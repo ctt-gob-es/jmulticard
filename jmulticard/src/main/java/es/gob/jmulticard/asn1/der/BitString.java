@@ -51,6 +51,7 @@ public abstract class BitString extends DecoderObject {
     /** Tipo ASN.1 "BIT STRING". */
     private static final byte TAG_BITSTRING = (byte) 0x03;
 
+    @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
         final Tlv tlv = new Tlv(this.getRawDerValue());
         if (TAG_BITSTRING != tlv.getTag()) {
@@ -64,6 +65,7 @@ public abstract class BitString extends DecoderObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected byte getDefaultTag() {
         return TAG_BITSTRING;
     }

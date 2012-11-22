@@ -52,24 +52,25 @@ public abstract class SequenceOf extends DecoderObject {
 	/** Tipo ASN.1 "SEQUENCE". */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private final Class elementsType;
+    private final Class<? extends DecoderObject> elementsType;
 
-    private Vector sequenceObjects = null;
+    private Vector<DecoderObject> sequenceObjects = null;
 
-	protected void decodeValue() throws Asn1Exception, TlvException {
+	@Override
+    protected void decodeValue() throws Asn1Exception, TlvException {
 		Tlv tlv = new Tlv(this.getRawDerValue());
 		checkTag(tlv.getTag());
 		int offset = 0;
 		byte[] remainingBytes;
         DecoderObject tmpDo;
         final byte[] valueBytes = tlv.getValue();
-        this.sequenceObjects = new Vector();
+        this.sequenceObjects = new Vector<DecoderObject>();
         while (offset < valueBytes.length) {
         	remainingBytes = new byte[valueBytes.length - offset];
         	System.arraycopy(valueBytes, offset, remainingBytes, 0, remainingBytes.length);
     		tlv = new Tlv(remainingBytes);
         	try {
-        		tmpDo = (DecoderObject)this.elementsType.newInstance();
+        		tmpDo = this.elementsType.newInstance();
         	}
         	catch (final Exception e) {
         		throw new Asn1Exception(
@@ -80,14 +81,14 @@ public abstract class SequenceOf extends DecoderObject {
         	offset = offset + tlv.getBytes().length;
         	tmpDo.checkTag(tlv.getTag());
         	tmpDo.setDerValue(tlv.getBytes());
-        	this.sequenceObjects.addElement(tmpDo);
+        	this.sequenceObjects.add(tmpDo);
         }
 	}
 
 	/** Construye un tipo ASN.1 <i>SequenceOf</i>.
      * Un <i>SequenceOf</i> contiene una secuencia de tipos ASN.1 (que deben ser iguales)
      * @param type Tipos (etiquetas) de objetos ASN.1 (1 a n elementos) que va a contener la secuencia. El orden es irrelevante */
-	protected SequenceOf(final Class type) {
+	protected SequenceOf(final Class<? extends DecoderObject> type) {
 	    super();
 		if (type == null) {
 			throw new IllegalArgumentException();
@@ -96,6 +97,7 @@ public abstract class SequenceOf extends DecoderObject {
 	}
 
     /** {@inheritDoc} */
+    @Override
     protected byte getDefaultTag() {
         return TAG_SEQUENCE;
     }
@@ -105,7 +107,7 @@ public abstract class SequenceOf extends DecoderObject {
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
      * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia */
     protected DecoderObject getElementAt(final int index) {
-        return (DecoderObject) this.sequenceObjects.elementAt(index);
+        return this.sequenceObjects.elementAt(index);
     }
 
     protected int getElementCount() {

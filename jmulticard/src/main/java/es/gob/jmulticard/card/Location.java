@@ -53,9 +53,9 @@ public final class Location {
 
     private static final int MASTER_FILE_ID = 0x3F00;
 
-    private Vector path = new Vector();
+    private Vector<Integer> path = new Vector<Integer>();
 
-    private static final Hashtable HEXBYTES = new Hashtable();
+    private static final Hashtable<String, Integer> HEXBYTES = new Hashtable<String, Integer>();
 
     static {
         final String hex[] = {
@@ -93,10 +93,10 @@ public final class Location {
     /*
      * Constructor privado. Necesario para algunas operaciones internas
      */
-    private Location(final Vector path) {
+    private Location(final Vector<Integer> path) {
         if (path != null) {
             final int numElements = path.size();
-            this.path = new Vector(numElements);
+            this.path = new Vector<Integer>(numElements);
             for (int i = 0; i < numElements; i++) {
                 this.path.insertElementAt(path.elementAt(i), i);
             }
@@ -117,7 +117,7 @@ public final class Location {
     /** Obtiene la direcci&oacute;n f&iacute;sica del fichero actualmente apuntado.
      * @return Una palabra con la direcci&oacute;n de memoria seleccionada. */
     public byte[] getFile() {
-        final int address = ((Integer) this.path.elementAt(0)).intValue();
+        final int address = this.path.elementAt(0).intValue();
         return new byte[] {
                 (byte) (address >> 8 & 0xFF), (byte) (address & 0xFF)
         };
@@ -129,7 +129,7 @@ public final class Location {
     	if (this.path.size() < 1) {
     		return null;
     	}
-        final int address = ((Integer) this.path.elementAt(this.path.size() - 1)).intValue();
+        final int address = this.path.elementAt(this.path.size() - 1).intValue();
         return new byte[] {
                 (byte) (address >> 8 & 0xFF), (byte) (address & 0xFF)
         };
@@ -166,10 +166,10 @@ public final class Location {
         }
 
         for (int i = 0; i < absolutePath.length(); i = i + 4) {
-            final int mm = ((Integer) Location.HEXBYTES.get(absolutePath.substring(i, i + 1))).intValue();
-            final int ml = ((Integer) Location.HEXBYTES.get(absolutePath.substring(i + 1, i + 2))).intValue();
-            final int lm = ((Integer) Location.HEXBYTES.get(absolutePath.substring(i + 2, i + 3))).intValue();
-            final int ll = ((Integer) Location.HEXBYTES.get(absolutePath.substring(i + 3, i + 4))).intValue();
+            final int mm = Location.HEXBYTES.get(absolutePath.substring(i, i + 1)).intValue();
+            final int ml = Location.HEXBYTES.get(absolutePath.substring(i + 1, i + 2)).intValue();
+            final int lm = Location.HEXBYTES.get(absolutePath.substring(i + 2, i + 3)).intValue();
+            final int ll = Location.HEXBYTES.get(absolutePath.substring(i + 3, i + 4)).intValue();
             int id = ll;
             id += lm << 4;
             id += ml << 8;
@@ -183,12 +183,13 @@ public final class Location {
 
     /** Devuelve una representaci&oacute;n de la ruta absoluta del fichero separando cada identificador mediante barras.
      * @see java.lang.Object#toString() */
+    @Override
     public String toString() {
         final StringBuffer buffer = new StringBuffer();
         if (this.path != null && !this.path.isEmpty()) {
             buffer.append("3F00"); //$NON-NLS-1$
             for (int i = 0; i < this.path.size(); i++) {
-                final Integer integer = (Integer) this.path.elementAt(i);
+                final Integer integer = this.path.elementAt(i);
                 buffer.append('/').append(HexUtils.hexify(new byte[] {
                         (byte) (integer.shortValue() >> 8), integer.byteValue()
                 }, false));

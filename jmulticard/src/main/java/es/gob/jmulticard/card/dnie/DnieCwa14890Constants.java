@@ -203,16 +203,19 @@ final class DnieCwa14890Constants {
         };
 
         /** {@inheritDoc} */
+        @Override
         public BigInteger getModulus() {
             return this.ifdModulus;
         }
 
         /** {@inheritDoc} */
+        @Override
         public String getFormat() {
             return "PKCS#8"; //$NON-NLS-1$
         }
 
         /** {@inheritDoc} */
+        @Override
         public byte[] getEncoded() {
             final byte[] out = new byte[this.encoded.length];
             System.arraycopy(this.encoded, 0, out, 0, this.encoded.length);
@@ -220,11 +223,13 @@ final class DnieCwa14890Constants {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String getAlgorithm() {
             return "RSA"; //$NON-NLS-1$
         }
 
         /** {@inheritDoc} */
+        @Override
         public BigInteger getPrivateExponent() {
             return this.ifdPrivateExponent;
         }
@@ -256,11 +261,13 @@ final class DnieCwa14890Constants {
         };
 
         /** {@inheritDoc} */
+        @Override
         public String getFormat() {
             return "X.509"; //$NON-NLS-1$
         }
 
         /** {@inheritDoc} */
+        @Override
         public byte[] getEncoded() {
             final byte[] out = new byte[this.encoded.length];
             System.arraycopy(this.encoded, 0, out, 0, this.encoded.length);
@@ -268,6 +275,7 @@ final class DnieCwa14890Constants {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String getAlgorithm() {
             return "RSA"; //$NON-NLS-1$
         }

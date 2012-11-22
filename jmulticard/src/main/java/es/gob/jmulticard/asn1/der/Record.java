@@ -49,14 +49,14 @@ import es.gob.jmulticard.asn1.TlvException;
  * objetos concatenados deben ser del mismo tipo ASN.1 */
 public abstract class Record extends DecoderObject {
 
-    private final Class[] elementsTypes;
+    private final Class<? extends DecoderObject>[] elementsTypes;
 
     private final DecoderObject[] elements;
 
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN.1 que va a contener el registro (que obligatoriamente deben ser
      *        subclases de <code>DecoderObject</code> */
-    protected Record(final Class[] types) {
+    protected Record(final Class<? extends DecoderObject>[] types) {
         super();
         if (types == null || types.length == 0) {
             throw new IllegalArgumentException("Los tipos de los elementos del registro no pueden ser nulos ni vacios" //$NON-NLS-1$
@@ -83,6 +83,7 @@ public abstract class Record extends DecoderObject {
         return this.elements[pos];
     }
 
+    @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
         if (this.getRawDerValue().length == 0) {
             throw new Asn1Exception("El valor del objeto ASN.1 esta vacio"); //$NON-NLS-1$
@@ -96,7 +97,7 @@ public abstract class Record extends DecoderObject {
             System.arraycopy(this.getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
             tlv = new Tlv(remainingBytes);
             try {
-                tmpDo = (DecoderObject) this.elementsTypes[i].newInstance();
+                tmpDo = this.elementsTypes[i].newInstance();
             }
             catch (final Exception e) {
                 throw new Asn1Exception("No se ha podido instanciar un " + this.elementsTypes[i].getName() + //$NON-NLS-1$
@@ -111,6 +112,7 @@ public abstract class Record extends DecoderObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected byte getDefaultTag() {
         throw new UnsupportedOperationException("No hay tipo por defecto"); //$NON-NLS-1$
     }

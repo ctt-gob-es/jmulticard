@@ -56,7 +56,7 @@ abstract class Pkcs15Object extends Sequence {
     /** Construye un tipo PKCS#15 ASN.1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
-    Pkcs15Object(final Class classAttributes, final Class typeAttributes) {
+    Pkcs15Object(final Class<? extends DecoderObject> classAttributes, final Class<? extends DecoderObject> typeAttributes) {
         super(new Class[] {
             CommonObjectAttributes.class,
             classAttributes,

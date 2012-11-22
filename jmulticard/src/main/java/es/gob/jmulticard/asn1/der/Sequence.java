@@ -52,12 +52,12 @@ public abstract class Sequence extends DecoderObject {
 
     private final DecoderObject[] elements;
 
-    private final Class[] elementsTypes;
+    private final Class<? extends DecoderObject>[] elementsTypes;
 
     /** Construye un tipo ASN.1 <i>Sequence</i>.
      * Un <i>Sequence</i> contiene una secuencia de tipos ASN.1 (que pueden ser distintos)
      * @param types Tipos (etiquetas) de objetos ASN.1 (cero a n elementos) que va a contener la secuencia. El orden es relevante */
-    protected Sequence(final Class[] types) {
+    protected Sequence(final Class<? extends DecoderObject>[] types) {
         super();
         if (types == null) {
             throw new IllegalArgumentException();
@@ -67,6 +67,7 @@ public abstract class Sequence extends DecoderObject {
         this.elements = new DecoderObject[types.length];
     }
 
+    @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
         final Tlv mainTlv = new Tlv(this.getRawDerValue());
         checkTag(mainTlv.getTag());
@@ -80,7 +81,7 @@ public abstract class Sequence extends DecoderObject {
             System.arraycopy(rawValue, offset, remainingBytes, 0, remainingBytes.length);
             tlv = new Tlv(remainingBytes);
             try {
-                tmpDo = (DecoderObject) this.elementsTypes[i].newInstance();
+                tmpDo = this.elementsTypes[i].newInstance();
             }
             catch (final Exception e) {
                 throw new Asn1Exception("No se ha podido instanciar un " + this.elementsTypes[i].getName() + //$NON-NLS-1$
@@ -95,6 +96,7 @@ public abstract class Sequence extends DecoderObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected byte getDefaultTag() {
         return TAG_SEQUENCE;
     }

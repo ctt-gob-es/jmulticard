@@ -52,7 +52,8 @@ public final class CertificateIssuerContextSpecific extends ContextSpecific {
 	}
 
 	/** {@inheritDoc} */
-	public String toString() {
+	@Override
+    public String toString() {
 		return getObject().toString();
 	}
 

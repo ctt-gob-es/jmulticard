@@ -126,6 +126,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
 
     /** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
      * a la apertura del canal. */
+    @Override
     public void open() throws ApduConnectionException {
 
         final ApduConnection conn = this.subConnection;
@@ -547,6 +548,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void close() throws ApduConnectionException {
     	if (this.openState) {
     		this.subConnection.close();
@@ -555,6 +557,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
     }
 
     /** {@inheritDoc} */
+    @Override
     public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
 
         final CommandApdu protectedApdu;
@@ -597,6 +600,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
     }
 
     /** {@inheritDoc} */
+    @Override
     public byte[] reset() throws ApduConnectionException {
 
         this.openState = false;
@@ -611,31 +615,37 @@ public final class Cwa14890OneConnection implements ApduConnection {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void addCardConnectionListener(final CardConnectionListener ccl) {
         this.subConnection.addCardConnectionListener(ccl);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void removeCardConnectionListener(final CardConnectionListener ccl) {
         this.subConnection.removeCardConnectionListener(ccl);
     }
 
     /** {@inheritDoc} */
+    @Override
     public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
         return this.subConnection.getTerminals(onlyWithCardPresent);
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getTerminalInfo(final int terminal) throws ApduConnectionException {
         return this.subConnection.getTerminalInfo(terminal);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setTerminal(final int t) {
         this.subConnection.setTerminal(t);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean isOpen() {
         return this.openState && this.subConnection.isOpen();
     }

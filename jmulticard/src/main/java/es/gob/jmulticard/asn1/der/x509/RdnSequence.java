@@ -51,7 +51,8 @@ public final class RdnSequence extends SequenceOf {
 	}
 
 	/** {@inheritDoc} */
-	public String toString() {
+	@Override
+    public String toString() {
 		final StringBuffer sb = new StringBuffer();
 		final int lastIndex = getElementCount();
 		for (int i=0; i<lastIndex;i++) {

@@ -115,6 +115,7 @@ public final class BerTlvIdentifier {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -140,11 +141,13 @@ public final class BerTlvIdentifier {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return new BigInteger(this.value).intValue();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         if (this.value == null) {
             return "NULL"; //$NON-NLS-1$

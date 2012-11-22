@@ -54,7 +54,8 @@ public final class RelativeDistinguishedName extends Set {
 	}
 
 	/** {@inheritDoc} */
-	public String toString() {
+	@Override
+    public String toString() {
 		return getElementAt(0).toString();
 	}
 

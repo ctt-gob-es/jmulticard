@@ -55,7 +55,8 @@ public class PrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 	}
 
 	/** {@inheritDoc} */
-	public void checkTag(final byte tag) throws Asn1Exception {
+	@Override
+    public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
 			throw new Asn1Exception(
 				"Se esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
@@ -65,7 +66,8 @@ public class PrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 	}
 
 	/** {@inheritDoc} */
-	public String toString() {
+	@Override
+    public String toString() {
 		return getObject().toString();
 	}
 

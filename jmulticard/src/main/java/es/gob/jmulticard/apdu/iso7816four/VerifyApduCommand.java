@@ -72,6 +72,7 @@ public final class VerifyApduCommand extends CommandApdu {
     }
 
     /** {@inheritDoc} */
+    @Override
     public byte[] getData() {
         final char[] p = this.pwc.getPassword();
         final byte[] k = new byte[p.length];

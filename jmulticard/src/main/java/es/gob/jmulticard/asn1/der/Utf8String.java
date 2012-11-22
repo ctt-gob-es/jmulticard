@@ -57,11 +57,13 @@ public final class Utf8String extends DecoderObject {
     private static final byte TAG_PRINTABLESTRING = (byte) 0x13;
 
     /** {@inheritDoc} */
+    @Override
     protected byte getDefaultTag() {
         return TAG_UTF8STRING;
     }
 
 	/** {@inheritDoc} */
+    @Override
     public void checkTag(final byte tag) throws Asn1Exception {
     	if ((TAG_UTF8STRING != tag) && (TAG_PRINTABLESTRING != tag)) {
 			throw new Asn1Exception(
@@ -75,6 +77,7 @@ public final class Utf8String extends DecoderObject {
 
     private String stringValue = null;
 
+    @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
     	final Tlv tlv = new Tlv(this.getRawDerValue());
     	checkTag(tlv.getTag());
@@ -89,6 +92,7 @@ public final class Utf8String extends DecoderObject {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
     	return this.stringValue;
     }

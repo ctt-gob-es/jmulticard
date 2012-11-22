@@ -55,6 +55,7 @@ public final class ObjectIdentifier extends DecoderObject {
 	private byte[] rawValue = null;
 
 	/** {@inheritDoc} */
+    @Override
     public void checkTag(final byte tag) throws Asn1Exception {
     	if ((TAG_OBJECTID != tag) && (RELATIVE_OID != tag)) {
 			throw new Asn1Exception(
@@ -66,16 +67,19 @@ public final class ObjectIdentifier extends DecoderObject {
 		}
     }
 
-	protected void decodeValue() throws Asn1Exception, TlvException {
+	@Override
+    protected void decodeValue() throws Asn1Exception, TlvException {
 		this.rawValue = new Tlv(this.getRawDerValue()).getValue();
 	}
 
-	protected byte getDefaultTag() {
+	@Override
+    protected byte getDefaultTag() {
 		return TAG_OBJECTID;
 	}
 
 	/** Devuelve una representaci&oacute;n textual del c&oacute;digo OID o su valor hexadecimal si no se reconoce. */
-	public String toString() {
+	@Override
+    public String toString() {
 		if (this.rawValue == null) {
 			throw new IllegalStateException("El valor del OID no esta establecido"); //$NON-NLS-1$
 		}

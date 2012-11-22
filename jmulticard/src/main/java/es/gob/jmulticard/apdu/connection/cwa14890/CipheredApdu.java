@@ -108,6 +108,7 @@ final class CipheredApdu extends CommandApdu {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setLe(final int le) {
         throw new UnsupportedOperationException("No se puede establecer el Le en una APDU cifrada"); //$NON-NLS-1$
     }

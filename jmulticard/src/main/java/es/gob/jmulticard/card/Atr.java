@@ -72,6 +72,7 @@ public final class Atr implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object o) {
         if (!(o instanceof Atr)) {
             return false;
@@ -89,6 +90,7 @@ public final class Atr implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return hashCode(this.atrBytes) + hashCode(this.mask);
     }

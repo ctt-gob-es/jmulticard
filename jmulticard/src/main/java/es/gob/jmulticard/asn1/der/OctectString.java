@@ -54,6 +54,7 @@ public class OctectString extends DecoderObject {
 
     private byte[] value = null;
 
+    @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
     	final Tlv tlv = new Tlv(this.getRawDerValue());
     	if (TAG_OCTECTSTRING != tlv.getTag()) {
@@ -66,6 +67,7 @@ public class OctectString extends DecoderObject {
     	this.value = tlv.getValue();
     }
 
+    @Override
     protected byte getDefaultTag() {
         return TAG_OCTECTSTRING;
     }

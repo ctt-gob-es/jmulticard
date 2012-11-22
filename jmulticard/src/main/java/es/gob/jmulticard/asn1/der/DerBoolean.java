@@ -52,13 +52,15 @@ public class DerBoolean extends DecoderObject {
 
 	private Boolean booleanValue = null;
 
-	protected void decodeValue() throws Asn1Exception, TlvException {
+	@Override
+    protected void decodeValue() throws Asn1Exception, TlvException {
 		final Tlv tmpTlv = new Tlv(this.getRawDerValue());
 		checkTag(tmpTlv.getTag());
 		this.booleanValue = Boolean.valueOf(tmpTlv.getValue()[0] == (byte) 0x00);
 	}
 
-	protected byte getDefaultTag() {
+	@Override
+    protected byte getDefaultTag() {
 		return TAG_BOOLEAN;
 	}
 

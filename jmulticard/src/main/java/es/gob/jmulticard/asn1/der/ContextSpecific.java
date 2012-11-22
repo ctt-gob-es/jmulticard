@@ -58,11 +58,12 @@ public abstract class ContextSpecific extends DecoderObject {
         return this.object;
     }
 
+    @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
         final Tlv tlv = new Tlv(this.getRawDerValue());
         final DecoderObject tmpDo;
         try {
-            tmpDo = (DecoderObject) this.elementType.newInstance();
+            tmpDo = this.elementType.newInstance();
         }
         catch (final Exception e) {
             throw new Asn1Exception("No se ha podido instanciar un " + this.elementType.getName() + " en el contexto especifico: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
@@ -72,11 +73,11 @@ public abstract class ContextSpecific extends DecoderObject {
         this.object = tmpDo;
     }
 
-    private final Class elementType;
+    private final Class<? extends DecoderObject> elementType;
 
     /** Construye un tipo ASN.1 espec&iacute;fico del contexto.
      * @param type Tipo de elemento contenido dentro de este objeto */
-    public ContextSpecific(final Class type) {
+    public ContextSpecific(final Class<? extends DecoderObject> type) {
         super();
         if (type == null) {
             throw new IllegalArgumentException("El tipo contenido dentro de ContextSpecific no puede ser nulo" //$NON-NLS-1$
@@ -85,11 +86,13 @@ public abstract class ContextSpecific extends DecoderObject {
         this.elementType = type;
     }
 
+    @Override
     protected byte getDefaultTag() {
         throw new UnsupportedOperationException("No hay tipo por defecto"); //$NON-NLS-1$
     }
 
     /** {@inheritDoc} */
+    @Override
     public void checkTag(final byte tag) throws Asn1Exception {
         if ((tag & 0x0c0) != 0x080) {
             throw new Asn1Exception("La etiqueta " + HexUtils.hexify(new byte[] { tag}, false) + //$NON-NLS-1$

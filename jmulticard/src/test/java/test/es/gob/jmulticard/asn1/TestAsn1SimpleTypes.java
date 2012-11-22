@@ -16,7 +16,8 @@ public class TestAsn1SimpleTypes extends TestCase {
 	/** Prueba la creaci&oacute; de un tipo UTF8String con datos incorrectos.
 	 * @throws Asn1Exception
 	 * @throws TlvException */
-	public void testUtf8StringCreationWithBadData() throws Asn1Exception, TlvException {
+	@SuppressWarnings("static-method")
+    public void testUtf8StringCreationWithBadData() throws Asn1Exception, TlvException {
 		Utf8String u = new Utf8String();
 		try {
 			u.setDerValue(new byte[] { (byte)0x00, (byte) 0x01, (byte) 0xff});
@@ -30,7 +31,8 @@ public class TestAsn1SimpleTypes extends TestCase {
 	/** Prueba la creaci&oacute; de un tipo BitString con datos incorrectos.
 	 * @throws Asn1Exception
 	 * @throws TlvException */
-	public void testBitStringCreationWithBadData() throws Asn1Exception, TlvException {
+	@SuppressWarnings("static-method")
+    public void testBitStringCreationWithBadData() throws Asn1Exception, TlvException {
 		BitString u = new AccessFlags();
 		try {
 			u.setDerValue(new byte[] { (byte)0x00, (byte) 0x01, (byte) 0xff});

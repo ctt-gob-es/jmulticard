@@ -84,21 +84,24 @@ public final class FakeX509Certificate extends X509Certificate {
 	}
 
 	/** {@inheritDoc} */
-	public Set getCriticalExtensionOIDs() {
-		final Set set = new HashSet(2);
+	@Override
+    public Set<String> getCriticalExtensionOIDs() {
+		final Set<String> set = new HashSet<String>(2);
 		set.add("2.5.29.15"); //$NON-NLS-1$
 		set.add("2.5.29.19"); //$NON-NLS-1$
 		return set;
 	}
 
 	/** M&eacute;todo no implementado. */
-	public byte[] getExtensionValue(final String e) {
+	@Override
+    public byte[] getExtensionValue(final String e) {
 		throw new UnsupportedOperationException();
 	}
 
 	/** {@inheritDoc} */
-	public Set getNonCriticalExtensionOIDs() {
-		final Set set = new HashSet(8);
+	@Override
+    public Set<String> getNonCriticalExtensionOIDs() {
+		final Set<String> set = new HashSet<String>(8);
 		set.add("2.5.29.14"); //$NON-NLS-1$
 		set.add("2.5.29.9"); //$NON-NLS-1$
 		set.add("1.3.6.1.5.5.7.1.1"); //$NON-NLS-1$
@@ -111,37 +114,44 @@ public final class FakeX509Certificate extends X509Certificate {
 	}
 
 	/** {@inheritDoc} */
-	public boolean hasUnsupportedCriticalExtension() {
+	@Override
+    public boolean hasUnsupportedCriticalExtension() {
 		return false;
 	}
 
 	/** {@inheritDoc} */
-	public void checkValidity() throws CertificateExpiredException, CertificateNotYetValidException {
+	@Override
+    public void checkValidity() throws CertificateExpiredException, CertificateNotYetValidException {
 		// Vacio, siempre es valido
 	}
 
 	/** {@inheritDoc} */
-	public void checkValidity(final Date d) throws CertificateExpiredException, CertificateNotYetValidException {
+	@Override
+    public void checkValidity(final Date d) throws CertificateExpiredException, CertificateNotYetValidException {
 		// Vacio, siempre es valido
 	}
 
 	/** {@inheritDoc} */
-	public int getBasicConstraints() {
+	@Override
+    public int getBasicConstraints() {
 		return -1;
 	}
 
 	/** {@inheritDoc} */
-	public Principal getIssuerDN() {
+	@Override
+    public Principal getIssuerDN() {
 		return this.issuerDn;
 	}
 
 	/** M&eacute;todo no implementado. */
-	public boolean[] getIssuerUniqueID() {
+	@Override
+    public boolean[] getIssuerUniqueID() {
 		throw new UnsupportedOperationException();
 	}
 
 	/** {@inheritDoc} */
-	public boolean[] getKeyUsage() {
+	@Override
+    public boolean[] getKeyUsage() {
 		if (this.authCert) {
 			return new boolean[] { true, false, false, false, false, false, false, false, false };
 		}
@@ -149,72 +159,86 @@ public final class FakeX509Certificate extends X509Certificate {
 	}
 
 	/** {@inheritDoc} */
-	public Date getNotAfter() {
+	@Override
+    public Date getNotAfter() {
 		return new Date();
 	}
 
 	/** {@inheritDoc} */
-	public Date getNotBefore() {
+	@Override
+    public Date getNotBefore() {
 		return new Date();
 	}
 
 	/** {@inheritDoc} */
-	public BigInteger getSerialNumber() {
+	@Override
+    public BigInteger getSerialNumber() {
 		return this.serialNumber;
 	}
 
 	/** {@inheritDoc} */
-	public String getSigAlgName() {
+	@Override
+    public String getSigAlgName() {
 		return "SHA1withRSA"; //$NON-NLS-1$
 	}
 
 	/** {@inheritDoc} */
-	public String getSigAlgOID() {
+	@Override
+    public String getSigAlgOID() {
 		return "1.2.840.113549.1.1.5"; //$NON-NLS-1$
 	}
 
 	/** {@inheritDoc} */
-	public byte[] getSigAlgParams() {
+	@Override
+    public byte[] getSigAlgParams() {
 		return null;
 	}
 
 	/** M&eacute;todo no implementado. */
-	public byte[] getSignature() {
+	@Override
+    public byte[] getSignature() {
 		throw new UnsupportedOperationException();
 	}
 
 	/** {@inheritDoc} */
-	public Principal getSubjectDN() {
+	@Override
+    public Principal getSubjectDN() {
 		return this.subjectDn;
 	}
 
 	/** M&eacute;todo no implementado. */
-	public boolean[] getSubjectUniqueID() {
+	@Override
+    public boolean[] getSubjectUniqueID() {
 		throw new UnsupportedOperationException();
 	}
 
 	/** M&eacute;todo no implementado. */
-	public byte[] getTBSCertificate() throws CertificateEncodingException {
+	@Override
+    public byte[] getTBSCertificate() throws CertificateEncodingException {
 		throw new UnsupportedOperationException();
 	}
 
 	/** {@inheritDoc} */
-	public int getVersion() {
+	@Override
+    public int getVersion() {
 		return 3;
 	}
 
 	/** M&eacute;todo no implementado. */
-	public byte[] getEncoded() throws CertificateEncodingException {
+	@Override
+    public byte[] getEncoded() throws CertificateEncodingException {
 		throw new UnsupportedOperationException();
 	}
 
 	/** M&eacute;todo no implementado. */
-	public PublicKey getPublicKey() {
+	@Override
+    public PublicKey getPublicKey() {
 		throw new UnsupportedOperationException();
 	}
 
 	/** {@inheritDoc} */
-	public String toString() {
+	@Override
+    public String toString() {
 		return "Certificado impostado: " + //$NON-NLS-1$
 				"\n Emisor: " + this.issuerDn.toString() + //$NON-NLS-1$
 				"\n Titular: " + this.subjectDn.toString() + //$NON-NLS-1$
@@ -222,12 +246,14 @@ public final class FakeX509Certificate extends X509Certificate {
 	}
 
 	/** M&eacute;todo no implementado. */
-	public void verify(final PublicKey puk) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+	@Override
+    public void verify(final PublicKey puk) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
 		throw new UnsupportedOperationException();
 	}
 
 	/** M&eacute;todo no implementado. */
-	public void verify(final PublicKey puk, final String s) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+	@Override
+    public void verify(final PublicKey puk, final String s) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
 		throw new UnsupportedOperationException();
 	}
 

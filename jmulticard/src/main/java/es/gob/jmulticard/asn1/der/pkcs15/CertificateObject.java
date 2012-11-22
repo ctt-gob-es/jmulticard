@@ -98,6 +98,7 @@ public final class CertificateObject extends Pkcs15Object {
 	}
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
     	return getTypeAttributes().toString() +
 			"\nAlias del certificado: " + getCommonObjectAttributes().getLabel() + //$NON-NLS-1$

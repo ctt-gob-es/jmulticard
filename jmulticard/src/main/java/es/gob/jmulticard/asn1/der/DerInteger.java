@@ -54,7 +54,8 @@ public class DerInteger extends DecoderObject {
 
 	private BigInteger value = null;
 
-	protected void decodeValue() throws Asn1Exception, TlvException {
+	@Override
+    protected void decodeValue() throws Asn1Exception, TlvException {
 		this.value = new BigInteger(new Tlv(this.getRawDerValue()).getValue());
 	}
 
@@ -67,7 +68,8 @@ public class DerInteger extends DecoderObject {
 		return this.value;
 	}
 
-	protected byte getDefaultTag() {
+	@Override
+    protected byte getDefaultTag() {
 		return TAG_INTEGER;
 	}
 

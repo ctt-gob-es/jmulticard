@@ -84,6 +84,7 @@ public final class StatusWord implements Serializable {
 
     /** Compara dos palabras de estado.
      * @return <code>true</code> si son iguales (a nivel de octetos), <code>false</code> si son distintas */
+    @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof StatusWord)) {
             return false;
@@ -97,6 +98,7 @@ public final class StatusWord implements Serializable {
 
     /** Devuelve un c&oacute;digo <i>hash</i> para la palabra de estado.
      * @return C&oacute;digo <i>hash</i> para la palabra de estado */
+    @Override
     public int hashCode() {
         return HexUtils.getShort(new byte[] {
                 this.msb, this.lsb
@@ -104,6 +106,7 @@ public final class StatusWord implements Serializable {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
     	return HexUtils.hexify(new byte [] { this.msb, this.lsb }, true);
     }
