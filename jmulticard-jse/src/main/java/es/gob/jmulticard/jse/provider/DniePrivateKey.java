@@ -148,7 +148,7 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		return this.name;
 	}
 
-	@SuppressWarnings("static-method")
+	@SuppressWarnings({ "static-method", "unused" })
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		throw new NotSerializableException();
 	}
