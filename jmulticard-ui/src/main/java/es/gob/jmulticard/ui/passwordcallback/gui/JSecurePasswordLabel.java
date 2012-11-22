@@ -64,9 +64,15 @@ final class JSecurePasswordLabel extends JLabel {
 
 	private final int delay = 500;
 	private final char[] pass;
+	char[] getPass() {
+	    return this.pass;
+	}
 	private final int maxChars;
 	private int passwordLength;
 	private Timer timer;
+	Timer getTimer() {
+	    return this.timer;
+	}
 	private boolean showCursor;
 
 	int getMaxChars() {
@@ -100,7 +106,7 @@ final class JSecurePasswordLabel extends JLabel {
 			public void keyTyped(final KeyEvent ke) {
 				//Caracteres validos password
 				if (isValid(ke.getKeyChar()) && (getPasswordLength() < getMaxChars())) {
-					JSecurePasswordLabel.this.pass[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
+					JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
 					ke.setKeyChar('\0');
 				}
 				updateText();
@@ -123,14 +129,14 @@ final class JSecurePasswordLabel extends JLabel {
 			@Override
 			public void focusGained(final FocusEvent arg0) {
 				JSecurePasswordLabel.this.setBackground(Color.WHITE);
-				JSecurePasswordLabel.this.timer.start();
+				JSecurePasswordLabel.this.getTimer().start();
 			}
 
 			@Override
 			public void focusLost(final FocusEvent arg0) {
 				JSecurePasswordLabel.this.setShowCursor(false);
 				JSecurePasswordLabel.this.setBackground(getParent().getBackground());
-				JSecurePasswordLabel.this.timer.stop();
+				JSecurePasswordLabel.this.getTimer().stop();
 				JSecurePasswordLabel.this.updateText();
 			}
 		});
@@ -148,7 +154,7 @@ final class JSecurePasswordLabel extends JLabel {
 		this.timer = new Timer(this.delay, new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
-				if(arg0.getSource().equals(timer)){
+				if(arg0.getSource().equals(getTimer())){
 					if(hasFocus()){
 						JSecurePasswordLabel.this.setShowCursor(!getShowCursor());
 						JSecurePasswordLabel.this.updateText();
@@ -206,7 +212,7 @@ final class JSecurePasswordLabel extends JLabel {
 	 * Setter privado para el campo showCursor que indica si ha de mostrarse el cursor o no
 	 * @param show Si ha de mostrarse el cursor o no
 	 */
-	private synchronized void setShowCursor(boolean show){
+	synchronized void setShowCursor(boolean show){
 		this.showCursor = show;
 	}
 	
@@ -214,7 +220,7 @@ final class JSecurePasswordLabel extends JLabel {
 	 * Getter privado para el campo showCursor que indica si ha de mostrarse el cursor o no
 	 * @return Si ha de mostrarse el cursor o no
 	 */
-	private synchronized boolean getShowCursor(){
+	synchronized boolean getShowCursor(){
 		return this.showCursor;
 	}
 }
