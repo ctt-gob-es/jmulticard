@@ -162,8 +162,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     	if (terminals.length < 1) {
     	    throw new NoReadersFoundException();
     	}
-    	for(int i=0;i<terminals.length;i++) {
-    		conn.setTerminal((int) terminals[i]);
+    	for (final long terminal : terminals) {
+    		conn.setTerminal((int) terminal);
     		try {
     			responseAtr = conn.reset();
     		}
@@ -328,7 +328,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         // Si no estamos en Modo Rapido, nos aseguramos de que este cargados
         // los certificados de verdad
-        if (this.needsRealCertificates || (this.authCert instanceof FakeX509Certificate && !this.fastMode)) {
+        if (this.needsRealCertificates || this.authCert instanceof FakeX509Certificate && !this.fastMode) {
             loadCertificates();
         }
 
@@ -364,10 +364,10 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             iccCertEncoded = this.selectFileByIdAndRead(CERT_ICC_FILE_ID);
         }
         catch (final ApduConnectionException e) {
-            throw new IOException("Error en el envio de APDU para la seleccion del certificado de componente de la tarjeta: " + e); //$NON-NLS-1$
+            throw new IOException("Error en el envio de APDU para la seleccion del certificado de componente de la tarjeta: " + e, e); //$NON-NLS-1$
         }
         catch (final Iso7816FourCardException e) {
-            throw new IOException("Error en la seleccion del certificado de componente de la tarjeta: " + e); //$NON-NLS-1$
+            throw new IOException("Error en la seleccion del certificado de componente de la tarjeta: " + e, e); //$NON-NLS-1$
         }
         return iccCertEncoded;
     }
@@ -631,7 +631,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             return buffer.toByteArray();
         }
         catch (final DataFormatException ex) {
-            throw new IOException("Error al descomprimir el certificado: " + ex); //$NON-NLS-1$
+            throw new IOException("Error al descomprimir el certificado: " + ex, ex); //$NON-NLS-1$
         }
     }
 
