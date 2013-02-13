@@ -59,6 +59,7 @@ import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.VerifyApduCommand;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
+import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.SmartCard;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
@@ -70,6 +71,8 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     /** Byte que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
+
+    private static final boolean PIN_AUTO_RETRY = false;
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU
@@ -261,17 +264,19 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @param retriesLeft Intentos restantes que quedan antes de bloquear la tarjeta. Un valor de Integer.MAX_VALUE
      *                    indica un valor desconocido
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado. */
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado.
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
     private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException {
 
-    	final PasswordCallback psc = (pinPc != null) ? pinPc : ((retriesLeft < Integer.MAX_VALUE) ?
+    	final PasswordCallback psc = pinPc != null ? pinPc : retriesLeft < Integer.MAX_VALUE ?
     			CommonPasswordCallback.getDnieBadPinPasswordCallback(retriesLeft) :
-    				CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null));
+    				CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null);
 
     	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
 
     	final ResponseApdu verifyResponse = this.getConnection().transmit(
-    			verifyCommandApdu
+			verifyCommandApdu
     	);
     	verifyCommandApdu = null;
 
@@ -280,9 +285,14 @@ public abstract class Iso7816FourCard extends SmartCard {
     	psc.clearPassword();
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
+            	// Si no hay reintento automatico se lanza la excepcion
+            	if (!PIN_AUTO_RETRY) {
+            		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
+            	}
+            	// Si hay reintento automativo volvemos a pedir el PIN con la misma CallBack
             	verifyPin(
-            			pinPc,
-            			verifyResponse.getStatusWord().getLsb() - (byte) 0xC0
+        			pinPc,
+        			verifyResponse.getStatusWord().getLsb() - (byte) 0xC0
             	);
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {

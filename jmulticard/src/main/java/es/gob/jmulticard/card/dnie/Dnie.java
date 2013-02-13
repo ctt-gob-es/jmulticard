@@ -90,6 +90,8 @@ import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
  */
 public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
 
+	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = false;
+
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
             (byte) 0x60, (byte) 0x1F
@@ -261,7 +263,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     @Override
     public String[] getAliases() {
         return new String[] {
-                AUTH_CERT_ALIAS, SIGN_CERT_ALIAS
+            AUTH_CERT_ALIAS,
+            SIGN_CERT_ALIAS
         };
     }
 
@@ -281,11 +284,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         X509Certificate tmpCert;
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
-            tmpCert =
-                    new FakeX509Certificate(cdf.getCertificateSubjectPrincipal(i),
-                                            cdf.getCertificateIssuerPrincipal(i),
-                                            cdf.getCertificateSerialNumber(i),
-                                            AUTH_CERT_ALIAS.equals(cdf.getCertificateAlias(i)));
+            tmpCert = new FakeX509Certificate(cdf.getCertificateSubjectPrincipal(i),
+        		cdf.getCertificateIssuerPrincipal(i),
+                cdf.getCertificateSerialNumber(i),
+                AUTH_CERT_ALIAS.equals(cdf.getCertificateAlias(i))
+            );
             if (AUTH_CERT_ALIAS.equals(cdf.getCertificateAlias(i))) {
                 this.authCert = tmpCert;
                 this.authCertPath = new Location(cdf.getCertificatePath(i));
@@ -483,8 +486,10 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             throw new IllegalArgumentException("La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference"); //$NON-NLS-1$
         }
 
-        if (DialogBuilder.showSignatureConfirmDialog(null, !AUTH_KEY_LABEL.equals(((DniePrivateKeyReference) privateKeyReference).toString())) == 1) {
-            throw new CancelledOperationException("Operacion de firma no autorizada por el usuario"); //$NON-NLS-1$
+        if (SHOW_SIGN_CONFIRM_DIALOG) {
+	        if (DialogBuilder.showSignatureConfirmDialog(null, !AUTH_KEY_LABEL.equals(((DniePrivateKeyReference) privateKeyReference).toString())) == 1) {
+	            throw new CancelledOperationException("Operacion de firma no autorizada por el usuario"); //$NON-NLS-1$
+	        }
         }
 
         return signOperation(data, algorithm, privateKeyReference);
