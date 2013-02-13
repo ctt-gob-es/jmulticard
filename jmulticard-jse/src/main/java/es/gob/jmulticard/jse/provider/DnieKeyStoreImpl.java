@@ -67,6 +67,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
+import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -117,6 +118,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 		}
         catch (final CryptoCardException e) {
 			throw new ProviderException(e);
+		}
+        catch (final BadPinException e) {
+			throw new BadPasswordProviderException(e);
 		}
     }
 

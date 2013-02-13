@@ -251,9 +251,11 @@ public abstract class Iso7816FourCard extends SmartCard {
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
      * @param pinPc PIN de la tarjeta
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
      *                                  el n&uacute;mero m&aacute;ximo de intentos) */
-    public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException {
+    public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
     	verifyPin(pinPc, Integer.MAX_VALUE);
     }
 
@@ -267,7 +269,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado.
      * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
-    private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException {
+    private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException, BadPinException {
 
     	final PasswordCallback psc = pinPc != null ? pinPc : retriesLeft < Integer.MAX_VALUE ?
     			CommonPasswordCallback.getDnieBadPinPasswordCallback(retriesLeft) :

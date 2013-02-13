@@ -1,11 +1,8 @@
 package es.gob.jmulticard.card;
 
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-
-
 /** Introducci&oacute;n incorrecta del PIN del DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class BadPinException extends ApduConnectionException {
+public class BadPinException extends CardException {
 
 	private static final long serialVersionUID = 9827614003517666L;
 

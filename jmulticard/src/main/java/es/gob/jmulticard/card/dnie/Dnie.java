@@ -73,6 +73,7 @@ import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
+import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
@@ -315,10 +316,12 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     /** Carga los certificados autenticos de la tarjeta.
      * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado
      * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado
      *         la inserci&oacute;n del PIN */
-    private void loadCertificates() throws CryptoCardException {
+    private void loadCertificates() throws CryptoCardException, BadPinException {
         if (this.isSecurityChannelOpen()) {
             return;
         }
@@ -327,7 +330,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     /** {@inheritDoc} */
     @Override
-    public X509Certificate getCertificate(final String alias) throws CryptoCardException {
+    public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
 
         // Si no estamos en Modo Rapido, nos aseguramos de que este cargados
         // los certificados de verdad
@@ -480,7 +483,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     /** {@inheritDoc} */
     @Override
-    public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException {
+    public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException, BadPinException {
 
         if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
             throw new IllegalArgumentException("La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference"); //$NON-NLS-1$
@@ -501,8 +504,10 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * @param privateKeyReference Referencia a la clave privada para la firma.
      * @return Firma de los datos.
      * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
-    private byte[] signOperation(final byte[] data, final String algorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException {
+    private byte[] signOperation(final byte[] data, final String algorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException, BadPinException {
 
         if (!this.isSecurityChannelOpen()) {
             this.verifyAndLoadCertificates();
@@ -556,9 +561,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** Abre el canal seguro de la tarjeta solicitando el PIN al usuario y carga los
      * certificados de verdad para utilizarlos cuando se desee.
      * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; ha bloqueado
      * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado la inserci&oacute;n del PIN */
-    private void verifyAndLoadCertificates() throws CryptoCardException {
+    private void verifyAndLoadCertificates() throws CryptoCardException, BadPinException {
 
         // Abrimos el canal seguro si no lo esta ya
         if (!this.isSecurityChannelOpen()) {
