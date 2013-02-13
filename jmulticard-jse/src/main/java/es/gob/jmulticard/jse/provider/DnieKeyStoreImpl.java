@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -63,6 +63,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.CryptoCard;
@@ -232,11 +234,14 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException, NoSuchAlgorithmException, CertificateException {
-    	if (password != null) {
-    		throw new IllegalArgumentException("La contrasena siempre debe ser null, esta se gestiona internamente"); //$NON-NLS-1$
-    	}
         // Aqui se realiza el acceso e inicializacion del DNIe
-        this.cryptoCard = new Dnie(new SmartcardIoConnection(), null, new JseCryptoHelper());
+        this.cryptoCard = new Dnie(
+    		new SmartcardIoConnection(),
+    		password != null ?
+    				new CachePasswordCallback(password) :
+    					null,
+    		new JseCryptoHelper()
+		);
     }
 
     /** Operaci&oacute;n no soportada. */
@@ -275,6 +280,21 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         if (!engineContainsAlias(alias)) {
             return false;
         }
-        return (entryClass.equals(PrivateKeyEntry.class));
+        return entryClass.equals(PrivateKeyEntry.class);
+    }
+
+    /** PasswordCallbak que almacena internamente y devuelve la contrase&ntilde;a con la que se
+     * construy&oacute; o la que se le establece posteriormente. */
+    private static final class CachePasswordCallback extends PasswordCallback {
+
+        private static final long serialVersionUID = 816457144215238935L;
+
+        /** Contruye una Callback con una contrase&ntilda; preestablecida.
+         * @param password
+         *        Contrase&ntilde;a por defecto. */
+        public CachePasswordCallback(final char[] password) {
+            super(">", false); //$NON-NLS-1$
+            this.setPassword(password);
+        }
     }
 }
