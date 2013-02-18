@@ -72,7 +72,7 @@ public abstract class Iso7816FourCard extends SmartCard {
     /** Byte que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private static final boolean PIN_AUTO_RETRY = false;
+    private static final boolean PIN_AUTO_RETRY = true;
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU

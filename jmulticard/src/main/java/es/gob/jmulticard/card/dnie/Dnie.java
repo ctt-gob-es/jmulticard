@@ -91,7 +91,7 @@ import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
  */
 public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
 
-	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = false;
+	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = true;
 
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
