@@ -8,29 +8,17 @@
 	<version>1.4</version>
 	<name>jmulticard</name>
 
+	<parent>
+		<groupId>es.gob</groupId>
+		<artifactId>jmulticard-base</artifactId>
+		<version>1.4</version>
+	</parent>
+	
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>es.gob</groupId>
 			<artifactId>jmulticard-ui</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.4</source>
-					<target>1.4</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
