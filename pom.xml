@@ -24,6 +24,7 @@
 
 	<modules>
 		<module>jmulticard</module>
+		<!-- <module>jmulticard-android</module> Solo funciona con Maven3 -->
 		<module>jmulticard-jse</module>
 		<module>jmulticard-jsr268</module>
 		<module>jmulticard-ui</module>
