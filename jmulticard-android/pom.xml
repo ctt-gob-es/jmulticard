@@ -4,7 +4,7 @@
 	 
  	<modelVersion>4.0.0</modelVersion>
     <groupId>es.gob.afirma</groupId>
-    <artifactId>afirma-ui-android</artifactId>
+    <artifactId>jmulticard-android</artifactId>
     <packaging>apklib</packaging>
 	
 	<parent>
@@ -27,7 +27,7 @@
 			<version>1.4</version>
 		</dependency>
 	</dependencies>
-	
+		
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src</sourceDirectory>
@@ -60,11 +60,38 @@
                 <configuration>
                     <sdk>
 						<path>${env.ANDROID_HOME}</path>
-                        <platform>4.1.2</platform>
+                        <platform>4.0.3</platform>
                     </sdk>
                 </configuration>
                 <extensions>true</extensions>
             </plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+					<additionalProjectnatures>
+						<projectnature>com.android.ide.eclipse.adt.AndroidNature</projectnature>
+					</additionalProjectnatures>
+					<additionalBuildcommands>
+						<buildcommand>com.android.ide.eclipse.adt.ResourceManagerBuilder</buildcommand>
+						<buildcommand>com.android.ide.eclipse.adt.PreCompilerBuilder</buildcommand>
+						<buildcommand>com.android.ide.eclipse.adt.ApkBuilder</buildcommand>
+					</additionalBuildcommands>
+					<!--
+							This is a workaround : we do not want JRE_CONTAINER, however if
+							we remove it, it will be automatically added, and placed first.
+							So we add it in the second position, so that the project is
+							recognized as an Android project.
+					-->
+					<classpathContainers>
+						<classpathContainer>com.android.ide.eclipse.adt.ANDROID_FRAMEWORK</classpathContainer>
+						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+					</classpathContainers>
+				</configuration>
+			</plugin>
         </plugins>
 	</build>
 </project> 
