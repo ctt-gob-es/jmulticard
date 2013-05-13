@@ -41,6 +41,7 @@ package es.gob.jmulticard.card.iso7816four;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.security.auth.callback.PasswordCallback;
 
@@ -62,7 +63,6 @@ import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.SmartCard;
-import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
 /** Tarjeta compatible ISO-7816-4.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
@@ -72,7 +72,7 @@ public abstract class Iso7816FourCard extends SmartCard {
     /** Byte que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private static final boolean PIN_AUTO_RETRY = true;
+    private static final boolean PIN_AUTO_RETRY = false;
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU
@@ -259,8 +259,9 @@ public abstract class Iso7816FourCard extends SmartCard {
     	verifyPin(pinPc, Integer.MAX_VALUE);
     }
 
-    /** Verifica el PIN de la tarjeta. El m&eacute;todo reintenta hasta que se introduce el PIN correctamente,
-     * se bloquea la tarjeta por exceso de intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
+    /** Verifica el PIN de la tarjeta. Si se establece la constante <code>PIN_AUTO_RETRY</code> a <code>true</code>,
+     * el m&eacute;todo reintenta hasta que se introduce el PIN correctamente se bloquea la tarjeta por exceso de
+     * intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
      * @param pinPc PIN de la tarjeta
      * @param retriesLeft Intentos restantes que quedan antes de bloquear la tarjeta. Un valor de Integer.MAX_VALUE
@@ -271,9 +272,26 @@ public abstract class Iso7816FourCard extends SmartCard {
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
     private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException, BadPinException {
 
-    	final PasswordCallback psc = pinPc != null ? pinPc : retriesLeft < Integer.MAX_VALUE ?
-    			CommonPasswordCallback.getDnieBadPinPasswordCallback(retriesLeft) :
-    				CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null);
+    	PasswordCallback psc = null;
+    	try {
+	    	if (pinPc != null) {
+	    		psc = pinPc;
+	    	}
+	    	else if (retriesLeft < Integer.MAX_VALUE) {
+	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
+	        	final Method getDnieBadPinPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDnieBadPinPasswordCallback", Integer.TYPE); //$NON-NLS-1$
+	        	psc = (PasswordCallback) getDnieBadPinPasswordCallbackMethod.invoke(null, Integer.valueOf(retriesLeft));
+	    	}
+	    	else {
+	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
+	        	final Method getDniePinForCertificateReadingPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDniePinForCertificateReadingPasswordCallback"); //$NON-NLS-1$
+	        	psc = (PasswordCallback) getDniePinForCertificateReadingPasswordCallbackMethod.invoke(null);
+	    	}
+    	}
+    	catch (final Exception e) {
+    		throw new IllegalArgumentException("pinPc no puede ser nulo cuando no hay un PasswordCallback por defecto", e); //$NON-NLS-1$
+    	}
+
 
     	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
 

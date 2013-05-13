@@ -42,6 +42,8 @@ package es.gob.jmulticard.card.dnie;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -83,15 +85,13 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
-import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 
 /**
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  */
 public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
 
-	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = true;
+	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = false;
 
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
@@ -200,9 +200,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla
      * @throws es.gob.jmulticard.card.InvalidCardException Si la tarjeta conectada no es un DNIe
      * @throws BurnedDnieCardException Si la tarjeta conectada es un DNIe con la memoria vol&aacute;til borrada */
-    public Dnie(final ApduConnection conn, final PasswordCallback pwc, final CryptoHelper cryptoHelper) throws ApduConnectionException,
-                                                                                                       InvalidCardException,
-                                                                                                       BurnedDnieCardException {
+    public Dnie(final ApduConnection conn,
+    		    final PasswordCallback pwc,
+    		    final CryptoHelper cryptoHelper) throws ApduConnectionException,
+                                                        InvalidCardException,
+                                                        BurnedDnieCardException {
         super((byte) 0x00, conn);
         connect(conn);
 
@@ -490,8 +492,34 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
 
         if (SHOW_SIGN_CONFIRM_DIALOG) {
-	        if (DialogBuilder.showSignatureConfirmDialog(null, !AUTH_KEY_LABEL.equals(((DniePrivateKeyReference) privateKeyReference).toString())) == 1) {
-	            throw new CancelledOperationException("Operacion de firma no autorizada por el usuario"); //$NON-NLS-1$
+
+        	boolean permissionDenied;
+        	try {
+        		final Class<?> dialogBuilderClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.DialogBuilder"); //$NON-NLS-1$
+        		final Class<?> componentClass = Class.forName("java.awt.Component"); //$NON-NLS-1$
+        		final Method showSignatureConfirmDialogMethod = dialogBuilderClass.getMethod("showSignatureConfirmDialog", componentClass, Boolean.TYPE); //$NON-NLS-1$
+
+        		final Integer result = (Integer) showSignatureConfirmDialogMethod.invoke(null, null, Boolean.valueOf(!AUTH_KEY_LABEL.equals(((DniePrivateKeyReference) privateKeyReference).toString())));
+        		permissionDenied = result.intValue() == 1;
+
+        	}
+        	catch (final Exception e) {
+        		Logger.getLogger("es.gob.afirma").severe("No se ha podido mostrar el dialogo grafico para la autorizacion de la firma, se realizara sin aprobacion expresa: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+        		permissionDenied = false;
+        	}
+
+	        if (permissionDenied) {
+
+	        	RuntimeException re;
+	        	try {
+	        		final Class<?> cancelledOperationExceptionClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.CancelledOperationException"); //$NON-NLS-1$
+	        		final Constructor<?> cancelledOperationExceptionConstructor = cancelledOperationExceptionClass.getConstructor(String.class);
+	        		re = (RuntimeException) cancelledOperationExceptionConstructor.newInstance("Operacion de firma no autorizada por el usuario"); //$NON-NLS-1$
+	        	} catch (final Exception e) {
+	        		throw new IllegalArgumentException("No se ha instanciar CancelledOperationException", e); //$NON-NLS-1$
+	        	}
+
+	            throw re;
 	        }
         }
 
