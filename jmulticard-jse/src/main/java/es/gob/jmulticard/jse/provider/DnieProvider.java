@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -49,6 +49,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import es.gob.jmulticard.apdu.connection.ApduConnection;
 
 /** Proveedor criptogr&aacute;fico JCA para DNIe.
  * Crea dos servicios:
@@ -74,12 +76,29 @@ public final class DnieProvider extends Provider {
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para el DNIe"; //$NON-NLS-1$
-    private static final double VERSION = 0.1d;
+    private static final double VERSION = 0.2d;
     private static final String NAME = "DNIeJCAProvider"; //$NON-NLS-1$
 
-    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe). */
+    private static ApduConnection defaultConnection = null;
+
+    /** Obtiene de forma est&aacute;tica el tipo de conexi&oacute;n de APDU que debe usar el <i>keyStore</i>.
+     * Si es nula (se ha invocado al constructor por defecto), es el propio <code>KeyStore</code> el que decide que
+     * conexi&oacute;n usar. */
+    static ApduConnection getDefaultApduConnection() {
+    	return defaultConnection;
+    }
+
+    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe) con la conexi&oacute;n por defecto. */
     public DnieProvider() {
+    	this(null);
+    }
+
+    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe).
+     * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU. */
+    public DnieProvider(final ApduConnection conn) {
         super(NAME, VERSION, INFO);
+
+        defaultConnection = conn;
 
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
             @Override
