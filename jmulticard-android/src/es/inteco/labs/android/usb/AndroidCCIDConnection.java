@@ -30,17 +30,16 @@
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
  * Este programa es distribuido con la esperanza de que sea util, pero
- * SIN NINGUNA GARANTIA; incluso sin la garantiÂ­a implicita de comercializacion
+ * SIN NINGUNA GARANTIA; incluso sin la garanti­a implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
 
 package es.inteco.labs.android.usb;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import android.content.Context;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
+import android.util.Log;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -50,7 +49,6 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.UnavailableReaderException;
 import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 import es.inteco.labs.android.usb.device.SmartCardUsbDevice;
-import es.inteco.labs.android.usb.device.SmartCardUsbFactory;
 import es.inteco.labs.android.usb.device.exception.NotAvailableUSBDeviceException;
 import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
 
@@ -59,19 +57,33 @@ import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
  * @author Jose Luis Escanciano Garcia */
 public final class AndroidCCIDConnection implements ApduConnection{
 
-	private List<SmartCardUsbDevice> terminals;
-	private final Context androidContext;
-	private int terminalID = -1;
+	private final SmartCardUsbDevice ccidReader;
 
 	/** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
-	 * @param ctx Contexto Android. */
-	public AndroidCCIDConnection(final Context ctx){
-		if (ctx == null) {
-			throw new UnsupportedOperationException(
-				"Debe facilitar un contexto Android valido a traves de PasswordCallbackManager.setDialogUIHandler()" //$NON-NLS-1$
+	 * @param usbManager Gestor de dispositivos USB del sistema
+	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
+	 * @throws UsbDeviceException */
+	public AndroidCCIDConnection(final UsbManager usbManager, final UsbDevice reader) throws UsbDeviceException{
+		if (!isCardReader(reader)) {
+			throw new IllegalArgumentException(
+				"Debe proporcionarse un lector de tarjetas CCID" //$NON-NLS-1$
 			);
 		}
-		this.androidContext = ctx;
+		this.ccidReader = new SmartCardUsbDevice(usbManager, reader);
+	}
+
+	/** Indica si el dispositivo es un lector de tarjetas.
+	 * @return <code>true</code> si es un dispositivo CCID, <code>false</code> en caso contrario */
+	private static boolean isCardReader(final UsbDevice device) {
+		if (device == null) {
+			return false;
+		}
+		// SmartCard Device Class: http://www.usb.org/developers/defined_class/#BaseClass00h
+		// SmartCard Interface Class: http://www.usb.org/developers/defined_class/#BaseClass0Bh
+		if(device.getDeviceClass() == 0x00 && device.getInterface(0).getInterfaceClass() == 0x0B) {
+				return true;
+		}
+		return false;
 	}
 
 	/** {@inheritDoc} */
@@ -79,13 +91,11 @@ public final class AndroidCCIDConnection implements ApduConnection{
 	public void open() throws ApduConnectionException {
 		try {
 			if(!isOpen()){
-				this.terminals.get(this.terminalID).open();
+				this.ccidReader.open();
 			}
 		}
 		catch (final NotAvailableUSBDeviceException e) {
-			//Error al acceder al dispositivo
-			this.terminalID = -1;
-			throw new UnavailableReaderException("No se puede acceder al dispositivo USB", e); //$NON-NLS-1$
+			throw new UnavailableReaderException("No se puede acceder al dispositivo USB: " + e, e); //$NON-NLS-1$
 		}
 	}
 
@@ -93,22 +103,14 @@ public final class AndroidCCIDConnection implements ApduConnection{
 	@Override
 	public void close() throws ApduConnectionException {
 		if(isOpen()) {
-			this.terminals.get(this.terminalID).close();
-		}
-		try {
-			this.terminals.get(this.terminalID).open();
-		}
-		catch (final NotAvailableUSBDeviceException e) {
-			//Error al acceder al dispositivo
-			this.terminalID = -1;
-			throw new UnavailableReaderException("No se puede acceder al dispositivo USB", e); //$NON-NLS-1$
+			this.ccidReader.close();
 		}
 	}
 
-    /** Tag que identifica que es necesario recuperar el resultado del comando anterior. */
+    /** Etiqueta que indica que es necesario recuperar el resultado del comando anterior. */
     private static final byte TAG_RESPONSE_PENDING = 0x61;
 
-    /** Tag que identifica si la respuesta tiene una longitud no valida. */
+    /** Etiqueta que identifica si la respuesta tiene una longitud no valida. */
     private static final byte TAG_RESPONSE_INVALID_LENGTH = 0x6C;
 
     /** {@inheritDoc} */
@@ -117,23 +119,29 @@ public final class AndroidCCIDConnection implements ApduConnection{
 		if(!isOpen()){
 			throw new UnavailableReaderException("No existe dispositivo USB asignado a la conexion"); //$NON-NLS-1$
 		}
-		try{
-			if(!this.terminals.get(this.terminalID).isCardActive()){
-				if(!this.terminals.get(this.terminalID).isCardPresent()){
+		try {
+
+			if(!this.ccidReader.isCardActive()){
+				if(!this.ccidReader.isCardPresent()){
 					//No hay tarjeta en el lector
 					throw new CardNotPresentException();
 				}
 				//Hay tarjeta, pero no esta activa
-				CCIDUsbLogger.w("La SmartCard del lector no esta activa, se reiniciara"); //$NON-NLS-1$
+				Log.i("es.gob.afirma", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
 				this.reset();
 			}
 
+			Log.d("es.gob.afirma", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+
 			final ResponseApdu response;
 			try {
-				response = new ResponseApdu(this.terminals.get(this.terminalID).transmit(command.getBytes()));
+				response = new ResponseApdu(this.ccidReader.transmit(command.getBytes()));
+
+				Log.d("es.gob.afirma", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		        // Solicitamos el resultado de la operacion si es necesario
 		        if (response.getStatusWord().getMsb() == TAG_RESPONSE_PENDING) {
+
 		            // Si ya se ha devuelto parte de los datos, los concatenamos al resultado
 		            if (response.getData().length > 0) {
 		                final byte[] data = response.getData();
@@ -149,6 +157,7 @@ public final class AndroidCCIDConnection implements ApduConnection{
 		            }
 		            return transmit(new GetResponseApduCommand((byte) 0x00, response.getStatusWord().getLsb()));
 		        }
+
 		        // En caso de longitud esperada incorrecta reenviamos la APDU con la longitud esperada.
 		        // Incluimos la condicion del CLA igual 0x00 para que no afecte a las APDUs cifradas
 		        // (de eso se encargara la clase de conexion con canal seguro)
@@ -166,7 +175,6 @@ public final class AndroidCCIDConnection implements ApduConnection{
 		}
 		catch(final NotAvailableUSBDeviceException e){
 			//Error al acceder al dispositivo
-			this.terminalID = -1;
 			throw new UnavailableReaderException("No se puede acceder al dispositivo USB: " + e, e); //$NON-NLS-1$
 		}
 	}
@@ -174,18 +182,14 @@ public final class AndroidCCIDConnection implements ApduConnection{
 	/** {@inheritDoc} */
 	@Override
 	public byte[] reset() throws ApduConnectionException {
-		if(this.terminalID == -1){
-			throw new UnavailableReaderException("No existe dispositivo USB asignado a la conexion"); //$NON-NLS-1$
-		}
 		try {
-			return this.terminals.get(this.terminalID).resetCCID().getAtrBytes();
+			return this.ccidReader.resetCCID().getAtrBytes();
 		}
 		catch (final UsbDeviceException e) {
 			throw new ApduConnectionException("Error al reiniciar tarjeta: " + e, e); //$NON-NLS-1$
 		}
 		catch (final NotAvailableUSBDeviceException e) {
 			//Error al acceder al dispositivo
-			this.terminalID = -1;
 			throw new UnavailableReaderException("No se puede acceder al dispositivo USB: " + e, e); //$NON-NLS-1$
 		}
 	}
@@ -205,57 +209,40 @@ public final class AndroidCCIDConnection implements ApduConnection{
 	/** {@inheritDoc} */
 	@Override
 	public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
-		this.terminals = new ArrayList<SmartCardUsbDevice>();
-		Iterator<SmartCardUsbDevice> iteratorDevices = new ArrayList<SmartCardUsbDevice>().iterator();
-		try {
-			iteratorDevices = SmartCardUsbFactory.getInstance(this.androidContext).usbDevices().iterator();
-		}
-		catch (final InterruptedException e) {
-			throw new ApduConnectionException("No es posible obtener la lista de lectores de tarjetas: " + e, e); //$NON-NLS-1$
-		}
-		while (iteratorDevices.hasNext()) {
-			final SmartCardUsbDevice androidUsbSmartCard = iteratorDevices.next();
-			if(androidUsbSmartCard.isCardReader()) {
-				if(onlyWithCardPresent){
-					try {
-						if(androidUsbSmartCard.isCardPresent()){
-							this.terminals.add(androidUsbSmartCard);
-						}
-					}
-					catch (final NotAvailableUSBDeviceException e) {
-						//Problema al acceder al dispositivo => no se anade
-						CCIDUsbLogger.w(e);
-					}
-				}
-				else {
-					this.terminals.add(androidUsbSmartCard);
+		if (onlyWithCardPresent) {
+			try {
+				if (!this.ccidReader.isCardPresent()) {
+					return new long[0];
 				}
 			}
+			catch (final NotAvailableUSBDeviceException e) {
+				Log.e("es.gob.afirma", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
-
-		final long[] tmp = new long[this.terminals.size()];
-		for (int i = 0; i < this.terminals.size(); i++) {
-			tmp[i] = i;
-		}
-		return tmp;
+		return new long[] { 0 };
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String getTerminalInfo(final int terminal) throws ApduConnectionException {
-		return this.terminals.get(terminal).getDeviceName();
+		if (terminal != 0) {
+			throw new ApduConnectionException("Solo se accede al terminal 0, y se indico el " + terminal); //$NON-NLS-1$
+		}
+		return this.ccidReader.getDeviceName();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void setTerminal(final int t) {
-		this.terminalID = t;
+		if (t != 0) {
+			throw new IllegalArgumentException("Solo se accede al terminal 0, y se indico el " + t); //$NON-NLS-1$
+		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public boolean isOpen() {
-		return this.terminalID != -1 ? this.terminals.get(this.terminalID).isOpen() : false;
+		return this.ccidReader.isOpen();
 	}
 
 }
