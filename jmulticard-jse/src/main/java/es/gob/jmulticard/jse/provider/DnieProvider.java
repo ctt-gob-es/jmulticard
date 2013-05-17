@@ -266,6 +266,7 @@ public final class DnieProvider extends Provider {
             ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.provider.DnieProvider"); //$NON-NLS-1$
             ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$
             ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.provider.DnieSignatureImpl"); //$NON-NLS-1$
+            ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.smartcardio");
         }
 
         /** {@inheritDoc} */

@@ -130,7 +130,7 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	/** Obtiene un di&aacute;logo de solicitd de PIN para realizar una lectura de certificados.
 	 * @param parent Componente padre para la modalidad
 	 * @return <i>PasswordCallback</i> de solicitd de PIN */
-	public static PasswordCallback getDniePinForCertificateReadingPasswordCallback(final Frame parent) {
+	public static PasswordCallback getDniePinForCertificateReadingPasswordCallback() {
 		return new CommonPasswordCallback(
 			Messages.getString("CommonPasswordCallback.4"), //$NON-NLS-1$
 			Messages.getString("CommonPasswordCallback.1") //$NON-NLS-1$

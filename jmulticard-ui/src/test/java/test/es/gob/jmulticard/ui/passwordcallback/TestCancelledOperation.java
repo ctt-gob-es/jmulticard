@@ -41,6 +41,6 @@ public class TestCancelledOperation {
 	@Ignore
 	public void testCancelPinDialogReadCert() {
 		JOptionPane.showMessageDialog(null, "Cancele el dialogo que se mostrara al cerrar este"); //$NON-NLS-1$
-		Logger.getAnonymousLogger().info(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null).getPassword()));
+		Logger.getAnonymousLogger().info(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback().getPassword()));
 	}
 }
