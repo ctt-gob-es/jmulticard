@@ -15,7 +15,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestJseProvider {
 
 	private static final char[] PASSWORD = null;
-	
+
 	/** Main.
 	 * @param args
 	 * @throws Exception */
@@ -28,35 +28,35 @@ public final class TestJseProvider {
 		final Provider p = new DnieProvider(new SmartcardIoConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
-		ks.load(null, PASSWORD); //$NON-NLS-1$
+		ks.load(null, PASSWORD);
 		final Enumeration<String> aliases = ks.aliases();
 		while (aliases.hasMoreElements()) {
 			System.out.println(aliases.nextElement());
 		}
-		
-		Signature signature = Signature.getInstance("SHA1withRSA");
-		signature.initSign((PrivateKey) ks.getKey("CertFirmaDigital", PASSWORD));
-		signature.update("Hola Mundo!!".getBytes());
+
+		final Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey("CertFirmaDigital", PASSWORD)); //$NON-NLS-1$
+		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
 		signature.sign();
-		
-		System.out.println("Firma generada correctamente");
+
+		System.out.println("Firma generada correctamente"); //$NON-NLS-1$
 	}
 
 	static void testProviderWithDefaultConnection() throws Exception {
 		final Provider p = new DnieProvider();
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
-		ks.load(null, PASSWORD); //$NON-NLS-1$
+		ks.load(null, PASSWORD);
 		final Enumeration<String> aliases = ks.aliases();
 		while (aliases.hasMoreElements()) {
 			System.out.println(aliases.nextElement());
 		}
-		
-		Signature signature = Signature.getInstance("SHA1withRSA");
-		signature.initSign((PrivateKey) ks.getKey("CertFirmaDigital", PASSWORD));
-		signature.update("Hola Mundo!!".getBytes());
+
+		final Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey("CertFirmaDigital", PASSWORD)); //$NON-NLS-1$
+		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
 		signature.sign();
-		
-		System.out.println("Firma generada correctamente");
+
+		System.out.println("Firma generada correctamente"); //$NON-NLS-1$
 	}
 }
