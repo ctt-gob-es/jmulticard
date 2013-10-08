@@ -369,6 +369,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     public byte[] getIccCertEncoded() throws IOException {
         byte[] iccCertEncoded;
         try {
+        	this.selectMasterFile();
             iccCertEncoded = this.selectFileByIdAndRead(CERT_ICC_FILE_ID);
         }
         catch (final ApduConnectionException e) {
