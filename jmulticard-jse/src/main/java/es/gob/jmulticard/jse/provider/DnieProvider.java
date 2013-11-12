@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 
@@ -103,9 +104,16 @@ public final class DnieProvider extends Provider {
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
             @Override
             public Void run() {
-                if (!(System.getSecurityManager() instanceof DnieSecurityManager)) {
-                    System.setSecurityManager(new DnieSecurityManager(System.getSecurityManager()));
-                }
+            	if (!"Dalvik".equals(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+	                if (!(System.getSecurityManager() instanceof DnieSecurityManager)) {
+	                    System.setSecurityManager(new DnieSecurityManager(System.getSecurityManager()));
+	                }
+            	}
+            	else {
+            		Logger.getLogger("es.gob.jmulticard").info(
+        				"En Android se omite la instalacion del gestor de seguridad" //$NON-NLS-1$ //$NON-NLS-2$
+    				);
+            	}
                 return null;
             }
         });
