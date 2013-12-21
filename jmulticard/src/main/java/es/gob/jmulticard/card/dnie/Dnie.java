@@ -86,9 +86,8 @@ import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
-/**
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- */
+/** DNI Electr&oacute;nico.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
 
 	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = true;

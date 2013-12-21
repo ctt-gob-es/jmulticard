@@ -69,7 +69,7 @@ import es.gob.jmulticard.card.SmartCard;
  * @author Alberto Mart&iacute;nez */
 public abstract class Iso7816FourCard extends SmartCard {
 
-    /** Byte que identifica una verificaci&oacute;n fallida del PIN */
+    /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
     private static final boolean PIN_AUTO_RETRY = true;
@@ -145,7 +145,15 @@ public abstract class Iso7816FourCard extends SmartCard {
 	 * @throws FileNotFoundException Si el ficheo no existe
      * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n */
     public void selectFileByName(final String name) throws ApduConnectionException, FileNotFoundException {
-    	final ResponseApdu response = this.getConnection().transmit(new SelectDfByNameApduCommand(this.getCla(), name.getBytes()));
+    	selectFileByName(name.getBytes());
+    }
+
+	/** Selecciona un fichero por nombre.
+	 * @param name Nombre del fichero en hexadecimal
+	 * @throws FileNotFoundException Si el ficheo no existe
+     * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n */
+    public void selectFileByName(final byte[] name) throws ApduConnectionException, FileNotFoundException {
+    	final ResponseApdu response = this.getConnection().transmit(new SelectDfByNameApduCommand(this.getCla(), name));
     	if (response.isOk()) {
     		return;
     	}
