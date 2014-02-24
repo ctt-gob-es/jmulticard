@@ -110,8 +110,8 @@ public final class DnieProvider extends Provider {
 	                }
             	}
             	else {
-            		Logger.getLogger("es.gob.jmulticard").info(
-        				"En Android se omite la instalacion del gestor de seguridad" //$NON-NLS-1$ //$NON-NLS-2$
+            		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+        				"En Android se omite la instalacion del gestor de seguridad" //$NON-NLS-1$
     				);
             	}
                 return null;
@@ -274,7 +274,7 @@ public final class DnieProvider extends Provider {
             ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.provider.DnieProvider"); //$NON-NLS-1$
             ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$
             ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.provider.DnieSignatureImpl"); //$NON-NLS-1$
-            ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.smartcardio");
+            ALLOWED_MEMBER_ACCESS_PREFIXES.add("es.gob.jmulticard.jse.smartcardio"); //$NON-NLS-1$
         }
 
         /** {@inheritDoc} */
