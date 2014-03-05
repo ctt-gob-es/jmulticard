@@ -49,7 +49,6 @@ import es.gob.jmulticard.asn1.der.Utf8String;
  *    flags CommonObjectFlags,
  *  }
  *  Label ::= UTF8String (SIZE(0..pkcs15-ub-label))
- *  Identifier ::= OCTET STRING (SIZE (0..pkcs15-ub-identifier))
  * </pre>
  * @author Gonzalo Henr&iacute;quez Manzano */
 public final class CommonObjectAttributes extends Sequence {

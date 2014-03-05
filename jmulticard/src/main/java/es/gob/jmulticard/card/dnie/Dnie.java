@@ -111,9 +111,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     private static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
 
-    /** Propiedad del sistema que determina si el "Modo r&aacute;pido" est&aacute;a activado. */
-    private static final String FAST_MODE_PROPERTY = "es.gob.jmulticard.fastmode"; //$NON-NLS-1$
-
     private X509Certificate authCert;
     private X509Certificate signCert;
     private X509Certificate intermediateCaCert;
@@ -145,11 +142,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     }, ATR_MASK);
 
     private final PasswordCallback passwordCallback;
-
-    /** Si se establece a <code>true</code> se recrean los certificados y los alias a partir del CDF, fichero
-     * p&uacute;blico que se puede leer sin PIN. Estos certificados son ficticios, y no recrean una estructura
-     * X.509 */
-    private final boolean fastMode;
 
     /** Conecta con el lector del sistema que tenga un DNIe insertado. */
     private void connect(final ApduConnection conn) throws BurnedDnieCardException, InvalidCardException, ApduConnectionException {
@@ -213,9 +205,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
         this.cryptoHelper = cryptoHelper;
 
-        this.fastMode = Boolean.getBoolean(FAST_MODE_PROPERTY);
-
-        // Cargamos la informacion publica de los certificados y el certificado
+        // Cargamos la localizacion de los certificados y el certificado
         // de CA intermedia de los certificados de firma y autenticacion
         preloadCertificates();
 
@@ -270,10 +260,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         };
     }
 
-    /**
-     * Carga certificados impostados para el uso b&aacute;sico de la tarjeta en el modo r&aacute;pido
-     * y la CA intermedia de los certificados reales.
-     */
+    /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticacion. */
     private void preloadCertificates() {
         final Cdf cdf = new Cdf();
         try {
@@ -284,19 +271,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             throw new IllegalStateException("No se ha podido cargar el CDF de la tarjeta: " + e.toString()); //$NON-NLS-1$
         }
 
-        X509Certificate tmpCert;
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
-            tmpCert = new FakeX509Certificate(cdf.getCertificateSubjectPrincipal(i),
-        		cdf.getCertificateIssuerPrincipal(i),
-                cdf.getCertificateSerialNumber(i),
-                AUTH_CERT_ALIAS.equals(cdf.getCertificateAlias(i))
-            );
             if (AUTH_CERT_ALIAS.equals(cdf.getCertificateAlias(i))) {
-                this.authCert = tmpCert;
                 this.authCertPath = new Location(cdf.getCertificatePath(i));
             }
             else if (SIGN_CERT_ALIAS.equals(cdf.getCertificateAlias(i))) {
-                this.signCert = tmpCert;
                 this.signCertPath = new Location(cdf.getCertificatePath(i));
             }
             else {
@@ -335,7 +314,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         // Si no estamos en Modo Rapido, nos aseguramos de que este cargados
         // los certificados de verdad
-        if (this.needsRealCertificates || this.authCert instanceof FakeX509Certificate && !this.fastMode) {
+        if (this.needsRealCertificates) {
             loadCertificates();
         }
 
@@ -676,9 +655,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     }
 
     private boolean isSecurityChannelOpen() {
-        // Si estan cargados los certificados de verdad entonces ya se abrio
-        // el canal seguro
-        return this.getConnection() instanceof Cwa14890OneConnection && this.getConnection().isOpen()
-               && !(this.authCert instanceof FakeX509Certificate);
+        // Si estan cargados los certificados entonces ya se abrio el canal seguro
+        return this.getConnection() instanceof Cwa14890OneConnection && this.getConnection().isOpen();
     }
 }
