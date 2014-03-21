@@ -55,7 +55,7 @@ public final class Messages {
 	}
 
     private static ResourceBundle bundle = ResourceBundle.getBundle(
-		"properties/messages", //$NON-NLS-1$
+		"properties/jmulticardmessages", //$NON-NLS-1$
 		Locale.getDefault(),
 		getCleanClassLoader()
 	);
