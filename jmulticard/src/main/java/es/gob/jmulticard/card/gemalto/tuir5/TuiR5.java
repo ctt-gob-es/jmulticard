@@ -1,16 +1,14 @@
 package es.gob.jmulticard.card.gemalto.tuir5;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.security.auth.callback.PasswordCallback;
-
-import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
@@ -48,6 +46,8 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	};
 
     private static final Location CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
+
+    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
 
 	/** Construye una clase que representa una tarjeta Gemalto TUI R5 MPCOS.
      * @param conn Conexi&oacute;n con la tarjeta
@@ -111,115 +111,36 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     private void preloadCertificates() throws IOException, Iso7816FourCardException {
     	selectMasterFile();
-    	final byte[] cdfData = selectFileByLocationAndRead(CDF_LOCATION);
-    	System.out.println("CDF: " + HexUtils.hexify(cdfData, true)); //$NON-NLS-1$
-    	System.out.println("CDF: " + new String(cdfData)); //$NON-NLS-1$
-    	final OutputStream fos = new FileOutputStream(File.createTempFile("CDF_", ".der"));
-    	fos.write(cdfData);
-    	fos.flush();
-    	fos.close();
         final Cdf cdf = new Cdf();
         try {
-			cdf.setDerValue(cdfData);
+			cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
 		}
         catch (final Exception e) {
-        	throw new IllegalStateException(e);
+        	throw new IOException("Error en la lectura del CDF: " + e, e); //$NON-NLS-1$
 		}
-    }
 
-    private void init() throws Iso7816FourCardException, IOException {
-
-    	selectPkcs15Applet();
-
-    	final ResponseApdu res;
-
-    	// Raiz
-    	selectFileById(new byte[] { (byte) 0x3F, (byte) 0x00});
-
-    	// PKCS#15
-    	selectFileById(new byte[] { (byte) 0x50, (byte) 0x00});
-
-    	// CDF
-    	final byte[] cdf = selectFileByIdAndRead(new byte[] { (byte) 0x50, (byte) 0x03});
-
-
-//    	res = sendArbitraryApdu(new CommandApdu(
-//			(byte) 0x00,
-//			(byte) 0xCA,
-//			(byte) 0x9F,
-//			(byte) 0x7F,
-//			null,
-//			Integer.valueOf(45)
-//		));
-
-//    	res = sendArbitraryApdu(new CommandApdu(
-//			(byte) 0x00,
-//			(byte) 0xCB,
-//			(byte) 0x00,
-//			(byte) 0xFF,
-//			new byte[] {
-//				(byte) 0xB6, // DST
-//					(byte) 0x03, // Long
-//						(byte) 0x83, // Referencia a clave publica
-//							(byte) 0x01, // Len
-//								(byte) 0x06, // Valor
-//				(byte) 0x7F, (byte) 0x49, (byte) 0x02, (byte) 0x81, (byte) 0x00
-//			},
-//			null
-//		));
-
-//    	System.out.println(HexUtils.hexify(res.getBytes(), true));
-    	System.out.println(new String(cdf));
-
-//    	// Verificacion del PIN
-//    	sendArbitraryApdu(new CommandApdu(
-//			(byte) 0x00, // CLA
-//			(byte) 0x20, // INS
-//			(byte) 0x00, // P1
-//			(byte) 0x81, // P2
-//			new byte[] { // PIN
-//				(byte) 0x31, (byte) 0x31, (byte) 0x31, (byte) 0x31, (byte) 0x00,
-//				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-//				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-//				(byte) 0x00
-//			},
-//			null // Ne
-//		));
-
-//    	sendArbitraryApdu(new CommandApdu(
-//			(byte) 0x00,
-//			(byte) 0xA4,
-//			(byte) 0x02,
-//			(byte) 0x00,
-//			new byte[] {
-//				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-//				(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
-//			},
-//			null
-//		));
-
-//    	// Seleccion del EF con el certificado
-//    	sendArbitraryApdu(new CommandApdu(
-//			(byte) 0x00,
-//			(byte) 0xA4,
-//			(byte) 0x08,
-//			(byte) 0x0C,
-//			new byte[] {
-//				(byte) 0x50, (byte) 0x00, (byte) 0x50, (byte) 0x01
-//			},
-//			null
-//		));
-//
-//    	// Lectura del EF con el certificado
-//    	sendArbitraryApdu(new CommandApdu(
-//			(byte) 0x00,
-//			(byte) 0xB0,
-//			(byte) 0x00,
-//			(byte) 0x00,
-//			null,
-//			Integer.valueOf(134)
-//		));
-
+        final CertificateFactory cf;
+		try {
+			cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+		}
+		catch (final CertificateException e) {
+			throw new IOException("Error obteniendo la factoria de certificados X.509: " + e, e); //$NON-NLS-1$
+		}
+        for (int i=0; i<cdf.getCertificateCount(); i++) {
+        	try {
+				certificatesByAlias.put(
+					cdf.getCertificateAlias(i),
+					(X509Certificate) cf.generateCertificate(
+						new ByteArrayInputStream(
+							selectFileByLocationAndRead(new Location(cdf.getCertificatePath(i)))
+						)
+					)
+				);
+			}
+        	catch (final CertificateException e) {
+				throw new IOException("Error en la lectura del certificado " + i + " del dispositivo: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+        }
     }
 
     private void selectPkcs15Applet() throws ApduConnectionException, InvalidCardException {
@@ -238,20 +159,16 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public String[] getAliases() throws CryptoCardException {
-		// TODO Auto-generated method stub
-		return null;
+		return certificatesByAlias.keySet().toArray(new String[0]);
 	}
 
 	@Override
-	public X509Certificate getCertificate(final String alias)
-			throws CryptoCardException, BadPinException {
-		// TODO Auto-generated method stub
-		return null;
+	public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
+		return certificatesByAlias.get(alias);
 	}
 
 	@Override
-	public PrivateKeyReference getPrivateKey(final String alias)
-			throws CryptoCardException {
+	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -273,27 +190,12 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 			new byte[] { (byte) 0x50, (byte) 0x00, (byte) 0x50, (byte) 0x01},
 			null
 		);
-		System.out.println("Select MF: " + HexUtils.hexify(selectMf.getBytes(), true)); //$NON-NLS-1$
 		sendArbitraryApdu(selectMf);
-
 	}
 
 	@Override
 	public String getCardName() {
 		return "Gemalto TUI R5 (MPCOS)"; //$NON-NLS-1$
-	}
-
-	private static final class CachePasswordCallback extends PasswordCallback {
-
-	    private static final long serialVersionUID = 816457144215238935L;
-
-	    /** Contruye una Callback con una contrase&ntilda; preestablecida.
-	     * @param password
-	     *        Contrase&ntilde;a por defecto. */
-	    public CachePasswordCallback(final char[] password) {
-	        super(">", false); //$NON-NLS-1$
-	        this.setPassword(password);
-	    }
 	}
 
 }
