@@ -42,6 +42,7 @@ package es.gob.jmulticard.asn1.der.pkcs1;
 import java.io.IOException;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
 
@@ -121,11 +122,19 @@ public final class DigestInfo extends Sequence {
     }
 
     /** Construye un objeto ASN.1 PKCS#1 <i>DigestInfo</i>. */
-    @SuppressWarnings("unchecked")
 	public DigestInfo() {
-        super(new Class[] {
-                AlgorithmIdentifer.class, OctectString.class
-        });
+        super(
+    		new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					AlgorithmIdentifer.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					OctectString.class,
+					false
+				)
+    		}
+		);
     }
 
     // TODO: Modificar este metodo y las llamadas al mismo para que reciba el algoritmo

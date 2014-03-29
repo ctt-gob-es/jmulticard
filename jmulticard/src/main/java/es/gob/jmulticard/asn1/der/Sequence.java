@@ -39,8 +39,12 @@
  */
 package es.gob.jmulticard.asn1.der;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
@@ -50,22 +54,24 @@ public abstract class Sequence extends DecoderObject {
     /** Tipo ASN.1 "SEQUENCE". */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private final DecoderObject[] elements;
+    private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
 
-    private final Class<? extends DecoderObject>[] elementsTypes;
+    private final OptionalDecoderObjectElement[] elementsTypes;
+
+    protected int size() {
+    	return this.elements.size();
+    }
 
     /** Construye un tipo ASN.1 <i>Sequence</i>.
      * Un <i>Sequence</i> contiene una secuencia de tipos ASN.1 (que pueden ser distintos)
      * @param types Tipos (etiquetas) de objetos ASN.1 (cero a n elementos) que va a contener la secuencia. El orden es relevante */
-    @SuppressWarnings("unchecked")
-	protected Sequence(final Class<? extends DecoderObject>[] types) {
+	protected Sequence(final OptionalDecoderObjectElement[] types) {
         super();
         if (types == null) {
             throw new IllegalArgumentException();
         }
-        this.elementsTypes = new Class[types.length];
+        this.elementsTypes = new OptionalDecoderObjectElement[types.length];
         System.arraycopy(types, 0, this.elementsTypes, 0, types.length);
-        this.elements = new DecoderObject[types.length];
     }
 
     @Override
@@ -80,19 +86,29 @@ public abstract class Sequence extends DecoderObject {
         for (int i = 0; i < this.elementsTypes.length; i++) {
             remainingBytes = new byte[rawValue.length - offset];
             System.arraycopy(rawValue, offset, remainingBytes, 0, remainingBytes.length);
-            tlv = new Tlv(remainingBytes);
             try {
-                tmpDo = this.elementsTypes[i].newInstance();
+            	tlv = new Tlv(remainingBytes);
+            }
+            catch(final Exception e) {
+            	if (this.elementsTypes[i].isOptional()) {
+                	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
+            		continue;
+            	}
+            	throw new Asn1Exception("Error en el elemento " + i + " del registro ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+            try {
+                tmpDo = this.elementsTypes[i].getElementType().newInstance();
             }
             catch (final Exception e) {
-                throw new Asn1Exception("No se ha podido instanciar un " + this.elementsTypes[i].getName() + //$NON-NLS-1$
-                                        " en la posicion " + Integer.toString(i) + " de la secuencia: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+                throw new Asn1Exception(
+            		"No se ha podido instanciar un " + this.elementsTypes[i].getElementType().getName() + //$NON-NLS-1$
+                        " en la posicion " + Integer.toString(i) + " de la secuencia: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
                 );
             }
             tmpDo.checkTag(tlv.getTag());
             tmpDo.setDerValue(tlv.getBytes());
             offset = offset + tlv.getBytes().length;
-            this.elements[i] = tmpDo;
+            this.elements.add(tmpDo);
         }
     }
 
@@ -107,6 +123,6 @@ public abstract class Sequence extends DecoderObject {
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
      * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia */
     protected DecoderObject getElementAt(final int index) {
-        return this.elements[index];
+        return this.elements.get(index);
     }
 }

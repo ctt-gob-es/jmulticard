@@ -6,6 +6,9 @@ import java.io.InputStream;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Test;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 
@@ -17,21 +20,26 @@ public class TestCdfCreation extends TestCase {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final String[] TEST_FILES = new String[] {
-            "CDF_GSD.BER", //$NON-NLS-1$
-            "CDF_EEE.BER", //$NON-NLS-1$
-            "CDF_GVA.BER", //$NON-NLS-1$
-            "CDF_JBM.BER", //$NON-NLS-1$
-            "CDF_JMA.BER", //$NON-NLS-1$
-            "CDF_TGM.BER" //$NON-NLS-1$
+    private static final String[] DNI_TEST_FILES = new String[] {
+        "CDF_GSD.BER", //$NON-NLS-1$
+        "CDF_EEE.BER", //$NON-NLS-1$
+        "CDF_GVA.BER", //$NON-NLS-1$
+        "CDF_JBM.BER", //$NON-NLS-1$
+        "CDF_JMA.BER", //$NON-NLS-1$
+        "CDF_TGM.BER" //$NON-NLS-1$
+    };
+
+    private static final String[] TUI_TEST_FILES = new String[] {
+    	"CDF_TUI_SAMPLE1.asn1" //$NON-NLS-1$
     };
 
     /** Prueba la creaci&oacute;n de CDF con volcados en disco.
      * @throws Exception En caso de cualquier tipo de error */
+    @Test
     public static void testCdf() throws Exception {
         byte[] cdfdata;
-        for (int i = 0; i < TEST_FILES.length; i++) {
-            cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(TEST_FILES[i]));
+        for (final String element : TUI_TEST_FILES) {
+            cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
             LOGGER.info("\n\nCDF completo (" + Integer.toString(cdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.info(HexUtils.hexify(cdfdata, true));
             final Cdf cdf = new Cdf();

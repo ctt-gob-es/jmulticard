@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs1;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.ObjectIdentifier;
 import es.gob.jmulticard.asn1.der.Sequence;
 
@@ -52,11 +53,15 @@ import es.gob.jmulticard.asn1.der.Sequence;
 public final class AlgorithmIdentifer extends Sequence {
 
 	/** Construye un objeto ASN.1 PKCS#1 <i>AlgorithmIdentifer</i>. */
-	@SuppressWarnings("unchecked")
 	public AlgorithmIdentifer() {
-		super(new Class[] {
-			ObjectIdentifier.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					ObjectIdentifier.class,
+					false
+				)
+			}
+		);
 	}
 
 }

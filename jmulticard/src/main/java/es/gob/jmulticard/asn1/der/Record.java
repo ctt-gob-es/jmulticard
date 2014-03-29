@@ -41,6 +41,7 @@ package es.gob.jmulticard.asn1.der;
 
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
@@ -49,21 +50,27 @@ import es.gob.jmulticard.asn1.TlvException;
  * objetos concatenados deben ser del mismo tipo ASN.1 */
 public abstract class Record extends DecoderObject {
 
-    private final Class<? extends DecoderObject>[] elementsTypes;
+    private final OptionalDecoderObjectElement[] elementsTypes;
 
     private final DecoderObject[] elements;
 
+    protected int size() {
+    	if (this.elements == null) {
+    		return 0;
+    	}
+    	return this.elements.length;
+    }
+
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN.1 que va a contener el registro (que obligatoriamente deben ser
-     *        subclases de <code>DecoderObject</code> */
-    @SuppressWarnings("unchecked")
-	protected Record(final Class<? extends DecoderObject>[] types) {
+     *              subclases de <code>DecoderObject</code> */
+	protected Record(final OptionalDecoderObjectElement[] types) {
         super();
         if (types == null || types.length == 0) {
             throw new IllegalArgumentException("Los tipos de los elementos del registro no pueden ser nulos ni vacios" //$NON-NLS-1$
             );
         }
-        this.elementsTypes = new Class[types.length];
+        this.elementsTypes = new OptionalDecoderObjectElement[types.length];
         System.arraycopy(types, 0, this.elementsTypes, 0, types.length);
         this.elements = new DecoderObject[types.length];
     }
@@ -94,20 +101,30 @@ public abstract class Record extends DecoderObject {
         byte[] remainingBytes;
         DecoderObject tmpDo;
         for (int i = 0; i < this.elementsTypes.length; i++) {
-            remainingBytes = new byte[this.getRawDerValue().length - offset];
-            System.arraycopy(this.getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
-            tlv = new Tlv(remainingBytes);
-            try {
-                tmpDo = this.elementsTypes[i].newInstance();
-            }
-            catch (final Exception e) {
-                throw new Asn1Exception("No se ha podido instanciar un " + this.elementsTypes[i].getName() + //$NON-NLS-1$
-                                        " en la posicion " + Integer.toString(i) + " del registro: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
-                );
-            }
-            tmpDo.checkTag(tlv.getTag());
+        	try {
+	            remainingBytes = new byte[this.getRawDerValue().length - offset];
+	            System.arraycopy(this.getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
+	            tlv = new Tlv(remainingBytes);
+	            try {
+	                tmpDo = this.elementsTypes[i].getElementType().newInstance();
+	            }
+	            catch (final Exception e) {
+	                throw new Asn1Exception(
+	            		"No se ha podido instanciar un " + this.elementsTypes[i].getElementType().getName() + //$NON-NLS-1$
+	                        " en la posicion " + Integer.toString(i) + " del registro: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+	                );
+	            }
+	            tmpDo.checkTag(tlv.getTag());
+        	}
+        	catch(final Exception e) {
+            	if (this.elementsTypes[i].isOptional()) {
+                	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
+            		continue;
+            	}
+            	throw new Asn1Exception("Error en el elemento " + i + " del registro ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+        	}
             offset = offset + tlv.getBytes().length;
-            tmpDo.setDerValue(tlv.getBytes());
+        	tmpDo.setDerValue(tlv.getBytes());
             this.elements[i] = tmpDo;
         }
     }

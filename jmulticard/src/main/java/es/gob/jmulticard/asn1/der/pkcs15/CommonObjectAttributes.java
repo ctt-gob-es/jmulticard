@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.Utf8String;
 
@@ -54,12 +55,19 @@ import es.gob.jmulticard.asn1.der.Utf8String;
 public final class CommonObjectAttributes extends Sequence {
 
     /** Construye un objeto <i>CommonObjectAttributes</i> ASN.1 de PKCS#15. */
-    @SuppressWarnings("unchecked")
 	public CommonObjectAttributes() {
-        super(new Class[] {
-    		Utf8String.class,
-    		CommonObjectFlags.class
-        });
+        super(
+    		new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					Utf8String.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					CommonObjectFlags.class,
+					true
+				)
+    		}
+		);
     }
 
     /** Obtiene la etiqueta del objeto.

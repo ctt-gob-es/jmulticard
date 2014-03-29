@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.x509;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.ObjectIdentifier;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.Utf8String;
@@ -54,12 +55,19 @@ import es.gob.jmulticard.asn1.der.Utf8String;
 public final class AttributeTypeAndDistinguishedValue extends Sequence {
 
 	/** Construye un objeto ASN.1 X.500 <i>AttributeTypeAndDistinguishedValue</i>. */
-	@SuppressWarnings("unchecked")
 	public AttributeTypeAndDistinguishedValue() {
-		super(new Class[] {
-			ObjectIdentifier.class,
-			Utf8String.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					ObjectIdentifier.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					Utf8String.class,
+					false
+				)
+			}
+		);
 	}
 
 	/** {@inheritDoc} */

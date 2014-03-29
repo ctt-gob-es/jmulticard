@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
@@ -48,12 +49,19 @@ public final class PrKdf extends Record {
 	private static final int BUFFER_SIZE = 150;
 
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1. */
-	@SuppressWarnings("unchecked")
 	public PrKdf() {
-		super(new Class[] {
-			PrivateKeyObject.class,
-			PrivateKeyObject.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					PrivateKeyObject.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					PrivateKeyObject.class,
+					false
+				)
+			}
+		);
 	}
 
 	/** Obtiene el n&uacute;mero de claves del PrKDF.

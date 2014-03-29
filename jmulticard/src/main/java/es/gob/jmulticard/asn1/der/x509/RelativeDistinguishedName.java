@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.x509;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Set;
 
 /** Tipo ASN.1 X.500 <i>RelativeDistinguishedName</i>.
@@ -49,9 +50,15 @@ import es.gob.jmulticard.asn1.der.Set;
 public final class RelativeDistinguishedName extends Set {
 
 	/** Construye un objeto ASN.1 X.500 <i>RelativeDistinguishedName</i>. */
-	@SuppressWarnings("unchecked")
 	public RelativeDistinguishedName() {
-		super(new Class[] { AttributeTypeAndDistinguishedValue.class });
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					AttributeTypeAndDistinguishedValue.class,
+					false
+				)
+			}
+		);
 	}
 
 	/** {@inheritDoc} */

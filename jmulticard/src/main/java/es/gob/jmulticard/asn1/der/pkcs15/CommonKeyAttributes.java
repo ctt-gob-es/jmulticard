@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerBoolean;
 import es.gob.jmulticard.asn1.der.Sequence;
 
@@ -56,15 +57,31 @@ import es.gob.jmulticard.asn1.der.Sequence;
 public final class CommonKeyAttributes extends Sequence {
 
 	/** Construye un objeto ASN.1 PKCS#15 <i>CommonKeyAttributes</i>. */
-	@SuppressWarnings("unchecked")
 	public CommonKeyAttributes() {
-		super(new Class[] {
-			Identifier.class,
-			KeyUsageFlags.class,
-			DerBoolean.class,
-			AccessFlags.class,
-			Reference.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					Identifier.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					KeyUsageFlags.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					DerBoolean.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					AccessFlags.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					Reference.class,
+					false
+				)
+			}
+		);
 	}
 
 	/**

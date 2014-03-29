@@ -41,6 +41,7 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import java.math.BigInteger;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.x509.RdnSequence;
@@ -61,26 +62,45 @@ import es.gob.jmulticard.asn1.der.x509.RdnSequence;
 public final class X509CertificateAttributes extends Sequence {
 
 	/** Crea un objeto ASN.1 PKCS#15 <i>X509CertificateAttributes</i>. */
-	@SuppressWarnings("unchecked")
 	public X509CertificateAttributes() {
-		super(new Class[] {
-			Path.class,
-			RdnSequence.class,
-			CertificateIssuerContextSpecific.class,
-			DerInteger.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					Path.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					RdnSequence.class,
+					true
+				),
+				new OptionalDecoderObjectElement(
+					CertificateIssuerContextSpecific.class,
+					true
+				),
+				new OptionalDecoderObjectElement(
+					DerInteger.class,
+					true
+				)
+			}
+		);
 	}
 
     /** Proporciona el nombre X.500 del emisor del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getIssuer() {
-        return getElementAt(2).toString();
+    	if (size() > 2) {
+    		return getElementAt(2).toString();
+    	}
+    	return null;
     }
 
     /** Proporciona el nombre X.500 del titular del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getSubject() {
-        return getElementAt(1).toString();
+    	if (size() > 1) {
+    		return getElementAt(1).toString();
+    	}
+    	return null;
     }
 
     /** Devuelve la ruta del certificado.
@@ -92,7 +112,10 @@ public final class X509CertificateAttributes extends Sequence {
     /** Obtiene el n&uacute;mero de serie del Certificado.
      * @return N&uacute;mero de serie del Certificado */
     BigInteger getSerialNumber() {
-    	return ((DerInteger)getElementAt(3)).getIntegerValue();
+    	if (size() > 3) {
+    		return ((DerInteger)getElementAt(3)).getIntegerValue();
+    	}
+    	return null;
     }
 
     /** {@inheritDoc} */

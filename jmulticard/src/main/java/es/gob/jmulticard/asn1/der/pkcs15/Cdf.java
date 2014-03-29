@@ -42,6 +42,7 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 import java.math.BigInteger;
 
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN.1 (<i>EF.CD</i> en ISO 7816-15).
@@ -51,11 +52,23 @@ public final class Cdf extends Record {
     private static final int BUFFER_SIZE = 150;
 
     /** Construye un objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN.1. */
-    @SuppressWarnings("unchecked")
 	public Cdf() {
-        super(new Class[] {
-                CertificateObject.class, CertificateObject.class, CertificateObject.class
-        });
+        super(
+    		new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					CertificateObject.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					CertificateObject.class,
+					true
+				),
+				new OptionalDecoderObjectElement(
+					CertificateObject.class,
+					true
+				)
+    		}
+		);
     }
 
     /** Obtiene el n&uacute;mero de certificados del CDF.
@@ -68,42 +81,66 @@ public final class Cdf extends Record {
      * @param index &Iacute;ndice del certificado
      * @return Nombre X.500 del emisor del certificado indicado */
     public String getCertificateIssuerPrincipal(final int index) {
-        return ((CertificateObject) getElementAt(index)).getIssuer();
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
+    	if (tmpCo != null) {
+    		return tmpCo.getIssuer();
+    	}
+    	return null;
     }
 
     /** Obtiene el nombre X.500 del titular del certificado indicado.
      * @param index &Iacute;ndice del certificado
      * @return Nombre X.500 del titular del certificado indicado */
     public String getCertificateSubjectPrincipal(final int index) {
-        return ((CertificateObject) getElementAt(index)).getSubject();
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
+    	if (tmpCo != null) {
+    		return tmpCo.getSubject();
+    	}
+    	return null;
     }
 
     /** Obtiene el n&uacute;mero de serie del certificado indicado.
      * @param index &Iacute;ndice del certificado
      * @return N&uacute;mero de serie del certificado indicado */
     public BigInteger getCertificateSerialNumber(final int index) {
-        return ((CertificateObject) getElementAt(index)).getSerialNumber();
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
+    	if (tmpCo != null) {
+    		return tmpCo.getSerialNumber();
+    	}
+    	return null;
     }
 
     /** Obtiene el identificador binario del certificado indicado.
      * @param index &Iacute;ndice del certificado
      * @return Identificador binario del certificado indicado */
     public byte[] getCertificateIdentifier(final int index) {
-        return ((CertificateObject) getElementAt(index)).getIdentifier();
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
+    	if (tmpCo != null) {
+    		return tmpCo.getIdentifier();
+    	}
+    	return null;
     }
 
     /** Obtiene la ruta PKCS#15 hacia el certificado indicado.
      * @param index &Iacute;ndice del certificado
      * @return Ruta PKCS#15 hacia el certificado indicado */
     public String getCertificatePath(final int index) {
-        return ((CertificateObject) getElementAt(index)).getPath();
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
+    	if (tmpCo != null) {
+    		return tmpCo.getPath();
+    	}
+    	return null;
     }
 
     /** Obtiene el alias del certificado indicado.
      * @param index &Iacute;ndice del certificado
      * @return Alias del certificado indicado */
     public String getCertificateAlias(final int index) {
-        return ((CertificateObject) getElementAt(index)).getAlias();
+		final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
+		if (tmpCo != null) {
+			return tmpCo.getAlias();
+		}
+    	return null;
     }
 
     /** {@inheritDoc} */
@@ -121,7 +158,7 @@ public final class Cdf extends Record {
             sb.append("\n  Emisor: "); //$NON-NLS-1$
             sb.append(getCertificateIssuerPrincipal(index));
             sb.append("\n  Numero de serie: "); //$NON-NLS-1$
-            sb.append(getCertificateSerialNumber(index).toString());
+            sb.append(getCertificateSerialNumber(index));
             sb.append("\n  Identificador: "); //$NON-NLS-1$
             sb.append(HexUtils.hexify(getCertificateIdentifier(index), true));
             sb.append("\n  Ruta PKCS#15: "); //$NON-NLS-1$

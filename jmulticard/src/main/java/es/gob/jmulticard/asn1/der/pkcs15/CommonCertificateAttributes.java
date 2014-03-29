@@ -40,6 +40,7 @@
 package es.gob.jmulticard.asn1.der.pkcs15;
 
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
 
@@ -54,9 +55,15 @@ import es.gob.jmulticard.asn1.der.Sequence;
 public final class CommonCertificateAttributes extends Sequence {
 
     /** Construye un objeto ASN.1 <i>CommonCertificateAttributes</i>. */
-    @SuppressWarnings("unchecked")
 	public CommonCertificateAttributes() {
-        super(new Class[] { Identifier.class });
+        super(
+    		new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					Identifier.class,
+					false
+				)
+			}
+		);
     }
 
     /** Obtiene el identificador de este <i>CommonCertificateAttributes</i>.

@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
 
@@ -53,12 +54,19 @@ import es.gob.jmulticard.asn1.der.Sequence;
 public final class PrivateRsaKeyAttributes extends Sequence {
 
 	/** Construye un objeto ASN.1 PKCS#15 <i>PrivateRsaKeyAttributes</i>. */
-	@SuppressWarnings("unchecked")
 	public PrivateRsaKeyAttributes() {
-		super(new Class[] {
-			Path.class,
-			DerInteger.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					Path.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					DerInteger.class,
+					false
+				)
+			}
+		);
 	}
 
 	String getPath() {

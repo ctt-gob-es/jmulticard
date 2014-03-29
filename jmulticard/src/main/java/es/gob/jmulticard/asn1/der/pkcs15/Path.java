@@ -40,6 +40,7 @@
 package es.gob.jmulticard.asn1.der.pkcs15;
 
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
@@ -55,13 +56,23 @@ import es.gob.jmulticard.asn1.der.Sequence;
 public final class Path extends Sequence {
 
 	/** Crea un objeto ASN.1 PKCS#15 <i>Path</i>. */
-	@SuppressWarnings("unchecked")
 	public Path() {
-		super(new Class[] {
-			OctectString.class,
-			DerInteger.class,
-			PathLength.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					OctectString.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					DerInteger.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					PathLength.class,
+					false
+				)
+			}
+		);
 	}
 
 	/** Obtiene la ruta del certificado como texto.
