@@ -88,7 +88,7 @@ public final class X509CertificateAttributes extends Sequence {
     /** Proporciona el nombre X.500 del emisor del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getIssuer() {
-    	if (size() > 2) {
+    	if (getElementCount() > 2) {
     		return getElementAt(2).toString();
     	}
     	return null;
@@ -97,7 +97,7 @@ public final class X509CertificateAttributes extends Sequence {
     /** Proporciona el nombre X.500 del titular del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getSubject() {
-    	if (size() > 1) {
+    	if (getElementCount() > 1) {
     		return getElementAt(1).toString();
     	}
     	return null;
@@ -112,7 +112,7 @@ public final class X509CertificateAttributes extends Sequence {
     /** Obtiene el n&uacute;mero de serie del Certificado.
      * @return N&uacute;mero de serie del Certificado */
     BigInteger getSerialNumber() {
-    	if (size() > 3) {
+    	if (getElementCount() > 3) {
     		return ((DerInteger)getElementAt(3)).getIntegerValue();
     	}
     	return null;

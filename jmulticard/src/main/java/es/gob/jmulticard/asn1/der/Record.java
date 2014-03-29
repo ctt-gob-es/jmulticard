@@ -39,6 +39,9 @@
  */
 package es.gob.jmulticard.asn1.der;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
@@ -52,14 +55,7 @@ public abstract class Record extends DecoderObject {
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 
-    private final DecoderObject[] elements;
-
-    protected int size() {
-    	if (this.elements == null) {
-    		return 0;
-    	}
-    	return this.elements.length;
-    }
+    private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
 
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN.1 que va a contener el registro (que obligatoriamente deben ser
@@ -72,23 +68,22 @@ public abstract class Record extends DecoderObject {
         }
         this.elementsTypes = new OptionalDecoderObjectElement[types.length];
         System.arraycopy(types, 0, this.elementsTypes, 0, types.length);
-        this.elements = new DecoderObject[types.length];
     }
 
     /** Obtiene el n&uacute;mero de elementos en el registro.
      * @return N&uacute;mero de elementos en el registro */
     protected int getElementCount() {
-        return this.elements.length;
+        return this.elements.size();
     }
 
     /** Obtiene el elemento ASN.1 situado en una posici&oacute;n concreta del registro.
      * @param pos Posici&oacute;n del elemento deseado
      * @return Elemento ASN.1 situado en la posici&oacute;n indicada */
     protected DecoderObject getElementAt(final int pos) {
-        if (pos < 0 || pos >= this.elements.length) {
+        if (pos < 0 || pos >= this.elements.size()) {
             throw new IndexOutOfBoundsException("No existe un elemento en este registro en el indice " + Integer.toString(pos)); //$NON-NLS-1$
         }
-        return this.elements[pos];
+        return this.elements.get(pos);
     }
 
     @Override
@@ -125,7 +120,7 @@ public abstract class Record extends DecoderObject {
         	}
             offset = offset + tlv.getBytes().length;
         	tmpDo.setDerValue(tlv.getBytes());
-            this.elements[i] = tmpDo;
+            this.elements.add(tmpDo);
         }
     }
 

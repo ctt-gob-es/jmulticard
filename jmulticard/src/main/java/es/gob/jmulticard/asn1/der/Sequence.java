@@ -58,7 +58,7 @@ public abstract class Sequence extends DecoderObject {
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 
-    protected int size() {
+    protected int getElementCount() {
     	return this.elements.size();
     }
 
