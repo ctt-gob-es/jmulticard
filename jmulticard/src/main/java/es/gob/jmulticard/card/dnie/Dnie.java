@@ -66,6 +66,7 @@ import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneConnection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
+import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ExternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.InternalAuthenticateApduCommand;
@@ -75,6 +76,7 @@ import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
+import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
@@ -91,6 +93,11 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
 
 	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = true;
+
+    /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
+    private final static byte ERROR_PIN_SW1 = (byte) 0x63;
+
+    private static final boolean PIN_AUTO_RETRY = true;
 
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
@@ -211,6 +218,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         // Cargamos la informacion publica con la referencia a las claves
         loadKeyReferences();
+
     }
 
     /** Carga la informaci&oacute;n p&uacute;blica con la referencia a las claves de firma. */
@@ -657,5 +665,71 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private boolean isSecurityChannelOpen() {
         // Si estan cargados los certificados entonces ya se abrio el canal seguro
         return this.getConnection() instanceof Cwa14890OneConnection && this.getConnection().isOpen();
+    }
+
+    @Override
+	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
+    	verifyPin(pinPc, Integer.MAX_VALUE);
+    }
+
+    /** Verifica el PIN de la tarjeta. Si se establece la constante <code>PIN_AUTO_RETRY</code> a <code>true</code>,
+     * el m&eacute;todo reintenta hasta que se introduce el PIN correctamente se bloquea la tarjeta por exceso de
+     * intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
+     * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
+     * @param pinPc PIN de la tarjeta
+     * @param retriesLeft Intentos restantes que quedan antes de bloquear la tarjeta. Un valor de Integer.MAX_VALUE
+     *                    indica un valor desconocido
+     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado.
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
+    private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException, BadPinException {
+
+    	PasswordCallback psc = null;
+    	try {
+	    	if (pinPc != null) {
+	    		psc = pinPc;
+	    	}
+	    	else if (retriesLeft < Integer.MAX_VALUE) {
+	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
+	        	final Method getDnieBadPinPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDnieBadPinPasswordCallback", Integer.TYPE); //$NON-NLS-1$
+	        	psc = (PasswordCallback) getDnieBadPinPasswordCallbackMethod.invoke(null, Integer.valueOf(retriesLeft));
+	    	}
+	    	else {
+	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
+	        	final Method getDniePinForCertificateReadingPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDniePinForCertificateReadingPasswordCallback"); //$NON-NLS-1$
+	        	psc = (PasswordCallback) getDniePinForCertificateReadingPasswordCallbackMethod.invoke(null);
+	    	}
+    	}
+    	catch (final Exception e) {
+    		throw new IllegalArgumentException("pinPc no puede ser nulo cuando no hay un PasswordCallback por defecto", e); //$NON-NLS-1$
+    	}
+
+    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
+
+    	final ResponseApdu verifyResponse = this.getConnection().transmit(
+			verifyCommandApdu
+    	);
+    	verifyCommandApdu = null;
+
+        // Comprobamos si ocurrio algun error durante la verificacion del PIN para volverlo
+        // a pedir si es necesario
+    	psc.clearPassword();
+        if (!verifyResponse.isOk()) {
+            if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
+            	// Si no hay reintento automatico se lanza la excepcion
+            	if (!PIN_AUTO_RETRY) {
+            		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
+            	}
+            	// Si hay reintento automativo volvemos a pedir el PIN con la misma CallBack
+            	verifyPin(
+        			pinPc,
+        			verifyResponse.getStatusWord().getLsb() - (byte) 0xC0
+            	);
+            }
+            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
+            	throw new AuthenticationModeLockedException();
+            }
+        }
     }
 }

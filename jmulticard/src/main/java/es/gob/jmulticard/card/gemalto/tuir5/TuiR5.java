@@ -10,11 +10,14 @@ import java.util.Map;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
+import es.gob.jmulticard.apdu.gemalto.CheckVerifyRetriesLeftApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
@@ -76,10 +79,32 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		selectPkcs15Applet();
 
 		// Precargamos los certificados
-		preloadCertificates();
+//		preloadCertificates();
+
+		System.out.println(getRemainingPinRetries());
+
+    	verifyPin(this.passwordCallback);
+//
+//		System.out.println(
+//			HexUtils.hexify(
+//				new CommandApdu((byte)0x00, (byte)0x20, (byte)0x00, (byte)0x81, null, null).getBytes(),
+//				true
+//			)
+//		);
+//		System.out.println(
+//			HexUtils.hexify(
+//				new CheckVerifyRetriesLeftApduCommand((byte)0x00).getBytes(), true
+//			)
+//		);
+//		System.out.println(
+//			HexUtils.hexify(
+//				sendArbitraryApdu(new CommandApdu((byte)0x00, (byte)0x20, (byte)0x00, (byte)0x81, null, null)).getBytes(),
+//				true
+//			)
+//		);
 
 		// Precargamos las referencias a las claves privadas
-		loadKeyReferences();
+//		loadKeyReferences();
 	}
 
     /** Conecta con el lector del sistema que tenga una TUI insertada.
@@ -226,6 +251,27 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	@Override
 	public String getCardName() {
 		return "Gemalto TUI R5 (MPCOS)"; //$NON-NLS-1$
+	}
+
+    /** Obtiene el n&uacute;mero de intentos restantes para introducci&oacute;n del PIN.
+     * @return N&uacute;mero de intentos restantes para introducci&oacute;n del PIN
+     * @throws ApduConnectionException Si se recibe una respuesta inesperada o hay errores de comunicaci&oacute; con la tarjeta */
+    private int getRemainingPinRetries() throws ApduConnectionException {
+    	final CheckVerifyRetriesLeftApduCommand retriesLeftCommandApdu = new CheckVerifyRetriesLeftApduCommand((byte) 0x00);
+    	System.out.println(HexUtils.hexify(retriesLeftCommandApdu.getBytes(), true));
+    	final ResponseApdu verifyResponse = this.getConnection().transmit(
+			retriesLeftCommandApdu
+    	);
+    	if (verifyResponse.getStatusWord().getMsb() == (byte) 0x63) {
+    		return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
+    	}
+    	throw new ApduConnectionException("Respuesta desconocida: " + HexUtils.hexify(verifyResponse.getBytes(), true)); //$NON-NLS-1$
+    }
+
+	@Override
+	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

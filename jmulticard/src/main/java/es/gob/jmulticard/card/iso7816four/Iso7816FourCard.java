@@ -41,7 +41,6 @@ package es.gob.jmulticard.card.iso7816four;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import javax.security.auth.callback.PasswordCallback;
 
@@ -58,8 +57,6 @@ import es.gob.jmulticard.apdu.iso7816four.ReadBinaryApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectDfByNameApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
-import es.gob.jmulticard.apdu.iso7816four.VerifyApduCommand;
-import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.SmartCard;
@@ -272,69 +269,6 @@ public abstract class Iso7816FourCard extends SmartCard {
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
      *                                  el n&uacute;mero m&aacute;ximo de intentos) */
-    public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
-    	verifyPin(pinPc, Integer.MAX_VALUE);
-    }
+    public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException;
 
-    /** Verifica el PIN de la tarjeta. Si se establece la constante <code>PIN_AUTO_RETRY</code> a <code>true</code>,
-     * el m&eacute;todo reintenta hasta que se introduce el PIN correctamente se bloquea la tarjeta por exceso de
-     * intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
-     * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
-     * @param pinPc PIN de la tarjeta
-     * @param retriesLeft Intentos restantes que quedan antes de bloquear la tarjeta. Un valor de Integer.MAX_VALUE
-     *                    indica un valor desconocido
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado.
-     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
-    private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException, BadPinException {
-
-    	PasswordCallback psc = null;
-    	try {
-	    	if (pinPc != null) {
-	    		psc = pinPc;
-	    	}
-	    	else if (retriesLeft < Integer.MAX_VALUE) {
-	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
-	        	final Method getDnieBadPinPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDnieBadPinPasswordCallback", Integer.TYPE); //$NON-NLS-1$
-	        	psc = (PasswordCallback) getDnieBadPinPasswordCallbackMethod.invoke(null, Integer.valueOf(retriesLeft));
-	    	}
-	    	else {
-	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
-	        	final Method getDniePinForCertificateReadingPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDniePinForCertificateReadingPasswordCallback"); //$NON-NLS-1$
-	        	psc = (PasswordCallback) getDniePinForCertificateReadingPasswordCallbackMethod.invoke(null);
-	    	}
-    	}
-    	catch (final Exception e) {
-    		throw new IllegalArgumentException("pinPc no puede ser nulo cuando no hay un PasswordCallback por defecto", e); //$NON-NLS-1$
-    	}
-
-
-    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
-
-    	final ResponseApdu verifyResponse = this.getConnection().transmit(
-			verifyCommandApdu
-    	);
-    	verifyCommandApdu = null;
-
-        // Comprobamos si ocurrio algun error durante la verificacion del PIN para volverlo
-        // a pedir si es necesario
-    	psc.clearPassword();
-        if (!verifyResponse.isOk()) {
-            if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
-            	// Si no hay reintento automatico se lanza la excepcion
-            	if (!PIN_AUTO_RETRY) {
-            		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
-            	}
-            	// Si hay reintento automativo volvemos a pedir el PIN con la misma CallBack
-            	verifyPin(
-        			pinPc,
-        			verifyResponse.getStatusWord().getLsb() - (byte) 0xC0
-            	);
-            }
-            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
-            	throw new AuthenticationModeLockedException();
-            }
-        }
-    }
 }
