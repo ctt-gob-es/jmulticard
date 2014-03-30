@@ -20,17 +20,14 @@ public class TestCdfCreation extends TestCase {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final String[] DNI_TEST_FILES = new String[] {
+    private static final String[] TEST_FILES = new String[] {
         "CDF_GSD.BER", //$NON-NLS-1$
         "CDF_EEE.BER", //$NON-NLS-1$
         "CDF_GVA.BER", //$NON-NLS-1$
         "CDF_JBM.BER", //$NON-NLS-1$
         "CDF_JMA.BER", //$NON-NLS-1$
-        "CDF_TGM.BER" //$NON-NLS-1$
-    };
-
-    private static final String[] TUI_TEST_FILES = new String[] {
-    	"CDF_TUI_SAMPLE1.asn1" //$NON-NLS-1$
+        "CDF_TGM.BER", //$NON-NLS-1$
+        "CDF_TUI_SAMPLE1.asn1" //$NON-NLS-1$
     };
 
     /** Prueba la creaci&oacute;n de CDF con volcados en disco.
@@ -38,7 +35,7 @@ public class TestCdfCreation extends TestCase {
     @Test
     public static void testCdf() throws Exception {
         byte[] cdfdata;
-        for (final String element : TUI_TEST_FILES) {
+        for (final String element : TEST_FILES) {
             cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
             LOGGER.info("\n\nCDF completo (" + Integer.toString(cdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.info(HexUtils.hexify(cdfdata, true));
