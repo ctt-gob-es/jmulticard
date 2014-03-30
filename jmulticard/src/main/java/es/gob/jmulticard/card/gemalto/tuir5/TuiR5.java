@@ -8,12 +8,15 @@ import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.security.auth.callback.PasswordCallback;
+
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
+import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
@@ -24,6 +27,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
 
 /** Tarjeta Gemalto TUI R5 MPCOS.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -45,16 +49,25 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
     	{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x18, (byte) 0x0C, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x63, (byte) 0x42, (byte) 0x00 }
 	};
 
-    private static final Location CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
+    private static final Location   CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
+    private static final Location PRKDF_LOCATION = new Location("50005001"); //$NON-NLS-1$
+
+    private final PasswordCallback passwordCallback;
 
     private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
 
 	/** Construye una clase que representa una tarjeta Gemalto TUI R5 MPCOS.
      * @param conn Conexi&oacute;n con la tarjeta
-	 * @throws Iso7816FourCardException
-	 * @throws IOException */
-	public TuiR5(final ApduConnection conn) throws Iso7816FourCardException, IOException {
+	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la TUI
+	 * @throws Iso7816FourCardException Cuando hay errores relativos a la ISO-7816-4
+	 * @throws IOException Si hay errores de entrada / salida */
+	public TuiR5(final ApduConnection conn, final PasswordCallback pwc) throws Iso7816FourCardException, IOException {
 		super((byte) 0x00, conn);
+
+		if (pwc == null) {
+			throw new IllegalArgumentException("El PasswordCallback no puede ser nulo"); //$NON-NLS-1$
+		}
+		this.passwordCallback = pwc;
 
 		// Conectamos
 		connect(conn);
@@ -64,6 +77,9 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
 		// Precargamos los certificados
 		preloadCertificates();
+
+		// Precargamos las referencias a las claves privadas
+		loadKeyReferences();
 	}
 
     /** Conecta con el lector del sistema que tenga una TUI insertada.
@@ -155,6 +171,20 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 			}
     	}
     	throw new InvalidCardException("La tarjeta no contiene ningun Applet PKCS#15 de identificador conocido"); //$NON-NLS-1$
+    }
+
+    /** Carga la informaci&oacute;n p&uacute;blica con la referencia a las claves de firma. */
+    private void loadKeyReferences() {
+        final PrKdf prKdf = new PrKdf();
+        try {
+            prKdf.setDerValue(selectFileByLocationAndRead(PRKDF_LOCATION));
+        }
+        catch(final RequiredSecurityStateNotSatisfiedException e) {
+        	throw new SecurityException("Se necesita PIN"); //$NON-NLS-1$
+        }
+        catch (final Exception e) {
+            throw new IllegalStateException("No se ha podido cargar el PrKDF de la tarjeta: " + e.toString()); //$NON-NLS-1$
+        }
     }
 
 	@Override

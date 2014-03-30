@@ -74,6 +74,8 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     private static final boolean PIN_AUTO_RETRY = true;
 
+    private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
+
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU
      * @param conn Connexi&oacute;n con la tarjeta
@@ -95,11 +97,16 @@ public abstract class Iso7816FourCard extends SmartCard {
      *        fichero
      * @param readLength Longitud de los datos a leer (en octetos)
      * @return APDU de respuesta
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU */
-    private ResponseApdu readBinary(final byte msbOffset, final byte lsbOffset, final byte readLength) throws ApduConnectionException {
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
+     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
+     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
+    private ResponseApdu readBinary(final byte msbOffset, final byte lsbOffset, final byte readLength) throws ApduConnectionException, RequiredSecurityStateNotSatisfiedException {
     	final ResponseApdu res = this.getConnection().transmit(new ReadBinaryApduCommand(this.getCla(), msbOffset, lsbOffset, readLength));
         if (res.isOk()) {
         	return res;
+        }
+        if (UNSATISFIED_SECURITY_STATE.equals(res.getStatusWord())) {
+        	throw new RequiredSecurityStateNotSatisfiedException(res.getStatusWord());
         }
         throw new ApduConnectionException("Respuesta invalida en la lectura de binario con el codigo: " + res.getStatusWord()); //$NON-NLS-1$
     }
@@ -108,8 +115,10 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @param len Longitud del fichero a leer
      * @return APDU de respuesta
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws IOException Si hay problemas en el buffer de lectura */
-    public byte[] readBinaryComplete(final int len) throws IOException {
+     * @throws IOException Si hay problemas en el buffer de lectura
+     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
+     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
+    public byte[] readBinaryComplete(final int len) throws IOException, RequiredSecurityStateNotSatisfiedException {
 
         int off = 0;
         ResponseApdu readResponse;
