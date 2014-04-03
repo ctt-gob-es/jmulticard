@@ -73,4 +73,8 @@ public final class PrivateRsaKeyAttributes extends Sequence {
 		return ((Path)getElementAt(0)).getPathString();
 	}
 
+	int getKeyLength() {
+		return ((DerInteger)getElementAt(1)).getIntegerValue().intValue();
+	}
+
 }

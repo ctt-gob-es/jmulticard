@@ -85,7 +85,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		selectPkcs15Applet();
 
 		// Precargamos los certificados
-		preloadCertificates();
+//		preloadCertificates();
 
 		LOGGER.info("Intentos de PIN restantes: " + getRemainingPinRetries()); //$NON-NLS-1$
 
@@ -199,6 +199,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
         catch (final Exception e) {
             throw new IllegalStateException("No se ha podido cargar el PrKDF de la tarjeta: " + e.toString()); //$NON-NLS-1$
         }
+        System.out.println(prKdf.toString());
     }
 
 	@Override
@@ -247,7 +248,6 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
      * @throws ApduConnectionException Si se recibe una respuesta inesperada o hay errores de comunicaci&oacute; con la tarjeta */
     private int getRemainingPinRetries() throws ApduConnectionException {
     	final CheckVerifyRetriesLeftApduCommand retriesLeftCommandApdu = new CheckVerifyRetriesLeftApduCommand((byte) 0x00);
-    	System.out.println(HexUtils.hexify(retriesLeftCommandApdu.getBytes(), true));
     	final ResponseApdu verifyResponse = this.getConnection().transmit(
 			retriesLeftCommandApdu
     	);

@@ -48,7 +48,8 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo ASN.1 <i>Sequence</i>. */
+/** Tipo ASN.1 <i>Sequence</i>.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class Sequence extends DecoderObject {
 
     /** Tipo ASN.1 "SEQUENCE". */
@@ -88,25 +89,18 @@ public abstract class Sequence extends DecoderObject {
             System.arraycopy(rawValue, offset, remainingBytes, 0, remainingBytes.length);
             try {
             	tlv = new Tlv(remainingBytes);
+            	tmpDo = this.elementsTypes[i].getElementType().newInstance();
+            	tmpDo.checkTag(tlv.getTag());
+                tmpDo.setDerValue(tlv.getBytes());
             }
             catch(final Exception e) {
             	if (this.elementsTypes[i].isOptional()) {
                 	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
             		continue;
             	}
-            	throw new Asn1Exception("Error en el elemento " + i + " del registro ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+            	throw new Asn1Exception("Error en el elemento " + i + " de la recuencia ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            try {
-                tmpDo = this.elementsTypes[i].getElementType().newInstance();
-            }
-            catch (final Exception e) {
-                throw new Asn1Exception(
-            		"No se ha podido instanciar un " + this.elementsTypes[i].getElementType().getName() + //$NON-NLS-1$
-                        " en la posicion " + Integer.toString(i) + " de la secuencia: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
-                );
-            }
-            tmpDo.checkTag(tlv.getTag());
-            tmpDo.setDerValue(tlv.getBytes());
+            // El offset se avanza antes del continue de la opcionalidad
             offset = offset + tlv.getBytes().length;
             this.elements.add(tmpDo);
         }

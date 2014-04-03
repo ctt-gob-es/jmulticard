@@ -58,7 +58,7 @@ public final class PrKdf extends Record {
 				),
 				new OptionalDecoderObjectElement(
 					PrivateKeyObject.class,
-					false
+					true
 				)
 			}
 		);
@@ -91,6 +91,13 @@ public final class PrKdf extends Record {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyPath();
 	}
 
+	/** Obtiene la longitud de la clave indicada.
+	 * @param index &Iacute;ndice de la clave
+	 * @return Longitud de la clave indicada */
+	public int getKeyLength(final int index) {
+		return ((PrivateKeyObject) getElementAt(index)).getKeyLength();
+	}
+
     /** {@inheritDoc} */
 	@Override
     public String toString() {
@@ -101,9 +108,13 @@ public final class PrKdf extends Record {
 			sb.append(Integer.toString(index));
 			sb.append("\n  Nombre de la clave: "); //$NON-NLS-1$
 			sb.append(getKeyName(index));
+			sb.append("\n  Longitud de la clave: "); //$NON-NLS-1$
+			sb.append(getKeyLength(index));
 			sb.append("\n  Ruta hacia la clave: "); //$NON-NLS-1$
 			sb.append(getKeyPath(index));
-			sb.append('\n');
+			if (index != getKeyCount() -1) {
+				sb.append('\n');
+			}
 		}
 		return sb.toString();
 	}

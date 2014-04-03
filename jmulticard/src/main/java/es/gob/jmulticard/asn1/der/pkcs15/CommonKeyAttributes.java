@@ -48,7 +48,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *  CommonKeyAttributes ::= SEQUENCE {
  *    iD    Identifier,
  *    usage   KeyUsageFlags,
- *    native  BOOLEAN,
+ *    native  BOOLEAN OPTIONAL,
  *    accessFlags  KeyAccessFlags,
  *    keyReference Reference
  *  }
@@ -61,36 +61,33 @@ public final class CommonKeyAttributes extends Sequence {
 		super(
 			new OptionalDecoderObjectElement[] {
 				new OptionalDecoderObjectElement(
-					Identifier.class,
+					Identifier.class,    // Subtipo de Octet String
 					false
 				),
 				new OptionalDecoderObjectElement(
-					KeyUsageFlags.class,
+					KeyUsageFlags.class, // Subtipo de Bit String
 					false
 				),
 				new OptionalDecoderObjectElement(
 					DerBoolean.class,
+					true // Opcional
+				),
+				new OptionalDecoderObjectElement(
+					AccessFlags.class,   // Subtipo de Bit String
 					false
 				),
 				new OptionalDecoderObjectElement(
-					AccessFlags.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					Reference.class,
+					Reference.class,     // Subtipo de Integer
 					false
 				)
 			}
 		);
 	}
 
-	/**
-	 * Devuelve el identificador de la clave.
-	 * @return Identificador.
-	 */
+	/** Devuelve el identificador de la clave.
+	 * @return Identificador de la clave. */
 	public byte[] getIdentifier() {
 		return ((Identifier) getElementAt(0)).getOctectStringByteValue();
 	}
-
 
 }

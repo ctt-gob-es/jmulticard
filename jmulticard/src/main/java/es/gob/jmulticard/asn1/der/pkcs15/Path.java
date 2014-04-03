@@ -48,8 +48,8 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * <pre>
  *  Path ::= SEQUENCE {
  *   path OCTET STRING,
- *   index INTEGER (0..pkcs15-ub-index),
- *   length [0] INTEGER (0..pkcs15-ub-index)
+ *   index INTEGER (0..pkcs15-ub-index) OPTIONAL,
+ *   length [0] INTEGER (0..pkcs15-ub-index) OPTIONAL
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -65,11 +65,11 @@ public final class Path extends Sequence {
 				),
 				new OptionalDecoderObjectElement(
 					DerInteger.class,
-					false
+					true
 				),
 				new OptionalDecoderObjectElement(
 					PathLength.class,
-					false
+					true
 				)
 			}
 		);

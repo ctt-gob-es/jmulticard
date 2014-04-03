@@ -47,7 +47,8 @@ import es.gob.jmulticard.asn1.der.Utf8String;
  * <pre>
  *  CommonObjectAttributes ::= SEQUENCE {
  *    label Label,
- *    flags CommonObjectFlags,
+ *    flags CommonObjectFlags OPTIONAL,
+ *    authId Identifier OPTIONAL,
  *  }
  *  Label ::= UTF8String (SIZE(0..pkcs15-ub-label))
  * </pre>
@@ -59,11 +60,15 @@ public final class CommonObjectAttributes extends Sequence {
         super(
     		new OptionalDecoderObjectElement[] {
 				new OptionalDecoderObjectElement(
-					Utf8String.class,
+					Utf8String.class, // Label
 					false
 				),
 				new OptionalDecoderObjectElement(
-					CommonObjectFlags.class,
+					CommonObjectFlags.class, // Subtipo de Bit String
+					true
+				),
+				new OptionalDecoderObjectElement(
+					Identifier.class,        // Subtipo de Octet String
 					true
 				)
     		}
