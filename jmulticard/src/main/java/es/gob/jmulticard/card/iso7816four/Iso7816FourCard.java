@@ -66,11 +66,6 @@ import es.gob.jmulticard.card.SmartCard;
  * @author Alberto Mart&iacute;nez */
 public abstract class Iso7816FourCard extends SmartCard {
 
-    /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
-    private final static byte ERROR_PIN_SW1 = (byte) 0x63;
-
-    private static final boolean PIN_AUTO_RETRY = true;
-
     private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
 
     /** Construye una tarjeta compatible ISO 7816-4.

@@ -7,6 +7,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
@@ -18,6 +19,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.gemalto.CheckVerifyRetriesLeftApduCommand;
+import es.gob.jmulticard.apdu.gemalto.VerifyApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
@@ -55,6 +57,10 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
     private static final Location   CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
     private static final Location PRKDF_LOCATION = new Location("50005001"); //$NON-NLS-1$
 
+    private static byte CLA = (byte) 0x00;
+
+    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
     private final PasswordCallback passwordCallback;
 
     private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
@@ -79,37 +85,20 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		selectPkcs15Applet();
 
 		// Precargamos los certificados
-//		preloadCertificates();
+		preloadCertificates();
 
-		System.out.println(getRemainingPinRetries());
+		LOGGER.info("Intentos de PIN restantes: " + getRemainingPinRetries()); //$NON-NLS-1$
 
     	verifyPin(this.passwordCallback);
-//
-//		System.out.println(
-//			HexUtils.hexify(
-//				new CommandApdu((byte)0x00, (byte)0x20, (byte)0x00, (byte)0x81, null, null).getBytes(),
-//				true
-//			)
-//		);
-//		System.out.println(
-//			HexUtils.hexify(
-//				new CheckVerifyRetriesLeftApduCommand((byte)0x00).getBytes(), true
-//			)
-//		);
-//		System.out.println(
-//			HexUtils.hexify(
-//				sendArbitraryApdu(new CommandApdu((byte)0x00, (byte)0x20, (byte)0x00, (byte)0x81, null, null)).getBytes(),
-//				true
-//			)
-//		);
 
-		// Precargamos las referencias a las claves privadas
-//		loadKeyReferences();
+    	// Precargamos las referencias a las claves privadas
+    	loadKeyReferences();
+
 	}
 
     /** Conecta con el lector del sistema que tenga una TUI insertada.
      * @throws Iso7816FourCardException
-     * @throws IOException */
+     * @throws IOException Cuando hay errores de entrada / salida */
     private void connect(final ApduConnection conn) throws Iso7816FourCardException, IOException {
     	if (conn == null) {
     		throw new IllegalArgumentException("La conexion no puede ser nula"); //$NON-NLS-1$
@@ -238,7 +227,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	@Override
 	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException {
 		final CommandApdu selectMf = new CommandApdu(
-			(byte) 0x00,
+			CLA,
 			(byte) 0xA4,
 			(byte) 0x08,
 			(byte) 0x0C,
@@ -270,8 +259,16 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
-		// TODO Auto-generated method stub
-
+		final VerifyApduCommand verifyPinApduCommand = new VerifyApduCommand(
+			CLA,
+			this.passwordCallback
+		);
+		final ResponseApdu verifyResponse = this.getConnection().transmit(
+			verifyPinApduCommand
+		);
+		if (!verifyResponse.isOk()) {
+			throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
+		}
 	}
 
 }

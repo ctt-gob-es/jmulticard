@@ -37,75 +37,59 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.asn1.der.pkcs15;
+package es.gob.jmulticard.apdu.gemalto;
 
-import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
-import es.gob.jmulticard.asn1.der.Record;
+import javax.security.auth.callback.PasswordCallback;
 
-/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
+import es.gob.jmulticard.apdu.CommandApdu;
+
+/** APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
+ * <b>Importante</b>: La implementaci&oacute;n actual est&aacute; ligada a Gemalto en el sentido
+ * de que siempre se usa una longitud de 16 (0x10h) caracteres para el PIN, completando con
+ * 0x00h el valor real del PIN.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class PrKdf extends Record {
+public final class VerifyApduCommand extends CommandApdu {
 
-	private static final int BUFFER_SIZE = 150;
+    private static final byte INS_VERIFY = (byte) 0x20;
 
-    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1. */
-	public PrKdf() {
-		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					PrivateKeyObject.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					PrivateKeyObject.class,
-					false
-				)
-			}
+    private final PasswordCallback pwc;
+
+    /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
+     * @param cla Clase (CLA) de la APDU
+     * @param pinPc Pin de la tarjeta inteligente */
+    public VerifyApduCommand(final byte cla, final PasswordCallback pinPc) {
+        super(
+    		cla,																 // CLA
+    		VerifyApduCommand.INS_VERIFY, 										 // INS
+    		(byte)0x00, 														 // P1
+    		(byte)0x81,															 // P2
+    		new byte[] {                                                         // Data
+    			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, //  Siempre de 0x10h
+    			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,  //  de tamano
+    			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+    			(byte) 0x00
+			},
+    		null																 // Le
 		);
-	}
-
-	/** Obtiene el n&uacute;mero de claves del PrKDF.
-	 * @return N&uacute;mero de claves del PrKDF */
-	public int getKeyCount() {
-		return getElementCount();
-	}
-
-	/** Obtiene el identificador de la clave indicada.
-	 * @param index &Iacute;ndice de la clave
-	 * @return Identificador de la clave */
-	public String getKeyIdentifier(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
-	}
-
-	/** Obtiene el nombre de la clave indicada
-	 * @param index &Iacute;ndice de la clave
-	 * @return Nombre de la clave */
-	public String getKeyName(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyName();
-	}
-
-	/** Obtiene la ruta PKCS#15 hacia la clave indicada.
-	 * @param index &Iacute;ndice de la clave
-	 * @return Ruta PKCS#15 hacia la clave indicada */
-	public String getKeyPath(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyPath();
-	}
+        if (pinPc == null) {
+        	throw new IllegalArgumentException(
+    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
+        	);
+        }
+        this.pwc = pinPc;
+    }
 
     /** {@inheritDoc} */
-	@Override
-    public String toString() {
-		final StringBuffer sb = new StringBuffer(PrKdf.BUFFER_SIZE);
-		sb.append("Fichero de Descripcion de Claves Privadas:\n"); //$NON-NLS-1$
-		for (int index=0;index<getKeyCount();index++) {
-			sb.append(" Clave privada "); //$NON-NLS-1$
-			sb.append(Integer.toString(index));
-			sb.append("\n  Nombre de la clave: "); //$NON-NLS-1$
-			sb.append(getKeyName(index));
-			sb.append("\n  Ruta hacia la clave: "); //$NON-NLS-1$
-			sb.append(getKeyPath(index));
-			sb.append('\n');
-		}
-		return sb.toString();
-	}
-
+    @Override
+    public byte[] getBytes() {
+    	final byte[] currentApdu = super.getBytes();
+        final char[] p = this.pwc.getPassword();
+        for (int i=0; i<p.length;i++) {
+        	currentApdu[i+5] = (byte) p[i];
+        }
+        for (int i=0;i<p.length;i++) {
+            p[i] = '\0';
+        }
+        return currentApdu;
+    }
 }
