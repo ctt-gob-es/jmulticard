@@ -44,7 +44,7 @@ import java.util.Vector;
 
 import es.gob.jmulticard.HexUtils;
 
-/** Ruta hacia un fichero (EF o DF) ISO 7816-4.>
+/** Ruta hacia un fichero (EF o DF) ISO 7816-4.
  * Un fichero (EF) o directorio (DF) se identifica por un par de bytes o palabra
  * que representan su identificador &uacute;nico. Todos los ficheros tienen como
  * antepasado al fichero MF, que corresponde con el identificador 0x3F00.
@@ -59,8 +59,8 @@ public final class Location {
 
     static {
         final String hex[] = {
-                              "a", "b", "c", "d", "e", "f" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-                      };
+    		"a", "b", "c", "d", "e", "f" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+        };
         for (int i = 0; i < 9; i++) {
             Location.HEXBYTES.put(String.valueOf(i), Integer.valueOf(String.valueOf(i)));
         }
@@ -90,9 +90,7 @@ public final class Location {
         init(auxPathVar.toString());
     }
 
-    /*
-     * Constructor privado. Necesario para algunas operaciones internas
-     */
+    /** Constructor privado. Necesario para algunas operaciones internas. */
     private Location(final Vector<Integer> path) {
         if (path != null) {
             final int numElements = path.size();
@@ -103,7 +101,7 @@ public final class Location {
         }
     }
 
-    /** Obtiene el fichero hijo del Location proporcionado
+    /** Obtiene el fichero hijo del <code>Location</code> proporcionado.
      * @return Devuelve un objeto location que contiene el hijo del fichero actual si existe. Si no tiene hijos devuelve null. */
     public Location getChild() {
         final Location aux = new Location(this.path);
@@ -135,9 +133,7 @@ public final class Location {
         };
     }
 
-    /*
-     * Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico
-     */
+    /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico. */
     private static boolean isValidPath(final String absolutePath) {
         if (absolutePath.length() == 0) {
             return false;

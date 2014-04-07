@@ -19,6 +19,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.gemalto.CheckVerifyRetriesLeftApduCommand;
+import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.gemalto.VerifyApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
@@ -85,7 +86,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		selectPkcs15Applet();
 
 		// Precargamos los certificados
-//		preloadCertificates();
+		preloadCertificates();
 
 		LOGGER.info("Intentos de PIN restantes: " + getRemainingPinRetries()); //$NON-NLS-1$
 
@@ -214,14 +215,58 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
-		// TODO Auto-generated method stub
-		return null;
+		if (alias == null) {
+			throw new IllegalArgumentException("El alias no puede ser nulo"); //$NON-NLS-1$
+		}
+		if (!certificatesByAlias.containsKey(alias)) {
+			LOGGER.warning("La tarjeta no contiene el alias '" + alias + "', se devolvera null"); //$NON-NLS-1$ //$NON-NLS-2$
+			return null;
+		}
+		final String aliases[] = getAliases();
+		byte index = (byte) 0xff;
+		for (int i=0;i<aliases.length;i++) {
+			if (alias.equals(aliases[i])) {
+				index = (byte) i;
+				break;
+			}
+		}
+		if (index == (byte) 0xff) {
+			throw new IllegalStateException("La tarjeta no contiene el alias: " + alias); //$NON-NLS-1$
+		}
+		final MseSetSignatureKeyApduCommand mseSet = new MseSetSignatureKeyApduCommand(
+			CLA,
+			MseSetSignatureKeyApduCommand.CryptographicMechanism.RSASSA_PKCS1v1_5_SHA1,
+			index
+		);
+		final ResponseApdu res;
+		try {
+			res = sendArbitraryApdu(mseSet);
+		}
+		catch (final Exception e) {
+			throw new CryptoCardException("Error enviando la APDU de establecimiento de clave privada para firma: " + e, e); //$NON-NLS-1$
+		}
+		if (res.isOk()) {
+			return new TuiPrivateKeyReference(index);
+		}
+		throw new CryptoCardException(
+			"No se ha podido recuperar la referencia a la clave privada: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+		);
 	}
 
 	@Override
-	public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference keyRef)
-			throws CryptoCardException, BadPinException {
-		// TODO Auto-generated method stub
+	public byte[] sign(final byte[] data,
+			           final String algorithm,
+			           final PrivateKeyReference keyRef) throws CryptoCardException,
+			                                                    BadPinException {
+		if (keyRef == null) {
+			throw new IllegalArgumentException("La referencia a la clave privada no puede ser nula"); //$NON-NLS-1$
+		}
+		if (!(keyRef instanceof TuiPrivateKeyReference)) {
+			throw new CryptoCardException(
+				"Solo se admiten claves privadas de tipo TuiPrivateKeyReference, pero se encontro: " + keyRef.getClass().getName() //$NON-NLS-1$
+			);
+		}
+		// TODO: Implementar
 		return null;
 	}
 

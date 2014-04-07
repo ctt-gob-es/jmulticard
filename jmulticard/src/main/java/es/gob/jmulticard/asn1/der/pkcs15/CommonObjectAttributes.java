@@ -81,4 +81,16 @@ public final class CommonObjectAttributes extends Sequence {
     	return getElementAt(0).toString();
     }
 
+    /** Obtiene el identificador del objecto.
+     * @return Identificador del objecto */
+    public byte[] getIdentifier() {
+    	for (int i=0;i<getElementCount();i++) {
+    		final Object o = getElementAt(i);
+    		if (o instanceof Identifier) {
+    			return ((Identifier)o).getOctectStringByteValue().clone();
+    		}
+    	}
+    	return null;
+    }
+
 }
