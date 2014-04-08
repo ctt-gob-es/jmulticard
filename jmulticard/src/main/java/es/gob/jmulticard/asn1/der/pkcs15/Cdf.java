@@ -55,18 +55,17 @@ public final class Cdf extends Record {
 	public Cdf() {
         super(
     		new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					CertificateObject.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					CertificateObject.class,
-					true
-				),
-				new OptionalDecoderObjectElement(
-					CertificateObject.class,
-					true
-				)
+				// Maximo 10 certificados
+				new OptionalDecoderObjectElement(CertificateObject.class, false),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true),
+				new OptionalDecoderObjectElement(CertificateObject.class, true)
     		}
 		);
     }

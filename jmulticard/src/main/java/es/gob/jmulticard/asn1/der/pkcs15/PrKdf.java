@@ -58,14 +58,17 @@ public final class PrKdf extends Record {
 	public PrKdf() {
 		super(
 			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					PrivateKeyObject.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					PrivateKeyObject.class,
-					true
-				)
+				// Maximo 10 certificados
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, false),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true)
 			}
 		);
 	}
