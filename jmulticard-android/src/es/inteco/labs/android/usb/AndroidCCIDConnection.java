@@ -55,7 +55,7 @@ import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
  * Basado en <code>es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
  * @author Jose Luis Escanciano Garcia */
-public final class AndroidCCIDConnection implements ApduConnection{
+public final class AndroidCCIDConnection implements ApduConnection {
 
 	private final SmartCardUsbDevice ccidReader;
 
@@ -90,7 +90,7 @@ public final class AndroidCCIDConnection implements ApduConnection{
 	@Override
 	public void open() throws ApduConnectionException {
 		try {
-			if(!isOpen()){
+			if(!isOpen()) {
 				this.ccidReader.open();
 			}
 		}
