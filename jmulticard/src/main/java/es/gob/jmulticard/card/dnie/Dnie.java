@@ -143,11 +143,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             (byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
     }, ATR_MASK);
 
-    private static final Atr BURNED_DNI_ATR = new Atr(new byte[] {
-            (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
-            (byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x65, (byte) 0x81
-    }, ATR_MASK);
-
     private final PasswordCallback passwordCallback;
 
     /** Conecta con el lector del sistema que tenga un DNIe insertado. */
@@ -173,10 +168,15 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     			continue;
     		}
     		actualAtr = new Atr(responseAtr, ATR_MASK);
-    		if (BURNED_DNI_ATR.equals(actualAtr)) {
-                throw new BurnedDnieCardException();
-            }
+
     		if (!ATR.equals(actualAtr)) { // La tarjeta encontrada no es un DNIe
+        		// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
+        		// en 90-00
+        		final byte[] actualAtrBytes = actualAtr.getBytes();
+        		if (actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
+        			actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65) {
+                    	throw new BurnedDnieCardException(actualAtr);
+                }
     			invalidCardException = new InvalidCardException(getCardName(), ATR, responseAtr);
     			continue;
     		}

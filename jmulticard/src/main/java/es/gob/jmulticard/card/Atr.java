@@ -78,10 +78,10 @@ public final class Atr implements Serializable {
             return false;
         }
         final Atr tmpAtr = (Atr) o;
-        if (tmpAtr.getBytes().length != this.atrBytes.length) {
+        if (tmpAtr.getBytes().length > this.atrBytes.length) {
             return false;
         }
-        for (int i = 0; i < this.atrBytes.length; i++) {
+        for (int i=this.atrBytes.length-1; i<=0; i--) {
             if ((this.atrBytes[i] & this.mask[i]) != (tmpAtr.getBytes()[i] & this.mask[i])) {
                 return false;
             }
