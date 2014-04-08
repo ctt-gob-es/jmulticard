@@ -39,7 +39,13 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
+import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
+import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
@@ -118,5 +124,26 @@ public final class PrKdf extends Record {
 		}
 		return sb.toString();
 	}
+
+    /** Establece el valor (en codificaci&oacute;n DER) del objeto ASN.1.
+     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN.1
+     * @throws Asn1Exception Si no se puede decodificar adecuadamente el valor establecido
+     * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada */
+    @Override
+	public void setDerValue(final byte[] value) throws Asn1Exception, TlvException {
+    	super.setDerValue(value);
+    	try {
+	    	final File tmpFile = File.createTempFile("PrKDF-", ".asn1"); //$NON-NLS-1$ //$NON-NLS-2$
+	    	final OutputStream fos = new FileOutputStream(tmpFile);
+	    	fos.write(value);
+	    	fos.flush();
+	    	fos.close();
+	    	System.out.println("PrKDF guardado en: " + tmpFile.getAbsolutePath()); //$NON-NLS-1$
+    	}
+    	catch(final Exception e) {
+    		e.printStackTrace();
+    	}
+
+    }
 
 }
