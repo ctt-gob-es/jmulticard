@@ -50,7 +50,8 @@ public final class BurnedDnieCardException extends CardException {
 
 	private static final long serialVersionUID = -3337211407421513080L;
 
-	/** Construye una excepci&oacute;n de DNIe con memoria vol&aacute;til borrada. */
+	/** Construye una excepci&oacute;n de DNIe con memoria vol&aacute;til borrada.
+	 * @param atr ATR encontrado en la tarjeta */
     BurnedDnieCardException(final Atr atr) {
         super(
     		atr != null ?

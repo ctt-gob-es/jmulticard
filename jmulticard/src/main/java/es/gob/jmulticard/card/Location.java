@@ -90,7 +90,8 @@ public final class Location {
         init(auxPathVar.toString());
     }
 
-    /** Constructor privado. Necesario para algunas operaciones internas. */
+    /** Constructor privado. Necesario para algunas operaciones internas.
+     * @param path Ruta asociada */
     private Location(final Vector<Integer> path) {
         if (path != null) {
             final int numElements = path.size();
@@ -133,7 +134,10 @@ public final class Location {
         };
     }
 
-    /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico. */
+    /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico.
+     * @param absolutePath Ruta a comprobar
+     * @return <code>true</code> si la ruta es inv&aacute;lida, <code>false</code> en caso
+     *         contrario */
     private static boolean isValidPath(final String absolutePath) {
         if (absolutePath.length() == 0) {
             return false;
@@ -148,10 +152,9 @@ public final class Location {
         return true;
     }
 
-    /*
-     * Genera un vector de enteros con los diversos identificadores de DF y EF
-     * indicados en la ruta absoluta que se proporciona como parametro
-     */
+    /** Genera un vector de enteros con los diversos identificadores de DF y EF
+     * indicados en la ruta absoluta que se proporciona como par&aacute;metro.
+     * @param absolutePath Ruta absoluta */
     private void init(final String absolutePath) {
         if (absolutePath == null || "".equals(absolutePath.trim()) //$NON-NLS-1$
             || absolutePath.trim().length() % 4 != 0) {

@@ -98,7 +98,8 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	}
 
     /** Conecta con el lector del sistema que tenga una TUI insertada.
-     * @throws Iso7816FourCardException
+     * @param conn Conexi&oacute;n hacia la TUI
+     * @throws Iso7816FourCardException Si hay errores en el di&aacute;logo ISO 7816-4
      * @throws IOException Cuando hay errores de entrada / salida */
     private void connect(final ApduConnection conn) throws Iso7816FourCardException, IOException {
     	if (conn == null) {

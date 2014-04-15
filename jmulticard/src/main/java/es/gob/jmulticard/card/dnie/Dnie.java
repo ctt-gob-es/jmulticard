@@ -145,8 +145,14 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     private final PasswordCallback passwordCallback;
 
-    /** Conecta con el lector del sistema que tenga un DNIe insertado. */
-    private void connect(final ApduConnection conn) throws BurnedDnieCardException, InvalidCardException, ApduConnectionException {
+    /** Conecta con el lector del sistema que tenga un DNIe insertado.
+     * @param conn Coenxi&oacute;n hacia el DNIe
+     * @throws BurnedDnieCardException Si el DNIe tiene su memoria vol&aacute;til borrada
+     * @throws InvalidCardException Si la tarjeta no es un DNIe
+     * @throws ApduConnectionException si hay problemas de conexi&oacute;n con la tarjeta */
+    private void connect(final ApduConnection conn) throws BurnedDnieCardException,
+                                                           InvalidCardException,
+                                                           ApduConnectionException {
     	if (conn == null) {
     		throw new IllegalArgumentException("La conexion no puede ser nula"); //$NON-NLS-1$
     	}
