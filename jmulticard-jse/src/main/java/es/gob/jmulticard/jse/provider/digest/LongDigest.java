@@ -49,7 +49,8 @@ abstract class LongDigest implements ExtendedDigest {
 
     /** Copy constructor. We are using copy constructors in place
      * of the Object.clone() interface as this interface is not
-     * supported by J2ME. */
+     * supported by J2ME.
+     * @param t Huella origen. */
     protected LongDigest(final LongDigest t) {
         this.xBuf = new byte[t.xBuf.length];
         System.arraycopy(t.xBuf, 0, this.xBuf, 0, t.xBuf.length);
@@ -92,7 +93,7 @@ abstract class LongDigest implements ExtendedDigest {
         //
         // fill the current word
         //
-        while ((this.xBufOff != 0) && (len > 0)) {
+        while (this.xBufOff != 0 && len > 0) {
             update(in[inOff]);
 
             inOff++;
@@ -176,7 +177,7 @@ abstract class LongDigest implements ExtendedDigest {
      * upper long (less 3 bits) word of the byte count. */
     private void adjustByteCounts() {
         if (this.byteCount1 > 0x1fffffffffffffffL) {
-            this.byteCount2 += (this.byteCount1 >>> 61);
+            this.byteCount2 += this.byteCount1 >>> 61;
             this.byteCount1 &= 0x1fffffffffffffffL;
         }
     }
@@ -275,27 +276,27 @@ abstract class LongDigest implements ExtendedDigest {
 
     /* SHA-384 and SHA-512 functions (as for SHA-256 but for longs) */
     private static long ch(final long x, final long y, final long z) {
-        return ((x & y) ^ ((~x) & z));
+        return x & y ^ ~x & z;
     }
 
     private static long maj(final long x, final long y, final long z) {
-        return ((x & y) ^ (x & z) ^ (y & z));
+        return x & y ^ x & z ^ y & z;
     }
 
     private static long sum0(final long x) {
-        return ((x << 36) | (x >>> 28)) ^ ((x << 30) | (x >>> 34)) ^ ((x << 25) | (x >>> 39));
+        return (x << 36 | x >>> 28) ^ (x << 30 | x >>> 34) ^ (x << 25 | x >>> 39);
     }
 
     private static long sum1(final long x) {
-        return ((x << 50) | (x >>> 14)) ^ ((x << 46) | (x >>> 18)) ^ ((x << 23) | (x >>> 41));
+        return (x << 50 | x >>> 14) ^ (x << 46 | x >>> 18) ^ (x << 23 | x >>> 41);
     }
 
     private static long sigma0(final long x) {
-        return ((x << 63) | (x >>> 1)) ^ ((x << 56) | (x >>> 8)) ^ (x >>> 7);
+        return (x << 63 | x >>> 1) ^ (x << 56 | x >>> 8) ^ x >>> 7;
     }
 
     private static long sigma1(final long x) {
-        return ((x << 45) | (x >>> 19)) ^ ((x << 3) | (x >>> 61)) ^ (x >>> 6);
+        return (x << 45 | x >>> 19) ^ (x << 3 | x >>> 61) ^ x >>> 6;
     }
 
     /* SHA-384 and SHA-512 Constants

@@ -141,7 +141,7 @@ public final class PrKdf extends Record {
 	    	fos.write(value);
 	    	fos.flush();
 	    	fos.close();
-	    	System.out.println("PrKDF guardado en: " + tmpFile.getAbsolutePath()); //$NON-NLS-1$
+	    	System.out.println("Se ha guardado el PrKDF en: " + tmpFile.getAbsolutePath()); //$NON-NLS-1$
     	}
     	catch(final Exception e) {
     		e.printStackTrace();

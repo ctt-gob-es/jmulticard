@@ -320,9 +320,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
         private static final long serialVersionUID = 816457144215238935L;
 
-        /** Contruye una Callback con una contrase&ntilda; preestablecida.
-         * @param password
-         *        Contrase&ntilde;a por defecto. */
+        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
+         * @param password Contrase&ntilde;a por defecto. */
         public CachePasswordCallback(final char[] password) {
             super(">", false); //$NON-NLS-1$
             this.setPassword(password);

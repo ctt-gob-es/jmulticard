@@ -138,15 +138,16 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     /** Respuesta al mensaje */
     private int answer;
 
-    /** Texto para el boton */
+    /** Texto para el bot&oacute;n */
     private static String cancellText = Messages.getString("PrincipalGUI.cancelar"); //$NON-NLS-1$
 
     /** Constructor.
-     * @param JDialog componente padre.
-     * @param modal modal
+     * @param componentParent componente padre.
+     * @param modal <code>true</code> si se desea que el di&aacute;logo sea modal,
+     *              <code>false</code> en caso contrario.
      * @param message mensaje
-     * @param title titulo
-     * @param typeMessage tipo de mensaje
+     * @param title T&iacute;tulo
+     * @param typeMessage Tipo de mensaje
      * @param isInputDialog indica sies una alerta de tipo input */
     private CustomDialog(final JDialog componentParent,
                          final boolean modal,
@@ -181,12 +182,12 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     }
 
     /** Constructor.
-     * @param JFrame componente padre.
+     * @param componentParent Componente padre para la modalidad.
      * @param modal modal
-     * @param message mensaje
-     * @param title titulo
-     * @param typeMessage tipo de mensaje
-     * @param isInputDialog indica sies una alerta de tipo input */
+     * @param message Mensaje del di&aacute;logo.
+     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param typeMessage Tipo de mensaje
+     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos. */
     private CustomDialog(final JFrame componentParent,
                          final boolean modal,
                          final String message,
@@ -200,18 +201,20 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     }
 
     /** Posici&oacute;n X inicial de la ventana dependiendo de la resoluci&oacute;n de pantalla.
+     * @param width Ancho de la ventana.
      * @return int Posici&oacute;n X */
     private static int getInitialX(final int width) {
         final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        return ((screenSize.width / 2) - (width / 2));
+        return screenSize.width / 2 - width / 2;
     }
 
     /** Posici&oacute;n Y inicial de la ventana dependiendo del sistema operativo y de la
      * resoluci&oacute;n de pantalla.
+     * @param height Alto de la ventana.
      * @return int Posici&oacute;n Y */
     private static int getInitialY(final int height) {
         final Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        return ((screenSize.height / 2) - (height / 2));
+        return screenSize.height / 2 - height / 2;
     }
 
     /** Metodo que inicializa los componentes de la alerta.
@@ -319,8 +322,8 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
         cons.gridx = 2;
         cons.gridy = 0;
         cons.gridwidth = 6;
-        cons.gridheight = (isInputDialog ? 2 : 3);
-        cons.weighty = (isInputDialog ? 0.35 : 0.65);
+        cons.gridheight = isInputDialog ? 2 : 3;
+        cons.weighty = isInputDialog ? 0.35 : 0.65;
         cons.weightx = 0.90;
         container.add(this.mainPanel, cons);
 
@@ -338,7 +341,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
         cons.gridy = 3;
         cons.gridwidth = 6;
         cons.gridheight = 1;
-        cons.weighty = (isInputDialog ? 0.65 : 0.35);
+        cons.weighty = isInputDialog ? 0.65 : 0.35;
         cons.weightx = 0.0;
         container.add(this.buttonsPanel, cons);
 
@@ -608,14 +611,15 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
 
     /** Muestra un di&aacute;logo de solicitud de contrase&ntilde;a.
      * @param componentParent Componente padre para la modalidad
-     * @param modal modal
-     * @param charSet filtro
-     * @param beep
-     * @param message mensaje a mostrar
-     * @param mnemonic tajo
-     * @param title titulo del dialogo
-     * @param typeMessage tipo de mensaje
-     * @return pass */
+     * @param modal <code>true</code> si se desea que el di&aacute;logo sea modal,
+     *              <code>false</code> en caso contrario.
+     * @param beep <code>true</code> si se desean usar sonidos como ayuda al usuario,
+     *             <code>false</code> en caso contrario.
+     * @param message Mensaje a mostrar.
+     * @param mnemonic Atajo de teclado.
+     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param typeMessage Tipo de mensaje
+     * @return Contrase&ntilde;a introducida por el usuario */
     public static char[] showInputPasswordDialog(final Component componentParent,
                                                  final boolean modal,
                                                  final boolean beep,

@@ -76,9 +76,7 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
      * en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
-	 * @param title T&iacute;tulo de la ventana gr&aacute;fica
-	 * @param parent Componente padre para la modalidad. Si se indica <code>null</code>
-	 *               se intenta hacer una modalidad a nivel de <i>toolkit</i> */
+	 * @param title T&iacute;tulo de la ventana gr&aacute;fica. */
 	private CommonPasswordCallback(final String prompt, final String title) {
 		super(prompt, true);
 		if (prompt == null) {
@@ -116,7 +114,6 @@ public final class CommonPasswordCallback extends PasswordCallback {
     }
 
 	/** Obtiene un di&aacute;logo de solicitd de PIN tras una introducci&oacute;n erronea.
-	 * @param parent Componente padre para la modalidad
 	 * @param retriesLeft Intentos restantes antes de bloquear el DNIe
 	 * @return <i>PasswordCallback</i> de solicitd de PIN */
 	public static PasswordCallback getDnieBadPinPasswordCallback(final int retriesLeft) {
@@ -127,7 +124,6 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	}
 
 	/** Obtiene un di&aacute;logo de solicitd de PIN para realizar una lectura de certificados.
-	 * @param parent Componente padre para la modalidad
 	 * @return <i>PasswordCallback</i> de solicitd de PIN */
 	public static PasswordCallback getDniePinForCertificateReadingPasswordCallback() {
 		return new CommonPasswordCallback(

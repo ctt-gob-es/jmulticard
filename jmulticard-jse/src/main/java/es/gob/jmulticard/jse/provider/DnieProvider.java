@@ -84,7 +84,8 @@ public final class DnieProvider extends Provider {
 
     /** Obtiene de forma est&aacute;tica el tipo de conexi&oacute;n de APDU que debe usar el <i>keyStore</i>.
      * Si es nula (se ha invocado al constructor por defecto), es el propio <code>KeyStore</code> el que decide que
-     * conexi&oacute;n usar. */
+     * conexi&oacute;n usar.
+     * @return Conexi&oacute;n por defecto */
     static ApduConnection getDefaultApduConnection() {
     	return defaultConnection;
     }
