@@ -128,8 +128,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private DniePrivateKeyReference authKeyRef;
     private DniePrivateKeyReference signKeyRef;
 
-    private boolean needsRealCertificates = false;
-
     /** Manejador de funciones criptograficas. */
     private CryptoHelper cryptoHelper = null;
 
@@ -328,7 +326,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         // Si no estamos en Modo Rapido, nos aseguramos de que este cargados
         // los certificados de verdad
-        if (this.needsRealCertificates) {
+        if (this.authCert == null) {
             loadCertificates();
         }
 
@@ -466,7 +464,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** {@inheritDoc} */
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
-        this.needsRealCertificates = true;
         if (AUTH_CERT_ALIAS.equals(alias)) {
             return this.authKeyRef;
         }
