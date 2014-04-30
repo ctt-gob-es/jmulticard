@@ -39,7 +39,8 @@
  */
 package es.gob.jmulticard.card;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import es.gob.jmulticard.HexUtils;
@@ -55,7 +56,7 @@ public final class Location {
 
     private Vector<Integer> path = new Vector<Integer>();
 
-    private static final Hashtable<String, Integer> HEXBYTES = new Hashtable<String, Integer>();
+    private static final Map<String, Integer> HEXBYTES = new HashMap<String, Integer>();
 
     static {
         final String hex[] = {
