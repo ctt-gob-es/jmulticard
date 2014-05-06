@@ -127,7 +127,6 @@ public final class SelectFileApduResponse extends ResponseApdu {
     /** {@inheritDoc} */
     @Override
     public boolean isOk() {
-        this.getBytesFromData(this.getData().length - 2, 2);
         return super.isOk() && this.getData()[0] == (byte) 0x6F && this.getData().length > 2;
     }
 
