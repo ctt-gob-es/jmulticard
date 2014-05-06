@@ -2,7 +2,6 @@ package es.gob.jmulticard;
 
 import java.util.Arrays;
 
-import test.es.gob.jmulticard.CachePasswordCallback;
 import es.gob.jmulticard.card.gemalto.tuir5.TuiR5;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
