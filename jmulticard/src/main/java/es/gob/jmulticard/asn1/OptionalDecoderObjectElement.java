@@ -12,9 +12,9 @@ public final class OptionalDecoderObjectElement {
 	 * @param opt <code>true</code> si este elemento es opcional dentro de un objeto compuesto,
 	 *            <code>false</code> en caso contrario */
 	public OptionalDecoderObjectElement(final Class<? extends DecoderObject> type, final boolean opt) {
-		if (type == null) {
+		if (type == null && !opt) {
 			throw new IllegalArgumentException(
-				"El tipo de elemento ASN.1 no puede ser nulo" //$NON-NLS-1$
+				"El tipo de elemento ASN.1 no puede ser nulo cuando el elemento no es opcional" //$NON-NLS-1$
 			);
 		}
 		this.elementType = type;
