@@ -143,24 +143,31 @@ public abstract class Iso7816FourCard extends SmartCard {
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero
-	 * @throws FileNotFoundException Si el ficheo no existe
-     * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n */
-    public void selectFileByName(final String name) throws ApduConnectionException, FileNotFoundException {
+	 * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
+	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
+    public void selectFileByName(final String name) throws ApduConnectionException,
+                                                           Iso7816FourCardException {
     	selectFileByName(name.getBytes());
     }
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero en hexadecimal
-	 * @throws FileNotFoundException Si el ficheo no existe
-     * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n */
-    public void selectFileByName(final byte[] name) throws ApduConnectionException, FileNotFoundException {
-    	final ResponseApdu response = this.getConnection().transmit(new SelectDfByNameApduCommand(this.getCla(), name));
+	 * @throws FileNotFoundException Si el fichero no existe
+     * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
+	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
+    public void selectFileByName(final byte[] name) throws ApduConnectionException,
+                                                           FileNotFoundException,
+                                                           Iso7816FourCardException {
+    	final CommandApdu selectCommand = new SelectDfByNameApduCommand(this.getCla(), name);
+    	final ResponseApdu response = sendArbitraryApdu(selectCommand);
     	if (response.isOk()) {
     		return;
     	}
-    	if (HexUtils.arrayEquals(response.getBytes(), new byte[] { (byte) 0x6a, (byte) 0x82})) {
-    		throw new FileNotFoundException(name);
-    	}
+        final StatusWord sw = response.getStatusWord();
+        if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
+            throw new FileNotFoundException(name);
+        }
+        throw new Iso7816FourCardException(sw, selectCommand);
     }
 
     /** Selecciona un fichero (DF o EF).
@@ -169,7 +176,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero */
     public int selectFileById(final byte[] id) throws ApduConnectionException, Iso7816FourCardException {
-		final ResponseApdu res = this.getConnection().transmit(new SelectFileByIdApduCommand(this.getCla(), id));
+    	final CommandApdu selectCommand = new SelectFileByIdApduCommand(this.getCla(), id);
+		final ResponseApdu res = this.getConnection().transmit(selectCommand);
     	if (HexUtils.arrayEquals(res.getBytes(), new byte[] { (byte) 0x6a, (byte) 0x82 })) {
     		throw new FileNotFoundException(id);
     	}
@@ -181,7 +189,7 @@ public abstract class Iso7816FourCard extends SmartCard {
         if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
             throw new FileNotFoundException(id);
         }
-        throw new Iso7816FourCardException(sw);
+        throw new Iso7816FourCardException(sw, selectCommand);
     }
 
     /** Selecciona un fichero y lo lee por completo.
@@ -225,8 +233,9 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     /** Selecciona el fichero maestro.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws FileNotFoundException Si no se encuentra el MF */
-    protected abstract void selectMasterFile() throws ApduConnectionException, FileNotFoundException;
+     * @throws FileNotFoundException Si no se encuentra el MF
+     * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa */
+    protected abstract void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException;
 
     /** Establece una clave p&uacute;blica para la la verificaci&oacute;n posterior de
      * un certificado emitido por otro al que pertenece esta clave.

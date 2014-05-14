@@ -85,7 +85,6 @@ import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
-import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico.
@@ -635,7 +634,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     }
 
 	@Override
-    protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException {
+    protected void selectMasterFile() throws ApduConnectionException, Iso7816FourCardException {
     	selectFileByName(MASTER_FILE_NAME);
     }
 

@@ -175,7 +175,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
         }
     }
 
-    private void selectPkcs15Applet() throws ApduConnectionException, InvalidCardException {
+    private void selectPkcs15Applet() throws ApduConnectionException, InvalidCardException, Iso7816FourCardException {
     	// Seleccionamos el Applet TUI, probando los identificadores conocidos
     	for (final byte[] aid : APPLETS_AIDS) {
     		try {
