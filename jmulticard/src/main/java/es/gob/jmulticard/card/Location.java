@@ -77,20 +77,6 @@ public final class Location {
         init(absolutePath);
     }
 
-    /** Constructor de la clase Location.
-     * @param absolutePath Ruta absoluta donde se encuentra el fichero
-     * @param pathSeparator Caracter separador de identificadores de ficheros */
-    public Location(final String absolutePath, final char pathSeparator) {
-        final StringBuffer auxPathVar = new StringBuffer();
-
-        for (int i = 0; i < absolutePath.length(); i++) {
-            if (absolutePath.charAt(i) != pathSeparator) {
-                auxPathVar.append(absolutePath.charAt(i));
-            }
-        }
-        init(auxPathVar.toString());
-    }
-
     /** Constructor privado. Necesario para algunas operaciones internas.
      * @param path Ruta asociada */
     private Location(final Vector<Integer> path) {
