@@ -279,7 +279,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
         }
         catch (final Exception e) {
-            throw new IllegalStateException("No se ha podido cargar el CDF de la tarjeta: " + e.toString()); //$NON-NLS-1$
+            throw new IllegalStateException("No se ha podido cargar el CDF de la tarjeta: " + e.toString(), e); //$NON-NLS-1$
         }
 
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
