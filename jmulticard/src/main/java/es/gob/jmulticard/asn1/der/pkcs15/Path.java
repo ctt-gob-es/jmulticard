@@ -81,4 +81,9 @@ public final class Path extends Sequence {
 		return HexUtils.hexify(((OctectString)getElementAt(0)).getOctectStringByteValue(), false);
 	}
 
+	@Override
+	public String toString() {
+		return new String(((OctectString)getElementAt(0)).getOctectStringByteValue());
+	}
+
 }
