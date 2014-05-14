@@ -207,6 +207,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
                                                         InvalidCardException,
                                                         BurnedDnieCardException {
         super((byte) 0x00, conn);
+        conn.reset();
         connect(conn);
 
         this.passwordCallback = pwc;
@@ -276,7 +277,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         final Cdf cdf = new Cdf();
         try {
         	selectMasterFile();
-            cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
+        	final byte[] cdfBytes = selectFileByLocationAndRead(CDF_LOCATION);
+            cdf.setDerValue(cdfBytes);
         }
         catch (final Exception e) {
             throw new IllegalStateException("No se ha podido cargar el CDF de la tarjeta: " + e.toString(), e); //$NON-NLS-1$
