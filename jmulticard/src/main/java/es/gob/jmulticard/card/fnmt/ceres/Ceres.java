@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.fnmt.ceres;
+	package es.gob.jmulticard.card.fnmt.ceres;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +13,9 @@ import java.util.zip.Inflater;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.ceres.CeresVerifyApduCommand;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -33,8 +36,6 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
-	private final PasswordCallback passwordCallback;
-
 	private static final byte CLA = (byte) 0x00;
 
     private static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
@@ -43,18 +44,19 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     /** Nombre del Fichero Maestro. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
+    /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
+    private final static byte ERROR_PIN_SW1 = (byte) 0x63;
+
     private Map<String, X509Certificate> certs;
-    private Map<String, String> keys;
+    private Map<String, Location> keys;
 
 	/** Construye una clase que representa una tarjeta FNMT-RCM CERES.
 	 * @param conn Conexi&oacute;n con la tarjeta.
-	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la tarjeta.
 	 * @throws ApduConnectionException Si hay problemas con la conexi&oacute;n proporcionada.
 	 * @throws InvalidCardException Si la tarjeta conectada no es una FNMT-RCM CERES.
 	 */
-	public Ceres(final ApduConnection conn, final PasswordCallback pwc) throws ApduConnectionException, InvalidCardException {
+	public Ceres(final ApduConnection conn) throws ApduConnectionException, InvalidCardException {
 		super(CLA, conn);
-		this.passwordCallback = pwc;
 		getConnection().open();
 		try {
 			preload();
@@ -101,12 +103,11 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     			"El numero de claves de la tarjeta (" + prkdf.getKeyCount() + ") no coincide con el de certificados (" + this.certs.size() + ")" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
         }
-        this.keys = new LinkedHashMap<String, String>(this.certs.size());
+        this.keys = new LinkedHashMap<String, Location>(this.certs.size());
         final String[] aliases = getAliases();
         for (int i=0; i<this.certs.size(); i++) {
-        	this.keys.put(aliases[i], prkdf.getKeyPath(i));
+        	this.keys.put(aliases[i], new Location(prkdf.getKeyPath(i).replace("\\", "").trim())); //$NON-NLS-1$ //$NON-NLS-2$
         }
-
 	}
 
 	@Override
@@ -121,8 +122,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
-		// TODO Auto-generated method stub
-		return null;
+		return new CeresPrivateKeyReference(this.keys.get(alias));
 	}
 
 	@Override
@@ -138,8 +138,13 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	@Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
-		// TODO Auto-generated method stub
-
+		final CommandApdu chv = new CeresVerifyApduCommand(CLA, pinPc);
+		final ResponseApdu verifyResponse = sendArbitraryApdu(chv);
+        if (!verifyResponse.isOk()) {
+            if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
+            	throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
+            }
+        }
 	}
 
 	@Override
