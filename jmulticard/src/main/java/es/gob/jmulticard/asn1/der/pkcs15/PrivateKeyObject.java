@@ -43,6 +43,18 @@ package es.gob.jmulticard.asn1.der.pkcs15;
  * <pre>
  *  PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
  *    CommonKeyAttributes,
+ *    CommonPrivateKeyAttributes,
+ *    KeyAttributes
+ *  }
+ * </pre>
+ * Que en el caso de claves privadas RSA (instanciando como
+ * <code>PrivateKeyObject {PrivateRSAKeyAttributes}</code>) y deshaciendo <code>PKCS15Object</code>
+ * en su secuencia queda la estructura:
+ * <pre>
+ *  PrivateKeyObject {PrivateRSAKeyAttributes} ::= SEQUENCE {
+ *    CommonObjectAttributes,
+ *    CommonKeyAttributes,
+ *    CommonPrivateKeyAttributes,
  *    PrivateRsaKeyAttributes
  *  }
  * </pre>
@@ -54,6 +66,7 @@ public final class PrivateKeyObject extends Pkcs15Object {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
 			CommonKeyAttributes.class,
+			null,
 			PrivateRsaKeyAttributesContextSpecific.class
 		);
 	}

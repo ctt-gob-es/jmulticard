@@ -46,11 +46,13 @@ import es.gob.jmulticard.asn1.der.Sequence;
 /** Tipo ASN.1 PKCS#15 <i>CommonKeyAttributes</i>.
  * <pre>
  *  CommonKeyAttributes ::= SEQUENCE {
- *    iD    Identifier,
- *    usage   KeyUsageFlags,
- *    native  BOOLEAN OPTIONAL,
- *    accessFlags  KeyAccessFlags,
- *    keyReference Reference
+ *    iD           Identifier,
+ *    usage        KeyUsageFlags,
+ *    native       BOOLEAN OPTIONAL,
+ *    accessFlags  KeyAccessFlags OPTIONAL,
+ *    keyReference Reference OPTIONAL,
+ *    startDate    GeneralizedTime OPTIONAL,
+ *    endDate      [0] GeneralizedTime OPTIONAL,
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */

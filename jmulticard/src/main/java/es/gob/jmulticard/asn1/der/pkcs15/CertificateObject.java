@@ -45,8 +45,19 @@ import java.math.BigInteger;
 /** Tipo PKCS#15 ASN.1 <i>CertificateObject</i> (<i>CertificateInfoObject</i> en ISO 7816-15).
  *  <pre>
  *    CertificateObject {CertAttributes} ::= PKCS15Object {
+ *      CommonCertificateAttributes,
+ *      NULL,
+ *      CertAttributes
+ *    }
+ *  </pre>
+ *  Que en el caso de un certificado X.509 se instancia como
+ *  <code>x509Certificate CertificateObject { X509CertificateAttributes }</code>,
+ *  quedando la estructura (secuencia deshaciendo el <code>PKCS15Object</code>):
+ *  <pre>
+ *    CertificateObject {X509CertificateAttributes} ::= SEQUENCE {
  *      CommonObjectAttributes,
  *      CommonCertificateAttributes,
+ *      NULL,
  *      X509CertificateAttributes
  *    }
  *  </pre>
@@ -58,6 +69,7 @@ public final class CertificateObject extends Pkcs15Object {
 		super(
 		//  CommonObjectAttributes (se hereda)
 			CommonCertificateAttributes.class,
+			null,
 			X509CertificateAttributesContextSpecific.class
 		);
 	}

@@ -162,7 +162,9 @@ public final class Cdf extends Record {
             sb.append(HexUtils.hexify(getCertificateIdentifier(index), true));
             sb.append("\n  Ruta PKCS#15: "); //$NON-NLS-1$
             sb.append(getCertificatePath(index));
-            sb.append('\n');
+			if (index != getCertificateCount() -1) {
+				sb.append('\n');
+			}
         }
         return sb.toString();
     }

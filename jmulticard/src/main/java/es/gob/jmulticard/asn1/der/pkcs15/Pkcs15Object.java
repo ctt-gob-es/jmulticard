@@ -41,6 +41,7 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
+import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.Sequence;
 
 /** Tipo PKCS#15 ASN.1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
@@ -48,16 +49,20 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *  PKCS15Object ::= SEQUENCE {
  *      commonObjectAttributes CommonObjectAttributes,
  *      classAttributes ClassAttributes,
+ *      subclassAttributes SubclassAttributes OPTIONAL,
  *      typeAttributes [1] TypeAttributes
  *  }
  * </pre>
  * @author Gonzalo Henr&iacute;quez Manzano */
-abstract class Pkcs15Object extends Sequence {
+public abstract class Pkcs15Object extends Sequence {
 
     /** Construye un tipo PKCS#15 ASN.1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
+     * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
-	Pkcs15Object(final Class<? extends DecoderObject> classAttributes, final Class<? extends DecoderObject> typeAttributes) {
+	protected Pkcs15Object(final Class<? extends DecoderObject> classAttributes,
+			               final Class<? extends ContextSpecific> subclassAttributes,
+			               final Class<? extends ContextSpecific> typeAttributes) {
         super(
     		new OptionalDecoderObjectElement[] {
 				new OptionalDecoderObjectElement(
@@ -67,6 +72,10 @@ abstract class Pkcs15Object extends Sequence {
 				new OptionalDecoderObjectElement(
 					classAttributes,
 					false
+				),
+				new OptionalDecoderObjectElement(
+					subclassAttributes,
+					true
 				),
 				new OptionalDecoderObjectElement(
 					typeAttributes,
@@ -90,8 +99,11 @@ abstract class Pkcs15Object extends Sequence {
 
     /** Obtiene los atributos espec&iacute;ficos del tipo.
      * @return Atributos espec&iacute;ficos del tipo */
-    DecoderObject getTypeAttributes() {
-        return this.getElementAt(2);
+    public DecoderObject getTypeAttributes() {
+    	if (getElementCount() == 3) {
+    		return this.getElementAt(2);
+    	}
+    	return this.getElementAt(3);
     }
 
 }

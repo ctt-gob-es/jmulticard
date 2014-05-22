@@ -59,8 +59,8 @@ public class PrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
 			throw new Asn1Exception(
-				"Se esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
-				" pero se ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+				"PrivateRsaKeyAttributesContextSpecific esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
+				" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
 			);
 		}
 	}
