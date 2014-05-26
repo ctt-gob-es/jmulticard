@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -68,7 +68,7 @@ final class JSecurePasswordLabel extends JLabel {
 	    return this.pass;
 	}
 	private final int maxChars;
-	private int passwordLength;
+	int passwordLength;
 	private Timer timer;
 	Timer getTimer() {
 	    return this.timer;
@@ -92,7 +92,7 @@ final class JSecurePasswordLabel extends JLabel {
 			 * @return Si el caracter es o no v&aacute;lido. */
 			private boolean isValid(final char c){
 				// Letras y numeros
-				if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+				if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
 					return true;
 				}
 				// Especiales permitidos
@@ -105,7 +105,7 @@ final class JSecurePasswordLabel extends JLabel {
 			@Override
 			public void keyTyped(final KeyEvent ke) {
 				//Caracteres validos password
-				if (isValid(ke.getKeyChar()) && (getPasswordLength() < getMaxChars())) {
+				if (isValid(ke.getKeyChar()) && getPasswordLength() < getMaxChars()) {
 					JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
 					ke.setKeyChar('\0');
 				}
@@ -212,10 +212,10 @@ final class JSecurePasswordLabel extends JLabel {
 	 * Setter privado para el campo showCursor que indica si ha de mostrarse el cursor o no
 	 * @param show Si ha de mostrarse el cursor o no
 	 */
-	synchronized void setShowCursor(boolean show){
+	synchronized void setShowCursor(final boolean show){
 		this.showCursor = show;
 	}
-	
+
 	/**
 	 * Getter privado para el campo showCursor que indica si ha de mostrarse el cursor o no
 	 * @return Si ha de mostrarse el cursor o no

@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -41,6 +41,7 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import java.math.BigInteger;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.x509.RdnSequence;
@@ -62,24 +63,44 @@ public final class X509CertificateAttributes extends Sequence {
 
 	/** Crea un objeto ASN.1 PKCS#15 <i>X509CertificateAttributes</i>. */
 	public X509CertificateAttributes() {
-		super(new Class[] {
-			Path.class,
-			RdnSequence.class,
-			CertificateIssuerContextSpecific.class,
-			DerInteger.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				new OptionalDecoderObjectElement(
+					Path.class,
+					false
+				),
+				new OptionalDecoderObjectElement(
+					RdnSequence.class,
+					true
+				),
+				new OptionalDecoderObjectElement(
+					CertificateIssuerContextSpecific.class,
+					true
+				),
+				new OptionalDecoderObjectElement(
+					DerInteger.class,
+					true
+				)
+			}
+		);
 	}
 
     /** Proporciona el nombre X.500 del emisor del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getIssuer() {
-        return getElementAt(2).toString();
+    	if (getElementCount() > 2) {
+    		return getElementAt(2).toString();
+    	}
+    	return null;
     }
 
     /** Proporciona el nombre X.500 del titular del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getSubject() {
-        return getElementAt(1).toString();
+    	if (getElementCount() > 1) {
+    		return getElementAt(1).toString();
+    	}
+    	return null;
     }
 
     /** Devuelve la ruta del certificado.
@@ -91,7 +112,10 @@ public final class X509CertificateAttributes extends Sequence {
     /** Obtiene el n&uacute;mero de serie del Certificado.
      * @return N&uacute;mero de serie del Certificado */
     BigInteger getSerialNumber() {
-    	return ((DerInteger)getElementAt(3)).getIntegerValue();
+    	if (getElementCount() > 3) {
+    		return ((DerInteger)getElementAt(3)).getIntegerValue();
+    	}
+    	return null;
     }
 
     /** {@inheritDoc} */

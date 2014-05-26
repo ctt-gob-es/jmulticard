@@ -39,8 +39,8 @@ package es.inteco.labs.android.usb.device;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.SystemClock;
+import android.util.Log;
 import es.gob.jmulticard.HexUtils;
-import es.inteco.labs.android.usb.CCIDUsbLogger;
 import es.inteco.labs.android.usb.device.ccid.instruction.UsbCommand;
 import es.inteco.labs.android.usb.device.ccid.instruction.UsbInstructionFactory;
 import es.inteco.labs.android.usb.device.ccid.response.UsbResponse;
@@ -63,17 +63,12 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	private int flag_transmit_retries = 0;
 	private int flag_reconnect_channel = 0;
 
-	/**
-	 * Constructor
-	 * @param usbDev
-	 * @param usbDeviceCon
-	 * @throws UsbDeviceException
-	 */
-	protected SmartCardUsbDevice(final UsbManager usbManager, final UsbDevice usbDev) throws UsbDeviceException {
+	/** Constructor.
+	 * @param usbDev Lector de tarjetas USB CCID.
+	 * @param usbManager Gestor de dispositivos USB de Android
+	 * @throws UsbDeviceException */
+	public SmartCardUsbDevice(final UsbManager usbManager, final UsbDevice usbDev) throws UsbDeviceException {
 		super(usbManager, usbDev);
-		if(!isCardReader()){
-			throw new UsbDeviceException("Este dispositivo no es un lector de tarjetas"); //$NON-NLS-1$
-		}
 	}
 
 	/** Indica si la tarjeta est&aacute; presente en el lector de tarjetas.
@@ -88,11 +83,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 		catch (final UsbCommandTransmissionException e) {
 			this.close();
 			this.channel = this.open();
-			CCIDUsbLogger.e(e.getMessage());
+			Log.w("es.gob.afirma", "Error de transmision USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbDeviceException e) {
-			CCIDUsbLogger.e(e.getMessage());
+			Log.w("es.gob.afirma", "Error en dispositivo USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbSmartCardChannelException e) {
@@ -115,11 +110,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 		catch (final UsbCommandTransmissionException e) {
 			this.close();
 			this.channel = this.open();
-			CCIDUsbLogger.e(e.getMessage());
+			Log.w("es.gob.afirma", "Error de transmision USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbDeviceException e) {
-			CCIDUsbLogger.e(e.getMessage());
+			Log.w("es.gob.afirma", "Error en dispositivo USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbSmartCardChannelException e) {
@@ -188,7 +183,6 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 		}
 		catch (final UsbSmartCardChannelException e) {
 			// Es necesario reconectar
-			CCIDUsbLogger.w(e);
 			if(this.flag_reconnect_channel++ < MAX_RECONNECT_CHANNEL_RETRIES) {
 				releaseChannel();
 				return resetCCID();
@@ -215,7 +209,6 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 		}
 		catch (final UsbCommandTransmissionException e) {
 			// Es necesario reconectar
-			CCIDUsbLogger.w(e);
 			if(this.flag_transmit_retries++ < MAX_TRANSMIT_RETRIES) {
 				SystemClock.sleep(RETRY_TIMEOUT);
 				return transmit(apdu);
@@ -226,7 +219,6 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 			throw new UsbDeviceException(e);
 		}
 		catch (final UsbSmartCardChannelException e) {
-			CCIDUsbLogger.w(e);
 			if(this.flag_reconnect_channel++ < MAX_RECONNECT_CHANNEL_RETRIES) {
 				releaseChannel();
 				return transmit(apdu);
@@ -245,13 +237,12 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	/** Abre la conexi&oacute;n con un dispositivo SmartCard.
 	 * @return Conexi&oacute;n con un dispositivo SmartCard
 	 * @throws NotAvailableUSBDeviceException */
-	public SmartCardChannel open() throws NotAvailableUSBDeviceException{
+	public SmartCardChannel open() throws NotAvailableUSBDeviceException {
 		try {
 			return this.getChannel();
 		}
 		catch (final UsbDeviceException e) {
-			CCIDUsbLogger.e(e);
-			return null;
+			throw new NotAvailableUSBDeviceException("Error en la apertura del canal: " + e, e); //$NON-NLS-1$
 		}
 	}
 

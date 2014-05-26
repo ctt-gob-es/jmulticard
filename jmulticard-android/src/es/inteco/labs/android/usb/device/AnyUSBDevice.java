@@ -40,12 +40,11 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
-import es.inteco.labs.android.usb.CCIDUsbLogger;
 import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
 
 /** Dispositivo USB conectado.
  * @author Jose Luis Escanciano Garcia */
-public class AnyUSBDevice {
+class AnyUSBDevice {
 
 	private final UsbManager usbManager;
 	private final UsbDevice usbDevice;
@@ -53,10 +52,9 @@ public class AnyUSBDevice {
 	private UsbInterface usbInterface;
 
 	/** Constructor.
-	 * @param usbDev
-	 * @param usbDeviceCon
-	 * @throws UsbDeviceException
-	 */
+	 * @param usbDev Dispositivo USB
+	 * @param UsbManager Gestor de dispositivos USB de Android
+	 * @throws UsbDeviceException */
 	protected AnyUSBDevice(final UsbManager usbMan, final UsbDevice usbDev) throws UsbDeviceException {
 		super();
 
@@ -95,21 +93,6 @@ public class AnyUSBDevice {
 			this.usbDeviceConnection.close();
 			this.usbDeviceConnection = null;
 		}
-	}
-
-	/** Indica si el dispositivo es un lector de tarjetas.
-	 * @return <code>true</code> si es un dispositivo CCID, <code>false</code> en caso contrario */
-	public boolean isCardReader() {
-		//SmartCard Device Class: http://www.usb.org/developers/defined_class/#BaseClass00h
-		//SmartCard Interface Class: http://www.usb.org/developers/defined_class/#BaseClass0Bh
-		if(this.usbDevice.getDeviceClass() == 0x00){
-			if(this.usbInterface != null && this.usbInterface.getInterfaceClass() == 0x0B){
-				CCIDUsbLogger.d(new String("Lector de SmartCard: " + getDeviceName())); //$NON-NLS-1$
-				return true;
-			}
-		}
-		CCIDUsbLogger.d(new String("Este dispositivo no es un lector de tarjetas: " + getDeviceName())); //$NON-NLS-1$
-		return false;
 	}
 
 	protected UsbDevice getUsbDevice(){

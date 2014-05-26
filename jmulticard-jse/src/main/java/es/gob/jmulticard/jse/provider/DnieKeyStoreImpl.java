@@ -66,6 +66,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
@@ -73,7 +74,6 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Implementaci&oacute;n del SPI KeyStore para DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -232,15 +232,42 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	if (param != null) {
        		throw new IllegalArgumentException("El LoadStoreParameter siempre debe ser null, la contrasena se gestiona internamente"); //$NON-NLS-1$
     	}
-    	this.cryptoCard = new Dnie(new SmartcardIoConnection(), null, new JseCryptoHelper());
+    	// Ponemos la conexion por defecto
+    	final ApduConnection conn;
+    	try {
+	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
+				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").newInstance() : //$NON-NLS-1$
+					DnieProvider.getDefaultApduConnection();
+    	}
+    	catch(final Exception e) {
+    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
+    	}
+    	this.cryptoCard = new Dnie(
+			conn,
+			null,
+			new JseCryptoHelper()
+		);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void engineLoad(final InputStream stream, final char[] password) throws IOException, NoSuchAlgorithmException, CertificateException {
+    public void engineLoad(final InputStream stream, final char[] password) throws IOException,
+                                                                                   NoSuchAlgorithmException,
+                                                                                   CertificateException {
+    	// Ponemos la conexion por defecto
+    	final ApduConnection conn;
+    	try {
+	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
+				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").newInstance() : //$NON-NLS-1$
+					DnieProvider.getDefaultApduConnection();
+    	}
+    	catch(final Exception e) {
+    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
+    	}
+
         // Aqui se realiza el acceso e inicializacion del DNIe
         this.cryptoCard = new Dnie(
-    		new SmartcardIoConnection(),
+    		conn,
     		password != null ?
     				new CachePasswordCallback(password) :
     					null,
@@ -293,9 +320,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
         private static final long serialVersionUID = 816457144215238935L;
 
-        /** Contruye una Callback con una contrase&ntilda; preestablecida.
-         * @param password
-         *        Contrase&ntilde;a por defecto. */
+        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
+         * @param password Contrase&ntilde;a por defecto. */
         public CachePasswordCallback(final char[] password) {
             super(">", false); //$NON-NLS-1$
             this.setPassword(password);

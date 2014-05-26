@@ -57,22 +57,16 @@ import es.gob.jmulticard.apdu.iso7816four.ReadBinaryApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectDfByNameApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
-import es.gob.jmulticard.apdu.iso7816four.VerifyApduCommand;
-import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.SmartCard;
-import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
 /** Tarjeta compatible ISO-7816-4.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez */
 public abstract class Iso7816FourCard extends SmartCard {
 
-    /** Byte que identifica una verificaci&oacute;n fallida del PIN */
-    private final static byte ERROR_PIN_SW1 = (byte) 0x63;
-
-    private static final boolean PIN_AUTO_RETRY = true;
+    private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU
@@ -95,11 +89,16 @@ public abstract class Iso7816FourCard extends SmartCard {
      *        fichero
      * @param readLength Longitud de los datos a leer (en octetos)
      * @return APDU de respuesta
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU */
-    private ResponseApdu readBinary(final byte msbOffset, final byte lsbOffset, final byte readLength) throws ApduConnectionException {
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
+     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
+     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
+    private ResponseApdu readBinary(final byte msbOffset, final byte lsbOffset, final byte readLength) throws ApduConnectionException, RequiredSecurityStateNotSatisfiedException {
     	final ResponseApdu res = this.getConnection().transmit(new ReadBinaryApduCommand(this.getCla(), msbOffset, lsbOffset, readLength));
         if (res.isOk()) {
         	return res;
+        }
+        if (UNSATISFIED_SECURITY_STATE.equals(res.getStatusWord())) {
+        	throw new RequiredSecurityStateNotSatisfiedException(res.getStatusWord());
         }
         throw new ApduConnectionException("Respuesta invalida en la lectura de binario con el codigo: " + res.getStatusWord()); //$NON-NLS-1$
     }
@@ -108,8 +107,10 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @param len Longitud del fichero a leer
      * @return APDU de respuesta
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws IOException Si hay problemas en el buffer de lectura */
-    public byte[] readBinaryComplete(final int len) throws IOException {
+     * @throws IOException Si hay problemas en el buffer de lectura
+     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
+     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
+    public byte[] readBinaryComplete(final int len) throws IOException, RequiredSecurityStateNotSatisfiedException {
 
         int off = 0;
         ResponseApdu readResponse;
@@ -142,16 +143,31 @@ public abstract class Iso7816FourCard extends SmartCard {
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero
-	 * @throws FileNotFoundException Si el ficheo no existe
-     * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n */
-    public void selectFileByName(final String name) throws ApduConnectionException, FileNotFoundException {
-    	final ResponseApdu response = this.getConnection().transmit(new SelectDfByNameApduCommand(this.getCla(), name.getBytes()));
+	 * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
+	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
+    public void selectFileByName(final String name) throws ApduConnectionException,
+                                                           Iso7816FourCardException {
+    	selectFileByName(name.getBytes());
+    }
+
+	/** Selecciona un fichero por nombre.
+	 * @param name Nombre del fichero en hexadecimal
+	 * @throws FileNotFoundException Si el fichero no existe
+     * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
+	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
+    public void selectFileByName(final byte[] name) throws ApduConnectionException,
+                                                           FileNotFoundException,
+                                                           Iso7816FourCardException {
+    	final CommandApdu selectCommand = new SelectDfByNameApduCommand(this.getCla(), name);
+    	final ResponseApdu response = sendArbitraryApdu(selectCommand);
     	if (response.isOk()) {
     		return;
     	}
-    	if (HexUtils.arrayEquals(response.getBytes(), new byte[] { (byte) 0x6a, (byte) 0x82})) {
-    		throw new FileNotFoundException(name);
-    	}
+        final StatusWord sw = response.getStatusWord();
+        if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
+            throw new FileNotFoundException(name);
+        }
+        throw new Iso7816FourCardException(sw, selectCommand);
     }
 
     /** Selecciona un fichero (DF o EF).
@@ -160,7 +176,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero */
     public int selectFileById(final byte[] id) throws ApduConnectionException, Iso7816FourCardException {
-		final ResponseApdu res = this.getConnection().transmit(new SelectFileByIdApduCommand(this.getCla(), id));
+    	final CommandApdu selectCommand = new SelectFileByIdApduCommand(this.getCla(), id);
+		final ResponseApdu res = this.getConnection().transmit(selectCommand);
     	if (HexUtils.arrayEquals(res.getBytes(), new byte[] { (byte) 0x6a, (byte) 0x82 })) {
     		throw new FileNotFoundException(id);
     	}
@@ -172,7 +189,7 @@ public abstract class Iso7816FourCard extends SmartCard {
         if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
             throw new FileNotFoundException(id);
         }
-        throw new Iso7816FourCardException(sw);
+        throw new Iso7816FourCardException(sw, selectCommand);
     }
 
     /** Selecciona un fichero y lo lee por completo.
@@ -216,8 +233,9 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     /** Selecciona el fichero maestro.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws FileNotFoundException Si no se encuentra el MF */
-    protected abstract void selectMasterFile() throws ApduConnectionException, FileNotFoundException;
+     * @throws FileNotFoundException Si no se encuentra el MF
+     * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa */
+    protected abstract void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException;
 
     /** Establece una clave p&uacute;blica para la la verificaci&oacute;n posterior de
      * un certificado emitido por otro al que pertenece esta clave.
@@ -255,51 +273,6 @@ public abstract class Iso7816FourCard extends SmartCard {
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
      *                                  el n&uacute;mero m&aacute;ximo de intentos) */
-    public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
-    	verifyPin(pinPc, Integer.MAX_VALUE);
-    }
+    public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException;
 
-    /** Verifica el PIN de la tarjeta. El m&eacute;todo reintenta hasta que se introduce el PIN correctamente,
-     * se bloquea la tarjeta por exceso de intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
-     * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
-     * @param pinPc PIN de la tarjeta
-     * @param retriesLeft Intentos restantes que quedan antes de bloquear la tarjeta. Un valor de Integer.MAX_VALUE
-     *                    indica un valor desconocido
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado.
-     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
-    private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException, BadPinException {
-
-    	final PasswordCallback psc = pinPc != null ? pinPc : retriesLeft < Integer.MAX_VALUE ?
-    			CommonPasswordCallback.getDnieBadPinPasswordCallback(retriesLeft) :
-    				CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null);
-
-    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
-
-    	final ResponseApdu verifyResponse = this.getConnection().transmit(
-			verifyCommandApdu
-    	);
-    	verifyCommandApdu = null;
-
-        // Comprobamos si ocurrio algun error durante la verificacion del PIN para volverlo
-        // a pedir si es necesario
-    	psc.clearPassword();
-        if (!verifyResponse.isOk()) {
-            if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
-            	// Si no hay reintento automatico se lanza la excepcion
-            	if (!PIN_AUTO_RETRY) {
-            		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
-            	}
-            	// Si hay reintento automativo volvemos a pedir el PIN con la misma CallBack
-            	verifyPin(
-        			pinPc,
-        			verifyResponse.getStatusWord().getLsb() - (byte) 0xC0
-            	);
-            }
-            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
-            	throw new AuthenticationModeLockedException();
-            }
-        }
-    }
 }

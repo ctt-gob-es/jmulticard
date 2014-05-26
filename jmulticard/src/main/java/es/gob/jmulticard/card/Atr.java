@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -51,7 +51,7 @@ public final class Atr implements Serializable {
 
     /** Construye una respuesta al reset.
      * @param a ATR de la tarjeta
-     * @param m M&aacute;scara de comparaci&oacute;n del ATR para determinar modelo espec&iacite;fico
+     * @param m M&aacute;scara de comparaci&oacute;n del ATR para determinar modelo espec&iacute;fico
      *        de tarjeta */
     public Atr(final byte[] a, final byte[] m) {
         if (a == null || m == null) {
@@ -78,10 +78,10 @@ public final class Atr implements Serializable {
             return false;
         }
         final Atr tmpAtr = (Atr) o;
-        if (tmpAtr.getBytes().length != this.atrBytes.length) {
+        if (tmpAtr.getBytes().length > this.atrBytes.length) {
             return false;
         }
-        for (int i = 0; i < this.atrBytes.length; i++) {
+        for (int i=this.atrBytes.length-1; i<=0; i--) {
             if ((this.atrBytes[i] & this.mask[i]) != (tmpAtr.getBytes()[i] & this.mask[i])) {
                 return false;
             }
@@ -100,8 +100,8 @@ public final class Atr implements Serializable {
             return 0;
         }
         int result = 1;
-        for (int i = 0; i < a.length; i++) {
-            result = 31 * result + a[i];
+        for (final byte element : a) {
+            result = 31 * result + element;
         }
         return result;
     }

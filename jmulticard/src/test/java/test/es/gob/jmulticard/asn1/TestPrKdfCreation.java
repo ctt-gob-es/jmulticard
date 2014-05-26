@@ -6,7 +6,9 @@ import java.io.InputStream;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import es.gob.jmulticard.HexUtils;
+
+import org.junit.Test;
+
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 
 /** Prueba de creaci&oacute;n de PrKDK PKCS#15.
@@ -18,21 +20,24 @@ public class TestPrKdfCreation extends TestCase {
     private static final int BUFFER_SIZE = 4096;
 
     private static final String[] TEST_FILES = new String[] {
-        "PRKDF_TGM.BER" //$NON-NLS-1$
+        "PRKDF_TGM.BER", //$NON-NLS-1$
+        "PrKDF_2281552478270226931.der", //$NON-NLS-1$
+        "PrKDF_TUI_01.der" //$NON-NLS-1$
     };
 
     /** Prueba la creaci&oacute;n de PrKDK con volcados en disco.
      * @throws Exception en caso de cualquier tipo de error */
+    @Test
     public static void testPrKdf() throws Exception {
         byte[] prkdfdata;
-        for (int i = 0; i < TEST_FILES.length; i++) {
-            prkdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(TEST_FILES[i]));
-            LOGGER.info("\n\nPrKDF completo (" + Integer.toString(prkdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
-            LOGGER.info(HexUtils.hexify(prkdfdata, true));
+        for (final String element : TEST_FILES) {
+            prkdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
+            //LOGGER.info("\n\nPrKDF completo (" + Integer.toString(prkdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
+            //LOGGER.info(HexUtils.hexify(prkdfdata, true));
             final PrKdf prkdf = new PrKdf();
             Assert.assertNotNull(prkdf);
             prkdf.setDerValue(prkdfdata);
-            LOGGER.info("\n" + prkdf.toString()); //$NON-NLS-1$
+            LOGGER.info("\n" + prkdf.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

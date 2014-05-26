@@ -47,13 +47,9 @@ import es.inteco.labs.android.usb.device.ccid.response.UsbResponse;
 import es.inteco.labs.android.usb.device.exception.UsbCommandTransmissionException;
 import es.inteco.labs.android.usb.device.exception.UsbSmartCardChannelException;
 
-/**
- * Clase que representa el canal a través del cual se procesan las peticiones USB para un dispositivo concreto
- *
- * @author Jose Luis Escanciano Garcia
- *
- */
-public final class SmartCardChannel {
+/** Representa el canal a traves del cual se procesan las peticiones USB para un dispositivo concreto.
+ * @author Jose Luis Escanciano Garcia */
+final class SmartCardChannel {
 	private UsbEndpoint endPointIn;
 	private UsbEndpoint endPointOut;
 
@@ -64,11 +60,9 @@ public final class SmartCardChannel {
 	private static final int TIME_EXTENSION_RETRY_MS = 200;
 	private static final int TIMEOUT_MS = 5000;
 
-	/**
-	 * Constructor. Inicia los EndPoints del Interfaz del dispositivo
+	/** Constructor. Inicia los EndPoints del Interfaz del dispositivo
 	 * @param usbDevCon
-	 * @param usbInterface
-	 */
+	 * @param usbInterface */
 	protected SmartCardChannel(final UsbDeviceConnection usbDevCon, final UsbInterface usbInterface) {
 		this.usbDeviceConnection = usbDevCon;
 		for (int i = 0; i < usbInterface.getEndpointCount(); i++) {
@@ -89,11 +83,11 @@ public final class SmartCardChannel {
 	 * @return Respuesta USB al comando
 	 * @throws UsbCommandTransmissionException
 	 * @throws UsbSmartCardChannelException */
-	public UsbResponse transmit(final UsbCommand command) throws UsbCommandTransmissionException, UsbSmartCardChannelException{
-		//CCIDUsbLogger.d(command.getClass().getCanonicalName());
+	UsbResponse transmit(final UsbCommand command) throws UsbCommandTransmissionException, UsbSmartCardChannelException{
+
 		final int responseLength = MAX_SIZE_APDU_T0 + UsbResponse.USB_HEADER_BASE_SIZE;
 
-		//Se envía el comando
+		//Se envia el comando
 		usbSendCommand(command.getBytes());
 
 		//Se recoge la respuesta
@@ -107,7 +101,7 @@ public final class SmartCardChannel {
 			usbResponse = new UsbResponse(command, usbRetrieveResponse(responseLength));
 		}
 
-	    //Comprobar si la respuesta corresponde con la petición
+	    //Comprobar si la respuesta corresponde con la peticion
 	    if(command.getInstructionCount() != usbResponse.getSequenceNumber()){
 	    	//TODO: Si esto pasa, lo mejor es reiniciar la conexion con el dispositivo
 	    	throw new UsbSmartCardChannelException("El ID de secuencia del comando [" + command.getInstructionCount() + "] no coincide con el de la respuesta [" + usbResponse.getSequenceNumber() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -121,10 +115,7 @@ public final class SmartCardChannel {
 	 * @throws UsbCommandTransmissionException */
 	private void usbSendCommand(final byte[] data) throws UsbCommandTransmissionException {
 		final int dataTransferred = this.usbDeviceConnection.bulkTransfer(this.endPointOut, data, data.length, TIMEOUT_MS);
-		if(dataTransferred == 0 || dataTransferred==data.length){
-			//OK
-		}
-		else{
+		if(!(dataTransferred == 0 || dataTransferred==data.length)) {
 			throw new UsbCommandTransmissionException("Error al transmitir el comando [" + dataTransferred + " ; " + data.length + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}

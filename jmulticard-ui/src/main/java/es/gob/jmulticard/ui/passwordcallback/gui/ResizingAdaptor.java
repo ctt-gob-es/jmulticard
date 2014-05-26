@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -67,15 +67,13 @@ import javax.swing.border.TitledBorder;
 final class ResizingAdaptor extends ComponentAdapter {
     private final JAccessibilityCustomDialog theCustomDialog;
 
-    /** Constructor
-     * @param window
-     *        ventana a redimensionar */
+    /** Constructor.
+     * @param customDialog Di&aacute;logo a redimensionar */
     ResizingAdaptor(final JAccessibilityCustomDialog customDialog) {
         super();
         this.theCustomDialog = customDialog;
     }
 
-    /** Evento de redimensionado */
     @Override
     public void componentResized(final ComponentEvent e) {
         if (this.theCustomDialog != null) {
@@ -83,8 +81,8 @@ final class ResizingAdaptor extends ComponentAdapter {
         }
     }
 
-    /** Ajusta el tamano de fuente de una ventana
-     * @param components */
+    /** Ajusta el tama&ntilde;o de fuente de una ventana.
+     * @param components Componentes que conforman la ventana. */
     private void adjustFontSize(final Component[] components) {
         // Se calcula la relacion de aspecto para redimensionar el texto
         double relWidth;
@@ -114,7 +112,7 @@ final class ResizingAdaptor extends ComponentAdapter {
                     else {
                         resizeFactor = Math.round(relation / getResizingFactorFileChooser());
                     }
-                    actualComponent.setFont(actualComponent.getFont().deriveFont((getFontSize() + resizeFactor)));
+                    actualComponent.setFont(actualComponent.getFont().deriveFont(getFontSize() + resizeFactor));
                 }
                 else {
                     if (actualComponent instanceof JComboBox) {
@@ -131,14 +129,14 @@ final class ResizingAdaptor extends ComponentAdapter {
                     // Se comprueba si el panel tiene un nombre asignado
                     final String name = actualComponent.getName();
                     // Se hara el resize del titulo en el caso de que el componente no sea el panel de botones de accesibilidad de los alerts
-                    if ((name == null) || (!name.equalsIgnoreCase("AccessibilityButtonsPanel"))) { //$NON-NLS-1$
+                    if (name == null || !name.equalsIgnoreCase("AccessibilityButtonsPanel")) { //$NON-NLS-1$
                         final TitledBorder b = (TitledBorder) componentBorder;
                         final float resizeFactor = Math.round(relation / getResizingFactorFrame());
                         if (b.getTitleFont() != null) {
-                            b.setTitleFont(b.getTitleFont().deriveFont((getFontSize() - 2 + resizeFactor)));
+                            b.setTitleFont(b.getTitleFont().deriveFont(getFontSize() - 2 + resizeFactor));
                         }
                         else {
-                            b.setTitleFont(actualComponent.getFont().deriveFont((getFontSize() - 2 + resizeFactor)));
+                            b.setTitleFont(actualComponent.getFont().deriveFont(getFontSize() - 2 + resizeFactor));
                         }
                     }
                 }
@@ -182,9 +180,8 @@ final class ResizingAdaptor extends ComponentAdapter {
     }
 
     /** Devuelve el factor final de redimensionado de imagen.
-     * @param height altura
-     * @param factor factor
-     * @return factor final de redimensionado */
+     * @param factor Factor inicial de redimensionado.
+     * @return Factor final de redimensionado */
     private float getImageResizeFactor(final double factor) {
         float resizeFactor = 0;
         if (this.theCustomDialog != null) {
@@ -196,8 +193,8 @@ final class ResizingAdaptor extends ComponentAdapter {
     private static Image iconToImage(final Icon icon){
     	return iconToImage(icon, new Dimension(icon.getIconWidth(), icon.getIconWidth()));
     }
-    
-    private static Image iconToImage(final Icon icon, Dimension d) {
+
+    private static Image iconToImage(final Icon icon, final Dimension d) {
         if (icon instanceof ImageIcon) {
             return ((ImageIcon) icon).getImage();
         }
@@ -213,13 +210,18 @@ final class ResizingAdaptor extends ComponentAdapter {
         return image;
     }
 
-    /** Redimensiona una imagen
-     * @param factor factor de redimension
-     * @param c Componente de tipo JLabel en el que se encuentra la imagen
-     * @param w Width inicial de la imagen
-     * @para h Height inicial de la imagen
-     * @param multiplicando Valor de multiplicacion para el nuevo tamano de la imagen. Es mayor cuanto menor sea el tamano inicial de la imagen */
-    private static void resizeImage(final double factor, final Component c, final int w, final int h, final int multiplicando) {
+    /** Redimensiona una imagen.
+     * @param factor factor de redimensi&oacute;n.
+     * @param c Componente de tipo JLabel en el que se encuentra la imagen.
+     * @param w Ancho inicial de la imagen.
+     * @param h Alto inicial de la imagen.
+     * @param multiplicando Valor de multiplicaci&oacute;n para el nuevo tama&ntilde;o de la imagen.
+     *                      Es mayor cuanto menor sea el tama&ntilde;o inicial de la imagen. */
+    private static void resizeImage(final double factor,
+    		                        final Component c,
+    		                        final int w,
+    		                        final int h,
+    		                        final int multiplicando) {
         Image image = null;
         // Se comprueba si el componente es instancia de IconLabel
         if (c instanceof IconLabel) {
@@ -244,13 +246,13 @@ final class ResizingAdaptor extends ComponentAdapter {
         ImageIcon imageIcon = null;
 
         // Se almacena el factor
-        double factorAux = factor;
+        final double factorAux = factor;
 
         // Se comprueba si se trata del boton de ayuda
-        if ((button.getName() != null) && (button.getName().equalsIgnoreCase("maximizar"))) { //$NON-NLS-1$
+        if (button.getName() != null && button.getName().equalsIgnoreCase("maximizar")) { //$NON-NLS-1$
             imageIcon = Constants.IMAGEICON_MAXIMIZE; // Se carga la imagen original
         }
-        else if ((button.getName() != null) && (button.getName().equalsIgnoreCase("restaurar"))) { //$NON-NLS-1$
+        else if (button.getName() != null && button.getName().equalsIgnoreCase("restaurar")) { //$NON-NLS-1$
             imageIcon = Constants.IMAGEICONRESTORE; // Se carga la imagen original
         }
         else {
@@ -258,7 +260,7 @@ final class ResizingAdaptor extends ComponentAdapter {
         }
         // Se redimensionan las imagenes
         int lado = (int) Math.round(25 * 2 * factorAux);
-        lado = (lado < 25 ? 25 : lado);
+        lado = lado < 25 ? 25 : lado;
         final ImageIcon newImage = new ImageIcon(imageIcon.getImage().getScaledInstance(lado,
                                                                      lado,
                                                                      java.awt.Image.SCALE_SMOOTH));
@@ -267,8 +269,8 @@ final class ResizingAdaptor extends ComponentAdapter {
         button.setPreferredSize(new Dimension(lado, lado));
     }
 
-    /** Devuelve el tamano de la fuente en funcion de las opciones de accesibilidad
-     * @return */
+    /** Devuelve el tama&ntilde;o de la fuente en funcion de las opciones de accesibilidad.
+     * @return Tama&ntilde;o de la fuente en funcion de las opciones de accesibilidad. */
     private static float getFontSize() {
         if (GeneralConfig.isBigFontSize()) {
             return 16;
@@ -281,10 +283,10 @@ final class ResizingAdaptor extends ComponentAdapter {
      * @return Boolean que indica si el componente pasado como par&aacute;metro va a ser redimensionado. */
     private static boolean isResizable(final Component a) {
         boolean resizable = false;
-        resizable = resizable || (a instanceof JButton) || (a instanceof JLabel);
-        resizable = resizable || (a instanceof JTextField);
-        resizable = resizable || (a instanceof JPanel);
-        return resizable || (a instanceof JCheckBox);
+        resizable = resizable || a instanceof JButton || a instanceof JLabel;
+        resizable = resizable || a instanceof JTextField;
+        resizable = resizable || a instanceof JPanel;
+        return resizable || a instanceof JCheckBox;
     }
 
     /** Indica el factor de redimensionado que se aplicara en los componentes de un JFrame. Este metodo es util para aplicar factores distintos a

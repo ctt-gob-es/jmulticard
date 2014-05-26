@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -39,20 +39,30 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class PrKdf extends Record {
 
-	private static final int BUFFER_SIZE = 150;
-
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1. */
 	public PrKdf() {
-		super(new Class[] {
-			PrivateKeyObject.class,
-			PrivateKeyObject.class
-		});
+		super(
+			new OptionalDecoderObjectElement[] {
+				// Maximo 10 certificados
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, false),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObject.class, true)
+			}
+		);
 	}
 
 	/** Obtiene el n&uacute;mero de claves del PrKDF.
@@ -67,7 +77,7 @@ public final class PrKdf extends Record {
 	public String getKeyIdentifier(final int index) {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
-	
+
 	/** Obtiene el nombre de la clave indicada
 	 * @param index &Iacute;ndice de la clave
 	 * @return Nombre de la clave */
@@ -82,21 +92,53 @@ public final class PrKdf extends Record {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyPath();
 	}
 
+	/** Obtiene la longitud de la clave indicada.
+	 * @param index &Iacute;ndice de la clave
+	 * @return Longitud de la clave indicada */
+	public int getKeyLength(final int index) {
+		return ((PrivateKeyObject) getElementAt(index)).getKeyLength();
+	}
+
     /** {@inheritDoc} */
 	@Override
     public String toString() {
-		final StringBuffer sb = new StringBuffer(PrKdf.BUFFER_SIZE); 
+		final StringBuilder sb = new StringBuilder();
 		sb.append("Fichero de Descripcion de Claves Privadas:\n"); //$NON-NLS-1$
 		for (int index=0;index<getKeyCount();index++) {
 			sb.append(" Clave privada "); //$NON-NLS-1$
 			sb.append(Integer.toString(index));
 			sb.append("\n  Nombre de la clave: "); //$NON-NLS-1$
 			sb.append(getKeyName(index));
+			sb.append("\n  Longitud de la clave: "); //$NON-NLS-1$
+			sb.append(getKeyLength(index));
 			sb.append("\n  Ruta hacia la clave: "); //$NON-NLS-1$
 			sb.append(getKeyPath(index));
-			sb.append('\n');
+			if (index != getKeyCount() -1) {
+				sb.append('\n');
+			}
 		}
 		return sb.toString();
 	}
+
+//    /** Establece el valor (en codificaci&oacute;n DER) del objeto ASN.1.
+//     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN.1
+//     * @throws Asn1Exception Si no se puede decodificar adecuadamente el valor establecido
+//     * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada */
+//    @Override
+//	public void setDerValue(final byte[] value) throws Asn1Exception, TlvException {
+//    	super.setDerValue(value);
+//    	try {
+//	    	final java.io.File tmpFile = java.io.File.createTempFile("PrKDF-", ".asn1"); //$NON-NLS-1$ //$NON-NLS-2$
+//	    	final java.io.OutputStream fos = new java.io.FileOutputStream(tmpFile);
+//	    	fos.write(value);
+//	    	fos.flush();
+//	    	fos.close();
+//	    	System.out.println("Se ha guardado el PrKDF en: " + tmpFile.getAbsolutePath()); //$NON-NLS-1$
+//    	}
+//    	catch(final Exception e) {
+//    		e.printStackTrace();
+//    	}
+//
+//    }
 
 }

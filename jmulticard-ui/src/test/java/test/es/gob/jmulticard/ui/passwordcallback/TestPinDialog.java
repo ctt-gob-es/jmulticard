@@ -19,7 +19,7 @@ public class TestPinDialog {
     public void testPinInput() throws Exception {
         JOptionPane.showMessageDialog(null,
                                       "Redimensione el dialogo siguiente de introduccion de PIN, esciba caracteres hasta alcanzar el maximo, muestre y oculte los caracteres. Maximice y minimice"); //$NON-NLS-1$
-        System.out.println(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null).getPassword()));
+        System.out.println(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback().getPassword()));
     }
 
     /** Prueba simple del di&aacute;logo del PIN entre dos confirmaciones.
@@ -30,7 +30,7 @@ public class TestPinDialog {
     public void testConfirm() throws Exception {
         JOptionPane.showMessageDialog(null, "Redimensione el dialogo siguiente de confirmacion de firma. Maximice y minimice"); //$NON-NLS-1$
         System.out.println(DialogBuilder.showSignatureConfirmDialog(null, true));
-        System.out.println(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback(null).getPassword()));
+        System.out.println(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback().getPassword()));
         System.out.println(DialogBuilder.showSignatureConfirmDialog(null, true));
     }
 

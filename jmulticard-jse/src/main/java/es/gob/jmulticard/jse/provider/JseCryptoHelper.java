@@ -108,7 +108,7 @@ public final class JseCryptoHelper implements CryptoHelper {
     }
 
     /** Normaliza el nombre de un algoritmo de huella digital.
-     * @param algo Algoritmo.
+     * @param algorithm Algoritmo.
      * @return nom,bre normalizado o el mismo de entrada si no se puede identificar. */
     private static String normalizeDigestAlgorithm(final String algorithm) {
         if ("SHA".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
