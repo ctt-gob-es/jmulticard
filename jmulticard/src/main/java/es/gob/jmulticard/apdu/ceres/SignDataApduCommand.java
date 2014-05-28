@@ -13,12 +13,12 @@ public final class SignDataApduCommand extends CommandApdu {
 	/** Construye una APDU de firma de datos.
 	 * @param key Clave de firma
 	 * @param data Datos a cargar */
-	public SignDataApduCommand(final byte[] key) {
+	public SignDataApduCommand(final byte key) {
 		super(
 			CLA,
 			INS_SIGN_DATA,
 			(byte)0x80,
-			(byte)0x01,
+			key,
 			null,
 			Integer.valueOf(128)
 		);

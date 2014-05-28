@@ -1,28 +1,27 @@
 package es.gob.jmulticard.card.fnmt.ceres;
 
-import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
 
 /** Clave privada de una tarjeta CERES. La clase no contiene la clave privada en si, sino una referencia a ella.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class CeresPrivateKeyReference implements PrivateKeyReference {
 
-	private final Location keyPath;
+	private final byte index;
 
 	/** Crea una referencia a una clave privada de tarjeta CERES.
-	 * @param path Ruta interna de la clave. */
-	public CeresPrivateKeyReference(final Location path) {
-		this.keyPath = path;
+	 * @param idx &Iacute;ndice interno de la clave. */
+	public CeresPrivateKeyReference(final byte idx) {
+		this.index = idx;
 	}
 
-	/** Recupera la ruta de la clave.
-	 * @return Ruta de la clave. */
-	public Location getKeyPath() {
-		return this.keyPath;
+	/** Recupera el &iacute;ndice de la clave.
+	 * @return &Iacute;ndice de la clave. */
+	public byte getKeyIndex() {
+		return this.index;
 	}
 
 	@Override
 	public String toString() {
-		return "Clave privada de tarjeta CERES con ruta: " + this.keyPath.toString(); //$NON-NLS-1$
+		return "Clave privada de tarjeta CERES con indoce: " + Byte.toString(this.index); //$NON-NLS-1$
 	}
 }
