@@ -229,8 +229,16 @@ public final class SmartcardIoConnection implements ApduConnection {
             throw new ApduConnectionOpenedInExclusiveModeException();
         }
 
+        final List<CardTerminal> terminales;
         try {
-            final List<CardTerminal> terminales = TerminalFactory.getDefault().terminals().list();
+            terminales = TerminalFactory.getDefault().terminals().list();
+        }
+        catch(final Exception e) {
+        	throw new NoReadersFoundException(
+    			"No se han podido listar los lectores del sistema: " + e, e //$NON-NLS-1$
+			);
+        }
+        try {
             if (terminales.size() < 1) {
                 throw new NoReadersFoundException();
             }
@@ -244,7 +252,8 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
         catch (final CardException e) {
             throw new ApduConnectionException(
-                "No se ha podido abrir la conexion con el lector de tarjetas numero " + Integer.toString(this.terminalNumber), e);  //$NON-NLS-1$
+                "No se ha podido abrir la conexion con el lector de tarjetas numero " + Integer.toString(this.terminalNumber), e  //$NON-NLS-1$
+    		);
         }
 
         if (this.exclusive) {
