@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.jse.smartcardio;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -162,49 +163,26 @@ public final class SmartcardIoConnection implements ApduConnection {
     		LOGGER.warning("No se ha podido recuperar la lista de lectores del sistema: " + e); //$NON-NLS-1$
     		return new long[0];
     	}
+
         try {
+        	// Listamos los indices de los lectores que correspondan segun si tienen o no tarjeta insertada
+        	final ArrayList<Long> idsTerminales = new ArrayList<Long>(terminales.size());
+        	for (int idx = 0; idx < terminales.size(); idx++) {
+        		if (onlyWithCardPresent) {
+        			if (terminales.get(idx).isCardPresent()) {
+        				idsTerminales.add(Long.valueOf(idx));
+        			}
+        		}
+        		else {
+        			idsTerminales.add(Long.valueOf(idx));
+        		}
+        	}
 
-
-            if (terminales.size() > 0) {
-                // Calculamos el numero de terminales que hay que devolver
-                int numTerminales = 0;
-                if (onlyWithCardPresent) {
-                    for (final CardTerminal terminal : terminales) {
-                        if (terminal.isCardPresent()) {
-                            numTerminales++;
-                        }
-                    }
-                }
-                else {
-                    numTerminales = terminales.size();
-                }
-
-                final long[] idsTerminales = new long[numTerminales];
-
-                // Creamos una lista con los identificadores de lectores de
-                // tarjetas. Los identificadores
-                // son los indices dentro de la lista de terminales
-                int offset = 0;
-                for (int i = 0; i < terminales.size(); i++) {
-                    final CardTerminal terminal = terminales.get(i);
-                    if (onlyWithCardPresent) {
-                        if (terminal.isCardPresent()) {
-                            idsTerminales[offset] = i;
-                        }
-                        else {
-                            continue;
-                        }
-                    }
-                    else {
-                        idsTerminales[offset] = i;
-                    }
-
-                    offset++;
-                }
-
-                return idsTerminales;
-            }
-            return new long[0];
+        	final long[] ids = new long[idsTerminales.size()];
+        	for (int i = 0; i < ids.length; i++) {
+        		ids[i] = idsTerminales.get(i).longValue();
+        	}
+        	return ids;
         }
         catch (final Exception ex) {
             throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema", ex); //$NON-NLS-1$
