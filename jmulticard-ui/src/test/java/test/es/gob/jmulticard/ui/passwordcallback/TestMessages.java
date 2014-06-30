@@ -1,8 +1,8 @@
 package test.es.gob.jmulticard.ui.passwordcallback;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import es.gob.jmulticard.ui.passwordcallback.Messages;

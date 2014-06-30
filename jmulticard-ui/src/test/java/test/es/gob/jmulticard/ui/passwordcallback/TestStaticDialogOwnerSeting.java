@@ -2,8 +2,7 @@ package test.es.gob.jmulticard.ui.passwordcallback;
 
 import javax.swing.JFrame;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 

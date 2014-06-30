@@ -1,7 +1,9 @@
 package test.es.gob.jmulticard.ui.passwordcallback;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Assert;
+
 import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
 
 /** @author Alberto Mart&iacute;nez */
