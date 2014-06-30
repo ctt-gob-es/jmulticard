@@ -1,7 +1,10 @@
 package test.es.gob.jmulticard.asn1.der;
 
-import junit.framework.Assert;
+
 import junit.framework.TestCase;
+
+import org.junit.Assert;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;

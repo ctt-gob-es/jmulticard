@@ -1,7 +1,9 @@
 package test.es.gob.jmulticard.apdu;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Assert;
+
 import es.gob.jmulticard.apdu.ResponseApdu;
 
 /** Prueba de m&eacute;todos de la clase {@linkplain es.gob.jmulticard.apdu.ResponseApdu}

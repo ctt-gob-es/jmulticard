@@ -1,7 +1,9 @@
 package test.es.gob.jmulticard;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Assert;
+
 import es.gob.jmulticard.HexUtils;
 
 /** Pruebas de los m&eacute;todos definidos en la clase de utilidades {@linkplain es.gob.jmulticard.HexUtils}

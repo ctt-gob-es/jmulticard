@@ -1,7 +1,9 @@
 package test.es.gob.jmulticard.card;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Assert;
+
 import es.gob.jmulticard.card.CryptoCardException;
 
 /** Pruebas unitarias para la clase {@linkplain es.gob.jmulticard.card.CryptoCardException}

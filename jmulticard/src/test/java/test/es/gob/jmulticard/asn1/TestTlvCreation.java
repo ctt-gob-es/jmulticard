@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.junit.Assert;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Tlv;
 
@@ -30,13 +32,13 @@ public class TestTlvCreation extends TestCase {
      * @throws Exception en caso de cualquier tipo de error */
     public static void testTlv() throws Exception {
         byte[] cdfdata;
-        for (int i = 0; i < TEST_FILES.length; i++) {
-            cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(TEST_FILES[i]));
+        for (final String element : TEST_FILES) {
+            cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
 
             final Tlv tlv = new Tlv(cdfdata);
             Assert.assertNotNull(tlv);
             LOGGER.info(tlv.toString());
-            LOGGER.info("\n\nProbando " + TEST_FILES[i]); //$NON-NLS-1$
+            LOGGER.info("\n\nProbando " + element); //$NON-NLS-1$
             LOGGER.info("\nTLV completo (" + Integer.toString(tlv.getBytes().length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.info(HexUtils.hexify(tlv.getBytes(), true));
             LOGGER.info("\nTipo TLV:"); //$NON-NLS-1$
