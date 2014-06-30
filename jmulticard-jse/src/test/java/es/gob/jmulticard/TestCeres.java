@@ -14,7 +14,7 @@ public final class TestCeres {
 	 * @param args
 	 * @throws Exception */
 	public static void main(final String[] args) throws Exception {
-          /*
+
 		final Ceres ceres = new Ceres(
 			new SmartcardIoConnection(),
 			new JseCryptoHelper()
@@ -27,7 +27,7 @@ public final class TestCeres {
 			ceres.sign("hola".getBytes(), "SHA512withRSA", null),  //$NON-NLS-1$//$NON-NLS-2$
 			true
 		));
-    */
+
 	}
 
 }
