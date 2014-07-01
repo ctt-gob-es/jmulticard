@@ -120,25 +120,4 @@ public final class PrKdf extends Record {
 		return sb.toString();
 	}
 
-//    /** Establece el valor (en codificaci&oacute;n DER) del objeto ASN.1.
-//     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN.1
-//     * @throws Asn1Exception Si no se puede decodificar adecuadamente el valor establecido
-//     * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada */
-//    @Override
-//	public void setDerValue(final byte[] value) throws Asn1Exception, TlvException {
-//    	super.setDerValue(value);
-//    	try {
-//	    	final java.io.File tmpFile = java.io.File.createTempFile("PrKDF-", ".asn1"); //$NON-NLS-1$ //$NON-NLS-2$
-//	    	final java.io.OutputStream fos = new java.io.FileOutputStream(tmpFile);
-//	    	fos.write(value);
-//	    	fos.flush();
-//	    	fos.close();
-//	    	System.out.println("Se ha guardado el PrKDF en: " + tmpFile.getAbsolutePath()); //$NON-NLS-1$
-//    	}
-//    	catch(final Exception e) {
-//    		e.printStackTrace();
-//    	}
-//
-//    }
-
 }
