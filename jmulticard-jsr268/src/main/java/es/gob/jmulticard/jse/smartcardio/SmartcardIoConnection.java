@@ -312,14 +312,14 @@ public final class SmartcardIoConnection implements ApduConnection {
                 SmartcardIoConnection.LOGGER.warning(
                     "Error intentando cerrar la conexion con el lector: " + e); //$NON-NLS-1$
             }
-            this.terminalNumber = terminalN;
-            if (wasOpened) {
-                try {
-                    open();
-                }
-                catch (final Exception e) {
-                    SmartcardIoConnection.LOGGER.warning("Error intentando abrir la conexion con el lector: " + e); //$NON-NLS-1$
-                }
+        }
+        this.terminalNumber = terminalN;
+        if (wasOpened) {
+            try {
+            	open();
+            }
+            catch (final Exception e) {
+            	SmartcardIoConnection.LOGGER.warning("Error intentando abrir la conexion con el lector: " + e); //$NON-NLS-1$
             }
         }
     }
