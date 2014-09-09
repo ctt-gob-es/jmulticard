@@ -56,7 +56,7 @@ public abstract class CardException extends IOException {
     }
 
     protected CardException(final String description, final Throwable cause) {
-        super(description + ": " + cause.getMessage()); //$NON-NLS-1$
+        super(description + ": " + cause.getMessage(), cause); //$NON-NLS-1$
     }
 
 	protected CardException(final Throwable e) {
