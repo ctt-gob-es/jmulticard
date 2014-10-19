@@ -58,7 +58,8 @@ public final class SelectFileApduResponse extends ResponseApdu {
     }
 
     private void decode() {
-        if (this.isOk()) {
+    	// Comprobamos que haya respuesta (getData().length > 0), ya que puede no devolver un FCI
+        if (this.isOk() && this.getData().length > 0) {
             // Longitud del troncho.
             final int length = this.getData()[1];
 
@@ -127,6 +128,9 @@ public final class SelectFileApduResponse extends ResponseApdu {
     /** {@inheritDoc} */
     @Override
     public boolean isOk() {
+    	if (this.getData().length == 0) {
+    		return super.isOk();
+    	}
         return super.isOk() && this.getData()[0] == (byte) 0x6F && this.getData().length > 2;
     }
 

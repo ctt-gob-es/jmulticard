@@ -41,6 +41,7 @@ package es.gob.jmulticard.card.iso7816four;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
@@ -67,6 +68,9 @@ import es.gob.jmulticard.card.SmartCard;
 public abstract class Iso7816FourCard extends SmartCard {
 
     private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
+    private static final StatusWord EOF_REACHED = new StatusWord((byte) 0x62, (byte) 0x82);
+
+    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU
@@ -92,24 +96,36 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
      * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
      *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
-    private ResponseApdu readBinary(final byte msbOffset, final byte lsbOffset, final byte readLength) throws ApduConnectionException, RequiredSecurityStateNotSatisfiedException {
-    	final ResponseApdu res = this.getConnection().transmit(new ReadBinaryApduCommand(this.getCla(), msbOffset, lsbOffset, readLength));
+    private ResponseApdu readBinary(final byte msbOffset,
+    		                        final byte lsbOffset,
+    		                        final byte readLength) throws ApduConnectionException,
+                                                                  RequiredSecurityStateNotSatisfiedException {
+    	final ResponseApdu res = this.getConnection().transmit(
+			new ReadBinaryApduCommand(
+				this.getCla(), msbOffset, lsbOffset, readLength
+			)
+		);
         if (res.isOk()) {
         	return res;
         }
         if (UNSATISFIED_SECURITY_STATE.equals(res.getStatusWord())) {
         	throw new RequiredSecurityStateNotSatisfiedException(res.getStatusWord());
         }
+        if (EOF_REACHED.equals(res.getStatusWord())) {
+        	LOGGER.warning("Se ha alcanzado el final de fichero antes de poder leer los octetos indicados"); //$NON-NLS-1$
+        	return res;
+        }
         throw new ApduConnectionException("Respuesta invalida en la lectura de binario con el codigo: " + res.getStatusWord()); //$NON-NLS-1$
     }
 
     /** Lee por completo el contenido binario del fichero actualmente seleccionado.
-     * @param len Longitud del fichero a leer
-     * @return APDU de respuesta
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws IOException Si hay problemas en el buffer de lectura
-     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
-     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
+     * @param len Longitud del fichero a leer.
+     * @return APDU de respuesta.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws IOException Si hay problemas en el buffer de lectura.
+     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento.
+     *                                                    de una condici&oacute;n de seguridad y esta
+     *                                                    no se ha satisfecho. */
     public byte[] readBinaryComplete(final int len) throws IOException, RequiredSecurityStateNotSatisfiedException {
 
         int off = 0;
@@ -129,13 +145,20 @@ public abstract class Iso7816FourCard extends SmartCard {
                 readResponse = this.readBinary(msbOffset, lsbOffset, (byte) 0x0ef);
             }
 
-            if (!readResponse.isOk()) {
-                return readResponse.getStatusWord().getBytes();
+            final boolean eofReached = EOF_REACHED.equals(readResponse.getStatusWord());
+
+            if (!readResponse.isOk() && !eofReached) {
+                throw new IOException("Error leyendo el binario (" + readResponse.getStatusWord() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             out.write(readResponse.getData());
 
             off += 0x0ef;
+
+            // Si hemos llegado al final no seguimos leyendo
+            if (eofReached) {
+            	break;
+            }
         }
 
         return out.toByteArray();
