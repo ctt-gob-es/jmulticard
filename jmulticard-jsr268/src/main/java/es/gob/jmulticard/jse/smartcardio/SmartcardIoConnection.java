@@ -56,6 +56,7 @@ import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionOpenedInExclusiveModeException;
+import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
@@ -73,31 +74,6 @@ public final class SmartcardIoConnection implements ApduConnection {
      * con la tarjeta. */
     private final static String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
 
-    /** Protocolo de conexi&oacute;n con la tarjeta. */
-    public enum ConnectionProtocol {
-        /** T=0. */
-        T0,
-        /** T=1. */
-        T1,
-        /** T=CL. */
-        TCL;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case T0:
-                    return "T=0"; //$NON-NLS-1$
-                case T1:
-                    return "T=1"; //$NON-NLS-1$
-                case TCL:
-                    return "T=CL"; //$NON-NLS-1$
-                default:
-                    return ""; //$NON-NLS-1$
-            }
-        }
-
-    }
-
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     private int terminalNumber = 0;
@@ -108,7 +84,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private boolean exclusive = false;
 
-    private ConnectionProtocol protocol = ConnectionProtocol.T0;
+    private ApduConnectionProtocol protocol = ApduConnectionProtocol.T0;
 
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
     @Override
@@ -281,15 +257,16 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
     }
 
-    /** establece el Protocolo de conexi&oacute;n con la tarjeta.
-     * @param p
-     *        Protocolo de conexi&oacute;n con la tarjeta */
-    public void setProtocol(final ConnectionProtocol p) {
+    /** Establece el Protocolo de conexi&oacute;n con la tarjeta.
+     * Por defecto, si no se establece ninguno, es <i>T=0</i>.
+     * @param p Protocolo de conexi&oacute;n con la tarjeta. */
+    @Override
+	public void setProtocol(final ApduConnectionProtocol p) {
         if (p == null) {
             SmartcardIoConnection.LOGGER.warning(
                 "El protocolo de conexion no puede ser nulo, se usara T=0" //$NON-NLS-1$
             );
-            this.protocol = ConnectionProtocol.T0;
+            this.protocol = ApduConnectionProtocol.T0;
             return;
         }
         this.protocol = p;
@@ -416,7 +393,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     /** Devuelve el protocolo de conexi&oacute;n con la tarjeta usado actualmente
      * @return Un objeto de tipo enumerado <code>ConnectionProtocol</code> */
-    public ConnectionProtocol getProtocol() {
+    public ApduConnectionProtocol getProtocol() {
         return this.protocol;
     }
 
