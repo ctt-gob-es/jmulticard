@@ -84,7 +84,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private boolean exclusive = false;
 
-    private ApduConnectionProtocol protocol = ApduConnectionProtocol.T0;
+    private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
 
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
     @Override
@@ -258,7 +258,8 @@ public final class SmartcardIoConnection implements ApduConnection {
     }
 
     /** Establece el Protocolo de conexi&oacute;n con la tarjeta.
-     * Por defecto, si no se establece ninguno, es <i>T=0</i>.
+     * Por defecto, si no se establece ninguno, se indica <i>*</i> para que sea el API subyancente el
+     * que detecte el apropiado.
      * @param p Protocolo de conexi&oacute;n con la tarjeta. */
     @Override
 	public void setProtocol(final ApduConnectionProtocol p) {

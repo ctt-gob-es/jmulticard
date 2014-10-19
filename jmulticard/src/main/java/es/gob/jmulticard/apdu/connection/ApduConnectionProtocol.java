@@ -9,7 +9,9 @@ public enum ApduConnectionProtocol {
     /** T=1. */
     T1,
     /** T=CL. */
-    TCL;
+    TCL,
+    /** Cualquiera. */
+    ANY;
 
     @Override
     public String toString() {
@@ -21,7 +23,7 @@ public enum ApduConnectionProtocol {
             case TCL:
                 return "T=CL"; //$NON-NLS-1$
             default:
-                return ""; //$NON-NLS-1$
+                return "*"; //$NON-NLS-1$
         }
     }
 }
