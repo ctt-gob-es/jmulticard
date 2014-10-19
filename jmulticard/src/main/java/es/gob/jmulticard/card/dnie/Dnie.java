@@ -93,6 +93,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
 	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = true;
 
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
@@ -209,6 +211,15 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         super((byte) 0x00, conn);
         conn.reset();
         connect(conn);
+
+        try {
+			selectMasterFile();
+		}
+        catch (final Iso7816FourCardException e) {
+			LOGGER.warning(
+				"No se ha podido seleccionar el directorio raiz antes de leer las estructuras: " + e //$NON-NLS-1$
+			);
+		}
 
         this.passwordCallback = pwc;
         if (cryptoHelper == null) {
