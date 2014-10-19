@@ -1,13 +1,19 @@
 package es.gob.jmulticard.card.cardos;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
@@ -15,7 +21,9 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
 import es.gob.jmulticard.asn1.der.pkcs15.Odf;
+import es.gob.jmulticard.asn1.der.pkcs15.Path;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
@@ -49,21 +57,14 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private final PasswordCallback passwordCallback;
-
     private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
 
 	/** Construye un objeto que representa una tarjeta Atos / Siemens CardOS.
      * @param conn Conexi&oacute;n con la tarjeta.
-	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la TUI.
 	 * @throws Iso7816FourCardException Cuando hay errores relativos a la ISO-7816-4.
 	 * @throws IOException Si hay errores de entrada / salida. */
-	public CardOS(final ApduConnection conn, final PasswordCallback pwc) throws Iso7816FourCardException, IOException {
+	public CardOS(final ApduConnection conn) throws Iso7816FourCardException, IOException {
 		super(CLA, conn);
-		if (pwc == null) {
-			throw new IllegalArgumentException("El PasswordCallback no puede ser nulo"); //$NON-NLS-1$
-		}
-		this.passwordCallback = pwc;
 
 		// Conectamos
 		connect(conn);
@@ -157,14 +158,79 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
     		// }
 			final byte[] odfBytes = readBinaryComplete(162); // A2
 
-//			System.out.println(HexUtils.hexify(c, true));
-//			final java.io.OutputStream fos = new FileOutputStream(File.createTempFile("ODF_", ".asn1"));  //$NON-NLS-1$//$NON-NLS-2$
-//			fos.write(c);
-//			fos.flush();
-//			fos.close();
-
 			final Odf odf = new Odf();
 			odf.setDerValue(odfBytes);
+
+			// Sacamos del ODF la ruta del CDF
+			final Path cdfPath = odf.getCertificatesPath();
+
+			// Seleccionamos el CDF
+			selectFileById(cdfPath.getPathBytes());
+
+			// Leemos el CDF mediante registros
+			final List<byte[]> cdfRecords = readAllRecords();
+
+			final CertificateFactory cf;
+			try {
+				cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+			}
+			catch (final CertificateException e1) {
+				throw new IllegalStateException(
+					"No se ha podido obtener la factoria de certificados X.509: " + e1, e1 //$NON-NLS-1$
+				);
+			}
+
+			CertificateObject co;
+			for (final byte[] b : cdfRecords) {
+				try {
+					co = new CertificateObject();
+					co.setDerValue(HexUtils.subArray(b, 2, b.length - 2));
+				}
+				catch(final Exception e) {
+					LOGGER.warning("Omitido registro de certificado por no ser un CertificateObject de PKCS#15: " + e); //$NON-NLS-1$
+					continue;
+				}
+
+				System.out.println(co.toString() + "\n"); //$NON-NLS-1$
+
+				final byte[] certPath = co.getPathBytes();
+				if (certPath == null || certPath.length != 4) {
+					LOGGER.warning("Se omite una posicion de certificado porque su ruta no es de cuatro octetos: " + co.getAlias()); //$NON-NLS-1$
+					continue;
+				}
+
+				final byte[] MASTER_FILE = new byte[] { (byte) 0x50, (byte) 0x15 };
+
+				sendArbitraryApdu(
+					new CommandApdu(
+						getCla(),    // CLA
+						(byte) 0xA4, // INS
+						(byte) 0x08, // P1
+						(byte) 0x0C, // P2
+						new byte[] {
+							MASTER_FILE[0], MASTER_FILE[1], certPath[0], certPath[1], certPath[2], certPath[3]
+						},
+						null
+					)
+				);
+
+				final byte[] certBytes = readBinaryComplete(9999);
+
+				final X509Certificate cert;
+				try {
+					cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certBytes));
+				}
+				catch (final CertificateException e) {
+					LOGGER.severe(
+						"No ha sido posible generar el certificado para el alias " + co.getAlias() + ": " + e //$NON-NLS-1$ //$NON-NLS-2$
+					);
+					continue;
+				}
+
+				certificatesByAlias.put(co.getAlias(), cert);
+
+			}
+
 
     }
 
@@ -175,13 +241,20 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public String[] getAliases() throws CryptoCardException {
-		throw new UnsupportedOperationException();
+		return certificatesByAlias.keySet().toArray(new String[0]);
 	}
 
 	@Override
 	public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
-		throw new UnsupportedOperationException();
+		return certificatesByAlias.get(alias);
 	}
+
+	@Override
+	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException {
+		selectFileById(new byte[0]);
+	}
+
+	//************ NO IMPLEMENTADAS AUN ***************************
 
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
@@ -190,11 +263,6 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference keyRef) throws CryptoCardException, BadPinException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException {
 		throw new UnsupportedOperationException();
 	}
 
