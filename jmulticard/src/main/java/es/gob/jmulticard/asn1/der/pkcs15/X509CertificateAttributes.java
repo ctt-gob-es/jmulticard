@@ -41,6 +41,7 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import java.math.BigInteger;
 
+import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
@@ -88,32 +89,51 @@ public final class X509CertificateAttributes extends Sequence {
     /** Proporciona el nombre X.500 del emisor del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getIssuer() {
-    	if (getElementCount() > 2) {
-    		return getElementAt(2).toString();
+    	final DecoderObject d = getObject(CertificateIssuerContextSpecific.class);
+    	if (d==null) {
+    		return null;
     	}
-    	return null;
+    	return d.toString();
     }
 
     /** Proporciona el nombre X.500 del titular del certificado
      * @return Nombre X.500 del emisor del certificado */
     String getSubject() {
-    	if (getElementCount() > 1) {
-    		return getElementAt(1).toString();
+    	final DecoderObject d = getObject(RdnSequence.class);
+    	if (d==null) {
+    		return null;
     	}
-    	return null;
+    	return d.toString();
     }
 
     /** Devuelve la ruta del certificado.
      * @return Ruta (<i>path</i>) del certificado */
     String getPath() {
-        return ((Path)getElementAt(0)).getPathString();
+    	final DecoderObject d = getObject(Path.class);
+    	if (d==null) {
+    		return null;
+    	}
+        return ((Path)d).getPathString();
     }
 
     /** Obtiene el n&uacute;mero de serie del Certificado.
      * @return N&uacute;mero de serie del Certificado */
     BigInteger getSerialNumber() {
-    	if (getElementCount() > 3) {
-    		return ((DerInteger)getElementAt(3)).getIntegerValue();
+    	final DecoderObject d = getObject(DerInteger.class);
+    	if (d==null) {
+    		return null;
+    	}
+    	return ((DerInteger)d).getIntegerValue();
+    }
+
+    private DecoderObject getObject(final Class<?> objectType) {
+    	if (objectType == null) {
+    		return null;
+    	}
+    	for (int i=0;i<getElementCount();i++) {
+    		if (getElementAt(i).getClass().equals(objectType)) {
+    			return getElementAt(i);
+    		}
     	}
     	return null;
     }
@@ -122,10 +142,10 @@ public final class X509CertificateAttributes extends Sequence {
     @Override
     public String toString() {
     	return "Atributos del certificado\n" + //$NON-NLS-1$
-			" Ruta: " + getPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			" Titular: " + getSubject() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			" Emisor: " + getIssuer() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			" Numero de serie: " + getSerialNumber().toString(); //$NON-NLS-1$
+			" Ruta: " + getPath() + //$NON-NLS-1$
+			(getSubject() != null ? "\n Titular: " + getSubject() : "") + //$NON-NLS-1$ //$NON-NLS-2$
+			(getIssuer() != null ? "\n Emisor: " + getIssuer() : "") + //$NON-NLS-1$ //$NON-NLS-2$
+			(getSerialNumber() != null ? "\n Numero de serie: " + getSerialNumber().toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

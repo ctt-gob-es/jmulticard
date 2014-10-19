@@ -81,9 +81,15 @@ public final class Path extends Sequence {
 		return HexUtils.hexify(((OctectString)getElementAt(0)).getOctectStringByteValue(), false);
 	}
 
+	/** Obtiene la ruta en forma de array de octetos.
+	 * @return Ruta en forma de array de octetos. */
+	public byte[] getPathBytes() {
+		return ((OctectString)getElementAt(0)).getOctectStringByteValue();
+	}
+
 	@Override
 	public String toString() {
-		return new String(((OctectString)getElementAt(0)).getOctectStringByteValue());
+		return new String(((OctectString)getElementAt(0)).getOctectStringByteValue() + " - " + getPathString()); //$NON-NLS-1$
 	}
 
 }

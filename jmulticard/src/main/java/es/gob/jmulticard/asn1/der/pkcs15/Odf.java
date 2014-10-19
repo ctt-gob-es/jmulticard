@@ -1,5 +1,6 @@
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
@@ -34,8 +35,25 @@ public final class Odf extends Record {
 		super(
 			new OptionalDecoderObjectElement[] {
 				new OptionalDecoderObjectElement(PrivateKeysContextSpecific.class, true),
+				new OptionalDecoderObjectElement(PublicKeysContextSpecific.class, true),
+				//new OptionalDecoderObjectElement(TrustedPublicKeysContextSpecific.class, true),
+				new OptionalDecoderObjectElement(SecretKeysContextSpecific.class, true),
+				new OptionalDecoderObjectElement(CertificatesContextSpecific.class, true)
 			}
 		);
+	}
+
+	/** Obtiene la ruta (Path ASN.1 PKCS#15) hacia los certificados.
+	 * @return Ruta (Path ASN.1 PKCS#15) hacia los certificados, o <code>null</code>
+	 *         si este ODF no contiene esta ruta. */
+	public Path getCertificatesPath() {
+		for (int i=0;i<getElementCount();i++) {
+			final DecoderObject dobj = getElementAt(i);
+			if (dobj instanceof CertificatesContextSpecific) {
+				return ((CertificatesContextSpecific)dobj).getCertificatesPath();
+			}
+		}
+		return null;
 	}
 
 }

@@ -41,6 +41,8 @@ package es.gob.jmulticard.card.iso7816four;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -55,6 +57,7 @@ import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.iso7816four.GetChallengeApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetVerificationKeyApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ReadBinaryApduCommand;
+import es.gob.jmulticard.apdu.iso7816four.ReadRecordApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectDfByNameApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
@@ -118,6 +121,28 @@ public abstract class Iso7816FourCard extends SmartCard {
         throw new ApduConnectionException("Respuesta invalida en la lectura de binario con el codigo: " + res.getStatusWord()); //$NON-NLS-1$
     }
 
+    /** Lee todos los registros del binario actualmente seleccionado.
+     * @return Lista de registros leidos del binario actualmente seleccionado.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws Iso7816FourCardException SI ocurren problemas durante la lectura de los registros. */
+    public List<byte[]> readAllRecords() throws ApduConnectionException, Iso7816FourCardException {
+    	final List<byte[]> ret = new ArrayList<byte[]>();
+    	StatusWord readedResponseSw;
+    	final CommandApdu readRecordApduCommand = new ReadRecordApduCommand(getCla());
+    	do {
+    		final ResponseApdu readedResponse = sendArbitraryApdu(readRecordApduCommand);
+    		readedResponseSw = readedResponse.getStatusWord();
+    		if (!readedResponse.isOk() && !ReadRecordApduCommand.RECORD_NOT_FOUND.equals(readedResponseSw)) {
+    			throw new Iso7816FourCardException(
+					"Error en la lectura de registro", readedResponseSw //$NON-NLS-1$
+    			);
+    		}
+    		ret.add(readedResponse.getData());
+    	} while (!ReadRecordApduCommand.RECORD_NOT_FOUND.equals(readedResponseSw));
+
+    	return ret;
+    }
+
     /** Lee por completo el contenido binario del fichero actualmente seleccionado.
      * @param len Longitud del fichero a leer.
      * @return APDU de respuesta.
@@ -129,7 +154,7 @@ public abstract class Iso7816FourCard extends SmartCard {
     public byte[] readBinaryComplete(final int len) throws IOException, RequiredSecurityStateNotSatisfiedException {
 
         int off = 0;
-        ResponseApdu readResponse;
+        ResponseApdu readedResponse;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // Leemos en iteraciones de 239 bytes (0xEF) lo maximo que permite el DNIe
@@ -139,19 +164,19 @@ public abstract class Iso7816FourCard extends SmartCard {
             final byte lsbOffset = (byte) (off & 0x0ff);
             final int left = len - off;
             if (left < 0x0ef) { // Si es menor que el maximo que podemos leer por iteracion
-                readResponse = this.readBinary(msbOffset, lsbOffset, (byte) left);
+                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) left);
             }
             else {
-                readResponse = this.readBinary(msbOffset, lsbOffset, (byte) 0x0ef);
+                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) 0x0ef);
             }
 
-            final boolean eofReached = EOF_REACHED.equals(readResponse.getStatusWord());
+            final boolean eofReached = EOF_REACHED.equals(readedResponse.getStatusWord());
 
-            if (!readResponse.isOk() && !eofReached) {
-                throw new IOException("Error leyendo el binario (" + readResponse.getStatusWord() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (!readedResponse.isOk() && !eofReached) {
+                throw new IOException("Error leyendo el binario (" + readedResponse.getStatusWord() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            out.write(readResponse.getData());
+            out.write(readedResponse.getData());
 
             off += 0x0ef;
 

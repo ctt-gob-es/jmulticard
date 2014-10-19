@@ -82,7 +82,7 @@ public final class CertificateObject extends Pkcs15Object {
 
     /** Proporciona el nombre X.500 del titular del certificado
      * @return Nombre X.500 del emisor del certificado */
-    String getSubject() {
+    public String getSubject() {
     	return ((X509CertificateAttributesContextSpecific)getTypeAttributes()).getSubject();
     }
 
