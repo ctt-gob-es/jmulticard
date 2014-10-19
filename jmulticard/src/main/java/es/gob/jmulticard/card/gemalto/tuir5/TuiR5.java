@@ -66,13 +66,13 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
 
-	/** Construye una clase que representa una tarjeta Gemalto TUI R5 MPCOS.
-     * @param conn Conexi&oacute;n con la tarjeta
-	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la TUI
-	 * @throws Iso7816FourCardException Cuando hay errores relativos a la ISO-7816-4
-	 * @throws IOException Si hay errores de entrada / salida */
+	/** Construye un objeto que representa una tarjeta Gemalto TUI R5 MPCOS.
+     * @param conn Conexi&oacute;n con la tarjeta.
+	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la TUI.
+	 * @throws Iso7816FourCardException Cuando hay errores relativos a la ISO-7816-4.
+	 * @throws IOException Si hay errores de entrada / salida. */
 	public TuiR5(final ApduConnection conn, final PasswordCallback pwc) throws Iso7816FourCardException, IOException {
-		super((byte) 0x00, conn);
+		super(CLA, conn);
 
 		if (pwc == null) {
 			throw new IllegalArgumentException("El PasswordCallback no puede ser nulo"); //$NON-NLS-1$
@@ -142,7 +142,9 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
     }
 
     private void preloadCertificates() throws IOException, Iso7816FourCardException {
+
     	selectMasterFile();
+
         final Cdf cdf = new Cdf();
         try {
 			cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
