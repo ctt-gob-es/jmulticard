@@ -91,6 +91,12 @@ public final class X509CertificateAttributesContextSpecific extends ContextSpeci
     	return ((X509CertificateAttributes)getObject()).getPath();
     }
 
+    /** Devuelve la ruta del certificado como array de octetos.
+     * @return Ruta (<i>path</i>) del certificado como array de octetos. */
+    byte[] getPathBytes() {
+    	return ((X509CertificateAttributes)getObject()).getPathBytes();
+    }
+
     /** Obtiene el n&uacute;mero de serie del Certificado.
      * @return N&uacute;mero de serie del Certificado */
     BigInteger getSerialNumber() {

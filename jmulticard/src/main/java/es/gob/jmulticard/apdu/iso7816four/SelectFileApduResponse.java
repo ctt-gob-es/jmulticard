@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.apdu.iso7816four;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.Apdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
@@ -102,17 +103,23 @@ public final class SelectFileApduResponse extends ResponseApdu {
     /** Obtiene el nombre del DF.
      * @return Nombre del DF */
     byte[] getDfName() {
-        final byte[] out = new byte[this.dfName.length];
-        System.arraycopy(this.dfName, 0, out, 0, this.dfName.length);
-        return out;
+    	if (this.dfName != null) {
+	        final byte[] out = new byte[this.dfName.length];
+	        System.arraycopy(this.dfName, 0, out, 0, this.dfName.length);
+	        return out;
+    	}
+    	return null;
     }
 
     /** Devuelve el identificador del fichero seleccionado.
      * @return Identificador del fichero */
     byte[] getFileId() {
-        final byte[] out = new byte[this.fileId.length];
-        System.arraycopy(this.fileId, 0, out, 0, this.fileId.length);
-        return out;
+    	if (this.fileId != null) {
+	        final byte[] out = new byte[this.fileId.length];
+	        System.arraycopy(this.fileId, 0, out, 0, this.fileId.length);
+	        return out;
+    	}
+    	return null;
     }
 
     /** Devuelve la longitud del fichero seleccionado.
@@ -132,6 +139,19 @@ public final class SelectFileApduResponse extends ResponseApdu {
     		return super.isOk();
     	}
         return super.isOk() && this.getData()[0] == (byte) 0x6F && this.getData().length > 2;
+    }
+
+    @Override
+    public String toString() {
+    	final StringBuilder sb = new StringBuilder("Resultado de la seleccion de fichero:\n"); //$NON-NLS-1$
+    	if (getDfName() != null) {
+    		sb.append(" Nombre del DF: " + new String(getDfName())); //$NON-NLS-1$
+    	}
+    	if (getFileId() != null) {
+    		sb.append(" Identificador de fichero: " + HexUtils.hexify(getFileId(), true)); //$NON-NLS-1$
+    	}
+    	sb.append(" Longitud del fichero: " + getFileLength()); //$NON-NLS-1$
+    	return sb.toString();
     }
 
 }

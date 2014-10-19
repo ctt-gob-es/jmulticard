@@ -82,14 +82,20 @@ public final class CertificateObject extends Pkcs15Object {
 
     /** Proporciona el nombre X.500 del titular del certificado
      * @return Nombre X.500 del emisor del certificado */
-    public String getSubject() {
+    String getSubject() {
     	return ((X509CertificateAttributesContextSpecific)getTypeAttributes()).getSubject();
     }
 
     /** Devuelve la ruta del certificado.
      * @return Ruta (<i>path</i>) del certificado */
-    String getPath() {
+    public String getPath() {
     	return ((X509CertificateAttributesContextSpecific)getTypeAttributes()).getPath();
+    }
+
+    /** Devuelve la ruta del certificado como array de octetos.
+     * @return Ruta (<i>path</i>) del certificado como array de octetos. */
+    public byte[] getPathBytes() {
+    	return ((X509CertificateAttributesContextSpecific)getTypeAttributes()).getPathBytes();
     }
 
     /** Obtiene el n&uacute;mero de serie del Certificado.
@@ -106,7 +112,7 @@ public final class CertificateObject extends Pkcs15Object {
 
 	/** Obtiene el alias del certificado.
 	 * @return Alias del certificado */
-	String getAlias() {
+	public String getAlias() {
 		return getCommonObjectAttributes().getLabel();
 	}
 

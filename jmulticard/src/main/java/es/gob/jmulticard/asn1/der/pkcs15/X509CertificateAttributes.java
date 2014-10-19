@@ -116,6 +116,16 @@ public final class X509CertificateAttributes extends Sequence {
         return ((Path)d).getPathString();
     }
 
+    /** Devuelve la ruta del certificado como array de octetos.
+     * @return Ruta (<i>path</i>) del certificado como array de octetos*/
+    byte[] getPathBytes() {
+    	final DecoderObject d = getObject(Path.class);
+    	if (d==null) {
+    		return null;
+    	}
+        return ((Path)d).getPathBytes();
+    }
+
     /** Obtiene el n&uacute;mero de serie del Certificado.
      * @return N&uacute;mero de serie del Certificado */
     BigInteger getSerialNumber() {
