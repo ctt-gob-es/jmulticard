@@ -191,8 +191,6 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 					continue;
 				}
 
-				System.out.println(co.toString() + "\n"); //$NON-NLS-1$
-
 				final byte[] certPath = co.getPathBytes();
 				if (certPath == null || certPath.length != 4) {
 					LOGGER.warning("Se omite una posicion de certificado porque su ruta no es de cuatro octetos: " + co.getAlias()); //$NON-NLS-1$
