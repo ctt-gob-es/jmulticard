@@ -44,6 +44,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.UnavailableReaderException;
@@ -226,7 +227,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 	@Override
 	public String getTerminalInfo(final int terminal) throws ApduConnectionException {
 		if (terminal != 0) {
-			throw new ApduConnectionException("Solo se accede al terminal 0, y se indico el " + terminal); //$NON-NLS-1$
+			throw new IllegalArgumentException("Solo se accede al terminal 0, y se indico el " + terminal); //$NON-NLS-1$
 		}
 		return this.ccidReader.getDeviceName();
 	}
@@ -243,6 +244,11 @@ public final class AndroidCCIDConnection implements ApduConnection {
 	@Override
 	public boolean isOpen() {
 		return this.ccidReader.isOpen();
+	}
+
+	@Override
+	public void setProtocol(final ApduConnectionProtocol p) {
+		// No hace nada
 	}
 
 }

@@ -6,6 +6,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre NFC para Android.
@@ -106,6 +107,11 @@ public final class AndroidNfcConnection implements ApduConnection {
 	@Override
 	public boolean isOpen() {
 		return this.iso.isConnected();
+	}
+
+	@Override
+	public void setProtocol(final ApduConnectionProtocol p) {
+		// No hace nada
 	}
 
 }
