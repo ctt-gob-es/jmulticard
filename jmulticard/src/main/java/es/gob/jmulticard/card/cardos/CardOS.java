@@ -238,7 +238,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	}
 
 	@Override
-	public String[] getAliases() throws CryptoCardException {
+	public String[] getAliases() {
 		return certificatesByAlias.keySet().toArray(new String[0]);
 	}
 
@@ -250,6 +250,20 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	@Override
 	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException {
 		selectFileById(new byte[0]);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder(getCardName())
+		 .append("\n Tarjeta con ").append(certificatesByAlias.size()).append(" certificado(s):\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		final String[] aliases = getAliases();
+		for (int i=0;i<aliases.length;i++) {
+			sb.append("  "); //$NON-NLS-1$
+			sb.append(i+1);
+			sb.append(" - "); //$NON-NLS-1$
+			sb.append(aliases[i]);
+		}
+		return sb.toString();
 	}
 
 	//************ NO IMPLEMENTADAS AUN ***************************

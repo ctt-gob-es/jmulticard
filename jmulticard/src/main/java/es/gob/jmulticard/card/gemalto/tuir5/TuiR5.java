@@ -88,12 +88,12 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		// Precargamos los certificados
 		preloadCertificates();
 
-		LOGGER.info("Intentos de PIN restantes: " + getRemainingPinRetries()); //$NON-NLS-1$
-
-    	verifyPin(this.passwordCallback);
-
-    	// Precargamos las referencias a las claves privadas
-    	loadKeyReferences();
+//		LOGGER.info("Intentos de PIN restantes: " + getRemainingPinRetries()); //$NON-NLS-1$
+//
+//    	verifyPin(this.passwordCallback);
+//
+//    	// Precargamos las referencias a las claves privadas
+//    	loadKeyReferences();
 
 	}
 
