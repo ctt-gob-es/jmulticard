@@ -14,7 +14,7 @@ public class TestStaticDialogOwnerSeting {
     /** Prueba del establecimiento del componente padre de un di&aacute;logo. */
     @SuppressWarnings("static-method")
     @Test
-    @Ignore
+    @Ignore // Necesita GUI
     public void testSetGetDialogOwner() {
         final JFrame frame = new JFrame();
         PasswordCallbackManager.setDialogOwner(frame);
