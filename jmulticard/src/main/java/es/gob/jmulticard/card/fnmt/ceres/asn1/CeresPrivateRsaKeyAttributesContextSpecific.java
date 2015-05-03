@@ -73,7 +73,7 @@ public final class CeresPrivateRsaKeyAttributesContextSpecific extends ContextSp
 	}
 
 	String getPath() {
-		return ((Path)getObject()).toString();
+		return new String(((Path)getObject()).getPathBytes());
 	}
 
 }

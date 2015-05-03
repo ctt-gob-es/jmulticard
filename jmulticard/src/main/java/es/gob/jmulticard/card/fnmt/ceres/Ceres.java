@@ -55,7 +55,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
     private Map<String, X509Certificate> certs;
-    private Map<String, Byte> keys;
+    private Map<String, String> keys;
 
 	/** Construye una clase que representa una tarjeta FNMT-RCM CERES.
 	 * @param conn Conexi&oacute;n con la tarjeta.
@@ -115,14 +115,12 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     			"El numero de claves de la tarjeta (" + prkdf.getKeyCount() + ") no coincide con el de certificados (" + this.certs.size() + ")" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
         }
-        this.keys = new LinkedHashMap<String, Byte>(this.certs.size());
+        this.keys = new LinkedHashMap<String, String>(this.certs.size());
         final String[] aliases = getAliases();
         for (int i=0; i<this.certs.size(); i++) {
         	this.keys.put(
     			aliases[i],
-				Byte.valueOf(
-					prkdf.getKeyPath(i).substring(2)
-				)
+				prkdf.getKeyPath(i)
 			);
         }
 	}
@@ -139,7 +137,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
-		return new CeresPrivateKeyReference(this.keys.get(alias).byteValue());
+		return new CeresPrivateKeyReference(this.keys.get(alias));
 	}
 
 	@Override

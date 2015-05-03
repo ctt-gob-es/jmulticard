@@ -123,33 +123,36 @@ public final class Location {
 
     /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico.
      * @param absolutePath Ruta a comprobar
-     * @return <code>true</code> si la ruta es inv&aacute;lida, <code>false</code> en caso
-     *         contrario */
-    private static boolean isValidPath(final String absolutePath) {
+     * @throws IllegalArgumentException si la ruta es inv&aacute;lida */
+    private static void checkValidPath(final String absolutePath) throws IllegalArgumentException {
+    	if (absolutePath == null) {
+    		throw new IllegalArgumentException("Ruta nula"); //$NON-NLS-1$
+    	}
         if (absolutePath.length() == 0) {
-            return false;
+            throw new IllegalArgumentException("Ruta vacia"); //$NON-NLS-1$
+        }
+        if (absolutePath.trim().length() % 4 != 0) {
+        	throw new IllegalArgumentException(
+    			"Un location valido debe estar compuesto por grupos pares de octetos: " + absolutePath //$NON-NLS-1$
+			);
         }
         final String aux = absolutePath.toLowerCase();
         for (int i = 0; i < absolutePath.length(); i++) {
-            if (!(aux.charAt(i) >= '0' && aux.charAt(i) <= '9' || aux.charAt(i) >= 'a' && aux.charAt(i) <= 'f')) {
-                return false;
+        	final char currentChar = aux.charAt(i);
+            if (!(currentChar >= '0' && currentChar <= '9' || currentChar >= 'a' && currentChar <= 'f')) {
+            	throw new IllegalArgumentException(
+        			"Encontrado el caracter invalido '" + currentChar + "'en la ruta '" + absolutePath + "'" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    			);
             }
         }
-
-        return true;
     }
 
     /** Genera un vector de enteros con los diversos identificadores de DF y EF
      * indicados en la ruta absoluta que se proporciona como par&aacute;metro.
      * @param absolutePath Ruta absoluta */
     private void init(final String absolutePath) {
-        if (absolutePath == null || "".equals(absolutePath.trim()) //$NON-NLS-1$
-            || absolutePath.trim().length() % 4 != 0) {
-            throw new IllegalArgumentException("Un location valido debe estar compuesto por grupos de pares octetos."); //$NON-NLS-1$
-        }
-        if (!isValidPath(absolutePath)) {
-            throw new IllegalArgumentException("La ruta contiene caracteres no validos."); //$NON-NLS-1$
-        }
+
+        checkValidPath(absolutePath);
 
         for (int i = 0; i < absolutePath.length(); i = i + 4) {
             final int mm = Location.HEXBYTES.get(absolutePath.substring(i, i + 1)).intValue();

@@ -6,22 +6,22 @@ import es.gob.jmulticard.card.PrivateKeyReference;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class CeresPrivateKeyReference implements PrivateKeyReference {
 
-	private final byte index;
+	private final String path;
 
 	/** Crea una referencia a una clave privada de tarjeta CERES.
-	 * @param idx &Iacute;ndice interno de la clave. */
-	public CeresPrivateKeyReference(final byte idx) {
-		this.index = idx;
+	 * @param p Ruta interna de la clave. */
+	public CeresPrivateKeyReference(final String p) {
+		this.path = p;
 	}
 
 	/** Recupera el &iacute;ndice de la clave.
-	 * @return &Iacute;ndice de la clave. */
-	public byte getKeyIndex() {
-		return this.index;
+	 * @return Ruta de la clave. */
+	public String getKeyIndex() {
+		return this.path;
 	}
 
 	@Override
 	public String toString() {
-		return "Clave privada de tarjeta CERES con indoce: " + Byte.toString(this.index); //$NON-NLS-1$
+		return "Clave privada de tarjeta CERES con ruta: " + this.path; //$NON-NLS-1$
 	}
 }

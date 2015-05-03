@@ -88,7 +88,7 @@ public final class CeresCdf extends Record {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(BUFFER_SIZE);
-        sb.append("Fichero de Descripcion de Certificados:\n"); //$NON-NLS-1$
+        sb.append("Fichero de Descripcion de Certificados CERES:\n"); //$NON-NLS-1$
         for (int index = 0; index < getCertificateCount(); index++) {
             sb.append(" Certificado "); //$NON-NLS-1$
             sb.append(Integer.toString(index));

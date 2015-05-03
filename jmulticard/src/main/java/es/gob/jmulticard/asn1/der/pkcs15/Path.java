@@ -89,7 +89,7 @@ public final class Path extends Sequence {
 
 	@Override
 	public String toString() {
-		return new String(((OctectString)getElementAt(0)).getOctectStringByteValue() + " - " + getPathString()); //$NON-NLS-1$
+		return getPathString();
 	}
 
 }

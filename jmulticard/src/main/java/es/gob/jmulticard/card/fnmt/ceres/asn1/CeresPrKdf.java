@@ -82,7 +82,7 @@ public final class CeresPrKdf extends Record {
 	@Override
     public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("Fichero de Descripcion de Claves Privadas:\n"); //$NON-NLS-1$
+		sb.append("Fichero de Descripcion de Claves Privadas CERES:\n"); //$NON-NLS-1$
 		for (int index=0;index<getKeyCount();index++) {
 			sb.append(" Clave privada "); //$NON-NLS-1$
 			sb.append(Integer.toString(index));

@@ -75,7 +75,7 @@ public final class CeresX509CertificateAttributesContextSpecific extends Context
     /** Devuelve la ruta del certificado.
      * @return Ruta (<i>path</i>) del certificado */
     String getPath() {
-    	return ((Path)getObject()).toString();
+    	return new String(((Path)getObject()).getPathBytes());
     }
 
 }
