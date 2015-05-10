@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.DataFormatException;
@@ -137,7 +138,10 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
-		return new CeresPrivateKeyReference(this.keys.get(alias));
+		return new CeresPrivateKeyReference(
+			this.keys.get(alias),
+			((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
+		);
 	}
 
 	@Override
@@ -167,7 +171,22 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			);
 		}
 
-		CommandApdu cmd = new LoadDataApduCommand(digestInfo);
+		CommandApdu cmd;
+		try {
+			cmd = new LoadDataApduCommand(
+				CryptoHelper.addPkcs1PaddingForPrivateKeyOperation(
+					digestInfo,
+					ceresPrivateKey.getKeyBitSize()
+				)
+			);
+		}
+		catch (final Exception e1) {
+			throw new CryptoCardException(
+				"Error realizando el relleno PKCS#1 de los datos a firmar: " + e1, //$NON-NLS-1$
+				e1
+			);
+		}
+
 		ResponseApdu res;
 		try {
 			res = sendArbitraryApdu(cmd);

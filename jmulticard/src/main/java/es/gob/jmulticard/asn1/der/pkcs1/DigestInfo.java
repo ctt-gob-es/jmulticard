@@ -149,11 +149,8 @@ public final class DigestInfo extends Sequence {
     public static byte[] encode(final String signingAlgorithm, final byte[] data, final CryptoHelper cryptoHelper) throws IOException {
 
         final String normalizedSignningAlgorithm = getNormalizedSigningAlgorithm(signingAlgorithm);
-
         final String digestAlgorithm = getDigestAlgorithm(normalizedSignningAlgorithm);
-
         final byte[] header = selectHeaderTemplate(digestAlgorithm);
-
         final byte[] md = cryptoHelper.digest(digestAlgorithm, data);
 
         final byte[] digestInfo = new byte[header.length + md.length];
