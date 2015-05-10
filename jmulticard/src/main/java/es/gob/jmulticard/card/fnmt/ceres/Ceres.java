@@ -152,7 +152,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		if (!(keyRef instanceof CeresPrivateKeyReference)) {
 			throw new IllegalArgumentException(
-				"La clave proporcinoada debe ser de tipo CeresPrivateKeyReference, pero se ha recibido de tipo " + keyRef.getClass().getName() //$NON-NLS-1$
+				"La clave proporcionada debe ser de tipo CeresPrivateKeyReference, pero se ha recibido de tipo " + keyRef.getClass().getName() //$NON-NLS-1$
 			);
 		}
 		final CeresPrivateKeyReference ceresPrivateKey = (CeresPrivateKeyReference) keyRef;
@@ -214,9 +214,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	}
 
     /** Descomprime un certificado contenido en la tarjeta CERES.
-     * @param compressedCertificate Certificado comprimido en ZIP a partir del 9 byte.
+     * @param compressedCertificate Certificado comprimido en ZIP a partir del 9 octeto.
      * @return Certificado codificado.
-     * @throws IOException Cuando se produce un error en la descompresion del certificado. */
+     * @throws IOException Cuando se produce un error en la descompresi&oacute;n del certificado. */
     private static byte[] deflate(final byte[] compressedCertificate) throws IOException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final Inflater decompressor = new Inflater();
