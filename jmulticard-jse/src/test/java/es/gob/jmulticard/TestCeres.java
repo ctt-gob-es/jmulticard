@@ -8,6 +8,7 @@ import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
+
 /** Pruebas de FNMT-CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestCeres {
@@ -32,6 +33,16 @@ public final class TestCeres {
 				true
 			)
 		);
+
+//		System.out.println(
+//			HexUtils.hexify(
+//				CryptoHelper.addPkcs1PaddingForPrivateKeyOperation(
+//					DigestInfo.encode("SHA1withRSA", "HOLA".getBytes(), new JseCryptoHelper()), //$NON-NLS-1$ //$NON-NLS-2$
+//					1024
+//				),
+//				true
+//			)
+//		);
 
 	}
 

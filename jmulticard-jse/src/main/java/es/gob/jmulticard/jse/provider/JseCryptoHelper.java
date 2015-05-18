@@ -62,7 +62,7 @@ import es.gob.jmulticard.jse.provider.digest.SHA512Digest;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE6.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class JseCryptoHelper implements CryptoHelper {
+public final class JseCryptoHelper extends CryptoHelper {
 
     private static final String SHA512 = "SHA-512"; //$NON-NLS-1$
     private static final String SHA384 = "SHA-384"; //$NON-NLS-1$
