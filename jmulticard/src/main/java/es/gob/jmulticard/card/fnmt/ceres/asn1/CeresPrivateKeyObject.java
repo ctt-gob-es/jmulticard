@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.card.fnmt.ceres.asn1;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.der.pkcs15.CommonKeyAttributes;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
 
@@ -68,10 +69,18 @@ public final class CeresPrivateKeyObject extends Pkcs15Object {
 	public CeresPrivateKeyObject() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
-			CommonKeyAttributes.class,
-			CeresCommonPrivateKeyAttributesContextSpecific.class,
-			CeresPrivateRsaKeyAttributesContextSpecific.class
+			CommonKeyAttributes.class,                              // ClassAttributes
+			CeresCommonPrivateKeyAttributesContextSpecific.class,   // SubclassAttributes
+			CeresPrivateRsaKeyAttributesContextSpecific.class       // TypeAttributes
 		);
+	}
+
+	byte[] getKeyIdentifier() {
+		return ((CommonKeyAttributes)getClassAttributes()).getIdentifier();
+	}
+
+	byte getKeyReference() {
+		return ((CommonKeyAttributes)getClassAttributes()).getReference().getIntegerValue().byteValue();
 	}
 
 	String getKeyPath() {
@@ -81,7 +90,9 @@ public final class CeresPrivateKeyObject extends Pkcs15Object {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-    	return "Ruta de la clave privada: " + getKeyPath(); //$NON-NLS-1$
+    	return "Clave privada con ruta '" + getKeyPath() + //$NON-NLS-1$
+			"', identificador '" + HexUtils.hexify(getKeyIdentifier(), true) + //$NON-NLS-1$
+			"' y referencia '0x" + HexUtils.hexify(new byte[] { getKeyReference() }, false); //$NON-NLS-1$
     }
 
 }

@@ -93,7 +93,7 @@ public abstract class Pkcs15Object extends Sequence {
 
     /** Obtiene los atributos espec&iacute;ficos de clase.
      * @return Atributos espec&iacute;ficos de clase */
-    DecoderObject getClassAttributes() {
+    public DecoderObject getClassAttributes() {
         return this.getElementAt(1);
     }
 

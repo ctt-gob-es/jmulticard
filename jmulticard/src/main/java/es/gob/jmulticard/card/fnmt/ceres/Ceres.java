@@ -107,7 +107,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         System.out.println(cdf.toString());
 
         final CeresPrKdf prkdf = new CeresPrKdf();
-        prkdf.setDerValue(selectFileByLocationAndRead(PRKDF_LOCATION));
+        final byte[] prkdfValue =  selectFileByLocationAndRead(PRKDF_LOCATION);
+        prkdf.setDerValue(prkdfValue);
 
         System.out.println(prkdf.toString());
 

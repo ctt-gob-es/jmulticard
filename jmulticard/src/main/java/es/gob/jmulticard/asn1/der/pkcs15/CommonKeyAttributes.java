@@ -50,10 +50,11 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *    usage        KeyUsageFlags,
  *    native       BOOLEAN OPTIONAL,
  *    accessFlags  KeyAccessFlags OPTIONAL,
- *    keyReference Reference OPTIONAL,
+ *    keyReference PKCS15Reference OPTIONAL,
  *    startDate    GeneralizedTime OPTIONAL,
  *    endDate      [0] GeneralizedTime OPTIONAL,
  *  }
+ *  PKCS15Reference ::= INTEGER (0..pkcs15-ub-reference)
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CommonKeyAttributes extends Sequence {
@@ -90,6 +91,19 @@ public final class CommonKeyAttributes extends Sequence {
 	 * @return Identificador de la clave. */
 	public byte[] getIdentifier() {
 		return ((Identifier) getElementAt(0)).getOctectStringByteValue();
+	}
+
+	/** Devuelve la referencia de la clave,
+	 * @return Referencia de la clave, o <code>null</code> si la clave no tiene referencia. */
+	public Reference getReference() {
+		// Recorro la secuencia buscando la referencia, porque no puedo saber la posicion exacta con los opcionales
+		for (int i=0;i<getElementCount();i++) {
+			final Object o = getElementAt(i);
+			if (o instanceof Reference) {
+				return (Reference) o;
+			}
+		}
+		return null;
 	}
 
 }

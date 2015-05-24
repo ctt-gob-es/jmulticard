@@ -39,10 +39,30 @@
  */
 package es.gob.jmulticard.card.fnmt.ceres.asn1;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
+ * El PrKDF es una secuencia de estructuras <code>PKCS15PrivateKey</code>:
+ * <pre>
+ * PKCS15PrivateKey ::= CHOICE {
+ *    privateRSAKey [0] PKCS15PrivateKeyObject {
+ *        PKCS15PrivateRSAKeyAttributes
+ *    },
+ *    privateECKey  [1] PKCS15PrivateKeyObject {
+ *        PKCS15PrivateECKeyAttributes
+ *    },
+ *    ... -- More private key types TBD --
+ * }
+ *
+ * PKCS15PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
+ *    PKCS15CommonKeyAttributes,
+ *    PKCS15CommonPrivateKeyAttributes,
+ *    KeyAttributes
+ * }
+ * </pre>
+ * En este caso, las claves siempre ser&aacute;n de tipo RSA.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresPrKdf extends Record {
 
@@ -72,10 +92,24 @@ public final class CeresPrKdf extends Record {
 	}
 
 	/** Obtiene la ruta PKCS#15 hacia la clave indicada.
-	 * @param index &Iacute;ndice de la clave
-	 * @return Ruta PKCS#15 hacia la clave indicada */
+	 * @param index &Iacute;ndice de la clave.
+	 * @return Ruta PKCS#15 hacia la clave indicada. */
 	public String getKeyPath(final int index) {
 		return ((CeresPrivateKeyObject) getElementAt(index)).getKeyPath();
+	}
+
+	/** Obtiene el identificador de la clave indicada.
+	 * @param index &Iacute;ndice de la clave.
+	 * @return Identificador de la clave indicada. */
+	public byte[] getKeyId(final int index) {
+		return ((CeresPrivateKeyObject) getElementAt(index)).getKeyIdentifier();
+	}
+
+	/** Obtiene la referencia de la clave indicada.
+	 * @param index &Iacute;ndice de la clave.
+	 * @return Referencia de la clave indicada. */
+	public byte getKeyReference(final int index) {
+		return ((CeresPrivateKeyObject) getElementAt(index)).getKeyReference();
 	}
 
     /** {@inheritDoc} */
@@ -88,6 +122,10 @@ public final class CeresPrKdf extends Record {
 			sb.append(Integer.toString(index));
 			sb.append("\n  Ruta hacia la clave: "); //$NON-NLS-1$
 			sb.append(getKeyPath(index));
+			sb.append("\n  Identificador de la clave: "); //$NON-NLS-1$
+			sb.append(HexUtils.hexify(getKeyId(index), false));
+			sb.append("\n  Referencia de la clave: 0x"); //$NON-NLS-1$
+			sb.append(HexUtils.hexify(new byte[] { getKeyReference(index) }, false));
 			if (index != getKeyCount() -1) {
 				sb.append('\n');
 			}

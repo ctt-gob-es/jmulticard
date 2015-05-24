@@ -24,7 +24,7 @@ public final class TestCeres {
 		);
 		System.out.println(ceres.getCardName());
 		System.out.println(Arrays.asList(ceres.getAliases()));
-		System.out.println(ceres.getCertificate(ceres.getAliases()[0]));
+		//System.out.println(ceres.getCertificate(ceres.getAliases()[0]));
 		final PrivateKeyReference pkr = ceres.getPrivateKey(ceres.getAliases()[0]);
 		ceres.verifyPin(new CachePasswordCallback("1234".toCharArray())); //$NON-NLS-1$
 		System.out.println(
