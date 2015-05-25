@@ -8,7 +8,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
  * Crea dos servicios:
  * <dl>
  * <dt><code>KeyStore</code></dt>
- * <dd><i>DNI</i></dd>
+ * <dd><i>CERES</i></dd>
  * <dt><code>Signature</code></dt>
  * <dd><i>SHA1withRSA</i>, <i>SHA256withRSA</i>, <i>SHA384withRSA</i>, <i>SHA512withRSA</i></dd>
  * </dl>
@@ -41,12 +41,12 @@ public final class CeresProvider extends Provider {
     	return defaultConnection;
     }
 
-    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe) con la conexi&oacute;n por defecto. */
+    /** Crea un proveedor JCA para tarjeta FNMT-RCM-CERES con la conexi&oacute;n por defecto. */
     public CeresProvider() {
     	this(null);
     }
 
-    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe).
+    /** Crea un proveedor JCA para tarjeta FNMT-RCM-CERES.
      * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU. */
     public CeresProvider(final ApduConnection conn) {
         super(NAME, VERSION, INFO);
