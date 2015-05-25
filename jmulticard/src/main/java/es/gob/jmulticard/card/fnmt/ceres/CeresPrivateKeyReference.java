@@ -1,26 +1,27 @@
 package es.gob.jmulticard.card.fnmt.ceres;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.card.PrivateKeyReference;
 
 /** Clave privada de una tarjeta CERES. La clase no contiene la clave privada en si, sino una referencia a ella.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class CeresPrivateKeyReference implements PrivateKeyReference {
 
-	private final String path;
+	private final byte reference;
 	private final int keySize;
 
 	/** Crea una referencia a una clave privada de tarjeta CERES.
-	 * @param p Ruta interna de la clave.
+	 * @param r Referencia interna de la clave.
 	 * @param kSize Tama&ntilde;o en bits de la clave privada. */
-	public CeresPrivateKeyReference(final String p, final int kSize) {
-		this.path = p;
+	public CeresPrivateKeyReference(final byte r, final int kSize) {
+		this.reference = r;
 		this.keySize = kSize;
 	}
 
-	/** Recupera el &iacute;ndice de la clave.
-	 * @return Ruta de la clave. */
-	public String getKeyIndex() {
-		return this.path;
+	/** Recupera la referencia de la clave.
+	 * @return Referencia de la clave. */
+	public byte getKeyReference() {
+		return this.reference;
 	}
 
 	/** Obtiene el tam&ntilde;o en bits de la clave.
@@ -31,6 +32,6 @@ public class CeresPrivateKeyReference implements PrivateKeyReference {
 
 	@Override
 	public String toString() {
-		return "Clave privada de tarjeta CERES de " + this.keySize + " bits con ruta: " + this.path; //$NON-NLS-1$ //$NON-NLS-2$
+		return "Clave privada de tarjeta CERES de " + this.keySize + " bits con referencia: 0x" + HexUtils.hexify(new byte[] { this.reference }, false); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

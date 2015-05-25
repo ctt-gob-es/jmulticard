@@ -56,15 +56,22 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
     private Map<String, X509Certificate> certs;
-    private Map<String, String> keys;
+    private Map<String, Byte> keys;
+
+    private final PasswordCallback passwordCallback;
+
+    private boolean authenticated = false;
 
 	/** Construye una clase que representa una tarjeta FNMT-RCM CERES.
 	 * @param conn Conexi&oacute;n con la tarjeta.
+	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la tarjeta.
 	 * @param ch Clase para la realizaci&oacute;n de las huellas digitales del <i>DigestInfo</i>.
 	 * @throws ApduConnectionException Si hay problemas con la conexi&oacute;n proporcionada.
 	 * @throws InvalidCardException Si la tarjeta conectada no es una FNMT-RCM CERES.
 	 */
-	public Ceres(final ApduConnection conn, final CryptoHelper ch) throws ApduConnectionException, InvalidCardException {
+	public Ceres(final ApduConnection conn,
+			     final PasswordCallback pwc,
+			     final CryptoHelper ch) throws ApduConnectionException, InvalidCardException {
 		super(CLA, conn);
 		if (ch == null) {
 			throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
@@ -77,6 +84,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new ApduConnectionException("Error cargando las estructuras iniciales de la tarjeta: " + e, e); //$NON-NLS-1$
 		}
 		this.cryptoHelper = ch;
+		this.passwordCallback = pwc;
 	}
 
 	private void preload() throws ApduConnectionException,
@@ -117,12 +125,12 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     			"El numero de claves de la tarjeta (" + prkdf.getKeyCount() + ") no coincide con el de certificados (" + this.certs.size() + ")" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
         }
-        this.keys = new LinkedHashMap<String, String>(this.certs.size());
+        this.keys = new LinkedHashMap<String, Byte>(this.certs.size());
         final String[] aliases = getAliases();
         for (int i=0; i<this.certs.size(); i++) {
         	this.keys.put(
     			aliases[i],
-				prkdf.getKeyPath(i)
+				Byte.valueOf(prkdf.getKeyReference(i))
 			);
         }
 	}
@@ -140,7 +148,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
 		return new CeresPrivateKeyReference(
-			this.keys.get(alias),
+			this.keys.get(alias).byteValue(),
 			((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
 		);
 	}
@@ -188,6 +196,17 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			);
 		}
 
+		// Pedimos el PIN si no se ha pedido antes
+		if (!this.authenticated) {
+			try {
+				verifyPin(this.passwordCallback);
+				this.authenticated = true;
+			}
+			catch (final ApduConnectionException e1) {
+				throw new CryptoCardException("Error en la verificacion de PIN: " + e1, e1); //$NON-NLS-1$
+			}
+		}
+
 		ResponseApdu res;
 		try {
 			res = sendArbitraryApdu(cmd);
@@ -199,7 +218,10 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new CryptoCardException("No se han podido enviar los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true)); //$NON-NLS-1$
 		}
 
-		cmd = new SignDataApduCommand(ceresPrivateKey.getKeyIndex());
+		cmd = new SignDataApduCommand(
+			ceresPrivateKey.getKeyReference(), // Referencia
+			ceresPrivateKey.getKeyBitSize()    // Tamano en bits de la clave
+		);
 		try {
 			res = sendArbitraryApdu(cmd);
 		}
