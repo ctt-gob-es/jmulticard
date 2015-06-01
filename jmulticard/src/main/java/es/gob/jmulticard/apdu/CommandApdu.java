@@ -59,9 +59,14 @@ public class CommandApdu extends Apdu {
 	 * @param param2 Segundo par&aacute;metro (P2) de la APDU
 	 * @param data Datos del comando
 	 * @param ne N&uacute;mero de octetos esperados en la respuesta (Ne) */
-	public CommandApdu(final byte cla, final byte ins, final byte param1,
-			final byte param2, final byte[] data, final Integer ne) {
+	public CommandApdu(final byte cla,
+			           final byte ins,
+			           final byte param1,
+			           final byte param2,
+			           final byte[] data,
+			           final Integer ne) {
 		super();
+
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		this.cla = cla;
@@ -83,8 +88,7 @@ public class CommandApdu extends Apdu {
 			this.body = new byte[data.length];
 			System.arraycopy(data, 0, this.body, 0, data.length);
 
-			baos.write(Integer.valueOf(String.valueOf(this.body.length))
-					.byteValue());
+			baos.write(Integer.valueOf(String.valueOf(this.body.length)).byteValue());
 
 			if (this.body.length > 0) {
 				try {
@@ -97,10 +101,12 @@ public class CommandApdu extends Apdu {
 				}
 			}
 		}
+
 		this.le = ne;
 		if (ne != null) {
 			baos.write(ne.byteValue());
 		}
+
 		setBytes(baos.toByteArray());
 	}
 

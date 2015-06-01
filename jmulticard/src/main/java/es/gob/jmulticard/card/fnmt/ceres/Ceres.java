@@ -23,6 +23,7 @@ import es.gob.jmulticard.apdu.ceres.LoadDataApduCommand;
 import es.gob.jmulticard.apdu.ceres.SignDataApduCommand;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.iso7816eight.EnvelopeDataApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
@@ -170,32 +171,6 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		final CeresPrivateKeyReference ceresPrivateKey = (CeresPrivateKeyReference) keyRef;
 
-		final byte[] digestInfo;
-		try {
-			digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
-		}
-		catch(final Exception e) {
-			throw new CryptoCardException(
-				"Erros creando el DigestInfo para la firma con el algoritmo " + algorithm + ": " + e, e //$NON-NLS-1$ //$NON-NLS-2$
-			);
-		}
-
-		CommandApdu cmd;
-		try {
-			cmd = new LoadDataApduCommand(
-				CryptoHelper.addPkcs1PaddingForPrivateKeyOperation(
-					digestInfo,
-					ceresPrivateKey.getKeyBitSize()
-				)
-			);
-		}
-		catch (final Exception e1) {
-			throw new CryptoCardException(
-				"Error realizando el relleno PKCS#1 de los datos a firmar: " + e1, //$NON-NLS-1$
-				e1
-			);
-		}
-
 		// Pedimos el PIN si no se ha pedido antes
 		if (!this.authenticated) {
 			try {
@@ -207,18 +182,21 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			}
 		}
 
-		ResponseApdu res;
+		final byte[] digestInfo;
 		try {
-			res = sendArbitraryApdu(cmd);
+			digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
 		}
-		catch (final Exception e) {
-			throw new CryptoCardException("Error enviando los datos a firmar a la tarjeta: " + e, e); //$NON-NLS-1$
-		}
-		if (!res.isOk()) {
-			throw new CryptoCardException("No se han podido enviar los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true)); //$NON-NLS-1$
+		catch(final Exception e) {
+			throw new CryptoCardException(
+				"Erros creando el DigestInfo para la firma con el algoritmo " + algorithm + ": " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+			);
 		}
 
-		cmd = new SignDataApduCommand(
+		loadData(ceresPrivateKey.getKeyBitSize(), digestInfo);
+
+		final ResponseApdu res;
+
+		final CommandApdu cmd = new SignDataApduCommand(
 			ceresPrivateKey.getKeyReference(), // Referencia
 			ceresPrivateKey.getKeyBitSize()    // Tamano en bits de la clave
 		);
@@ -232,6 +210,83 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new CryptoCardException("No se han podido firmar los datos. Respuesta: " + HexUtils.hexify(res.getBytes(), true)); //$NON-NLS-1$
 		}
 		return res.getData();
+	}
+
+	private void loadData(final int keyBitSize, final byte[] digestInfo) throws CryptoCardException {
+		final byte[] paddedData;
+		try {
+			paddedData = CryptoHelper.addPkcs1PaddingForPrivateKeyOperation(
+				digestInfo,
+				keyBitSize
+			);
+		}
+		catch (final Exception e1) {
+			throw new CryptoCardException(
+				"Error realizando el relleno PKCS#1 de los datos a firmar: " + e1, //$NON-NLS-1$
+				e1
+			);
+		}
+
+		ResponseApdu res;
+
+		// Si la clave es de 1024 la carga se puede hacer en una unica APDU
+		if (keyBitSize < 2048) {
+			try {
+				res = sendArbitraryApdu(new LoadDataApduCommand(paddedData));
+			}
+			catch (final Exception e) {
+				throw new CryptoCardException("Error enviando los datos a firmar a la tarjeta: " + e, e); //$NON-NLS-1$
+			}
+			if (!res.isOk()) {
+				throw new CryptoCardException("No se han podido enviar los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true)); //$NON-NLS-1$
+			}
+		}
+		// Pero si es de 2048 hacen falta dos APDU, envolviendo la APDU de carga de datos
+		else if (keyBitSize == 2048) {
+
+			final byte[] envelopedLoadDataApdu = new byte[] {
+				(byte) 0x90, (byte) 0x58, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00
+			};
+
+			// La primera APDU carga 0xFF octetos (254)
+			byte[] data = new byte[255];
+			System.arraycopy(envelopedLoadDataApdu, 0, data, 0, envelopedLoadDataApdu.length);
+			System.arraycopy(paddedData, 0, data, envelopedLoadDataApdu.length, 255 - envelopedLoadDataApdu.length);
+
+			try {
+				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
+			}
+			catch (final Exception e) {
+				throw new CryptoCardException("Error en el segundo envio a la tarjeta de los datos a firmar: " + e, e); //$NON-NLS-1$
+			}
+			if (!res.isOk()) {
+				throw new CryptoCardException(
+					"No se han podido enviar (segunda tanda) los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+				);
+			}
+
+			// La segunda APDU es de 0x08 octetos (8)
+			data = new byte[8];
+			System.arraycopy(paddedData, 255 - envelopedLoadDataApdu.length, data, 0, 8);
+
+			try {
+				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
+			}
+			catch (final Exception e) {
+				throw new CryptoCardException("Error en el primer envio a la tarjeta de los datos a firmar: " + e, e); //$NON-NLS-1$
+			}
+			if (!res.isOk()) {
+				throw new CryptoCardException(
+					"No se han podido enviar (primera tanda) los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+				);
+			}
+
+		}
+
+		else {
+			throw new IllegalArgumentException("Solo se soportan claves de 2048 o menos bits"); //$NON-NLS-1$
+		}
+
 	}
 
 	@Override
