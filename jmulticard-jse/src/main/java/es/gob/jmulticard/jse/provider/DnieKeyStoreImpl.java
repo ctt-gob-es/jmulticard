@@ -266,13 +266,15 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
-        this.cryptoCard = new Dnie(
-    		conn,
-    		password != null ?
-    				new CachePasswordCallback(password) :
-    					null,
-    		new JseCryptoHelper()
-		);
+        final Dnie dnie = new Dnie(
+            conn,
+            password != null ?
+                    new CachePasswordCallback(password) :
+                        null,
+            new JseCryptoHelper()
+        );
+        dnie.setPinAutoRetry(false);
+        this.cryptoCard = dnie;
     }
 
     /** Operaci&oacute;n no soportada. */
@@ -314,7 +316,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         return entryClass.equals(PrivateKeyEntry.class);
     }
 
-    /** PasswordCallbak que almacena internamente y devuelve la contrase&ntilde;a con la que se
+    /** PasswordCallback que almacena internamente y devuelve la contrase&ntilde;a con la que se
      * construy&oacute; o la que se le establece posteriormente. */
     private static final class CachePasswordCallback extends PasswordCallback {
 
@@ -325,6 +327,17 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         public CachePasswordCallback(final char[] password) {
             super(">", false); //$NON-NLS-1$
             this.setPassword(password);
+        }
+
+        /** Ignoramos intentos de borrado de la contrase&ntilde, para forzar que
+         * si quiere cambiarse se haga explicitamente mediante <code>setPassword</code>.
+         * Esto evita problemas en otras partes del codigo en que se esta llamando
+         * este metodo para forzar que se pida al usuario una nueva introduccion de la
+         * contrase&ntildea la proxima vez que se use.
+         */
+        @Override
+        public void clearPassword() {
+            // Ignore
         }
     }
 }

@@ -98,8 +98,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private static final boolean PIN_AUTO_RETRY = true;
-
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
             (byte) 0x60, (byte) 0x1F
@@ -128,6 +126,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     private DniePrivateKeyReference authKeyRef;
     private DniePrivateKeyReference signKeyRef;
+    private boolean pinAutoRetry = true;
 
     /** Manejador de funciones criptograficas. */
     private CryptoHelper cryptoHelper = null;
@@ -682,12 +681,23 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         return this.getConnection() instanceof Cwa14890OneConnection && this.getConnection().isOpen();
     }
 
+    /** Indica si se ha de pedir automáticamente el pin del dispositivo de nuevo
+     * en caso de que se haya introducido pin incorrecto. Si el PasswordCallback
+     * que vas a utilizar en las llamadas a verifyPin no pide el pin cada vez 
+     * que se llama a <code>PasswordCallback#getPassword()</code>, setea este 
+     * atributo a <code>false</code>, o tu DNI se bloqueará con la introducción
+     * de un PIN incorrecto.
+     */
+    public void setPinAutoRetry(boolean pinAutoRetry) {
+        this.pinAutoRetry = pinAutoRetry;
+    }
+
     @Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
     	verifyPin(pinPc, Integer.MAX_VALUE);
     }
 
-    /** Verifica el PIN de la tarjeta. Si se establece la constante <code>PIN_AUTO_RETRY</code> a <code>true</code>,
+    /** Verifica el PIN de la tarjeta. Si se establece el atributo <code>pinAutoRetry</code> a <code>true</code>,
      * el m&eacute;todo reintenta hasta que se introduce el PIN correctamente se bloquea la tarjeta por exceso de
      * intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
@@ -732,8 +742,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     	psc.clearPassword();
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
-            	// Si no hay reintento automatico se lanza la excepcion
-            	if (!PIN_AUTO_RETRY) {
+            	// Si no hay reintento automatico, se lanza la excepcion
+            	if (!pinAutoRetry) {
             		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             	}
             	// Si hay reintento automativo volvemos a pedir el PIN con la misma CallBack
