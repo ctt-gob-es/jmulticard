@@ -314,7 +314,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         return entryClass.equals(PrivateKeyEntry.class);
     }
 
-    /** PasswordCallbak que almacena internamente y devuelve la contrase&ntilde;a con la que se
+    /** PasswordCallback que almacena internamente y devuelve la contrase&ntilde;a con la que se
      * construy&oacute; o la que se le establece posteriormente. */
     private static final class CachePasswordCallback extends PasswordCallback {
 
