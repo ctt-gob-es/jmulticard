@@ -218,6 +218,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 			}
 			catch (final NotAvailableUSBDeviceException e) {
 				Log.e("es.gob.afirma", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				return new long[0];
 			}
 		}
 		return new long[] { 0 };
