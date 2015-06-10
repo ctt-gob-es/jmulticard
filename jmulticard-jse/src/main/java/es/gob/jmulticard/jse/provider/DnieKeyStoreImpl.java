@@ -155,6 +155,11 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	catch(final AuthenticationModeLockedException e) {
     		throw e;
     	}
+        catch (final BadPinException e) {
+            // Lanzamos la excepcion, ya que si no se pueden gastar dos intentos de pin, uno
+            // aqui y otro abajo.
+            throw new BadPasswordProviderException(e);
+        }
     	catch (final Exception e) {
     		Logger.getLogger("es.gob.jmulticard").warning("No se ha podido cargar el certificado de la CA intermedia"); //$NON-NLS-1$ //$NON-NLS-2$
     		intermediateCaCert = null;
