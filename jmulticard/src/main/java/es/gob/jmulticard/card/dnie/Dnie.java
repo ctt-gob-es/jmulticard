@@ -120,12 +120,15 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private X509Certificate authCert;
     private X509Certificate signCert;
     private X509Certificate intermediateCaCert;
+    private boolean areCertificatesLoaded = false;
 
     private Location authCertPath;
     private Location signCertPath;
 
     private DniePrivateKeyReference authKeyRef;
     private DniePrivateKeyReference signKeyRef;
+
+    private boolean isPinVerified = false;
     private boolean pinAutoRetry = true;
 
     /** Manejador de funciones criptograficas. */
@@ -325,7 +328,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado
      *         la inserci&oacute;n del PIN */
     private void loadCertificates() throws CryptoCardException, BadPinException {
-        if (this.isSecurityChannelOpen()) {
+        if (this.isSecurityChannelOpen() && this.areCertificatesLoaded) {
             return;
         }
         verifyAndLoadCertificates();
@@ -612,6 +615,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
                 if (this.passwordCallback != null) {
                 	this.passwordCallback.clearPassword();
                 }
+                this.isPinVerified = true;
             }
             catch (final ApduConnectionException e) {
                 throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
@@ -627,6 +631,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
             final byte[] signCertEncoded = deflate(selectFileByLocationAndRead(this.signCertPath));
             this.signCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signCertEncoded));
+            this.areCertificatesLoaded = true;
         }
         catch (final CertificateException e) {
             throw new CryptoCardException(
@@ -678,7 +683,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     private boolean isSecurityChannelOpen() {
         // Si estan cargados los certificados entonces ya se abrio el canal seguro
-        return this.getConnection() instanceof Cwa14890OneConnection && this.getConnection().isOpen();
+        return isPinVerified &&
+                this.getConnection() instanceof Cwa14890OneConnection &&
+                this.getConnection().isOpen();
     }
 
     /** Indica si se ha de pedir automáticamente el pin del dispositivo de nuevo
