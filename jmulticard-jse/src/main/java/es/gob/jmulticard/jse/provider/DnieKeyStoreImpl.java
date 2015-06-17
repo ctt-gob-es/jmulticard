@@ -142,6 +142,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public Certificate[] engineGetCertificateChain(final String alias) {
+
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
@@ -152,8 +153,11 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	try {
     		intermediateCaCert = this.cryptoCard.getCertificate(INTERMEDIATE_CA_CERT_ALIAS);
     	}
-    	catch(final AuthenticationModeLockedException e) {
+    	catch (final AuthenticationModeLockedException e) {
     		throw e;
+    	}
+    	catch (final BadPinException e) {
+    		throw new BadPasswordProviderException(e);
     	}
     	catch (final Exception e) {
     		Logger.getLogger("es.gob.jmulticard").warning("No se ha podido cargar el certificado de la CA intermedia"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -162,12 +166,12 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     	if (intermediateCaCert == null) {
     		return new X509Certificate[] {
-    				(X509Certificate) engineGetCertificate(alias)
+				(X509Certificate) engineGetCertificate(alias)
     		};
     	}
     	return new X509Certificate[] {
-    			(X509Certificate) engineGetCertificate(alias),
-    			intermediateCaCert
+			(X509Certificate) engineGetCertificate(alias),
+			intermediateCaCert
     	};
     }
 
