@@ -318,26 +318,10 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
     }
 
-    /** Carga los certificados autenticos de la tarjeta.
-     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
-     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado
-     * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado
-     *         la inserci&oacute;n del PIN */
-    private void loadCertificates() throws CryptoCardException, BadPinException {
-        if (this.isSecurityChannelOpen()) {
-            return;
-        }
-        verifyAndLoadCertificates();
-    }
-
     /** {@inheritDoc} */
     @Override
     public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
 
-        // Si no estamos en Modo Rapido, nos aseguramos de que este cargados
-        // los certificados de verdad
         if (this.authCert == null) {
             loadCertificates();
         }
@@ -487,7 +471,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     /** {@inheritDoc} */
     @Override
-    public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException, BadPinException {
+    public byte[] sign(final byte[] data, final String signAlgorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException, BadPinException {
 
         if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
             throw new IllegalArgumentException("La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference"); //$NON-NLS-1$
@@ -501,23 +485,31 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         		final Class<?> componentClass = Class.forName("java.awt.Component"); //$NON-NLS-1$
         		final Method showSignatureConfirmDialogMethod = dialogBuilderClass.getMethod("showSignatureConfirmDialog", componentClass, Boolean.TYPE); //$NON-NLS-1$
 
-        		final Integer result = (Integer) showSignatureConfirmDialogMethod.invoke(null, null, Boolean.valueOf(!AUTH_KEY_LABEL.equals(((DniePrivateKeyReference) privateKeyReference).toString())));
+        		final Integer result = (Integer) showSignatureConfirmDialogMethod.invoke(
+    				null,
+    				null,
+    				Boolean.valueOf(!AUTH_KEY_LABEL.equals(((DniePrivateKeyReference) privateKeyReference).toString()))
+				);
         		permissionDenied = result.intValue() == 1;
 
         	}
         	catch (final Exception e) {
-        		Logger.getLogger("es.gob.afirma").severe("No se ha podido mostrar el dialogo grafico para la autorizacion de la firma, se realizara sin aprobacion expresa: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+        		Logger.getLogger("es.gob.afirma").severe( //$NON-NLS-1$
+    				"No se ha podido mostrar el dialogo grafico para la autorizacion de la firma, se realizara sin aprobacion expresa: " + e //$NON-NLS-1$
+				);
         		permissionDenied = false;
         	}
 
 	        if (permissionDenied) {
-
-	        	RuntimeException re;
+	        	final RuntimeException re;
 	        	try {
-	        		final Class<?> cancelledOperationExceptionClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.CancelledOperationException"); //$NON-NLS-1$
+	        		final Class<?> cancelledOperationExceptionClass = Class.forName(
+        				"es.gob.jmulticard.ui.passwordcallback.CancelledOperationException" //$NON-NLS-1$
+    				);
 	        		final Constructor<?> cancelledOperationExceptionConstructor = cancelledOperationExceptionClass.getConstructor(String.class);
 	        		re = (RuntimeException) cancelledOperationExceptionConstructor.newInstance("Operacion de firma no autorizada por el usuario"); //$NON-NLS-1$
-	        	} catch (final Exception e) {
+	        	}
+	        	catch (final Exception e) {
 	        		throw new IllegalArgumentException("No se ha instanciar CancelledOperationException", e); //$NON-NLS-1$
 	        	}
 
@@ -525,31 +517,35 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 	        }
         }
 
-        return signOperation(data, algorithm, privateKeyReference);
+        return signOperation(data, signAlgorithm, privateKeyReference);
     }
 
     /** Realiza la operaci&oacute;n de firma.
      * @param data Datos que se desean firmar.
-     * @param algorithm Algoritmo de firma.
+     * @param signAlgorithm Algoritmo de firma (por ejemplo, SHA512withRSA, SHA1withRSA, etc.).
      * @param privateKeyReference Referencia a la clave privada para la firma.
      * @return Firma de los datos.
      * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
      * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
-    private byte[] signOperation(final byte[] data, final String algorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException, BadPinException {
-
-        if (!this.isSecurityChannelOpen()) {
-            this.verifyAndLoadCertificates();
-        }
+    private byte[] signOperation(final byte[] data,
+    		                     final String signAlgorithm,
+    		                     final PrivateKeyReference privateKeyReference) throws CryptoCardException,
+    		                                                                           BadPinException {
+        this.openSecureChannelIfNotAlreadyOpened();
 
         ResponseApdu res;
         try {
-            CommandApdu apdu = new MseSetSignatureKeyApduCommand((byte) 0x00, ((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath());
+            CommandApdu apdu = new MseSetSignatureKeyApduCommand(
+        		(byte) 0x00, ((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath()
+    		);
 
             res = this.getConnection().transmit(apdu);
             if (!res.isOk()) {
-                throw new DnieCardException("Error en el establecimiento de las variables de entorno para firma", res.getStatusWord()); //$NON-NLS-1$
+                throw new DnieCardException(
+            		"Error en el establecimiento de las variables de entorno para firma", res.getStatusWord() //$NON-NLS-1$
+        		);
             }
 
             // TODO: Modificar esta llamada y la clase DigestInfo para que reciba el algoritmo
@@ -557,7 +553,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
             final byte[] digestInfo;
             try {
-                digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
+                digestInfo = DigestInfo.encode(signAlgorithm, data, this.cryptoHelper);
             }
             catch (final IOException e) {
                 throw new DnieCardException("Error en el calculo del hash para firmar", e); //$NON-NLS-1$
@@ -579,7 +575,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             catch (final Exception ex) {
                 throw new DnieCardException("No se pudo recuperar el canal seguro para firmar: " + ex, ex); //$NON-NLS-1$
             }
-            return signOperation(data, algorithm, privateKeyReference);
+            return signOperation(data, signAlgorithm, privateKeyReference);
         }
         catch (final ApduConnectionException e) {
             throw new DnieCardException("Error en la transmision de comandos a la tarjeta", e); //$NON-NLS-1$
@@ -588,17 +584,13 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         return res.getData();
     }
 
-    /** Abre el canal seguro de la tarjeta solicitando el PIN al usuario y carga los
-     * certificados de verdad para utilizarlos cuando se desee.
-     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
-     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; ha bloqueado
-     * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado la inserci&oacute;n del PIN */
-    private void verifyAndLoadCertificates() throws CryptoCardException, BadPinException {
-
+    /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya hecho.
+     * @throws CryptoCardException Si hay problemas en el proceso.
+     * @throws BadPinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
+    private void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, BadPinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!this.isSecurityChannelOpen()) {
+        	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
             if (!(this.getConnection() instanceof Cwa14890OneConnection)) {
                 final Cwa14890OneConnection secureConnection = new Cwa14890OneConnection(this, this.getConnection(), this.cryptoHelper);
                 try {
@@ -618,32 +610,48 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
                 throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
             }
         }
+    }
 
-        // Cargamos certificados
-        try {
-            final CertificateFactory certFactory = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+    /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados), abriendo el canal seguro de
+     * la tarjeta si fuese necesario, mediante el PIN de usuario.
+     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
+     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; ha bloqueado
+     * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado la inserci&oacute;n del PIN
+     *                                                                           usando el di&aacute;logo gr&aacute;fico integrado. */
+    private void loadCertificates() throws CryptoCardException, BadPinException {
 
-            final byte[] authCertEncoded = deflate(selectFileByLocationAndRead(this.authCertPath));
-            this.authCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(authCertEncoded));
+    	// Abrimos el canal si es necesario
+    	openSecureChannelIfNotAlreadyOpened();
 
-            final byte[] signCertEncoded = deflate(selectFileByLocationAndRead(this.signCertPath));
-            this.signCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signCertEncoded));
-        }
-        catch (final CertificateException e) {
-            throw new CryptoCardException(
-        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
-    		);
-        }
-        catch (final IOException e) {
-            throw new CryptoCardException(
-        		"Error al cargar los certificados reales del DNIe, error en la descompresion de los datos", e //$NON-NLS-1$
-    		);
-		}
-        catch (final Iso7816FourCardException e) {
-            throw new CryptoCardException(
-        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
-    		);
-		}
+        // Cargamos certificados si es necesario
+    	if (this.authCert == null || this.signCert == null) {
+	        try {
+	            final CertificateFactory certFactory = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+
+	            final byte[] authCertEncoded = deflate(selectFileByLocationAndRead(this.authCertPath));
+	            this.authCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(authCertEncoded));
+
+	            final byte[] signCertEncoded = deflate(selectFileByLocationAndRead(this.signCertPath));
+	            this.signCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signCertEncoded));
+	        }
+	        catch (final CertificateException e) {
+	            throw new CryptoCardException(
+	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
+	    		);
+	        }
+	        catch (final IOException e) {
+	            throw new CryptoCardException(
+	        		"Error al cargar los certificados reales del DNIe, error en la descompresion de los datos", e //$NON-NLS-1$
+	    		);
+			}
+	        catch (final Iso7816FourCardException e) {
+	            throw new CryptoCardException(
+	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
+	    		);
+			}
+    	}
     }
 
 	@Override
