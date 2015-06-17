@@ -184,9 +184,6 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public Key engineGetKey(final String alias, final char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException {
-    	if (password != null) {
-    		Logger.getLogger("es.gob.jmulticard").warning("Se ha proporcionado una contrasena, pero esta se ignorara, ya que el PIN se gestiona internamente"); //$NON-NLS-1$ //$NON-NLS-2$
-    	}
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
