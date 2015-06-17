@@ -82,7 +82,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		// SmartCard Device Class: http://www.usb.org/developers/defined_class/#BaseClass00h
 		// SmartCard Interface Class: http://www.usb.org/developers/defined_class/#BaseClass0Bh
 		if(device.getDeviceClass() == 0x00 && device.getInterface(0).getInterfaceClass() == 0x0B) {
-				return true;
+			return true;
 		}
 		return false;
 	}
@@ -218,6 +218,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 			}
 			catch (final NotAvailableUSBDeviceException e) {
 				Log.e("es.gob.afirma", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				return new long[0];
 			}
 		}
 		return new long[] { 0 };
