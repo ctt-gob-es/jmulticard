@@ -97,9 +97,15 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     private Map<String, X509Certificate> certs;
     private Map<String, Byte> keys;
 
-    private final PasswordCallback passwordCallback;
+    private PasswordCallback passwordCallback = null;
 
     private boolean authenticated = false;
+
+    /** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.
+     * @param pwc <code>PasswordCallback</code> para el PIN de la tarjeta. */
+    public void setPasswordCallback(final PasswordCallback pwc) {
+    	this.passwordCallback = pwc;
+    }
 
     private void checkAtr(final byte[] atrBytes) throws InvalidCardException {
     	Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
@@ -123,13 +129,11 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	/** Construye una clase que representa una tarjeta FNMT-RCM CERES.
 	 * @param conn Conexi&oacute;n con la tarjeta.
-	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la tarjeta.
 	 * @param ch Clase para la realizaci&oacute;n de las huellas digitales del <i>DigestInfo</i>.
 	 * @throws ApduConnectionException Si hay problemas con la conexi&oacute;n proporcionada.
 	 * @throws InvalidCardException Si la tarjeta conectada no es una FNMT-RCM CERES.
 	 */
 	public Ceres(final ApduConnection conn,
-			     final PasswordCallback pwc,
 			     final CryptoHelper ch) throws ApduConnectionException, InvalidCardException {
 		super(CLA, conn);
 		if (ch == null) {
@@ -146,7 +150,6 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new ApduConnectionException("Error cargando las estructuras iniciales de la tarjeta: " + e, e); //$NON-NLS-1$
 		}
 		this.cryptoHelper = ch;
-		this.passwordCallback = pwc;
 	}
 
 	private void preload() throws ApduConnectionException,
@@ -357,12 +360,18 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	@Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
+		if (pinPc == null) {
+			throw new BadPinException("No se ha establecido un PasswordCallback"); //$NON-NLS-1$
+		}
 		final CommandApdu chv = new CeresVerifyApduCommand(CLA, pinPc);
 		final ResponseApdu verifyResponse = sendArbitraryApdu(chv);
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
             	throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
+            throw new ApduConnectionException(
+        		"Error en el envio de la verificacion de PIN con respuesta: " + verifyResponse.getStatusWord() //$NON-NLS-1$
+    		);
         }
 	}
 

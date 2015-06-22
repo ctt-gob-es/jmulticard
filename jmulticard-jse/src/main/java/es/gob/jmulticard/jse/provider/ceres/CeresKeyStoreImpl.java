@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.x500.X500Principal;
@@ -124,10 +123,14 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
     /** {@inheritDoc} */
     @Override
-    public Key engineGetKey(final String alias, final char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException {
+    public Key engineGetKey(final String alias, final char[] password) throws NoSuchAlgorithmException,
+                                                                              UnrecoverableKeyException {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
+    	this.cryptoCard.setPasswordCallback(
+			new CachePasswordCallback(password)
+		);
         try {
         	final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
         	if (!(pkRef instanceof CeresPrivateKeyReference)) {
@@ -146,15 +149,18 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     		                             final ProtectionParameter protParam) throws KeyStoreException,
     		                                                                         NoSuchAlgorithmException,
     		                                                                         UnrecoverableEntryException {
-    	if (protParam != null) {
-    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-				"Se ha proporcionado un ProtectionParameter, pero este se ignorara, ya que el PIN se gestiona en la carga" //$NON-NLS-1$
+    	if (!(protParam instanceof KeyStore.PasswordProtection)) {
+    		throw new KeyStoreException(
+				"Se necesita un ProtectionParameter de tipo KeyStore.PasswordProtection" //$NON-NLS-1$
 			);
     	}
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
-    	final PrivateKey key = (PrivateKey) engineGetKey(alias, null);
+    	final PrivateKey key = (PrivateKey) engineGetKey(
+			alias,
+			((KeyStore.PasswordProtection)protParam).getPassword()
+		);
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
     }
 
@@ -197,9 +203,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         // Aqui se realiza el acceso e inicializacion de la tarjeta
         this.cryptoCard = new Ceres(
     		getApduConnection(),
-    		password != null ?
-				new CachePasswordCallback(password) :
-					null,
     		new JseCryptoHelper()
 		);
 
@@ -254,7 +257,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
         /** Contruye una Callback con una contrase&ntilde;a pre-establecida.
          * @param password Contrase&ntilde;a por defecto. */
-        public CachePasswordCallback(final char[] password) {
+        CachePasswordCallback(final char[] password) {
             super(">", false); //$NON-NLS-1$
             this.setPassword(password);
         }
