@@ -41,28 +41,28 @@ import es.gob.jmulticard.jse.provider.JseCryptoHelper;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
-    private static List<String> USERS_CERTS_ALIASES = null;
+    private static List<String> userCertAliases = null;
 
     private Ceres cryptoCard = null;
 
     private void loadAliases() throws CryptoCardException {
     	final String[] aliases = this.cryptoCard.getAliases();
-    	USERS_CERTS_ALIASES = new ArrayList<String>(aliases.length);
+    	userCertAliases = new ArrayList<String>(aliases.length);
     	for (final String alias : aliases) {
-    		USERS_CERTS_ALIASES.add(alias);
+    		userCertAliases.add(alias);
     	}
     }
 
     /** {@inheritDoc} */
     @Override
     public Enumeration<String> engineAliases() {
-        return Collections.enumeration(USERS_CERTS_ALIASES);
+        return Collections.enumeration(userCertAliases);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean engineContainsAlias(final String alias) {
-        return USERS_CERTS_ALIASES.contains(alias);
+        return userCertAliases.contains(alias);
     }
 
     /** Operaci&oacute;n no soportada. */
@@ -96,7 +96,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         }
         final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
         final X500Principal principal = ((X509Certificate) cert).getIssuerX500Principal();
-        for (final String alias : USERS_CERTS_ALIASES) {
+        for (final String alias : userCertAliases) {
         	final X509Certificate c = (X509Certificate) engineGetCertificate(alias);
             if (c.getSerialNumber() == serial && principal.equals(principal)) {
                 return alias;
@@ -161,13 +161,13 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
-        return USERS_CERTS_ALIASES.contains(alias);
+        return userCertAliases.contains(alias);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean engineIsKeyEntry(final String alias) {
-        return USERS_CERTS_ALIASES.contains(alias);
+        return userCertAliases.contains(alias);
     }
 
     private static ApduConnection getApduConnection() {
@@ -228,7 +228,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public int engineSize() {
-        return USERS_CERTS_ALIASES.size();
+        return userCertAliases.size();
     }
 
     /** Operaci&oacute;n no soportada. */
