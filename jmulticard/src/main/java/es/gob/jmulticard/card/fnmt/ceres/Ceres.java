@@ -27,6 +27,7 @@ import es.gob.jmulticard.apdu.iso7816eight.EnvelopeDataApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
+import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
@@ -42,6 +43,43 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 /** Tarjeta FNMT-RCM CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Ceres extends Iso7816EightCard implements CryptoCard {
+
+	private static final byte[] ATR_MASK_TC = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
+	};
+	private static final Atr ATR_TC = new Atr(new byte[] {
+        (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x46, (byte) 0x4E, (byte) 0x4d,
+        (byte) 0x54, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
+    }, ATR_MASK_TC);
+
+	private static final byte[] ATR_MASK_ST = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
+	};
+	private static final Atr ATR_ST = new Atr(new byte[] {
+        (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x43, (byte) 0x45, (byte) 0x52,
+        (byte) 0x45, (byte) 0x53, (byte) 0x02, (byte) 0x2c, (byte) 0x34, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
+    }, ATR_MASK_ST);
+
+	private static final byte[] ATR_MASK_SLE_FN20 = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
+	};
+	private static final Atr ATR_SLE_FN20 = new Atr(new byte[] {
+        (byte) 0x3B, (byte) 0xeF, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x14, (byte) 0x80, (byte) 0x25, (byte) 0x43, (byte) 0x45,
+        (byte) 0x52, (byte) 0x45, (byte) 0x53, (byte) 0x57, (byte) 0x05, (byte) 0x60, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x90, (byte) 0x00
+    }, ATR_MASK_SLE_FN20);
+
+	private static final byte[] ATR_MASK_SLE_FN19 = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
+	};
+	private static final Atr ATR_SLE_FN19 = new Atr(new byte[] {
+        (byte) 0x3B, (byte) 0xeF, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x14, (byte) 0x80, (byte) 0x25, (byte) 0x43, (byte) 0x45,
+        (byte) 0x52, (byte) 0x45, (byte) 0x53, (byte) 0x57, (byte) 0x01, (byte) 0x16, (byte) 0x01, (byte) 0x01, (byte) 0x03, (byte) 0x90, (byte) 0x00
+    }, ATR_MASK_SLE_FN19);
+
 
 	private static final byte CLA = (byte) 0x00;
 
@@ -63,6 +101,26 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
     private boolean authenticated = false;
 
+    private void checkAtr(final byte[] atrBytes) throws InvalidCardException {
+    	Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
+    	if (ATR_TC.equals(tmpAtr)) {
+    		return;
+    	}
+    	tmpAtr = new Atr(atrBytes, ATR_MASK_ST);
+    	if (ATR_ST.equals(tmpAtr)) {
+    		return;
+    	}
+    	tmpAtr = new Atr(atrBytes, ATR_MASK_SLE_FN19);
+    	if (ATR_SLE_FN19.equals(tmpAtr)) {
+    		return;
+    	}
+    	tmpAtr = new Atr(atrBytes, ATR_MASK_SLE_FN20);
+    	if (ATR_SLE_FN20.equals(tmpAtr)) {
+    		return;
+    	}
+    	throw new InvalidCardException(getCardName(), ATR_TC, atrBytes);
+    }
+
 	/** Construye una clase que representa una tarjeta FNMT-RCM CERES.
 	 * @param conn Conexi&oacute;n con la tarjeta.
 	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la tarjeta.
@@ -78,6 +136,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
 		}
 		getConnection().open();
+
+		checkAtr(getConnection().reset());
+
 		try {
 			preload();
 		}
