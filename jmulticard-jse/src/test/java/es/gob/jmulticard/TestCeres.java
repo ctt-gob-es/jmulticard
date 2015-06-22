@@ -2,7 +2,8 @@ package es.gob.jmulticard;
 
 import java.util.Arrays;
 
-import es.gob.jmulticard.TestTui.CachePasswordCallback;
+import javax.security.auth.callback.PasswordCallback;
+
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
@@ -12,6 +13,18 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 /** Pruebas de FNMT-CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestCeres {
+
+	final static class CachePasswordCallback extends PasswordCallback {
+
+	    private static final long serialVersionUID = 816457144215238935L;
+
+	    /** Contruye una Callback con una contrase&ntilde; preestablecida.
+	     * @param password Contrase&ntilde;a por defecto. */
+	    public CachePasswordCallback(final char[] password) {
+	        super(">", false); //$NON-NLS-1$
+	        this.setPassword(password);
+	    }
+	}
 
 	/** Main.
 	 * @param args
