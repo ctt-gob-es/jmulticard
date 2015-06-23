@@ -1,8 +1,10 @@
 package es.gob.jmulticard.jse.provider.ceres;
 
+import java.awt.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
@@ -128,9 +130,30 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
-    	this.cryptoCard.setPasswordCallback(
-			new CachePasswordCallback(password)
-		);
+
+    	// No permitimos PIN nulo, si llega nulo pedimos por dialogo grafico
+    	if (password == null) {
+    		try {
+    			final Class<?> uiPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.UIPasswordCallback"); //$NON-NLS-1$
+    			final Constructor<?> uiPasswordCallbackConstructor = uiPasswordCallbackClass.getConstructor(String.class, Component.class, String.class, String.class);
+
+    			final PasswordCallback passwordCallback = (PasswordCallback) uiPasswordCallbackConstructor.newInstance(
+					CeresMessages.getString("CeresKeyStoreImpl.0"), //$NON-NLS-1$
+					null,
+					null,
+					CeresMessages.getString("CeresKeyStoreImpl.1") //$NON-NLS-1$
+				);
+    			this.cryptoCard.setPasswordCallback(passwordCallback);
+    		}
+    		catch (final Exception e) {
+    			throw new IllegalArgumentException("Se ha proporcionado un PIN nulo y no se ha podido solicitar al usuario: " + e, e); //$NON-NLS-1$
+    		}
+    	}
+    	else {
+    		this.cryptoCard.setPasswordCallback(
+				new CachePasswordCallback(password)
+			);
+    	}
         try {
         	final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
         	if (!(pkRef instanceof CeresPrivateKeyReference)) {
