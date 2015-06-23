@@ -382,6 +382,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             );
         }
         catch (final Exception e) {
+        	e.printStackTrace();
             throw new ApduConnectionException(
                     "Error tratando de transmitir la APDU " + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
                     " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
