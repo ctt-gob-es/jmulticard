@@ -177,13 +177,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	this.certs.put(i + " " + cert.getSerialNumber(), cert); //$NON-NLS-1$
         }
 
-        System.out.println(cdf.toString());
-
         final CeresPrKdf prkdf = new CeresPrKdf();
         final byte[] prkdfValue =  selectFileByLocationAndRead(PRKDF_LOCATION);
         prkdf.setDerValue(prkdfValue);
-
-        System.out.println(prkdf.toString());
 
         if (prkdf.getKeyCount() != this.certs.size()) {
         	throw new IllegalStateException(
