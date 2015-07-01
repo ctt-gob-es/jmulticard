@@ -94,7 +94,13 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
+    /** Certificados de la tarjeta indexados por su alias. */
     private Map<String, X509Certificate> certs;
+
+    /** Alias de los certificados de la tarjeta indexados por el identificador interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
+    private Map<String, String> aliasByCertAndKeyId;
+
+    /** Claves privadas de la tarjeta indexadas por el alias de su certificado asociado. */
     private Map<String, Byte> keys;
 
     private PasswordCallback passwordCallback = null;
@@ -163,8 +169,12 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
 
         // Leemos los certificados segun las rutas del CDF
+
         final CertificateFactory cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+
         this.certs = new LinkedHashMap<String, X509Certificate>(cdf.getCertificateCount());
+        this.aliasByCertAndKeyId = new LinkedHashMap<String, String>(cdf.getCertificateCount());
+
         for (int i=0; i<cdf.getCertificateCount(); i++) {
         	final Location l = new Location(cdf.getCertificatePath(i).replace("\\", "").trim()); //$NON-NLS-1$ //$NON-NLS-2$
         	final X509Certificate cert = (X509Certificate) cf.generateCertificate(
@@ -174,7 +184,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 					)
 				)
 			);
-        	this.certs.put(i + " " + cert.getSerialNumber(), cert); //$NON-NLS-1$
+        	final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
+        	this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
+        	this.certs.put(alias, cert);
         }
 
         final CeresPrKdf prkdf = new CeresPrKdf();
@@ -186,14 +198,35 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     			"El numero de claves de la tarjeta (" + prkdf.getKeyCount() + ") no coincide con el de certificados (" + this.certs.size() + ")" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
         }
-        this.keys = new LinkedHashMap<String, Byte>(this.certs.size());
-        final String[] aliases = getAliases();
-        for (int i=0; i<this.certs.size(); i++) {
-        	this.keys.put(
-    			aliases[i],
-				Byte.valueOf(prkdf.getKeyReference(i))
-			);
+        this.keys = new LinkedHashMap<String, Byte>();
+        for (int i=0; i<prkdf.getKeyCount(); i++) {
+        	final String alias = this.aliasByCertAndKeyId.get(prkdf.getKeyId(i));
+        	if (alias != null) {
+	        	this.keys.put(
+	    			alias,
+					Byte.valueOf(prkdf.getKeyReference(i))
+				);
+        	}
         }
+
+        // Sincronizamos claves y certificados
+        hideCertsWithoutKey();
+	}
+
+	/** Oculta los certificados que no tienen una clave privada asociada. */
+	private void hideCertsWithoutKey() {
+		final String[] aliases;
+		try {
+			aliases = getAliases();
+		}
+		catch (final Exception e) {
+			throw new IllegalStateException("No se han podido leer los alias de los certificados de la tarjeta CERES: " + e, e); //$NON-NLS-1$
+		}
+		for (final String alias : aliases) {
+			if (this.keys.get(alias) == null) {
+				this.certs.remove(alias);
+			}
+		}
 	}
 
 	@Override
