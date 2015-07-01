@@ -68,7 +68,7 @@ public final class CommonCertificateAttributes extends Sequence {
 
     /** Obtiene el identificador de este <i>CommonCertificateAttributes</i>.
      * @return Identificador del <i>CommonCertificateAttributes</i> */
-    byte[] getId() {
+    public byte[] getId() {
         if (this.getElementAt(0) == null) {
         	throw new IllegalStateException("No existe el identificador dentro del objeto"); //$NON-NLS-1$
         }

@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.card.fnmt.ceres.asn1;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
@@ -73,9 +74,20 @@ public final class CeresCdf extends Record {
         return getElementCount();
     }
 
+    /** Obtiene el identificador del certificado indicado.
+     * @param index &Iacute;ndice del certificado.
+     * @return Identificador del certificado indicado. */
+    public byte[] getCertificateId(final int index) {
+    	final CeresCertificateObject tmpCo = (CeresCertificateObject) getElementAt(index);
+    	if (tmpCo != null) {
+    		return tmpCo.getId();
+    	}
+    	return null;
+    }
+
     /** Obtiene la ruta PKCS#15 hacia el certificado indicado.
-     * @param index &Iacute;ndice del certificado
-     * @return Ruta PKCS#15 hacia el certificado indicado */
+     * @param index &Iacute;ndice del certificado.
+     * @return Ruta PKCS#15 hacia el certificado indicado. */
     public String getCertificatePath(final int index) {
     	final CeresCertificateObject tmpCo = (CeresCertificateObject) getElementAt(index);
     	if (tmpCo != null) {
@@ -94,6 +106,8 @@ public final class CeresCdf extends Record {
             sb.append(Integer.toString(index));
             sb.append("\n  Ruta PKCS#15: "); //$NON-NLS-1$
             sb.append(getCertificatePath(index));
+            sb.append("\n  Identificador del certificado: "); //$NON-NLS-1$
+            sb.append(HexUtils.hexify(getCertificateId(index), false));
 			if (index != getCertificateCount() -1) {
 				sb.append('\n');
 			}

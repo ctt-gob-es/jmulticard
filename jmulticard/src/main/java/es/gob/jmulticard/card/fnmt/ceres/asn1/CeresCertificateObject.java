@@ -64,10 +64,16 @@ public final class CeresCertificateObject extends Pkcs15Object {
 		);
 	}
 
-    /** Devuelve la ruta del certificado.
+    /** Obtiene la ruta del certificado.
      * @return Ruta (<i>path</i>) del certificado */
     public String getPath() {
     	return ((CeresX509CertificateAttributesContextSpecific)getTypeAttributes()).getPath();
+    }
+
+    /** Obtiene el identificador del certificado.
+     * @return Identificador del certificado. */
+    public byte[] getId() {
+    	return ((CommonCertificateAttributes)getClassAttributes()).getId();
     }
 
     /** {@inheritDoc} */

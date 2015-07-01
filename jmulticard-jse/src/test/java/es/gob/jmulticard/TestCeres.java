@@ -35,6 +35,7 @@ public final class TestCeres {
 			new SmartcardIoConnection(),
 			new JseCryptoHelper()
 		);
+		ceres.setPasswordCallback(new CachePasswordCallback("1234".toCharArray())); //$NON-NLS-1$
 		System.out.println(ceres.getCardName());
 		System.out.println(Arrays.asList(ceres.getAliases()));
 		System.out.println(ceres.getCertificate(ceres.getAliases()[0]));
