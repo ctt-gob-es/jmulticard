@@ -1,6 +1,5 @@
 package es.gob.jmulticard.jse.provider.ceres;
 
-import java.awt.Component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -133,9 +132,18 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
     	// No permitimos PIN nulo, si llega nulo pedimos por dialogo grafico
     	if (password == null) {
+    		// En Android damos directamente un fallo
+    		if ("Dalvik".equals(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+    			throw new IllegalArgumentException("Es necesario proporcionar el PIN de la tarjeta"); //$NON-NLS-1$
+    		}
     		try {
     			final Class<?> uiPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.UIPasswordCallback"); //$NON-NLS-1$
-    			final Constructor<?> uiPasswordCallbackConstructor = uiPasswordCallbackClass.getConstructor(String.class, Component.class, String.class, String.class);
+    			final Constructor<?> uiPasswordCallbackConstructor = uiPasswordCallbackClass.getConstructor(
+					String.class,
+					Object.class,
+					String.class,
+					String.class
+				);
 
     			final PasswordCallback passwordCallback = (PasswordCallback) uiPasswordCallbackConstructor.newInstance(
 					CeresMessages.getString("CeresKeyStoreImpl.0"), //$NON-NLS-1$
