@@ -22,7 +22,9 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	private final BigInteger modulus;
 
 	/** Crea una clave privada de tarjeta FNMT-RCM-CERES.
-	 * @param keyReference Referencia a la clave privada de tarjeta FNMT-RCM-CERES. */
+	 * @param keyReference Referencia a la clave privada de tarjeta FNMT-RCM-CERES.
+	 * @param card Tarjeta a la cual pertenece esta clave.
+	 * @param mod M&oacute;dulo de la clave privada. */
 	CeresPrivateKey(final CeresPrivateKeyReference keyReference, final Ceres card, final BigInteger mod) {
 		this.keyRef = keyReference;
 		this.ceres = card;
