@@ -98,7 +98,16 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private static final boolean PIN_AUTO_RETRY = true;
+    private static final boolean PIN_AUTO_RETRY;
+    static {
+    	// No hacemos el reintento de PIN en Android
+    	if ("Dalvik".equals(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
+    		PIN_AUTO_RETRY = false;
+    	}
+    	else {
+    		PIN_AUTO_RETRY = true;
+    	}
+    }
 
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
@@ -696,7 +705,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     }
 
     /** Verifica el PIN de la tarjeta. Si se establece la constante <code>PIN_AUTO_RETRY</code> a <code>true</code>,
-     * el m&eacute;todo reintenta hasta que se introduce el PIN correctamente se bloquea la tarjeta por exceso de
+     * el m&eacute;todo reintenta hasta que se introduce el PIN correctamente, se bloquea la tarjeta por exceso de
      * intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
      * @param pinPc PIN de la tarjeta
