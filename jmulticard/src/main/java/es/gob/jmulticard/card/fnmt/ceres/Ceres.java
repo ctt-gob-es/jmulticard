@@ -193,11 +193,6 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         final byte[] prkdfValue =  selectFileByLocationAndRead(PRKDF_LOCATION);
         prkdf.setDerValue(prkdfValue);
 
-        if (prkdf.getKeyCount() != this.certs.size()) {
-        	throw new IllegalStateException(
-    			"El numero de claves de la tarjeta (" + prkdf.getKeyCount() + ") no coincide con el de certificados (" + this.certs.size() + ")" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			);
-        }
         this.keys = new LinkedHashMap<String, Byte>();
         for (int i=0; i<prkdf.getKeyCount(); i++) {
         	final String alias = this.aliasByCertAndKeyId.get(prkdf.getKeyId(i));
