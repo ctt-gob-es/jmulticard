@@ -11,7 +11,7 @@ import java.util.Enumeration;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
-/** Pruebas del proveedor JSE para DNIe 100% Java.
+/** Pruebas del proveedor JSE para tarjeta CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProviderCeres {
 
