@@ -60,6 +60,8 @@ public final class AndroidCCIDConnection implements ApduConnection {
 
 	private final SmartCardUsbDevice ccidReader;
 
+	private static final boolean DEBUG = false;
+
 	/** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
 	 * @param usbManager Gestor de dispositivos USB del sistema
 	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
@@ -132,13 +134,17 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				this.reset();
 			}
 
-			Log.d("es.gob.afirma", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+			if (DEBUG) {
+				Log.d("es.gob.afirma", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 
 			final ResponseApdu response;
 			try {
 				response = new ResponseApdu(this.ccidReader.transmit(command.getBytes()));
 
-				Log.d("es.gob.afirma", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+				if (DEBUG) {
+					Log.d("es.gob.afirma", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 
 		        // Solicitamos el resultado de la operacion si es necesario
 		        if (response.getStatusWord().getMsb() == TAG_RESPONSE_PENDING) {
