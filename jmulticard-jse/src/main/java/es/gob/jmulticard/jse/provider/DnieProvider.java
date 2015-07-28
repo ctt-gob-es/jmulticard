@@ -40,8 +40,10 @@
 package es.gob.jmulticard.jse.provider;
 
 import java.security.Provider;
+import java.security.ProviderException;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.card.dnie.Dnie;
 
 /** Proveedor criptogr&aacute;fico JCA para DNIe.
  * Crea dos servicios:
@@ -91,6 +93,13 @@ public final class DnieProvider extends Provider {
         super(NAME, VERSION, INFO);
 
         defaultConnection = conn;
+
+        try {
+        	Dnie.connect(conn);
+        }
+        catch(final Exception e) {
+        	throw new ProviderException("No se ha podido inicializar el proveedor de DNIe: " + e, e); //$NON-NLS-1$
+        }
 
         // KeyStore
         put("KeyStore.DNI", "es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$

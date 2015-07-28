@@ -231,7 +231,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException, NoSuchAlgorithmException, CertificateException {
     	if (param != null) {
-       		throw new IllegalArgumentException("El LoadStoreParameter siempre debe ser null, la contrasena se gestiona internamente"); //$NON-NLS-1$
+       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+   				"Se ha proporcionado un LoadStoreParameter, pero este se ignorara, la contrasena se gestiona internamente" //$NON-NLS-1$
+			);
     	}
     	// Ponemos la conexion por defecto
     	final ApduConnection conn;

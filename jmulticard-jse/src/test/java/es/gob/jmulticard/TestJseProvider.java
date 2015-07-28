@@ -22,7 +22,7 @@ public final class TestJseProvider {
 	 * @throws Exception */
 	public static void main(final String[] args) throws Exception {
 		TestJseProvider.testProviderWithCustomConnection();
-		TestJseProvider.testProviderWithDefaultConnection();
+//		TestJseProvider.testProviderWithDefaultConnection();
 	}
 
 	static void testProviderWithCustomConnection() throws Exception {

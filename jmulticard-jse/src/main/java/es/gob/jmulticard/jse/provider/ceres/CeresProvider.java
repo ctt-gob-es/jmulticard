@@ -1,8 +1,10 @@
 package es.gob.jmulticard.jse.provider.ceres;
 
 import java.security.Provider;
+import java.security.ProviderException;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 
 /** Proveedor criptogr&aacute;fico JCA para tarjeta FNMT-RCM.CERES.
  * Crea dos servicios:
@@ -52,6 +54,15 @@ public final class CeresProvider extends Provider {
         super(NAME, VERSION, INFO);
 
         defaultConnection = conn;
+
+        try {
+			Ceres.connect(conn);
+		}
+        catch (final Exception e) {
+        	throw new ProviderException(
+				"No se ha podido conectar con la tarjeta CERES: " + e, e //$NON-NLS-1$
+			);
+		}
 
         // KeyStore
         put("KeyStore.CERES", "es.gob.jmulticard.jse.provider.ceres.CeresKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -18,14 +18,15 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	private static final long serialVersionUID = 4403051294889801855L;
 
 	private final Ceres ceres;
-
 	private final CeresPrivateKeyReference keyRef;
+	private final BigInteger modulus;
 
 	/** Crea una clave privada de tarjeta FNMT-RCM-CERES.
 	 * @param keyReference Referencia a la clave privada de tarjeta FNMT-RCM-CERES. */
-	CeresPrivateKey(final CeresPrivateKeyReference keyReference, final Ceres card) {
+	CeresPrivateKey(final CeresPrivateKeyReference keyReference, final Ceres card, final BigInteger mod) {
 		this.keyRef = keyReference;
 		this.ceres = card;
+		this.modulus = mod;
 	}
 
 	/** {@inheritDoc} */
@@ -61,7 +62,7 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	/** M&eacute;todo no soportado. */
 	@Override
 	public BigInteger getModulus() {
-		throw new UnsupportedOperationException();
+		return this.modulus;
 	}
 
 	/** M&eacute;todo no soportado. */

@@ -158,7 +158,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * @throws BurnedDnieCardException Si el DNIe tiene su memoria vol&aacute;til borrada
      * @throws InvalidCardException Si la tarjeta no es un DNIe
      * @throws ApduConnectionException si hay problemas de conexi&oacute;n con la tarjeta */
-    private void connect(final ApduConnection conn) throws BurnedDnieCardException,
+    public static void connect(final ApduConnection conn) throws BurnedDnieCardException,
                                                            InvalidCardException,
                                                            ApduConnectionException {
     	if (conn == null) {
@@ -191,7 +191,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         			actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65) {
                     	throw new BurnedDnieCardException(actualAtr);
                 }
-    			invalidCardException = new InvalidCardException(getCardName(), ATR, responseAtr);
+    			invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$
     			continue;
     		}
     		return;

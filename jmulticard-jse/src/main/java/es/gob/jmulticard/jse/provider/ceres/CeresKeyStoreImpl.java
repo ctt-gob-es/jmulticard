@@ -19,6 +19,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -167,7 +168,11 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         	if (!(pkRef instanceof CeresPrivateKeyReference)) {
         		throw new ProviderException("La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName()); //$NON-NLS-1$
         	}
-        	return new CeresPrivateKey((CeresPrivateKeyReference) pkRef, this.cryptoCard);
+        	return new CeresPrivateKey(
+    			(CeresPrivateKeyReference) pkRef,
+    			this.cryptoCard,
+    			((RSAPublicKey)engineGetCertificate(alias).getPublicKey()).getModulus()
+			);
 		}
         catch (final CryptoCardException e) {
 			throw new ProviderException(e);

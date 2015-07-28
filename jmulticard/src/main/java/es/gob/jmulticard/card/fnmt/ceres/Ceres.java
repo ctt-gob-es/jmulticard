@@ -113,7 +113,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     	this.passwordCallback = pwc;
     }
 
-    private void checkAtr(final byte[] atrBytes) throws InvalidCardException {
+    private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
     	Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
     	if (ATR_TC.equals(tmpAtr)) {
     		return;
@@ -130,7 +130,16 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     	if (ATR_SLE_FN20.equals(tmpAtr)) {
     		return;
     	}
-    	throw new InvalidCardException(getCardName(), ATR_TC, atrBytes);
+    	throw new InvalidCardException("CERES", ATR_TC, atrBytes); //$NON-NLS-1$
+    }
+
+    /** Inicia la conexi&oacute;n con la tarjeta CERES.
+     * @param conn Conexi&oacute;n con el lector de tarjetas.
+     * @throws ApduConnectionException Si ocurren errores de conexi&oacute;n.
+     * @throws InvalidCardException SI la tarjeta encontrada en el lector no es una tarjeta FNMT-RCM-CERES. */
+    public static void connect(final ApduConnection conn) throws ApduConnectionException, InvalidCardException {
+    	conn.open();
+    	checkAtr(conn.reset());
     }
 
 	/** Construye una clase que representa una tarjeta FNMT-RCM CERES.
@@ -145,9 +154,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		if (ch == null) {
 			throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
 		}
-		getConnection().open();
 
-		checkAtr(getConnection().reset());
+		connect(conn);
 
 		try {
 			preload();
@@ -185,7 +193,10 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				)
 			);
         	final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
-        	this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
+        	this.aliasByCertAndKeyId.put(
+    			HexUtils.hexify(cdf.getCertificateId(i), false),
+    			alias
+			);
         	this.certs.put(alias, cert);
         }
 
@@ -195,7 +206,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
         this.keys = new LinkedHashMap<String, Byte>();
         for (int i=0; i<prkdf.getKeyCount(); i++) {
-        	final String alias = this.aliasByCertAndKeyId.get(prkdf.getKeyId(i));
+        	final String alias = this.aliasByCertAndKeyId.get(
+    			HexUtils.hexify(prkdf.getKeyId(i), false)
+			);
         	if (alias != null) {
 	        	this.keys.put(
 	    			alias,
