@@ -155,7 +155,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
 		}
 
-		connect(conn);
+		connect(getConnection());
 
 		try {
 			preload();
