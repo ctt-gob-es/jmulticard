@@ -21,8 +21,37 @@ public final class TestJseProviderCeres {
 	 * @param args
 	 * @throws Exception */
 	public static void main(final String[] args) throws Exception {
-		TestJseProviderCeres.testProviderWithCustomConnection();
-		TestJseProviderCeres.testProviderWithDefaultConnection();
+		//TestJseProviderCeres.testProviderWithCustomConnection();
+		//TestJseProviderCeres.testProviderWithDefaultConnection();
+		final Provider p = new CeresProvider();
+		Security.addProvider(p);
+		final KeyStore ks = KeyStore.getInstance("CERES"); //$NON-NLS-1$
+		final char[] pin = new UIPasswordCallback(
+			"PIN de la tarjeta CERES", //$NON-NLS-1$
+			null,
+			"Introduzca el PIN de la tarjeta CERES", //$NON-NLS-1$
+			"PIN FNMT-RCM-CERES" //$NON-NLS-1$
+		).getPassword();
+		ks.load(null, pin);
+		final Enumeration<String> aliases = ks.aliases();
+		String alias = null;
+		System.out.println("Encontrados los siguientes certificados:"); //$NON-NLS-1$
+		while (aliases.hasMoreElements()) {
+			alias = aliases.nextElement();
+			System.out.println(
+				AOUtil.getCN((X509Certificate) ks.getCertificate(alias))
+			);
+		}
+		System.out.println();
+		System.out.println("Se hara una firma de prueba con '" + AOUtil.getCN((X509Certificate) ks.getCertificate(alias)) + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+		final Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey(alias, pin));
+		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
+		final byte[] sign = signature.sign();
+
+		System.out.println("Firma generada correctamente:"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(sign, true));
+
 	}
 
 	static void testProviderWithCustomConnection() throws Exception {
@@ -68,4 +97,5 @@ public final class TestJseProviderCeres {
 			((X509Certificate)ks.getCertificate(alias)).getIssuerX500Principal().toString()
 		);
 	}
+
 }

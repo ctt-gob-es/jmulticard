@@ -92,10 +92,20 @@ public final class DnieProvider extends Provider {
     public DnieProvider(final ApduConnection conn) {
         super(NAME, VERSION, INFO);
 
-        defaultConnection = conn;
+        try {
+			defaultConnection = conn == null ?
+				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").newInstance() : //$NON-NLS-1$
+					conn;
+		}
+        catch (final Exception e) {
+			throw new ProviderException(
+				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto: " + e, e //$NON-NLS-1$
+			);
+		}
 
         try {
-        	Dnie.connect(conn);
+        	Dnie.connect(defaultConnection);
+        	defaultConnection.close();
         }
         catch(final Exception e) {
         	throw new ProviderException("No se ha podido inicializar el proveedor de DNIe: " + e, e); //$NON-NLS-1$

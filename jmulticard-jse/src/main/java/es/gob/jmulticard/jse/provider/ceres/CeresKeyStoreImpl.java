@@ -213,14 +213,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     }
 
     private static ApduConnection getApduConnection() {
-    	try {
-	    	 return CeresProvider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").newInstance() : //$NON-NLS-1$
-					CeresProvider.getDefaultApduConnection();
-	   	}
-	   	catch(final Exception e) {
-	   		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
-	   	}
+    	return CeresProvider.getDefaultApduConnection();
     }
 
     /** {@inheritDoc} */

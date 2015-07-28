@@ -235,18 +235,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
    				"Se ha proporcionado un LoadStoreParameter, pero este se ignorara, la contrasena se gestiona internamente" //$NON-NLS-1$
 			);
     	}
-    	// Ponemos la conexion por defecto
-    	final ApduConnection conn;
-    	try {
-	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").newInstance() : //$NON-NLS-1$
-					DnieProvider.getDefaultApduConnection();
-    	}
-    	catch(final Exception e) {
-    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
-    	}
+
     	this.cryptoCard = new Dnie(
-			conn,
+			DnieProvider.getDefaultApduConnection(),
 			null,
 			new JseCryptoHelper()
 		);
