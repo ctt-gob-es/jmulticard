@@ -98,7 +98,7 @@ public abstract class Sequence extends DecoderObject {
                 	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
             		continue;
             	}
-            	throw new Asn1Exception("Error en el elemento " + i + " de la recuencia ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+            	throw new Asn1Exception("Error en el elemento " + i + " de la secuencia ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
             }
             // El offset se avanza antes del continue de la opcionalidad
             offset = offset + tlv.getBytes().length;

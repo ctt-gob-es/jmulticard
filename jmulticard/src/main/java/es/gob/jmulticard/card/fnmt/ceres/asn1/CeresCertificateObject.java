@@ -39,8 +39,8 @@
  */
 package es.gob.jmulticard.card.fnmt.ceres.asn1;
 
+import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
 import es.gob.jmulticard.asn1.der.pkcs15.CommonCertificateAttributes;
-import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
 
 
 /** Tipo PKCS#15 ASN.1 <i>CeresCertificateObject</i> (<i>CertificateInfoObject</i> en ISO 7816-15).
@@ -52,7 +52,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
  *    }
  *  </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CeresCertificateObject extends Pkcs15Object {
+public final class CeresCertificateObject extends CertificateObject {
 
 	/** Crea un objeto <i>CeresCertificateObject</i>. */
 	public CeresCertificateObject() {
@@ -66,13 +66,15 @@ public final class CeresCertificateObject extends Pkcs15Object {
 
     /** Obtiene la ruta del certificado.
      * @return Ruta (<i>path</i>) del certificado */
-    public String getPath() {
+    @Override
+	public String getPath() {
     	return ((CeresX509CertificateAttributesContextSpecific)getTypeAttributes()).getPath();
     }
 
     /** Obtiene el identificador del certificado.
      * @return Identificador del certificado. */
-    public byte[] getId() {
+    @Override
+	public byte[] getIdentifier() {
     	return ((CommonCertificateAttributes)getClassAttributes()).getId();
     }
 

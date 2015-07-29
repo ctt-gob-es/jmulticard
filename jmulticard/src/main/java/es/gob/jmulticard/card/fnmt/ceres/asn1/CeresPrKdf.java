@@ -42,6 +42,7 @@ package es.gob.jmulticard.card.fnmt.ceres.asn1;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
+import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
  * El PrKDF es una secuencia de estructuras <code>PKCS15PrivateKey</code>:
@@ -71,7 +72,9 @@ public final class CeresPrKdf extends Record {
 		super(
 			new OptionalDecoderObjectElement[] {
 				// Maximo 10 certificados
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, false),
+
+				// Estructura antigua, que incumple PKCS#15
+				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
@@ -81,6 +84,7 @@ public final class CeresPrKdf extends Record {
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true)
+
 			}
 		);
 	}
@@ -95,21 +99,21 @@ public final class CeresPrKdf extends Record {
 	 * @param index &Iacute;ndice de la clave.
 	 * @return Ruta PKCS#15 hacia la clave indicada. */
 	public String getKeyPath(final int index) {
-		return ((CeresPrivateKeyObject) getElementAt(index)).getKeyPath();
+		return ((PrivateKeyObject) getElementAt(index)).getKeyPath();
 	}
 
 	/** Obtiene el identificador de la clave indicada.
 	 * @param index &Iacute;ndice de la clave.
 	 * @return Identificador de la clave indicada. */
 	public byte[] getKeyId(final int index) {
-		return ((CeresPrivateKeyObject) getElementAt(index)).getKeyIdentifier();
+		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
 
 	/** Obtiene la referencia de la clave indicada.
 	 * @param index &Iacute;ndice de la clave.
 	 * @return Referencia de la clave indicada. */
 	public byte getKeyReference(final int index) {
-		return ((CeresPrivateKeyObject) getElementAt(index)).getKeyReference();
+		return ((PrivateKeyObject) getElementAt(index)).getKeyReference();
 	}
 
     /** {@inheritDoc} */

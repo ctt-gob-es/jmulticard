@@ -39,6 +39,9 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import es.gob.jmulticard.asn1.DecoderObject;
+import es.gob.jmulticard.asn1.der.ContextSpecific;
+
 /** Tipo ASN.1 PKCS#15 <i>PrivateKeyObject</i>.
  * <pre>
  *  PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
@@ -59,7 +62,18 @@ package es.gob.jmulticard.asn1.der.pkcs15;
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class PrivateKeyObject extends Pkcs15Object {
+public class PrivateKeyObject extends Pkcs15Object {
+
+    /** Construye un tipo PrivateKeyObject ASN.1.
+     * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
+     * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
+     * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
+	protected PrivateKeyObject(final Class<? extends DecoderObject> classAttributes,
+			                   final Class<? extends ContextSpecific> subclassAttributes,
+			                   final Class<? extends ContextSpecific> typeAttributes) {
+        super(classAttributes, subclassAttributes, typeAttributes);
+	}
+
 
 	/** Construye un objeto ASN.1 PKCS#15 <i>PrivateKeyObject</i> */
 	public PrivateKeyObject() {
@@ -71,10 +85,10 @@ public final class PrivateKeyObject extends Pkcs15Object {
 		);
 	}
 
-	/** Obtiene el nombre de la clave privada.
+	/** Obtiene el identificador de la clave privada.
 	 * @return Nombre de la clave privada */
-	String getKeyIdentifier() {
-		return new String(((CommonKeyAttributes) this.getClassAttributes()).getIdentifier());
+	public byte[] getKeyIdentifier() {
+		return ((CommonKeyAttributes) this.getClassAttributes()).getIdentifier();
 	}
 
 	/** Obtiene el nombre de la clave privada.
@@ -83,7 +97,9 @@ public final class PrivateKeyObject extends Pkcs15Object {
 		return getCommonObjectAttributes().getLabel();
 	}
 
-	String getKeyPath() {
+	/** Obtiene la ruta hacia la clave privada.
+	 * @return Ruta hacia la clave privada. */
+	public String getKeyPath() {
 		return ((PrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getPath();
 	}
 
@@ -96,5 +112,11 @@ public final class PrivateKeyObject extends Pkcs15Object {
     public String toString() {
     	return "Nombre de la clave privada: " + getCommonObjectAttributes().getLabel(); //$NON-NLS-1$
     }
+
+	/** Obtiene la referencia de la clave.
+	 * @return Referencia de la clave. */
+	public byte getKeyReference() {
+		return ((CommonKeyAttributes)getClassAttributes()).getReference().getIntegerValue().byteValue();
+	}
 
 }

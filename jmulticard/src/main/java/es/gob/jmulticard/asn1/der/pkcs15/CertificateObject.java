@@ -41,6 +41,9 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import java.math.BigInteger;
 
+import es.gob.jmulticard.asn1.DecoderObject;
+import es.gob.jmulticard.asn1.der.ContextSpecific;
+
 
 /** Tipo PKCS#15 ASN.1 <i>CertificateObject</i> (<i>CertificateInfoObject</i> en ISO 7816-15).
  *  <pre>
@@ -62,7 +65,7 @@ import java.math.BigInteger;
  *    }
  *  </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CertificateObject extends Pkcs15Object {
+public class CertificateObject extends Pkcs15Object {
 
 	/** Crea un objeto <i>CertificateObject</i>. */
 	public CertificateObject() {
@@ -73,6 +76,16 @@ public final class CertificateObject extends Pkcs15Object {
 			X509CertificateAttributesContextSpecific.class
 		);
 	}
+
+    /** Construye un tipo CertificateObject ASN.1.
+     * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
+     * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
+     * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
+	protected CertificateObject(final Class<? extends DecoderObject> classAttributes,
+			               final Class<? extends ContextSpecific> subclassAttributes,
+			               final Class<? extends ContextSpecific> typeAttributes) {
+        super(classAttributes, subclassAttributes, typeAttributes);
+    }
 
 	/** Proporciona el nombre X.500 del emisor del certificado
      * @return Nombre X.500 del emisor del certificado */
@@ -106,7 +119,7 @@ public final class CertificateObject extends Pkcs15Object {
 
 	/** Obtiene el identificador binario del certificado.
 	 * @return Identificador del certificado */
-	byte[] getIdentifier() {
+	public byte[] getIdentifier() {
 		return ((CommonCertificateAttributes) getClassAttributes()).getId();
 	}
 

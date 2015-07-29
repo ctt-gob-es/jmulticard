@@ -41,7 +41,7 @@ package es.gob.jmulticard.card.fnmt.ceres.asn1;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.der.pkcs15.CommonKeyAttributes;
-import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
+import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
 /** Tipo ASN.1 PKCS#15 <i>PrivateKeyObject</i>.
  * <pre>
@@ -63,7 +63,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CeresPrivateKeyObject extends Pkcs15Object {
+public final class CeresPrivateKeyObject extends PrivateKeyObject {
 
 	/** Construye un objeto ASN.1 PKCS#15 <i>PrivateKeyObject</i> */
 	public CeresPrivateKeyObject() {
@@ -75,15 +75,18 @@ public final class CeresPrivateKeyObject extends Pkcs15Object {
 		);
 	}
 
-	byte[] getKeyIdentifier() {
+	@Override
+	public byte[] getKeyIdentifier() {
 		return ((CommonKeyAttributes)getClassAttributes()).getIdentifier();
 	}
 
-	byte getKeyReference() {
+	@Override
+	public byte getKeyReference() {
 		return ((CommonKeyAttributes)getClassAttributes()).getReference().getIntegerValue().byteValue();
 	}
 
-	String getKeyPath() {
+	@Override
+	public String getKeyPath() {
 		return ((CeresPrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getPath();
 	}
 

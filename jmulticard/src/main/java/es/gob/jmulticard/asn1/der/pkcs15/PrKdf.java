@@ -74,7 +74,7 @@ public final class PrKdf extends Record {
 	/** Obtiene el identificador de la clave indicada.
 	 * @param index &Iacute;ndice de la clave
 	 * @return Identificador de la clave */
-	public String getKeyIdentifier(final int index) {
+	public byte[] getKeyIdentifier(final int index) {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
 

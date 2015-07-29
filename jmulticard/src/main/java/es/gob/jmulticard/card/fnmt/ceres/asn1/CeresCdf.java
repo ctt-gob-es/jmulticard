@@ -42,6 +42,7 @@ package es.gob.jmulticard.card.fnmt.ceres.asn1;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
+import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
 
 /** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN.1 (<i>EF.CD</i> en ISO 7816-15).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -54,7 +55,9 @@ public final class CeresCdf extends Record {
         super(
     		new OptionalDecoderObjectElement[] {
 				// Maximo 10 certificados
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, false),
+
+    			// Estructura antigua, que incumple PKCS#15
+				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
 				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
 				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
 				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
@@ -78,9 +81,9 @@ public final class CeresCdf extends Record {
      * @param index &Iacute;ndice del certificado.
      * @return Identificador del certificado indicado. */
     public byte[] getCertificateId(final int index) {
-    	final CeresCertificateObject tmpCo = (CeresCertificateObject) getElementAt(index);
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
-    		return tmpCo.getId();
+    		return tmpCo.getIdentifier();
     	}
     	return null;
     }
@@ -89,7 +92,7 @@ public final class CeresCdf extends Record {
      * @param index &Iacute;ndice del certificado.
      * @return Ruta PKCS#15 hacia el certificado indicado. */
     public String getCertificatePath(final int index) {
-    	final CeresCertificateObject tmpCo = (CeresCertificateObject) getElementAt(index);
+    	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
     		return tmpCo.getPath();
     	}
