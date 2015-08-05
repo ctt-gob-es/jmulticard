@@ -76,7 +76,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private int terminalNumber = 0;
+    private int terminalNumber = -1;
 
     private CardChannel canal = null;
 
@@ -196,8 +196,21 @@ public final class SmartcardIoConnection implements ApduConnection {
             if (terminales.size() < 1) {
                 throw new NoReadersFoundException();
             }
+            if (this.terminalNumber == -1) {
+            	final long[] cadsWithCard = getTerminals(true);
+            	if (cadsWithCard.length > 0) {
+            		this.terminalNumber = (int) cadsWithCard[0];
+            	}
+            	else {
+            		throw new ApduConnectionException(
+        				"En el sistema no hay ningun terminal con tarjeta insertada" //$NON-NLS-1$
+    				);
+            	}
+            }
             if (terminales.size() <= this.terminalNumber) {
-                throw new ApduConnectionException("No se detecto el lector de tarjetas numero " + Integer.toString(this.terminalNumber)); //$NON-NLS-1$
+                throw new ApduConnectionException(
+            		"No se detecto el lector de tarjetas numero " + Integer.toString(this.terminalNumber) //$NON-NLS-1$
+        		);
             }
             this.card = terminales.get(this.terminalNumber).connect(this.protocol.toString());
         }
