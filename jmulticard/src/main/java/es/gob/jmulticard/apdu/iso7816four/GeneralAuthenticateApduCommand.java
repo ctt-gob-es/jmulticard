@@ -41,38 +41,28 @@ package es.gob.jmulticard.apdu.iso7816four;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-/** APDU ISO 7816-4 mediante la que se pide a la tarjeta que demuestre que posee la
- * clave privada de su certificado de componente. *
- * @author Carlos Gamuci Mill&aacute;n */
-public final class InternalAuthenticateApduCommand extends CommandApdu {
+/** APDU ISO 7816-4 de autenticaci&oacute;n general. *
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+public final class GeneralAuthenticateApduCommand extends CommandApdu {
 
 	/** Byte de instrucci&oacute;n de la APDU. */
-	private static final byte INS_INTERNAL_AUTHENTICATE = (byte) 0x88;
+	private static final byte INS_GENERAL_AUTHENTICATE = (byte) 0x86;
 
 	/** Valor para indicar que no se dispone de informaci&oacute;n al respecto. */
 	private static final byte NO_INFORMATION_GIVEN = (byte) 0x00;
 
-	/** Crea un objeto para la autenticaci&oacute;n interna.
-	 * @param cla Clase (CLA) de la APDU.
-	 * @param randomBytes Array de 8 bytes aleatorios para la autenticaci&oacute;n.
-	 * @param privateKeyRef Referencia a la clave privada del certificado a autenticar. */
-	public InternalAuthenticateApduCommand(final byte cla, final byte[] randomBytes, final byte[] privateKeyRef) {
+	/** Crea un objeto para la auitenticaci&oacute;n interna.
+	 * @param cla Clase (CLA) de la APDU
+	 * @param data Datos de autenticaci&oacute;n. */
+	public GeneralAuthenticateApduCommand(final byte cla, final byte[] data) {
 		super(
-			cla,									// CLA
-			INS_INTERNAL_AUTHENTICATE,				// INS
-			NO_INFORMATION_GIVEN,					// P1
-			NO_INFORMATION_GIVEN,					// P2
-			buildData(randomBytes, privateKeyRef),	// Data
-			null									// Le
+			cla,                      // CLA
+			INS_GENERAL_AUTHENTICATE, // INS
+			NO_INFORMATION_GIVEN,	  // P1
+			NO_INFORMATION_GIVEN,     // P2
+			data,	                  // Data
+			null                      // Le
 		);
 	}
 
-	private static byte[] buildData(final byte[] randomBytes, final byte[] privateKeyRef) {
-		final byte[] ret = new byte[randomBytes.length + privateKeyRef.length];
-		// Numero aleatorio (8 bytes)
-		System.arraycopy(randomBytes, 0, ret, 0, randomBytes.length);
-		// Referencia a la clave privada
-		System.arraycopy(privateKeyRef, 0, ret, 0 + randomBytes.length, privateKeyRef.length);
-		return ret;
-	}
 }

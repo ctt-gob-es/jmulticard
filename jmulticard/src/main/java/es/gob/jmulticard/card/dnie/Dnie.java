@@ -154,10 +154,10 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private final PasswordCallback passwordCallback;
 
     /** Conecta con el lector del sistema que tenga un DNIe insertado.
-     * @param conn Coenxi&oacute;n hacia el DNIe
-     * @throws BurnedDnieCardException Si el DNIe tiene su memoria vol&aacute;til borrada
-     * @throws InvalidCardException Si la tarjeta no es un DNIe
-     * @throws ApduConnectionException si hay problemas de conexi&oacute;n con la tarjeta */
+     * @param conn Conexi&oacute;n hacia el DNIe.
+     * @throws BurnedDnieCardException Si el DNIe tiene su memoria vol&aacute;til borrada.
+     * @throws InvalidCardException Si la tarjeta no es un DNIe.
+     * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta. */
     public static void connect(final ApduConnection conn) throws BurnedDnieCardException,
                                                            InvalidCardException,
                                                            ApduConnectionException {
@@ -206,12 +206,12 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     }
 
     /** Construye una clase que representa un DNIe.
-     * @param conn Conexi&oacute;n con la tarjeta
-     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla
-     * @throws es.gob.jmulticard.card.InvalidCardException Si la tarjeta conectada no es un DNIe
-     * @throws BurnedDnieCardException Si la tarjeta conectada es un DNIe con la memoria vol&aacute;til borrada */
+     * @param conn Conexi&oacute;n con la tarjeta.
+     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.
+     * @throws es.gob.jmulticard.card.InvalidCardException Si la tarjeta conectada no es un DNIe.
+     * @throws BurnedDnieCardException Si la tarjeta conectada es un DNIe con la memoria vol&aacute;til borrada. */
     public Dnie(final ApduConnection conn,
     		    final PasswordCallback pwc,
     		    final CryptoHelper cryptoHelper) throws ApduConnectionException,
