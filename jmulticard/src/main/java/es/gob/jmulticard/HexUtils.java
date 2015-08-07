@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 
 /** Utilidades varias de tratamiento de datos binarios y hexadecimales.
@@ -183,5 +185,23 @@ public final class HexUtils {
         }
         return b;
     }
+
+	/** Concatena arrays de octetos.
+	 * @param arrays Arrays de octetos a concatenar, en el orden de concatenaci&oacute;n.
+	 * @return Arrays concatenados. */
+	public static byte[] concatenateByteArrays(final byte[]... arrays) {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		for (final byte[] array : arrays) {
+			try {
+				baos.write(array);
+			}
+			catch (final IOException e) {
+				throw new IllegalStateException(
+					"Error construyendo el campo de datos: " + e, e //$NON-NLS-1$
+				);
+			}
+		}
+		return baos.toByteArray();
+	}
 
 }

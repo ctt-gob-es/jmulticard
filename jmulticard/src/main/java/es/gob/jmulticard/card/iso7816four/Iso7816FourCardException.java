@@ -95,6 +95,17 @@ public class Iso7816FourCardException extends Exception {
         this.returnCode = retCode;
     }
 
+    /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.
+     * @param retCode Palabra de estado
+     * @param origin APDU que gener&oacute; la palabra de estado.
+     * @param desc Descripci&oacute;n de la excepci&oacute;n. */
+    public Iso7816FourCardException(final StatusWord retCode, final Apdu origin, final String desc) {
+        super(
+    		(desc != null ? desc + " - " : "") + (ERRORS.get(retCode) != null ? ERRORS.get(retCode) : "Codigo de retorno " + HexUtils.hexify(retCode.getBytes(), true) + ".") + " APDU de origen: " + HexUtils.hexify(origin.getBytes(), true) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		);
+        this.returnCode = retCode;
+    }
+
     private static final long serialVersionUID = 5935577997660561619L;
 
     /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado) que caus&oacute; la
