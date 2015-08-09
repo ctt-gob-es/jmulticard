@@ -44,7 +44,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
 
-/** Tipo ASN.1 <i>CommonCertificateAttributes</i>.
+/** Tipo ASN&#46;1 <i>CommonCertificateAttributes</i>.
  * <pre>
  *  CommonCertificateAttributes ::= SEQUENCE {
  *   iD Identifier
@@ -54,7 +54,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Gonzalo Henr&iacute;quez Manzano. */
 public final class CommonCertificateAttributes extends Sequence {
 
-    /** Construye un objeto ASN.1 <i>CommonCertificateAttributes</i>. */
+    /** Construye un objeto ASN&#46;1 <i>CommonCertificateAttributes</i>. */
 	public CommonCertificateAttributes() {
         super(
     		new OptionalDecoderObjectElement[] {

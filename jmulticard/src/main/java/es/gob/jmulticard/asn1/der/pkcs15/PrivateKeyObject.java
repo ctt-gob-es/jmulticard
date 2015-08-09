@@ -42,7 +42,7 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
-/** Tipo ASN.1 PKCS#15 <i>PrivateKeyObject</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i>.
  * <pre>
  *  PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
  *    CommonKeyAttributes,
@@ -64,7 +64,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class PrivateKeyObject extends Pkcs15Object {
 
-    /** Construye un tipo PrivateKeyObject ASN.1.
+    /** Construye un tipo PrivateKeyObject ASN&#46;1.
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
      * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
@@ -75,7 +75,7 @@ public class PrivateKeyObject extends Pkcs15Object {
 	}
 
 
-	/** Construye un objeto ASN.1 PKCS#15 <i>PrivateKeyObject</i> */
+	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> */
 	public PrivateKeyObject() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)

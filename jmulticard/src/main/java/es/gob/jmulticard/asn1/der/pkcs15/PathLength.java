@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.Record;
 
-/** Tipo ASN.1 entero de contexto espec&iacute;fico.
+/** Tipo ASN&#46;1 entero de contexto espec&iacute;fico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class PathLength extends ContextSpecific {
 
@@ -58,7 +58,7 @@ public final class PathLength extends ContextSpecific {
 		return this.value.intValue();
 	}
 
-	/** Construye un objeto ASN.1 entero de contexto espec&iacute;fico. */
+	/** Construye un objeto ASN&#46;1 entero de contexto espec&iacute;fico. */
 	public PathLength() {
 		super(Record.class);
 	}

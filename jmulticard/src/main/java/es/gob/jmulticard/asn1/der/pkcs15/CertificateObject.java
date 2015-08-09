@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
 
-/** Tipo PKCS#15 ASN.1 <i>CertificateObject</i> (<i>CertificateInfoObject</i> en ISO 7816-15).
+/** Tipo PKCS#15 ASN&#46;1 <i>CertificateObject</i> (<i>CertificateInfoObject</i> en ISO 7816-15).
  *  <pre>
  *    CertificateObject {CertAttributes} ::= PKCS15Object {
  *      CommonCertificateAttributes,
@@ -53,7 +53,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *      CertAttributes
  *    }
  *  </pre>
- *  Que en el caso de un certificado X.509 se instancia como
+ *  Que en el caso de un certificado X&#46;509 se instancia como
  *  <code>x509Certificate CertificateObject { X509CertificateAttributes }</code>,
  *  quedando la estructura (secuencia deshaciendo el <code>PKCS15Object</code>):
  *  <pre>
@@ -77,7 +77,7 @@ public class CertificateObject extends Pkcs15Object {
 		);
 	}
 
-    /** Construye un tipo CertificateObject ASN.1.
+    /** Construye un tipo CertificateObject ASN&#46;1.
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
      * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */

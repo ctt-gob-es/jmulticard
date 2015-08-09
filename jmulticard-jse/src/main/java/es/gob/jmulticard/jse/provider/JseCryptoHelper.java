@@ -287,6 +287,11 @@ public final class JseCryptoHelper extends CryptoHelper {
 			);
 			kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
 		}
+
+		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+			"Seleccionado el siguiente generador de claves de curva eliptica: " + kpg.getClass().getName() //$NON-NLS-1$
+		);
+
 		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
 		kpg.initialize(parameterSpec);
 		return kpg.generateKeyPair();

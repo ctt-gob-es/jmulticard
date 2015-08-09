@@ -43,7 +43,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerBoolean;
 import es.gob.jmulticard.asn1.der.Sequence;
 
-/** Tipo ASN.1 PKCS#15 <i>CommonKeyAttributes</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>CommonKeyAttributes</i>.
  * <pre>
  *  CommonKeyAttributes ::= SEQUENCE {
  *    iD           Identifier,
@@ -59,7 +59,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CommonKeyAttributes extends Sequence {
 
-	/** Construye un objeto ASN.1 PKCS#15 <i>CommonKeyAttributes</i>. */
+	/** Construye un objeto ASN&#46;1 PKCS#15 <i>CommonKeyAttributes</i>. */
 	public CommonKeyAttributes() {
 		super(
 			new OptionalDecoderObjectElement[] {

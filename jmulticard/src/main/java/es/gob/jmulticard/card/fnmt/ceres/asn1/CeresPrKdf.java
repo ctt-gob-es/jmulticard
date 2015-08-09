@@ -44,7 +44,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
-/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1.
+/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
  * El PrKDF es una secuencia de estructuras <code>PKCS15PrivateKey</code>:
  * <pre>
  * PKCS15PrivateKey ::= CHOICE {
@@ -67,7 +67,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresPrKdf extends Record {
 
-    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN.1. */
+    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
 	public CeresPrKdf() {
 		super(
 			new OptionalDecoderObjectElement[] {

@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo ASN.1 <i>Integer</i>.
+/** Tipo ASN&#46;1 <i>Integer</i>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class DerInteger extends DecoderObject {
 

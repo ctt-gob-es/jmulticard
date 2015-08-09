@@ -47,18 +47,18 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo <i>UTF8String</i> de ASN.1.
+/** Tipo <i>UTF8String</i> de ASN&#46;1.
  * Incorpora soporte adem&aacute;s para <i>PrintableString</i> y <i>T61String</i>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Utf8String extends DecoderObject {
 
-	/** Tipo ASN.1 "UTF8String". */
+	/** Tipo ASN&#46;1 "UTF8String". */
     private static final byte TAG_UTF8STRING = (byte) 0x0C;
 
-    /** Tipo ASN.1 "PrintableString". */
+    /** Tipo ASN&#46;1 "PrintableString". */
     private static final byte TAG_PRINTABLESTRING = (byte) 0x13;
 
-    /** Tipo ASN.1 "T61String". */
+    /** Tipo ASN&#46;1 "T61String". */
     private static final byte TAG_T61STRING = (byte) 0x14;
 
     /** {@inheritDoc} */

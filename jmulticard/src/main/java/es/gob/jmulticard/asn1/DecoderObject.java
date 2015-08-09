@@ -41,7 +41,7 @@ package es.gob.jmulticard.asn1;
 
 import es.gob.jmulticard.HexUtils;
 
-/** Objeto ASN.1 gen&eacute;rico.
+/** Objeto ASN&#46;1 gen&eacute;rico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez */
 public abstract class DecoderObject {
@@ -54,8 +54,8 @@ public abstract class DecoderObject {
         return out;
     }
 
-    /** Establece el valor (en codificaci&oacute;n DER) del objeto ASN.1.
-     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN.1
+    /** Establece el valor (en codificaci&oacute;n DER) del objeto ASN&#46;1.
+     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN&#46;1
      * @throws Asn1Exception Si no se puede decodificar adecuadamente el valor establecido
      * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada */
     public void setDerValue(final byte[] value) throws Asn1Exception, TlvException {
@@ -67,8 +67,8 @@ public abstract class DecoderObject {
         decodeValue();
     }
 
-    /** Obtiene el valor binario del objeto ASN.1.
-     * @return Valor binario del objeto ASN.1 */
+    /** Obtiene el valor binario del objeto ASN&#46;1.
+     * @return Valor binario del objeto ASN&#46;1 */
     public byte[] getBytes() {
         final byte[] out = new byte[this.rawDerValue.length];
         System.arraycopy(this.rawDerValue, 0, out, 0, this.rawDerValue.length);
@@ -77,15 +77,15 @@ public abstract class DecoderObject {
 
     /** Decodifica el valor DER establecido comprobando que corresponde al esperado y formando las
      * estructuras internas.
-     * @throws Asn1Exception Si hay errores correspondientes a las estructuras ASN.1 DER
+     * @throws Asn1Exception Si hay errores correspondientes a las estructuras ASN&#46;1 DER
      * @throws TlvException Si hay errores relativos a los TLV DER */
     protected abstract void decodeValue() throws Asn1Exception, TlvException;
 
-    /** Obtiene la etiqueta de tipo ASN.1 del objeto.
-     * @return Etiqueta de tipo ASN.1 del objeto */
+    /** Obtiene la etiqueta de tipo ASN&#46;1 del objeto.
+     * @return Etiqueta de tipo ASN&#46;1 del objeto */
     protected abstract byte getDefaultTag();
 
-    /** Comprueba que el tipo proporcionado sea compatible con el del objeto ASN.1.
+    /** Comprueba que el tipo proporcionado sea compatible con el del objeto ASN&#46;1.
      * @param tag Etiqueta de tipo a comprobar
      * @throws Asn1Exception Si las etiquetas de tipo no son compatibles */
     public void checkTag(final byte tag) throws Asn1Exception {

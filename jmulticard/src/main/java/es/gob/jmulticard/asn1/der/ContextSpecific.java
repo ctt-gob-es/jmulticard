@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo ASN.1 espec&iacute;fico del contexto.
+/** Tipo ASN&#46;1 espec&iacute;fico del contexto.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class ContextSpecific extends DecoderObject {
 
@@ -76,7 +76,7 @@ public abstract class ContextSpecific extends DecoderObject {
 
     private final Class<? extends DecoderObject> elementType;
 
-    /** Construye un tipo ASN.1 espec&iacute;fico del contexto.
+    /** Construye un tipo ASN&#46;1 espec&iacute;fico del contexto.
      * @param type Tipo de elemento contenido dentro de este objeto */
     public ContextSpecific(final Class<? extends DecoderObject> type) {
         super();

@@ -43,7 +43,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
 
-/** Tipo ASN.1 PKCS#15 <i>PrivateRsaKeyAttributes</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>PrivateRsaKeyAttributes</i>.
  * <pre>
  *  PrivateRSAKeyAttributes ::= SEQUENCE {
  *   value   ObjectValue {RSAPrivateKeyObject},
@@ -53,7 +53,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class PrivateRsaKeyAttributes extends Sequence {
 
-	/** Construye un objeto ASN.1 PKCS#15 <i>PrivateRsaKeyAttributes</i>. */
+	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateRsaKeyAttributes</i>. */
 	public PrivateRsaKeyAttributes() {
 		super(
 			new OptionalDecoderObjectElement[] {

@@ -4,7 +4,7 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
-/** Objeto PKCS#15 ODF (<i>Object Description File</i>) ASN.1.
+/** Objeto PKCS#15 ODF (<i>Object Description File</i>) ASN&#46;1.
  * Su estructura general es una repetici&oacute;n de registros de tipo <code>PKCS15Objects</code>:
  * <pre>
  * PKCS15Objects ::= CHOICE {
@@ -30,7 +30,7 @@ import es.gob.jmulticard.asn1.der.Record;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Odf extends Record {
 
-	/** Construye un objeto PKCS#15 ODF (<i>Object Description File</i>) ASN.1. */
+	/** Construye un objeto PKCS#15 ODF (<i>Object Description File</i>) ASN&#46;1. */
 	public Odf() {
 		super(
 			new OptionalDecoderObjectElement[] {
@@ -43,8 +43,8 @@ public final class Odf extends Record {
 		);
 	}
 
-	/** Obtiene la ruta (Path ASN.1 PKCS#15) hacia los certificados.
-	 * @return Ruta (Path ASN.1 PKCS#15) hacia los certificados, o <code>null</code>
+	/** Obtiene la ruta (Path ASN&#46;1 PKCS#15) hacia los certificados.
+	 * @return Ruta (Path ASN&#46;1 PKCS#15) hacia los certificados, o <code>null</code>
 	 *         si este ODF no contiene esta ruta. */
 	public Path getCertificatesPath() {
 		for (int i=0;i<getElementCount();i++) {

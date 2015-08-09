@@ -45,13 +45,13 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
-/** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN.1 (<i>EF.CD</i> en ISO 7816-15).
+/** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1 (<i>EF.CD</i> en ISO 7816-15).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Cdf extends Record {
 
     private static final int BUFFER_SIZE = 150;
 
-    /** Construye un objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN.1. */
+    /** Construye un objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1. */
 	public Cdf() {
         super(
     		new OptionalDecoderObjectElement[] {

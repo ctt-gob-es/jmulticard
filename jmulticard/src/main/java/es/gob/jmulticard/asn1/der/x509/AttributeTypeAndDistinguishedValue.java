@@ -44,7 +44,7 @@ import es.gob.jmulticard.asn1.der.ObjectIdentifier;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.Utf8String;
 
-/** Tipo ASN.1 X.500 <i>AttributeTypeAndDistinguishedValue</i>.
+/** Tipo ASN&#46;1 X&#46;500 <i>AttributeTypeAndDistinguishedValue</i>.
  * <pre>
  *  AttributeTypeAndDistinguishedValue ::= SEQUENCE {
  *   type ObjectIdentifier,
@@ -54,7 +54,7 @@ import es.gob.jmulticard.asn1.der.Utf8String;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class AttributeTypeAndDistinguishedValue extends Sequence {
 
-	/** Construye un objeto ASN.1 X.500 <i>AttributeTypeAndDistinguishedValue</i>. */
+	/** Construye un objeto ASN&#46;1 X&#46;500 <i>AttributeTypeAndDistinguishedValue</i>. */
 	public AttributeTypeAndDistinguishedValue() {
 		super(
 			new OptionalDecoderObjectElement[] {

@@ -5,7 +5,7 @@ import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
 /** Enumeraci&oacute;n de certificados espec&iacute;fica de contexto.
- * Sigue la estructura ASN.1 (es de tipo <i>PublicKeys</i>):
+ * Sigue la estructura ASN&#46;1 (es de tipo <i>PublicKeys</i>):
  * <pre>
  *  Certificates ::= PathOrObjects {PrivateKeyType}
  * </pre>
@@ -21,8 +21,8 @@ public final class CertificatesContextSpecific extends ContextSpecific {
 		super(Path.class);
 	}
 
-	/** Obtiene la ruta (Path ASN.1 PKCS#15) hacia los certificados.
-	 * @return Ruta (Path ASN.1 PKCS#15) hacia los certificados. */
+	/** Obtiene la ruta (Path ASN&#46;1 PKCS#15) hacia los certificados.
+	 * @return Ruta (Path ASN&#46;1 PKCS#15) hacia los certificados. */
 	public Path getCertificatesPath() {
 		if (getObject() instanceof Path) {
 			return (Path) getObject();

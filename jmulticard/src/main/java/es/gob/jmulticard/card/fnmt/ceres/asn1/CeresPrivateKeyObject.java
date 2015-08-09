@@ -43,7 +43,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.der.pkcs15.CommonKeyAttributes;
 import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
-/** Tipo ASN.1 PKCS#15 <i>PrivateKeyObject</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i>.
  * <pre>
  *  PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
  *    CommonKeyAttributes,
@@ -65,7 +65,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresPrivateKeyObject extends PrivateKeyObject {
 
-	/** Construye un objeto ASN.1 PKCS#15 <i>PrivateKeyObject</i> */
+	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> */
 	public CeresPrivateKeyObject() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)

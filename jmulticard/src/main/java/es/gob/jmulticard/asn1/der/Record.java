@@ -48,9 +48,9 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Registro de objetos ASN.1. Un registro de objetos es una concatenaci&oacute;n directa de tipos ASN.1 pero
+/** Registro de objetos ASN&#46;1. Un registro de objetos es una concatenaci&oacute;n directa de tipos ASN&#46;1 pero
  * sin construir un tipo compuesto, por lo que no conforma en si un TLV (y no tiene etiqueta de tipo). Todos los
- * objetos concatenados deben ser del mismo tipo ASN.1 */
+ * objetos concatenados deben ser del mismo tipo ASN&#46;1 */
 public abstract class Record extends DecoderObject {
 
     private final OptionalDecoderObjectElement[] elementsTypes;
@@ -58,7 +58,7 @@ public abstract class Record extends DecoderObject {
     private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
 
     /** Construye un elemento <i>Record Of</i>.
-     * @param types Tipos de los objetos ASN.1 que va a contener el registro (que obligatoriamente deben ser
+     * @param types Tipos de los objetos ASN&#46;1 que va a contener el registro (que obligatoriamente deben ser
      *              subclases de <code>DecoderObject</code> */
 	protected Record(final OptionalDecoderObjectElement[] types) {
         super();
@@ -76,9 +76,9 @@ public abstract class Record extends DecoderObject {
         return this.elements.size();
     }
 
-    /** Obtiene el elemento ASN.1 situado en una posici&oacute;n concreta del registro.
+    /** Obtiene el elemento ASN&#46;1 situado en una posici&oacute;n concreta del registro.
      * @param pos Posici&oacute;n del elemento deseado
-     * @return Elemento ASN.1 situado en la posici&oacute;n indicada */
+     * @return Elemento ASN&#46;1 situado en la posici&oacute;n indicada */
     protected DecoderObject getElementAt(final int pos) {
         if (pos < 0 || pos >= this.elements.size()) {
             throw new IndexOutOfBoundsException("No existe un elemento en este registro en el indice " + Integer.toString(pos)); //$NON-NLS-1$

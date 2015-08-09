@@ -39,27 +39,27 @@
  */
 package es.gob.jmulticard.asn1;
 
-/** Excepci&oacute;n gen&eacute;rica de sintaxis ASN.1.
+/** Excepci&oacute;n gen&eacute;rica de sintaxis ASN&#46;1.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez */
 public final class Asn1SyntaxException extends Exception {
 
     private static final long serialVersionUID = 2189471462653074438L;
 
-    /** Construye una excepci&oacute;n gen&eacute;rica de sintaxis ASN.1.
+    /** Construye una excepci&oacute;n gen&eacute;rica de sintaxis ASN&#46;1.
      * @param message Mensaje de la excepci&oacute;n */
     public Asn1SyntaxException(final String message) {
         super(message);
     }
 
-    /** Sintaxis ASN.1 incorrecta.
+    /** Sintaxis ASN&#46;1 incorrecta.
      * @see Exception#Exception(Throwable)
      * @param cause Causa inicial de la excepci&oacute;n */
     public Asn1SyntaxException(final Throwable cause) {
         super(cause.getMessage());
     }
 
-    /** Construye una excepci&oacute;n gen&eacute;rica de sintaxis ASN.1.
+    /** Construye una excepci&oacute;n gen&eacute;rica de sintaxis ASN&#46;1.
      * @param message Mensaje de la excepci&oacute;n
      * @param cause causa de la excepci&oacute;n */
     public Asn1SyntaxException(final String message, final Throwable cause) {

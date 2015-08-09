@@ -44,7 +44,7 @@ import java.io.IOException;
 
 import es.gob.jmulticard.HexUtils;
 
-/** Representaci&oacute;n de un TLV (Top-Longitud-Valor) binario en representaci&oacute;n ASN.1 DER. */
+/** Representaci&oacute;n de un TLV (Top-Longitud-Valor) binario en forma ASN&#46;1 DER. */
 public final class Tlv {
 
     /** Octeto de tipo (equiqueta). */

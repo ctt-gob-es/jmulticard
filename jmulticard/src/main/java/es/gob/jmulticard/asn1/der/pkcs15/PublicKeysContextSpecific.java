@@ -5,7 +5,7 @@ import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
 /** Enumeraci&oacute;n de claves p&uacute;blicas espec&iacute;fica de contexto.
- * Sigue la estructura ASN.1:
+ * Sigue la estructura ASN&#46;1:
  * <pre>
  *  PublicKeys ::= PathOrObjects {PrivateKeyType}
  * </pre>

@@ -44,7 +44,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
-/** Tipo ASN.1 PKCS#15 <i>Path</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>Path</i>.
  * <pre>
  *  Path ::= SEQUENCE {
  *   path OCTET STRING,
@@ -55,7 +55,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Path extends Sequence {
 
-	/** Crea un objeto ASN.1 PKCS#15 <i>Path</i>. */
+	/** Crea un objeto ASN&#46;1 PKCS#15 <i>Path</i>. */
 	public Path() {
 		super(
 			new OptionalDecoderObjectElement[] {

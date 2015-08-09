@@ -44,7 +44,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.Sequence;
 
-/** Tipo PKCS#15 ASN.1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
+/** Tipo PKCS#15 ASN&#46;1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
  * <pre>
  *  PKCS15Object ::= SEQUENCE {
  *      commonObjectAttributes CommonObjectAttributes,
@@ -56,7 +56,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Gonzalo Henr&iacute;quez Manzano */
 public abstract class Pkcs15Object extends Sequence {
 
-    /** Construye un tipo PKCS#15 ASN.1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
+    /** Construye un tipo PKCS#15 ASN&#46;1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
      * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */

@@ -45,13 +45,13 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
-/** Objeto ASN.1 de contexto espec&iacute;fico del <i>X509CertificateAttributes</i>.
+/** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>X509CertificateAttributes</i>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class X509CertificateAttributesContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA1;
 
-	/** Construye un objeto ASN.1 de contexto espec&iacute;fico del <i>X509CertificateAttributes</i>. */
+	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>X509CertificateAttributes</i>. */
 	public X509CertificateAttributesContextSpecific() {
 		super(X509CertificateAttributes.class);
 	}

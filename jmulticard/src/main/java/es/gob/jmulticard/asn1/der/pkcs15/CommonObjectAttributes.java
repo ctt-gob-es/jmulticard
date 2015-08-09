@@ -43,7 +43,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.Utf8String;
 
-/** Objeto <i>CommonObjectAttributes</i> ASN.1 de PKCS#15.
+/** Objeto <i>CommonObjectAttributes</i> ASN&#46;1 de PKCS#15.
  * <pre>
  *  CommonObjectAttributes ::= SEQUENCE {
  *    label Label,
@@ -55,7 +55,7 @@ import es.gob.jmulticard.asn1.der.Utf8String;
  * @author Gonzalo Henr&iacute;quez Manzano */
 public final class CommonObjectAttributes extends Sequence {
 
-    /** Construye un objeto <i>CommonObjectAttributes</i> ASN.1 de PKCS#15. */
+    /** Construye un objeto <i>CommonObjectAttributes</i> ASN&#46;1 de PKCS#15. */
 	public CommonObjectAttributes() {
         super(
     		new OptionalDecoderObjectElement[] {

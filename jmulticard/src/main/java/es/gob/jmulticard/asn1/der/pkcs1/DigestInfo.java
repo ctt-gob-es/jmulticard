@@ -47,7 +47,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
 
-/** Tipo ASN.1 PKCS#1 <i>DigestInfo</i>.
+/** Tipo ASN&#46;1 PKCS#1 <i>DigestInfo</i>.
  *
  * <pre>
  *  DigestInfo::=SEQUENCE {
@@ -111,7 +111,7 @@ public final class DigestInfo extends Sequence {
         return out;
     }
 
-    /** Construye un objeto ASN.1 PKCS#1 <i>DigestInfo</i>. */
+    /** Construye un objeto ASN&#46;1 PKCS#1 <i>DigestInfo</i>. */
 	public DigestInfo() {
         super(
     		new OptionalDecoderObjectElement[] {

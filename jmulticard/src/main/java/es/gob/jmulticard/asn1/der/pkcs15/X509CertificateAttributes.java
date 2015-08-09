@@ -47,7 +47,7 @@ import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
 import es.gob.jmulticard.asn1.der.x509.RdnSequence;
 
-/** Tipo ASN.1 PKCS#15 <i>X509CertificateAttributes</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>X509CertificateAttributes</i>.
  * <pre>
  *  X509CertificateAttributes ::= SEQUENCE {
  *    value ObjectValue { Certificate },
@@ -62,7 +62,7 @@ import es.gob.jmulticard.asn1.der.x509.RdnSequence;
  * @author Gonzalo Henr&iacute;quez Manzano */
 public final class X509CertificateAttributes extends Sequence {
 
-	/** Crea un objeto ASN.1 PKCS#15 <i>X509CertificateAttributes</i>. */
+	/** Crea un objeto ASN&#46;1 PKCS#15 <i>X509CertificateAttributes</i>. */
 	public X509CertificateAttributes() {
 		super(
 			new OptionalDecoderObjectElement[] {

@@ -48,11 +48,11 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo ASN.1 <i>Sequence</i>.
+/** Tipo ASN&#46;1 <i>Sequence</i>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class Sequence extends DecoderObject {
 
-    /** Tipo ASN.1 "SEQUENCE". */
+    /** Tipo ASN&#46;1 <i>Sequence</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
     private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
@@ -63,9 +63,9 @@ public abstract class Sequence extends DecoderObject {
     	return this.elements.size();
     }
 
-    /** Construye un tipo ASN.1 <i>Sequence</i>.
-     * Un <i>Sequence</i> contiene una secuencia de tipos ASN.1 (que pueden ser distintos)
-     * @param types Tipos (etiquetas) de objetos ASN.1 (cero a n elementos) que va a contener la secuencia. El orden es relevante */
+    /** Construye un tipo ASN&#46;1 <i>Sequence</i>.
+     * Un <i>Sequence</i> contiene una secuencia de tipos ASN&#46;1 (que pueden ser distintos)
+     * @param types Tipos (etiquetas) de objetos ASN&#46;1 (cero a n elementos) que va a contener la secuencia. El orden es relevante */
 	protected Sequence(final OptionalDecoderObjectElement[] types) {
         super();
         if (types == null) {
@@ -98,7 +98,7 @@ public abstract class Sequence extends DecoderObject {
                 	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
             		continue;
             	}
-            	throw new Asn1Exception("Error en el elemento " + i + " de la secuencia ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+            	throw new Asn1Exception("Error en el elemento " + i + " (" + this.elementsTypes[i].getElementType().getName() + ") de la secuencia ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
             // El offset se avanza antes del continue de la opcionalidad
             offset = offset + tlv.getBytes().length;

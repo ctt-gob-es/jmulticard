@@ -1,8 +1,10 @@
 package es.gob.jmulticard.card.pace;
 
 import java.io.IOException;
+import java.security.KeyPair;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -12,6 +14,7 @@ import es.gob.jmulticard.apdu.iso7816four.GeneralAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.der.x509.SubjectPublicKeyInfo;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
@@ -21,6 +24,11 @@ public final class PaceChannelHelper {
 	private static final byte[] CAN_PADDING = new byte[] {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
 	};
+
+	private static final byte TAG_DYNAMIC_AUTHENTICATION_DATA = (byte) 0x7C;
+	private static final byte TAG_MAPPING_DATA = (byte) 0x81;
+	private static final byte UNCOMPRESSED_POINT = (byte) 0x04;
+
 
 	private PaceChannelHelper() {
 		// No instanciable
@@ -121,7 +129,7 @@ public final class PaceChannelHelper {
 		}
 		catch (final IOException e) {
 			throw new PaceException(
-				"Error obteniendo el 'sk' a partir del CAN", e //$NON-NLS-1$
+				"Error obteniendo el 'sk' a partir del CAN: " + e, e //$NON-NLS-1$
 			);
 		}
 
@@ -134,11 +142,60 @@ public final class PaceChannelHelper {
 		}
 		catch (final Exception e) {
 			throw new PaceException(
-				"Error descifranco el 'nonce'", e //$NON-NLS-1$
+				"Error descifranco el 'nonce': " + e, e //$NON-NLS-1$
 			);
 		}
 
 		// 1.3.4 - Segundo comando General Autenticate - Map Nonce
+
+		// Generamos un par de claves EC para el DH
+		final KeyPair kpIfdDh1;
+		try {
+			kpIfdDh1 = cryptoHelper.generateEcKeyPair(EcCurve.BRAINPOOL_P256_R1);
+		}
+		catch (final Exception e) {
+			throw new PaceException(
+				"Error creando el par de claves EC: " + e, e //$NON-NLS-1$
+			);
+		}
+
+		final SubjectPublicKeyInfo ecPuk = new SubjectPublicKeyInfo();
+		try {
+			ecPuk.setDerValue(
+				kpIfdDh1.getPublic().getEncoded()
+			);
+		}
+		catch (final Exception e) {
+			throw new PaceException(
+				"La clave publica EC no esta en el formato esperado: " + e, //$NON-NLS-1$
+				e
+			);
+		}
+
+		final Tlv tlv = new Tlv(
+			TAG_DYNAMIC_AUTHENTICATION_DATA,
+			new Tlv(
+				TAG_MAPPING_DATA,
+				ecPuk.getSubjectPubicKey()
+			).getBytes()
+		);
+
+		comm = new GeneralAuthenticateApduCommand(
+			(byte) 0x10,
+			tlv.getBytes()
+		);
+
+		res = conn.transmit(comm);
+
+		if (!res.isOk()) {
+			throw new PaceException(
+				res.getStatusWord(),
+				comm,
+				"Error mapeando el aleatorio de calculo PACE (Nonce)" //$NON-NLS-1$
+			);
+		}
+
+		System.out.println(HexUtils.hexify(res.getBytes(), true));
 
 	}
 
