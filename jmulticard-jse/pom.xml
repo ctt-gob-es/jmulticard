@@ -19,10 +19,18 @@
 			<artifactId>jmulticard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>es.gob</groupId>
 			<artifactId>jmulticard-jsr268</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.52</version>
+		</dependency>
+		
 	</dependencies>
 </project>

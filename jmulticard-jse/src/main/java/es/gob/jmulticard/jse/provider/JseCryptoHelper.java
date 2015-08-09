@@ -48,16 +48,20 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import es.gob.jmulticard.CryptoHelper;
 
@@ -270,7 +274,19 @@ public final class JseCryptoHelper extends CryptoHelper {
 	@Override
 	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                 InvalidAlgorithmParameterException {
-		final KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
+		KeyPairGenerator kpg;
+		try {
+			kpg = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
+		}
+		catch (final Exception e) {
+			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				"No se ha podido obtener un generador de pares de claves de curva eliptica con BouncyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
+			);
+			kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
+		}
 		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
 		kpg.initialize(parameterSpec);
 		return kpg.generateKeyPair();
