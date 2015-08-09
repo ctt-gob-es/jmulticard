@@ -72,6 +72,8 @@ public abstract class BitString extends DecoderObject {
         return TAG_BITSTRING;
     }
 
+    /** Obtiene el valor binario del campo de datos del <i>BitString</i>.
+     * @return Valor binario del campo de datos del <i>BitString</i>. */
     public byte[] getValue() {
     	return this.tlv != null ? this.tlv.getValue() : null;
     }
