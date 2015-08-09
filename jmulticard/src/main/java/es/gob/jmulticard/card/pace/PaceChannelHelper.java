@@ -1,16 +1,26 @@
 package es.gob.jmulticard.card.pace;
 
+import java.io.IOException;
+
+import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.iso7816four.GeneralAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
+import es.gob.jmulticard.asn1.Tlv;
+import es.gob.jmulticard.asn1.TlvException;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PaceChannelHelper {
+
+	private static final byte[] CAN_PADDING = new byte[] {
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
+	};
 
 	private PaceChannelHelper() {
 		// No instanciable
@@ -18,16 +28,32 @@ public final class PaceChannelHelper {
 
 	/** Abre un canal PACE mediante el CAN (<i>Card Access Number</i>).
 	 * @param cla Clase de APDU para los comandos de establecimiento de canal.
+	 * @param can CAN (<i>Card Access Number</i>).
 	 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
+	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas auxiliares.
 	 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
 	 * @throws PaceException Si hay problemas en la apertura del canal. */
-	public static void openPaceChannel(final byte cla, final ApduConnection conn) throws ApduConnectionException, PaceException {
-
+	public static void openPaceChannel(final byte cla,
+			                           final String can,
+			                           final ApduConnection conn,
+			                           final CryptoHelper cryptoHelper) throws ApduConnectionException,
+			                                                                   PaceException {
 		if (conn == null) {
 			throw new IllegalArgumentException(
 				"El canal de conexion no puede ser nulo" //$NON-NLS-1$
 			);
 		}
+		if (can == null || "".equals(can)) { //$NON-NLS-1$
+			throw new IllegalArgumentException(
+				"Es necesario proporcionar el CAN para abrir canal PACE" //$NON-NLS-1$
+			);
+		}
+		if (cryptoHelper == null) {
+			throw new IllegalArgumentException(
+				"El CryptoHelper no puede ser nulo" //$NON-NLS-1$
+			);
+		}
+
 		if (!conn.isOpen()) {
 			conn.open();
 		}
@@ -52,7 +78,7 @@ public final class PaceChannelHelper {
 			);
 		}
 
-		// 1.3.3 - Primer comando General Autenticate
+		// 1.3.3 - Primer comando General Autenticate - Get Nonce
 		comm = new GeneralAuthenticateApduCommand(
 			(byte) 0x10,
 			new byte[] { (byte) 0x7C, (byte) 0x00 }
@@ -63,9 +89,56 @@ public final class PaceChannelHelper {
 			throw new PaceException(
 				res.getStatusWord(),
 				comm,
-				"Error solicitando el aleatorio de calculo PACE" //$NON-NLS-1$
+				"Error solicitando el aleatorio de calculo PACE (Nonce)" //$NON-NLS-1$
 			);
 		}
+
+		final byte[] nonce;
+		try {
+			nonce = new Tlv(new Tlv(res.getData()).getValue()).getValue();
+		}
+		catch (final TlvException e) {
+			throw new PaceException(
+				"El aleatorio de calculo PACE (Nonce) obtenido (" + HexUtils.hexify(res.getData(), true) + ") no sigue el formato esperado: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+			);
+		}
+
+		final byte[] sk = new byte[16];
+		try {
+			System.arraycopy(
+				cryptoHelper.digest(
+					CryptoHelper.DigestAlgorithm.SHA1,
+					HexUtils.concatenateByteArrays(
+						can.getBytes(),
+						CAN_PADDING
+					)
+				),
+				0,
+				sk,
+				0,
+				16
+			);
+		}
+		catch (final IOException e) {
+			throw new PaceException(
+				"Error obteniendo el 'sk' a partir del CAN", e //$NON-NLS-1$
+			);
+		}
+
+		final byte[] secret;
+		try {
+			secret = cryptoHelper.aesDecrypt(
+				nonce,
+				sk
+			);
+		}
+		catch (final Exception e) {
+			throw new PaceException(
+				"Error descifranco el 'nonce'", e //$NON-NLS-1$
+			);
+		}
+
+		// 1.3.4 - Segundo comando General Autenticate - Map Nonce
 
 	}
 

@@ -41,12 +41,18 @@ package es.gob.jmulticard.jse.provider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.ECGenParameterSpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -54,81 +60,30 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import es.gob.jmulticard.CryptoHelper;
-import es.gob.jmulticard.jse.provider.digest.Digest;
-import es.gob.jmulticard.jse.provider.digest.SHA1Digest;
-import es.gob.jmulticard.jse.provider.digest.SHA256Digest;
-import es.gob.jmulticard.jse.provider.digest.SHA384Digest;
-import es.gob.jmulticard.jse.provider.digest.SHA512Digest;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE6.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class JseCryptoHelper extends CryptoHelper {
 
-    private static final String SHA512 = "SHA-512"; //$NON-NLS-1$
-    private static final String SHA384 = "SHA-384"; //$NON-NLS-1$
-    private static final String SHA256 = "SHA-256"; //$NON-NLS-1$
-    private static final String SHA1 = "SHA-1"; //$NON-NLS-1$
-
     /** {@inheritDoc} */
     @Override
-    public byte[] digest(final String algorithm, final byte[] data) throws IOException {
+    public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 
         if (algorithm == null) {
             throw new IllegalArgumentException("El algoritmo de huella digital no puede ser nulo"); //$NON-NLS-1$
         }
+        if (data == null) {
+        	throw new IllegalArgumentException("Los datos para realizar la huella digital no pueden ser nulos"); //$NON-NLS-1$
+        }
 
-        final String digestAlgorithm = normalizeDigestAlgorithm(algorithm);
         try {
-            final Digest digest = selectMessageDigest(digestAlgorithm);
-            digest.update(data, 0, data.length);
-            final byte[] result = new byte[digest.getDigestSize()];
-            digest.doFinal(result, 0);
-            return result;
-        }
-        catch (final Exception e) {
-            throw new IOException("Error obteniendo la huella digital de los datos: " + e, e); //$NON-NLS-1$
-        }
-    }
-
-    /* Devuelve una instancia del algoritmo de huella pedido o null si la opcion no existe */
-    private static Digest selectMessageDigest(final String digestAlgorithm) {
-        if (JseCryptoHelper.SHA1.equals(digestAlgorithm)) {
-            return new SHA1Digest();
-        }
-        else if (JseCryptoHelper.SHA256.equals(digestAlgorithm)) {
-            return new SHA256Digest();
-        }
-        else if (JseCryptoHelper.SHA384.equals(digestAlgorithm)) {
-            return new SHA384Digest();
-        }
-        else if (JseCryptoHelper.SHA512.equals(digestAlgorithm)) {
-            return new SHA512Digest();
-        }
-        return null;
-    }
-
-    /** Normaliza el nombre de un algoritmo de huella digital.
-     * @param algorithm Algoritmo.
-     * @return nom,bre normalizado o el mismo de entrada si no se puede identificar. */
-    private static String normalizeDigestAlgorithm(final String algorithm) {
-        if ("SHA".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-            "SHA1".equalsIgnoreCase(algorithm) //$NON-NLS-1$
-            || JseCryptoHelper.SHA1.equalsIgnoreCase(algorithm)) {
-            return JseCryptoHelper.SHA1;
-        }
-        else if ("SHA256".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-                 JseCryptoHelper.SHA256.equalsIgnoreCase(algorithm)) {
-            return JseCryptoHelper.SHA256;
-        }
-        else if ("SHA384".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-                 JseCryptoHelper.SHA384.equalsIgnoreCase(algorithm)) {
-            return JseCryptoHelper.SHA384;
-        }
-        else if ("SHA512".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-                 JseCryptoHelper.SHA512.equalsIgnoreCase(algorithm)) {
-            return JseCryptoHelper.SHA512;
-        }
-        return null;
+			return MessageDigest.getInstance(algorithm.toString()).digest(data);
+		}
+        catch (final NoSuchAlgorithmException e) {
+        	throw new IOException(
+    			"El sistema no soporta el algoritmo de huella digital indicado ('" + algorithm + "'): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+			);
+		}
     }
 
     private static byte[] doDesede(final byte[] data, final byte[] key, final int direction) throws IOException {
@@ -260,4 +215,65 @@ public final class JseCryptoHelper extends CryptoHelper {
         sr.nextBytes(randomBytes);
         return randomBytes;
     }
+
+	@Override
+	public byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException {
+		if (data == null) {
+			throw new IllegalArgumentException(
+				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
+			);
+		}
+		if (key == null) {
+			throw new IllegalArgumentException(
+				"La clave de cifrado no puede ser nula" //$NON-NLS-1$
+			);
+		}
+		final Cipher aesCipher;
+		try {
+			aesCipher = Cipher.getInstance("AES/CBC/NoPadding"); //$NON-NLS-1$
+		}
+		catch (final Exception e) {
+			throw new IOException(
+				"No se ha podido obtener una instancia del cifrador 'AES/CBC/NoPadding': " + e, e //$NON-NLS-1$
+			);
+		}
+
+		// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
+		// para IvParameterSpec.getIV(), normalmente todo ceros
+		final byte[] iv = new byte[aesCipher.getBlockSize()];
+		new SecureRandom().nextBytes(iv);
+		final IvParameterSpec ivParams = new IvParameterSpec(iv);
+
+		try {
+			aesCipher.init(
+				Cipher.DECRYPT_MODE,
+				new SecretKeySpec(key, "AES"), //$NON-NLS-1$
+				ivParams
+			);
+		}
+		catch (final Exception e) {
+			throw new IOException(
+				"La clave proporcionada no es valida: " + e, e//$NON-NLS-1$
+			);
+		}
+		try {
+			return aesCipher.doFinal(data);
+		}
+		catch (final Exception e) {
+			e.printStackTrace();
+			throw new IOException(
+				"Error en el descifrado, posiblemente los datos proporcionados no sean validos: "  + e, e//$NON-NLS-1$
+			);
+		}
+	}
+
+	@Override
+	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
+	                                                                 InvalidAlgorithmParameterException {
+		final KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
+		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
+		kpg.initialize(parameterSpec);
+		return kpg.generateKeyPair();
+	}
+
 }

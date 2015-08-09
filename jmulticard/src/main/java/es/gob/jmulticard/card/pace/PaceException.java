@@ -14,4 +14,8 @@ public final class PaceException extends Iso7816FourCardException {
         super(retCode, origin, description);
 	}
 
+	PaceException(final String description, final Throwable e) {
+		super(description, e);
+	}
+
 }

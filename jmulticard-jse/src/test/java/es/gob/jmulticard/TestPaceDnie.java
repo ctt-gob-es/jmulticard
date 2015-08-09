@@ -2,6 +2,7 @@ package es.gob.jmulticard;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.pace.PaceChannelHelper;
+import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** pruebas de PACE con DNIe 3.0.
@@ -15,7 +16,12 @@ public final class TestPaceDnie {
 		final ApduConnection conn = new SmartcardIoConnection();
 //		System.out.println(conn.getTerminalInfo((int) conn.getTerminals(true)[0]));
 //		conn.setTerminal((int) conn.getTerminals(true)[0]);
-		PaceChannelHelper.openPaceChannel((byte)0x10, conn);
+		PaceChannelHelper.openPaceChannel(
+			(byte)0x10,
+			"739712", // CAN //$NON-NLS-1$
+			conn,
+			new JseCryptoHelper()
+		);
 	}
 
 }

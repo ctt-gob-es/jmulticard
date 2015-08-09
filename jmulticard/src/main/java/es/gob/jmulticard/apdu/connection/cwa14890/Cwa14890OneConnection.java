@@ -76,9 +76,6 @@ public final class Cwa14890OneConnection implements ApduConnection {
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
     };
 
-    /** Nombre del algoritmo SHA-1 de huella digital. */
-    private static final String SHA1_ALGORITHM_NAME = "SHA1"; //$NON-NLS-1$
-
     /** Helper para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
     private final CryptoHelper cryptoHelper;
 
@@ -280,7 +277,16 @@ public final class Cwa14890OneConnection implements ApduConnection {
         System.arraycopy(SECURE_CHANNEL_KENC_AUX, 0, kidficcConcat, kidficc.length, SECURE_CHANNEL_KENC_AUX.length);
 
         final byte[] keyEnc = new byte[16];
-        System.arraycopy(this.cryptoHelper.digest(SHA1_ALGORITHM_NAME, kidficcConcat), 0, keyEnc, 0, keyEnc.length);
+        System.arraycopy(
+    		this.cryptoHelper.digest(
+				CryptoHelper.DigestAlgorithm.SHA1,
+				kidficcConcat
+			),
+			0,
+			keyEnc,
+			0,
+			keyEnc.length
+		);
 
         return keyEnc;
     }
@@ -297,7 +303,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         System.arraycopy(SECURE_CHANNEL_KMAC_AUX, 0, kidficcConcat, kidficc.length, SECURE_CHANNEL_KMAC_AUX.length);
 
         final byte[] keyMac = new byte[16];
-        System.arraycopy(this.cryptoHelper.digest(SHA1_ALGORITHM_NAME, kidficcConcat), 0, keyMac, 0, keyMac.length);
+        System.arraycopy(this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, kidficcConcat), 0, keyMac, 0, keyMac.length);
 
         return keyMac;
     }
@@ -428,7 +434,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         baos.write(randomIfd);
         baos.write(this.card.getChrCCvIfd());
 
-        final byte[] calculatedHash = this.cryptoHelper.digest(SHA1_ALGORITHM_NAME, baos.toByteArray());
+        final byte[] calculatedHash = this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, baos.toByteArray());
         if (!HexUtils.arrayEquals(hash, calculatedHash)) {
             throw new SecureChannelException("Error en la comprobacion de la clave de autenticacion interna. Se obtuvo el hash '" + //$NON-NLS-1$
                                              HexUtils.hexify(calculatedHash, false)
@@ -490,7 +496,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         baos.write(randomIcc);
         baos.write(serial);
 
-        final byte[] hash = this.cryptoHelper.digest(SHA1_ALGORITHM_NAME, baos.toByteArray());
+        final byte[] hash = this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, baos.toByteArray());
 
         // Construimos el mensaje para el desafio a la tarjeta. Este estara compuesto por:
         // Byte 0: 0x6a - Relleno segun ISO 9796-2 (DS scheme 1)

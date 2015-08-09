@@ -42,6 +42,7 @@ package es.gob.jmulticard.asn1.der.pkcs1;
 import java.io.IOException;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.DigestAlgorithm;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
@@ -57,20 +58,9 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class DigestInfo extends Sequence {
 
-    private static final String SHA1_NORMALIZED_ALGO_NAME = "SHA-1"; //$NON-NLS-1$
-
-    private static final String SHA256_NORMALIZED_ALGO_NAME = "SHA-256"; //$NON-NLS-1$
-
-    private static final String SHA384_NORMALIZED_ALGO_NAME = "SHA-384"; //$NON-NLS-1$
-
-    private static final String SHA512_NORMALIZED_ALGO_NAME = "SHA-512"; //$NON-NLS-1$
-
     private static final String SHA1WITHRSA_NORMALIZED_ALGO_NAME = "SHA1withRSA"; //$NON-NLS-1$
-
     private static final String SHA256WITHRSA_NORMALIZED_ALGO_NAME = "SHA256withRSA"; //$NON-NLS-1$
-
     private static final String SHA384WITHRSA_NORMALIZED_ALGO_NAME = "SHA384withRSA"; //$NON-NLS-1$
-
     private static final String SHA512WITHRSA_NORMALIZED_ALGO_NAME = "SHA512withRSA"; //$NON-NLS-1$
 
     private static final byte[] SHA1_DIGESTINFO_HEADER = new byte[] {
@@ -149,7 +139,7 @@ public final class DigestInfo extends Sequence {
     public static byte[] encode(final String signingAlgorithm, final byte[] data, final CryptoHelper cryptoHelper) throws IOException {
 
         final String normalizedSignningAlgorithm = getNormalizedSigningAlgorithm(signingAlgorithm);
-        final String digestAlgorithm = getDigestAlgorithm(normalizedSignningAlgorithm);
+        final DigestAlgorithm digestAlgorithm = getDigestAlgorithm(normalizedSignningAlgorithm);
         final byte[] header = selectHeaderTemplate(digestAlgorithm);
         final byte[] md = cryptoHelper.digest(digestAlgorithm, data);
 
@@ -196,39 +186,42 @@ public final class DigestInfo extends Sequence {
      * un algoritmo concreto.
      * @param algorithm Algoritmo del que obtener la plantilla de cabecera.
      * @return Cabecera. */
-    private static byte[] selectHeaderTemplate(final String algorithm) {
-        if (SHA1_NORMALIZED_ALGO_NAME.equals(algorithm)) {
-            return getSha1DigestinfoHeader();
-        }
-        else if (SHA256_NORMALIZED_ALGO_NAME.equals(algorithm)) {
-            return getSha256DigestinfoHeader();
-        }
-        else if (SHA384_NORMALIZED_ALGO_NAME.equals(algorithm)) {
-            return getSha384DigestinfoHeader();
-        }
-        else if (SHA512_NORMALIZED_ALGO_NAME.equals(algorithm)) {
-            return getSha512DigestinfoHeader();
-        }
-        return new byte[0];
+    private static byte[] selectHeaderTemplate(final DigestAlgorithm algorithm) {
+    	switch(algorithm) {
+    		case SHA1:
+    			return getSha1DigestinfoHeader();
+    		case SHA256:
+    			return getSha256DigestinfoHeader();
+    		case SHA384:
+    			return getSha384DigestinfoHeader();
+    		case SHA512:
+    			return getSha512DigestinfoHeader();
+			default:
+				throw new IllegalStateException(
+		    		"Algoritmo de huella digital no soportado: " + algorithm //$NON-NLS-1$
+				);
+    	}
     }
 
     /** Obtiene el algoritmo de huella digital correspondiente a un algoritmo de firma
      * concreto.
      * @param signatureAlgorithm Algoritmo de firma.
      * @return Algoritmo de huella digital o la propia entrada si no se identific&oacute;. */
-    private static String getDigestAlgorithm(final String signatureAlgorithm) {
+    private static DigestAlgorithm getDigestAlgorithm(final String signatureAlgorithm) {
         if (SHA1WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
-            return SHA1_NORMALIZED_ALGO_NAME;
+            return DigestAlgorithm.SHA1;
         }
         else if (SHA256WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
-            return SHA256_NORMALIZED_ALGO_NAME;
+            return DigestAlgorithm.SHA256;
         }
         else if (SHA384WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
-            return SHA384_NORMALIZED_ALGO_NAME;
+            return DigestAlgorithm.SHA384;
         }
         else if (SHA512WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
-            return SHA512_NORMALIZED_ALGO_NAME;
+            return DigestAlgorithm.SHA512;
         }
-        return signatureAlgorithm;
+        throw new IllegalStateException(
+    		"Algoritmo de huella digital no soportado para: " + signatureAlgorithm //$NON-NLS-1$
+		);
     }
 }

@@ -41,7 +41,10 @@ package es.gob.jmulticard;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 
@@ -49,6 +52,49 @@ import java.security.cert.CertificateException;
  * JSE/JME/Dalvik.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class CryptoHelper {
+
+	/** Nombre de curva ek&iacute;ptica. */
+	public enum EcCurve {
+
+		/** BrainpoolP256r1. */
+		BRAINPOOL_P256_R1("brainpoolP256R1"); //$NON-NLS-1$
+
+		private final String name;
+		private EcCurve(final String n) {
+			this.name = n;
+		}
+
+		@Override
+		public String toString() {
+			return this.name;
+		}
+	}
+
+	/** Algoritmo de huella digital. */
+	public enum DigestAlgorithm {
+
+		/** SHA-1. */
+		SHA1("SHA1"), //$NON-NLS-1$
+
+		/** SHA-256. */
+		SHA256("SHA-256"), //$NON-NLS-1$
+
+		/** SHA-384. */
+		SHA384("SHA-384"), //$NON-NLS-1$
+
+		/** SHA-512. */
+		SHA512("SHA-512"); //$NON-NLS-1$
+
+		private final String name;
+		private DigestAlgorithm(final String n) {
+			this.name = n;
+		}
+
+		@Override
+		public String toString() {
+			return this.name;
+		}
+	}
 
 	private static final int PKCS1_LEN_1024 = 128;
 	private static final int PKCS1_LEN_2048 = 256;
@@ -92,7 +138,7 @@ public abstract class CryptoHelper {
      * @return Huella digital de los datos.
      * @throws IOException Si ocurre alg&uacute;n problema generando la huella
      *         digital. */
-    public abstract byte[] digest(final String algorithm, final byte[] data) throws IOException;
+    public abstract byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException;
 
     /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con un
      * salto de (IV) de 8 bytes a cero. Si se le indica una clave de 24 bytes,
@@ -133,6 +179,14 @@ public abstract class CryptoHelper {
      *         desencriptado. */
     public abstract byte[] desDecrypt(final byte[] data, final byte[] key) throws IOException;
 
+    /** Desencripta datos mediante AES (modo CBC sin relleno).
+     * @param data Datos a encriptar.
+     * @param key Clave AES de cifrado.
+     * @return Datos cifrados.
+     * @throws IOException Si ocurre alg&uacute;n problema durante el
+     *         encriptado. */
+    public abstract byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException;
+
     /** Desencripta datos mediante RSA.
      * @param cipheredData Datos a desencriptar.
      * @param key Clava RSA de descifrado.
@@ -162,4 +216,12 @@ public abstract class CryptoHelper {
      * @throws IOException Si ocurre alg&uacute;n problema durante la
      *         generaci&oacute;n del aleatorio. */
     public abstract byte[] generateRandomBytes(int numBytes) throws IOException;
+
+	/** Genera un par de claves de tipo curva el&iacute;ptica.
+	 * @param curveName Tipo de curva el&iacute;ptica a utilizar.
+	 * @return Par de claves generadas.
+	 * @throws NoSuchAlgorithmException Si el sistema no soporta la generaci&oacute;n de curvas el&iacute;pticas.
+	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva el&iacute;ptica indicada. */
+	public abstract KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
+	                                                                          InvalidAlgorithmParameterException;
 }

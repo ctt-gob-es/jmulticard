@@ -95,6 +95,14 @@ public class Iso7816FourCardException extends Exception {
         this.returnCode = retCode;
     }
 
+    /** Crea una excepci&oacute;n referente a ISO 7816-4.
+     * @param desc Descripci&oacute;n de la excepci&oacute;n.
+     * @param e Excepci&oacute;n de origen. */
+    public Iso7816FourCardException(final String desc, final Throwable e) {
+    	super(desc, e);
+    	this.returnCode = null;
+    }
+
     /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.
      * @param retCode Palabra de estado
      * @param origin APDU que gener&oacute; la palabra de estado.
