@@ -22,11 +22,6 @@ public final class CeresVerifyApduCommand extends CommandApdu {
     		charArrayToByteArray(pinPc),	// Data
     		null							// Le
 		);
-        if (pinPc == null) {
-        	throw new IllegalArgumentException(
-    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
-        	);
-        }
     }
 
     private static byte[] charArrayToByteArray(final PasswordCallback pinPc) {
