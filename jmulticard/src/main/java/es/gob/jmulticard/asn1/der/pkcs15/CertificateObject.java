@@ -63,6 +63,29 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *      NULL,
  *      X509CertificateAttributes
  *    }
+ *
+ *    CommonObjectAttributes ::= SEQUENCE {
+ *      label Label,
+ *      flags CommonObjectFlags OPTIONAL,
+ *      authId Identifier OPTIONAL,
+ *    }
+ *    Label ::= UTF8String (SIZE(0..pkcs15-ub-label))
+ *
+ *    CommonCertificateAttributes ::= SEQUENCE {
+ *      iD Identifier
+ *    }
+ *    Identifier ::= OCTET STRING (SIZE (0..pkcs15-ub-identifier))
+ *
+ *    X509CertificateAttributes ::= SEQUENCE {
+ *      value ObjectValue { Certificate },
+ *      subject Name,
+ *      issuer [0] Name,
+ *      serialNumber INTEGER
+ *    }
+ *    Name ::= CHOICE {
+ *      rdnSequence RDNSequence
+ *    }
+ *
  *  </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class CertificateObject extends Pkcs15Object {
