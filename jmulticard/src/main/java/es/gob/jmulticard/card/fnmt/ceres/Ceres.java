@@ -172,8 +172,13 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	                              CertificateException,
 	                              Asn1Exception,
 	                              TlvException {
+
+        // Nos vamos al raiz antes de nada
+        selectMasterFile();
+
 		// Cargamos el CDF
         final CeresCdf cdf = new CeresCdf();
+
         final byte[] cdfBytes = selectFileByLocationAndRead(CDF_LOCATION);
 
         cdf.setDerValue(cdfBytes);
