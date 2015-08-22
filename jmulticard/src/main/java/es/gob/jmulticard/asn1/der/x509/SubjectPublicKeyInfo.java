@@ -11,8 +11,8 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *   }
  *
  *   AlgorithmIdentifier { ALGORITHM:IOSet } ::= SEQUENCE {
- *    algorithm ALGORITHM.&id({IOSet}),
- *    parameters ALGORITHM.&Type({IOSet}{@algorithm}) OPTIONAL
+ *    algorithm ALGORITHM.&amp;id({IOSet}),
+ *    parameters ALGORITHM.&amp;Type({IOSet}{&#64;algorithm}) OPTIONAL
  *   }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

@@ -13,7 +13,9 @@ abstract class MseSetApduCommand extends CommandApdu {
     protected static final byte SET_FOR_AUTHENTICATION = (byte) 0xc1;
 
     /** Crea un objeto para la gesti&oacute;n del entorno de seguridad.
-     * @param cla Clase (CLA) de la APDU. */
+     * @param cla Clase (CLA) de la APDU.
+     * @param param2 P2.
+     * @param data Datos de la APDU. */
 	protected MseSetApduCommand(final byte cla, final byte param2, final byte[] data) {
 		super(
 			cla,
