@@ -101,7 +101,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 	        }
 	        catch (final Exception e) {
 	            throw new ApduConnectionException(
-	                "Error intentando cerrar el objeto de tarjeta inteligente, la conexion puede quedar abierta pero inutil", e //$NON-NLS-1$
+	                "Error intentando cerrar el objeto de tarjeta inteligente, la conexion puede quedar abierta pero inutil: " + e, e //$NON-NLS-1$
 	            );
 	        }
 	        this.card = null;
@@ -124,7 +124,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             return null;
         }
         catch (final Exception ex) {
-            throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema", ex); //$NON-NLS-1$
+            throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema: " + ex, ex); //$NON-NLS-1$
         }
     }
 
@@ -161,7 +161,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         	return ids;
         }
         catch (final Exception ex) {
-            throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema", ex); //$NON-NLS-1$
+            throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema: " + ex, ex); //$NON-NLS-1$
         }
     }
 
@@ -219,7 +219,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
         catch (final CardException e) {
             throw new ApduConnectionException(
-                "No se ha podido abrir la conexion con el lector de tarjetas numero " + Integer.toString(this.terminalNumber), e  //$NON-NLS-1$
+                "No se ha podido abrir la conexion con el lector de tarjetas numero " + Integer.toString(this.terminalNumber) + ": " + e, e  //$NON-NLS-1$ //$NON-NLS-2$
     		);
         }
 
@@ -229,7 +229,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             }
             catch (final CardException e) {
                 throw new ApduConnectionException(
-                    "No se ha podido abrir la conexion exclusiva con el lector de tarjetas numero " + Integer.toString(this.terminalNumber), e //$NON-NLS-1$
+                    "No se ha podido abrir la conexion exclusiva con el lector de tarjetas numero " + Integer.toString(this.terminalNumber) + ": " + e, e //$NON-NLS-1$ //$NON-NLS-2$
                 );
             }
         }
@@ -397,11 +397,11 @@ public final class SmartcardIoConnection implements ApduConnection {
         catch (final Exception e) {
         	e.printStackTrace();
             throw new ApduConnectionException(
-                    "Error tratando de transmitir la APDU " + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
-                    " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
-                    " en modo EXCLUSIVE=" + //$NON-NLS-1$
-                    Boolean.toString(this.exclusive) +
-                    " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
+                "Error tratando de transmitir la APDU " + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
+                " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+                " en modo EXCLUSIVE=" + //$NON-NLS-1$
+                Boolean.toString(this.exclusive) +
+                " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
             );
         }
     }
