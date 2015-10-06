@@ -385,8 +385,10 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             this.setPublicKeyToVerification(DnieCwa14890Constants.REF_C_CV_CA_PUBLIC_KEY);
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error al seleccionar para verificacion la " //$NON-NLS-1$
-                                             + "clave publica de la CA raiz de los certificados verificables por la tarjeta", e); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error al seleccionar para verificacion la " +//$NON-NLS-1$
+                     "clave publica de la CA raiz de los certificados verificables por la tarjeta", e //$NON-NLS-1$
+    		);
         }
 
         // Verificamos la CA intermedia del controlador. La clave publica queda almacenada en memoria
@@ -565,7 +567,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
                 digestInfo = DigestInfo.encode(signAlgorithm, data, this.cryptoHelper);
             }
             catch (final IOException e) {
-                throw new DnieCardException("Error en el calculo del hash para firmar", e); //$NON-NLS-1$
+                throw new DnieCardException("Error en el calculo del hash para firmar: " + e, e); //$NON-NLS-1$
             }
 
             apdu = new PsoSignHashApduCommand((byte) 0x00, digestInfo);
@@ -587,7 +589,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             return signOperation(data, signAlgorithm, privateKeyReference);
         }
         catch (final ApduConnectionException e) {
-            throw new DnieCardException("Error en la transmision de comandos a la tarjeta", e); //$NON-NLS-1$
+            throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
         }
 
         return res.getData();
@@ -606,7 +608,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
                     this.setConnection(secureConnection);
                 }
                 catch (final ApduConnectionException e) {
-                    throw new CryptoCardException("Error en el establecimiento del canal seguro", e); //$NON-NLS-1$
+                    throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
                 }
             }
             try {
@@ -647,17 +649,17 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 	        }
 	        catch (final CertificateException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
+	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
 	    		);
 	        }
 	        catch (final IOException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados reales del DNIe, error en la descompresion de los datos", e //$NON-NLS-1$
+	        		"Error al cargar los certificados reales del DNIe, error en la descompresion de los datos: " + e, e //$NON-NLS-1$
 	    		);
 			}
 	        catch (final Iso7816FourCardException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
+	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
 	    		);
 			}
     	}
@@ -734,7 +736,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 	    	}
     	}
     	catch (final Exception e) {
-    		throw new IllegalArgumentException("pinPc no puede ser nulo cuando no hay un PasswordCallback por defecto", e); //$NON-NLS-1$
+    		throw new IllegalArgumentException("pinPc no puede ser nulo cuando no hay un PasswordCallback por defecto: " + e, e); //$NON-NLS-1$
     	}
 
     	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);

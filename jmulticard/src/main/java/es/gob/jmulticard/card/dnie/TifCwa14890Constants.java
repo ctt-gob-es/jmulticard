@@ -43,13 +43,11 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 
-/** Constantes del DNIe para el establecimiento de canal seguro CWA-14890.
- * @author Carlos Gamuci
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Alberto Mart&iacute;nez */
-final class DnieCwa14890Constants {
+/** Constantes de la FNMT-TIF (variante del DNIe) para el establecimiento de canal seguro CWA-14890.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.  */
+final class TifCwa14890Constants {
 
-    private DnieCwa14890Constants() {
+    private TifCwa14890Constants() {
         /* No permitimos la instanciacion */
     }
 
