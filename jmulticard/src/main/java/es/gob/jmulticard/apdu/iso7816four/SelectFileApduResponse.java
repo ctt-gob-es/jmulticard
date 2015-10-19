@@ -145,10 +145,12 @@ public final class SelectFileApduResponse extends ResponseApdu {
     public String toString() {
     	final StringBuilder sb = new StringBuilder("Resultado de la seleccion de fichero:\n"); //$NON-NLS-1$
     	if (getDfName() != null) {
-    		sb.append(" Nombre del DF: " + new String(getDfName())); //$NON-NLS-1$
+    		sb.append(" Nombre del fichero: " + new String(getDfName())); //$NON-NLS-1$
+    		sb.append('\n');
     	}
     	if (getFileId() != null) {
     		sb.append(" Identificador de fichero: " + HexUtils.hexify(getFileId(), true)); //$NON-NLS-1$
+    		sb.append('\n');
     	}
     	sb.append(" Longitud del fichero: " + getFileLength()); //$NON-NLS-1$
     	return sb.toString();

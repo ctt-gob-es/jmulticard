@@ -47,20 +47,16 @@ import java.security.interfaces.RSAPrivateKey;
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez */
-final class DnieCwa14890Constants {
-
-    private DnieCwa14890Constants() {
-        /* No permitimos la instanciacion */
-    }
+final class DnieCwa14890Constants implements Cwa14890Constants {
 
     /** Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
      * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta. */
-    static final byte[] REF_C_CV_CA_PUBLIC_KEY = new byte[] {
+	private static final byte[] REF_C_CV_CA_PUBLIC_KEY = new byte[] {
             (byte) 0x02, (byte) 0x0f
     };
 
     /** Certificado de la CA intermedia de Terminal verificable por la tarjeta. */
-    static final byte[] C_CV_CA = new byte[] {
+	private static final byte[] C_CV_CA = new byte[] {
             (byte) 0x7F, (byte) 0x21, (byte) 0x81, (byte) 0xCE, (byte) 0x5F, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x3C, (byte) 0xBA,
             (byte) 0xDC, (byte) 0x36, (byte) 0x84, (byte) 0xBE, (byte) 0xF3, (byte) 0x20, (byte) 0x41, (byte) 0xAD, (byte) 0x15, (byte) 0x50,
             (byte) 0x89, (byte) 0x25, (byte) 0x8D, (byte) 0xFD, (byte) 0x20, (byte) 0xC6, (byte) 0x91, (byte) 0x15, (byte) 0xD7, (byte) 0x2F,
@@ -88,17 +84,17 @@ final class DnieCwa14890Constants {
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza). */
-    static final byte[] CHR_C_CV_CA = new byte[] {
+	private static final byte[] CHR_C_CV_CA = new byte[] {
             (byte) 0x65, (byte) 0x73, (byte) 0x53, (byte) 0x44, (byte) 0x49, (byte) 0x60, (byte) 0x00, (byte) 0x06
     };
 
     /** Referencia al fichero en donde reside la clave privada de componente. */
-    static final byte[] REF_ICC_PRIVATE_KEY = new byte[] {
+	private static final byte[] REF_ICC_PRIVATE_KEY = new byte[] {
             (byte) 0x02, (byte) 0x1f
     };
 
     /** Certificado de Terminal verificable por la tarjeta. */
-    static final byte[] C_CV_IFD = new byte[] {
+	private static final byte[] C_CV_IFD = new byte[] {
             (byte) 0x7f, (byte) 0x21, (byte) 0x81, (byte) 0xcd, (byte) 0x5f, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x82, (byte) 0x5b,
             (byte) 0x69, (byte) 0xc6, (byte) 0x45, (byte) 0x1e, (byte) 0x5f, (byte) 0x51, (byte) 0x70, (byte) 0x74, (byte) 0x38, (byte) 0x5f,
             (byte) 0x2f, (byte) 0x17, (byte) 0xd6, (byte) 0x4d, (byte) 0xfe, (byte) 0x2e, (byte) 0x68, (byte) 0x56, (byte) 0x75, (byte) 0x67,
@@ -126,12 +122,12 @@ final class DnieCwa14890Constants {
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza). */
-    static final byte[] CHR_C_CV_IFD = new byte[] {
+	private static final byte[] CHR_C_CV_IFD = new byte[] {
             (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
     };
 
     /** Clave privada del certificado de Terminal. */
-    static final RSAPrivateKey IFD_PRIVATE_KEY = new RSAPrivateKey() {
+	private static final RSAPrivateKey IFD_PRIVATE_KEY = new RSAPrivateKey() {
 
         private static final long serialVersionUID = 6991556885804507378L;
 
@@ -236,7 +232,7 @@ final class DnieCwa14890Constants {
     };
 
     /** Clave p&uacute;blica del certificado de componente de la tarjeta. */
-    static final PublicKey CA_COMPONENT_PUBLIC_KEY = new PublicKey() {
+    private static final PublicKey CA_COMPONENT_PUBLIC_KEY = new PublicKey() {
 
         private static final long serialVersionUID = -143874096089393139L;
 
@@ -280,4 +276,44 @@ final class DnieCwa14890Constants {
             return "RSA"; //$NON-NLS-1$
         }
     };
+
+	@Override
+	public byte[] getRefCCvCaPublicKey() {
+		return REF_C_CV_CA_PUBLIC_KEY;
+	}
+
+	@Override
+	public byte[] getCCvCa() {
+		return C_CV_CA;
+	}
+
+	@Override
+	public byte[] getChrCCvCa() {
+		return CHR_C_CV_CA;
+	}
+
+	@Override
+	public byte[] getRefIccPrivateKey() {
+		return REF_ICC_PRIVATE_KEY;
+	}
+
+	@Override
+	public byte[] getCCvIfd() {
+		return C_CV_IFD;
+	}
+
+	@Override
+	public byte[] getChrCCvIfd() {
+		return CHR_C_CV_IFD;
+	}
+
+	@Override
+	public RSAPrivateKey getIfdPrivateKey() {
+		return IFD_PRIVATE_KEY;
+	}
+
+	@Override
+	public PublicKey getCaComponentPublicKey() {
+		return CA_COMPONENT_PUBLIC_KEY;
+	}
 }

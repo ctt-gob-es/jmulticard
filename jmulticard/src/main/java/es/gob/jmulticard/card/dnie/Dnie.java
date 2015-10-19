@@ -91,6 +91,8 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
 
+	private static Cwa14890Constants cwa14890Constants;
+
 	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = true;
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
@@ -117,12 +119,14 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** Nombre del Master File del DNIe. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
-    private static final String AUTH_CERT_ALIAS = "CertAutenticacion"; //$NON-NLS-1$
-    private static final String SIGN_CERT_ALIAS = "CertFirmaDigital"; //$NON-NLS-1$
-    private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
+    private static final String CERT_ALIAS_AUTH = "CertAutenticacion"; //$NON-NLS-1$
+    private static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
+    private static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
+    private static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
     private static final String AUTH_KEY_LABEL = "KprivAutenticacion"; //$NON-NLS-1$
     private static final String SIGN_KEY_LABEL = "KprivFirmaDigital"; //$NON-NLS-1$
+    private static final String CYPH_KEY_LABEL = "KprivCifrado"; //$NON-NLS-1$
 
     private static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
 
@@ -130,13 +134,22 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     private X509Certificate authCert;
     private X509Certificate signCert;
+    private X509Certificate cyphCert;
     private X509Certificate intermediateCaCert;
 
     private Location authCertPath;
     private Location signCertPath;
 
+    /** Localizaci&oacute;n del certificado de de cifrado.
+     * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
+    private Location cyphCertPath = null;
+
     private DniePrivateKeyReference authKeyRef;
     private DniePrivateKeyReference signKeyRef;
+
+    /** Referencia a la clave privada de cifrado.
+     * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
+    private DniePrivateKeyReference cyphKeyRef = null;
 
     /** Manejador de funciones criptograficas. */
     private CryptoHelper cryptoHelper = null;
@@ -149,6 +162,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private static final Atr ATR = new Atr(new byte[] {
             (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
             (byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
+    }, ATR_MASK);
+
+    private static final Atr ATR_TIF = new Atr(new byte[] {
+            (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x54, (byte) 0x49, (byte) 0x46,
+            (byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
     }, ATR_MASK);
 
     private final PasswordCallback passwordCallback;
@@ -183,7 +201,13 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     		}
     		actualAtr = new Atr(responseAtr, ATR_MASK);
 
-    		if (!ATR.equals(actualAtr)) { // La tarjeta encontrada no es un DNIe
+    		if (ATR.equals(actualAtr)) {
+    			cwa14890Constants = new DnieCwa14890Constants();
+    		}
+    		else if (ATR_TIF.equals(actualAtr)) {
+    			cwa14890Constants = new TifCwa14890Constants();
+    		}
+    		else { // La tarjeta encontrada no es un DNIe
         		// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
         		// en 90-00
         		final byte[] actualAtrBytes = actualAtr.getBytes();
@@ -232,12 +256,12 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         this.passwordCallback = pwc;
         if (cryptoHelper == null) {
-            throw new IllegalArgumentException("El CryptoHelper no puede ser nula"); //$NON-NLS-1$
+            throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
         this.cryptoHelper = cryptoHelper;
 
         // Cargamos la localizacion de los certificados y el certificado
-        // de CA intermedia de los certificados de firma y autenticacion
+        // de CA intermedia de los certificados de firma, autenticacion y, si existe, cifrado
         preloadCertificates();
 
         // Cargamos la informacion publica con la referencia a las claves
@@ -262,12 +286,15 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             else if (SIGN_KEY_LABEL.equals(prKdf.getKeyName(i))) {
                 this.signKeyRef = new DniePrivateKeyReference(this, prKdf.getKeyIdentifier(i), new Location(prKdf.getKeyPath(i)), SIGN_KEY_LABEL);
             }
+            else if (CYPH_KEY_LABEL.equals(prKdf.getKeyName(i))) {
+                this.cyphKeyRef = new DniePrivateKeyReference(this, prKdf.getKeyIdentifier(i), new Location(prKdf.getKeyPath(i)), CYPH_KEY_LABEL);
+            }
         }
     }
 
-    /** Recupera el n&uacute;mero de serie de un DNIe
-     * @return Un array de bytes que contiene el n&uacute;mero de serie del DNIe
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla */
+    /** Recupera el n&uacute;mero de serie de un DNIe.
+     * @return Un array de bytes que contiene el n&uacute;mero de serie del DNIe.
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla. */
     @Override
     public byte[] getSerialNumber() throws ApduConnectionException {
         final ResponseApdu response = this.getConnection().transmit(new GetChipInfoApduCommand());
@@ -286,9 +313,16 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** {@inheritDoc} */
     @Override
     public String[] getAliases() {
+    	if (this.cyphCertPath != null) {
+            return new String[] {
+                CERT_ALIAS_AUTH,
+                CERT_ALIAS_SIGN,
+                CERT_ALIAS_CYPHER
+            };
+    	}
         return new String[] {
-            AUTH_CERT_ALIAS,
-            SIGN_CERT_ALIAS
+            CERT_ALIAS_AUTH,
+            CERT_ALIAS_SIGN
         };
     }
 
@@ -305,24 +339,37 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
 
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
-            if (AUTH_CERT_ALIAS.equals(cdf.getCertificateAlias(i))) {
+            if (CERT_ALIAS_AUTH.equals(cdf.getCertificateAlias(i))) {
                 this.authCertPath = new Location(cdf.getCertificatePath(i));
             }
-            else if (SIGN_CERT_ALIAS.equals(cdf.getCertificateAlias(i))) {
+            else if (CERT_ALIAS_SIGN.equals(cdf.getCertificateAlias(i))) {
                 this.signCertPath = new Location(cdf.getCertificatePath(i));
             }
-            else {
+            else if (CERT_ALIAS_CYPHER.equals(cdf.getCertificateAlias(i))) {
+            	this.cyphCertPath = new Location(cdf.getCertificatePath(i));
+            }
+            else if (CERT_ALIAS_INTERMEDIATE_CA.equals(cdf.getCertificateAlias(i))) {
             	try {
-            		final byte[] intermediateCaCertEncoded = deflate(selectFileByLocationAndRead(new Location(cdf.getCertificatePath(i))));
-            		this.intermediateCaCert =
-            			(X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
-            					new ByteArrayInputStream(intermediateCaCertEncoded));
+            		final byte[] intermediateCaCertEncoded = deflate(
+        				selectFileByLocationAndRead(
+    						new Location(
+								cdf.getCertificatePath(i)
+							)
+        				)
+    				);
+            		this.intermediateCaCert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
+    					new ByteArrayInputStream(intermediateCaCertEncoded)
+					);
             	}
             	catch (final Exception e) {
             		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-            				"No se ha podido cargar el certificado de la autoridad intermedia de la DGP: " + e.toString()); //$NON-NLS-1$
+        				"No se ha podido cargar el certificado de la autoridad intermedia del CNP: " + e //$NON-NLS-1$
+    				);
             		this.intermediateCaCert = null;
             	}
+            }
+            else {
+            	LOGGER.warning("La tarjeta contiene un certificado no esperado: " + cdf.getCertificateAlias(i)); //$NON-NLS-1$
             }
         }
     }
@@ -335,13 +382,13 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             loadCertificates();
         }
 
-        if (AUTH_CERT_ALIAS.equals(alias)) {
+        if (CERT_ALIAS_AUTH.equals(alias)) {
             return this.authCert;
         }
-        if (SIGN_CERT_ALIAS.equals(alias)) {
+        if (CERT_ALIAS_SIGN.equals(alias)) {
             return this.signCert;
         }
-        if (INTERMEDIATE_CA_CERT_ALIAS.equals(alias)) {
+        if (CERT_ALIAS_INTERMEDIATE_CA.equals(alias)) {
             return this.intermediateCaCert;
         }
         return null;
@@ -382,7 +429,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         // Seleccionamos en la tarjeta la clave publica de la CA raiz del controlador
         try {
-            this.setPublicKeyToVerification(DnieCwa14890Constants.REF_C_CV_CA_PUBLIC_KEY);
+            this.setPublicKeyToVerification(Dnie.cwa14890Constants.getRefCCvCaPublicKey());
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
@@ -393,47 +440,48 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
         // Verificamos la CA intermedia del controlador. La clave publica queda almacenada en memoria
         try {
-            this.verifyCertificate(DnieCwa14890Constants.C_CV_CA);
+            this.verifyCertificate(Dnie.cwa14890Constants.getCCvCa());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error en la verificacion del certificado de la CA intermedia de Terminal", e); //$NON-NLS-1$
+            throw new SecureChannelException("Error en la verificacion del certificado de la CA intermedia de Terminal: " + e, e); //$NON-NLS-1$
         }
 
         // Seleccionamos a traves de su CHR la clave publica del certificado recien cargado en memoria
         // (CA intermedia de Terminal) para su verificacion
         try {
-            this.setPublicKeyToVerification(DnieCwa14890Constants.CHR_C_CV_CA);
+            this.setPublicKeyToVerification(Dnie.cwa14890Constants.getChrCCvCa());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error al establecer la clave publica del certificado de CA intermedia " //$NON-NLS-1$
-                                             + "de Terminal para su verificacion en tarjeta", e); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error al establecer la clave publica del certificado de CA intermedia de Terminal para su verificacion en tarjeta: " + e, e //$NON-NLS-1$
+    		);
         }
 
         // Enviamos el certificado de Terminal (C_CV_IFD) para su verificacion por la tarjeta
         try {
-            this.verifyCertificate(DnieCwa14890Constants.C_CV_IFD);
+            this.verifyCertificate(Dnie.cwa14890Constants.getCCvIfd());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error en la verificacion del certificado de Terminal", e); //$NON-NLS-1$
+            throw new SecureChannelException("Error en la verificacion del certificado de Terminal: " + e, e); //$NON-NLS-1$
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public byte[] getRefIccPrivateKey() {
-        return DnieCwa14890Constants.REF_ICC_PRIVATE_KEY;
+        return Dnie.cwa14890Constants.getRefIccPrivateKey();
     }
 
     /** {@inheritDoc} */
     @Override
     public byte[] getChrCCvIfd() {
-        return DnieCwa14890Constants.CHR_C_CV_IFD;
+        return Dnie.cwa14890Constants.getChrCCvIfd();
     }
 
     /** {@inheritDoc} */
     @Override
     public RSAPrivateKey getIfdPrivateKey() {
-        return DnieCwa14890Constants.IFD_PRIVATE_KEY;
+        return Dnie.cwa14890Constants.getIfdPrivateKey();
     }
 
     /** {@inheritDoc} */
@@ -442,8 +490,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         final CommandApdu apdu = new MseSetAuthenticationKeyApduCommand((byte) 0x00, refPublicKey, refPrivateKey);
         final ResponseApdu res = this.getConnection().transmit(apdu);
         if (!res.isOk()) {
-            throw new SecureChannelException("Error durante el establecimiento de las claves publica y privada " + //$NON-NLS-1$
-                                             "para atenticacion (error: " + HexUtils.hexify(res.getBytes(), true) + ")" //$NON-NLS-1$ //$NON-NLS-2$
+            throw new SecureChannelException(
+        		"Error durante el establecimiento de las claves publica y privada " + //$NON-NLS-1$
+                     "para atenticacion (error: " + HexUtils.hexify(res.getBytes(), true) + ")" //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
     }
@@ -471,11 +520,14 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** {@inheritDoc} */
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
-        if (AUTH_CERT_ALIAS.equals(alias)) {
+        if (CERT_ALIAS_AUTH.equals(alias)) {
             return this.authKeyRef;
         }
-        else if (SIGN_CERT_ALIAS.equals(alias)) {
+        else if (CERT_ALIAS_SIGN.equals(alias)) {
             return this.signKeyRef;
+        }
+        else if (CERT_ALIAS_CYPHER.equals(alias)) {
+        	return this.cyphKeyRef;
         }
         return null;
     }
@@ -637,29 +689,34 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     	openSecureChannelIfNotAlreadyOpened();
 
         // Cargamos certificados si es necesario
-    	if (this.authCert == null || this.signCert == null) {
+    	if (this.authCert == null || this.signCert == null || this.cyphCert == null && this.cyphCertPath != null) {
 	        try {
 	            final CertificateFactory certFactory = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 
-	            final byte[] authCertEncoded = deflate(selectFileByLocationAndRead(this.authCertPath));
-	            this.authCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(authCertEncoded));
+	            byte[] certEncoded = deflate(selectFileByLocationAndRead(this.authCertPath));
+	            this.authCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
 
-	            final byte[] signCertEncoded = deflate(selectFileByLocationAndRead(this.signCertPath));
-	            this.signCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(signCertEncoded));
+	            certEncoded = deflate(selectFileByLocationAndRead(this.signCertPath));
+	            this.signCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
+
+	            if (this.cyphCertPath != null) {
+	            	certEncoded = deflate(selectFileByLocationAndRead(this.cyphCertPath));
+	            	this.cyphCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
+	            }
 	        }
 	        catch (final CertificateException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
+	        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
 	    		);
 	        }
 	        catch (final IOException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados reales del DNIe, error en la descompresion de los datos: " + e, e //$NON-NLS-1$
+	        		"Error al cargar los certificados del DNIe, error en la descompresion de los datos: " + e, e //$NON-NLS-1$
 	    		);
 			}
 	        catch (final Iso7816FourCardException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados reales del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
+	        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
 	    		);
 			}
     	}

@@ -86,19 +86,17 @@ public abstract class Iso7816FourCard extends SmartCard {
     }
 
     /** Lee un contenido binario del fichero actualmente seleccionado.
-     * @param msbOffset
-     *        Octeto m&aacute;s significativo del desplazamiento
-     *        (<i>offset</i>) hasta el punto de inicio de la lectura desde
-     *        el comienzo del fichero
-     * @param lsbOffset
-     *        Octeto menos significativo del desplazamiento (<i>offset</i>)
-     *        hasta el punto de inicio de la lectura desde el comienzo del
-     *        fichero
-     * @param readLength Longitud de los datos a leer (en octetos)
-     * @return APDU de respuesta
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
+     * @param msbOffset Octeto m&aacute;s significativo del desplazamiento
+     *                  (<i>offset</i>) hasta el punto de inicio de la lectura desde
+     *        			el comienzo del fichero.
+     * @param lsbOffset Octeto menos significativo del desplazamiento (<i>offset</i>)
+     *                  hasta el punto de inicio de la lectura desde el comienzo del
+     *                  fichero.
+     * @param readLength Longitud de los datos a leer (en octetos).
+     * @return APDU de respuesta.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
-     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho */
+     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho. */
     private ResponseApdu readBinary(final byte msbOffset,
     		                        final byte lsbOffset,
     		                        final byte readLength) throws ApduConnectionException,
@@ -147,7 +145,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @param len Longitud del fichero a leer.
      * @return APDU de respuesta.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
-     * @throws IOException Si hay problemas en el buffer de lectura.
+     * @throws IOException Si hay problemas en el <i>buffer</i> de lectura.
      * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento.
      *                                                    de una condici&oacute;n de seguridad y esta
      *                                                    no se ha satisfecho. */
@@ -219,10 +217,10 @@ public abstract class Iso7816FourCard extends SmartCard {
     }
 
     /** Selecciona un fichero (DF o EF).
-     * @param id Identificador del fichero a seleccionar
-     * @return Tama&ntilde;o del fichero seleccionado
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero */
+     * @param id Identificador del fichero a seleccionar.
+     * @return Tama&ntilde;o del fichero seleccionado.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero. */
     public int selectFileById(final byte[] id) throws ApduConnectionException, Iso7816FourCardException {
     	final CommandApdu selectCommand = new SelectFileByIdApduCommand(this.getCla(), id);
 		final ResponseApdu res = this.getConnection().transmit(selectCommand);

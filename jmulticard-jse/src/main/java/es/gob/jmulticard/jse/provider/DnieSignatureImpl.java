@@ -148,7 +148,8 @@ abstract class DnieSignatureImpl extends SignatureSpi {
         }
         catch (final CryptoCardException e) {
             throw new SignatureException(e);
-        } catch (final BadPinException e) {
+        }
+    	catch (final BadPinException e) {
 			throw new SignatureAuthException(e);
 		}
     }

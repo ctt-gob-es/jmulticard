@@ -68,7 +68,7 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SmartcardIoConnection implements ApduConnection {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
      * con la tarjeta. */

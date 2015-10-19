@@ -182,7 +182,7 @@ public final class JseCryptoHelper extends CryptoHelper {
             return dec.doFinal(cipheredData);
         }
         catch (final Exception e) {
-            throw new IOException("Error descifrando los datos mediante la clave RSA: " + e, e); //$NON-NLS-1$
+            throw new IOException("Error cifrando/descifrando los datos mediante la clave RSA: " + e, e); //$NON-NLS-1$
         }
 
     }

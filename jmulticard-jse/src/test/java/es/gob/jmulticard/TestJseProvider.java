@@ -15,14 +15,14 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProvider {
 
-	private static final char[] PASSWORD = "".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "dummy".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args
 	 * @throws Exception */
 	public static void main(final String[] args) throws Exception {
 		TestJseProvider.testProviderWithCustomConnection();
-		TestJseProvider.testProviderWithDefaultConnection();
+		//TestJseProvider.testProviderWithDefaultConnection();
 	}
 
 	static void testProviderWithCustomConnection() throws Exception {

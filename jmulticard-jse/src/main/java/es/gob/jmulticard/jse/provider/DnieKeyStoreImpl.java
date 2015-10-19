@@ -57,7 +57,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -81,24 +81,19 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
-    private static final List<String> USERS_CERTS_ALIASES = new ArrayList<String>(2);
-    static {
-        USERS_CERTS_ALIASES.add("CertAutenticacion"); //$NON-NLS-1$
-        USERS_CERTS_ALIASES.add("CertFirmaDigital"); //$NON-NLS-1$
-    }
-
     private CryptoCard cryptoCard = null;
+    private List<String> aliases = null;
 
     /** {@inheritDoc} */
     @Override
     public Enumeration<String> engineAliases() {
-        return Collections.enumeration(USERS_CERTS_ALIASES);
+        return Collections.enumeration(this.aliases);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean engineContainsAlias(final String alias) {
-        return USERS_CERTS_ALIASES.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     /** Operaci&oacute;n no soportada. */
@@ -131,7 +126,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
             return null;
         }
         final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
-        for (final String alias : USERS_CERTS_ALIASES) {
+        for (final String alias : this.aliases) {
             if (((X509Certificate) engineGetCertificate(alias)).getSerialNumber() == serial) {
                 return alias;
             }
@@ -218,13 +213,13 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
-        return USERS_CERTS_ALIASES.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean engineIsKeyEntry(final String alias) {
-        return USERS_CERTS_ALIASES.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     /** {@inheritDoc} */
@@ -241,6 +236,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 			null,
 			new JseCryptoHelper()
 		);
+
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     /** {@inheritDoc} */
@@ -263,10 +260,12 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         this.cryptoCard = new Dnie(
     		conn,
     		password != null ?
-    				new CachePasswordCallback(password) :
-    					null,
+				new CachePasswordCallback(password) :
+					null,
     		new JseCryptoHelper()
 		);
+
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     /** Operaci&oacute;n no soportada. */
@@ -290,7 +289,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public int engineSize() {
-        return USERS_CERTS_ALIASES.size();
+        return this.aliases.size();
     }
 
     /** Operaci&oacute;n no soportada. */

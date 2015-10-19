@@ -213,7 +213,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final Exception e) {
             conn.close();
-            throw new ApduConnectionException("Error durante el proceso de autenticacion interna de la tarjeta", e); //$NON-NLS-1$
+            throw new ApduConnectionException("Error durante el proceso de autenticacion interna de la tarjeta: " + e, e); //$NON-NLS-1$
         }
 
         // --- STAGE 4 ---
@@ -400,7 +400,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
             if (desMsg[0] != (byte) 0x6a || desMsg[desMsg.length - 1] != (byte) 0xbc) {
                 throw new SecureChannelException(
             		"Error en la autenticacion interna para el establecimiento del canal seguro. " + //$NON-NLS-1$
-                    "El mensaje descifrado es: " + HexUtils.hexify(desMsg, true) //$NON-NLS-1$
+                    "El mensaje descifrado es:\n" + HexUtils.hexify(desMsg, true) //$NON-NLS-1$
                 );
             }
         }

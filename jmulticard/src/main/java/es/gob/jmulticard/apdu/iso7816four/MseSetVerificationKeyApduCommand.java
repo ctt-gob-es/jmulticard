@@ -47,12 +47,12 @@ import es.gob.jmulticard.asn1.Tlv;
 public final class MseSetVerificationKeyApduCommand extends MseSetApduCommand {
 
     /** Control Reference Template for Digital Signature (DST) */
-    private static final byte DST = (byte) 0xb6;
+    private static final byte DST = (byte) 0xB6;
 
     /** Tag para identificar un identificador de fichero. */
     private static final byte TAG_FILE_ID = (byte) 0x83;
 
-    /** Crea un objeto para el establecimiento de una clave publica para verificacion.
+    /** Crea un objeto para el establecimiento de una clave p&uacute;blica para verificaci&oacute;n.
      * @param cla Clase (CLA) de la APDU
      * @param keyFileId Identificador de campo con la clave p&uacute;blica. Puede ser
      *        una referencia a la direcci&oacute;n en donde se almacena o un CHR para su carga
