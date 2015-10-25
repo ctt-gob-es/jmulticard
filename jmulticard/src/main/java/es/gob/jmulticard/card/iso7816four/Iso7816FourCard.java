@@ -72,6 +72,9 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
     private static final StatusWord EOF_REACHED = new StatusWord((byte) 0x62, (byte) 0x82);
+    private static final StatusWord OFFSET_OUTSIDE_EF = new StatusWord((byte) 0x6B, (byte) 0x00);
+
+    private static final int MAX_READ_CHUNK = 0xEE;
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
@@ -96,18 +99,25 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @return APDU de respuesta.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento
-     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho. */
+     *                        de una condici&oacute;n de seguridad y esta no se ha satisfecho.
+     * @throws OffsetOutsideEfException Si el desplazamiento indicado o el tama&ntilde;o indicados
+     *                                  para la lectura caen fuera de los l&iacute;mites del fichero. */
     private ResponseApdu readBinary(final byte msbOffset,
     		                        final byte lsbOffset,
     		                        final byte readLength) throws ApduConnectionException,
-                                                                  RequiredSecurityStateNotSatisfiedException {
+                                                                  RequiredSecurityStateNotSatisfiedException,
+                                                                  OffsetOutsideEfException {
+    	final CommandApdu apdu = new ReadBinaryApduCommand(
+			this.getCla(), msbOffset, lsbOffset, readLength
+		);
     	final ResponseApdu res = this.getConnection().transmit(
-			new ReadBinaryApduCommand(
-				this.getCla(), msbOffset, lsbOffset, readLength
-			)
+			apdu
 		);
         if (res.isOk()) {
         	return res;
+        }
+        if (OFFSET_OUTSIDE_EF.equals(res.getStatusWord())) {
+        	throw new OffsetOutsideEfException(OFFSET_OUTSIDE_EF, apdu);
         }
         if (UNSATISFIED_SECURITY_STATE.equals(res.getStatusWord())) {
         	throw new RequiredSecurityStateNotSatisfiedException(res.getStatusWord());
@@ -155,17 +165,24 @@ public abstract class Iso7816FourCard extends SmartCard {
         ResponseApdu readedResponse;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        // Leemos en iteraciones de 239 bytes (0xEF) lo maximo que permite el DNIe
-        // una vez abierto el canal seguro
+        // Leemos en iteraciones de MAX_READ_CHUNK bytes
         while (off < len) {
             final byte msbOffset = (byte) (off >> 8);
             final byte lsbOffset = (byte) (off & 0x0ff);
             final int left = len - off;
-            if (left < 0x0ef) { // Si es menor que el maximo que podemos leer por iteracion
-                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) left);
+            try {
+	            if (left < MAX_READ_CHUNK) { // Si es menor que el maximo que podemos leer por iteracion
+	                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) left);
+	            }
+	            else {
+	                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) MAX_READ_CHUNK);
+	            }
             }
-            else {
-                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) 0x0ef);
+            catch(final OffsetOutsideEfException e) {
+            	LOGGER.warning(
+        			"Se ha intentado una lectura fuera de los limites del fichero, se devolvera lo leido hasta ahora: " + e //$NON-NLS-1$
+    			);
+            	return out.toByteArray();
             }
 
             final boolean eofReached = EOF_REACHED.equals(readedResponse.getStatusWord());
@@ -176,7 +193,7 @@ public abstract class Iso7816FourCard extends SmartCard {
 
             out.write(readedResponse.getData());
 
-            off += 0x0ef;
+            off += MAX_READ_CHUNK;
 
             // Si hemos llegado al final no seguimos leyendo
             if (eofReached) {

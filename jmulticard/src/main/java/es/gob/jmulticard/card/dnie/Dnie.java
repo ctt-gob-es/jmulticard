@@ -100,6 +100,18 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
+    private static final CertificateFactory certFactory;
+    static {
+    	try {
+			certFactory = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+		}
+    	catch (final Exception e) {
+			throw new IllegalStateException(
+				"No se ha podido obtener la factoria de certificados X.509: " + e, e //$NON-NLS-1$
+			);
+		}
+    }
+
     private static final boolean PIN_AUTO_RETRY;
     static {
     	// No hacemos el reintento de PIN en Android
@@ -339,16 +351,17 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
 
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
-            if (CERT_ALIAS_AUTH.equals(cdf.getCertificateAlias(i))) {
+        	final String currentAlias = cdf.getCertificateAlias(i);
+            if (CERT_ALIAS_AUTH.equals(currentAlias)) {
                 this.authCertPath = new Location(cdf.getCertificatePath(i));
             }
-            else if (CERT_ALIAS_SIGN.equals(cdf.getCertificateAlias(i))) {
+            else if (CERT_ALIAS_SIGN.equals(currentAlias)) {
                 this.signCertPath = new Location(cdf.getCertificatePath(i));
             }
-            else if (CERT_ALIAS_CYPHER.equals(cdf.getCertificateAlias(i))) {
+            else if (CERT_ALIAS_CYPHER.equals(currentAlias)) {
             	this.cyphCertPath = new Location(cdf.getCertificatePath(i));
             }
-            else if (CERT_ALIAS_INTERMEDIATE_CA.equals(cdf.getCertificateAlias(i))) {
+            else if (CERT_ALIAS_INTERMEDIATE_CA.equals(currentAlias)) {
             	try {
             		final byte[] intermediateCaCertEncoded = deflate(
         				selectFileByLocationAndRead(
@@ -357,7 +370,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 							)
         				)
     				);
-            		this.intermediateCaCert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
+            		this.intermediateCaCert = (X509Certificate) certFactory.generateCertificate(
     					new ByteArrayInputStream(intermediateCaCertEncoded)
 					);
             	}
@@ -390,6 +403,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
         if (CERT_ALIAS_INTERMEDIATE_CA.equals(alias)) {
             return this.intermediateCaCert;
+        }
+        if (CERT_ALIAS_CYPHER.equals(alias)) {
+        	return this.cyphCert;
         }
         return null;
     }
@@ -675,6 +691,13 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
     }
 
+    private X509Certificate loadCertificate(final Location location) throws IOException, Iso7816FourCardException, CertificateException {
+        final byte[] certEncoded = deflate(
+    		selectFileByLocationAndRead(location)
+		);
+        return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
+    }
+
     /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados), abriendo el canal seguro de
      * la tarjeta si fuese necesario, mediante el PIN de usuario.
      * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
@@ -691,18 +714,12 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         // Cargamos certificados si es necesario
     	if (this.authCert == null || this.signCert == null || this.cyphCert == null && this.cyphCertPath != null) {
 	        try {
-	            final CertificateFactory certFactory = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 
-	            byte[] certEncoded = deflate(selectFileByLocationAndRead(this.authCertPath));
-	            this.authCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
-
-	            certEncoded = deflate(selectFileByLocationAndRead(this.signCertPath));
-	            this.signCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
-
+        		this.signCert = loadCertificate(this.signCertPath);
+            	this.authCert = loadCertificate(this.authCertPath);
 	            if (this.cyphCertPath != null) {
-	            	certEncoded = deflate(selectFileByLocationAndRead(this.cyphCertPath));
-	            	this.cyphCert = (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
-	            }
+	            		this.cyphCert = loadCertificate(this.cyphCertPath);
+            	}
 	        }
 	        catch (final CertificateException e) {
 	            throw new CryptoCardException(
@@ -716,7 +733,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 			}
 	        catch (final Iso7816FourCardException e) {
 	            throw new CryptoCardException(
-	        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
+	        		"Error al cargar los certificados del DNIe: " + e, e //$NON-NLS-1$
 	    		);
 			}
     	}
