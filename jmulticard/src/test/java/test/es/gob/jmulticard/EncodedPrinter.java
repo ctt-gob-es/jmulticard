@@ -2,12 +2,12 @@ package test.es.gob.jmulticard;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+
+import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
 
@@ -55,9 +55,7 @@ public final class EncodedPrinter {
 		(byte)0xF2, (byte)0xAE, (byte)0xC6, (byte)0xA6, (byte)0x35, (byte)0xC9, (byte)0x28, (byte)0x00,
 		(byte)0x49, (byte)0x91, (byte)0x33, (byte)0x55, (byte)0xE4, (byte)0x6D, (byte)0xD4, (byte)0xA7
 	};
-	private static final byte[] E = new byte[] {
-		(byte)0x01, (byte)0x00, (byte)0x01
-	};
+
 	private static final byte[] D = new byte[] {
 		(byte)0xA4, (byte)0x70, (byte)0x22, (byte)0x6F, (byte)0xBD, (byte)0xC1, (byte)0x56, (byte)0x4D,
 		(byte)0xEF, (byte)0x52, (byte)0x26, (byte)0xBB, (byte)0xF5, (byte)0x7A, (byte)0xB9, (byte)0x44,
@@ -77,37 +75,38 @@ public final class EncodedPrinter {
 		(byte)0x35, (byte)0xDF, (byte)0xFE, (byte)0xEB, (byte)0xD3, (byte)0x48, (byte)0xC0, (byte)0xD1
 	};
 
-	private static void printPublic() throws NoSuchAlgorithmException, InvalidKeySpecException {
+	/** Imprime la codificaci&oacute;n de una clave p&uacute;lica RSA.
+	 * @throws Exception en cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void printPublic() throws Exception {
 		final RSAPublicKeySpec spec = new RSAPublicKeySpec(
-				new BigInteger(MOD),
-				new BigInteger(EXP)
-			);
-			final KeyFactory factory = KeyFactory.getInstance("RSA"); //$NON-NLS-1$
-			final PublicKey pub = factory.generatePublic(spec);
-			final byte[] enc = pub.getEncoded();
-			System.out.println(
-				"(byte) 0x" + HexUtils.hexify(enc, true).replace("\n", "-").replace("-", ", (byte) 0x") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			);
-	}
-
-	private static void printPrivate() throws NoSuchAlgorithmException, InvalidKeySpecException {
-		final RSAPrivateKeySpec privateSpec = new RSAPrivateKeySpec(
-			new BigInteger(D),
-			new BigInteger(E)
+			new BigInteger(MOD),
+			new BigInteger(EXP)
 		);
-		final KeyFactory factory = KeyFactory.getInstance("RSA");
-		final PrivateKey priv = factory.generatePrivate(privateSpec);
-		final byte[] enc = priv.getEncoded();
+		final KeyFactory factory = KeyFactory.getInstance("RSA"); //$NON-NLS-1$
+		final PublicKey pub = factory.generatePublic(spec);
+		final byte[] enc = pub.getEncoded();
 		System.out.println(
 			"(byte) 0x" + HexUtils.hexify(enc, true).replace("\n", "-").replace("-", ", (byte) 0x") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		);
 	}
 
-	/** Imprime la codificaci&oacute;n de una clave p&uacute;lica RSA.
-	 * @param args No se usa.
-	 * @throws Exception En cualquier error. */
-	public static void main(final String[] args) throws Exception {
-		printPrivate();
+	/** Imprime la codificaci&oacute;n de una clave privada RSA.
+	 * @throws Exception en cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void printPrivate() throws Exception {
+		final RSAPrivateKeySpec privateSpec = new RSAPrivateKeySpec(
+			new BigInteger(N),
+			new BigInteger(D)
+		);
+		final KeyFactory factory = KeyFactory.getInstance("RSA"); //$NON-NLS-1$
+		final PrivateKey priv = factory.generatePrivate(privateSpec);
+		final byte[] enc = priv.getEncoded();
+		System.out.println(
+			"(byte) 0x" + HexUtils.hexify(enc, true).replace("\n", "-").replace("-", ", (byte) 0x") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		);
 	}
 
 }
