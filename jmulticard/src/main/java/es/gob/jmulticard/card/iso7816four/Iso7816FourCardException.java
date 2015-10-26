@@ -61,6 +61,7 @@ public class Iso7816FourCardException extends Exception {
         ERRORS.put(new StatusWord((byte) 0x69, (byte) 0x84), "Dato referenciado invalido."); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x69, (byte) 0x85), "Condiciones de uso no satisfechas."); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x69, (byte) 0x86), "Comando no permitido (no existe ningun EF seleccionado)."); //$NON-NLS-1$
+        ERRORS.put(new StatusWord((byte) 0x69, (byte) 0x88), "Objetos de datos incorrectos para el mensaje seguro."); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x6A, (byte) 0x80), "Parametros incorrectos en el campo de datos."); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x6A, (byte) 0x81), "Funcion no soportada."); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x6A, (byte) 0x82), "No se encuentra el fichero."); //$NON-NLS-1$

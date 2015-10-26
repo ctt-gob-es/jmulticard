@@ -56,6 +56,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
+import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente.
  * @author Carlos Gamuci */
@@ -583,7 +584,13 @@ public final class Cwa14890OneConnection implements ApduConnection {
         	throw new InvalidCryptographicChecksum();
         }
         if (!responseApdu.isOk()) {
-        	throw new SecureChannelException("Error en la APDU de respuesta cifrada con el codigo " + responseApdu.getStatusWord()); //$NON-NLS-1$
+        	throw new SecureChannelException(
+    			"Error en la APDU de respuesta cifrada con el codigo " + responseApdu.getStatusWord(), //$NON-NLS-1$
+        		new Iso7816FourCardException(
+    				responseApdu.getStatusWord(),
+    				responseApdu
+			    )
+			);
         }
 
         // Desencriptamos la respuesta

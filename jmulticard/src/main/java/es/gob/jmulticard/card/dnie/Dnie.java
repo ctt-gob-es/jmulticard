@@ -212,9 +212,17 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     			continue;
     		}
     		actualAtr = new Atr(responseAtr, ATR_MASK);
+    		final byte[] actualAtrBytes = actualAtr.getBytes();
 
     		if (ATR.equals(actualAtr)) {
-    			cwa14890Constants = new DnieCwa14890Constants();
+    			if (actualAtrBytes[15] == 0x04 &&
+    				actualAtrBytes[16] == 0x00) {
+    					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
+    					cwa14890Constants = new Dnie3Cwa14890Constants();
+    			}
+    			else {
+    				cwa14890Constants = new DnieCwa14890Constants();
+    			}
     		}
     		else if (ATR_TIF.equals(actualAtr)) {
     			cwa14890Constants = new TifCwa14890Constants();
@@ -222,7 +230,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     		else { // La tarjeta encontrada no es un DNIe
         		// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
         		// en 90-00
-        		final byte[] actualAtrBytes = actualAtr.getBytes();
         		if (actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
         			actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65) {
                     	throw new BurnedDnieCardException(actualAtr);
