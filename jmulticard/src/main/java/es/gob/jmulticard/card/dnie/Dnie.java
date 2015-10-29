@@ -48,6 +48,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -133,6 +135,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     private static final String CERT_ALIAS_AUTH = "CertAutenticacion"; //$NON-NLS-1$
     private static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
+    private static final String CERT_ALIAS_SIGNALIAS = "CertFirmaSeudonimo"; //$NON-NLS-1$
     private static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
     private static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
@@ -147,14 +150,19 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private X509Certificate authCert;
     private X509Certificate signCert;
     private X509Certificate cyphCert;
+    private X509Certificate signAliasCert;
     private X509Certificate intermediateCaCert;
 
     private Location authCertPath;
     private Location signCertPath;
 
-    /** Localizaci&oacute;n del certificado de de cifrado.
+    /** Localizaci&oacute;n del certificado de cifrado.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
     private Location cyphCertPath = null;
+
+    /** Localizaci&oacute;n del certificado de firma con seud&oacute;nimo.
+     * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
+    private Location signAliasCertPath = null;
 
     private DniePrivateKeyReference authKeyRef;
     private DniePrivateKeyReference signKeyRef;
@@ -163,22 +171,26 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
     private DniePrivateKeyReference cyphKeyRef = null;
 
+    /** Referencia a la clave privada de firma con seud&oacute;nimo.
+     * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
+    private DniePrivateKeyReference signAliasKeyRef = null;
+
     /** Manejador de funciones criptograficas. */
     private CryptoHelper cryptoHelper = null;
 
     private static final byte[] ATR_MASK = new byte[] {
-            (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-            (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
+        (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+        (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
     };
 
     private static final Atr ATR = new Atr(new byte[] {
-            (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
-            (byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
+        (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
+        (byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
     }, ATR_MASK);
 
     private static final Atr ATR_TIF = new Atr(new byte[] {
-            (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x54, (byte) 0x49, (byte) 0x46,
-            (byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
+        (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x54, (byte) 0x49, (byte) 0x46,
+        (byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
     }, ATR_MASK);
 
     private final PasswordCallback passwordCallback;
@@ -312,6 +324,15 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             else if (CYPH_KEY_LABEL.equals(prKdf.getKeyName(i))) {
                 this.cyphKeyRef = new DniePrivateKeyReference(this, prKdf.getKeyIdentifier(i), new Location(prKdf.getKeyPath(i)), CYPH_KEY_LABEL);
             }
+            else {
+            	// Certificado de firma con seudonimo
+            	this.signAliasKeyRef = new DniePrivateKeyReference(
+        			this,
+        			prKdf.getKeyIdentifier(i),
+        			new Location(prKdf.getKeyPath(i)),
+        			prKdf.getKeyName(i)
+    			);
+            }
         }
     }
 
@@ -324,7 +345,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         if (response.isOk()) {
         	return response.getData();
         }
-        throw new ApduConnectionException("Respuesta invalida en la obtencion del numero de serie con el codigo: " + response.getStatusWord()); //$NON-NLS-1$
+        throw new ApduConnectionException(
+    		"Respuesta invalida en la obtencion del numero de serie con el codigo: " + response.getStatusWord() //$NON-NLS-1$
+		);
     }
 
     /** {@inheritDoc} */
@@ -333,20 +356,24 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         return "DNIe"; //$NON-NLS-1$
     }
 
+	private String[] aliases = null;
+
     /** {@inheritDoc} */
     @Override
     public String[] getAliases() {
-    	if (this.cyphCertPath != null) {
-            return new String[] {
-                CERT_ALIAS_AUTH,
-                CERT_ALIAS_SIGN,
-                CERT_ALIAS_CYPHER
-            };
+    	if (this.aliases == null) {
+	    	final List<String> aliasesList = new ArrayList<String>();
+	    	aliasesList.add(CERT_ALIAS_AUTH);
+	    	aliasesList.add(CERT_ALIAS_SIGN);
+	    	if (this.cyphCertPath != null) {
+	    		aliasesList.add(CERT_ALIAS_CYPHER);
+	    	}
+	    	if (this.signAliasCertPath != null) {
+	    		aliasesList.add(CERT_ALIAS_SIGNALIAS);
+	    	}
+	    	this.aliases = aliasesList.toArray(new String[0]);
     	}
-        return new String[] {
-            CERT_ALIAS_AUTH,
-            CERT_ALIAS_SIGN
-        };
+    	return this.aliases;
     }
 
     /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticacion. */
@@ -393,7 +420,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             	}
             }
             else {
-            	LOGGER.warning("La tarjeta contiene un certificado no esperado: " + cdf.getCertificateAlias(i)); //$NON-NLS-1$
+            	this.signAliasCertPath = new Location(cdf.getCertificatePath(i));
             }
         }
     }
@@ -402,7 +429,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     @Override
     public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
 
-        if (this.authCert == null) {
+        if (this.authCert == null) { // Este certificado esta presente en todas las variantes del DNIe
             loadCertificates();
         }
 
@@ -417,6 +444,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
         if (CERT_ALIAS_CYPHER.equals(alias)) {
         	return this.cyphCert;
+        }
+        if (CERT_ALIAS_SIGNALIAS.equals(alias)) {
+        	return this.signAliasCert;
         }
         return null;
     }
@@ -556,15 +586,22 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         else if (CERT_ALIAS_CYPHER.equals(alias)) {
         	return this.cyphKeyRef;
         }
+        else if (CERT_ALIAS_SIGNALIAS.equals(alias)){
+        	return this.signAliasKeyRef;
+        }
         return null;
     }
 
     /** {@inheritDoc} */
     @Override
-    public byte[] sign(final byte[] data, final String signAlgorithm, final PrivateKeyReference privateKeyReference) throws CryptoCardException, BadPinException {
-
+    public byte[] sign(final byte[] data,
+    		           final String signAlgorithm,
+    		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
+    		                                                                 BadPinException {
         if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
-            throw new IllegalArgumentException("La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+        		"La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference" //$NON-NLS-1$
+    		);
         }
 
         if (SHOW_SIGN_CONFIRM_DIALOG) {
@@ -573,7 +610,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         	try {
         		final Class<?> dialogBuilderClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.DialogBuilder"); //$NON-NLS-1$
         		final Class<?> componentClass = Class.forName("java.awt.Component"); //$NON-NLS-1$
-        		final Method showSignatureConfirmDialogMethod = dialogBuilderClass.getMethod("showSignatureConfirmDialog", componentClass, Boolean.TYPE); //$NON-NLS-1$
+        		final Method showSignatureConfirmDialogMethod = dialogBuilderClass.getMethod(
+    				"showSignatureConfirmDialog", //$NON-NLS-1$
+    				componentClass,
+    				Boolean.TYPE
+				);
 
         		final Integer result = (Integer) showSignatureConfirmDialogMethod.invoke(
     				null,
@@ -723,30 +764,35 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     	openSecureChannelIfNotAlreadyOpened();
 
         // Cargamos certificados si es necesario
-    	if (this.authCert == null || this.signCert == null || this.cyphCert == null && this.cyphCertPath != null) {
-	        try {
-
-        		this.signCert = loadCertificate(this.signCertPath);
-            	this.authCert = loadCertificate(this.authCertPath);
-	            if (this.cyphCertPath != null) {
+    	if (this.authCert == null ||
+    		this.signCert == null ||
+    		this.cyphCert == null && this.cyphCertPath != null ||
+    		this.signAliasCert == null && this.signAliasCertPath != null) {
+		        try {
+	        		this.signCert = loadCertificate(this.signCertPath);
+	            	this.authCert = loadCertificate(this.authCertPath);
+		            if (this.cyphCertPath != null) {
 	            		this.cyphCert = loadCertificate(this.cyphCertPath);
-            	}
-	        }
-	        catch (final CertificateException e) {
-	            throw new CryptoCardException(
-	        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
-	    		);
-	        }
-	        catch (final IOException e) {
-	            throw new CryptoCardException(
-	        		"Error al cargar los certificados del DNIe, error en la descompresion de los datos: " + e, e //$NON-NLS-1$
-	    		);
-			}
-	        catch (final Iso7816FourCardException e) {
-	            throw new CryptoCardException(
-	        		"Error al cargar los certificados del DNIe: " + e, e //$NON-NLS-1$
-	    		);
-			}
+	            	}
+		            if (this.signAliasCertPath != null) {
+		            	this.signAliasCert = loadCertificate(this.signAliasCertPath);
+		            }
+		        }
+		        catch (final CertificateException e) {
+		            throw new CryptoCardException(
+		        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
+		    		);
+		        }
+		        catch (final IOException e) {
+		            throw new CryptoCardException(
+		        		"Error al cargar los certificados del DNIe, error en la descompresion de los datos: " + e, e //$NON-NLS-1$
+		    		);
+				}
+		        catch (final Iso7816FourCardException e) {
+		            throw new CryptoCardException(
+		        		"Error al cargar los certificados del DNIe: " + e, e //$NON-NLS-1$
+		    		);
+				}
     	}
     }
 
@@ -810,13 +856,22 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 	    		psc = pinPc;
 	    	}
 	    	else if (retriesLeft < Integer.MAX_VALUE) {
-	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
-	        	final Method getDnieBadPinPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDnieBadPinPasswordCallback", Integer.TYPE); //$NON-NLS-1$
+	    		final Class<?> commonPasswordCallbackClass = Class.forName(
+    				"es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback" //$NON-NLS-1$
+				);
+	        	final Method getDnieBadPinPasswordCallbackMethod = commonPasswordCallbackClass.getMethod(
+        			"getDnieBadPinPasswordCallback", //$NON-NLS-1$
+        			Integer.TYPE
+    			);
 	        	psc = (PasswordCallback) getDnieBadPinPasswordCallbackMethod.invoke(null, Integer.valueOf(retriesLeft));
 	    	}
 	    	else {
-	    		final Class<?> commonPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback"); //$NON-NLS-1$
-	        	final Method getDniePinForCertificateReadingPasswordCallbackMethod = commonPasswordCallbackClass.getMethod("getDniePinForCertificateReadingPasswordCallback"); //$NON-NLS-1$
+	    		final Class<?> commonPasswordCallbackClass = Class.forName(
+    				"es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback" //$NON-NLS-1$
+				);
+	        	final Method getDniePinForCertificateReadingPasswordCallbackMethod = commonPasswordCallbackClass.getMethod(
+        			"getDniePinForCertificateReadingPasswordCallback" //$NON-NLS-1$
+    			);
 	        	psc = (PasswordCallback) getDniePinForCertificateReadingPasswordCallbackMethod.invoke(null);
 	    	}
     	}
