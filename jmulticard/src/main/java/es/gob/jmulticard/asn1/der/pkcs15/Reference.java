@@ -41,7 +41,10 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import es.gob.jmulticard.asn1.der.DerInteger;
 
-/** Tipo ASN&#46;1 PKCS#15 <i>Reference</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>Reference</i>:
+ * <pre>
+ * PKCS15Reference  ::= INTEGER (0..pkcs15-ub-reference)
+ * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Reference extends DerInteger {
 

@@ -80,7 +80,7 @@ public class PrivateKeyObject extends Pkcs15Object {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
 			CommonKeyAttributes.class,
-			null,
+			CommonPrivateKeyAttributesContextSpecific.class,
 			PrivateRsaKeyAttributesContextSpecific.class
 		);
 	}

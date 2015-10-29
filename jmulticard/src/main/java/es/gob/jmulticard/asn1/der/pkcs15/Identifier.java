@@ -42,6 +42,10 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 import es.gob.jmulticard.asn1.der.OctectString;
 
 /** Tipo ASN&#46;1 PKCS#15 <i>Identifier</i>.
+ * Es directamente un <code>OctectString</code>:
+ * <pre>
+ *  PKCS15Identifier ::= OCTET STRING (SIZE (1..pkcs15-ub-identifier))
+ * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Identifier extends OctectString {
 	// Sin cambios respecto a OctectString

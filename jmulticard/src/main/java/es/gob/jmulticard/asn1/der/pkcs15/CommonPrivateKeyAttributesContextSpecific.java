@@ -39,75 +39,45 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
-import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
-import es.gob.jmulticard.asn1.der.DerBoolean;
-import es.gob.jmulticard.asn1.der.Sequence;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.Asn1Exception;
+import es.gob.jmulticard.asn1.der.ContextSpecific;
+import es.gob.jmulticard.asn1.der.Null;
 
-/** Tipo ASN&#46;1 PKCS#15 <i>CommonKeyAttributes</i>.
- * <pre>
- *  CommonKeyAttributes ::= SEQUENCE {
- *    iD           Identifier,
- *    usage        KeyUsageFlags,
- *    native       BOOLEAN OPTIONAL,
- *    accessFlags  KeyAccessFlags OPTIONAL,
- *    keyReference PKCS15Reference OPTIONAL,
- *    startDate    GeneralizedTime OPTIONAL,
- *    endDate      [0] GeneralizedTime OPTIONAL,
- *  }
- *  Identifier ::= OCTET STRING (SIZE (1..pkcs15-ub-identifier))
- *  KeyUsageFlags ::= BIT STRING
- *  PKCS15Reference ::= INTEGER (0..pkcs15-ub-reference)
- *  KeyAccessFlags ::= BIT STRING
- *  PKCS15Reference  ::= INTEGER (0..pkcs15-ub-reference)
- * </pre>
+/** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CommonKeyAttributes extends Sequence {
+public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpecific {
 
-	/** Construye un objeto ASN&#46;1 PKCS#15 <i>CommonKeyAttributes</i>. */
-	public CommonKeyAttributes() {
-		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					Identifier.class,    // Subtipo de Octet String
-					false
-				),
-				new OptionalDecoderObjectElement(
-					KeyUsageFlags.class, // Subtipo de Bit String
-					false
-				),
-				new OptionalDecoderObjectElement(
-					DerBoolean.class,
-					true // Opcional
-				),
-				new OptionalDecoderObjectElement(
-					AccessFlags.class,   // Subtipo de Bit String
-					false
-				),
-				new OptionalDecoderObjectElement(
-					Reference.class,     // Subtipo de Integer
-					false
-				)
-			}
-		);
+	private static final byte TAG = (byte) 0xA0;
+
+	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>. */
+	public CommonPrivateKeyAttributesContextSpecific() {
+		super(Null.class);
 	}
 
-	/** Devuelve el identificador de la clave.
-	 * @return Identificador de la clave. */
-	public byte[] getIdentifier() {
-		return ((Identifier) getElementAt(0)).getOctectStringByteValue();
-	}
-
-	/** Devuelve la referencia de la clave,
-	 * @return Referencia de la clave, o <code>null</code> si la clave no tiene referencia. */
-	public Reference getReference() {
-		// Recorro la secuencia buscando la referencia, porque no puedo saber la posicion exacta con los opcionales
-		for (int i=0;i<getElementCount();i++) {
-			final Object o = getElementAt(i);
-			if (o instanceof Reference) {
-				return (Reference) o;
-			}
+	/** {@inheritDoc} */
+	@Override
+    public void checkTag(final byte tag) throws Asn1Exception {
+		if (TAG != tag) {
+			throw new Asn1Exception(
+				"CommonPrivateKeyAttributesContextSpecific esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
+				" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+			);
 		}
-		return null;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+    public String toString() {
+		return getObject().toString();
+	}
+
+	String getPath() {
+		return ((PrivateRsaKeyAttributes)getObject()).getPath();
+	}
+
+	int getKeyLength() {
+		return ((PrivateRsaKeyAttributes)getObject()).getKeyLength();
 	}
 
 }

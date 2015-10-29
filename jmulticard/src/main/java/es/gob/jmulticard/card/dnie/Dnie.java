@@ -292,10 +292,14 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     private void loadKeyReferences() {
         final PrKdf prKdf = new PrKdf();
         try {
-            prKdf.setDerValue(selectFileByLocationAndRead(PRKDF_LOCATION));
+            prKdf.setDerValue(
+        		selectFileByLocationAndRead(PRKDF_LOCATION)
+    		);
         }
         catch (final Exception e) {
-            throw new IllegalStateException("No se ha podido cargar el PrKDF de la tarjeta: " + e.toString()); //$NON-NLS-1$
+            throw new IllegalStateException(
+        		"No se ha podido cargar el PrKDF de la tarjeta: " + e.toString() //$NON-NLS-1$
+    		);
         }
 
         for (int i = 0; i < prKdf.getKeyCount(); i++) {

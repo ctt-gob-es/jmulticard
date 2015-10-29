@@ -45,11 +45,11 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
 
 /** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class PrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
+public final class PrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA1;
 
-	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>X509CertificateAttributes</i>. */
+	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>. */
 	public PrivateRsaKeyAttributesContextSpecific() {
 		super(PrivateRsaKeyAttributes.class);
 	}

@@ -118,7 +118,6 @@ final class ApduEncrypter {
             for (int i=0; i<paddedData.length; i++){
             	paddedData[i] = (byte) 0x00;
             }
-
             for (int i=0;i<data.length;i++) {
                 data[i] = '\0';
             }
@@ -129,9 +128,12 @@ final class ApduEncrypter {
         // Si hay campo Le calculamos el TLV con ellos
         byte[] tlvLeBytes = new byte[0];
         if (le != null) {
-            tlvLeBytes = new Tlv(TAG_LE_TLV, new byte[] {
-                le.byteValue()
-            }).getBytes();
+            tlvLeBytes = new Tlv(
+        		TAG_LE_TLV,
+        		new byte[] {
+    				le.byteValue()
+        		}
+    		).getBytes();
         }
 
         // Concatenamos los TLV de datos y Le para obtener el cuerpo de la nueva APDU
@@ -139,28 +141,37 @@ final class ApduEncrypter {
         System.arraycopy(tlvDataBytes, 0, completeDataBytes, 0, tlvDataBytes.length);
         System.arraycopy(tlvLeBytes, 0, completeDataBytes, tlvDataBytes.length, tlvLeBytes.length);
 
-        // Sumamos la CLA el valor indicativo de APDU cifrada
+        // Sumamos la CLA al valor indicativo de APDU cifrada
         cla = (byte) (cla | CLA_OF_PROTECTED_APDU);
 
         // Componemos los datos necesario para el calculo del MAC del mensaje
         baos.reset();
-        baos.write(addPadding7816(new byte[] {
-                cla, ins, p1, p2
-        }));
+        baos.write(
+    		addPadding7816(
+				new byte[] {
+					cla, ins, p1, p2
+				}
+			)
+		);
         baos.write(completeDataBytes);
         final byte[] encryptedDataPadded = addPadding7816(baos.toByteArray());
 
         // Calculamos el valor MAC para la autenticacion de los datos
-        final byte[] mac = generateMac(encryptedDataPadded, sendSequenceCounter, keyMac, cryptoHelper);
+        final byte[] mac = generateMac(
+    		encryptedDataPadded,
+    		sendSequenceCounter,
+    		keyMac,
+    		cryptoHelper
+		);
 
         return new CipheredApdu(cla, ins, p1, p2, completeDataBytes, mac);
     }
 
-    /** Agrega un Padding a un array de bytes conforme las especificaciones de la ISO 7816.
-     * Esto es, se agrega un byte 0x80 al array y se completa con bytes 0x00 hasta que el
+    /** Agrega un relleno (<i>padding</i>) a un array de bytes conforme las especificaciones ISO 7816.
+     * Esto es, se agrega un byte <code>0x80</code> al array y se completa con bytes <code>0x00</code> hasta que el
      * array es m&uacute;ltiplo de 8.
-     * @param data Datos a los que agregar el padding.
-     * @return Datos con padding. */
+     * @param data Datos a los que agregar el relleno.
+     * @return Datos con relleno. */
     private static byte[] addPadding7816(final byte[] data) {
         final byte[] paddedData = new byte[(data.length / 8 + 1) * 8];
         System.arraycopy(data, 0, paddedData, 0, data.length);
@@ -219,10 +230,18 @@ final class ApduEncrypter {
         System.arraycopy(kMac, 0, keyTdesBytes, 0, 16);
         System.arraycopy(kMac, 0, keyTdesBytes, 16, 8);
 
-        final byte[] ret =
-                HexUtils.subArray(cryptoHelper.desedeEncrypt(HexUtils.xor(tmpData, HexUtils.subArray(dataPadded, i, 8)), keyTdesBytes), 0, 4);
+        return HexUtils.subArray(
+    		cryptoHelper.desedeEncrypt(
+				HexUtils.xor(
+					tmpData,
+					HexUtils.subArray(dataPadded, i, 8)
+				),
+				keyTdesBytes
+			),
+			0,
+			4
+		);
 
-        return ret;
     }
 
     /** Desencripta los datos de una APDU de respuesta protegida.
@@ -277,7 +296,17 @@ final class ApduEncrypter {
         // Pasamos el TLV completo de datos y el del StatusWord concatenados
         final int tlvsLenght = (dataTlv != null ? 1 + 1 + dataTlv.getValue().length / 128 + dataTlv.getValue().length : 0) + // Tag (1 byte) + Lenght (1 byte + 1 por cada 128) + Value (Value.lenght bytes
         		1 + 1 + swTlv.getValue().length; // Tag (1 byte) + Lenght (1 byte) + Value (Value.lenght bytes)
-        verifyMac(HexUtils.subArray(responseApdu.getData(), 0, tlvsLenght), macTlv.getValue(), ssc, kMac, cryptoHelper);
+        verifyMac(
+    		HexUtils.subArray(
+				responseApdu.getData(),
+				0,
+				tlvsLenght
+			),
+			macTlv.getValue(),
+			ssc,
+			kMac,
+			cryptoHelper
+		);
 
         if (dataTlv == null) {
             return new ResponseApdu(swTlv.getValue());

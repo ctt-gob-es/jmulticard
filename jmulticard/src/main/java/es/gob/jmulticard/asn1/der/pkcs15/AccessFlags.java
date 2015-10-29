@@ -41,7 +41,15 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 
 import es.gob.jmulticard.asn1.der.BitString;
 
-/** Tipo ASN&#46;1 PKCS#15 <i>AccessFlags</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>AccessFlags</i>:
+ * <pre>
+ * PKCS15KeyAccessFlags ::= BIT STRING {
+ *       sensitive       (0),
+ *       extractable     (1),
+ *       alwaysSensitive (2),
+ *       neverExtractable(3)
+ * }
+ * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class AccessFlags extends BitString {
 	// Sin diferencias respecto a bitString
