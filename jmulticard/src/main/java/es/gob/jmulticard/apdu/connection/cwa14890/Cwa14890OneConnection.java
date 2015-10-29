@@ -571,11 +571,17 @@ public final class Cwa14890OneConnection implements ApduConnection {
         final CommandApdu protectedApdu;
         try {
         	this.ssc = increment(this.ssc);
-            protectedApdu = ApduEncrypter.protectAPDU(command, this.kenc, this.kmac, this.ssc, this.cryptoHelper);
+            protectedApdu = ApduEncrypter.protectAPDU(
+        		command,
+        		this.kenc,
+        		this.kmac,
+        		this.ssc,
+        		this.cryptoHelper
+    		);
         }
         catch (final IOException e) {
             throw new SecureChannelException(
-        		"Error en la encriptacion de la APDU para su envio por el canal seguro", e //$NON-NLS-1$
+        		"Error en la encriptacion de la APDU para su envio por el canal seguro: " + e, e //$NON-NLS-1$
             );
         }
 

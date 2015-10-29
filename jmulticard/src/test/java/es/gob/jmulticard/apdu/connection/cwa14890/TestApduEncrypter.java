@@ -1,5 +1,7 @@
 package es.gob.jmulticard.apdu.connection.cwa14890;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
@@ -20,7 +22,7 @@ public final class TestApduEncrypter {
 	};
 
 	private static final byte[] SSC = new byte[] {
-		(byte)0xd3, (byte)0x1a, (byte)0xc8, (byte)0xec, (byte)0x7b, (byte)0xa0, (byte)0xfe, (byte)0x74
+		(byte)0xd3, (byte)0x1a, (byte)0xc8, (byte)0xec, (byte)0x7b, (byte)0xa0, (byte)0xfe, (byte)0x75
 	};
 
 	/** Prueba de cifrado de APDU.
@@ -45,11 +47,9 @@ public final class TestApduEncrypter {
 			SSC,
 			new JseCryptoHelper()
 		);
-		System.out.println(
+		Assert.assertEquals(
+			"0ca40400198711013e9ac315a8e855dd3722f291078ac2bd8e04b6f56963", //$NON-NLS-1$
 			HexUtils.hexify(a.getBytes(), false).toLowerCase()
-		);
-		System.out.println(
-			"0ca40400198711013e9ac315a8e855dd3722f291078ac2bd8e04b6f56963" //$NON-NLS-1$
 		);
 	}
 
