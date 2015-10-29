@@ -78,7 +78,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     /** UID. */
     private static final long serialVersionUID = 1L;
 
-    /** Etiqueta con la informacion de la alerta. */
+    /** Etiqueta con la informaci&ntilde;n de la alerta. */
     private InfoLabel infoLabel = null;
 
     /** Panel de botones. */
@@ -90,8 +90,11 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     /** Panel principal. */
     private JPanel mainPanel = null;
 
-    /** Campo de texto o campo de contrasena */
+    /** Campo de texto o campo de contrase&ntilde;a. */
     private JSecurePasswordLabel component = null;
+
+    private static final int PIN_MIN_LENGTH = 4;
+    private static final int PIN_MAX_LENGTH = 16;
 
     JSecurePasswordLabel getComponent() {
         return this.component;
@@ -650,35 +653,31 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
 
         // campo de password del dialogo
         customDialog.component = new JSecurePasswordLabel(16);
-        customDialog.component.addKeyListener(new KeyListener() {
+        customDialog.component.addKeyListener(
+    		new KeyListener() {
 
-            @Override
-            public void keyTyped(final KeyEvent arg0) { /* Vacio */}
+	            @Override
+	            public void keyTyped(final KeyEvent arg0) { /* Vacio */}
 
-            @Override
-            public void keyReleased(final KeyEvent ke) {
-            	//final char[] pwd = customDialog.getComponent().getPassword();
-            	//final int length = pwd.length;
-            	// Machacamos la copia por seguridad
-            	//for (int i=0;i<length;i++) {
-            	//	pwd[i] = '\0';
-            	//}
-            	final int length = customDialog.getComponent().getPasswordLength();
-                //Control de los botones aceptar/cancelar
-                if (length > 7 && length < 17) {
-                    getOkButton().setEnabled(true);
-                	if (10 == ke.getKeyCode()) {
-    					getOkButton().doClick();
-    				}
-                }
-                else {
-                    getOkButton().setEnabled(false);
-                }
-            }
+	            @Override
+	            public void keyReleased(final KeyEvent ke) {
+	            	final int length = customDialog.getComponent().getPasswordLength();
+	                //Control de los botones aceptar/cancelar
+	                if (length >= PIN_MIN_LENGTH && length <= PIN_MAX_LENGTH) {
+	                    getOkButton().setEnabled(true);
+	                	if (10 == ke.getKeyCode()) {
+	    					getOkButton().doClick();
+	    				}
+	                }
+	                else {
+	                    getOkButton().setEnabled(false);
+	                }
+	            }
 
-            @Override
-            public void keyPressed(final KeyEvent arg0) { /* Vacio */}
-        });
+	            @Override
+	            public void keyPressed(final KeyEvent arg0) { /* Vacio */}
+	        }
+		);
         customDialog.component.addAncestorListener(new RequestFocusListener());
         Utils.remarcar(customDialog.component);
         Utils.setContrastColor(customDialog.component);

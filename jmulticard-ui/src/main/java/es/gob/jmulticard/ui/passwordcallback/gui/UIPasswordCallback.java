@@ -54,7 +54,7 @@ import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
 
 /** <i>PasswordCallbak</i> que muestra un di&aacute;logo para solicitar una
  * contrase&ntilde;a. */
-public class UIPasswordCallback extends PasswordCallback {
+public final class UIPasswordCallback extends PasswordCallback {
 
     private static final long serialVersionUID = 1719174318602363633L;
 

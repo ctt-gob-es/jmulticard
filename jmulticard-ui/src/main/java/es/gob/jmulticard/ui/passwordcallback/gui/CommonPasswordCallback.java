@@ -60,13 +60,15 @@ public final class CommonPasswordCallback extends PasswordCallback {
     }
 
     static {
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            @Override
-            public Void run() {
-                setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
-                return null;
-            }
-        });
+        AccessController.doPrivileged(
+    		new PrivilegedAction<Void>() {
+	            @Override
+	            public Void run() {
+	                setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
+	                return null;
+	            }
+	        }
+		);
     }
 
 	private static final long serialVersionUID = 5514503307266079255L;
@@ -94,22 +96,28 @@ public final class CommonPasswordCallback extends PasswordCallback {
     public char[] getPassword() {
 	    if (!headless) {
     		try {
-    			UIPasswordCallbackAccessibility psc = new UIPasswordCallbackAccessibility(getPrompt(), PasswordCallbackManager.getDialogOwner(), getPrompt(), 'P', this.title);
+    			UIPasswordCallbackAccessibility psc = new UIPasswordCallbackAccessibility(
+					getPrompt(),
+					PasswordCallbackManager.getDialogOwner(),
+					getPrompt(),
+					'P',
+					this.title
+				);
     			final char[] pss = psc.getPassword();
     			psc.clearPassword();
     			psc = null;
-
     			return pss;
     		}
     		catch(final java.awt.HeadlessException e) {
-    		    Logger.getLogger("es.gob.jmulticard").info("No hay entorno grafico, se revierte a consola: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+    		    Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+		    		"No hay entorno grafico, se revierte a consola: " + e //$NON-NLS-1$
+	    		);
     		}
 	    }
 	    ConsolePasswordCallback cpc = new ConsolePasswordCallback(getPrompt());
 	    final char[] pss = cpc.getPassword();
 	    cpc.clearPassword();
 	    cpc = null;
-
 	    return pss;
     }
 
