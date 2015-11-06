@@ -62,6 +62,14 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Carlos Gamuci */
 public final class Cwa14890OneConnection implements ApduConnection {
 
+	/** Variante de la especificaci&oacute;n CWA-14890. */
+	public enum Cwa14890OneVersion {
+		/** Uso de cifrado 3DES y MAC de cuatro octetos. */
+		V1,
+		/** Uso de cifrado AES128 y MAC de ocho octetos. */
+		V2
+	}
+
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
 	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
@@ -98,13 +106,19 @@ public final class Cwa14890OneConnection implements ApduConnection {
     /** Indica el estado de la conexi&oacute;n. */
     private boolean openState = false;
 
-    /** Crea el canal seguro CWA14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
+    private final ApduEncrypter apduEncrypter;
+
+    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
      * @param card Tarjeta con la funcionalidad CWA-14890
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
-     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas */
-    public Cwa14890OneConnection(final Cwa14890Card card, final ApduConnection connection, final CryptoHelper cryptoHelper) {
+     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas
+     * @param version Variante a usar de la especificaci&oacute;n CWA-14890. */
+    public Cwa14890OneConnection(final Cwa14890Card card,
+    		                     final ApduConnection connection,
+    		                     final CryptoHelper cryptoHelper,
+    		                     final Cwa14890OneVersion version) {
 
         if (card == null) {
             throw new IllegalArgumentException(
@@ -121,6 +135,19 @@ public final class Cwa14890OneConnection implements ApduConnection {
         this.card = card;
     	this.subConnection = connection;
         this.cryptoHelper = cryptoHelper;
+        switch(version) {
+	        case V1:
+	        	this.apduEncrypter = new ApduEncrypterDes();
+	        	break;
+	        case V2:
+	        	this.apduEncrypter = new ApduEncrypterAes();
+	        	break;
+	    	default:
+	    		throw new IllegalArgumentException(
+    				"Version de CWA-14890 no soportada: " + version //$NON-NLS-1$
+				);
+        }
+
     }
 
     /** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
@@ -152,17 +179,20 @@ public final class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final SecurityException e) {
             conn.close();
-            throw new IllegalStateException("Condicion de seguridad no satisfecha en la validacion de los certificados CWA-14890: " + e //$NON-NLS-1$
+            throw new IllegalStateException(
+        		"Condicion de seguridad no satisfecha en la validacion de los certificados CWA-14890: " + e //$NON-NLS-1$
             );
         }
         catch (final CertificateException e) {
             conn.close();
-            throw new IllegalStateException("No se han podido tratar los certificados CWA-14890: " + e//$NON-NLS-1$
+            throw new IllegalStateException(
+        		"No se han podido tratar los certificados CWA-14890: " + e//$NON-NLS-1$
             );
         }
         catch (final IOException e) {
             conn.close();
-            throw new IllegalStateException("No se han podido validar los certificados CWA-14890: " + e//$NON-NLS-1$
+            throw new IllegalStateException(
+        		"No se han podido validar los certificados CWA-14890: " + e//$NON-NLS-1$
             );
         }
 
@@ -170,7 +200,9 @@ public final class Cwa14890OneConnection implements ApduConnection {
         // y externa
         final RSAPublicKey iccPublicKey;
         try {
-            iccPublicKey = (RSAPublicKey) this.cryptoHelper.generateCertificate(this.card.getIccCertEncoded()).getPublicKey();
+            iccPublicKey = (RSAPublicKey) this.cryptoHelper.generateCertificate(
+        		this.card.getIccCertEncoded()
+    		).getPublicKey();
         }
         catch (final CertificateException e) {
             conn.close();
@@ -266,7 +298,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         this.openState = true;
     }
 
-    /** Genera la clave KENC para encriptar y desencriptar critogramas.
+    /** Genera la clave KENC para encriptar y desencriptar criptogramas.
      * @param kidficc XOR de los valores Kifd y Kicc.
      * @return Clave TripleDES.
      * @throws IOException Cuando no puede generarse la clave. */
@@ -335,9 +367,8 @@ public final class Cwa14890OneConnection implements ApduConnection {
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
     public byte[] internalAuthentication(final byte[] randomIfd, final RSAPublicKey iccPublicKey) throws SecureChannelException,
-                                                                                                 ApduConnectionException,
-                                                                                                 IOException {
-
+                                                                                                         ApduConnectionException,
+                                                                                                         IOException {
         // Seleccionamos la clave publica del certificado de Terminal a la vez
         // que aprovechamos para seleccionar la clave privada de componente para autenticar
         // este certificado de Terminal
@@ -437,9 +468,10 @@ public final class Cwa14890OneConnection implements ApduConnection {
 
         final byte[] calculatedHash = this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, baos.toByteArray());
         if (!HexUtils.arrayEquals(hash, calculatedHash)) {
-            throw new SecureChannelException("Error en la comprobacion de la clave de autenticacion interna. Se obtuvo el hash '" + //$NON-NLS-1$
-                                             HexUtils.hexify(calculatedHash, false)
-                                             + "' cuando se esperaba:" + HexUtils.hexify(hash, false) //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error en la comprobacion de la clave de autenticacion interna. Se obtuvo el hash '" + //$NON-NLS-1$
+                     HexUtils.hexify(calculatedHash, false)
+                         + "' cuando se esperaba:" + HexUtils.hexify(hash, false) //$NON-NLS-1$
             );
         }
 
@@ -457,7 +489,9 @@ public final class Cwa14890OneConnection implements ApduConnection {
      * @throws es.gob.jmulticard.apdu.connection.ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
      *         la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
-    private byte[] externalAuthentication(final byte[] serial, final byte[] randomIcc, final RSAPublicKey iccPublicKey) throws IOException {
+    private byte[] externalAuthentication(final byte[] serial,
+    		                              final byte[] randomIcc,
+    		                              final RSAPublicKey iccPublicKey) throws IOException {
 
         // Construimos el campo de datos para el comando "External authentication" de acuerdo
         // al siguiente formato:
@@ -571,7 +605,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         final CommandApdu protectedApdu;
         try {
         	this.ssc = increment(this.ssc);
-            protectedApdu = ApduEncrypterDes.protectAPDU(
+            protectedApdu = this.apduEncrypter.protectAPDU(
         		command,
         		this.kenc,
         		this.kmac,
@@ -602,7 +636,13 @@ public final class Cwa14890OneConnection implements ApduConnection {
         // Desencriptamos la respuesta
         try {
         	this.ssc = increment(this.ssc);
-        	final ResponseApdu decipherApdu = ApduEncrypterDes.decryptResponseApdu(responseApdu, this.kenc, this.ssc, this.kmac, this.cryptoHelper);
+        	final ResponseApdu decipherApdu = this.apduEncrypter.decryptResponseApdu(
+    			responseApdu,
+    			this.kenc,
+    			this.ssc,
+    			this.kmac,
+    			this.cryptoHelper
+			);
 
             // Si la APDU descifrada indicase que no se indico bien el tamano de la respuesta, volveriamos
             // a enviar el comando indicando la longitud correcta
@@ -683,7 +723,8 @@ public final class Cwa14890OneConnection implements ApduConnection {
         	final byte[] incrementedValue = new byte[8];
         	System.arraycopy(biArray, biArray.length - incrementedValue.length, incrementedValue, 0, incrementedValue.length);
         	return incrementedValue;
-        } else if (biArray.length < 8) {
+        }
+        else if (biArray.length < 8) {
         	final byte[] incrementedValue = new byte[8];
         	System.arraycopy(biArray, 0, incrementedValue, incrementedValue.length - biArray.length, biArray.length);
         	return incrementedValue;
@@ -702,6 +743,6 @@ public final class Cwa14890OneConnection implements ApduConnection {
 		if (this.subConnection != null) {
 			this.subConnection.setProtocol(p);
 		}
-
 	}
+
 }

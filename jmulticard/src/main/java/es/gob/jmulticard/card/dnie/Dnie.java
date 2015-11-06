@@ -66,6 +66,7 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneConnection;
+import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneConnection.Cwa14890OneVersion;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
@@ -226,8 +227,6 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     		actualAtr = new Atr(responseAtr, ATR_MASK);
     		final byte[] actualAtrBytes = actualAtr.getBytes();
 
-    		LOGGER.info("== Comprobamos el ATR");
-
     		if (ATR.equals(actualAtr)) {
     			if (actualAtrBytes[15] == 0x04 &&
     				actualAtrBytes[16] == 0x00) {
@@ -239,15 +238,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     			}
     		}
     		else if (ATR_TIF.equals(actualAtr)) {
-    			LOGGER.info(" == SI es una TIF");
     			cwa14890Constants = new TifCwa14890Constants();
     		}
     		else { // La tarjeta encontrada no es un DNIe
         		// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
         		// en 90-00
-
-    			LOGGER.info(" == NO es una TIF: " + ATR_TIF.equals(actualAtr));
-
         		if (actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
         			actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65) {
                     	throw new BurnedDnieCardException(actualAtr);
@@ -729,7 +724,12 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         if (!this.isSecurityChannelOpen()) {
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
             if (!(this.getConnection() instanceof Cwa14890OneConnection)) {
-                final Cwa14890OneConnection secureConnection = new Cwa14890OneConnection(this, this.getConnection(), this.cryptoHelper);
+                final Cwa14890OneConnection secureConnection = new Cwa14890OneConnection(
+            		this,
+            		this.getConnection(),
+            		this.cryptoHelper,
+            		cwa14890Constants instanceof Dnie3Cwa14890Constants ? Cwa14890OneVersion.V2 : Cwa14890OneVersion.V1
+        		);
                 try {
                     this.setConnection(secureConnection);
                 }
@@ -749,7 +749,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         }
     }
 
-    private X509Certificate loadCertificate(final Location location) throws IOException, Iso7816FourCardException, CertificateException {
+    private X509Certificate loadCertificate(final Location location) throws IOException,
+                                                                            Iso7816FourCardException,
+                                                                            CertificateException {
         final byte[] certEncoded = deflate(
     		selectFileByLocationAndRead(location)
 		);

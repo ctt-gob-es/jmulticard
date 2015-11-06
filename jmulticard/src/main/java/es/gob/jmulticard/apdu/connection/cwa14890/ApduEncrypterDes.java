@@ -40,15 +40,12 @@
 package es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.bertlv.BerTlv;
 
 /** Cifrador de APDU seg&uacute;n CWA-14890 mediante 3DES y MAC de 4 octetos.
@@ -56,18 +53,9 @@ import es.gob.jmulticard.asn1.bertlv.BerTlv;
  * @author Carlos Gamuci Mill&aacute;n */
 final class ApduEncrypterDes extends ApduEncrypter {
 
-    private ApduEncrypterDes() {
-        /* Constructor privado. */
+    ApduEncrypterDes() {
+        /* Constructor "default. */
     }
-
-    /** Byte prefijo de los datos para el c&aacute;lculo de la MAC. */
-    private static final byte TLV_VALUE_PREFIX_TO_MAC = (byte) 0x01;
-
-    /** Tag del TLV de datos de una APDU protegida. */
-    private static final byte TAG_DATA_TLV = (byte) 0x87;
-
-    /** Tag del TLV del Le de una APDU protegida. */
-    private static final byte TAG_LE_TLV = (byte) 0x97;
 
     /** Tag del TLV de estado de respuesta de una APDU de respuesta. */
     private static final byte TAG_SW_TLV = (byte) 0x99;
@@ -75,103 +63,23 @@ final class ApduEncrypterDes extends ApduEncrypter {
     /** Tag del TLV de codigo de autenticacion de mensaje (MAC) de una APDU de respuesta. */
     private static final byte TAG_MAC_TLV = (byte) 0x8E;
 
-    /** Encapsula una APDU para ser enviada por un canal seguro CWA-14890.
-     * El contador SSC se autoincrementa durante la operaci&oacute;n.
-     * @param unprotectedApdu APDU desprotegida (en claro)
-     * @param keyCipher Clave sim&eacute;trica de cifrado
-     * @param keyMac Clave sim&eacute;trica para el MAC
-     * @param sendSequenceCounter Contador de secuencia actual
-     * @param cryptoHelper Operador criptogr&aacute;fico
-     * @return APDU protegida (cifrada y con MAC)
-     * @throws IOException Si ocurren problemas durante los cifrados de la APDU */
-    static CipheredApdu protectAPDU(final CommandApdu unprotectedApdu,
-                                    final byte[] keyCipher,
-                                    final byte[] keyMac,
-                                    final byte[] sendSequenceCounter,
-                                    final CryptoHelper cryptoHelper) throws IOException {
-
-        byte cla = unprotectedApdu.getCla();
-        final byte ins = unprotectedApdu.getIns();
-        final byte p1 = unprotectedApdu.getP1();
-        final byte p2 = unprotectedApdu.getP2();
-        final byte[] data = unprotectedApdu.getData();
-        final Integer le = unprotectedApdu.getLe();
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // Si hay datos calculamos el TLV con estos datos cifrados
-        byte[] tlvDataBytes = new byte[0];
-        if (data != null && data.length > 0) {
-            baos.write(TLV_VALUE_PREFIX_TO_MAC);
-            final byte[] paddedData = addPadding7816(data);
-            baos.write(cryptoHelper.desedeEncrypt(paddedData, keyCipher));
-
-            // Sobrescribimos los datos de la APDU inmediatamente despues de cifrarla, para que este
-            // el minimo tiempo en memoria. Como los arrays son mutables con escribir esta copia se
-            // sobreescriben todas las referencias.
-            for (int i=0; i<paddedData.length; i++){
-            	paddedData[i] = (byte) 0x00;
-            }
-            for (int i=0;i<data.length;i++) {
-                data[i] = '\0';
-            }
-
-            tlvDataBytes = new Tlv(TAG_DATA_TLV, baos.toByteArray()).getBytes();
-        }
-
-        // Si hay campo Le calculamos el TLV con ellos
-        byte[] tlvLeBytes = new byte[0];
-        if (le != null) {
-            tlvLeBytes = new Tlv(
-        		TAG_LE_TLV,
-        		new byte[] {
-    				le.byteValue()
-        		}
-    		).getBytes();
-        }
-
-        // Concatenamos los TLV de datos y Le para obtener el cuerpo de la nueva APDU
-        final byte[] completeDataBytes = new byte[tlvDataBytes.length + tlvLeBytes.length];
-        System.arraycopy(tlvDataBytes, 0, completeDataBytes, 0, tlvDataBytes.length);
-        System.arraycopy(tlvLeBytes, 0, completeDataBytes, tlvDataBytes.length, tlvLeBytes.length);
-
-        // Sumamos la CLA al valor indicativo de APDU cifrada
-        cla = (byte) (cla | CLA_OF_PROTECTED_APDU);
-
-        // Componemos los datos necesario para el calculo del MAC del mensaje
-        baos.reset();
-        baos.write(
-    		addPadding7816(
-				new byte[] {
-					cla, ins, p1, p2
-				}
-			)
-		);
-        baos.write(completeDataBytes);
-        final byte[] encryptedDataPadded = addPadding7816(baos.toByteArray());
-
-        // Calculamos el valor MAC para la autenticacion de los datos
-        final byte[] mac = generateMac(
-    		encryptedDataPadded,
-    		sendSequenceCounter,
-    		keyMac,
-    		cryptoHelper
-		);
-
-        return new CipheredApdu(cla, ins, p1, p2, completeDataBytes, mac);
+    @Override
+	protected byte[] encryptData(final byte[] data, final byte[] key, final byte[] ssc, final CryptoHelper cryptoHelper) throws IOException {
+    	return cryptoHelper.desedeEncrypt(data, key);
     }
 
     /** Aplica el algoritmo para la generaci&oacute;n de la MAC del mensaje.
      * @param dataPadded Datos sobre los que generar la MAC.
      * @param ssc Contador de secuencia de la operaci&oacute;n.
-     * @param kMac Clave triple DES necesaria para la operaci&oacute;n.
+     * @param kMac Clave Triple DES necesaria para la operaci&oacute;n.
      * @param cryptoHelper Manejador para la realizaci&oacute;n de las operaciones criptogr&aacute;ficas.
      * @return Clave de autenticaci&oacute;n de los datos.
-     * @throws IOException Si hay errores de entrada / salida */
-    private static byte[] generateMac(final byte[] dataPadded,
-                                      final byte[] ssc,
-                                      final byte[] kMac,
-                                      final CryptoHelper cryptoHelper) throws IOException {
+     * @throws IOException Si hay errores de entrada / salida. */
+    @Override
+	protected byte[] generateMac(final byte[] dataPadded,
+                                 final byte[] ssc,
+                                 final byte[] kMac,
+                                 final CryptoHelper cryptoHelper) throws IOException {
 
         final byte keyDesBytes[] = new byte[8];
         System.arraycopy(kMac, 0, keyDesBytes, 0, 8);
@@ -210,7 +118,8 @@ final class ApduEncrypterDes extends ApduEncrypter {
      * @param cryptoHelper Manejador para el desencriptado.
      * @return APDU con la respuesta descifrada.
      * @throws IOException Cuando ocurre un error durante la desencriptaci&oacute;n de los datos. */
-    static ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
+    @Override
+	ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
             								final byte[] keyCipher,
             								final byte[] ssc,
             								final byte[] kMac,
@@ -290,7 +199,7 @@ final class ApduEncrypterDes extends ApduEncrypter {
      * @param kMac Clave para la generaci&oacute;n del MAC.
      * @param cryptoHelper Manejador de operaciones criptogr&aacute;ficas.
      */
-    private static void verifyMac(final byte[] verificableData, final byte[] macTlvBytes, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) {
+    private void verifyMac(final byte[] verificableData, final byte[] macTlvBytes, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) {
 
     	final byte[] calculatedMac;
     	try {
