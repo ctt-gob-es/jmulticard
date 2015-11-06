@@ -187,6 +187,14 @@ public abstract class CryptoHelper {
      *         encriptado. */
     public abstract byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException;
 
+    /** Encripta datos mediante AES (modo CBC sin relleno).
+     * @param data Datos a encriptar.
+     * @param key Clave AES de cifrado.
+     * @return Datos cifrados.
+     * @throws IOException Si ocurre alg&uacute;n problema durante el
+     *         encriptado. */
+    public abstract byte[] aesEncrypt(final byte[] data, final byte[] key) throws IOException;
+
     /** Desencripta datos mediante RSA.
      * @param cipheredData Datos a desencriptar.
      * @param key Clava RSA de descifrado.

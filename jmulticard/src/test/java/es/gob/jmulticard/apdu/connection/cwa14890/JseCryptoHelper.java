@@ -1,4 +1,3 @@
-package es.gob.jmulticard.apdu.connection.cwa14890;
 /*
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
@@ -38,24 +37,31 @@ package es.gob.jmulticard.apdu.connection.cwa14890;
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-
+package es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.ECGenParameterSpec;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import es.gob.jmulticard.CryptoHelper;
 
@@ -65,7 +71,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     /** {@inheritDoc} */
     @Override
-	public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
+    public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 
         if (algorithm == null) {
             throw new IllegalArgumentException("El algoritmo de huella digital no puede ser nulo"); //$NON-NLS-1$
@@ -112,13 +118,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     /** {@inheritDoc} */
     @Override
-	public byte[] desedeEncrypt(final byte[] data, final byte[] key) throws IOException {
+    public byte[] desedeEncrypt(final byte[] data, final byte[] key) throws IOException {
         return doDesede(data, key, Cipher.ENCRYPT_MODE);
     }
 
     /** {@inheritDoc} */
     @Override
-	public byte[] desedeDecrypt(final byte[] data, final byte[] key) throws IOException {
+    public byte[] desedeDecrypt(final byte[] data, final byte[] key) throws IOException {
         return doDesede(data, key, Cipher.DECRYPT_MODE);
     }
 
@@ -159,13 +165,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     /** {@inheritDoc} */
     @Override
-	public byte[] desEncrypt(final byte[] data, final byte[] key) throws IOException {
+    public byte[] desEncrypt(final byte[] data, final byte[] key) throws IOException {
         return doDes(data, key, Cipher.ENCRYPT_MODE);
     }
 
     /** {@inheritDoc} */
     @Override
-	public byte[] desDecrypt(final byte[] data, final byte[] key) throws IOException {
+    public byte[] desDecrypt(final byte[] data, final byte[] key) throws IOException {
         return doDes(data, key, Cipher.DECRYPT_MODE);
     }
 
@@ -183,25 +189,25 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     /** {@inheritDoc} */
     @Override
-	public byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException {
+    public byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException {
         return doRsa(cipheredData, key, Cipher.DECRYPT_MODE);
     }
 
     /** {@inheritDoc} */
     @Override
-	public byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException {
+    public byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException {
         return doRsa(data, key, Cipher.ENCRYPT_MODE);
     }
 
     /** {@inheritDoc} */
     @Override
-	public Certificate generateCertificate(final byte[] encode) throws CertificateException {
+    public Certificate generateCertificate(final byte[] encode) throws CertificateException {
         return CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(encode)); //$NON-NLS-1$
     }
 
     /** {@inheritDoc} */
     @Override
-	public byte[] generateRandomBytes(final int numBytes) throws IOException {
+    public byte[] generateRandomBytes(final int numBytes) throws IOException {
         final SecureRandom sr;
         try {
             sr = SecureRandom.getInstance("SHA1PRNG"); //$NON-NLS-1$
@@ -214,8 +220,8 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-	@Override
-	public byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException {
+
+    private static byte[] aesCrypt(final byte[] data, final byte[] key, final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -236,17 +242,11 @@ public final class JseCryptoHelper extends CryptoHelper {
 			);
 		}
 
-		// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
-		// para IvParameterSpec.getIV(), normalmente todo ceros
-		final byte[] iv = new byte[aesCipher.getBlockSize()];
-		new SecureRandom().nextBytes(iv);
-		final IvParameterSpec ivParams = new IvParameterSpec(iv);
-
 		try {
 			aesCipher.init(
-				Cipher.DECRYPT_MODE,
+				mode,
 				new SecretKeySpec(key, "AES"), //$NON-NLS-1$
-				ivParams
+				new IvParameterSpec(new byte[aesCipher.getBlockSize()])
 			);
 		}
 		catch (final Exception e) {
@@ -254,6 +254,26 @@ public final class JseCryptoHelper extends CryptoHelper {
 				"La clave proporcionada no es valida: " + e, e//$NON-NLS-1$
 			);
 		}
+
+//		// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
+//		// para IvParameterSpec.getIV(), normalmente todo ceros
+//		final byte[] iv = new byte[aesCipher.getBlockSize()];
+//		new SecureRandom().nextBytes(iv);
+//		final IvParameterSpec ivParams = new IvParameterSpec(iv);
+//
+//
+//		try {
+//			aesCipher.init(
+//				mode,
+//				new SecretKeySpec(key, "AES"), //$NON-NLS-1$
+//				ivParams
+//			);
+//		}
+//		catch (final Exception e) {
+//			throw new IOException(
+//				"La clave proporcionada no es valida: " + e, e//$NON-NLS-1$
+//			);
+//		}
 		try {
 			return aesCipher.doFinal(data);
 		}
@@ -263,13 +283,42 @@ public final class JseCryptoHelper extends CryptoHelper {
 				"Error en el descifrado, posiblemente los datos proporcionados no sean validos: "  + e, e//$NON-NLS-1$
 			);
 		}
+    }
+
+	@Override
+	public byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException {
+		return aesCrypt(data, key, Cipher.DECRYPT_MODE);
 	}
 
 	@Override
-	public KeyPair generateEcKeyPair(final EcCurve curveName)
-			throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-		return null;
+	public byte[] aesEncrypt(final byte[] data, final byte[] key) throws IOException {
+		return aesCrypt(data, key, Cipher.ENCRYPT_MODE);
 	}
 
+	@Override
+	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
+	                                                                 InvalidAlgorithmParameterException {
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
+		KeyPairGenerator kpg;
+		try {
+			kpg = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
+		}
+		catch (final Exception e) {
+			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				"No se ha podido obtener un generador de pares de claves de curva eliptica con BouncyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
+			);
+			kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
+		}
+
+		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+			"Seleccionado el siguiente generador de claves de curva eliptica: " + kpg.getClass().getName() //$NON-NLS-1$
+		);
+
+		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
+		kpg.initialize(parameterSpec);
+		return kpg.generateKeyPair();
+	}
 
 }

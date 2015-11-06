@@ -226,6 +226,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     		actualAtr = new Atr(responseAtr, ATR_MASK);
     		final byte[] actualAtrBytes = actualAtr.getBytes();
 
+    		LOGGER.info("== Comprobamos el ATR");
+
     		if (ATR.equals(actualAtr)) {
     			if (actualAtrBytes[15] == 0x04 &&
     				actualAtrBytes[16] == 0x00) {
@@ -237,11 +239,15 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     			}
     		}
     		else if (ATR_TIF.equals(actualAtr)) {
+    			LOGGER.info(" == SI es una TIF");
     			cwa14890Constants = new TifCwa14890Constants();
     		}
     		else { // La tarjeta encontrada no es un DNIe
         		// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
         		// en 90-00
+
+    			LOGGER.info(" == NO es una TIF: " + ATR_TIF.equals(actualAtr));
+
         		if (actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
         			actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65) {
                     	throw new BurnedDnieCardException(actualAtr);
@@ -848,8 +854,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNI tiene el PIN bloqueado.
      * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico */
-    private void verifyPin(final PasswordCallback pinPc, final int retriesLeft) throws ApduConnectionException, BadPinException {
-
+    private void verifyPin(final PasswordCallback pinPc,
+    		               final int retriesLeft) throws ApduConnectionException,
+    		                                             BadPinException {
     	PasswordCallback psc = null;
     	try {
 	    	if (pinPc != null) {
@@ -879,7 +886,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     		throw new IllegalArgumentException("pinPc no puede ser nulo cuando no hay un PasswordCallback por defecto: " + e, e); //$NON-NLS-1$
     	}
 
-    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
+    	CommandApdu verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
 
     	final ResponseApdu verifyResponse = this.getConnection().transmit(
 			verifyCommandApdu

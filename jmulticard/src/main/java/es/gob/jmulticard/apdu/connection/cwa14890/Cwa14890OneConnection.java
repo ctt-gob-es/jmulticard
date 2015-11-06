@@ -571,7 +571,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         final CommandApdu protectedApdu;
         try {
         	this.ssc = increment(this.ssc);
-            protectedApdu = ApduEncrypter.protectAPDU(
+            protectedApdu = ApduEncrypterDes.protectAPDU(
         		command,
         		this.kenc,
         		this.kmac,
@@ -602,7 +602,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         // Desencriptamos la respuesta
         try {
         	this.ssc = increment(this.ssc);
-        	final ResponseApdu decipherApdu = ApduEncrypter.decryptResponseApdu(responseApdu, this.kenc, this.ssc, this.kmac, this.cryptoHelper);
+        	final ResponseApdu decipherApdu = ApduEncrypterDes.decryptResponseApdu(responseApdu, this.kenc, this.ssc, this.kmac, this.cryptoHelper);
 
             // Si la APDU descifrada indicase que no se indico bien el tamano de la respuesta, volveriamos
             // a enviar el comando indicando la longitud correcta

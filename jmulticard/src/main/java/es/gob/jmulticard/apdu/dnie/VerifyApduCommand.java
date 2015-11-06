@@ -67,7 +67,7 @@ public final class VerifyApduCommand extends CommandApdu {
 		);
         if (pinPc == null) {
         	throw new IllegalArgumentException(
-        			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
+    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
         }
         this.pwc = pinPc;

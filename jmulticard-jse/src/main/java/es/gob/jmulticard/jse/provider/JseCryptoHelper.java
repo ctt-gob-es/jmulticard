@@ -220,8 +220,8 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-	@Override
-	public byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException {
+
+    private static byte[] aesCrypt(final byte[] data, final byte[] key, final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -250,7 +250,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 		try {
 			aesCipher.init(
-				Cipher.DECRYPT_MODE,
+				mode,
 				new SecretKeySpec(key, "AES"), //$NON-NLS-1$
 				ivParams
 			);
@@ -269,6 +269,16 @@ public final class JseCryptoHelper extends CryptoHelper {
 				"Error en el descifrado, posiblemente los datos proporcionados no sean validos: "  + e, e//$NON-NLS-1$
 			);
 		}
+    }
+
+	@Override
+	public byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException {
+		return aesCrypt(data, key, Cipher.DECRYPT_MODE);
+	}
+
+	@Override
+	public byte[] aesEncrypt(final byte[] data, final byte[] key) throws IOException {
+		return aesCrypt(data, key, Cipher.ENCRYPT_MODE);
 	}
 
 	@Override
