@@ -1,5 +1,7 @@
 package es.gob.jmulticard.apdu.connection.cwa14890;
 
+import java.io.IOException;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -7,6 +9,7 @@ import org.junit.Test;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 
 /** Pruebas del cifrado de APDU seg&uacute;n CWA-14890.
@@ -69,16 +72,24 @@ public final class TestApduEncrypter extends ApduEncrypter {
 			HexUtils.hexify(paddedData, false).toLowerCase()
 		);
 		final CryptoHelper cryptoHelper = new JseCryptoHelper();
-		//final byte[] cipheredApdu = cryptoHelper.aesEncrypt(paddedData, HexUtils.xor(SSC2, KENC2));
-		final byte[] cipheredApdu = cryptoHelper.aesEncrypt(paddedData, KENC2);
-		//final byte[] cipheredApdu = cryptoHelper.aesEncrypt(paddedData, SSC2);
-		//final byte[] cipheredApdu = cryptoHelper.aesEncrypt(paddedData, KMAC2);
-		//final byte[] cipheredApdu = cryptoHelper.aesEncrypt(cryptoHelper.aesEncrypt(paddedData, KMAC2), SSC2);
-		//final byte[] cipheredApdu = cryptoHelper.aesEncrypt(cryptoHelper.aesEncrypt(paddedData, SSC2), KENC2);
-		//final byte[] cipheredApdu = cryptoHelper.aesEncrypt(cryptoHelper.aesEncrypt(paddedData, KENC2), SSC2);
+
+		final byte[] iv = cryptoHelper.aesEncrypt(
+			SSC2,
+			new byte[0],
+			KENC2
+		);
+
+		System.out.println(HexUtils.hexify(iv, false).toLowerCase());
+		System.out.println();
+
+		final byte[] encryptedApdu = cryptoHelper.aesEncrypt(
+			paddedData,
+			iv,
+			KENC2
+		);
 
 		System.out.println("f5124ee2f53962e86e66a6d234827f0f"); //$NON-NLS-1$
-		System.out.println(HexUtils.hexify(cipheredApdu, false).toLowerCase());
+		System.out.println(HexUtils.hexify(encryptedApdu, false).toLowerCase());
 	}
 
 
@@ -92,15 +103,18 @@ public final class TestApduEncrypter extends ApduEncrypter {
 			(byte) 0x00,
 			new CachePasswordCallback("CRYPTOKI".toCharArray()) //$NON-NLS-1$
 		);
-		final byte[] res = ApduEncrypterDes.protectAPDU(
+		final ApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
+		final byte[] res = apduEncrypterDes.protectAPDU(
 			verifyCommandApdu,
 			KENC,
 			KMAC,
 			SSC_PIN,
 			new JseCryptoHelper()
 		).getBytes();
-		System.out.println(HexUtils.hexify(res, false).toLowerCase());
-		System.out.println("0c20000019871101ce1ab937c332f3faee43336d4311ef338e046908df4e"); //$NON-NLS-1$
+		Assert.assertEquals(
+			"0c20000019871101ce1ab937c332f3faee43336d4311ef338e046908df4e", //$NON-NLS-1$
+			HexUtils.hexify(res, false).toLowerCase()
+		);
 	}
 
 	/** Prueba de cifrado 3DES de APDU.
@@ -108,7 +122,8 @@ public final class TestApduEncrypter extends ApduEncrypter {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testEncryptionDes() throws Exception {
-		final CipheredApdu a = ApduEncrypterDes.protectAPDU(
+		final ApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
+		final CipheredApdu a = apduEncrypterDes.protectAPDU(
 			new CommandApdu(
 				(byte)0x00,
 				(byte)0xA4,
@@ -129,6 +144,22 @@ public final class TestApduEncrypter extends ApduEncrypter {
 			"0ca40400198711013e9ac315a8e855dd3722f291078ac2bd8e04b6f56963", //$NON-NLS-1$
 			HexUtils.hexify(a.getBytes(), false).toLowerCase()
 		);
+	}
+
+
+	@Override
+	protected byte[] encryptData(final byte[] data, final byte[] key, final byte[] ssc, final CryptoHelper cryptoHelper) throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected byte[] generateMac(final byte[] dataPadded, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu, final byte[] keyCipher, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) throws IOException {
+		throw new UnsupportedOperationException();
 	}
 
 }
