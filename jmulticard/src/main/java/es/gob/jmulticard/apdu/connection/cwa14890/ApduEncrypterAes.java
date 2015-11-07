@@ -1,6 +1,7 @@
 package es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -8,7 +9,12 @@ import es.gob.jmulticard.apdu.ResponseApdu;
 
 final class ApduEncrypterAes extends ApduEncrypter {
 
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
 	ApduEncrypterAes() {
+		LOGGER.info(
+			"Se usara AES y CMAC para el cifrado de mensajes en el canal seguro" //$NON-NLS-1$
+		);
 		this.paddingLength = 16;
 	}
 

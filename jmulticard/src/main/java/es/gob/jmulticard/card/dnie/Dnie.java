@@ -66,7 +66,7 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneConnection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneConnection.Cwa14890OneVersion;
+import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
@@ -724,12 +724,21 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         if (!this.isSecurityChannelOpen()) {
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
             if (!(this.getConnection() instanceof Cwa14890OneConnection)) {
-                final Cwa14890OneConnection secureConnection = new Cwa14890OneConnection(
+            	final ApduConnection secureConnection;
+            	if (cwa14890Constants instanceof Dnie3Cwa14890Constants) {
+            		secureConnection = new Cwa14890OneV2Connection(
+	            		this,
+	            		this.getConnection(),
+	            		this.cryptoHelper
+            		);
+            	}
+            	else {
+        		secureConnection = new Cwa14890OneConnection(
             		this,
             		this.getConnection(),
-            		this.cryptoHelper,
-            		cwa14890Constants instanceof Dnie3Cwa14890Constants ? Cwa14890OneVersion.V2 : Cwa14890OneVersion.V1
+            		this.cryptoHelper
         		);
+            	}
                 try {
                     this.setConnection(secureConnection);
                 }

@@ -60,7 +60,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente.
  * @author Carlos Gamuci */
-public final class Cwa14890OneConnection implements ApduConnection {
+public final class Cwa14890OneV2Connection implements ApduConnection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
@@ -107,7 +107,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas
      * @param version Variante a usar de la especificaci&oacute;n CWA-14890. */
-    public Cwa14890OneConnection(final Cwa14890Card card,
+    public Cwa14890OneV2Connection(final Cwa14890Card card,
     		                     final ApduConnection connection,
     		                     final CryptoHelper cryptoHelper) {
 
@@ -126,7 +126,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
         this.card = card;
     	this.subConnection = connection;
         this.cryptoHelper = cryptoHelper;
-    	this.apduEncrypter = new ApduEncrypterDes();
+    	this.apduEncrypter = new ApduEncrypterAes();
     }
 
     /** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
@@ -135,7 +135,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
     public void open() throws ApduConnectionException {
 
         final ApduConnection conn = this.subConnection;
-        if (!(conn instanceof Cwa14890OneConnection)) {
+        if (!(conn instanceof Cwa14890OneV2Connection)) {
         	if (conn.isOpen()) {
         		conn.reset();
         	}
