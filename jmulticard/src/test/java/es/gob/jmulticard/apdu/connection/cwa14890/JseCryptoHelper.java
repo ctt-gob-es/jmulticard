@@ -42,6 +42,7 @@ package es.gob.jmulticard.apdu.connection.cwa14890;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -57,6 +58,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -319,6 +321,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
 		kpg.initialize(parameterSpec);
 		return kpg.generateKeyPair();
+	}
+
+	@Override
+	public byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
+		final Mac eng = Mac.getInstance("AESCMAC", new BouncyCastleProvider()); //$NON-NLS-1$
+		eng.init(new SecretKeySpec(key, "AES")); //$NON-NLS-1$
+		return eng.doFinal(data);
 	}
 
 }

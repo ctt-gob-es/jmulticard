@@ -54,7 +54,7 @@ import es.gob.jmulticard.asn1.bertlv.BerTlv;
 final class ApduEncrypterDes extends ApduEncrypter {
 
     ApduEncrypterDes() {
-        /* Constructor "default. */
+        this.paddingLength = 8;
     }
 
     /** Tag del TLV de estado de respuesta de una APDU de respuesta. */
@@ -197,13 +197,12 @@ final class ApduEncrypterDes extends ApduEncrypter {
      * @param macTlvBytes C&oacute;digo de verificaci&oacute;n.
      * @param ssc C&oacute;digo de secuencia.
      * @param kMac Clave para la generaci&oacute;n del MAC.
-     * @param cryptoHelper Manejador de operaciones criptogr&aacute;ficas.
-     */
+     * @param cryptoHelper Manejador de operaciones criptogr&aacute;ficas. */
     private void verifyMac(final byte[] verificableData, final byte[] macTlvBytes, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) {
 
     	final byte[] calculatedMac;
     	try {
-    		calculatedMac = generateMac(addPadding7816(verificableData), ssc, kMac, cryptoHelper);
+    		calculatedMac = generateMac(addPadding7816(verificableData, this.paddingLength), ssc, kMac, cryptoHelper);
     	}
     	catch (final IOException e) {
     		throw new SecurityException("No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion"); //$NON-NLS-1$

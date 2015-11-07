@@ -2,8 +2,12 @@ package es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.IOException;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import junit.framework.Assert;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
 
 import es.gob.jmulticard.CryptoHelper;
@@ -46,11 +50,84 @@ public final class TestApduEncrypter extends ApduEncrypter {
 		(byte)0xbd, (byte)0x35, (byte)0x2d, (byte)0xbf, (byte)0x46, (byte)0x46, (byte)0x2f, (byte)0x60
 	};
 
-	/** Prueba de cifrado 3DES de APDU.
+	/** Prueba la generaci&oacute;n de CMAC con datos dependientes del SSC.
+	 * @throws IOException En cualquier error. */
+	@Test
+	public void testCMacGeneration() throws IOException {
+		final byte[] data = new byte[] {
+			(byte)0x0c, (byte)0xa4, (byte)0x04, (byte)0x00, (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x00,
+			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+			(byte)0x87, (byte)0x11, (byte)0x01, (byte)0xf5, (byte)0x12, (byte)0x4e, (byte)0xe2, (byte)0xf5,
+			(byte)0x39, (byte)0x62, (byte)0xe8, (byte)0x6e, (byte)0x66, (byte)0xa6, (byte)0xd2, (byte)0x34,
+			(byte)0x82, (byte)0x7f, (byte)0x0f, (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
+		};
+		Assert.assertEquals(
+			"70e6de5f679aee64", //$NON-NLS-1$
+			HexUtils.hexify(
+				generateMac(data, SSC2, KMAC2, new JseCryptoHelper()),
+				false
+			).toLowerCase()
+		);
+	}
+
+	/** Prueba de cifrado AES de una APDU.
 	 * @throws Exception En cualquier error. */
-	@SuppressWarnings("static-method")
 	@Test
 	public void testEncryptionAes() throws Exception {
+
+		this.paddingLength = 16;
+
+		final CommandApdu apdu = new CommandApdu(
+			(byte)0x00,
+			(byte)0xa4,
+			(byte)0x04,
+			(byte)0x00,
+			new byte[] {
+				(byte)0x4d, (byte)0x61, (byte)0x73, (byte)0x74, (byte)0x65, (byte)0x72, (byte)0x2e,
+				(byte)0x46, (byte)0x69, (byte)0x6c, (byte)0x65
+			},
+			null
+		);
+		System.out.println(
+			HexUtils.hexify(
+				protectAPDU(
+					apdu,
+					KENC2,
+					KMAC2,
+					SSC2,
+					new JseCryptoHelper()
+				).getBytes(),
+				false
+			).toLowerCase()
+		)
+			;
+
+		System.out.println(
+				HexUtils.hexify(
+					new ApduEncrypterAes().protectAPDU(
+						apdu,
+						KENC2,
+						KMAC2,
+						SSC2,
+						new JseCryptoHelper()
+					).getBytes(),
+					false
+				).toLowerCase()
+			)
+				;
+
+
+		System.out.println("0ca404001d871101f5124ee2f53962e86e66a6d234827f0f8e0870e6de5f679aee64"); //$NON-NLS-1$
+	}
+
+	/** Prueba de cifrado AES del cuerpo de una APDU.
+	 * @throws Exception En cualquier error. */
+	@Test
+	public void testPartialEncryptionAes() throws Exception {
+
+		this.paddingLength = 16;
+
 		final CommandApdu apdu = new CommandApdu(
 			(byte)0x00,
 			(byte)0xa4,
@@ -66,33 +143,24 @@ public final class TestApduEncrypter extends ApduEncrypter {
 			"00a404000b4d61737465722e46696c65", //$NON-NLS-1$
 			HexUtils.hexify(apdu.getBytes(), false).toLowerCase()
 		);
-		final byte[] paddedData = addPadding7816(apdu.getData());
+		final byte[] paddedData = addPadding7816(apdu.getData(), this.paddingLength);
 		Assert.assertEquals(
 			"4d61737465722e46696c658000000000", //$NON-NLS-1$
 			HexUtils.hexify(paddedData, false).toLowerCase()
 		);
-		final CryptoHelper cryptoHelper = new JseCryptoHelper();
 
-		final byte[] iv = cryptoHelper.aesEncrypt(
-			SSC2,
-			new byte[0],
-			KENC2
-		);
-
-		System.out.println(HexUtils.hexify(iv, false).toLowerCase());
-		System.out.println();
-
-		final byte[] encryptedApdu = cryptoHelper.aesEncrypt(
+		final byte[] encryptedApdu = encryptData(
 			paddedData,
-			iv,
-			KENC2
+			KENC2,
+			SSC2,
+			new JseCryptoHelper()
+		);
+		Assert.assertEquals(
+			"f5124ee2f53962e86e66a6d234827f0f", //$NON-NLS-1$
+			HexUtils.hexify(encryptedApdu, false).toLowerCase()
 		);
 
-		System.out.println("f5124ee2f53962e86e66a6d234827f0f"); //$NON-NLS-1$
-		System.out.println(HexUtils.hexify(encryptedApdu, false).toLowerCase());
 	}
-
-
 
 	/** Prueba de cifrado 3DES de APDU de verificaci&oacute;n de PIN.
 	 * @throws Exception En cualquier error. */
@@ -149,12 +217,39 @@ public final class TestApduEncrypter extends ApduEncrypter {
 
 	@Override
 	protected byte[] encryptData(final byte[] data, final byte[] key, final byte[] ssc, final CryptoHelper cryptoHelper) throws IOException {
-		throw new UnsupportedOperationException();
+		if (ssc == null) {
+			throw new IllegalArgumentException(
+				"El contador de secuencia no puede ser nulo en esta version de CWA-14890" //$NON-NLS-1$
+			);
+		}
+		// El vector de inicializacion del cifrado AES se calcula cifrando el SSC igualmente en AES con la misma clave y un vector
+		// de inicializacion todo a 0x00
+		final byte[] iv = cryptoHelper.aesEncrypt(
+			ssc,
+			new byte[0],
+			key
+		);
+		return cryptoHelper.aesEncrypt(
+			data,
+			iv,
+			key
+		);
 	}
 
 	@Override
 	protected byte[] generateMac(final byte[] dataPadded, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) throws IOException {
-		throw new UnsupportedOperationException();
+		final Mac eng;
+		try {
+			eng = Mac.getInstance("AESCMAC", new BouncyCastleProvider()); //$NON-NLS-1$
+			eng.init(new SecretKeySpec(kMac, "AES")); //$NON-NLS-1$
+		}
+		catch(final Exception e) {
+			throw new IOException(e);
+		}
+		final byte[] mac = eng.doFinal(HexUtils.concatenateByteArrays(ssc, dataPadded));
+		final byte[] ret = new byte[8];
+		System.arraycopy(mac, 0, ret, 0, 8);
+		return ret;
 	}
 
 	@Override

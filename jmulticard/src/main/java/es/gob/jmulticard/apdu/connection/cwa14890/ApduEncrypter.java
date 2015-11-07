@@ -28,6 +28,9 @@ abstract class ApduEncrypter {
     /** Primer byte a agregar en los padding ISO-7816. */
     private static final byte ISO7816_PADDING_PREFIX = (byte) 0x80;
 
+    /** En el relleno ISO-7816, longitud de la cual debe ser m&uacute;ltiplo el tama&ntilde;o de los datos de salida. */
+    protected int paddingLength = 8;
+
     /** Encapsula una APDU para ser enviada por un canal seguro CWA-14890.
      * El contador SSC se autoincrementa durante la operaci&oacute;n.
      * @param unprotectedApdu APDU desprotegida (en claro)
@@ -50,60 +53,26 @@ abstract class ApduEncrypter {
         final byte[] data = unprotectedApdu.getData();
         final Integer le = unprotectedApdu.getLe();
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // Si hay datos calculamos el TLV con estos datos cifrados
-        byte[] tlvDataBytes = new byte[0];
-        if (data != null && data.length > 0) {
-            baos.write(TLV_VALUE_PREFIX_TO_MAC);
-            final byte[] paddedData = addPadding7816(data);
-            baos.write(
-        		encryptData(paddedData, keyCipher, null, cryptoHelper)
-    		);
-
-            // Sobrescribimos los datos de la APDU inmediatamente despues de cifrarla, para que este
-            // el minimo tiempo en memoria. Como los arrays son mutables con escribir esta copia se
-            // sobreescriben todas las referencias.
-            for (int i=0; i<paddedData.length; i++){
-            	paddedData[i] = (byte) 0x00;
-            }
-            for (int i=0;i<data.length;i++) {
-                data[i] = '\0';
-            }
-
-            tlvDataBytes = new Tlv(TAG_DATA_TLV, baos.toByteArray()).getBytes();
-        }
-
-        // Si hay campo Le calculamos el TLV con ellos
-        byte[] tlvLeBytes = new byte[0];
-        if (le != null) {
-            tlvLeBytes = new Tlv(
-        		TAG_LE_TLV,
-        		new byte[] {
-    				le.byteValue()
-        		}
-    		).getBytes();
-        }
-
-        // Concatenamos los TLV de datos y Le para obtener el cuerpo de la nueva APDU
-        final byte[] completeDataBytes = new byte[tlvDataBytes.length + tlvLeBytes.length];
-        System.arraycopy(tlvDataBytes, 0, completeDataBytes, 0, tlvDataBytes.length);
-        System.arraycopy(tlvLeBytes, 0, completeDataBytes, tlvDataBytes.length, tlvLeBytes.length);
+        final byte[] tlvDataBytes = getDataTlv(
+    		data, keyCipher, sendSequenceCounter, cryptoHelper, this.paddingLength
+		);
+        final byte[] completeDataBytes = getCompleteDataBytes(le, tlvDataBytes);
 
         // Sumamos la CLA al valor indicativo de APDU cifrada
         cla = (byte) (cla | CLA_OF_PROTECTED_APDU);
 
         // Componemos los datos necesario para el calculo del MAC del mensaje
-        baos.reset();
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         baos.write(
     		addPadding7816(
 				new byte[] {
 					cla, ins, p1, p2
-				}
+				},
+				this.paddingLength
 			)
 		);
         baos.write(completeDataBytes);
-        final byte[] encryptedDataPadded = addPadding7816(baos.toByteArray());
+        final byte[] encryptedDataPadded = addPadding7816(baos.toByteArray(), this.paddingLength);
 
         // Calculamos el valor MAC para la autenticacion de los datos
         final byte[] mac = generateMac(
@@ -125,9 +94,10 @@ abstract class ApduEncrypter {
      * Esto es, se agrega un byte <code>0x80</code> al array y se completa con bytes <code>0x00</code> hasta que el
      * array es m&uacute;ltiplo de 8.
      * @param data Datos a los que agregar el relleno.
+     * @param size Longitud de la cual debe ser m&uacute;ltiplo el tama&ntilde;o de los datos de salida.
      * @return Datos con relleno. */
-    protected static byte[] addPadding7816(final byte[] data) {
-        final byte[] paddedData = new byte[(data.length / 8 + 1) * 8];
+    protected static byte[] addPadding7816(final byte[] data, final int size) {
+        final byte[] paddedData = new byte[(data.length / size + 1) * size];
         System.arraycopy(data, 0, paddedData, 0, data.length);
         paddedData[data.length] = ISO7816_PADDING_PREFIX;
         // Machacamos los datos
@@ -175,5 +145,57 @@ abstract class ApduEncrypter {
 			final byte[] kMac,
 			final CryptoHelper cryptoHelper) throws IOException;
 
+    private static void wipeByteArray(final byte[] in) {
+    	if (in != null) {
+    		for (int i=0; i<in.length; i++) {
+    			in[i] = '\0';
+    		}
+    	}
+    }
+
+    private static byte[] getCompleteDataBytes(final Integer le, final byte[] tlvDataBytes) {
+
+        // Si hay campo Le calculamos el TLV con ellos
+        byte[] tlvLeBytes = new byte[0];
+        if (le != null) {
+            tlvLeBytes = new Tlv(
+        		TAG_LE_TLV,
+        		new byte[] {
+    				le.byteValue()
+        		}
+    		).getBytes();
+        }
+
+        // Concatenamos los TLV de datos y Le para obtener el cuerpo de la nueva APDU
+        final byte[] completeDataBytes = new byte[tlvDataBytes.length + tlvLeBytes.length];
+        System.arraycopy(tlvDataBytes, 0, completeDataBytes, 0, tlvDataBytes.length);
+        System.arraycopy(tlvLeBytes, 0, completeDataBytes, tlvDataBytes.length, tlvLeBytes.length);
+
+        return completeDataBytes;
+    }
+
+	private byte[] getDataTlv(final byte[] data,
+			                  final byte[] keyCipher,
+			                  final byte[] sendSequenceCounter,
+			                  final CryptoHelper cryptoHelper,
+			                  final int paddingSize) throws IOException {
+
+		// Si hay datos calculamos el TLV con estos datos cifrados
+		if (data != null && data.length > 0) {
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			baos.write(TLV_VALUE_PREFIX_TO_MAC);
+			final byte[] paddedData = addPadding7816(data, paddingSize);
+			baos.write(encryptData(paddedData, keyCipher, sendSequenceCounter, cryptoHelper));
+
+			// Sobrescribimos los datos de la APDU inmediatamente despues de cifrarla, para que este
+			// el minimo tiempo en memoria. Como los arrays son mutables con escribir esta copia se
+			// sobreescriben todas las referencias.
+			wipeByteArray(paddedData);
+			wipeByteArray(data);
+
+			return new Tlv(TAG_DATA_TLV, baos.toByteArray()).getBytes();
+		}
+		return new byte[0];
+	}
 
 }

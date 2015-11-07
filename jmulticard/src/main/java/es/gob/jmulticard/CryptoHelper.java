@@ -42,6 +42,7 @@ package es.gob.jmulticard;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -234,4 +235,13 @@ public abstract class CryptoHelper {
 	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva el&iacute;ptica indicada. */
 	public abstract KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                          InvalidAlgorithmParameterException;
+
+	/** Realiza un CMAC con AES.
+	 * @param data Datos (deben estar ya con el relleno adecuado).
+	 * @param key Clave AES.
+	 * @return CMAC
+	 * @throws NoSuchAlgorithmException Si no se encuentra un proveedor que permita realizar
+	 *                                  CMAC con AES.
+	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
+	public abstract byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException, InvalidKeyException;
 }
