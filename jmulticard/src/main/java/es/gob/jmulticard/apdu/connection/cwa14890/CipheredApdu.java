@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.apdu.connection.cwa14890;
 
+import java.io.ByteArrayOutputStream;
+
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU cifrada para su env&iacute;o a trav&eacute;s de un canal seguro.
@@ -94,27 +96,24 @@ final class CipheredApdu extends CommandApdu {
        if (data == null || mac == null) {
         	throw new IllegalArgumentException("Ni los datos (TLV) ni el MAC pueden ser nulos"); //$NON-NLS-1$
        }
-       if (mac.length != 4) {
-        	throw new IllegalArgumentException("El MAC debe medir exactamente cuatro octetos"); //$NON-NLS-1$
+       if (!(mac.length != 4 || mac.length != 8)) {
+        	throw new IllegalArgumentException(
+    			"El MAC debe medir cuatro u ocho octetos, y el recibido mide " + mac.length + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
+			);
        }
-
-       final int retLength = data.length + mac.length + 2;
-
-       // Agregamos el TLV de Datos
-       final byte[] ret = new byte[retLength];
-       if (data.length > 0) {
-    	   System.arraycopy(data, 0, ret, 0, data.length);
+       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       try {
+	       baos.write(data);
+	       baos.write(TAG_CRYPTOGRAPHIC_CHECKSUM);
+	       baos.write((byte)mac.length);
+	       baos.write(mac);
        }
-
-       // Agregamos el TLV del CheckSum
-       ret[ret.length-1] = mac[3];
-       ret[ret.length-2] = mac[2];
-       ret[ret.length-3] = mac[1];
-       ret[ret.length-4] = mac[0];
-       ret[ret.length-5] = (byte) 0x04; // Long del Mac
-       ret[ret.length-6] = TAG_CRYPTOGRAPHIC_CHECKSUM;
-
-       return ret;
+       catch(final Exception e) {
+    	   throw new IllegalStateException(
+			   "Error creando la APDU cifrada: " + e //$NON-NLS-1$
+		   );
+       }
+       return baos.toByteArray();
     }
 
     /** {@inheritDoc} */
