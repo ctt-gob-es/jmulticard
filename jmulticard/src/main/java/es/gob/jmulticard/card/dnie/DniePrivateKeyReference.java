@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.card.dnie;
 
+import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
 
@@ -47,7 +48,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class DniePrivateKeyReference implements PrivateKeyReference {
 
-	private final Dnie dnieCard;
+	private final CryptoCard dnieCard;
 	private final byte[] identifier;
 	private final Location keyPath;
 	private final String label;
@@ -57,7 +58,7 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	 * @param id Identificador de la clave.
 	 * @param path Ruta interna de la clave.
 	 * @param lbl Etiqueta de la clave. */
-	public DniePrivateKeyReference(final Dnie card, final byte[] id, final Location path, final String lbl) {
+	public DniePrivateKeyReference(final CryptoCard card, final byte[] id, final Location path, final String lbl) {
 		this.dnieCard = card;
 		this.identifier = id;
 		this.keyPath = path;
@@ -66,7 +67,7 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 
 	/** Recupera el manejador de la tarjeta en la que se almacena la clave.
 	 * @return Manejador de la tarjeta. */
-	public Dnie getDnieCard() {
+	public CryptoCard getDnieCard() {
 		return this.dnieCard;
 	}
 

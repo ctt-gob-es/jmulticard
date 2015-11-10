@@ -139,8 +139,11 @@ abstract class DnieSignatureImpl extends SignatureSpi {
     	}
 
     	final DniePrivateKeyReference dniePkRef = new DniePrivateKeyReference(
-    			(Dnie) this.privateKey.getCryptoCard(), this.privateKey.getId(),
-    			this.privateKey.getPath(), this.privateKey.toString());
+			this.privateKey.getCryptoCard(),
+			this.privateKey.getId(),
+			this.privateKey.getPath(),
+			this.privateKey.toString()
+		);
 
     	try {
             return this.privateKey.getCryptoCard().sign(

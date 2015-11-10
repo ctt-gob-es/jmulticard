@@ -60,7 +60,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente.
  * @author Carlos Gamuci */
-public final class Cwa14890OneConnection implements ApduConnection {
+public class Cwa14890OneConnection implements ApduConnection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
@@ -325,7 +325,7 @@ public final class Cwa14890OneConnection implements ApduConnection {
      * @param randomIfd Aleatorio del desaf&iacute;o del Terminal.
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
-    private static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
+    protected static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
         // El contador de secuencia SSC se obtiene concatenando los 4 bytes menos
         // significativos del desafio de la tarjeta (RND.ICC) con los 4 menos
         // significativos del desafio del Terminal (RND.IFD)

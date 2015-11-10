@@ -72,7 +72,7 @@ import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
 /** Implementaci&oacute;n del SPI KeyStore para DNIe.
@@ -231,7 +231,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 			);
     	}
 
-    	this.cryptoCard = new Dnie(
+    	this.cryptoCard = DnieFactory.getDnie(
 			DnieProvider.getDefaultApduConnection(),
 			null,
 			new JseCryptoHelper()
@@ -257,7 +257,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
-        this.cryptoCard = new Dnie(
+    	this.cryptoCard = DnieFactory.getDnie(
     		conn,
     		password != null ?
 				new CachePasswordCallback(password) :

@@ -45,6 +45,7 @@ import java.math.BigInteger;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -60,7 +61,9 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente.
  * @author Carlos Gamuci */
-public final class Cwa14890OneV2Connection implements ApduConnection {
+public class Cwa14890OneV2Connection implements ApduConnection {
+
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
@@ -86,10 +89,10 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
     /** Conexi&oacute;n subyacente para el env&iacute;o de APDUs. */
     private final ApduConnection subConnection;
 
-    /** Clave TripleDES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
+    /** Clave AES para encriptar y desencriptar criptogramas. */
     private byte[] kenc = null;
 
-    /** Clave TripleDES (TDES o DESEDE) para calcular y verificar checksums. */
+    /** Clave AES para calcular y verificar checksums. */
     private byte[] kmac = null;
 
     /** Contador de secuencia. */
@@ -108,8 +111,8 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
      * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas
      * @param version Variante a usar de la especificaci&oacute;n CWA-14890. */
     public Cwa14890OneV2Connection(final Cwa14890Card card,
-    		                     final ApduConnection connection,
-    		                     final CryptoHelper cryptoHelper) {
+    		                       final ApduConnection connection,
+    		                       final CryptoHelper cryptoHelper) {
 
         if (card == null) {
             throw new IllegalArgumentException(
@@ -135,7 +138,7 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
     public void open() throws ApduConnectionException {
 
         final ApduConnection conn = this.subConnection;
-        if (!(conn instanceof Cwa14890OneV2Connection)) {
+        if (!(conn instanceof Cwa14890OneConnection)) {
         	if (conn.isOpen()) {
         		conn.reset();
         	}
@@ -245,8 +248,8 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
         // Esta fase no pertenece al procedimiento de apertura del canal seguro (ya esta
         // establecido), sino a la obtencion de las claves necesarias para su control. Estas
         // son:
-        // - Kenc: Clave TripleDES (TDES o DESEDE) para encriptar y desencriptar criptogramas.
-        // - Kmac: Clave TripleDES (TDES o DESEDE) para calcular y verificar checksums.
+        // - Kenc: Clave AES para encriptar y desencriptar criptogramas.
+        // - Kmac: Clave AES para calcular y verificar checksums.
         // - SSC: Contador de secuencia.
         // ---------------
 
@@ -279,7 +282,7 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
 
     /** Genera la clave KENC para encriptar y desencriptar criptogramas.
      * @param kidficc XOR de los valores Kifd y Kicc.
-     * @return Clave TripleDES.
+     * @return Clave AES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
         // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash de la
@@ -305,7 +308,7 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
 
     /** Genera la clave KMAC para calcular y verificar checksums.
      * @param kidficc XOR de los valores Kifd y Kicc.
-     * @return Clave TripleDES.
+     * @return Clave AES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
         // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
@@ -325,15 +328,11 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
      * @param randomIfd Aleatorio del desaf&iacute;o del Terminal.
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
-    private static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
-        // El contador de secuencia SSC se obtiene concatenando los 4 bytes menos
-        // significativos del desafio de la tarjeta (RND.ICC) con los 4 menos
-        // significativos del desafio del Terminal (RND.IFD)
-        final byte[] ssc = new byte[8];
-        System.arraycopy(randomIcc, 4, ssc, 0, 4);
-        System.arraycopy(randomIfd, 4, ssc, 4, 4);
-
-        return ssc;
+    protected static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
+        // El contador de secuencia SSC se obtiene concatenando el desafio de la tarjeta (RND.ICC) con
+        // el desafio del Terminal (RND.IFD)
+    	LOGGER.info("Se usara SSC de 16 octetos"); //$NON-NLS-1$
+        return HexUtils.concatenateByteArrays(randomIcc, randomIfd);
     }
 
     /** Lleva a cabo el proceso de autenticaci&oacute;n interna de la tarjeta mediante el
@@ -698,13 +697,13 @@ public final class Cwa14890OneV2Connection implements ApduConnection {
         bi = bi.add(BigInteger.ONE);
 
         final byte[] biArray = bi.toByteArray();
-        if (biArray.length > 8) {
-        	final byte[] incrementedValue = new byte[8];
+        if (biArray.length > 16) {
+        	final byte[] incrementedValue = new byte[16];
         	System.arraycopy(biArray, biArray.length - incrementedValue.length, incrementedValue, 0, incrementedValue.length);
         	return incrementedValue;
         }
-        else if (biArray.length < 8) {
-        	final byte[] incrementedValue = new byte[8];
+        else if (biArray.length < 16) {
+        	final byte[] incrementedValue = new byte[16];
         	System.arraycopy(biArray, 0, incrementedValue, incrementedValue.length - biArray.length, biArray.length);
         	return incrementedValue;
         }

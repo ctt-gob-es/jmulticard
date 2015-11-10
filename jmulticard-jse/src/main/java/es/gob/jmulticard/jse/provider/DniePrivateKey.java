@@ -47,7 +47,6 @@ import java.security.interfaces.RSAPrivateKey;
 
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.Location;
-import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
 /** Clave privada de un DNIe. La clase no contiene la clave privada en si, sino
@@ -58,7 +57,7 @@ public final class DniePrivateKey implements RSAPrivateKey {
 
 	private static final long serialVersionUID = 4403051294889801855L;
 
-	private final Dnie dnie;
+	private final CryptoCard dnie;
 
 	/** Identificador de la clave. */
 	private final byte[] id;
