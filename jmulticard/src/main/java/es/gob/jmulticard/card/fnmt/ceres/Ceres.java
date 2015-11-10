@@ -18,6 +18,7 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.ceres.CeresVerifyApduCommand;
 import es.gob.jmulticard.apdu.ceres.LoadDataApduCommand;
 import es.gob.jmulticard.apdu.ceres.SignDataApduCommand;
@@ -28,6 +29,7 @@ import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.card.Atr;
+import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
@@ -414,8 +416,14 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
             	throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
+            if (new StatusWord((byte)0x69, (byte)0x83).equals(verifyResponse.getStatusWord())) {
+            	throw new AuthenticationModeLockedException();
+            }
             throw new ApduConnectionException(
-        		"Error en el envio de la verificacion de PIN con respuesta: " + verifyResponse.getStatusWord() //$NON-NLS-1$
+        		new Iso7816FourCardException(
+	        		"Error en la verificacion de PIN", //$NON-NLS-1$
+	        		verifyResponse.getStatusWord()
+				)
     		);
         }
 	}

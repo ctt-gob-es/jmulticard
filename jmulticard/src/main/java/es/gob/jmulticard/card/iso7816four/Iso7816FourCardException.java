@@ -82,13 +82,16 @@ public class Iso7816FourCardException extends Exception {
 
     private final StatusWord returnCode;
 
-    Iso7816FourCardException(final String desc, final StatusWord retCode) {
+    /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.
+     * @param desc Descripci&oacute;n de la excepci&oacute;n.
+     * @param retCode Palabra de estado. */
+    public Iso7816FourCardException(final String desc, final StatusWord retCode) {
         super(desc);
         this.returnCode = retCode;
     }
 
     /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.
-     * @param retCode Palabra de estado
+     * @param retCode Palabra de estado.
      * @param origin APDU que gener&oacute; la palabra de estado. */
     public Iso7816FourCardException(final StatusWord retCode, final Apdu origin) {
         super(
@@ -106,7 +109,7 @@ public class Iso7816FourCardException extends Exception {
     }
 
     /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.
-     * @param retCode Palabra de estado
+     * @param retCode Palabra de estado.
      * @param origin APDU que gener&oacute; la palabra de estado.
      * @param desc Descripci&oacute;n de la excepci&oacute;n. */
     public Iso7816FourCardException(final StatusWord retCode, final Apdu origin, final String desc) {
