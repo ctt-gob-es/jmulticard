@@ -45,6 +45,7 @@ import java.awt.Dimension;
 import javax.security.auth.callback.PasswordCallback;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -111,7 +112,9 @@ public class UIPasswordCallback extends PasswordCallback {
                 pwd.requestFocusInWindow();
             }
         };
-        pane.createDialog(this.parent, this.title).setVisible(true);
+        final JDialog dialog = pane.createDialog(this.parent, this.title);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
 
         final Object selectedValue = pane.getValue();
         if (selectedValue == null) {
