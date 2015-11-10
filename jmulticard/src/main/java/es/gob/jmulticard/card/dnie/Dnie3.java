@@ -72,7 +72,7 @@ import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ExternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.InternalAuthenticateApduCommand;
-import es.gob.jmulticard.apdu.iso7816four.MseSetAuthenticationKeyApduCommand;
+import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
@@ -307,7 +307,7 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
     	return this.aliases;
     }
 
-    /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticacion. */
+    /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticaci&oacute;n. */
     private void preloadCertificates() {
         final Cdf cdf = new Cdf();
         try {
@@ -411,11 +411,33 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
         return iccCertEncoded;
     }
 
+    @Override
+	public void setPublicKeyToVerification(final byte[] refPublicKey) throws SecureChannelException,
+	                                                                         ApduConnectionException {
+    	final ResponseApdu res = sendArbitraryApdu(
+			new CommandApdu(
+				(byte)0x00, // CLA
+				(byte)0x22, // INS = MSE
+				(byte)0x81, // P1  = EXTERNAL AUTHENTICATION
+				(byte)0xB6, // P2  = SET
+				new Tlv((byte)0x83, refPublicKey).getBytes(),
+				null
+			)
+		);
+    	if (res.isOk()) {
+    		throw new SecureChannelException(
+				"Error estableciendo la clave publica para verificacion, con respuesta : " + res.getStatusWord() //$NON-NLS-1$
+			);
+    	}
+    }
+
     /** {@inheritDoc} */
     @Override
     public void verifyIfdCertificateChain() throws ApduConnectionException {
 
         // Seleccionamos en la tarjeta la clave publica de la CA raiz del controlador
+    	// (clave publica de la autoridad certificadora raiz de la jerarquia de certificados
+    	// verificable por la tarjeta).
         try {
             this.setPublicKeyToVerification(Dnie3.cwa14890Constants.getRefCCvCaPublicKey());
         }
@@ -431,7 +453,9 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
             this.verifyCertificate(Dnie3.cwa14890Constants.getCCvCa());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error en la verificacion del certificado de la CA intermedia de Terminal: " + e, e); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error en la verificacion del certificado de la CA intermedia de Terminal: " + e, e //$NON-NLS-1$
+    		);
         }
 
         // Seleccionamos a traves de su CHR la clave publica del certificado recien cargado en memoria
@@ -450,7 +474,9 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
             this.verifyCertificate(Dnie3.cwa14890Constants.getCCvIfd());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error en la verificacion del certificado de Terminal: " + e, e); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error en la verificacion del certificado de Terminal: " + e, e //$NON-NLS-1$
+    		);
         }
     }
 
@@ -474,9 +500,37 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
 
     /** {@inheritDoc} */
     @Override
-    public void setKeysToAuthentication(final byte[] refPublicKey, final byte[] refPrivateKey) throws ApduConnectionException {
-        final CommandApdu apdu = new MseSetAuthenticationKeyApduCommand((byte) 0x00, refPublicKey, refPrivateKey);
-        final ResponseApdu res = this.getConnection().transmit(apdu);
+    public void setKeysToAuthentication(final byte[] refPublicKey,
+    		                            final byte[] refPrivateKey) throws ApduConnectionException {
+
+    	final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	try {
+			baos.write(new Tlv((byte)0x84, refPrivateKey).getBytes());
+	    	baos.write(
+    			new Tlv(
+					(byte)0x83,
+					HexUtils.concatenateByteArrays(
+						new byte[] { (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00 },
+						refPublicKey
+					)
+				).getBytes()
+			);
+		}
+    	catch (final Exception e) {
+    		throw new ApduConnectionException(
+				"Error construyendo la APDU de establecimiento de claves de autenticacion: " + e //$NON-NLS-1$
+			);
+		}
+    	final ResponseApdu res = sendArbitraryApdu(
+    		new CommandApdu(
+				getCla(),   // CLA
+				(byte)0x22, // INS = MSE
+				(byte)0xC1, // P1 = EXTERNAL OR INTERNAL AUTH
+				(byte)0xA4, // AUTHENTICATION TEMPLATE
+				baos.toByteArray(),
+				null
+			)
+		);
         if (!res.isOk()) {
             throw new SecureChannelException(
         		"Error durante el establecimiento de las claves publica y privada " + //$NON-NLS-1$

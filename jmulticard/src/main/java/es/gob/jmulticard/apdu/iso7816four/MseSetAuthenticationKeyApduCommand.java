@@ -56,9 +56,12 @@ public final class MseSetAuthenticationKeyApduCommand extends MseSetAuthenticati
      * @param publicKeyFileId Identificador de campo de clave publica (CHR). Se utilizan los 12 bytes,
      *        rellenando con ceros por la izquierda desde los 8 m&iacute;nimos si es necesario
      * @param privateKeyRef Referencia a clave privada */
-    public MseSetAuthenticationKeyApduCommand(final byte cla, final byte[] publicKeyFileId, final byte[] privateKeyRef) {
+    public MseSetAuthenticationKeyApduCommand(final byte cla,
+    		                                  final byte[] publicKeyFileId,
+    		                                  final byte[] privateKeyRef) {
+
         super(cla,                                     // CLA
-              buidData(publicKeyFileId, privateKeyRef) // Data
+        		buidData(publicKeyFileId, privateKeyRef) // Data
         );
     }
 
@@ -66,10 +69,11 @@ public final class MseSetAuthenticationKeyApduCommand extends MseSetAuthenticati
         // Rellenamos el id de la clave hasta completar completar los 12 bytes
         final byte[] publicKeyFileIdCompleted = new byte[12];
         System.arraycopy(publicKeyFileId,
-                         0,
-                         publicKeyFileIdCompleted,
-                         publicKeyFileIdCompleted.length - publicKeyFileId.length,
-                         publicKeyFileId.length);
+             0,
+             publicKeyFileIdCompleted,
+             publicKeyFileIdCompleted.length - publicKeyFileId.length,
+             publicKeyFileId.length
+         );
         for (int i = 0; i < publicKeyFileIdCompleted.length - publicKeyFileId.length; i++) {
             publicKeyFileIdCompleted[i] = (byte) 0x00;
         }
