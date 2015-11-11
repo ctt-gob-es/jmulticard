@@ -62,6 +62,11 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Carlos Gamuci */
 public class Cwa14890OneConnection implements ApduConnection {
 
+	private static final int SHA1_LENGTH = 20;
+	private static final int KICC_LENGTH = 32;
+	private static final byte ISO_9796_2_PADDING_START = (byte) 0x6a;
+	private static final byte ISO_9796_2_PADDING_END = (byte) 0xbc;
+
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
 	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
@@ -69,12 +74,12 @@ public class Cwa14890OneConnection implements ApduConnection {
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kenc del canal seguro. */
     private static final byte[] SECURE_CHANNEL_KENC_AUX = new byte[] {
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
+        (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
     };
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kmac del canal seguro. */
     private static final byte[] SECURE_CHANNEL_KMAC_AUX = new byte[] {
-            (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
+        (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
     };
 
     /** Helper para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
@@ -370,8 +375,8 @@ public class Cwa14890OneConnection implements ApduConnection {
         // - Y que se ha cifrado con la clave publica del Terminal
         // Para obtener el mensaje original deberemos deshacer cada una de estas operaciones en
         // sentido inverso.
-        // El resultado sera correcto si empieza por el byte 0x6a (ISO 9796-2, DS scheme 1) y
-        // termina con el byte 0xbc (ISO-9796-2, Option 1).
+        // El resultado sera correcto si empieza por el byte 0x6a [ISO_9796_2_PADDING_START] (ISO 9796-2, DS scheme 1) y
+        // termina con el byte 0xbc [ISO_9796_2_PADDING_END] (ISO-9796-2, Option 1).
 
         // -- Descifrado con la clave privada del Terminal
         final byte[] sigMin = this.cryptoHelper.rsaDecrypt(sigMinCiphered, this.card.getIfdPrivateKey());
@@ -385,12 +390,12 @@ public class Cwa14890OneConnection implements ApduConnection {
         final byte[] sig = sigMin;
         byte[] desMsg = this.cryptoHelper.rsaEncrypt(sig, iccPublicKey);
 
-        // Si el resultado no empieza por 0x6a y termina por 0xbc (Valores definidos en la ISO 9796-2),
-        // se considera que es erroneo y deberemos probar la segunda opcion. Esto es, calcular N.ICC-SIG
-        // y volver a descifrar con la clave publica del certificado de componente
+        // Si el resultado no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina por 0xbc [ISO_9796_2_PADDING_END]
+        // (Valores definidos en la ISO 9796-2), se considera que es erroneo y deberemos probar la segunda opcion.
+        // Esto es, calcular N.ICC-SIG y volver a descifrar con la clave publica del certificado de componente
 
-        // Comprobamos que empiece por 0x6a y termine con 0xbc
-        if (desMsg[0] != (byte) 0x6a || desMsg[desMsg.length - 1] != (byte) 0xbc) {
+        // Comprobamos que empiece por 0x6a [ISO_9796_2_PADDING_START] y termine con 0xbc [ISO_9796_2_PADDING_END]
+        if (desMsg[0] != ISO_9796_2_PADDING_START || desMsg[desMsg.length - 1] != ISO_9796_2_PADDING_END) {
 
             // Calculamos N.ICC-SIG
             final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(sigMin)).toByteArray();
@@ -406,9 +411,9 @@ public class Cwa14890OneConnection implements ApduConnection {
             // Desciframos el mensaje con N.ICC-SIG
             desMsg = this.cryptoHelper.rsaEncrypt(niccMinusSig, iccPublicKey);
 
-            // Si en esta ocasion no empieza por 0x6a y termina con 0xbc, la autenticacion interna
-            // habra fallado
-            if (desMsg[0] != (byte) 0x6a || desMsg[desMsg.length - 1] != (byte) 0xbc) {
+            // Si en esta ocasion no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina con 0xbc [ISO_9796_2_PADDING_END],
+            // la autenticacion interna habra fallado
+            if (desMsg[0] != ISO_9796_2_PADDING_START || desMsg[desMsg.length - 1] != ISO_9796_2_PADDING_END) {
                 throw new SecureChannelException(
             		"Error en la autenticacion interna para el establecimiento del canal seguro. " + //$NON-NLS-1$
                     "El mensaje descifrado es:\n" + HexUtils.hexify(desMsg, true) //$NON-NLS-1$
@@ -419,16 +424,16 @@ public class Cwa14890OneConnection implements ApduConnection {
         // -- Descomponemos el resultado anterior en sus partes:
         // Byte 0: Relleno segun ISO 9796-2 (DS scheme 1)
         // Bytes 1-74: [PRND1] Bytes de relleno aleatorios para completar la longitud de la clave RSA
-        // Bytes 75-107: [Kicc] Semilla de 32 bytes generada por la targeta para la derivacion de claves
+        // Bytes 75-107: [Kicc] Semilla de 32 (KICC_LENGTH) bytes generada por la targeta para la derivacion de claves
         // Bytes 108-128: [h: PRND1||Kicc||RND.IFD||SN.IFD] Hash SHA1
         // Byte 129: Relleno segun ISO-9796-2 (option 1)
         final byte[] prnd1 = new byte[74];
         System.arraycopy(desMsg, 1, prnd1, 0, prnd1.length);
 
-        final byte[] kicc = new byte[32];
+        final byte[] kicc = new byte[KICC_LENGTH];
         System.arraycopy(desMsg, 75, kicc, 0, kicc.length);
 
-        final byte[] hash = new byte[20];
+        final byte[] hash = new byte[SHA1_LENGTH];
         System.arraycopy(desMsg, 107, hash, 0, hash.length);
 
         // -- Calculamos el hash para la comprobacion de la autenticacion, si coincide con el hash
@@ -513,17 +518,17 @@ public class Cwa14890OneConnection implements ApduConnection {
         final byte[] hash = this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, baos.toByteArray());
 
         // Construimos el mensaje para el desafio a la tarjeta. Este estara compuesto por:
-        // Byte 0: 0x6a - Relleno segun ISO 9796-2 (DS scheme 1)
+        // Byte 0: 0x6a [ISO_9796_2_PADDING_START] - Relleno segun ISO 9796-2 (DS scheme 1)
         // Bytes 1-74: [PRND2] Bytes de relleno aleatorios para completar la longitud de la clave RSA
         // Bytes 75-107: [Kifd] Semilla de 32 bytes generada por la targeta para la derivacion de claves
         // Bytes 108-128: [h: PRND2||Kifd||RND.ICC||SN.ICC] Hash SHA1
-        // Byte 129: 0xbc - Relleno segun ISO-9796-2 (option 1)
+        // Byte 129: 0xbc [ISO_9796_2_PADDING_END] - Relleno segun ISO-9796-2 (option 1)
         baos.reset();
-        baos.write((byte) 0x6a);
+        baos.write(ISO_9796_2_PADDING_START);
         baos.write(prnd2);
         baos.write(kifd);
         baos.write(hash);
-        baos.write((byte) 0xbc);
+        baos.write(ISO_9796_2_PADDING_END);
 
         final byte[] msg = baos.toByteArray();
         final RSAPrivateKey ifdPrivateKey = this.card.getIfdPrivateKey();

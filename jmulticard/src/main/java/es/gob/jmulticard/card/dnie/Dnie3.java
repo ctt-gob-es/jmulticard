@@ -424,7 +424,7 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
 				null
 			)
 		);
-    	if (res.isOk()) {
+    	if (!res.isOk()) {
     		throw new SecureChannelException(
 				"Error estableciendo la clave publica para verificacion, con respuesta : " + res.getStatusWord() //$NON-NLS-1$
 			);
