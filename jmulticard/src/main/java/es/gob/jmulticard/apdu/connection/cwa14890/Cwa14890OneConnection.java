@@ -64,6 +64,7 @@ public class Cwa14890OneConnection implements ApduConnection {
 
 	private static final int SHA1_LENGTH = 20;
 	private static final int KICC_LENGTH = 32;
+	private static final int KIFD_LENGTH = 32;
 	private static final byte ISO_9796_2_PADDING_START = (byte) 0x6a;
 	private static final byte ISO_9796_2_PADDING_END = (byte) 0xbc;
 
@@ -91,10 +92,10 @@ public class Cwa14890OneConnection implements ApduConnection {
     /** Conexi&oacute;n subyacente para el env&iacute;o de APDUs. */
     private final ApduConnection subConnection;
 
-    /** Clave TripleDES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
+    /** Clave Triple DES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
     private byte[] kenc = null;
 
-    /** Clave TripleDES (TDES o DESEDE) para calcular y verificar checksums. */
+    /** Clave Triple DES (TDES o DESEDE) para calcular y verificar checksums. */
     private byte[] kmac = null;
 
     /** Contador de secuencia. */
@@ -209,7 +210,9 @@ public class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final Exception e) {
             conn.close();
-            throw new ApduConnectionException("Error al verificar la cadena de certificados del controlador", e); //$NON-NLS-1$
+            throw new ApduConnectionException(
+        		"Error al verificar la cadena de certificados del controlador: " + e, e //$NON-NLS-1$
+    		);
         }
 
         // --- STAGE 3 ---
@@ -221,7 +224,9 @@ public class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final IOException e1) {
             conn.close();
-            throw new SecureChannelException("No se pudo generar el array de aleatorios", e1); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"No se pudo generar el array de aleatorios: " + e1, e1 //$NON-NLS-1$
+    		);
         }
 
         final byte[] kicc;
@@ -230,7 +235,9 @@ public class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final Exception e) {
             conn.close();
-            throw new ApduConnectionException("Error durante el proceso de autenticacion interna de la tarjeta: " + e, e); //$NON-NLS-1$
+            throw new ApduConnectionException(
+        		"Error durante el proceso de autenticacion interna de la tarjeta: " + e, e //$NON-NLS-1$
+    		);
         }
 
         // --- STAGE 4 ---
@@ -243,7 +250,9 @@ public class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final Exception e) {
             conn.close();
-            throw new ApduConnectionException("Error durante el proceso de autenticacion externa de la tarjeta", e); //$NON-NLS-1$
+            throw new ApduConnectionException(
+        		"Error durante el proceso de autenticacion externa de la tarjeta", e //$NON-NLS-1$
+    		);
         }
 
         // --- STAGE 5 ---
@@ -291,7 +300,13 @@ public class Cwa14890OneConnection implements ApduConnection {
         // concatenacion de kifdicc con el valor "00 00 00 01".
         final byte[] kidficcConcat = new byte[kidficc.length + SECURE_CHANNEL_KENC_AUX.length];
         System.arraycopy(kidficc, 0, kidficcConcat, 0, kidficc.length);
-        System.arraycopy(SECURE_CHANNEL_KENC_AUX, 0, kidficcConcat, kidficc.length, SECURE_CHANNEL_KENC_AUX.length);
+        System.arraycopy(
+    		SECURE_CHANNEL_KENC_AUX, 
+    		0, 
+    		kidficcConcat, 
+    		kidficc.length, 
+    		SECURE_CHANNEL_KENC_AUX.length
+		);
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
@@ -317,10 +332,22 @@ public class Cwa14890OneConnection implements ApduConnection {
         // del hash de la concatenacion de kifdicc con el valor "00 00 00 02".
         final byte[] kidficcConcat = new byte[kidficc.length + SECURE_CHANNEL_KMAC_AUX.length];
         System.arraycopy(kidficc, 0, kidficcConcat, 0, kidficc.length);
-        System.arraycopy(SECURE_CHANNEL_KMAC_AUX, 0, kidficcConcat, kidficc.length, SECURE_CHANNEL_KMAC_AUX.length);
+        System.arraycopy(
+    		SECURE_CHANNEL_KMAC_AUX, 
+    		0, 
+    		kidficcConcat, 
+    		kidficc.length, 
+    		SECURE_CHANNEL_KMAC_AUX.length
+		);
 
         final byte[] keyMac = new byte[16];
-        System.arraycopy(this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, kidficcConcat), 0, keyMac, 0, keyMac.length);
+        System.arraycopy(
+    		this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, kidficcConcat), 
+    		0, 
+    		keyMac, 
+    		0, 
+    		keyMac.length
+		);
 
         return keyMac;
     }
@@ -345,12 +372,13 @@ public class Cwa14890OneConnection implements ApduConnection {
      * cual el controlador comprueba la tarjeta.
      * @param randomIfd Array de 8 bytes aleatorios.
      * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
-     * @return Semilla de 32 bits, generada por la tarjeta, para la derivaci&oacute;n de
+     * @return Semilla de 32 [KICC_LENGTH] bits, generada por la tarjeta, para la derivaci&oacute;n de
      *         claves del canal seguro.
      * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
-    public byte[] internalAuthentication(final byte[] randomIfd, final RSAPublicKey iccPublicKey) throws SecureChannelException,
+    public byte[] internalAuthentication(final byte[] randomIfd, 
+    		                             final RSAPublicKey iccPublicKey) throws SecureChannelException,
                                                                                                          ApduConnectionException,
                                                                                                          IOException {
         // Seleccionamos la clave publica del certificado de Terminal a la vez
@@ -367,7 +395,10 @@ public class Cwa14890OneConnection implements ApduConnection {
         }
 
         // Iniciamos la autenticacion interna de la clave privada del certificado de componente
-        final byte[] sigMinCiphered = this.card.getInternalAuthenticateMessage(randomIfd, this.card.getChrCCvIfd());
+        final byte[] sigMinCiphered = this.card.getInternalAuthenticateMessage(
+    		randomIfd, 
+    		this.card.getChrCCvIfd()
+		);
 
         // Esta respuesta de la tarjeta es un mensaje:
         // - Cifrado con la clave privada de componente de la tarjeta
@@ -379,10 +410,13 @@ public class Cwa14890OneConnection implements ApduConnection {
         // termina con el byte 0xbc [ISO_9796_2_PADDING_END] (ISO-9796-2, Option 1).
 
         // -- Descifrado con la clave privada del Terminal
-        final byte[] sigMin = this.cryptoHelper.rsaDecrypt(sigMinCiphered, this.card.getIfdPrivateKey());
+        final byte[] sigMin = this.cryptoHelper.rsaDecrypt(
+    		sigMinCiphered, 
+    		this.card.getIfdPrivateKey()
+		);
 
         // Este resultado es el resultado de la funcion SIGMIN que es minimo de SIG (los
-        // datos sobre los que se ejecutaron la funcion) y N.ICC-SIG.
+        // datos sobre los que se ejecuto la funcion) y N.ICC-SIG.
         // Debemos averiguar cual de los dos es. Empezamos por comprobar si es SIG con lo que no
         // habra que deshacer la funcion y podemos descifrar directamente con la clave publica del
         // certificado de componente de la tarjeta.
@@ -390,18 +424,20 @@ public class Cwa14890OneConnection implements ApduConnection {
         final byte[] sig = sigMin;
         byte[] desMsg = this.cryptoHelper.rsaEncrypt(sig, iccPublicKey);
 
-        // Si el resultado no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina por 0xbc [ISO_9796_2_PADDING_END]
-        // (Valores definidos en la ISO 9796-2), se considera que es erroneo y deberemos probar la segunda opcion.
-        // Esto es, calcular N.ICC-SIG y volver a descifrar con la clave publica del certificado de componente
+        // Si el resultado no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina por 
+        // 0xbc [ISO_9796_2_PADDING_END] (Valores definidos en la ISO 9796-2), se considera que
+        // es erroneo y deberemos probar la segunda opcion.
+        // Esto es, calcular N.ICC-SIG y volver a descifrar con la clave publica del 
+        // certificado de componente
 
         // Comprobamos que empiece por 0x6a [ISO_9796_2_PADDING_START] y termine con 0xbc [ISO_9796_2_PADDING_END]
         if (desMsg[0] != ISO_9796_2_PADDING_START || desMsg[desMsg.length - 1] != ISO_9796_2_PADDING_END) {
 
             // Calculamos N.ICC-SIG
             final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(sigMin)).toByteArray();
-            final byte[] niccMinusSig = new byte[128];
+            final byte[] niccMinusSig = new byte[this.card.getIfdKeyLength()];
             // Ignoramos los ceros de la izquierda
-            if (sub.length > 128 && sub[0] == (byte) 0x00) {
+            if (sub.length > this.card.getIfdKeyLength() && sub[0] == (byte) 0x00) {
                 System.arraycopy(sub, 1, niccMinusSig, 0, sub.length - 1);
             }
             else {
@@ -423,18 +459,36 @@ public class Cwa14890OneConnection implements ApduConnection {
 
         // -- Descomponemos el resultado anterior en sus partes:
         // Byte 0: Relleno segun ISO 9796-2 (DS scheme 1)
-        // Bytes 1-74: [PRND1] Bytes de relleno aleatorios para completar la longitud de la clave RSA
-        // Bytes 75-107: [Kicc] Semilla de 32 (KICC_LENGTH) bytes generada por la targeta para la derivacion de claves
-        // Bytes 108-128: [h: PRND1||Kicc||RND.IFD||SN.IFD] Hash SHA1
-        // Byte 129: Relleno segun ISO-9796-2 (option 1)
-        final byte[] prnd1 = new byte[74];
-        System.arraycopy(desMsg, 1, prnd1, 0, prnd1.length);
+        // Bytes [PRND1] Bytes de relleno aleatorios para completar la longitud de la clave RSA
+        // Bytes [Kicc] Semilla de 32 [KICC_LENGTH] bytes generada por la tarjeta para la derivacion de claves
+        // Bytes [h: PRND1||Kicc||RND.IFD||SN.IFD] Hash SHA1
+        // Ultimo Byte: Relleno segun ISO-9796-2 (option 1)
+        final byte[] prnd1 = new byte[this.card.getIfdKeyLength() - KICC_LENGTH - SHA1_LENGTH - 2];
+        System.arraycopy(
+    		desMsg, 
+    		1, 
+    		prnd1, 
+    		0, 
+    		prnd1.length
+		);
 
         final byte[] kicc = new byte[KICC_LENGTH];
-        System.arraycopy(desMsg, 75, kicc, 0, kicc.length);
+        System.arraycopy(
+    		desMsg, 
+    		prnd1.length + 1, 
+    		kicc, 
+    		0, 
+    		kicc.length
+		);
 
         final byte[] hash = new byte[SHA1_LENGTH];
-        System.arraycopy(desMsg, 107, hash, 0, hash.length);
+        System.arraycopy(
+    		desMsg, 
+    		prnd1.length + kicc.length + 1, 
+    		hash, 
+    		0, 
+    		hash.length
+		);
 
         // -- Calculamos el hash para la comprobacion de la autenticacion, si coincide con el hash
         // extraido en el paso anterior, se confirma que se ha realizado correctamente
@@ -450,12 +504,15 @@ public class Cwa14890OneConnection implements ApduConnection {
         baos.write(randomIfd);
         baos.write(this.card.getChrCCvIfd());
 
-        final byte[] calculatedHash = this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, baos.toByteArray());
+        final byte[] calculatedHash = this.cryptoHelper.digest(
+    		CryptoHelper.DigestAlgorithm.SHA1, 
+    		baos.toByteArray()
+		);
         if (!HexUtils.arrayEquals(hash, calculatedHash)) {
             throw new SecureChannelException(
         		"Error en la comprobacion de la clave de autenticacion interna. Se obtuvo el hash '" + //$NON-NLS-1$
                      HexUtils.hexify(calculatedHash, false)
-                         + "' cuando se esperaba:" + HexUtils.hexify(hash, false) //$NON-NLS-1$
+                         + "' cuando se esperaba: '" + HexUtils.hexify(hash, false) + "'" //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
 
@@ -467,7 +524,7 @@ public class Cwa14890OneConnection implements ApduConnection {
      * @param serial Numero de serie de la tarjeta.
      * @param randomIcc Array de 8 bytes aleatorios generados por la tarjeta.
      * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
-     * @return Semilla de 32 bytes, generada por el Terminal, para la derivacion de claves del
+     * @return Semilla de 32 [KIFD_LENGTH] bytes, generada por el Terminal, para la derivacion de claves del
      *         canal seguro.
      * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error en el establecimiento de claves.
      * @throws es.gob.jmulticard.apdu.connection.ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
@@ -491,8 +548,8 @@ public class Cwa14890OneConnection implements ApduConnection {
         // PRND2 ="XX ... XX" bytes de relleno aleatorios generados por el terminal. La longitud
         // debe ser la necesaria para que la longitud desde "6A" hasta "BC" coincida con
         // la longitud de la clave RSA
-        // KIFD = Semilla de 32 bytes, generada por el terminal, para la derivacion de claves del
-        // canal seguro.
+        // KIFD = Semilla de 32 [KIFD_LENGTH] bytes, generada por el terminal, para la derivacion 
+    	// de claves del canal seguro.
         // h[PRND2 || KIFD || RND.ICC || SN.ICC ] = hash SHA1 que incluye los datos aportados por
         // la tarjeta y por el terminal
         // "BC" = relleno segun ISO 9796-2 (option 1)
@@ -500,8 +557,10 @@ public class Cwa14890OneConnection implements ApduConnection {
         // ----------------------
 
         // Generamos PRN2 y Kifd como valores aleatorios de la longitud apropiada
-        final byte[] prnd2 = this.cryptoHelper.generateRandomBytes(74);
-        final byte[] kifd = this.cryptoHelper.generateRandomBytes(32);
+        final byte[] prnd2 = this.cryptoHelper.generateRandomBytes(
+    		this.card.getIfdKeyLength() - 2 - KIFD_LENGTH - SHA1_LENGTH
+		);
+        final byte[] kifd = this.cryptoHelper.generateRandomBytes(KIFD_LENGTH);
 
         // Calculamos el hash que incorporaremos al mensaje a partir de los siguientes
         // datos concatenados:
@@ -515,14 +574,17 @@ public class Cwa14890OneConnection implements ApduConnection {
         baos.write(randomIcc);
         baos.write(serial);
 
-        final byte[] hash = this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, baos.toByteArray());
+        final byte[] hash = this.cryptoHelper.digest(
+    		CryptoHelper.DigestAlgorithm.SHA1, 
+    		baos.toByteArray()
+		);
 
         // Construimos el mensaje para el desafio a la tarjeta. Este estara compuesto por:
         // Byte 0: 0x6a [ISO_9796_2_PADDING_START] - Relleno segun ISO 9796-2 (DS scheme 1)
-        // Bytes 1-74: [PRND2] Bytes de relleno aleatorios para completar la longitud de la clave RSA
-        // Bytes 75-107: [Kifd] Semilla de 32 bytes generada por la targeta para la derivacion de claves
-        // Bytes 108-128: [h: PRND2||Kifd||RND.ICC||SN.ICC] Hash SHA1
-        // Byte 129: 0xbc [ISO_9796_2_PADDING_END] - Relleno segun ISO-9796-2 (option 1)
+        // Bytes [PRND2] Bytes de relleno aleatorios para completar la longitud de la clave RSA
+        // Bytes [Kifd] Semilla de 32 [KICC_LENGTH] bytes generada por la tarjeta para la derivacion de claves
+        // Bytes [h: PRND2||Kifd||RND.ICC||SN.ICC] Hash SHA1
+        // Ultimo Byte: 0xbc [ISO_9796_2_PADDING_END] - Relleno segun ISO-9796-2 (option 1)
         baos.reset();
         baos.write(ISO_9796_2_PADDING_START);
         baos.write(prnd2);
@@ -638,7 +700,7 @@ public class Cwa14890OneConnection implements ApduConnection {
         }
         catch (final Exception e) {
             throw new ApduConnectionException(
-        		"Error en la desencriptacion de la APDU de respuesta recibida por el canal seguro", e //$NON-NLS-1$
+        		"Error en la desencriptacion de la APDU de respuesta recibida por el canal seguro: " + e, e //$NON-NLS-1$
             );
 		}
     }
@@ -705,12 +767,24 @@ public class Cwa14890OneConnection implements ApduConnection {
         final byte[] biArray = bi.toByteArray();
         if (biArray.length > 8) {
         	final byte[] incrementedValue = new byte[8];
-        	System.arraycopy(biArray, biArray.length - incrementedValue.length, incrementedValue, 0, incrementedValue.length);
+        	System.arraycopy(
+    			biArray, 
+    			biArray.length - incrementedValue.length, 
+    			incrementedValue, 
+    			0, 
+    			incrementedValue.length
+			);
         	return incrementedValue;
         }
         else if (biArray.length < 8) {
         	final byte[] incrementedValue = new byte[8];
-        	System.arraycopy(biArray, 0, incrementedValue, incrementedValue.length - biArray.length, biArray.length);
+        	System.arraycopy(
+    			biArray, 
+    			0, 
+    			incrementedValue, 
+    			incrementedValue.length - biArray.length, 
+    			biArray.length
+			);
         	return incrementedValue;
         }
         return biArray;

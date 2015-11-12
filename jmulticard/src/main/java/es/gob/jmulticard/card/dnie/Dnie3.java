@@ -709,20 +709,11 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
             if (!(this.getConnection() instanceof Cwa14890OneConnection)) {
             	final ApduConnection secureConnection;
-            	if (cwa14890Constants instanceof Dnie3Cwa14890Constants) {
-            		secureConnection = new Cwa14890OneV2Connection(
-	            		this,
-	            		this.getConnection(),
-	            		this.cryptoHelper
-            		);
-            	}
-            	else {
-        		secureConnection = new Cwa14890OneConnection(
+        		secureConnection = new Cwa14890OneV2Connection(
             		this,
             		this.getConnection(),
             		this.cryptoHelper
         		);
-            	}
                 try {
                     this.setConnection(secureConnection);
                 }
@@ -908,4 +899,9 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
             }
         }
     }
+
+	@Override
+	public int getIfdKeyLength() {
+		return cwa14890Constants.getIfdKeyLength();
+	}
 }

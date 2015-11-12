@@ -322,4 +322,9 @@ final class TifCwa14890Constants implements Cwa14890Constants {
 	public PublicKey getCaComponentPublicKey() {
 		return CA_COMPONENT_PUBLIC_KEY;
 	}
+
+	@Override
+	public int getIfdKeyLength() {
+		return 128;
+	}
 }

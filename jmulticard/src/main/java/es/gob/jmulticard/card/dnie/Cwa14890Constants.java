@@ -82,8 +82,14 @@ interface Cwa14890Constants {
      * @return Clave privada del certificado de Terminal. */
     RSAPrivateKey getIfdPrivateKey();
 
-    /** Obtiene la clave p&uacute;blica del certificado de componente de la tarjeta.
-     * @return Clave p&uacute;blica del certificado de componente de la tarjeta. */
+    /** Obtiene la clave p&uacute;blica del certificado de componente del terminal.
+     * @return Clave p&uacute;blica del certificado de componente del terminal. */
     PublicKey getCaComponentPublicKey();
+
+    /** Obtiene la longitud, <u>en octetos</u>, de las claves RSA del certificado de
+     * comnponente del terminal.
+     * @return Longitud, <u>en octetos</u>, de las claves RSA del certificado de
+     *         comnponente del terminal. */
+    int getIfdKeyLength();
 
 }

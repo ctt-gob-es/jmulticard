@@ -184,8 +184,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
      * @throws InvalidCardException Si la tarjeta no es un DNIe.
      * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta. */
     public static void connect(final ApduConnection conn) throws BurnedDnieCardException,
-                                                           InvalidCardException,
-                                                           ApduConnectionException {
+                                                                 InvalidCardException,
+                                                                 ApduConnectionException {
     	if (!conn.isOpen()) {
     		conn.open();
     	}
@@ -202,8 +202,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     	 final PasswordCallback pwc,
     	 final CryptoHelper cryptoHelper,
     	 final boolean isTif) throws ApduConnectionException,
-                                                 InvalidCardException,
-                                                 BurnedDnieCardException {
+                                     InvalidCardException,
+                                     BurnedDnieCardException {
         super((byte) 0x00, conn);
         conn.reset();
         connect(conn);
@@ -315,7 +315,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
     	return this.aliases;
     }
 
-    /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticacion. */
+    /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticaci&oacute;n. */
     private void preloadCertificates() {
         final Cdf cdf = new Cdf();
         try {
@@ -439,7 +439,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             this.verifyCertificate(this.cwa14890Constants.getCCvCa());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error en la verificacion del certificado de la CA intermedia de Terminal: " + e, e); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error en la verificacion del certificado de la CA intermedia de Terminal: " + e, e //$NON-NLS-1$
+    		);
         }
 
         // Seleccionamos a traves de su CHR la clave publica del certificado recien cargado en memoria
@@ -458,7 +460,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             this.verifyCertificate(this.cwa14890Constants.getCCvIfd());
         }
         catch (final SecureChannelException e) {
-            throw new SecureChannelException("Error en la verificacion del certificado de Terminal: " + e, e); //$NON-NLS-1$
+            throw new SecureChannelException(
+        		"Error en la verificacion del certificado de Terminal: " + e, e //$NON-NLS-1$
+    		);
         }
     }
 
@@ -482,7 +486,8 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     /** {@inheritDoc} */
     @Override
-    public void setKeysToAuthentication(final byte[] refPublicKey, final byte[] refPrivateKey) throws ApduConnectionException {
+    public void setKeysToAuthentication(final byte[] refPublicKey, 
+    		                            final byte[] refPrivateKey) throws ApduConnectionException {
         final CommandApdu apdu = new MseSetAuthenticationKeyApduCommand((byte) 0x00, refPublicKey, refPrivateKey);
         final ResponseApdu res = this.getConnection().transmit(apdu);
         if (!res.isOk()) {
@@ -663,20 +668,11 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
             if (!(this.getConnection() instanceof Cwa14890OneConnection)) {
             	final ApduConnection secureConnection;
-            	if (this.cwa14890Constants instanceof Dnie3Cwa14890Constants) {
-            		secureConnection = new Cwa14890OneV2Connection(
-	            		this,
-	            		this.getConnection(),
-	            		this.cryptoHelper
-            		);
-            	}
-            	else {
         		secureConnection = new Cwa14890OneConnection(
             		this,
             		this.getConnection(),
             		this.cryptoHelper
         		);
-            	}
                 try {
                     this.setConnection(secureConnection);
                 }
@@ -862,4 +858,9 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
             }
         }
     }
+
+	@Override
+	public int getIfdKeyLength() {
+		return this.cwa14890Constants.getIfdKeyLength();
+	}
 }
