@@ -155,7 +155,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		throw new BadPasswordProviderException(e);
     	}
     	catch (final Exception e) {
-    		Logger.getLogger("es.gob.jmulticard").warning("No se ha podido cargar el certificado de la CA intermedia"); //$NON-NLS-1$ //$NON-NLS-2$
+    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				"No se ha podido cargar el certificado de la CA intermedia" //$NON-NLS-1$
+			);
     		intermediateCaCert = null;
 		}
 
@@ -178,14 +180,17 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** {@inheritDoc} */
     @Override
-    public Key engineGetKey(final String alias, final char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException {
+    public Key engineGetKey(final String alias, final char[] password) throws NoSuchAlgorithmException,
+                                                                              UnrecoverableKeyException {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
         try {
         	final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
         	if (!(pkRef instanceof DniePrivateKeyReference)) {
-        		throw new ProviderException("La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName()); //$NON-NLS-1$
+        		throw new ProviderException(
+    				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName() //$NON-NLS-1$
+				);
         	}
         	return new DniePrivateKey((DniePrivateKeyReference) pkRef);
 		}
@@ -198,10 +203,12 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     @Override
     public KeyStore.Entry engineGetEntry(final String alias,
     		                             final ProtectionParameter protParam) throws KeyStoreException,
-    		                                                                                  NoSuchAlgorithmException,
-    		                                                                                  UnrecoverableEntryException {
+    		                                                                         NoSuchAlgorithmException,
+    		                                                                         UnrecoverableEntryException {
     	if (protParam != null) {
-    		Logger.getLogger("es.gob.jmulticard").warning("Se ha proporcionado un ProtectionParameter, pero este se ignorara, ya que el PIN se gestiona internamente"); //$NON-NLS-1$ //$NON-NLS-2$
+    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				"Se ha proporcionado un ProtectionParameter, pero este se ignorara, ya que el PIN se gestiona internamente" //$NON-NLS-1$
+			);
     	}
     	if (!engineContainsAlias(alias)) {
     		return null;

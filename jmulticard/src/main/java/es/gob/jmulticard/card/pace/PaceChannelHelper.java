@@ -148,7 +148,7 @@ public final class PaceChannelHelper {
 
 		// 1.3.4 - Segundo comando General Autenticate - Map Nonce
 
-		// Generamos un par de claves EC para el DH
+		// Generamos un par de claves efimeras EC para el DH
 		final KeyPair kpIfdDh1;
 		try {
 			kpIfdDh1 = cryptoHelper.generateEcKeyPair(EcCurve.BRAINPOOL_P256_R1);
