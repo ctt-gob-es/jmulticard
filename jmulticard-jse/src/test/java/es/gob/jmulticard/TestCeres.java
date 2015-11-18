@@ -16,7 +16,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestCeres {
 
-	private static final String PIN = "ñapa"; //$NON-NLS-1$
+	private static final String PIN = "\u00F1apa"; //$NON-NLS-1$
 
 	final static class CachePasswordCallback extends PasswordCallback {
 
