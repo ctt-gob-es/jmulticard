@@ -55,6 +55,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         (byte) 0x54, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_TC);
 
+
 	private static final byte[] ATR_MASK_ST = new byte[] {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
@@ -64,6 +65,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         (byte) 0x45, (byte) 0x53, (byte) 0x02, (byte) 0x2c, (byte) 0x34, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_ST);
 
+
 	private static final byte[] ATR_MASK_SLE_FN20 = new byte[] {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
@@ -72,6 +74,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         (byte) 0x3B, (byte) 0xeF, (byte) 0x00, (byte) 0x00, (byte) 0x40, (byte) 0x14, (byte) 0x80, (byte) 0x25, (byte) 0x43, (byte) 0x45,
         (byte) 0x52, (byte) 0x45, (byte) 0x53, (byte) 0x57, (byte) 0x05, (byte) 0x60, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_SLE_FN20);
+
 
 	private static final byte[] ATR_MASK_SLE_FN19 = new byte[] {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
@@ -193,7 +196,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         this.aliasByCertAndKeyId = new LinkedHashMap<String, String>(cdf.getCertificateCount());
 
         for (int i=0; i<cdf.getCertificateCount(); i++) {
-        	final Location l = new Location(cdf.getCertificatePath(i).replace("\\", "").trim()); //$NON-NLS-1$ //$NON-NLS-2$
+        	final Location l = new Location(
+    			cdf.getCertificatePath(i).replace("\\", "").trim() //$NON-NLS-1$ //$NON-NLS-2$
+			);
         	final X509Certificate cert = (X509Certificate) cf.generateCertificate(
     			new ByteArrayInputStream(
 					deflate(

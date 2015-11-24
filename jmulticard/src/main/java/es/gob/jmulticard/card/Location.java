@@ -62,7 +62,7 @@ public final class Location {
         final String hex[] = {
     		"a", "b", "c", "d", "e", "f" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
         };
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i <= 9; i++) {
             Location.HEXBYTES.put(String.valueOf(i), Integer.valueOf(String.valueOf(i)));
         }
         for (int i = 10; i < 16; i++) {
@@ -155,10 +155,18 @@ public final class Location {
         checkValidPath(absolutePath);
 
         for (int i = 0; i < absolutePath.length(); i = i + 4) {
-            final int mm = Location.HEXBYTES.get(absolutePath.substring(i, i + 1)).intValue();
-            final int ml = Location.HEXBYTES.get(absolutePath.substring(i + 1, i + 2)).intValue();
-            final int lm = Location.HEXBYTES.get(absolutePath.substring(i + 2, i + 3)).intValue();
-            final int ll = Location.HEXBYTES.get(absolutePath.substring(i + 3, i + 4)).intValue();
+            final int mm = Location.HEXBYTES.get(
+        		absolutePath.substring(i, i + 1)
+    		).intValue();
+            final int ml = Location.HEXBYTES.get(
+        		absolutePath.substring(i + 1, i + 2)
+    		).intValue();
+            final int lm = Location.HEXBYTES.get(
+        		absolutePath.substring(i + 2, i + 3)
+    		).intValue();
+            final int ll = Location.HEXBYTES.get(
+        		absolutePath.substring(i + 3, i + 4)
+    		).intValue();
             int id = ll;
             id += lm << 4;
             id += ml << 8;

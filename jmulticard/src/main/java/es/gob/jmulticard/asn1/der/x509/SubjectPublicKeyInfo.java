@@ -34,9 +34,9 @@ public final class SubjectPublicKeyInfo extends Sequence {
 		);
 	}
 
-	/** Obtiene el campo <code>SubjectPubicKey</code> en su representaci&oacute;n binaria directa.
-	 * @return <code>SubjectPubicKey</code>. */
-	public byte[] getSubjectPubicKey() {
+	/** Obtiene el campo <code>SubjectPublicKey</code> en su representaci&oacute;n binaria directa.
+	 * @return <code>SubjectPublicKey</code>. */
+	public byte[] getSubjectPublicKey() {
 		// Eliminamos el primer octeto (00)
 		final byte[] tmp = ((SubjectPublicKey)getElementAt(1)).getValue();
 		final byte[] ret = new byte[tmp.length -1];
