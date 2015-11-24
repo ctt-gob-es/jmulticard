@@ -48,6 +48,8 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre
  * JSE/JME/Dalvik.
@@ -182,11 +184,13 @@ public abstract class CryptoHelper {
 
     /** Desencripta datos mediante AES (modo CBC sin relleno).
      * @param data Datos a encriptar.
+     * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
+     *           un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *         encriptado. */
-    public abstract byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException;
+    public abstract byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException;
 
     /** Encripta datos mediante AES (modo CBC sin relleno).
      * @param data Datos a encriptar.
@@ -244,4 +248,18 @@ public abstract class CryptoHelper {
 	 *                                  CMAC con AES.
 	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
 	public abstract byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException, InvalidKeyException;
+
+	/** Realiza un acuerdo de claves Diffie Hellman con algoritmo de curva el&iacute;ptica.
+	 * @param privateKey Clave privada.
+	 * @param publicKey Clave p&uacute;blica.
+	 * @param curveName Nombre de la curva a usar.
+	 * @return Resultado de acuerdo de claves.
+	 * @throws NoSuchAlgorithmException Si no hay ning&uacute;n proveedor en el sistema que soporte el
+	 *                                  algoritmo <i>ECDH</i>.
+	 * @throws InvalidKeySpecException Si alguna de las claves es inv&aacute;lida.
+	 * @throws InvalidKeyException Si alguna de las claves es inv&aacute;lida. */
+	public abstract byte[] doEcDh(Key privateKey, byte[] publicKey, final EcCurve curveName) throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
+
+	public abstract AlgorithmParameterSpec getEcPoint(byte[] nonceS, byte[] sharedSecretH, final EcCurve curveName);
+
 }

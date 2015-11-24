@@ -41,29 +41,45 @@ package es.gob.jmulticard.jse.provider;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.ECField;
+import java.security.spec.ECFieldFp;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.EllipticCurve;
+import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyAgreement;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.ECPointUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.math.ec.ECFieldElement;
 
 import es.gob.jmulticard.CryptoHelper;
 
@@ -72,6 +88,8 @@ import es.gob.jmulticard.CryptoHelper;
 public final class JseCryptoHelper extends CryptoHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
+	private static final String ECDH = "ECDH"; //$NON-NLS-1$
 
     /** {@inheritDoc} */
     @Override
@@ -224,7 +242,6 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-
     private static byte[] aesCrypt(final byte[] data, final byte[] iv, final byte[] key, final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
@@ -288,8 +305,8 @@ public final class JseCryptoHelper extends CryptoHelper {
     }
 
 	@Override
-	public byte[] aesDecrypt(final byte[] data, final byte[] key) throws IOException {
-		return aesCrypt(data, null, key, Cipher.DECRYPT_MODE);
+	public byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException {
+		return aesCrypt(data, iv, key, Cipher.DECRYPT_MODE);
 	}
 
 	@Override
@@ -328,6 +345,171 @@ public final class JseCryptoHelper extends CryptoHelper {
 		final Mac eng = Mac.getInstance("AESCMAC", new BouncyCastleProvider()); //$NON-NLS-1$
 		eng.init(new SecretKeySpec(key, "AES")); //$NON-NLS-1$
 		return eng.doFinal(data);
+	}
+
+	@Override
+	public byte[] doEcDh(final Key privateKey,
+			             final byte[] publicKey,
+			             final EcCurve curveName) throws NoSuchAlgorithmException,
+			                                             InvalidKeyException,
+			                                             InvalidKeySpecException {
+
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
+		KeyAgreement ka;
+		try {
+			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
+		}
+		catch (final NoSuchProviderException e) {
+			ka = KeyAgreement.getInstance(ECDH);
+		}
+		ka.init(privateKey);
+		ka.doPhase(loadEcPublicKey(publicKey, curveName), true);
+		return ka.generateSecret();
+	}
+
+	private static Key loadEcPublicKey(final byte [] pubKey,
+                                       final EcCurve curveName) throws NoSuchAlgorithmException,
+                                                                       InvalidKeySpecException {
+	    final ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec(curveName.toString());
+	    KeyFactory kf;
+		try {
+			kf = KeyFactory.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
+		}
+		catch (final NoSuchProviderException e) {
+			kf = KeyFactory.getInstance(ECDH);
+		}
+	    final ECNamedCurveSpec params = new ECNamedCurveSpec(curveName.toString(), spec.getCurve(), spec.getG(), spec.getN());
+	    final ECPoint point =  ECPointUtil.decodePoint(params.getCurve(), pubKey);
+	    final java.security.spec.ECPublicKeySpec pubKeySpec = new java.security.spec.ECPublicKeySpec(point, params);
+	    return kf.generatePublic(pubKeySpec);
+	}
+
+	@Override
+	public AlgorithmParameterSpec getEcPoint(final byte[] nonceS, final byte[] sharedSecretH, final EcCurve curveName) {
+		final AlgorithmParameterSpec ecParams = ECNamedCurveTable.getParameterSpec(curveName.toString());
+		final BigInteger affineX = os2i(sharedSecretH);
+		final BigInteger affineY = computeAffineY(affineX, (ECParameterSpec) ecParams);
+		final ECPoint sharedSecretPointH = new ECPoint(affineX, affineY);
+		return mapNonceGMWithECDH(os2i(nonceS), sharedSecretPointH, (ECParameterSpec) ecParams);
+	}
+
+	/** Convierte un Octet String de ASN&#46;1 en un entero
+	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3.1.2).
+	 * @param bytes Octet String de ASN&#46;1.
+	 * @return Entero (siempre positivo). */
+	private static BigInteger os2i(final byte[] bytes) {
+		if (bytes == null) { throw new IllegalArgumentException(); }
+		return os2i(bytes, 0, bytes.length);
+	}
+
+	/** Convierte un Octet String de ASN&#46;1 en un entero
+	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3.1.2).
+	 * @param Octet String de ASN&#46;1.
+	 * @param offset posici&oacute;n de inicio-
+	 * @param length longitud del Octet String.
+	 * @return Entero (siempre positivo). */
+	private static BigInteger os2i(final byte[] bytes, final int offset, final int length) {
+		if (bytes == null) {
+			throw new IllegalArgumentException("El Octet String no puede ser nulo"); //$NON-NLS-1$
+		}
+		BigInteger result = BigInteger.ZERO;
+		final BigInteger base = BigInteger.valueOf(256);
+		for (int i = offset; i < offset + length; i++) {
+			result = result.multiply(base);
+			result = result.add(BigInteger.valueOf(bytes[i] & 0xFF));
+		}
+		return result;
+	}
+
+	private static BigInteger computeAffineY(final BigInteger affineX, final ECParameterSpec params) {
+		final ECCurve bcCurve = toBouncyCastleECCurve(params);
+		final ECFieldElement a = bcCurve.getA();
+		final ECFieldElement b = bcCurve.getB();
+		final ECFieldElement x = bcCurve.fromBigInteger(affineX);
+		final ECFieldElement y = x.multiply(x).add(a).multiply(x).add(b).sqrt();
+		return y.toBigInteger();
+	}
+
+	private static ECCurve toBouncyCastleECCurve(final ECParameterSpec params) {
+		final EllipticCurve curve = params.getCurve();
+		final ECField field = curve.getField();
+		if (!(field instanceof ECFieldFp)) {
+			throw new IllegalArgumentException(
+				"Solo se soporta 'ECFieldFp' y se proporciono  " + field.getClass().getCanonicalName() //$NON-NLS-1$
+			);
+		}
+		final int coFactor = params.getCofactor();
+		final BigInteger order = params.getOrder();
+		final BigInteger a = curve.getA();
+		final BigInteger b = curve.getB();
+		final BigInteger p = getPrime(params);
+		return new ECCurve.Fp(p, a, b, order, BigInteger.valueOf(coFactor));
+	}
+
+	private static BigInteger getPrime(final ECParameterSpec params) {
+		if (params == null) {
+			throw new IllegalArgumentException(
+				"Los parametros no pueden ser nulos" //$NON-NLS-1$
+			);
+		}
+		final EllipticCurve curve = params.getCurve();
+		final ECField field = curve.getField();
+		if (!(field instanceof ECFieldFp)) {
+			throw new IllegalStateException(
+				"Solo se soporta 'ECFieldFp' y se proporciono  " + field.getClass().getCanonicalName() //$NON-NLS-1$
+			);
+		}
+		return ((ECFieldFp)field).getP();
+	}
+
+	private static ECParameterSpec mapNonceGMWithECDH(final BigInteger nonceS,
+			                                          final ECPoint sharedSecretPointH,
+			                                          final ECParameterSpec params) {
+		// D~ = (p, a, b, G~, n, h) where G~ = [s]G + H
+		final ECPoint generator = params.getGenerator();
+		final EllipticCurve curve = params.getCurve();
+		final BigInteger a = curve.getA();
+		final BigInteger b = curve.getB();
+		final ECFieldFp field = (ECFieldFp)curve.getField();
+		final BigInteger p = field.getP();
+		final BigInteger order = params.getOrder();
+		final int cofactor = params.getCofactor();
+		final ECPoint ephemeralGenerator = add(multiply(nonceS, generator, params), sharedSecretPointH, params);
+		if (!toBouncyCastleECPoint(ephemeralGenerator, params).isValid()) {
+			LOGGER.warning("Se ha generado un punto invalido"); //$NON-NLS-1$
+		}
+		return new ECParameterSpec(new EllipticCurve(new ECFieldFp(p), a, b), ephemeralGenerator, order, cofactor);
+	}
+
+	private static ECPoint multiply(final BigInteger s, final ECPoint point, final ECParameterSpec params) {
+		final org.bouncycastle.math.ec.ECPoint bcPoint = toBouncyCastleECPoint(point, params);
+		final org.bouncycastle.math.ec.ECPoint bcProd = bcPoint.multiply(s);
+		return fromBouncyCastleECPoint(bcProd);
+	}
+
+	private static ECPoint fromBouncyCastleECPoint(final org.bouncycastle.math.ec.ECPoint point) {
+		final org.bouncycastle.math.ec.ECPoint newPoint = point.normalize();
+		if (!newPoint.isValid()) {
+			LOGGER.warning("Se ha proporcionaod un punto invalido"); //$NON-NLS-1$
+		}
+		return new ECPoint(
+			newPoint.getAffineXCoord().toBigInteger(),
+			newPoint.getAffineYCoord().toBigInteger()
+		);
+	}
+
+	private static ECPoint add(final ECPoint x, final ECPoint y, final ECParameterSpec params) {
+		final org.bouncycastle.math.ec.ECPoint bcX = toBouncyCastleECPoint(x, params);
+		final org.bouncycastle.math.ec.ECPoint bcY = toBouncyCastleECPoint(y, params);
+		final org.bouncycastle.math.ec.ECPoint bcSum = bcX.add(bcY);
+		return fromBouncyCastleECPoint(bcSum);
+	}
+
+	private static org.bouncycastle.math.ec.ECPoint toBouncyCastleECPoint(final ECPoint point, final ECParameterSpec params) {
+		final org.bouncycastle.math.ec.ECCurve bcCurve = toBouncyCastleECCurve(params);
+		return bcCurve.createPoint(point.getAffineX(), point.getAffineY());
 	}
 
 }

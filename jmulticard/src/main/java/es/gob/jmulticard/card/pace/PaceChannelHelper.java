@@ -70,6 +70,9 @@ public final class PaceChannelHelper {
 		CommandApdu comm;
 
 		// 1.3.2 - Establecemos el algoritmo para PACE
+
+		System.out.println("Establecimiento algoritmo PACE");
+
 		comm = new MseSetPaceAlgorithmApduCommand(
 			cla,
 			MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128,
@@ -87,6 +90,9 @@ public final class PaceChannelHelper {
 		}
 
 		// 1.3.3 - Primer comando General Autenticate - Get Nonce
+
+		System.out.println("Primer comando General Autenticate - Get Nonce");
+
 		comm = new GeneralAuthenticateApduCommand(
 			(byte) 0x10,
 			new byte[] { (byte) 0x7C, (byte) 0x00 }
@@ -111,6 +117,8 @@ public final class PaceChannelHelper {
 			);
 		}
 
+		System.out.println("'nonce' obtenido: " + HexUtils.hexify(nonce, false));
+
 		final byte[] sk = new byte[16];
 		try {
 			System.arraycopy(
@@ -133,10 +141,13 @@ public final class PaceChannelHelper {
 			);
 		}
 
+		System.out.println("'sk' obtenido: " + HexUtils.hexify(sk, false));
+
 		final byte[] secret;
 		try {
 			secret = cryptoHelper.aesDecrypt(
 				nonce,
+				new byte[0],
 				sk
 			);
 		}
@@ -146,12 +157,16 @@ public final class PaceChannelHelper {
 			);
 		}
 
+		System.out.println("'secret' obtenido: " + HexUtils.hexify(secret, false));
+
 		// 1.3.4 - Segundo comando General Autenticate - Map Nonce
 
+		System.out.println("Segundo comando General Autenticate - Map Nonce");
+
 		// Generamos un par de claves efimeras EC para el DH
-		final KeyPair kpIfdDh1;
+		final KeyPair ifdDh1;
 		try {
-			kpIfdDh1 = cryptoHelper.generateEcKeyPair(EcCurve.BRAINPOOL_P256_R1);
+			ifdDh1 = cryptoHelper.generateEcKeyPair(EcCurve.BRAINPOOL_P256_R1);
 		}
 		catch (final Exception e) {
 			throw new PaceException(
@@ -159,10 +174,11 @@ public final class PaceChannelHelper {
 			);
 		}
 
+		// Codificamos la parte publica...
 		final SubjectPublicKeyInfo ecPuk = new SubjectPublicKeyInfo();
 		try {
 			ecPuk.setDerValue(
-				kpIfdDh1.getPublic().getEncoded()
+				ifdDh1.getPublic().getEncoded()
 			);
 		}
 		catch (final Exception e) {
@@ -172,14 +188,16 @@ public final class PaceChannelHelper {
 			);
 		}
 
+		// ... La metemos en un TLV de autenticacion ...
 		final Tlv tlv = new Tlv(
 			TAG_DYNAMIC_AUTHENTICATION_DATA,
 			new Tlv(
 				TAG_MAPPING_DATA,
-				ecPuk.getSubjectPubicKey()
+				ecPuk.getSubjectPublicKey()
 			).getBytes()
 		);
 
+		// ... Y la enviamos a la tarjeta
 		comm = new GeneralAuthenticateApduCommand(
 			(byte) 0x10,
 			tlv.getBytes()
@@ -195,8 +213,45 @@ public final class PaceChannelHelper {
 			);
 		}
 
-		System.out.println(HexUtils.hexify(res.getBytes(), true));
+		System.out.println(
+			"Clave privada del terminal (PKCS#8, " +
+				ifdDh1.getPrivate().getEncoded().length + "):  " + HexUtils.hexify(ifdDh1.getPrivate().getEncoded(), false));
+
+		// Obtengo la clave publica de la tarjeta
+
+		final byte[] pukIccDh1;
+		try {
+			pukIccDh1 = unwrapEcKey(res.getData());
+		}
+		catch(final Exception e) {
+			throw new PaceException(
+				"Error obteniendo la clave efimera EC publica de la tarjeta: " + e, e //$NON-NLS-1$
+			);
+		}
+
+		System.out.println("Clave publica de la tarjeta (sin TLV, " + pukIccDh1.length + "): " + HexUtils.hexify(
+			pukIccDh1,
+				false
+		));
+
+		final byte[] h;
+		try {
+			h = cryptoHelper.doEcDh(ifdDh1.getPrivate(), pukIccDh1, EcCurve.BRAINPOOL_P256_R1);
+		}
+		catch (final Exception e) {
+			throw new PaceException(
+				"Error calculando el EC-DH: " + e, e //$NON-NLS-1$
+			);
+		}
+
+		System.out.println("h de ECDH: " + HexUtils.hexify(h, false));
 
 	}
+
+	private static byte[] unwrapEcKey(final byte[] key) throws TlvException {
+		return new Tlv(new Tlv(key).getValue()).getValue();
+	}
+
+
 
 }
