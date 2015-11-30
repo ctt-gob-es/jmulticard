@@ -64,7 +64,6 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneConnection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
@@ -78,7 +77,6 @@ import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
-import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
@@ -89,7 +87,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
+public final class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 	private final Cwa14890Constants cwa14890Constants;
 
@@ -486,7 +484,7 @@ public final class Dnie extends Iso7816EightCard implements CryptoCard, Cwa14890
 
     /** {@inheritDoc} */
     @Override
-    public void setKeysToAuthentication(final byte[] refPublicKey, 
+    public void setKeysToAuthentication(final byte[] refPublicKey,
     		                            final byte[] refPrivateKey) throws ApduConnectionException {
         final CommandApdu apdu = new MseSetAuthenticationKeyApduCommand((byte) 0x00, refPublicKey, refPrivateKey);
         final ResponseApdu res = this.getConnection().transmit(apdu);

@@ -299,17 +299,9 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @return Clave AES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
-        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash de la
-        // concatenacion de kifdicc con el valor "00 00 00 01".
-        final byte[] kidficcConcat = new byte[kidficc.length + SECURE_CHANNEL_KENC_AUX.length];
-        System.arraycopy(kidficc, 0, kidficcConcat, 0, kidficc.length);
-        System.arraycopy(
-    		SECURE_CHANNEL_KENC_AUX,
-    		0,
-    		kidficcConcat,
-    		kidficc.length,
-    		SECURE_CHANNEL_KENC_AUX.length
-		);
+        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-256 de la
+        // concatenacion de kifdicc con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
+    	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
@@ -332,20 +324,15 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
         // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
-        // del hash de la concatenacion de kifdicc con el valor "00 00 00 02".
-        final byte[] kidficcConcat = new byte[kidficc.length + SECURE_CHANNEL_KMAC_AUX.length];
-        System.arraycopy(kidficc, 0, kidficcConcat, 0, kidficc.length);
-        System.arraycopy(
-    		SECURE_CHANNEL_KMAC_AUX,
-    		0,
-    		kidficcConcat,
-    		kidficc.length,
-    		SECURE_CHANNEL_KMAC_AUX.length
-		);
+        // del hash SHA-256 de la concatenacion de kifdicc con el valor "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
+        final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KMAC_AUX);
 
         final byte[] keyMac = new byte[16];
         System.arraycopy(
-    		this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA256, kidficcConcat),
+    		this.cryptoHelper.digest(
+				CryptoHelper.DigestAlgorithm.SHA256,
+				kidficcConcat
+			),
     		0,
     		keyMac,
     		0,
@@ -384,7 +371,10 @@ public class Cwa14890OneV2Connection implements ApduConnection {
         // que aprovechamos para seleccionar la clave privada de componente para autenticar
         // este certificado de Terminal
         try {
-            this.card.setKeysToAuthentication(this.card.getChrCCvIfd(), this.card.getRefIccPrivateKey());
+            this.card.setKeysToAuthentication(
+        		this.card.getChrCCvIfd(),
+        		this.card.getRefIccPrivateKey()
+    		);
         }
         catch (final Exception e) {
             throw new SecureChannelException(
@@ -444,7 +434,7 @@ public class Cwa14890OneV2Connection implements ApduConnection {
             }
 
             // Desciframos el mensaje con N.ICC-SIG
-            desMsg = this.cryptoHelper.rsaEncrypt(niccMinusSig, iccPublicKey);
+            desMsg = this.cryptoHelper.rsaDecrypt(niccMinusSig, iccPublicKey);
 
             // Si en esta ocasion no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina con 0xbc [ISO_9796_2_PADDING_END],
             // la autenticacion interna habra fallado

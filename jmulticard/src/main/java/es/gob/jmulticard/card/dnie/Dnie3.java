@@ -78,7 +78,6 @@ import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
-import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
@@ -89,9 +88,9 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa14890Card {
+public final class Dnie3 extends Iso7816EightCard implements Dni, Cwa14890Card {
 
-	private static final Cwa14890Constants cwa14890Constants = new Dnie3Cwa14890Constants();
+	private static final Cwa14890Constants cwa14890Constants = new Dnie3PinCwa14890Constants();
 
 	private static final boolean SHOW_SIGN_CONFIRM_DIALOG = false;
 
@@ -403,7 +402,9 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
             iccCertEncoded = this.selectFileByIdAndRead(CERT_ICC_FILE_ID);
         }
         catch (final ApduConnectionException e) {
-            throw new IOException("Error en el envio de APDU para la seleccion del certificado de componente de la tarjeta: " + e, e); //$NON-NLS-1$
+            throw new IOException(
+        		"Error en el envio de APDU para la seleccion del certificado de componente de la tarjeta: " + e, e //$NON-NLS-1$
+    		);
         }
         catch (final Iso7816FourCardException e) {
             throw new IOException("Error en la seleccion del certificado de componente de la tarjeta: " + e, e); //$NON-NLS-1$
@@ -649,7 +650,7 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
     		                     final String signAlgorithm,
     		                     final PrivateKeyReference privateKeyReference) throws CryptoCardException,
     		                                                                           BadPinException {
-        this.openSecureChannelIfNotAlreadyOpened();
+    	this.openSecureChannelIfNotAlreadyOpened();
 
         ResponseApdu res;
         try {
@@ -751,9 +752,6 @@ public final class Dnie3 extends Iso7816EightCard implements CryptoCard, Cwa1489
      * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado la inserci&oacute;n del PIN
      *                                                                           usando el di&aacute;logo gr&aacute;fico integrado. */
     private void loadCertificates() throws CryptoCardException, BadPinException {
-
-    	// Abrimos el canal si es necesario
-    	openSecureChannelIfNotAlreadyOpened();
 
         // Cargamos certificados si es necesario
     	if (this.authCert == null ||
