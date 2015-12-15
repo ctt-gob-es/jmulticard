@@ -5,8 +5,11 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
 import java.security.Signature;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
+
+import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
@@ -15,7 +18,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProvider {
 
-	private static final char[] PASSWORD = "88888888Y".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "rock2048".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args
@@ -63,5 +66,25 @@ public final class TestJseProvider {
 		System.out.println(
 			((X509Certificate)ks.getCertificate("CertFirmaDigital")).getIssuerX500Principal().toString() //$NON-NLS-1$
 		);
+	}
+
+	/** prueba de obtenci&oacute;n de la cadena de certificados.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void testGetCertificateChain() throws Exception {
+		final Provider p = new DnieProvider();
+		Security.addProvider(p);
+		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
+		ks.load(null, PASSWORD);
+		final Enumeration<String> aliases = ks.aliases();
+		while (aliases.hasMoreElements()) {
+			final String alias = aliases.nextElement();
+			for (final Certificate cert : ks.getCertificateChain(alias)) {
+				System.out.println(
+					"XXX: " + ((X509Certificate)cert).getSubjectX500Principal()
+				);
+			}
+		}
 	}
 }

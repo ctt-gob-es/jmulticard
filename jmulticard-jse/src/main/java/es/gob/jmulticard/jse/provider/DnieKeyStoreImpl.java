@@ -56,7 +56,9 @@ import java.security.UnrecoverableEntryException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -142,6 +144,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		return null;
     	}
 
+    	final List<X509Certificate> certs = new ArrayList<X509Certificate>();
+    	certs.add((X509Certificate) engineGetCertificate(alias));
+
     	// La cadena disponible del certificado la componen el propio certificado y el
     	// certificado de la CA intermedia. Si no se puede recuperar esta ultima, se obvia
     	X509Certificate intermediateCaCert;
@@ -156,20 +161,50 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
     	catch (final Exception e) {
     		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-				"No se ha podido cargar el certificado de la CA intermedia" //$NON-NLS-1$
+				"No se ha podido cargar el certificado de la CA intermedia: " + e //$NON-NLS-1$
 			);
     		intermediateCaCert = null;
 		}
 
-    	if (intermediateCaCert == null) {
-    		return new X509Certificate[] {
-				(X509Certificate) engineGetCertificate(alias)
-    		};
+    	X509Certificate sha2DnieRoot = null;
+
+    	if (intermediateCaCert != null) {
+
+    		certs.add(intermediateCaCert);
+
+    		// Si tenemos CA intermedia probamos con la raiz, incluida estaticamente
+    		// en el proyecto
+	    	try {
+				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
+					DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+				);
+			}
+	    	catch (final Exception e) {
+	    		sha2DnieRoot = null;
+	    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+					"No se ha podido cargar el certificado de la CA raiz: " + e //$NON-NLS-1$
+				);
+			}
+
+	    	// Comprobamos que efectivamente sea su raiz
+	    	if (sha2DnieRoot != null) {
+		    	try {
+					intermediateCaCert.verify(sha2DnieRoot.getPublicKey());
+				}
+		    	catch (final Exception e) {
+		    		sha2DnieRoot = null;
+		    		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+						"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + e //$NON-NLS-1$
+					);
+				}
+	    	}
     	}
-    	return new X509Certificate[] {
-			(X509Certificate) engineGetCertificate(alias),
-			intermediateCaCert
-    	};
+
+    	if (sha2DnieRoot != null) {
+    		certs.add(sha2DnieRoot);
+    	}
+
+    	return certs.toArray(new X509Certificate[0]);
     }
 
     /** Operaci&oacute;n no soportada. */
