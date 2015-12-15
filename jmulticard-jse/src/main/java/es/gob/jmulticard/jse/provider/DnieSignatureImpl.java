@@ -53,7 +53,7 @@ import java.security.SignatureSpi;
 
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
-import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.card.dnie.Dni;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
 /** Implementaci&oacute;n del SPI Signature para DNIe.
@@ -134,8 +134,10 @@ abstract class DnieSignatureImpl extends SignatureSpi {
     @Override
     protected byte[] engineSign() throws SignatureException {
 
-    	if (!(this.privateKey.getCryptoCard() instanceof Dnie)) {
-    		throw new ProviderException("La clave proporcionada no se corresponde con la de un DNIe"); //$NON-NLS-1$
+    	if (!(this.privateKey.getCryptoCard() instanceof Dni)) {
+    		throw new ProviderException(
+				"La clave proporcionada no se corresponde con la de un DNIe: " + this.privateKey.getCryptoCard().getClass().getName() //$NON-NLS-1$
+			);
     	}
 
     	final DniePrivateKeyReference dniePkRef = new DniePrivateKeyReference(
