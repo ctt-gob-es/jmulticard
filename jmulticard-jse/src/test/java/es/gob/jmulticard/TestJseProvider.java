@@ -82,7 +82,7 @@ public final class TestJseProvider {
 			final String alias = aliases.nextElement();
 			for (final Certificate cert : ks.getCertificateChain(alias)) {
 				System.out.println(
-					"XXX: " + ((X509Certificate)cert).getSubjectX500Principal()
+					"XXX: " + ((X509Certificate)cert).getSubjectX500Principal() //$NON-NLS-1$
 				);
 			}
 		}
