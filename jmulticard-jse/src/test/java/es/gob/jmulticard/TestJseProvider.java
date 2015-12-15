@@ -18,7 +18,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProvider {
 
-	private static final char[] PASSWORD = "rock2048".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "88888888Y".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args
