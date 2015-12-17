@@ -260,6 +260,11 @@ public abstract class CryptoHelper {
 	 * @throws InvalidKeyException Si alguna de las claves es inv&aacute;lida. */
 	public abstract byte[] doEcDh(Key privateKey, byte[] publicKey, final EcCurve curveName) throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
 
+	/** Obtiene un punto en una curva el&iacute;ptica.
+	 * @param nonceS Aleatorio de un solo uso.
+	 * @param sharedSecretH Secreto compartido.
+	 * @param curveName Nombre de la curva.
+	 * @return Punto encapsulado. */
 	public abstract AlgorithmParameterSpec getEcPoint(byte[] nonceS, byte[] sharedSecretH, final EcCurve curveName);
 
 }
