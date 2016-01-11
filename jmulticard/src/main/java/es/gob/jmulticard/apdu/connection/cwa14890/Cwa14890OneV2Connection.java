@@ -317,7 +317,7 @@ public class Cwa14890OneV2Connection implements ApduConnection {
 
     /** Genera la clave KMAC para calcular y verificar checksums.
      * @param kidficc XOR de los valores Kifd y Kicc.
-     * @return Clave AES.
+     * @return Clave TripleDES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
         // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
@@ -345,10 +345,9 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
     protected static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
-//        // El contador de secuencia SSC se obtiene concatenando el desafio de la tarjeta (RND.ICC) con
-//        // el desafio del Terminal (RND.IFD)
-//    	LOGGER.info("Se usara SSC de 16 octetos"); //$NON-NLS-1$
-//        return HexUtils.concatenateByteArrays(randomIcc, randomIfd);
+        // El contador de secuencia SSC se obtiene concatenando los 4 bytes menos
+        // significativos del desafio de la tarjeta (RND.ICC) con los 4 menos
+        // significativos del desafio del Terminal (RND.IFD)
         final byte[] ssc = new byte[8];
         System.arraycopy(randomIcc, 4, ssc, 0, 4);
         System.arraycopy(randomIfd, 4, ssc, 4, 4);
@@ -752,45 +751,32 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @return Valor incrementado. */
     private static byte[] increment(final byte[] data) {
         BigInteger bi = new BigInteger(1, data);
-        final byte[] biArray = (bi = bi.add(BigInteger.ONE)).toByteArray();
+        bi = bi.add(BigInteger.ONE);
+
+        final byte[] biArray = bi.toByteArray();
         if (biArray.length > 8) {
-            final byte[] incrementedValue = new byte[8];
-            System.arraycopy(biArray, biArray.length - incrementedValue.length, incrementedValue, 0, incrementedValue.length);
-            return incrementedValue;
+        	final byte[] incrementedValue = new byte[8];
+        	System.arraycopy(
+    			biArray, 
+    			biArray.length - incrementedValue.length, 
+    			incrementedValue, 
+    			0, 
+    			incrementedValue.length
+			);
+        	return incrementedValue;
         }
-        if (biArray.length < 8) {
-            final byte[] incrementedValue = new byte[8];
-            System.arraycopy(biArray, 0, incrementedValue, incrementedValue.length - biArray.length, biArray.length);
-            return incrementedValue;
+        else if (biArray.length < 8) {
+        	final byte[] incrementedValue = new byte[8];
+        	System.arraycopy(
+    			biArray, 
+    			0, 
+    			incrementedValue, 
+    			incrementedValue.length - biArray.length, 
+    			biArray.length
+			);
+        	return incrementedValue;
         }
         return biArray;
-//        BigInteger bi = new BigInteger(1, data);
-//        bi = bi.add(BigInteger.ONE);
-//
-//        final byte[] biArray = bi.toByteArray();
-//        if (biArray.length > 16) {
-//        	final byte[] incrementedValue = new byte[16];
-//        	System.arraycopy(
-//    			biArray,
-//    			biArray.length - incrementedValue.length,
-//    			incrementedValue,
-//    			0,
-//    			incrementedValue.length
-//			);
-//        	return incrementedValue;
-//        }
-//        else if (biArray.length < 16) {
-//        	final byte[] incrementedValue = new byte[16];
-//        	System.arraycopy(
-//    			biArray,
-//    			0,
-//    			incrementedValue,
-//    			incrementedValue.length - biArray.length,
-//    			biArray.length
-//			);
-//        	return incrementedValue;
-//        }
-//        return biArray;
     }
 
     /** Recupera la excepci&oacute;n subyacente utilizada por la conexi&oacute;n segura.

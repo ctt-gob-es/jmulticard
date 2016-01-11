@@ -296,17 +296,10 @@ public class Cwa14890OneConnection implements ApduConnection {
      * @return Clave TripleDES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
-        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash de la
-        // concatenacion de kifdicc con el valor "00 00 00 01".
-        final byte[] kidficcConcat = new byte[kidficc.length + SECURE_CHANNEL_KENC_AUX.length];
-        System.arraycopy(kidficc, 0, kidficcConcat, 0, kidficc.length);
-        System.arraycopy(
-    		SECURE_CHANNEL_KENC_AUX, 
-    		0, 
-    		kidficcConcat, 
-    		kidficc.length, 
-    		SECURE_CHANNEL_KENC_AUX.length
-		);
+        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-1 de la
+        // concatenacion de kifdicc con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
+    	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
+
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
@@ -329,23 +322,18 @@ public class Cwa14890OneConnection implements ApduConnection {
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
         // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
-        // del hash de la concatenacion de kifdicc con el valor "00 00 00 02".
-        final byte[] kidficcConcat = new byte[kidficc.length + SECURE_CHANNEL_KMAC_AUX.length];
-        System.arraycopy(kidficc, 0, kidficcConcat, 0, kidficc.length);
-        System.arraycopy(
-    		SECURE_CHANNEL_KMAC_AUX, 
-    		0, 
-    		kidficcConcat, 
-    		kidficc.length, 
-    		SECURE_CHANNEL_KMAC_AUX.length
-		);
+        // del hash SHA-1 de la concatenacion de kifdicc con el valor "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
+        final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KMAC_AUX);
 
         final byte[] keyMac = new byte[16];
         System.arraycopy(
-    		this.cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, kidficcConcat), 
-    		0, 
-    		keyMac, 
-    		0, 
+    		this.cryptoHelper.digest(
+				CryptoHelper.DigestAlgorithm.SHA1,
+				kidficcConcat
+			),
+    		0,
+    		keyMac,
+    		0,
     		keyMac.length
 		);
 
@@ -377,7 +365,7 @@ public class Cwa14890OneConnection implements ApduConnection {
      * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
-    public byte[] internalAuthentication(final byte[] randomIfd, 
+    public byte[] internalAuthentication(final byte[] randomIfd,
     		                             final RSAPublicKey iccPublicKey) throws SecureChannelException,
                                                                                                          ApduConnectionException,
                                                                                                          IOException {
@@ -385,7 +373,10 @@ public class Cwa14890OneConnection implements ApduConnection {
         // que aprovechamos para seleccionar la clave privada de componente para autenticar
         // este certificado de Terminal
         try {
-            this.card.setKeysToAuthentication(this.card.getChrCCvIfd(), this.card.getRefIccPrivateKey());
+            this.card.setKeysToAuthentication(
+        		this.card.getChrCCvIfd(),
+        		this.card.getRefIccPrivateKey()
+    		);
         }
         catch (final Exception e) {
             throw new SecureChannelException(
@@ -396,7 +387,7 @@ public class Cwa14890OneConnection implements ApduConnection {
 
         // Iniciamos la autenticacion interna de la clave privada del certificado de componente
         final byte[] sigMinCiphered = this.card.getInternalAuthenticateMessage(
-    		randomIfd, 
+    		randomIfd,
     		this.card.getChrCCvIfd()
 		);
 
@@ -411,7 +402,7 @@ public class Cwa14890OneConnection implements ApduConnection {
 
         // -- Descifrado con la clave privada del Terminal
         final byte[] sigMin = this.cryptoHelper.rsaDecrypt(
-    		sigMinCiphered, 
+    		sigMinCiphered,
     		this.card.getIfdPrivateKey()
 		);
 
@@ -424,10 +415,10 @@ public class Cwa14890OneConnection implements ApduConnection {
         final byte[] sig = sigMin;
         byte[] desMsg = this.cryptoHelper.rsaEncrypt(sig, iccPublicKey);
 
-        // Si el resultado no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina por 
+        // Si el resultado no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina por
         // 0xbc [ISO_9796_2_PADDING_END] (Valores definidos en la ISO 9796-2), se considera que
         // es erroneo y deberemos probar la segunda opcion.
-        // Esto es, calcular N.ICC-SIG y volver a descifrar con la clave publica del 
+        // Esto es, calcular N.ICC-SIG y volver a descifrar con la clave publica del
         // certificado de componente
 
         // Comprobamos que empiece por 0x6a [ISO_9796_2_PADDING_START] y termine con 0xbc [ISO_9796_2_PADDING_END]
@@ -445,7 +436,7 @@ public class Cwa14890OneConnection implements ApduConnection {
             }
 
             // Desciframos el mensaje con N.ICC-SIG
-            desMsg = this.cryptoHelper.rsaEncrypt(niccMinusSig, iccPublicKey);
+            desMsg = this.cryptoHelper.rsaDecrypt(niccMinusSig, iccPublicKey);
 
             // Si en esta ocasion no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina con 0xbc [ISO_9796_2_PADDING_END],
             // la autenticacion interna habra fallado
@@ -465,28 +456,28 @@ public class Cwa14890OneConnection implements ApduConnection {
         // Ultimo Byte: Relleno segun ISO-9796-2 (option 1)
         final byte[] prnd1 = new byte[this.card.getIfdKeyLength() - KICC_LENGTH - SHA1_LENGTH - 2];
         System.arraycopy(
-    		desMsg, 
-    		1, 
-    		prnd1, 
-    		0, 
+    		desMsg,
+    		1,
+    		prnd1,
+    		0,
     		prnd1.length
 		);
 
         final byte[] kicc = new byte[KICC_LENGTH];
         System.arraycopy(
-    		desMsg, 
-    		prnd1.length + 1, 
-    		kicc, 
-    		0, 
+    		desMsg,
+    		prnd1.length + 1,
+    		kicc,
+    		0,
     		kicc.length
 		);
 
         final byte[] hash = new byte[SHA1_LENGTH];
         System.arraycopy(
-    		desMsg, 
-    		prnd1.length + kicc.length + 1, 
-    		hash, 
-    		0, 
+    		desMsg,
+    		prnd1.length + kicc.length + 1,
+    		hash,
+    		0,
     		hash.length
 		);
 
@@ -505,7 +496,7 @@ public class Cwa14890OneConnection implements ApduConnection {
         baos.write(this.card.getChrCCvIfd());
 
         final byte[] calculatedHash = this.cryptoHelper.digest(
-    		CryptoHelper.DigestAlgorithm.SHA1, 
+    		CryptoHelper.DigestAlgorithm.SHA1,
     		baos.toByteArray()
 		);
         if (!HexUtils.arrayEquals(hash, calculatedHash)) {
@@ -548,7 +539,7 @@ public class Cwa14890OneConnection implements ApduConnection {
         // PRND2 ="XX ... XX" bytes de relleno aleatorios generados por el terminal. La longitud
         // debe ser la necesaria para que la longitud desde "6A" hasta "BC" coincida con
         // la longitud de la clave RSA
-        // KIFD = Semilla de 32 [KIFD_LENGTH] bytes, generada por el terminal, para la derivacion 
+        // KIFD = Semilla de 32 [KIFD_LENGTH] bytes, generada por el terminal, para la derivacion
     	// de claves del canal seguro.
         // h[PRND2 || KIFD || RND.ICC || SN.ICC ] = hash SHA1 que incluye los datos aportados por
         // la tarjeta y por el terminal
@@ -575,7 +566,7 @@ public class Cwa14890OneConnection implements ApduConnection {
         baos.write(serial);
 
         final byte[] hash = this.cryptoHelper.digest(
-    		CryptoHelper.DigestAlgorithm.SHA1, 
+    		CryptoHelper.DigestAlgorithm.SHA1,
     		baos.toByteArray()
 		);
 
@@ -768,10 +759,10 @@ public class Cwa14890OneConnection implements ApduConnection {
         if (biArray.length > 8) {
         	final byte[] incrementedValue = new byte[8];
         	System.arraycopy(
-    			biArray, 
-    			biArray.length - incrementedValue.length, 
-    			incrementedValue, 
-    			0, 
+    			biArray,
+    			biArray.length - incrementedValue.length,
+    			incrementedValue,
+    			0,
     			incrementedValue.length
 			);
         	return incrementedValue;
@@ -779,10 +770,10 @@ public class Cwa14890OneConnection implements ApduConnection {
         else if (biArray.length < 8) {
         	final byte[] incrementedValue = new byte[8];
         	System.arraycopy(
-    			biArray, 
-    			0, 
-    			incrementedValue, 
-    			incrementedValue.length - biArray.length, 
+    			biArray,
+    			0,
+    			incrementedValue,
+    			incrementedValue.length - biArray.length,
     			biArray.length
 			);
         	return incrementedValue;
