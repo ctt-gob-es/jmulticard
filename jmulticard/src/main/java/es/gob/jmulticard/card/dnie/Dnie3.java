@@ -679,7 +679,9 @@ public final class Dnie3 extends Iso7816EightCard implements Dni, Cwa14890Card {
             apdu = new PsoSignHashApduCommand((byte) 0x00, digestInfo);
             res = this.getConnection().transmit(apdu);
             if (!res.isOk()) {
-                throw new DnieCardException("Error durante la operacion de firma", res.getStatusWord()); //$NON-NLS-1$
+                throw new DnieCardException(
+                    	"Error durante la operacion de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
+                );
             }
         }
         catch(final LostChannelException e) {

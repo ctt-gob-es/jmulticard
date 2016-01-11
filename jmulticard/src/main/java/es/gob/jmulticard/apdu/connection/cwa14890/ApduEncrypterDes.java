@@ -51,9 +51,9 @@ import es.gob.jmulticard.asn1.bertlv.BerTlv;
 /** Cifrador de APDU seg&uacute;n CWA-14890 mediante 3DES y MAC de 4 octetos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Carlos Gamuci Mill&aacute;n */
-final class ApduEncrypterDes extends ApduEncrypter {
+class ApduEncrypterDes extends ApduEncrypter {
 
-    ApduEncrypterDes() {
+	ApduEncrypterDes() {
         this.paddingLength = 8;
     }
 
@@ -62,6 +62,17 @@ final class ApduEncrypterDes extends ApduEncrypter {
 
     /** Tag del TLV de codigo de autenticacion de mensaje (MAC) de una APDU de respuesta. */
     private static final byte TAG_MAC_TLV = (byte) 0x8E;
+
+    /** Longitud de la MAC de las APDU cifradas. */
+    private static final byte MAC_LENGTH_4 = 4;
+
+    /**
+     * Devuelve la longitud de la MAC de las APDU cifradas.
+     * @return Longitud de la MAC de las APDU cifradas.
+     */
+    protected int getMacLength() {
+    	return MAC_LENGTH_4;
+    }
 
     @Override
 	protected byte[] encryptData(final byte[] data, final byte[] key, final byte[] ssc, final CryptoHelper cryptoHelper) throws IOException {
@@ -105,7 +116,7 @@ final class ApduEncrypterDes extends ApduEncrypter {
 				keyTdesBytes
 			),
 			0,
-			4
+			getMacLength()
 		);
 
     }

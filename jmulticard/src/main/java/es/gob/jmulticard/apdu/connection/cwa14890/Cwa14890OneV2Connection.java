@@ -45,7 +45,6 @@ import java.math.BigInteger;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -68,8 +67,6 @@ public class Cwa14890OneV2Connection implements ApduConnection {
 	private static final int KIFD_LENGTH = 32;
 	private static final byte ISO_9796_2_PADDING_START = (byte) 0x6a;
 	private static final byte ISO_9796_2_PADDING_END = (byte) 0xbc;
-
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
@@ -95,10 +92,10 @@ public class Cwa14890OneV2Connection implements ApduConnection {
     /** Conexi&oacute;n subyacente para el env&iacute;o de APDUs. */
     private final ApduConnection subConnection;
 
-    /** Clave AES para encriptar y desencriptar criptogramas. */
+    /** Clave Triple DES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
     private byte[] kenc = null;
 
-    /** Clave AES para calcular y verificar checksums. */
+    /** Clave Triple DES (TDES o DESEDE) para calcular y verificar checksums. */
     private byte[] kmac = null;
 
     /** Contador de secuencia. */
@@ -135,7 +132,7 @@ public class Cwa14890OneV2Connection implements ApduConnection {
         this.card = card;
     	this.subConnection = connection;
         this.cryptoHelper = cryptoHelper;
-    	this.apduEncrypter = new ApduEncrypterAes();
+    	this.apduEncrypter = new ApduEncrypterDesMac8();
     }
 
     /** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
@@ -262,8 +259,8 @@ public class Cwa14890OneV2Connection implements ApduConnection {
         // Esta fase no pertenece al procedimiento de apertura del canal seguro (ya esta
         // establecido), sino a la obtencion de las claves necesarias para su control. Estas
         // son:
-        // - Kenc: Clave AES para encriptar y desencriptar criptogramas.
-        // - Kmac: Clave AES para calcular y verificar checksums.
+        // - Kenc: Clave TripleDES (TDES o DESEDE) para encriptar y desencriptar criptogramas.
+        // - Kmac: Clave TripleDES (TDES o DESEDE) para calcular y verificar checksums.
         // - SSC: Contador de secuencia.
         // ---------------
 
@@ -296,17 +293,17 @@ public class Cwa14890OneV2Connection implements ApduConnection {
 
     /** Genera la clave KENC para encriptar y desencriptar criptogramas.
      * @param kidficc XOR de los valores Kifd y Kicc.
-     * @return Clave AES.
+     * @return Clave TripleDES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
-        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-256 de la
+        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-1 de la
         // concatenacion de kifdicc con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
     	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
     		this.cryptoHelper.digest(
-				CryptoHelper.DigestAlgorithm.SHA256,
+				CryptoHelper.DigestAlgorithm.SHA1,
 				kidficcConcat
 			),
 			0,
@@ -324,13 +321,13 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
         // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
-        // del hash SHA-256 de la concatenacion de kifdicc con el valor "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
+        // del hash SHA-1 de la concatenacion de kifdicc con el valor "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
         final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KMAC_AUX);
 
         final byte[] keyMac = new byte[16];
         System.arraycopy(
     		this.cryptoHelper.digest(
-				CryptoHelper.DigestAlgorithm.SHA256,
+				CryptoHelper.DigestAlgorithm.SHA1,
 				kidficcConcat
 			),
     		0,
@@ -348,10 +345,14 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
     protected static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
-        // El contador de secuencia SSC se obtiene concatenando el desafio de la tarjeta (RND.ICC) con
-        // el desafio del Terminal (RND.IFD)
-    	LOGGER.info("Se usara SSC de 16 octetos"); //$NON-NLS-1$
-        return HexUtils.concatenateByteArrays(randomIcc, randomIfd);
+//        // El contador de secuencia SSC se obtiene concatenando el desafio de la tarjeta (RND.ICC) con
+//        // el desafio del Terminal (RND.IFD)
+//    	LOGGER.info("Se usara SSC de 16 octetos"); //$NON-NLS-1$
+//        return HexUtils.concatenateByteArrays(randomIcc, randomIfd);
+        final byte[] ssc = new byte[8];
+        System.arraycopy(randomIcc, 4, ssc, 0, 4);
+        System.arraycopy(randomIfd, 4, ssc, 4, 4);
+        return ssc;
     }
 
     /** Lleva a cabo el proceso de autenticaci&oacute;n interna de la tarjeta mediante el
@@ -751,32 +752,45 @@ public class Cwa14890OneV2Connection implements ApduConnection {
      * @return Valor incrementado. */
     private static byte[] increment(final byte[] data) {
         BigInteger bi = new BigInteger(1, data);
-        bi = bi.add(BigInteger.ONE);
-
-        final byte[] biArray = bi.toByteArray();
-        if (biArray.length > 16) {
-        	final byte[] incrementedValue = new byte[16];
-        	System.arraycopy(
-    			biArray,
-    			biArray.length - incrementedValue.length,
-    			incrementedValue,
-    			0,
-    			incrementedValue.length
-			);
-        	return incrementedValue;
+        final byte[] biArray = (bi = bi.add(BigInteger.ONE)).toByteArray();
+        if (biArray.length > 8) {
+            final byte[] incrementedValue = new byte[8];
+            System.arraycopy(biArray, biArray.length - incrementedValue.length, incrementedValue, 0, incrementedValue.length);
+            return incrementedValue;
         }
-        else if (biArray.length < 16) {
-        	final byte[] incrementedValue = new byte[16];
-        	System.arraycopy(
-    			biArray,
-    			0,
-    			incrementedValue,
-    			incrementedValue.length - biArray.length,
-    			biArray.length
-			);
-        	return incrementedValue;
+        if (biArray.length < 8) {
+            final byte[] incrementedValue = new byte[8];
+            System.arraycopy(biArray, 0, incrementedValue, incrementedValue.length - biArray.length, biArray.length);
+            return incrementedValue;
         }
         return biArray;
+//        BigInteger bi = new BigInteger(1, data);
+//        bi = bi.add(BigInteger.ONE);
+//
+//        final byte[] biArray = bi.toByteArray();
+//        if (biArray.length > 16) {
+//        	final byte[] incrementedValue = new byte[16];
+//        	System.arraycopy(
+//    			biArray,
+//    			biArray.length - incrementedValue.length,
+//    			incrementedValue,
+//    			0,
+//    			incrementedValue.length
+//			);
+//        	return incrementedValue;
+//        }
+//        else if (biArray.length < 16) {
+//        	final byte[] incrementedValue = new byte[16];
+//        	System.arraycopy(
+//    			biArray,
+//    			0,
+//    			incrementedValue,
+//    			incrementedValue.length - biArray.length,
+//    			biArray.length
+//			);
+//        	return incrementedValue;
+//        }
+//        return biArray;
     }
 
     /** Recupera la excepci&oacute;n subyacente utilizada por la conexi&oacute;n segura.
