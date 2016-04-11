@@ -38,29 +38,16 @@
  * o idoneidad para un proposito particular.
  */
 
-package es.gob.jmulticard.apdu.ceres;
+package es.gob.jmulticard.apdu.connection.cwa14890;
 
-import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.connection.ApduConnection;
 
-/** APDU de carga de datos.
- * Estos deben proporcionarse como <code>DigestInfo</code> con relleno PKCS#1.
+/** Conexi&oacute;n CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class LoadDataApduCommand extends CommandApdu {
+public interface Cwa14890Connection extends ApduConnection {
 
-	private static final byte CLA = (byte) 0x90;
-	private static final byte INS_LOAD_DATA = (byte) 0x58;
-
-	/** Construye una APDU de carga de datos.
-	 * @param paddedDigestInfo <code>DigestInfo</code> de los datos a cargar */
-	public LoadDataApduCommand(final byte[] paddedDigestInfo) {
-		super(
-			CLA,
-			INS_LOAD_DATA,
-			(byte)0x00,
-			(byte)0x00,
-			paddedDigestInfo,
-			null
-		);
-	}
+	/** Recupera la conexi&oacute;n subyacente utilizada por la conexi&oacute;n segura.
+     * @return Conexi&oacute;n con la tarjeta. */
+    ApduConnection getSubConnection();
 
 }

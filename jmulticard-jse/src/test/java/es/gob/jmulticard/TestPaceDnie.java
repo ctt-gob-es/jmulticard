@@ -10,11 +10,11 @@ import java.security.spec.InvalidKeySpecException;
 
 import junit.framework.Assert;
 
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.spec.ECPrivateKeySpec;
 import org.junit.Test;
+import org.spongycastle.jce.ECNamedCurveTable;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECParameterSpec;
+import org.spongycastle.jce.spec.ECPrivateKeySpec;
 
 import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.apdu.connection.ApduConnection;

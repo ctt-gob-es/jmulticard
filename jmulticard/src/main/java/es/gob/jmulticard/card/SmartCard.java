@@ -59,11 +59,11 @@ public abstract class SmartCard implements Card {
     	return this.connection.transmit(apdu);
     }
 
-    /** Establece una nueva conexi&oacute;n con la tarjeta cerrando la anterior.
+    /** Establece una nueva conexi&oacute;n con la tarjeta.
+     * No se cierra la conexi&oacute;n anterior.
      * @param conn Nueva conexi&oacute;n con la tarjeta.
      * @throws ApduConnectionException Cuando no se puede sustituir la conexi&oacute;n actual por la nueva. */
     protected void setConnection(final ApduConnection conn) throws ApduConnectionException {
-    	this.connection.close();
         if (!conn.isOpen()) {
             conn.open();
         }

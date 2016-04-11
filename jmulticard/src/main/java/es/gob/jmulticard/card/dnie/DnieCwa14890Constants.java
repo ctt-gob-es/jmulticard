@@ -43,6 +43,8 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 
+import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
+
 /** Constantes del DNIe para el establecimiento de canal seguro CWA-14890.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s

@@ -41,6 +41,8 @@ package es.gob.jmulticard.card;
 
 import java.io.Serializable;
 
+import es.gob.jmulticard.HexUtils;
+
 /** Respuesta al reset (ATR, <i>Answer To Reset</i>) de una tarjeta.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Atr implements Serializable {
@@ -61,6 +63,11 @@ public final class Atr implements Serializable {
         System.arraycopy(a, 0, this.atrBytes, 0, a.length);
         this.mask = new byte[m.length];
         System.arraycopy(m, 0, this.mask, 0, m.length);
+    }
+
+    @Override
+	public String toString() {
+    	return HexUtils.hexify(getBytes(), true);
     }
 
     /** Obtiene los octetos binarios de la respuesta al reset.

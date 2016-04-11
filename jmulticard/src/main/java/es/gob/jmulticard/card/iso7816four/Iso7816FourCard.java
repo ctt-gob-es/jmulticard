@@ -55,12 +55,12 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.iso7816four.GetChallengeApduCommand;
-import es.gob.jmulticard.apdu.iso7816four.MseSetVerificationKeyApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ReadBinaryApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ReadRecordApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectDfByNameApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
+import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.SmartCard;
@@ -306,14 +306,21 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws SecureChannelException Cuando ocurre un error durante la selecci&oacute;n de la clave.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
     public void setPublicKeyToVerification(final byte[] refPublicKey) throws SecureChannelException, ApduConnectionException {
-        final CommandApdu apdu = new MseSetVerificationKeyApduCommand((byte) 0x00, refPublicKey);
-        final ResponseApdu res = this.getConnection().transmit(apdu);
-        if (!res.isOk()) {
-            throw new SecureChannelException(
-        		"Error al seleccionar una clave publica para verificacion. Se obtuvo el error: " + //$NON-NLS-1$
-                HexUtils.hexify(res.getBytes(), true)
-            );
-        }
+    	final ResponseApdu res = sendArbitraryApdu(
+			new CommandApdu(
+				(byte)0x00, // CLA
+				(byte)0x22, // INS = MSE
+				(byte)0x81, // P1  = EXTERNAL AUTHENTICATION
+				(byte)0xB6, // P2  = SET
+				new Tlv((byte)0x83, refPublicKey).getBytes(),
+				null
+			)
+		);
+    	if (!res.isOk()) {
+    		throw new SecureChannelException(
+				"Error estableciendo la clave publica para verificacion, con respuesta : " + res.getStatusWord() //$NON-NLS-1$
+			);
+    	}
     }
 
     /** Lanza un desafio a la tarjeta para obtener un array de 8 bytes aleatorios.

@@ -9,6 +9,8 @@ import org.junit.Test;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 
+/** Utilidad de generaci&oacute;n de claves a partir de constantes.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestKeyGeneration {
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kenc del canal seguro. */

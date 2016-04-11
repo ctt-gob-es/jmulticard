@@ -77,15 +77,14 @@ public final class DnieFactory {
     		final byte[] actualAtrBytes = actualAtr.getBytes();
 
     		if (ATR.equals(actualAtr)) {
-    			if (actualAtrBytes[15] == 0x04 &&
-    				actualAtrBytes[16] == 0x00) {
-    					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
-    					return new Dnie3(conn, pwc, cryptoHelper);
+    			if (actualAtrBytes[15] == 0x04) {
+					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
+					return new Dnie3(conn, pwc, cryptoHelper);
     			}
-				return new Dnie(conn, pwc, cryptoHelper, false);
+				return new Dnie(conn, pwc, cryptoHelper);
     		}
     		else if (ATR_TIF.equals(actualAtr)) {
-    			return new Dnie(conn, pwc, cryptoHelper, true);
+    			return new Tif(conn, pwc, cryptoHelper);
     		}
     		else { // La tarjeta encontrada no es un DNIe
         		// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de

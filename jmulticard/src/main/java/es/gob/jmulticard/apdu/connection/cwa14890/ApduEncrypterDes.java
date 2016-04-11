@@ -66,10 +66,8 @@ class ApduEncrypterDes extends ApduEncrypter {
     /** Longitud de la MAC de las APDU cifradas. */
     private static final byte MAC_LENGTH_4 = 4;
 
-    /**
-     * Devuelve la longitud de la MAC de las APDU cifradas.
-     * @return Longitud de la MAC de las APDU cifradas.
-     */
+    /** Devuelve la longitud de la MAC de las APDU cifradas.
+     * @return Longitud de la MAC de las APDU cifradas. */
     protected int getMacLength() {
     	return MAC_LENGTH_4;
     }

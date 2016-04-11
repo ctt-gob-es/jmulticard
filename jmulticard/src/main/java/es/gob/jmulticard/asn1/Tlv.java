@@ -62,16 +62,24 @@ public final class Tlv {
      * @param t Etiqueta (tipo) del TLV
      * @param value Valor del TLV */
     public Tlv(final byte t, final byte[] value) {
-        if (value == null) {
+    	if (value == null) {
             throw new IllegalArgumentException("El valor del TLV no puede ser nulo"); //$NON-NLS-1$
         }
         this.valueOffset = 2;
         this.tag = t;
         this.length = value.length;
-        this.bytes = new byte[value.length + 2];
+        int iExtLen = 0;
+        iExtLen = value.length >= 128 ? 3 : 2;
+        this.bytes = new byte[value.length + iExtLen];
         this.bytes[0] = t;
-        this.bytes[1] = (byte) value.length;
-        System.arraycopy(value, 0, this.bytes, 2, value.length);
+        if (value.length >= 128) {
+            this.bytes[1] = -127;
+            this.bytes[2] = (byte)value.length;
+        } 
+        else {
+            this.bytes[1] = (byte)value.length;
+        }
+        System.arraycopy(value, 0, this.bytes, iExtLen, value.length);
     }
 
     /** Construye un TLV simple a partir de su representaci&oacute;n binaria directa.

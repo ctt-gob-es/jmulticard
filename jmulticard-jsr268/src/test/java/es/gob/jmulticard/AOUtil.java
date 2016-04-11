@@ -48,7 +48,7 @@ public final class AOUtil {
      * @throws URISyntaxException Si no se puede crear una URI soportada a partir de la cadena de entrada */
     public static URI createURI(final String file) throws URISyntaxException {
 
-        if (file == null || "".equals(file)) { //$NON-NLS-1$
+        if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("No se puede crear una URI a partir de un nulo"); //$NON-NLS-1$
         }
 

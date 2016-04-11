@@ -74,13 +74,13 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.ECPointUtil;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.jce.spec.ECNamedCurveSpec;
-import org.bouncycastle.math.ec.ECCurve;
-import org.bouncycastle.math.ec.ECFieldElement;
+import org.spongycastle.jce.ECNamedCurveTable;
+import org.spongycastle.jce.ECPointUtil;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.spongycastle.jce.spec.ECNamedCurveSpec;
+import org.spongycastle.math.ec.ECCurve;
+import org.spongycastle.math.ec.ECFieldElement;
 
 import es.gob.jmulticard.CryptoHelper;
 
@@ -327,7 +327,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
 		catch (final Exception e) {
 			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-				"No se ha podido obtener un generador de pares de claves de curva eliptica con BouncyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
+				"No se ha podido obtener un generador de pares de claves de curva eliptica con SpongyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
 			);
 			kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
 		}
@@ -425,7 +425,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 	}
 
 	private static BigInteger computeAffineY(final BigInteger affineX, final ECParameterSpec params) {
-		final ECCurve bcCurve = toBouncyCastleECCurve(params);
+		final ECCurve bcCurve = toSpongyCastleECCurve(params);
 		final ECFieldElement a = bcCurve.getA();
 		final ECFieldElement b = bcCurve.getB();
 		final ECFieldElement x = bcCurve.fromBigInteger(affineX);
@@ -433,7 +433,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		return y.toBigInteger();
 	}
 
-	private static ECCurve toBouncyCastleECCurve(final ECParameterSpec params) {
+	private static ECCurve toSpongyCastleECCurve(final ECParameterSpec params) {
 		final EllipticCurve curve = params.getCurve();
 		final ECField field = curve.getField();
 		if (!(field instanceof ECFieldFp)) {
@@ -478,20 +478,20 @@ public final class JseCryptoHelper extends CryptoHelper {
 		final BigInteger order = params.getOrder();
 		final int cofactor = params.getCofactor();
 		final ECPoint ephemeralGenerator = add(multiply(nonceS, generator, params), sharedSecretPointH, params);
-		if (!toBouncyCastleECPoint(ephemeralGenerator, params).isValid()) {
+		if (!toSpongyCastleECPoint(ephemeralGenerator, params).isValid()) {
 			LOGGER.warning("Se ha generado un punto invalido"); //$NON-NLS-1$
 		}
 		return new ECParameterSpec(new EllipticCurve(new ECFieldFp(p), a, b), ephemeralGenerator, order, cofactor);
 	}
 
 	private static ECPoint multiply(final BigInteger s, final ECPoint point, final ECParameterSpec params) {
-		final org.bouncycastle.math.ec.ECPoint bcPoint = toBouncyCastleECPoint(point, params);
-		final org.bouncycastle.math.ec.ECPoint bcProd = bcPoint.multiply(s);
-		return fromBouncyCastleECPoint(bcProd);
+		final org.spongycastle.math.ec.ECPoint bcPoint = toSpongyCastleECPoint(point, params);
+		final org.spongycastle.math.ec.ECPoint bcProd = bcPoint.multiply(s);
+		return fromSpongyCastleECPoint(bcProd);
 	}
 
-	private static ECPoint fromBouncyCastleECPoint(final org.bouncycastle.math.ec.ECPoint point) {
-		final org.bouncycastle.math.ec.ECPoint newPoint = point.normalize();
+	private static ECPoint fromSpongyCastleECPoint(final org.spongycastle.math.ec.ECPoint point) {
+		final org.spongycastle.math.ec.ECPoint newPoint = point.normalize();
 		if (!newPoint.isValid()) {
 			LOGGER.warning("Se ha proporcionaod un punto invalido"); //$NON-NLS-1$
 		}
@@ -502,14 +502,14 @@ public final class JseCryptoHelper extends CryptoHelper {
 	}
 
 	private static ECPoint add(final ECPoint x, final ECPoint y, final ECParameterSpec params) {
-		final org.bouncycastle.math.ec.ECPoint bcX = toBouncyCastleECPoint(x, params);
-		final org.bouncycastle.math.ec.ECPoint bcY = toBouncyCastleECPoint(y, params);
-		final org.bouncycastle.math.ec.ECPoint bcSum = bcX.add(bcY);
-		return fromBouncyCastleECPoint(bcSum);
+		final org.spongycastle.math.ec.ECPoint bcX = toSpongyCastleECPoint(x, params);
+		final org.spongycastle.math.ec.ECPoint bcY = toSpongyCastleECPoint(y, params);
+		final org.spongycastle.math.ec.ECPoint bcSum = bcX.add(bcY);
+		return fromSpongyCastleECPoint(bcSum);
 	}
 
-	private static org.bouncycastle.math.ec.ECPoint toBouncyCastleECPoint(final ECPoint point, final ECParameterSpec params) {
-		final org.bouncycastle.math.ec.ECCurve bcCurve = toBouncyCastleECCurve(params);
+	private static org.spongycastle.math.ec.ECPoint toSpongyCastleECPoint(final ECPoint point, final ECParameterSpec params) {
+		final org.spongycastle.math.ec.ECCurve bcCurve = toSpongyCastleECCurve(params);
 		return bcCurve.createPoint(point.getAffineX(), point.getAffineY());
 	}
 

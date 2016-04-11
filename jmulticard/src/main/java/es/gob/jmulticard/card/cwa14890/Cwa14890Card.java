@@ -74,11 +74,12 @@ public interface Cwa14890Card {
 
     /** Verifica que los certificados declarados por el controlador (certificados de
      * Terminal) sean v&aacute;lidos para el uso de la tarjeta.
+     * @param consts Clase de claves.
      * @throws ApduConnectionException Cuando ocurre alg&iacute;n error en la
      *         comunicaci&oacute;n con la tarjeta
      * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre alg&uacute;n error en la
      *         verificaci&oacute;n de los certificados */
-    void verifyIfdCertificateChain() throws ApduConnectionException;
+    void verifyIfdCertificateChain(final Cwa14890Constants consts) throws ApduConnectionException;
 
     /** Obtiene el mensaje de autenticaci&oacute;n interna de la tarjeta.
      * @param randomIfd Bytes aleatorios generados
@@ -114,20 +115,24 @@ public interface Cwa14890Card {
     byte[] getSerialNumber() throws ApduConnectionException;
 
     /** Recupera la referencia a la clave privada del certificado de Componente.
+     * @param consts Clase de claves.
      * @return Referencia a clave privada */
-    byte[] getRefIccPrivateKey();
+    byte[] getRefIccPrivateKey(final Cwa14890Constants consts);
 
     /** Recupera el CHR de la clave p&uacute;blica del certificado de Terminal.
+     * @param consts Clase de claves.
      * @return Referencia a clave p&uacute;blica */
-    byte[] getChrCCvIfd();
+    byte[] getChrCCvIfd(final Cwa14890Constants consts);
 
     /** Recupera la clave privada del certificado de componente del terminal.
+     * @param consts Clase de claves.
      * @return Clave privada */
-    RSAPrivateKey getIfdPrivateKey();
+    RSAPrivateKey getIfdPrivateKey(final Cwa14890Constants consts);
 
     /** Obtiene la longitud, <u>en octetos</u>, de las claves RSA del certificado de
      * comnponente del terminal.
+     * @param consts Clase de claves.
      * @return Longitud, <u>en octetos</u>, de las claves RSA del certificado de
      *         comnponente del terminal. */
-    int getIfdKeyLength();
+    int getIfdKeyLength(final Cwa14890Constants consts);
 }

@@ -7,8 +7,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import junit.framework.Assert;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;

@@ -43,6 +43,8 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 
+import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
+
 /** Constantes del DNIe para el establecimiento de canal seguro CWA-14890.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
@@ -172,41 +174,9 @@ final class Dnie3PinCwa14890Constants implements Cwa14890Constants {
             (byte) 0xC6, (byte) 0x3B, (byte) 0x35, (byte) 0x8B, (byte) 0x7C, (byte) 0x11, (byte) 0x5A, (byte) 0xA1
         });
 
-        private final byte[] encoded = new byte[]{ 48, -126, 1, 54, 2, 1, 0, 48, 13, 6, 9, 42, -122, 72, -122, -9, 13, 1, 1, 1, 5, 0, 4, -126, 1, 32, 48, -126, 1, 28, 2, 1, 0, 2, -127, -127, 0, -37, 44, -76, 30, 17, 43, -84, -6, 43, -41, -61, -45, -41, -106, 126, -124, -5, -108, 52, -4, 38, 31, -99, 9, 10, -119, -125, -108, 125, -81, -124, -120, -45, -33, -113, -67, -52, 31, -110, 73, 53, -123, -31, 52, -95, -76, 45, -27, 25, -12, 99, 36, 77, 126, -45, -124, -30, 109, 81, 108, -57, -92, -1, 120, -107, -79, -103, 33, 64, 4, 58, -84, -83, -4, 18, -24, 86, -78, 2, 52, 106, -8, 34, 107, 26, -120, 33, 55, -36, 60, 90, 87, -16, -46, -127, 92, 31, -51, 75, -76, 111, -87, 21, 127, -33, -3, 121, -20, 58, 16, -88, 36, -52, -63, -21, 60, -32, -74, -76, 57, 106, -30, 54, 89, 0, 22, -70, 105, 2, 1, 0, 2, -127, -128, 24, -76, 74, 61, 21, 92, 97, -21, -12, -29, 38, 28, -117, -79, 87, -29, 111, 99, -2, 48, -23, -81, 40, -119, 43, 89, -30, -83, -21, 24, -52, -116, -117, -83, 40, 75, -111, 101, -127, -100, -92, -34, -55, 74, -96, 107, 105, -68, -24, 23, 6, -47, -63, -74, 104, -21, 18, -122, -107, -27, -9, -2, -34, 24, -87, 8, -93, 1, 26, 100, 106, 72, 29, 62, -89, 29, -118, 56, 125, 71, 70, 9, -67, 87, -88, -126, -79, -126, -32, 71, -34, -128, -32, 75, 66, 33, 65, 107, -45, -99, -6, 31, -84, 3, 0, 100, 25, 98, -83, -79, 9, -30, -116, -81, 80, 6, 27, 104, -55, -54, -67, -101, 0, 49, 60, 15, 70, -19, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0 };
-        /*private final byte[] encoded = new byte[] {
-            (byte) 0x30, (byte) 0x82, (byte) 0x01, (byte) 0x35, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x30, (byte) 0x0D, (byte) 0x06,
-            (byte) 0x09, (byte) 0x2A, (byte) 0x86, (byte) 0x48, (byte) 0x86, (byte) 0xF7, (byte) 0x0D, (byte) 0x01, (byte) 0x01, (byte) 0x01,
-            (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x82, (byte) 0x01, (byte) 0x1F, (byte) 0x30, (byte) 0x82, (byte) 0x01, (byte) 0x1B,
-            (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x81, (byte) 0x80, (byte) 0xF4, (byte) 0x27, (byte) 0x97, (byte) 0x8D,
-            (byte) 0xA1, (byte) 0x59, (byte) 0xBA, (byte) 0x02, (byte) 0x79, (byte) 0x30, (byte) 0x8A, (byte) 0x6C, (byte) 0x6A, (byte) 0x89,
-            (byte) 0x50, (byte) 0x5A, (byte) 0xDA, (byte) 0x5A, (byte) 0x67, (byte) 0xC3, (byte) 0xDA, (byte) 0x26, (byte) 0x79, (byte) 0xEA,
-            (byte) 0xF4, (byte) 0xA1, (byte) 0xB0, (byte) 0x11, (byte) 0x9E, (byte) 0xDD, (byte) 0x4D, (byte) 0xF4, (byte) 0x6E, (byte) 0x78,
-            (byte) 0x04, (byte) 0x24, (byte) 0x71, (byte) 0xA9, (byte) 0xD1, (byte) 0x30, (byte) 0x1D, (byte) 0x3F, (byte) 0xB2, (byte) 0x8F,
-            (byte) 0x38, (byte) 0xC5, (byte) 0x7D, (byte) 0x08, (byte) 0x89, (byte) 0xF7, (byte) 0x31, (byte) 0xDB, (byte) 0x8E, (byte) 0xDD,
-            (byte) 0xBC, (byte) 0x13, (byte) 0x67, (byte) 0xC1, (byte) 0x34, (byte) 0xE1, (byte) 0xE9, (byte) 0x47, (byte) 0x78, (byte) 0x6B,
-            (byte) 0x8E, (byte) 0xC8, (byte) 0xE4, (byte) 0xB9, (byte) 0xCA, (byte) 0x6A, (byte) 0xA7, (byte) 0xC2, (byte) 0x4C, (byte) 0x86,
-            (byte) 0x91, (byte) 0xC7, (byte) 0xBE, (byte) 0x2F, (byte) 0xD8, (byte) 0xC1, (byte) 0x23, (byte) 0x66, (byte) 0x0E, (byte) 0x98,
-            (byte) 0x65, (byte) 0xE1, (byte) 0x4F, (byte) 0x19, (byte) 0xDF, (byte) 0xFB, (byte) 0xB7, (byte) 0xFF, (byte) 0x38, (byte) 0x08,
-            (byte) 0xC9, (byte) 0xF2, (byte) 0x04, (byte) 0xE7, (byte) 0x97, (byte) 0xD0, (byte) 0x6D, (byte) 0xD8, (byte) 0x33, (byte) 0x3A,
-            (byte) 0xC5, (byte) 0x83, (byte) 0x86, (byte) 0xEE, (byte) 0x4E, (byte) 0xB6, (byte) 0x1E, (byte) 0x20, (byte) 0xEC, (byte) 0xA7,
-            (byte) 0xEF, (byte) 0x38, (byte) 0xD5, (byte) 0xB0, (byte) 0x5E, (byte) 0xB1, (byte) 0x15, (byte) 0x96, (byte) 0x6A, (byte) 0x5A,
-            (byte) 0x89, (byte) 0xAD, (byte) 0x58, (byte) 0xA5, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x81, (byte) 0x80,
-            (byte) 0xD2, (byte) 0x7A, (byte) 0x03, (byte) 0x23, (byte) 0x7C, (byte) 0x72, (byte) 0x2E, (byte) 0x71, (byte) 0x8D, (byte) 0x69,
-            (byte) 0xF4, (byte) 0x1A, (byte) 0xEC, (byte) 0x68, (byte) 0xBD, (byte) 0x95, (byte) 0xE4, (byte) 0xE0, (byte) 0xC4, (byte) 0xCD,
-            (byte) 0x49, (byte) 0x15, (byte) 0x9C, (byte) 0x4A, (byte) 0x99, (byte) 0x63, (byte) 0x7D, (byte) 0xB6, (byte) 0x62, (byte) 0xFE,
-            (byte) 0xA3, (byte) 0x02, (byte) 0x51, (byte) 0xED, (byte) 0x32, (byte) 0x9C, (byte) 0xFC, (byte) 0x43, (byte) 0x89, (byte) 0xEB,
-            (byte) 0x71, (byte) 0x7B, (byte) 0x85, (byte) 0x02, (byte) 0x04, (byte) 0xCD, (byte) 0xF3, (byte) 0x30, (byte) 0xD6, (byte) 0x46,
-            (byte) 0xFC, (byte) 0x7B, (byte) 0x2B, (byte) 0x19, (byte) 0x29, (byte) 0xD6, (byte) 0x8C, (byte) 0xBE, (byte) 0x39, (byte) 0x49,
-            (byte) 0x7B, (byte) 0x62, (byte) 0x3A, (byte) 0x82, (byte) 0xC7, (byte) 0x64, (byte) 0x1A, (byte) 0xC3, (byte) 0x48, (byte) 0x79,
-            (byte) 0x57, (byte) 0x3D, (byte) 0xEA, (byte) 0x0D, (byte) 0xAB, (byte) 0xC7, (byte) 0xCA, (byte) 0x30, (byte) 0x9A, (byte) 0xE4,
-            (byte) 0xB3, (byte) 0xED, (byte) 0xDA, (byte) 0xFA, (byte) 0xEE, (byte) 0x55, (byte) 0xD5, (byte) 0x42, (byte) 0xF7, (byte) 0x80,
-            (byte) 0x23, (byte) 0x03, (byte) 0x51, (byte) 0xE7, (byte) 0x5E, (byte) 0x7F, (byte) 0x32, (byte) 0xDC, (byte) 0x65, (byte) 0x2E,
-            (byte) 0xF1, (byte) 0xED, (byte) 0x47, (byte) 0xA5, (byte) 0x1C, (byte) 0x18, (byte) 0xD9, (byte) 0xDF, (byte) 0x9F, (byte) 0xF4,
-            (byte) 0x8D, (byte) 0x87, (byte) 0x8D, (byte) 0xB6, (byte) 0x22, (byte) 0xEA, (byte) 0x6E, (byte) 0x93, (byte) 0x70, (byte) 0xE9,
-            (byte) 0xC6, (byte) 0x3B, (byte) 0x35, (byte) 0x8B, (byte) 0x7C, (byte) 0x11, (byte) 0x5A, (byte) 0xA1, (byte) 0x02, (byte) 0x01,
-            (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x01, (byte) 0x00,
-            (byte) 0x02, (byte) 0x01, (byte) 0x00
-        };*/
+        private final byte[] encoded = new byte[]{
+        		48, -126, 1, 54, 2, 1, 0, 48, 13, 6, 9, 42, -122, 72, -122, -9, 13, 1, 1, 1, 5, 0, 4, -126, 1, 32, 48, -126, 1, 28, 2, 1, 0, 2, -127, -127, 0, -12, 39, -105, -115, -95, 89, -70, 2, 121, 48, -118, 108, 106, -119, 80, 90, -38, 90, 103, -61, -38, 38, 121, -22, -12, -95, -80, 17, -98, -35, 77, -12, 110, 120, 4, 36, 113, -87, -47, 48, 29, 63, -78, -113, 56, -59, 125, 8, -119, -9, 49, -37, -114, -35, -68, 19, 103, -63, 52, -31, -23, 71, 120, 107, -114, -56, -28, -71, -54, 106, -89, -62, 76, -122, -111, -57, -66, 47, -40, -63, 35, 102, 14, -104, 101, -31, 79, 25, -33, -5, -73, -1, 56, 8, -55, -14, 4, -25, -105, -48, 109, -40, 51, 58, -59, -125, -122, -18, 78, -74, 30, 32, -20, -89, -17, 56, -43, -80, 94, -79, 21, -106, 106, 90, -119, -83, 88, -91, 2, 1, 0, 2, -127, -128, -46, 122, 3, 35, 124, 114, 46, 113, -115, 105, -12, 26, -20, 104, -67, -107, -28, -32, -60, -51, 73, 21, -100, 74, -103, 99, 125, -74, 98, -2, -93, 2, 81, -19, 50, -100, -4, 67, -119, -21, 113, 123, -123, 2, 4, -51, -13, 48, -42, 70, -4, 123, 43, 25, 41, -42, -116, -66, 57, 73, 123, 98, 58, -126, -57, 100, 26, -61, 72, 121, 87, 61, -22, 13, -85, -57, -54, 48, -102, -28, -77, -19, -38, -6, -18, 85, -43, 66, -9, -128, 35, 3, 81, -25, 94, 127, 50, -36, 101, 46, -15, -19, 71, -91, 28, 24, -39, -33, -97, -12, -115, -121, -115, -74, 34, -22, 110, -109, 112, -23, -58, 59, 53, -117, 124, 17, 90, -95, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0
+		};
 
         /** {@inheritDoc} */
         @Override
