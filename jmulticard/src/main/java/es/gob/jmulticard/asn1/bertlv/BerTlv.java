@@ -69,13 +69,13 @@ public final class BerTlv {
     private byte[] value;
 
     /** Obtiene la etiqueta (tipo) del TLV.
-     * @return Etiqueta (tipo) del TLV */
+     * @return Etiqueta (tipo) del TLV. */
     public BerTlvIdentifier getTag() {
         return this.tag;
     }
 
     /** Obtiene el valor del TLV.
-     * @return Valor del TLV */
+     * @return Valor del TLV. */
     public byte[] getValue() {
         if (this.value == null) {
             return null;
@@ -86,8 +86,8 @@ public final class BerTlv {
     }
 
     /** Obtiene una instancia del TLV.
-     * @param stream Representaci&oacute;n binaria del TLV
-     * @return Instancia del TLV */
+     * @param stream Representaci&oacute;n binaria del TLV.
+     * @return Instancia del TLV. */
     public static BerTlv getInstance(final ByteArrayInputStream stream) {
         final BerTlv tlv = new BerTlv();
         tlv.decode(stream);

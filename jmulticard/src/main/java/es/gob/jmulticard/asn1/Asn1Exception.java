@@ -45,20 +45,20 @@ public final class Asn1Exception extends Exception {
     private static final long serialVersionUID = 6806321101842954785L;
 
     /** Construye una excepci&oacute;n gen&eacute;rica de ASN&#46;1 DER.
-     * @param message Mensaje descriptivo de la excepci&oacute;n  */
+     * @param message Mensaje descriptivo de la excepci&oacute;n.  */
     public Asn1Exception(final String message) {
         super(message);
     }
 
     /** Construye una excepci&oacute;n gen&eacute;rica de ASN&#46;1 DER.
-     * @param cause Causa inicial de la excepci&oacute;n  */
+     * @param cause Causa inicial de la excepci&oacute;n.  */
     public Asn1Exception(final Throwable cause) {
         super(cause.getMessage());
     }
 
     /** Construye una excepci&oacute;n gen&eacute;rica de ASN&#46;1 DER.
-     * @param message Mensaje descriptivo de la excepci&oacute;n
-     * @param cause Causa inicial de la excepci&oacute;n  */
+     * @param message Mensaje descriptivo de la excepci&oacute;n.
+     * @param cause Causa inicial de la excepci&oacute;n.  */
     public Asn1Exception(final String message, final Throwable cause) {
         super(message + " : " + cause.toString()); //$NON-NLS-1$
     }

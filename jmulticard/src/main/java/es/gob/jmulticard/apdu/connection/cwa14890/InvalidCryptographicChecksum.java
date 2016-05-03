@@ -48,7 +48,7 @@ public final class InvalidCryptographicChecksum extends SecurityException {
 
 	/** Construye una excepci&oacute;n relacionada con un <i>checksum</i> criptogr&aacute;fico inv&aacute;lido
 	 * en una APDU protegida seg&uacute;n CWA-14890. */
-	InvalidCryptographicChecksum() {
+	public InvalidCryptographicChecksum() {
 		super("Checksum criptografico invalido (APDU respuesta = 6688)"); //$NON-NLS-1$
 	}
 

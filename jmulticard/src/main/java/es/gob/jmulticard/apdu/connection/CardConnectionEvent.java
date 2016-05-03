@@ -48,7 +48,7 @@ public final class CardConnectionEvent extends java.util.EventObject {
     private static final long serialVersionUID = 5904349664169930807L;
 
     /** Construye un objecto de evento de conexi&oacute;n a partir de una conexi&oacute;n dada.
-     * @param conn Conexi&oacute;n con tarjeta que ha generado el evento actual */
+     * @param conn Conexi&oacute;n con tarjeta que ha generado el evento actual. */
     public CardConnectionEvent(final ApduConnection conn) {
         super(conn);
     }

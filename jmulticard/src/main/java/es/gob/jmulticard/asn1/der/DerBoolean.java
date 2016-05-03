@@ -65,7 +65,7 @@ public class DerBoolean extends DecoderObject {
 	}
 
 	/** Obtiene el valor del objeto.
-	 * @return Valor del objeto <i>Boolean</i> */
+	 * @return Valor del objeto <i>Boolean</i>. */
 	public boolean getBooleanValue() {
 		if (this.booleanValue == null) {
 			throw new IllegalStateException("El valor del objeto boolean no esta establecido"); //$NON-NLS-1$

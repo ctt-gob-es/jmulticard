@@ -37,7 +37,7 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.apdu.connection.cwa14890;
+package es.gob.jmulticard.apdu.connection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,15 +45,19 @@ import java.io.IOException;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksum;
+import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.asn1.bertlv.BerTlv;
 
 /** Cifrador de APDU seg&uacute;n CWA-14890 mediante 3DES y MAC de 4 octetos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Carlos Gamuci Mill&aacute;n */
-class ApduEncrypterDes extends ApduEncrypter {
+public class ApduEncrypterDes extends ApduEncrypter {
 
-	ApduEncrypterDes() {
+	/**
+	 * Constructor de la clase para operaciones de cifrado cifrado DES.
+	 */
+	public ApduEncrypterDes() {
         this.paddingLength = 8;
     }
 
@@ -128,7 +132,7 @@ class ApduEncrypterDes extends ApduEncrypter {
      * @return APDU con la respuesta descifrada.
      * @throws IOException Cuando ocurre un error durante la desencriptaci&oacute;n de los datos. */
     @Override
-	ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
+	public ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
             								final byte[] keyCipher,
             								final byte[] ssc,
             								final byte[] kMac,
@@ -214,7 +218,7 @@ class ApduEncrypterDes extends ApduEncrypter {
     		calculatedMac = generateMac(addPadding7816(verificableData, this.paddingLength), ssc, kMac, cryptoHelper);
     	}
     	catch (final IOException e) {
-    		throw new SecurityException("No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion"); //$NON-NLS-1$
+    		throw new SecurityException("No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion: " + e); //$NON-NLS-1$
 		}
 
     	// Comparamos que el MAC recibido sea igual que el MAC que debimos recibir

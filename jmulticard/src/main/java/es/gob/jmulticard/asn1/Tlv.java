@@ -59,8 +59,8 @@ public final class Tlv {
     private final int valueOffset;
 
     /** Construye un TLV simple con etiqueta y longitud de un solo octeto cada uno.
-     * @param t Etiqueta (tipo) del TLV
-     * @param value Valor del TLV */
+     * @param t Etiqueta (tipo) del TLV.
+     * @param value Valor del TLV. */
     public Tlv(final byte t, final byte[] value) {
     	if (value == null) {
             throw new IllegalArgumentException("El valor del TLV no puede ser nulo"); //$NON-NLS-1$
@@ -83,8 +83,8 @@ public final class Tlv {
     }
 
     /** Construye un TLV simple a partir de su representaci&oacute;n binaria directa.
-     * @param buffer Representaci&oacute;n binaria del TLV
-     * @throws TlvException en caso de error analizando el TLV */
+     * @param buffer Representaci&oacute;n binaria del TLV.
+     * @throws TlvException en caso de error analizando el TLV. */
     public Tlv(final byte[] buffer) throws TlvException {
         if (buffer == null || buffer.length == 0) {
             throw new IllegalArgumentException("El TLV no puede ser nulo ni vacio"); //$NON-NLS-1$
@@ -138,7 +138,7 @@ public final class Tlv {
     }
 
     /** Devuelve el TLV directamente en binario.
-     * @return Valor finario completo del TLV */
+     * @return Valor finario completo del TLV. */
     public byte[] getBytes() {
         final byte[] out = new byte[this.bytes.length];
         System.arraycopy(this.bytes, 0, out, 0, this.bytes.length);
@@ -146,19 +146,19 @@ public final class Tlv {
     }
 
     /** Devuelve la longitud del valor del TLV.
-     * @return Longitud del valor del TLV */
+     * @return Longitud del valor del TLV. */
     public int getLength() {
         return this.length;
     }
 
     /** Devuelve el tipo (etiqueta) del TLV.
-     * @return Tipo (etiqueta) del TLV */
+     * @return Tipo (etiqueta) del TLV. */
     public byte getTag() {
         return this.tag;
     }
 
     /** Devuelve el valor del TLV.
-     * @return Valor del del TLV */
+     * @return Valor del del TLV. */
     public byte[] getValue() {
         final byte[] out = new byte[this.length];
         System.arraycopy(this.bytes, this.valueOffset, out, 0, this.length);

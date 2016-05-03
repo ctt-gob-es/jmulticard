@@ -52,13 +52,56 @@ public class CommandApdu extends Apdu {
 	private Integer le;
 	private final byte[] body;
 
-	/** Construye una APDU gen&eacute;rica
-	 * @param cla Clase (CLA) de APDU
-	 * @param ins Identificador de la instrucci&oacute;n (INS) que esta APDU representa
-	 * @param param1 Primer par&aacute;metro (P1) de la APDU
-	 * @param param2 Segundo par&aacute;metro (P2) de la APDU
-	 * @param data Datos del comando
-	 * @param ne N&uacute;mero de octetos esperados en la respuesta (Ne) */
+	
+	private static byte[] getBody(final byte[] bytes) {
+		if (bytes == null || bytes.length < 5) {
+			throw new IllegalArgumentException("La longitud del array de octetos debe ser igual o mayor que 5."); //$NON-NLS-1$
+		}
+		final byte[] data;
+		final int i = bytes[4] & 0xff;
+		if (bytes.length > 5) {
+			data = new byte[i];
+			System.arraycopy(bytes, 5, data, 0, i);
+			return data;
+		}
+		return null;
+	}
+	
+	private static Integer getLength(final byte[] bytes) {
+
+		if (bytes == null || bytes.length < 5) {
+			throw new IllegalArgumentException("La longitud del array de octetos debe ser igual o mayor que 5."); //$NON-NLS-1$
+		}
+		final int i = (bytes[4]) & 0xff;
+		if (bytes.length>5 && bytes.length>i+5) {
+			return new Integer(bytes[i+5]);
+		}
+		else if (bytes.length==5) {
+			return new Integer(i);
+		}
+		return null;
+	}
+	
+	/** Construye una APDU en base a un array de octetos.
+	 * @param bytes Array de octetos para la construcci&oacute;n del objeto. */
+	public CommandApdu(final byte[] bytes) {
+		this(
+			bytes[0], // CLA
+			bytes[1], // INS
+			bytes[2], // P1
+			bytes[3], // P2
+			getBody(bytes),
+			getLength(bytes)
+		);
+	}
+
+	/** Construye una APDU gen&eacute;rica.
+	 * @param cla Clase (CLA) de APDU.
+	 * @param ins Identificador de la instrucci&oacute;n (INS) que esta APDU representa.
+	 * @param param1 Primer par&aacute;metro (P1) de la APDU.
+	 * @param param2 Segundo par&aacute;metro (P2) de la APDU.
+	 * @param data Datos del comando.
+	 * @param ne N&uacute;mero de octetos esperados en la respuesta (Ne). */
 	public CommandApdu(final byte cla,
 			           final byte ins,
 			           final byte param1,
@@ -111,13 +154,13 @@ public class CommandApdu extends Apdu {
 	}
 
 	/** Devuelve la clase (CLA) de APDU.
-	 * @return Clase (CLA) de APDU */
+	 * @return Clase (CLA) de APDU. */
 	public byte getCla() {
 		return this.cla;
 	}
 
 	/** Obtiene el cuerpo de la APDU.
-	 * @return Cuerpo de la APDU, o <code>null</code> si no est&aacute; establecido */
+	 * @return Cuerpo de la APDU, o <code>null</code> si no est&aacute; establecido. */
 	public byte[] getData() {
 		if (this.body == null) {
 			return null;
@@ -129,7 +172,7 @@ public class CommandApdu extends Apdu {
 
 	/** Devuelve el octeto identificador de la instrucci&oacute;n (INS) que esta
 	 * APDU representa.
-	 * @return Identificador de instrucci&oacute;n */
+	 * @return Identificador de instrucci&oacute;n. */
 	public byte getIns() {
 		return this.ins;
 	}
@@ -137,19 +180,19 @@ public class CommandApdu extends Apdu {
 	/** Obtiene el n&uacute;mero m&aacute;ximo de octetos esperados en la APDU de
 	 * respuesta.
 	 * @return N&uacute;mero m&aacute;ximo de octetos esperados en la APDU de
-	 *         respuesta, o <code>null</code> si no est&aacute; establecido */
+	 *         respuesta, o <code>null</code> si no est&aacute; establecido. */
 	public Integer getLe() {
 		return this.le;
 	}
 
 	/** Devuelve el primer par&aacute;metro (P1) de la APDU.
-	 * @return Primer par&aacute;metro (P1) de la APDU */
+	 * @return Primer par&aacute;metro (P1) de la APDU. */
 	public byte getP1() {
 		return this.p1;
 	}
 
 	/** Devuelve el segundo par&aacute;metro (P2) de la APDU.
-	 * @return Segundo par&aacute;metro (P2) de la APDU */
+	 * @return Segundo par&aacute;metro (P2) de la APDU. */
 	public byte getP2() {
 		return this.p2;
 	}

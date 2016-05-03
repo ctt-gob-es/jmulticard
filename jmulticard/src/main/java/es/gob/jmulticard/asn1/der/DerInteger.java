@@ -60,7 +60,7 @@ public class DerInteger extends DecoderObject {
 	}
 
 	/** Obtiene el valor entero (<code>BigInteger</code>) del objeto.
-	 * @return Valor del objeto */
+	 * @return Valor del objeto. */
 	public BigInteger getIntegerValue() {
 		if (this.value == null) {
 			throw new IllegalStateException("El valor del objeto aun no esta establecido"); //$NON-NLS-1$

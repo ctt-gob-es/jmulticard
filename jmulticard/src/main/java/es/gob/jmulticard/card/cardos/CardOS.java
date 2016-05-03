@@ -282,5 +282,12 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
 		throw new UnsupportedOperationException();
 	}
+	
+	/** {@inheritDoc}
+	 */
+	@Override
+	public byte[] changePIN(final String oldPin, final String newPin) {
+		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
+	}
 
 }

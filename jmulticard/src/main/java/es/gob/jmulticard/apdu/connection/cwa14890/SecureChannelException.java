@@ -49,14 +49,14 @@ public class SecureChannelException extends ApduConnectionException {
     private static final long serialVersionUID = 3618976402641614649L;
 
     /** Crea una excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro.
-     * @param msg Mensaje de la excepci&oacute;n
-     * @param cause Causa de la excepci&oacute;n */
+     * @param msg Mensaje de la excepci&oacute;n.
+     * @param cause Causa de la excepci&oacute;n. */
     public SecureChannelException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 
     /** Crea una excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro.
-     * @param msg Mensaje de la excepci&oacute;n */
+     * @param msg Mensaje de la excepci&oacute;n. */
     public SecureChannelException(final String msg) {
         super(msg);
     }

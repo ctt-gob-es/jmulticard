@@ -63,7 +63,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 		/** PACE-ECDH-GM-AES-CBC-CMAC-128. */
 		PACE_ECDH_GM_AES_CBC_CMAC128(
 			new byte[] {
-				/* T */ (byte) 0x80,
+				/* T */ 
 				/* L */ (byte) 0x0A,
 				/* V */ (byte) 0x04, (byte) 0x00, (byte) 0x7f, (byte) 0x00, (byte) 0x07,
 				        (byte) 0x02, (byte) 0x02, (byte) 0x04, (byte) 0x02, (byte) 0x02
@@ -93,13 +93,14 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 			                              final PacePasswordType pwdType,
 			                              final PaceAlgorithmParam algorithmParam) {
 		super(
-			cla,
-			HexUtils.concatenateByteArrays(
-				algorithm.getBytes(),
-				pwdType.getBytes(),
-				algorithmParam.getBytes()
-			)
-		);
+				cla,
+				HexUtils.concatenateByteArrays(
+					new byte[]{(byte)0x80},
+					algorithm.getBytes(),
+					pwdType.getBytes(),
+					algorithmParam.getBytes()
+				)
+			);
 	}
 
 }

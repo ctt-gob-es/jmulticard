@@ -62,14 +62,14 @@ package es.gob.jmulticard.asn1.bertlv;
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 
-/** Identificador de TLV ASN&#46;1 BER
+/** Identificador de TLV ASN&#46;1 BER.
  * @author Isaac Levin */
 public final class BerTlvIdentifier {
 
     private byte[] value;
 
-    /** Obtiene el valor de la etiqueta (tipo) del TLV
-     * @return Valor de la etiqueta (tipo) del TLV */
+    /** Obtiene el valor de la etiqueta (tipo) del TLV.
+     * @return Valor de la etiqueta (tipo) del TLV. */
     public int getTagValue() {
         if (this.value == null) {
             return 0;

@@ -66,6 +66,7 @@ import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
+import es.gob.jmulticard.apdu.dnie.ChangePINApduCommand;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
@@ -887,5 +888,58 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	@Override
 	public int getIfdKeyLength(final Cwa14890Constants consts) {
 		return consts.getIfdKeyLength();
+	}
+
+	/** Realiza la operaci&oacute;n de cambio de PIN
+	 * @param oldPin PIN actual.
+	 * @param newPin PIN nuevo.
+	 * @return Estado de la operaci&oacute;n.
+	 * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
+	 * @throws es.gob.jmulticard.card.BadPinException Si el PIN actual es incorrecto
+	 * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
+	@Override
+	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException, BadPinException, AuthenticationModeLockedException {
+		openSecureChannelIfNotAlreadyOpened();
+
+		try {
+			System.out.println(HexUtils.hexify(selectFileByLocationAndRead(new Location("50156005")), false));
+		} 
+		catch (final Exception e1) {}
+		ResponseApdu res = null;
+		try {
+			//Seleccion de directorio maestro
+			selectMasterFile();
+			//Seleccion de fichero de PIN por Id
+			final byte[] pinFile = new byte[] {(byte)0x00, (byte) 0x00};
+			selectFileById(pinFile);
+			//Envio de APDU de cambio de PIN
+			final CommandApdu apdu = new ChangePINApduCommand(oldPin.getBytes(), newPin.getBytes());
+			res = getConnection().transmit(apdu);
+			if (!res.isOk()) {
+				throw new DnieCardException(
+						"Error en el establecimiento de las variables de entorno para el cambio de PIN", res.getStatusWord() //$NON-NLS-1$
+						);
+			}
+		}
+		catch(final LostChannelException e) {
+			LOGGER.warning("Se ha perdido el canal seguro para firmar. Se procede a recuperarlo: " + e); //$NON-NLS-1$
+			try {
+				getConnection().close();
+				if (getConnection() instanceof Cwa14890Connection) {
+					setConnection(((Cwa14890Connection) getConnection()).getSubConnection());
+				}
+			}
+			catch (final Exception ex) {
+				throw new DnieCardException("No se pudo recuperar el canal seguro para firmar: " + ex, ex); //$NON-NLS-1$
+			}
+		}
+		catch (final ApduConnectionException e) {
+			throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new DnieCardException("No se pudo seleccionar el fichero de PIN de la tarjeta: " + e, e); //$NON-NLS-1$
+		}
+
+		return res.getData();
 	}
 }

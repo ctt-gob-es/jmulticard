@@ -50,7 +50,7 @@ public class Apdu {
     private byte[] apduBytes = null;
 
     /** Obtiene los octetos que conforman la APDU.
-     * @return Array de octetos que conforman la APDU */
+     * @return Array de octetos que conforman la APDU. */
     public byte[] getBytes() {
         final byte[] response = new byte[this.apduBytes.length];
         System.arraycopy(this.apduBytes, 0, response, 0, this.apduBytes.length);

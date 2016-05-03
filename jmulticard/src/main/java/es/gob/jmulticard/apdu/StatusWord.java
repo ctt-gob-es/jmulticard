@@ -53,22 +53,22 @@ public final class StatusWord implements Serializable {
     private byte lsb = 0x00;
 
     /** Contruye una palabra de estado de una APDU.
-     * @param msb Octeto m&aacute;s significativo de la palabra de estado
-     * @param lsb Octeto menos significativo de la palabra de estado */
+     * @param msb Octeto m&aacute;s significativo de la palabra de estado.
+     * @param lsb Octeto menos significativo de la palabra de estado. */
     public StatusWord(final byte msb, final byte lsb) {
         this.msb = msb;
         this.lsb = lsb;
     }
 
     /** Obtiene el octeto m&aacute;s significativo de la palabra de estado.
-     * @return Octeto m&aacute;s significativo de la palabra de estado
+     * @return Octeto m&aacute;s significativo de la palabra de estado.
      * @see #getLsb() */
     public byte getMsb() {
         return this.msb;
     }
 
     /** Obtiene el octeto menos significativo de la palabra de estado.
-     * @return Octeto menos significativo de la palabra de estado
+     * @return Octeto menos significativo de la palabra de estado.
      * @see #getMsb() */
     public byte getLsb() {
         return this.lsb;
@@ -83,7 +83,7 @@ public final class StatusWord implements Serializable {
     }
 
     /** Compara dos palabras de estado.
-     * @return <code>true</code> si son iguales (a nivel de octetos), <code>false</code> si son distintas */
+     * @return <code>true</code> si son iguales (a nivel de octetos), <code>false</code> si son distintas. */
     @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof StatusWord)) {
@@ -97,7 +97,7 @@ public final class StatusWord implements Serializable {
     }
 
     /** Devuelve un c&oacute;digo <i>hash</i> para la palabra de estado.
-     * @return C&oacute;digo <i>hash</i> para la palabra de estado */
+     * @return C&oacute;digo <i>hash</i> para la palabra de estado. */
     @Override
     public int hashCode() {
         return HexUtils.getShort(new byte[] {

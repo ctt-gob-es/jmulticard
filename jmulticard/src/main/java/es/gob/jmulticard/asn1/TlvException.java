@@ -39,20 +39,20 @@
  */
 package es.gob.jmulticard.asn1;
 
-/** Excepci&oacute;n gen&eacute;rica de error en un TLV */
+/** Excepci&oacute;n gen&eacute;rica de error en un TLV. */
 public final class TlvException extends Exception {
 
     private static final long serialVersionUID = -295492295001355798L;
 
     /** Construye una excepci&oacute;n gen&eacute;rica de error en un TLV.
-     * @param message Mensaje de la excepci&oacute;n */
+     * @param message Mensaje de la excepci&oacute;n. */
     public TlvException(final String message) {
         super(message);
     }
 
     /** Construye una excepci&oacute;n gen&eacute;rica de error en un TLV.
-     * @param message Mensaje de la excepci&oacute;n
-     * @param cause Causa que provoc&oacute; la excepci&oacute;n */
+     * @param message Mensaje de la excepci&oacute;n.
+     * @param cause Causa que provoc&oacute; la excepci&oacute;n. */
     public TlvException(final String message, final Throwable cause) {
         super(message + ": " + cause.toString()); //$NON-NLS-1$
     }

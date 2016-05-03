@@ -77,7 +77,7 @@ public abstract class ContextSpecific extends DecoderObject {
     private final Class<? extends DecoderObject> elementType;
 
     /** Construye un tipo ASN&#46;1 espec&iacute;fico del contexto.
-     * @param type Tipo de elemento contenido dentro de este objeto */
+     * @param type Tipo de elemento contenido dentro de este objeto. */
     public ContextSpecific(final Class<? extends DecoderObject> type) {
         super();
         if (type == null) {

@@ -48,7 +48,7 @@ public final class CardNotPresentException extends ApduConnectionException {
 
 	/** Construye una excepci&oacute;n relativa a un intento de conexi&oacute;n en un lector de
      * tarjetas que no tiene una tarjeta inteligente insertada.
-	 * @param cause Causa de la excepci&oacute;n */
+	 * @param cause Causa de la excepci&oacute;n. */
     public CardNotPresentException(final Throwable cause) {
         super("No hay ninguna tarjeta insertada en el lector", cause); //$NON-NLS-1$
     }

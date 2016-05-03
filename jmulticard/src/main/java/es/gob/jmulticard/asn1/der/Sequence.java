@@ -64,8 +64,8 @@ public abstract class Sequence extends DecoderObject {
     }
 
     /** Construye un tipo ASN&#46;1 <i>Sequence</i>.
-     * Un <i>Sequence</i> contiene una secuencia de tipos ASN&#46;1 (que pueden ser distintos)
-     * @param types Tipos (etiquetas) de objetos ASN&#46;1 (cero a n elementos) que va a contener la secuencia. El orden es relevante */
+     * Un <i>Sequence</i> contiene una secuencia de tipos ASN&#46;1 (que pueden ser distintos).
+     * @param types Tipos (etiquetas) de objetos ASN&#46;1 (cero a n elementos) que va a contener la secuencia. El orden es relevante. */
 	protected Sequence(final OptionalDecoderObjectElement[] types) {
         super();
         if (types == null) {
@@ -113,9 +113,9 @@ public abstract class Sequence extends DecoderObject {
     }
 
     /** Devuelve el elemento situado en la posici&oacute;n indicada.
-     * @param index Posici&oacute;n del elemento a recuperar
+     * @param index Posici&oacute;n del elemento a recuperar.
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
-     * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia */
+     * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia. */
     protected DecoderObject getElementAt(final int index) {
         return this.elements.get(index);
     }

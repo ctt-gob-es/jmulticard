@@ -46,7 +46,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 /** APDU cifrada para su env&iacute;o a trav&eacute;s de un canal seguro.
  * @author Carlos Gamuci
  * @author Alberto Mart&iacute;nez */
-final class CipheredApdu extends CommandApdu {
+public final class CipheredApdu extends CommandApdu {
 
 	private static final byte TAG_CRYPTOGRAPHIC_CHECKSUM = (byte) 0x8E;
 
@@ -66,12 +66,12 @@ final class CipheredApdu extends CommandApdu {
     }
 
     /** Crea una APDU cifrada seg&uacute;n CWA-14890.
-     * @param cla Clase (CLA)
-     * @param ins Instrucci&oacute;n (INS)
-     * @param p1 Primer par&aacute;metro
-     * @param p2 Segundo par&aacute;metro
-     * @param data Datos del TLV criptograma
-     * @param mac C&oacute;digo de autenticaci&oacute;n del criptograma (MAC) */
+     * @param cla Clase (CLA).
+     * @param ins Instrucci&oacute;n (INS).
+     * @param p1 Primer par&aacute;metro.
+     * @param p2 Segundo par&aacute;metro.
+     * @param data Datos del TLV criptograma.
+     * @param mac C&oacute;digo de autenticaci&oacute;n del criptograma (MAC). */
     CipheredApdu(final byte cla,
     		     final byte ins,
     		     final byte p1,

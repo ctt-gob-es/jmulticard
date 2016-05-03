@@ -87,9 +87,9 @@ public final class MseSetSignatureKeyApduCommand extends CommandApdu {
     }
 
     /** Crea una APDU para el establecimiento de la clave privada de firma.
-     * @param cla Clase (CLA) de la APDU
-     * @param algo Mecanismo criptogr&aacute;fico a usar con la clave privada establecida
-     * @param privateKeyReference Referencia a la clave a establecer */
+     * @param cla Clase (CLA) de la APDU.
+     * @param algo Mecanismo criptogr&aacute;fico a usar con la clave privada establecida.
+     * @param privateKeyReference Referencia a la clave a establecer. */
     public MseSetSignatureKeyApduCommand(final byte cla,
     		                             final CryptographicMechanism algo,
     		                             final byte privateKeyReference) {

@@ -38,7 +38,7 @@
  * o idoneidad para un proposito particular.
  */
 
-package es.gob.jmulticard.apdu.connection.cwa14890;
+package es.gob.jmulticard.apdu.connection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,7 +51,7 @@ import es.gob.jmulticard.asn1.Tlv;
 
 /** Cifrador de APDU seg&uacute;n CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-abstract class ApduEncrypter {
+	public abstract class ApduEncrypter {
 
     /** Tag del TLV de datos de una APDU protegida. */
     protected static final byte TAG_DATA_TLV = (byte) 0x87;
@@ -73,14 +73,14 @@ abstract class ApduEncrypter {
 
     /** Encapsula una APDU para ser enviada por un canal seguro CWA-14890.
      * El contador SSC se autoincrementa durante la operaci&oacute;n.
-     * @param unprotectedApdu APDU desprotegida (en claro)
-     * @param keyCipher Clave sim&eacute;trica de cifrado
-     * @param keyMac Clave sim&eacute;trica para el MAC
-     * @param sendSequenceCounter Contador de secuencia actual
-     * @param cryptoHelper Operador criptogr&aacute;fico
-     * @return APDU protegida (cifrada y con MAC)
-     * @throws IOException Si ocurren problemas durante los cifrados de la APDU */
-    CipheredApdu protectAPDU(final CommandApdu unprotectedApdu,
+     * @param unprotectedApdu APDU desprotegida (en claro).
+     * @param keyCipher Clave sim&eacute;trica de cifrado.
+     * @param keyMac Clave sim&eacute;trica para el MAC.
+     * @param sendSequenceCounter Contador de secuencia actual.
+     * @param cryptoHelper Operador criptogr&aacute;fico.
+     * @return APDU protegida (cifrada y con MAC).
+     * @throws IOException Si ocurren problemas durante los cifrados de la APDU. */
+    public CipheredApdu protectAPDU(final CommandApdu unprotectedApdu,
                                     final byte[] keyCipher,
                                     final byte[] keyMac,
                                     final byte[] sendSequenceCounter,
@@ -179,7 +179,16 @@ abstract class ApduEncrypter {
                                           final byte[] kMac,
                                           final CryptoHelper cryptoHelper) throws IOException;
 
-    abstract ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
+    /** Desencripta la Apdu de respuesta recibida a partir de las variables del canal de cifrado (kenc, kmac, ssc).
+     * @param responseApdu Respuesta a desencriptar.
+     * @param keyCipher Clave de cifrado.
+     * @param ssc Contador de cifrado.
+     * @param kMac Clave de cifrado.
+     * @param cryptoHelper Instancia que lleva a cabo las operaciones de cifrado.
+     * @return Apdu descifrada.
+     * @throws IOException Error en el proceso de descifrado.
+     */
+    public abstract ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
 			final byte[] keyCipher,
 			final byte[] ssc,
 			final byte[] kMac,

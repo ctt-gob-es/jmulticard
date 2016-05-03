@@ -50,8 +50,8 @@ public class ApduConnectionException extends IOException {
 
     /** Construye una excepci&oacute;n relativa a un error de conexi&oacute;n con un lector de
      * tarjetas o con una tarjeta inteligente.
-     * @param message Mensaje de excepci&oacute;n
-     * @param cause Causa de la excepci&oacute;n */
+     * @param message Mensaje de excepci&oacute;n.
+     * @param cause Causa de la excepci&oacute;n. */
     public ApduConnectionException(final String message, final Throwable cause) {
         super(message + ": " + cause); //$NON-NLS-1$
         initCause(cause);
@@ -59,14 +59,14 @@ public class ApduConnectionException extends IOException {
 
     /** Construye una excepci&oacute;n relativa a un error de conexi&oacute;n con un lector de
      * tarjetas o con una tarjeta inteligente.
-     * @param message Mensaje de excepci&oacute;n */
+     * @param message Mensaje de excepci&oacute;n. */
     public ApduConnectionException(final String message) {
         super(message);
     }
 
     /** Construye una excepci&oacute;n relativa a un error de conexi&oacute;n con un lector de
      * tarjetas o con una tarjeta inteligente.
-     * @param cause Causa de la excepci&oacute;n */
+     * @param cause Causa de la excepci&oacute;n. */
     public ApduConnectionException(final Throwable cause) {
         super(cause);
     }

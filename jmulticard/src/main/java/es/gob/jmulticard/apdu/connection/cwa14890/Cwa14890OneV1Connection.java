@@ -54,10 +54,12 @@ import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.apdu.connection.ApduEncrypter;
+import es.gob.jmulticard.apdu.connection.ApduEncrypterDes;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
+import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente.
  * @author Carlos Gamuci */
@@ -73,6 +75,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
 	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
+	
+	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
+	private static final byte MSB_INCORRECT_LE_PACE = (byte) 0x62;
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kenc del canal seguro. */
     private static final byte[] SECURE_CHANNEL_KENC_AUX = new byte[] {
@@ -85,13 +90,13 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     };
 
     /** Helper para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
-    private final CryptoHelper cryptoHelper;
+    protected final CryptoHelper cryptoHelper;
 
     /** Tarjeta CWA-14890 con la que se desea establecer el canal seguro. */
     private final Cwa14890Card card;
 
     /** Conexi&oacute;n subyacente para el env&iacute;o de APDUs. */
-    private final ApduConnection subConnection;
+    protected ApduConnection subConnection;
 
     /** Clave Triple DES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
     private byte[] kenc = null;
@@ -103,9 +108,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     private byte[] ssc = null;
 
     /** Indica el estado de la conexi&oacute;n. */
-    private boolean openState = false;
+    protected boolean openState = false;
 
-    private final ApduEncrypter apduEncrypter;
+    protected final ApduEncrypter apduEncrypter;
 
     private final Cwa14890Constants consts;
 
@@ -117,9 +122,32 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
+     * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
+     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas. */
+    public Cwa14890OneV1Connection(final ApduConnection connection,
+    		                       final CryptoHelper cryptoHelper) {
+
+        if (cryptoHelper == null) {
+            throw new IllegalArgumentException(
+        		"CryptoHelper no puede ser nulo" //$NON-NLS-1$
+            );
+        }
+
+        this.card = null;
+    	this.subConnection = connection instanceof Cwa14890Connection ?
+			((Cwa14890Connection)connection).getSubConnection() :
+				connection;
+        this.cryptoHelper = cryptoHelper;
+    	this.apduEncrypter = instantiateApduEncrypter();
+    	this.consts = null;
+    }
+    
+    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
+     * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
+     * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
      * @param card Tarjeta con la funcionalidad CWA-14890.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
-     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas
+     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas.
      * @param cwaConsts Clase de claves CWA-14890. */
     public Cwa14890OneV1Connection(final Cwa14890Card card,
     		                       final ApduConnection connection,
@@ -145,7 +173,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
 
         this.card = card;
-    	this.subConnection = connection instanceof Cwa14890Connection ?
+        this.subConnection = connection instanceof Cwa14890Connection ?
 			((Cwa14890Connection)connection).getSubConnection() :
 				connection;
         this.cryptoHelper = cryptoHelper;
@@ -153,7 +181,8 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     	this.consts = cwaConsts;
     }
 
-    /** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
+
+	/** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
      * a la apertura del canal. */
     @Override
     public void open() throws ApduConnectionException {
@@ -671,15 +700,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         if (INVALID_CRYPTO_CHECKSUM.equals(responseApdu.getStatusWord())) {
         	throw new InvalidCryptographicChecksum();
         }
-        if (!responseApdu.isOk()) {
-        	throw new SecureChannelException(
-    			"Error en la APDU de respuesta cifrada con el codigo " + responseApdu.getStatusWord(), //$NON-NLS-1$
-        		new Iso7816FourCardException(
-    				responseApdu.getStatusWord(),
-    				responseApdu
-			    )
-			);
-        }
 
         // Desencriptamos la respuesta
         try {
@@ -696,6 +716,10 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
             // a enviar el comando indicando la longitud correcta
             if (decipherApdu.getStatusWord().getMsb() == MSB_INCORRECT_LE) {
             	command.setLe(decipherApdu.getStatusWord().getLsb());
+            	return transmit(command);
+            }
+            else if (decipherApdu.getStatusWord().getMsb() == MSB_INCORRECT_LE_PACE) {
+            	command.setLe(command.getLe().intValue()-1);
             	return transmit(command);
             }
             return decipherApdu;

@@ -84,10 +84,10 @@ final class BitManipulationHelper {
 	}
 
 	/** Obtiene el valor del bit de la posici&oacute;n indicada.
-	 * @param value Valor entero a considerar como binario de entrada
-	 * @param position Posici&oacute;n del bit, empezando desde 1
+	 * @param value Valor entero a considerar como binario de entrada.
+	 * @param position Posici&oacute;n del bit, empezando desde 1.
 	 * @return <code>true</code> si el valor del bit es 1, <code>false</code>
-	 *         si es 0 */
+	 *         si es 0. */
 	static boolean getBitValue(final int value, final int position) {
 
 		if (position > 32) {
@@ -101,10 +101,10 @@ final class BitManipulationHelper {
 	}
 
 	/** Establece el valor del bit de la posici&oacute;n indicada.
-	 * @param value Valor entero a considerar como binario de entrada
-	 * @param position Posici&oacute;n del bit, empezando desde 1
-	 * @param bitValue Valor a establecer, <code>true</code> para 1, <code>false</code> para 0
-	 * @return Valor entero, considerado como binario, con el bit indicado cambiado */
+	 * @param value Valor entero a considerar como binario de entrada.
+	 * @param position Posici&oacute;n del bit, empezando desde 1.
+	 * @param bitValue Valor a establecer, <code>true</code> para 1, <code>false</code> para 0.
+	 * @return Valor entero, considerado como binario, con el bit indicado cambiado. */
 	static int setBitValue(final int value, final int position, final boolean bitValue) {
 		if (position > 32) {
 			throw new BerParsingException("No se puede establecer el valor del bit de la posicion  " //$NON-NLS-1$

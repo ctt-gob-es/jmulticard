@@ -51,7 +51,7 @@ public final class LoadDataApduCommand extends CommandApdu {
 	private static final byte INS_LOAD_DATA = (byte) 0x58;
 
 	/** Construye una APDU de carga de datos.
-	 * @param paddedDigestInfo <code>DigestInfo</code> de los datos a cargar */
+	 * @param paddedDigestInfo <code>DigestInfo</code> de los datos a cargar. */
 	public LoadDataApduCommand(final byte[] paddedDigestInfo) {
 		super(
 			CLA,

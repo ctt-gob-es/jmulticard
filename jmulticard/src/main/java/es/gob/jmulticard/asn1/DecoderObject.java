@@ -55,9 +55,9 @@ public abstract class DecoderObject {
     }
 
     /** Establece el valor (en codificaci&oacute;n DER) del objeto ASN&#46;1.
-     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN&#46;1
-     * @throws Asn1Exception Si no se puede decodificar adecuadamente el valor establecido
-     * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada */
+     * @param value Valor (TLC con codificaci&oacute;n DER) del objeto ASN&#46;1.
+     * @throws Asn1Exception Si no se puede decodificar adecuadamente el valor establecido.
+     * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada. */
     public void setDerValue(final byte[] value) throws Asn1Exception, TlvException {
         if (value == null) {
             throw new IllegalArgumentException("El valor del objeto ASN.1 no puede ser nulo"); //$NON-NLS-1$
@@ -68,7 +68,7 @@ public abstract class DecoderObject {
     }
 
     /** Obtiene el valor binario del objeto ASN&#46;1.
-     * @return Valor binario del objeto ASN&#46;1 */
+     * @return Valor binario del objeto ASN&#46;1. */
     public byte[] getBytes() {
         final byte[] out = new byte[this.rawDerValue.length];
         System.arraycopy(this.rawDerValue, 0, out, 0, this.rawDerValue.length);
@@ -77,17 +77,17 @@ public abstract class DecoderObject {
 
     /** Decodifica el valor DER establecido comprobando que corresponde al esperado y formando las
      * estructuras internas.
-     * @throws Asn1Exception Si hay errores correspondientes a las estructuras ASN&#46;1 DER
-     * @throws TlvException Si hay errores relativos a los TLV DER */
+     * @throws Asn1Exception Si hay errores correspondientes a las estructuras ASN&#46;1 DER.
+     * @throws TlvException Si hay errores relativos a los TLV DER. */
     protected abstract void decodeValue() throws Asn1Exception, TlvException;
 
     /** Obtiene la etiqueta de tipo ASN&#46;1 del objeto.
-     * @return Etiqueta de tipo ASN&#46;1 del objeto */
+     * @return Etiqueta de tipo ASN&#46;1 del objeto. */
     protected abstract byte getDefaultTag();
 
     /** Comprueba que el tipo proporcionado sea compatible con el del objeto ASN&#46;1.
-     * @param tag Etiqueta de tipo a comprobar
-     * @throws Asn1Exception Si las etiquetas de tipo no son compatibles */
+     * @param tag Etiqueta de tipo a comprobar.
+     * @throws Asn1Exception Si las etiquetas de tipo no son compatibles. */
     public void checkTag(final byte tag) throws Asn1Exception {
         if (getDefaultTag() != tag) {
             throw new Asn1Exception(

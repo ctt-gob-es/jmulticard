@@ -60,7 +60,7 @@ public abstract class CryptoHelper {
 	public enum EcCurve {
 
 		/** BrainpoolP256r1. */
-		BRAINPOOL_P256_R1("brainpoolP256R1"); //$NON-NLS-1$
+		BRAINPOOL_P256_R1("brainpoolp256r1"); //$NON-NLS-1$
 
 		private final String name;
 		private EcCurve(final String n) {

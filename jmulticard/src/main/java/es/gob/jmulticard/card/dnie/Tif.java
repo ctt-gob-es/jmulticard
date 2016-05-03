@@ -5,8 +5,10 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.card.AuthenticationModeLockedException;
+import es.gob.jmulticard.card.BadPinException;
+import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
-import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
 
 /** Tarjeta FNMT TIF (variante del DNIe).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -26,10 +28,12 @@ public final class Tif extends Dnie {
 			                                           BurnedDnieCardException {
 		super(conn, pwc, cryptoHelper);
 	}
-
+	
+	/** {@inheritDoc}
+	 */
 	@Override
-	protected Cwa14890Constants getCwa14890Constants() {
-		return new TifCwa14890Constants();
+	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException, BadPinException, AuthenticationModeLockedException {
+		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
 	}
 
 }

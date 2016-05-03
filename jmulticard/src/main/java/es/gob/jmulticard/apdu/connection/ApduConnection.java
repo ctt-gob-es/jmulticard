@@ -52,55 +52,55 @@ public interface ApduConnection {
 	void setProtocol(final ApduConnectionProtocol p);
 
     /** Abre la conexi&oacute;n con la tarjeta inteligente actualmente insertada en el lector.
-     * @throws ApduConnectionException Cuando ocurre cualquier problema abriendo la conexi&oacute;n
+     * @throws ApduConnectionException Cuando ocurre cualquier problema abriendo la conexi&oacute;n.
      * @see #close() */
     void open() throws ApduConnectionException;
 
     /** Cierra la conexi&oacute;n con la tarjeta inteligente actualmente insertada en el lector.
-     * @throws ApduConnectionException Cuando ocurre cualquier problema cerrando la conexi&oacute;n
+     * @throws ApduConnectionException Cuando ocurre cualquier problema cerrando la conexi&oacute;n.
      * @see #open() */
     void close() throws ApduConnectionException;
 
     /** Env&iacute;a un comando APDU a la tarjeta inteligente.
-     * @param command APDU que se desea enviar a la tarjeta
-     * @return APDU de respuesta de la tarjeta al env&iacute;o
-     * @throws ApduConnectionException Cuando ocurre cualquier problema con la conexi&oacute;n transmitiendo la APDU */
+     * @param command APDU que se desea enviar a la tarjeta.
+     * @return APDU de respuesta de la tarjeta al env&iacute;o.
+     * @throws ApduConnectionException Cuando ocurre cualquier problema con la conexi&oacute;n transmitiendo la APDU. */
     ResponseApdu transmit(CommandApdu command) throws ApduConnectionException;
 
     /** Reinicializa la conexi&oacute;n con la tarjeta inteligente.
-     * @return Respuesta al reset (ATR) de la tarjeta
-     * @throws ApduConnectionException Cuando ocurre cualquier problema reinicializando la conexi&oacute;n */
+     * @return Respuesta al reset (ATR) de la tarjeta.
+     * @throws ApduConnectionException Cuando ocurre cualquier problema reinicializando la conexi&oacute;n. */
     byte[] reset() throws ApduConnectionException;
 
     /** A&ntilde;ade un objeto al que se notificar&aacute; cuando existan eventos en la conexi&oacute;n.
      * Solo se notificar&aacute;n las inserciones y las extracciones cuando la implementaci&oacute;n subyacente lo soporte.
-     * @param ccl Objeto al que se desea notificar los eventos de la conexi&oacute;n */
+     * @param ccl Objeto al que se desea notificar los eventos de la conexi&oacute;n. */
     void addCardConnectionListener(CardConnectionListener ccl);
 
     /** Indica que ya no se desea notificar a un objeto cuando existan eventos en la conexi&oacute;n.
-     * @param ccl Objeto al que ya no se desea notificar los eventos de la conexi&oacute;n */
+     * @param ccl Objeto al que ya no se desea notificar los eventos de la conexi&oacute;n. */
     void removeCardConnectionListener(CardConnectionListener ccl);
 
-    /** Devuelve todos los lectores de tarjetas presentes en el sistema
-     * @param onlyWithCardPresent Para indicar que s&oacute;lo devuelva lectores que tengan una tarjeta insertada
-     * @return Una lista con los identificadores de lectores de tarjetas conectados
-     * @throws ApduConnectionException Cuando ocurran problemas en la conexi&oacute;n con los lectores */
+    /** Devuelve todos los lectores de tarjetas presentes en el sistema.
+     * @param onlyWithCardPresent Para indicar que s&oacute;lo devuelva lectores que tengan una tarjeta insertada.
+     * @return Una lista con los identificadores de lectores de tarjetas conectados.
+     * @throws ApduConnectionException Cuando ocurran problemas en la conexi&oacute;n con los lectores. */
     long[] getTerminals(boolean onlyWithCardPresent) throws ApduConnectionException;
 
-    /** Devuelve informaci&oacute;n sobre un terminal
-     * @param terminal N&uacute;mero de terminal que se desea obtener informaci&oacute;n
-     * @return Una descripci&oacute;n del terminal especificado
-     * @throws ApduConnectionException Cuando ocurran problemas en la conexi&oacute;n con los lectores */
+    /** Devuelve informaci&oacute;n sobre un terminal.
+     * @param terminal N&uacute;mero de terminal que se desea obtener informaci&oacute;n.
+     * @return Una descripci&oacute;n del terminal especificado.
+     * @throws ApduConnectionException Cuando ocurran problemas en la conexi&oacute;n con los lectores. */
     String getTerminalInfo(int terminal) throws ApduConnectionException;
 
     /** Establece el lector de tarjetas que se usar&aacute; para la conexi&oacute;n. Si se cambia el terminal
      * estando la conexi&oacute;n ya abierta, se intentar&aacute; reabrirla con el nuevo terminal.
-     * @param t N&uacute;mero de terminal que se desea pase a ser el actual
-     * @throws NullPointerException Cuando se especifica un n&uacute;mero de terminal no v&aacute;lido */
+     * @param t N&uacute;mero de terminal que se desea pase a ser el actual.
+     * @throws NullPointerException Cuando se especifica un n&uacute;mero de terminal no v&aacute;lido. */
     void setTerminal(int t);
 
     /** Indica si la conexi&oacute;n est&aacute; abierta o no.
-     * @return <code>true</code> si la conexi&oacute;n esta abierta, <code>false</code> si est&aacute; cerrada */
+     * @return <code>true</code> si la conexi&oacute;n esta abierta, <code>false</code> si est&aacute; cerrada. */
     boolean isOpen();
 
 }

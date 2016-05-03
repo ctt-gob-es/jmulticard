@@ -39,23 +39,28 @@
  */
 package es.gob.jmulticard.card.dnie;
 
+import java.io.IOException;
+
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
+import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
+import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class Dnie3 extends Dnie {
+public class Dnie3 extends Dnie {
 
     /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
-    private final ApduConnection rawConnection;
+    private ApduConnection rawConnection;
 
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
@@ -165,9 +170,12 @@ public final class Dnie3 extends Dnie {
     }
 
     /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados).
-     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta. */
+     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta. 
+     * @throws BadPinException */
     @Override
-	protected void loadCertificates() throws CryptoCardException {
+	protected void loadCertificates() throws CryptoCardException, BadPinException {
+    	// Abrimos el canal si es necesario
+    	openSecureChannelIfNotAlreadyOpened();
     	loadCertificatesInternal();
     }
 
@@ -195,7 +203,7 @@ public final class Dnie3 extends Dnie {
 
     @Override
 	protected boolean shouldShowSignConfirmDialog() {
-		return false;
+		return true;
 	}
 
 }

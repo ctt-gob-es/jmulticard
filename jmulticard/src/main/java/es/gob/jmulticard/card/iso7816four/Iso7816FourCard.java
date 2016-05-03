@@ -178,7 +178,7 @@ public abstract class Iso7816FourCard extends SmartCard {
 	                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) MAX_READ_CHUNK);
 	            }
             }
-            catch(final OffsetOutsideEfException e) {
+            catch(final Exception e) {
             	LOGGER.warning(
         			"Se ha intentado una lectura fuera de los limites del fichero, se devolvera lo leido hasta ahora: " + e //$NON-NLS-1$
     			);

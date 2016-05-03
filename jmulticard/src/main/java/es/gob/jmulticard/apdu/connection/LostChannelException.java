@@ -46,7 +46,7 @@ public class LostChannelException extends ApduConnectionException {
     private static final long serialVersionUID = -4881940145750512085L;
 
     /** Construye una excepci&oacute;n de p&eacute;rdida del canal de comunicaci&oacute;n con la tarjeta.
-     * @param message Mensaje de causa de la p&eacute;rdida del canal */
+     * @param message Mensaje de causa de la p&eacute;rdida del canal. */
     public LostChannelException(final String message) {
         super(message);
     }

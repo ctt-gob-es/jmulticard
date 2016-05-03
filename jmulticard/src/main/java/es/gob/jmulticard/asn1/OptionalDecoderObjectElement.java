@@ -8,9 +8,9 @@ public final class OptionalDecoderObjectElement {
 	private final boolean optional;
 
 	/** Construye un tipo de objeto ASN&#46;1 gen&eacute;rico opcional dentro de un objeto compuesto.
-	 * @param type Tipo de objeto ASN&#46;1
+	 * @param type Tipo de objeto ASN&#46;1.
 	 * @param opt <code>true</code> si este elemento es opcional dentro de un objeto compuesto,
-	 *            <code>false</code> en caso contrario */
+	 *            <code>false</code> en caso contrario. */
 	public OptionalDecoderObjectElement(final Class<? extends DecoderObject> type, final boolean opt) {
 		if (type == null && !opt) {
 			throw new IllegalArgumentException(
@@ -22,14 +22,14 @@ public final class OptionalDecoderObjectElement {
 	}
 
 	/** Optiene el tipo del elemento ASN&#46;1.
-	 * @return Tipo del elemento ASN&#46;1 */
+	 * @return Tipo del elemento ASN&#46;1. */
 	public Class<? extends DecoderObject> getElementType() {
 		return this.elementType;
 	}
 
 	/** Indica si el elemento es opcional dentro de un objeto compuesto.
 	 * @return <code>true</code> si este elemento es opcional dentro de un objeto compuesto,
-	 *          <code>false</code> en caso contrario */
+	 *          <code>false</code> en caso contrario. */
 	public boolean isOptional() {
 		return this.optional;
 	}

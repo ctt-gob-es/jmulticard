@@ -333,4 +333,10 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		return sb.toString();
 	}
 
+	/** {@inheritDoc}
+	 */
+	@Override
+	public byte[] changePIN(final String oldPin, final String newPin) {
+		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
+	}
 }

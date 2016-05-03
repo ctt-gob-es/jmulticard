@@ -11,8 +11,8 @@ public final class VerifyApduCommand extends CommandApdu {
 	private static final byte INS_VERIFY = (byte) 0x20;
 
     /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
-     * @param cla Clase (CLA) de la APDU
-     * @param pinPc Pin de la tarjeta inteligente */
+     * @param cla Clase (CLA) de la APDU.
+     * @param pinPc Pin de la tarjeta inteligente. */
     public VerifyApduCommand(final byte cla, final PasswordCallback pinPc) {
         super(
     		cla,							// CLA

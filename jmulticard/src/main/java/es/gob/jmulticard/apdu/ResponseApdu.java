@@ -45,14 +45,14 @@ public class ResponseApdu extends Apdu {
 
     /** Construye una APDU de respuesta a partir de su representaci&oacute;n
      * binaria directa.
-     * @param fullBytes Representaci&oacute;n binaria directa de la APDU */
+     * @param fullBytes Representaci&oacute;n binaria directa de la APDU. */
     public ResponseApdu(final byte[] fullBytes) {
         super();
         this.setBytes(fullBytes);
     }
 
     /** Obtiene el campo de datos de la APDU.
-     * @return Campo de datos de la APDU */
+     * @return Campo de datos de la APDU. */
     public byte[] getData() {
         final byte[] dat = new byte[getBytes().length-2];
         System.arraycopy(getBytes(), 0, dat, 0, getBytes().length-2);
@@ -60,14 +60,14 @@ public class ResponseApdu extends Apdu {
     }
 
     /** Obtiene la palabra de estado (<i>Status Word</i>) de la APDU.
-     * @return Palabra de estado (<i>Status Word</i>) de la APDU */
+     * @return Palabra de estado (<i>Status Word</i>) de la APDU. */
     public StatusWord getStatusWord() {
         return new StatusWord(getBytes()[getBytes().length - 2], getBytes()[getBytes().length - 1]);
     }
 
     /** Indica si la APDU es una respuesta correcta o no a un comando.
      * @return <code>true</code> si el comando termin&oacute; con &eacute;xito
-     *         (termina en 9000), <code>false</code> en caso contrario */
+     *         (termina en 9000), <code>false</code> en caso contrario. */
     public boolean isOk() {
         if (getBytes() == null || getBytes().length < 2) {
             return false;
