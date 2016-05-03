@@ -262,11 +262,11 @@ public final class SmartcardIoConnection implements ApduConnection {
     }
 
     /** Establece si la conexi&oacute;n se debe abrir en modo exclusivo. Solo
-     * puede establecerse si la conexi&oacute;n aun no ha sido abierta
+     * puede establecerse si la conexi&oacute;n aun no ha sido abierta.
      * @param ex
      *        <code>true</code> para abrir la conexi&oacute;n en modo
      *        exclusivo, <code>false</code> para abrirla en modo no
-     *        exclusivo */
+     *        exclusivo. */
     public void setExclusiveUse(final boolean ex) {
         if (this.card == null) {
             this.exclusive = ex;
@@ -415,13 +415,13 @@ public final class SmartcardIoConnection implements ApduConnection {
     }
 
     /** Devuelve el protocolo de conexi&oacute;n con la tarjeta usado actualmente
-     * @return Un objeto de tipo enumerado <code>ConnectionProtocol</code> */
+     * @return Un objeto de tipo enumerado <code>ConnectionProtocol</code>. */
     public ApduConnectionProtocol getProtocol() {
         return this.protocol;
     }
 
     /** Indica si la conexi&oacute;n con la tarjeta se ha establecido en modo exclusivo o no
-     * @return <code>true</code> si la conexi&oacute;n est&aacute; establecida en modo exclusivo */
+     * @return <code>true</code> si la conexi&oacute;n est&aacute; establecida en modo exclusivo. */
     public boolean isExclusiveUse() {
         return this.exclusive;
     }
