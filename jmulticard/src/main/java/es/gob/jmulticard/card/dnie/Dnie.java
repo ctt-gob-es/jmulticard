@@ -87,6 +87,7 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.pace.PaceConnection;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -763,10 +764,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado la inserci&oacute;n del PIN
      *                                                                           usando el di&aacute;logo gr&aacute;fico integrado. */
     protected void loadCertificates() throws CryptoCardException, BadPinException {
-
-    	// Abrimos el canal si es necesario
+    	// Abrimos canal seguro si no esta abierto
     	openSecureChannelIfNotAlreadyOpened();
-
         // Cargamos certificados si es necesario
     	loadCertificatesInternal();
     }
@@ -803,7 +802,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     protected boolean isSecurityChannelOpen() {
-        return this.getConnection() instanceof Cwa14890Connection && this.getConnection().isOpen();
+	    //Devuelve true si el canal actual es de PIN o de usuario	
+        return this.getConnection() instanceof Cwa14890Connection && this.getConnection().isOpen() && !(this.getConnection() instanceof PaceConnection);
     }
 
     @Override
@@ -902,7 +902,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		openSecureChannelIfNotAlreadyOpened();
 
 		try {
-			System.out.println(HexUtils.hexify(selectFileByLocationAndRead(new Location("50156005")), false));
+			System.out.println(HexUtils.hexify(selectFileByLocationAndRead(new Location("50156005")), false)); //$NON-NLS-1$
 		} 
 		catch (final Exception e1) {}
 		ResponseApdu res = null;
