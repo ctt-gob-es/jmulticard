@@ -42,7 +42,6 @@ package es.gob.jmulticard.ui.passwordcallback.gui;
 import java.awt.Component;
 
 import javax.security.auth.callback.PasswordCallback;
-import javax.swing.JOptionPane;
 
 /** <i>PasswordCallbak</i> que muestra un di&aacute;logo para solicitar una
  * contrase&ntilde;a. */
@@ -71,7 +70,11 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
      * @param message Mensaje
      * @param mnemonic Mnem&oacute;nico para el propio campo de texto
      * @param title T&iacute;tulo del di&aacute;logo */
-    public UIPasswordCallbackAccessibility(final String prompt, final Component parent, final String message, final int mnemonic, final String title) {
+    public UIPasswordCallbackAccessibility(final String prompt,
+    		                               final Component parent,
+    		                               final String message,
+    		                               final int mnemonic,
+    		                               final String title) {
         super(prompt, false);
         this.parent = parent;
         if (prompt != null) {
@@ -88,12 +91,10 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
     public char[] getPassword() {
     	return CustomDialog.showInputPasswordDialog(
 			this.parent,
-			true,
-			false,
+			true, // Modal
 			this.message,
 			this.mnemonic,
-			this.title,
-			JOptionPane.QUESTION_MESSAGE
+			this.title
     	);
     }
 }

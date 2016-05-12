@@ -150,16 +150,14 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      *              <code>false</code> en caso contrario.
      * @param message mensaje
      * @param title T&iacute;tulo
-     * @param typeMessage Tipo de mensaje
      * @param isInputDialog indica sies una alerta de tipo input */
     private CustomDialog(final JDialog componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
-                         final int typeMessage,
                          final boolean isInputDialog) {
         super(componentParent, modal, isInputDialog);
-        initComponents(message, title, typeMessage, isInputDialog);
+        initComponents(message, title, isInputDialog);
         setLocationRelativeTo(componentParent);
         pack();
     }
@@ -169,17 +167,15 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param modal modal
      * @param message mensaje
      * @param title titulo
-     * @param typeMessage tipo de mensaje
      * @param isInputDialog indica sies una alerta de tipo input */
     private CustomDialog(final Component componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
-                         final int typeMessage,
                          final boolean isInputDialog) {
         super(isInputDialog);
         this.setModal(modal);
-        initComponents(message, title, typeMessage, isInputDialog);
+        initComponents(message, title, isInputDialog);
         setLocationRelativeTo(componentParent);
         pack();
     }
@@ -189,16 +185,14 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param modal modal
      * @param message Mensaje del di&aacute;logo.
      * @param title T&iacute;tulo del di&aacute;logo.
-     * @param typeMessage Tipo de mensaje
      * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos. */
     private CustomDialog(final JFrame componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
-                         final int typeMessage,
                          final boolean isInputDialog) {
         super(componentParent, modal, isInputDialog);
-        initComponents(message, title, typeMessage, isInputDialog);
+        initComponents(message, title, isInputDialog);
         setLocationRelativeTo(componentParent);
         pack();
     }
@@ -223,12 +217,10 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     /** Metodo que inicializa los componentes de la alerta.
      * @param message mensaje que se mostrara en la alerta
      * @param title T&iacute;tulo de la alerta
-     * @param typeMessage tipo de mensaje
      * @param isInputDialog indica sies una alerta de tipo input */
     private void initComponents(
     		final String message,
     		final String title,
-    		final int typeMessage,
     		final boolean isInputDialog) {
         // Se obtienen las dimensiones de maximizado
         final int maxWidth = this.getMaxWidth();
@@ -557,16 +549,14 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param message mensaje a mostrar
      * @param title titulo del dialogo
      * @param typeOption opciones de interacion
-     * @param typeMessage tipo de mensaje
      * @return respuesta del usuario. */
     public static int showConfirmDialog(final Component componentParent,
                                         final boolean modal,
                                         final String message,
                                         final String title,
-                                        final int typeOption,
-                                        final int typeMessage) {
+                                        final int typeOption) {
 
-        final CustomDialog customDialog = CustomDialog.getInstanceCustomDialog(componentParent, modal, message, title, typeMessage, false);
+        final CustomDialog customDialog = CustomDialog.getInstanceCustomDialog(componentParent, modal, message, title, false);
         CustomDialog.okButton.setEnabled(true);
         customDialog.getRootPane().setDefaultButton(null);
 
@@ -616,26 +606,20 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param componentParent Componente padre para la modalidad
      * @param modal <code>true</code> si se desea que el di&aacute;logo sea modal,
      *              <code>false</code> en caso contrario.
-     * @param beep <code>true</code> si se desean usar sonidos como ayuda al usuario,
-     *             <code>false</code> en caso contrario.
      * @param message Mensaje a mostrar.
      * @param mnemonic Atajo de teclado.
      * @param title T&iacute;tulo del di&aacute;logo.
-     * @param typeMessage Tipo de mensaje
      * @return Contrase&ntilde;a introducida por el usuario */
     public static char[] showInputPasswordDialog(final Component componentParent,
                                                  final boolean modal,
-                                                 final boolean beep,
                                                  final String message,
                                                  final int mnemonic,
-                                                 final String title,
-                                                 final int typeMessage) {
+                                                 final String title) {
     	final CustomDialog customDialog = CustomDialog.getInstanceCustomDialog(
     			componentParent,
     			modal,
     			message,
     			title,
-    			typeMessage,
     			true
     	);
         CustomDialog.okButton.setEnabled(false);
@@ -836,25 +820,23 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param modal modal
      * @param message mensaje
      * @param title titulo del dialogo
-     * @param typeMessage tipo de alerta.
      * @param isInputDialog indica sies una alerta de tipo input
      * @return instancia de CustomDialog. */
     static CustomDialog getInstanceCustomDialog(final Component componentParent,
                                                 final boolean modal,
                                                 final String message,
                                                 final String title,
-                                                final int typeMessage,
                                                 final boolean isInputDialog) {
         CustomDialog customDialog = null;
         // Se chequea cual sera el componente padre.
         if (componentParent instanceof JDialog) {
-            customDialog = new CustomDialog((JDialog) componentParent, modal, message, title, typeMessage, isInputDialog);
+            customDialog = new CustomDialog((JDialog) componentParent, modal, message, title, isInputDialog);
         }
         else if (componentParent instanceof JFrame) {
-            customDialog = new CustomDialog((JFrame) componentParent, modal, message, title, typeMessage, isInputDialog);
+            customDialog = new CustomDialog((JFrame) componentParent, modal, message, title, isInputDialog);
         }
         else {
-            customDialog = new CustomDialog(componentParent, modal, message, title, typeMessage, isInputDialog);
+            customDialog = new CustomDialog(componentParent, modal, message, title, isInputDialog);
         }
         return customDialog;
     }
