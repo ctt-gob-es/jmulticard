@@ -60,7 +60,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 public class Dnie3 extends Dnie {
 
     /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
-    private ApduConnection rawConnection;
+    protected ApduConnection rawConnection;
 
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
@@ -158,7 +158,7 @@ public class Dnie3 extends Dnie {
 		}
 
         try {
-            this.setConnection(usrSecureConnection);
+            setConnection(usrSecureConnection);
         }
         catch (final ApduConnectionException e) {
             throw new CryptoCardException(
@@ -198,12 +198,13 @@ public class Dnie3 extends Dnie {
         		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
     		);
 		}
+        
     	return ret;
     }
 
     @Override
 	protected boolean shouldShowSignConfirmDialog() {
-		return true;
+		return false;
 	}
 
 }

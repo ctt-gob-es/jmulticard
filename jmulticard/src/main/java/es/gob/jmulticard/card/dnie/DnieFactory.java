@@ -1,10 +1,21 @@
 package es.gob.jmulticard.card.dnie;
 
-import java.lang.reflect.Method;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -22,6 +33,9 @@ public final class DnieFactory {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
+    private static final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
+    
+    private static String can = null;
 	private static final byte[] ATR_MASK = new byte[] {
 			(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 			(byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
@@ -86,10 +100,30 @@ public final class DnieFactory {
 			final byte[] actualAtrBytes = actualAtr.getBytes();
 			if(ATR_NFC.equals(actualAtr)) {
 				//Pedir CAN
-				String can = JOptionPane.showInputDialog(null,"Introduzca el c\u00f3digo CAN de su DNIe:", "DNI Electr\u00f3nico: Introducci\u00f3n de CAN", 1); //$NON-NLS-1$ //$NON-NLS-2$
+				if(can == null) {
+					final JLabel label1 = new JLabel("Introduzca el c\u00f3digo CAN de su DNIe:"); //$NON-NLS-1$
+					final ImageIcon icon = new ImageIcon(DnieFactory.class.getResource(CAN_EXAMPLE));
+					Image img = icon.getImage();
+					Image newimg = img.getScaledInstance(230, 140,  java.awt.Image.SCALE_SMOOTH);
+					final JLabel label2 = new JLabel(new ImageIcon(newimg));
+					final JPanel panel = new JPanel();
+					panel.setLayout(new GridBagLayout());
+					panel.setPreferredSize(new Dimension(350, 210));
+					 final GridBagConstraints constraints = new GridBagConstraints();
+				    constraints.fill = GridBagConstraints.HORIZONTAL;
+				    constraints.weightx = 1.0;
+				    constraints.anchor = GridBagConstraints.CENTER;
+				    panel.add(label1, constraints);
+				    constraints.gridy++;
+				    constraints.gridy++;
+				    constraints.gridy++;
+				    constraints.insets = new Insets(20,0,0,20);
+					panel.add(label2, constraints);
+					can = JOptionPane.showInputDialog(null, panel, "DNI Electr\u00f3nico: Introducci\u00f3n de CAN", JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
+				}
 				try {
 					return new DnieNFC(conn, pwc, cryptoHelper, can);
-				}
+				} 
 				catch (PaceException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE: " + e); //$NON-NLS-1$
 				}

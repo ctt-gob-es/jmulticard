@@ -873,7 +873,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             	if (!PIN_AUTO_RETRY || psc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
             		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             	}
-            	// Si hay reintento automativo volvemos a pedir el PIN con la misma CallBack
+            	// Si hay reintento automatico volvemos a pedir el PIN con la misma CallBack
             	verifyPin(
         			pinPc,
         			verifyResponse.getStatusWord().getLsb() - (byte) 0xC0
