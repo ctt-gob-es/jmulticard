@@ -53,6 +53,7 @@ import java.security.SignatureSpi;
 
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.dnie.Dni;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
@@ -154,7 +155,7 @@ abstract class DnieSignatureImpl extends SignatureSpi {
         catch (final CryptoCardException e) {
             throw new SignatureException(e);
         }
-    	catch (final BadPinException e) {
+    	catch (final PinException e) {
 			throw new SignatureAuthException(e);
 		}
     }

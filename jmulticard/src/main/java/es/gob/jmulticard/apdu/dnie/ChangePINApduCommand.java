@@ -3,12 +3,8 @@ package es.gob.jmulticard.apdu.dnie;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 
-/**
- * Clase que define la estructura de una Apdu para el cambio de PIN
- * 
- * @author Sergio Mart&iacute;nez Rico
- *
- */
+/** Clase que define la estructura de una Apdu para el cambio de PIN 
+ * @author Sergio Mart&iacute;nez Rico */
 public class ChangePINApduCommand extends CommandApdu {
 
 	private static final byte INS_CHANGE_PIN = (byte) 0x24;

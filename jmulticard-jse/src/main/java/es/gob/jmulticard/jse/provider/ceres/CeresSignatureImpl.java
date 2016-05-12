@@ -14,6 +14,7 @@ import java.security.SignatureSpi;
 
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
 import es.gob.jmulticard.jse.provider.SignatureAuthException;
@@ -115,7 +116,7 @@ abstract class CeresSignatureImpl extends SignatureSpi {
         catch (final CryptoCardException e) {
             throw new SignatureException(e);
         }
-    	catch (final BadPinException e) {
+    	catch (final PinException e) {
 			throw new SignatureAuthException(e);
 		}
     }

@@ -29,9 +29,9 @@ public class TestPinDialog {
     @Ignore // Necesita GUI
     public void testConfirm() throws Exception {
         JOptionPane.showMessageDialog(null, "Redimensione el dialogo siguiente de confirmacion de firma. Maximice y minimice"); //$NON-NLS-1$
-        System.out.println(DialogBuilder.showSignatureConfirmDialog(null, true));
+        System.out.println(DialogBuilder.showSignatureConfirmDialog(null));
         System.out.println(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback().getPassword()));
-        System.out.println(DialogBuilder.showSignatureConfirmDialog(null, true));
+        System.out.println(DialogBuilder.showSignatureConfirmDialog(null));
     }
 
 }

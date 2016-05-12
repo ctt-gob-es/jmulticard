@@ -1,17 +1,14 @@
 package es.gob.jmulticard.card.dnie;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.util.logging.Logger;
 
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,9 +30,6 @@ public final class DnieFactory {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private static final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
-    
-    private static String can = null;
 	private static final byte[] ATR_MASK = new byte[] {
 			(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 			(byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
@@ -64,20 +58,22 @@ public final class DnieFactory {
 	 * @param conn Conexi&oacute;n con el lector de tarjetas.
 	 * @param pwc <i>PasswordCallback</i> para la obtenci&oacute;n del PIN.
 	 * @param cryptoHelper Clase de apoyo para operaciones criptogr&aacute;ficas.
+	 * @param ch Gestor de <i>callbacks</i> para la obtenci&oacute;n de datos adicionales por parte
+	 *           del titular del DNIe.
 	 * @return Clase de DNIe apropiada (seg&uacute;n su ATR).
 	 * @throws InvalidCardException Si se ha detectado al menos una tarjeta, pero no es un DNIe.
 	 * @throws BurnedDnieCardException Si se ha detectado un DNIe con su memoria vol&aacute;til borrada.
-	 * @throws ApduConnectionException Si no se puede conectar con el lector de tarjetas.
-	 */
-	public static CryptoCard getDnie(final ApduConnection conn,
+	 * @throws ApduConnectionException Si no se puede conectar con el lector de tarjetas. */
+	public static Dnie getDnie(final ApduConnection conn,
 			final PasswordCallback pwc,
-			final CryptoHelper cryptoHelper) throws InvalidCardException,
-													BurnedDnieCardException,
-													ApduConnectionException {
+			final CryptoHelper cryptoHelper,
+			final CallbackHandler ch) throws InvalidCardException,
+											 BurnedDnieCardException,
+											 ApduConnectionException {
 		if (conn == null) {
 			throw new IllegalArgumentException(
-					"La conexion no puede ser nula" //$NON-NLS-1$
-					);
+				"La conexion no puede ser nula" //$NON-NLS-1$
+			);
 		}
 		byte[] responseAtr;
 		Atr actualAtr;
@@ -99,30 +95,8 @@ public final class DnieFactory {
 			actualAtr = new Atr(responseAtr, ATR_MASK);
 			final byte[] actualAtrBytes = actualAtr.getBytes();
 			if(ATR_NFC.equals(actualAtr)) {
-				//Pedir CAN
-				if(can == null) {
-					final JLabel label1 = new JLabel("Introduzca el c\u00f3digo CAN de su DNIe:"); //$NON-NLS-1$
-					final ImageIcon icon = new ImageIcon(DnieFactory.class.getResource(CAN_EXAMPLE));
-					Image img = icon.getImage();
-					Image newimg = img.getScaledInstance(230, 140,  java.awt.Image.SCALE_SMOOTH);
-					final JLabel label2 = new JLabel(new ImageIcon(newimg));
-					final JPanel panel = new JPanel();
-					panel.setLayout(new GridBagLayout());
-					panel.setPreferredSize(new Dimension(350, 210));
-					 final GridBagConstraints constraints = new GridBagConstraints();
-				    constraints.fill = GridBagConstraints.HORIZONTAL;
-				    constraints.weightx = 1.0;
-				    constraints.anchor = GridBagConstraints.CENTER;
-				    panel.add(label1, constraints);
-				    constraints.gridy++;
-				    constraints.gridy++;
-				    constraints.gridy++;
-				    constraints.insets = new Insets(20,0,0,20);
-					panel.add(label2, constraints);
-					can = JOptionPane.showInputDialog(null, panel, "DNI Electr\u00f3nico: Introducci\u00f3n de CAN", JOptionPane.PLAIN_MESSAGE); //$NON-NLS-1$
-				}
 				try {
-					return new DnieNFC(conn, pwc, cryptoHelper, can);
+					return new DnieNFC(conn, pwc, cryptoHelper, ch); //$NON-NLS-1$
 				} 
 				catch (PaceException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE: " + e); //$NON-NLS-1$
@@ -132,12 +106,12 @@ public final class DnieFactory {
 				if (actualAtrBytes[15] == 0x04 /*&&
 						actualAtrBytes[16] == 0x00*/) {
 					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
-					return new Dnie3(conn, pwc, cryptoHelper);
+					return new Dnie3(conn, pwc, cryptoHelper, ch);
 				}
-				return new Dnie(conn, pwc, cryptoHelper);
+				return new Dnie(conn, pwc, cryptoHelper, ch);
 			}
 			else if (ATR_TIF.equals(actualAtr)) {
-				return new Tif(conn, pwc, cryptoHelper);
+				return new Tif(conn, pwc, cryptoHelper, ch);
 			}
 			else { // La tarjeta encontrada no es un DNIe
 				// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de

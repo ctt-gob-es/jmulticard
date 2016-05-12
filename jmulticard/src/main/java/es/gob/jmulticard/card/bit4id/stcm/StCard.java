@@ -15,6 +15,7 @@ import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
+import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
@@ -88,7 +89,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException,
-	                                                           BadPinException {
+	                                                           PinException {
 		if (pinPc == null) {
 			throw new BadPinException("No se ha establecido un PasswordCallback"); //$NON-NLS-1$
 		}

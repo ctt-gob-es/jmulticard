@@ -39,14 +39,24 @@
  */
 package es.gob.jmulticard.ui.passwordcallback;
 
-import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.io.Console;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.ConfirmationCallback;
+import javax.security.auth.callback.TextInputCallback;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialog;
 
@@ -81,15 +91,16 @@ private static boolean headless = false;
      *        destinada a la autenticaci&oacute;n
      * @return <code>0</code> si el usuario acepta, <code>1</code> si rechaza hacer la operaci&oacute;n con
      *         clave privada */
-    public static int showSignatureConfirmDialog(final Component parent, final boolean digitalSignCert) {
+    public static int showSignatureConfirmDialog(final Callback callBack) {
         if (!headless) {
             try {
-                return CustomDialog.showConfirmDialog((parent != null) ? parent : PasswordCallbackManager.getDialogOwner(),
-                                                      true,
-                                                      (digitalSignCert) ? Messages.getString("DialogBuilder.2") : Messages.getString("DialogBuilder.3"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                      Messages.getString("DialogBuilder.1"), //$NON-NLS-1$
-                                                      JOptionPane.YES_NO_OPTION,
-                                                      JOptionPane.WARNING_MESSAGE);
+                return CustomDialog.showConfirmDialog(PasswordCallbackManager.getDialogOwner(),
+                                                     true,
+                                  					((ConfirmationCallback) callBack).getPrompt(), 
+	                                  				"Mensaje de seguridad", 
+	                                  				((ConfirmationCallback) callBack).getOptionType(), 
+	                                  				((ConfirmationCallback) callBack).getMessageType());
+    					
             }
             catch (final java.awt.HeadlessException e) {
                 Logger.getLogger("es.gob.jmulticard").info("No hay entorno grafico, se revierte a consola: " + e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -99,11 +110,11 @@ private static boolean headless = false;
         if (console == null) {
             throw new NoConsoleException("No hay consola para solicitar el PIN"); //$NON-NLS-1$
         }
-        return getConsoleConfirm(console, digitalSignCert);
+        return getConsoleConfirm(console, callBack);
     }
     
-    private static int getConsoleConfirm(final Console console, final boolean digitalSignCert) {
-        console.printf(((digitalSignCert) ? Messages.getString("DialogBuilder.2") : Messages.getString("DialogBuilder.3")) + " " + Messages.getString("DialogBuilder.4") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    private static int getConsoleConfirm(final Console console, final Callback callBack) {
+        console.printf(((ConfirmationCallback)callBack).getPrompt());
         final String confirm = console.readLine().replace("\n", "").replace("\r", "").trim().toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ("si".equals(confirm) //$NON-NLS-1$
                 || "s".equals(confirm) //$NON-NLS-1$
@@ -113,7 +124,30 @@ private static boolean headless = false;
         else if ("no".equals(confirm) || "n".equals(confirm)) { //$NON-NLS-1$ //$NON-NLS-2$
         	return 1;
         }
-        else return getConsoleConfirm(console, digitalSignCert);
+        else return getConsoleConfirm(console, callBack);
     }
     
+    public static String getCan(final Callback callBack) {
+			final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
+			final JLabel label1 = new JLabel(((TextInputCallback)callBack).getPrompt());
+			final ImageIcon icon = new ImageIcon(DialogBuilder.class.getResource(CAN_EXAMPLE));
+			Image img = icon.getImage();
+			Image newimg = img.getScaledInstance(230, 140,  java.awt.Image.SCALE_SMOOTH);
+			final JLabel label2 = new JLabel(new ImageIcon(newimg));
+			final JPanel panel = new JPanel();
+			panel.setLayout(new GridBagLayout());
+			panel.setPreferredSize(new Dimension(350, 210));
+			final GridBagConstraints constraints = new GridBagConstraints();
+			constraints.fill = GridBagConstraints.HORIZONTAL;
+			constraints.weightx = 1.0;
+			constraints.anchor = GridBagConstraints.CENTER;
+			panel.add(label1, constraints);
+			constraints.gridy++;
+			constraints.gridy++;
+			constraints.gridy++;
+			constraints.insets = new Insets(20,0,0,20);
+			panel.add(label2, constraints);
+			return JOptionPane.showInputDialog(null, panel, ((TextInputCallback)callBack).getText(), JOptionPane.PLAIN_MESSAGE);//"DNI Electr\u00f3nico: Introducci\u00f3n de CAN", 
+
+    }
 }

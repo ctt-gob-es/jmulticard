@@ -47,19 +47,13 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
-/**
- * Clase para operaciones de cifrado cifrado AES.
- * 
- * @author Sergio Mart&iacute;nez Rico
- *
- */
+/** Clase para operaciones de cifrado cifrado AES.
+ * @author Sergio Mart&iacute;nez Rico */
 public final class ApduEncrypterAes extends ApduEncrypter {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	/**
-	 * Constructor de la clase para operaciones de cifrado cifrado AES.
-	 */
+	/** Constructor de la clase para operaciones de cifrado cifrado AES. */
 	public ApduEncrypterAes() {
 		LOGGER.info(
 			"Se usara AES y CMAC para el cifrado de mensajes en el canal seguro" //$NON-NLS-1$

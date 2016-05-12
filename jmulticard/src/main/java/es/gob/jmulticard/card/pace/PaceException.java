@@ -6,7 +6,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Excepci&oacute;n de error relacionado con el protocolo PACE.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class PaceException extends Iso7816FourCardException {
+public class PaceException extends Iso7816FourCardException {
 
 	private static final long serialVersionUID = 6633945897491338530L;
 
@@ -14,8 +14,12 @@ public final class PaceException extends Iso7816FourCardException {
         super(retCode, origin, description);
 	}
 
-	PaceException(final String description, final Throwable e) {
+	public PaceException(final String description, final Throwable e) {
 		super(description, e);
+	}
+	
+	PaceException(final String description) {
+		super(description);
 	}
 
 }

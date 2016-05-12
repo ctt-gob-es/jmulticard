@@ -45,6 +45,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.KeyStoreException;
@@ -66,14 +67,16 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
-import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
+import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
@@ -83,7 +86,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
-    private CryptoCard cryptoCard = null;
+    private Dnie cryptoCard = null;
     private List<String> aliases = null;
 
     /** {@inheritDoc} */
@@ -116,7 +119,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         catch (final CryptoCardException e) {
 			throw new ProviderException(e);
 		}
-        catch (final BadPinException e) {
+        catch (final PinException e) {
 			throw new BadPasswordProviderException(e);
 		}
     }
@@ -220,18 +223,18 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
-        try {
-        	final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
-        	if (!(pkRef instanceof DniePrivateKeyReference)) {
-        		throw new ProviderException(
-    				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName() //$NON-NLS-1$
-				);
-        	}
-        	return new DniePrivateKey((DniePrivateKeyReference) pkRef);
+    	if (password != null) {
+    		// Establecemos un nuevo PasswordCallback
+    		//TODO:XXX
+    		new CachePasswordCallback(password);
+    	}
+        final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
+		if (!(pkRef instanceof DniePrivateKeyReference)) {
+			throw new ProviderException(
+				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName() //$NON-NLS-1$
+			);
 		}
-        catch (final CryptoCardException e) {
-			throw new ProviderException(e);
-		}
+		return new DniePrivateKey((DniePrivateKeyReference) pkRef);
     }
 
     /** {@inheritDoc} */
@@ -245,10 +248,27 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				"Se ha proporcionado un ProtectionParameter, pero este se ignorara, ya que el PIN se gestiona internamente" //$NON-NLS-1$
 			);
     	}
+    	if(protParam instanceof KeyStore.CallbackHandlerProtection) {
+    		// Establecemos el CallbackHandler
+    		CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
+    		if(chp != null) {
+    			this.cryptoCard.setCallbackHandler(chp);
+    		}
+    	}
+    	else if (protParam instanceof KeyStore.PasswordProtection) {
+    		// Establecemos el PasswordCallback
+    		PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
+    		if(pwc != null) {
+    			this.cryptoCard.setPasswordCallback(pwc);
+    		}
+    	}
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
-    	final PrivateKey key = (PrivateKey) engineGetKey(alias, null);
+    	final PrivateKey key = (PrivateKey) engineGetKey(
+			alias, 
+			null // Le pasamos null porque ya hemos establecido el PasswordCallback o el CallbackHander antes
+		);
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
     }
 
@@ -268,16 +288,41 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException, NoSuchAlgorithmException, CertificateException {
     	if (param != null) {
-       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-   				"Se ha proporcionado un LoadStoreParameter, pero este se ignorara, la contrasena se gestiona internamente" //$NON-NLS-1$
+    		ProtectionParameter pp = param.getProtectionParameter();
+    		if (pp instanceof KeyStore.CallbackHandlerProtection) {
+    			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
+    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo");
+    			}
+    			this.cryptoCard = DnieFactory.getDnie(
+					DnieProvider.getDefaultApduConnection(),
+					null,
+					new JseCryptoHelper(),
+					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
+				);
+    		}
+    		else if (pp instanceof KeyStore.PasswordProtection) {
+    			PasswordCallback pwc = new PasswordProtectionPasswordCallback((PasswordProtection) pp);
+    			this.cryptoCard = DnieFactory.getDnie(
+					DnieProvider.getDefaultApduConnection(),
+					pwc,
+					new JseCryptoHelper(),
+					null
+				);
+    		}
+    		else {
+	       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$
+				);
+    		}
+    	}
+    	else {
+	    	this.cryptoCard = DnieFactory.getDnie(
+				DnieProvider.getDefaultApduConnection(),
+				null,
+				new JseCryptoHelper(),
+				null
 			);
     	}
-
-    	this.cryptoCard = DnieFactory.getDnie(
-			DnieProvider.getDefaultApduConnection(),
-			null,
-			new JseCryptoHelper()
-		);
 
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
@@ -304,7 +349,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		password != null ?
 				new CachePasswordCallback(password) :
 					null,
-    		new JseCryptoHelper()
+    		new JseCryptoHelper(),
+    		null
 		);
 
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());

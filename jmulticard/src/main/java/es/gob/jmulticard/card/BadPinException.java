@@ -2,14 +2,14 @@ package es.gob.jmulticard.card;
 
 /** Introducci&oacute;n incorrecta del PIN del DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class BadPinException extends CardException {
+public class BadPinException extends PinException {
 
 	private static final long serialVersionUID = 9827614003517666L;
 
 	private final int retries;
 
 	/** Construye una excepci&oacute;n de introducci&oacute;n incorrecta del PIN del DNIe.
-	 * @param retriesLeft Intentos restantes */
+	 * @param retriesLeft Intentos restantes. */
 	public BadPinException(final int retriesLeft) {
 		super("PIN incorrecto, intentos restantes: " + Integer.toString(retriesLeft)); //$NON-NLS-1$
 		this.retries = retriesLeft;
@@ -24,7 +24,7 @@ public class BadPinException extends CardException {
 
 	/** Obtiene los intentos restantes que quedan para introdicir correctamente el PIN antes de que
 	 * se bloquee el DNIe, y -1 si se desconoce.
-	 * @return Intentos restantes que quedan para introdicir correctamente el PIN */
+	 * @return Intentos restantes que quedan para introdicir correctamente el PIN. */
 	public int getRemainingRetries() {
 		return this.retries;
 	}

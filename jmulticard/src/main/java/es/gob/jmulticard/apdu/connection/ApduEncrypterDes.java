@@ -54,9 +54,7 @@ import es.gob.jmulticard.asn1.bertlv.BerTlv;
  * @author Carlos Gamuci Mill&aacute;n */
 public class ApduEncrypterDes extends ApduEncrypter {
 
-	/**
-	 * Constructor de la clase para operaciones de cifrado cifrado DES.
-	 */
+	/** Constructor de la clase para operaciones de cifrado cifrado DES. */
 	public ApduEncrypterDes() {
         this.paddingLength = 8;
     }

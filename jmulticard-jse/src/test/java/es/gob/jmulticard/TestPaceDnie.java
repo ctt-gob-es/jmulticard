@@ -43,7 +43,8 @@ public final class TestPaceDnie {
 			dni = DnieFactory.getDnie(
 					conn,
 					cpc,
-					new JseCryptoHelper()
+					new JseCryptoHelper(),
+					null
 				);
 		} catch (final Exception e) {
 			throw new Exception(e.getMessage());

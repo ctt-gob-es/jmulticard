@@ -21,8 +21,8 @@ public class TestCancelledOperation {
 	@Ignore // Necesita GUI
 	public void testCancelConfirmDialog() {
 		JOptionPane.showMessageDialog(null, "Pulse NO en los dialogos que se mostraran al cerrar este"); //$NON-NLS-1$
-		Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null, true));
-		Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null, true));
+		Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null));
+		Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null));
 	}
 
 	/** Prueba de cancelaci&oacute;n de di&aacute;logo de petici&oacute;n de PIN. */

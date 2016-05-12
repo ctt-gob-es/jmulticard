@@ -40,7 +40,11 @@
 package es.gob.jmulticard.card.dnie;
 
 import java.io.IOException;
+import java.security.AccessControlException;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
@@ -52,6 +56,7 @@ import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
+import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
@@ -71,10 +76,11 @@ public class Dnie3 extends Dnie {
      * @throws BurnedDnieCardException Si la tarjeta conectada es un DNIe con la memoria vol&aacute;til borrada. */
     Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
-    	  final CryptoHelper cryptoHelper) throws ApduConnectionException,
+    	  final CryptoHelper cryptoHelper,
+    	  final CallbackHandler ch) throws ApduConnectionException,
                                                   InvalidCardException,
                                                   BurnedDnieCardException {
-        super(conn, pwc, cryptoHelper);
+        super(conn, pwc, cryptoHelper, ch);
         this.rawConnection = conn;
     }
 
@@ -85,7 +91,7 @@ public class Dnie3 extends Dnie {
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws BadPinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
 	@Override
-	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, BadPinException {
+	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
 
         // Si el canal seguro esta ya abierto salimos sin hacer nada
         if (this.isSecurityChannelOpen()) {
@@ -132,7 +138,7 @@ public class Dnie3 extends Dnie {
         LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
 
         try {
-            verifyPin(getPasswordCallback());
+            verifyPin(getInternalPasswordCallback(false));
         }
         catch (final ApduConnectionException e) {
             throw new CryptoCardException(
@@ -169,11 +175,23 @@ public class Dnie3 extends Dnie {
         LOGGER.info("Canal seguro de Usuario para DNIe establecido"); //$NON-NLS-1$
     }
 
+	protected byte[] signInternal(final byte[] data,
+            final String signAlgorithm,
+            final PrivateKeyReference privateKeyReference) throws CryptoCardException,
+                                                                  PinException {
+		if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
+            throw new IllegalArgumentException(
+        		"La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference" //$NON-NLS-1$
+    		);
+        }
+        return signOperation(data, signAlgorithm, privateKeyReference);
+	}
+	
     /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados).
      * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta. 
      * @throws BadPinException */
     @Override
-	protected void loadCertificates() throws CryptoCardException, BadPinException {
+	protected void loadCertificates() throws CryptoCardException, PinException {
     	// Abrimos el canal si es necesario
     	openSecureChannelIfNotAlreadyOpened();
     	loadCertificatesInternal();
@@ -184,12 +202,12 @@ public class Dnie3 extends Dnie {
     public byte[] sign(final byte[] data,
     		           final String signAlgorithm,
     		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
-    		                                                                 BadPinException {
+    		                                                                 PinException {
     	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
 
         // Reestablecemos el canal inicial, para que en una segunda firma se tenga que volver a pedir
     	// el PIN y rehacer los canales CWA
-        try {
+        try {   	
         	this.rawConnection.reset();
 			setConnection(this.rawConnection);
 		}
@@ -201,10 +219,4 @@ public class Dnie3 extends Dnie {
         
     	return ret;
     }
-
-    @Override
-	protected boolean shouldShowSignConfirmDialog() {
-		return false;
-	}
-
 }

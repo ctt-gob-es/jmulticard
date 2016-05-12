@@ -28,7 +28,7 @@ public final class TestDnieChangePIN {
 	public static void testChangePIN() throws Exception {
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
 		final ApduConnection ac = new SmartcardIoConnection();
-		final CryptoCard dni = DnieFactory.getDnie(ac , cpc, new JseCryptoHelper());
+		final CryptoCard dni = DnieFactory.getDnie(ac , cpc, new JseCryptoHelper(), null);
 		dni.changePIN("password", "pinNuevo"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
