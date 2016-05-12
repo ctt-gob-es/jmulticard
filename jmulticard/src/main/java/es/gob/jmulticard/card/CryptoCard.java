@@ -76,7 +76,7 @@ public interface CryptoCard {
      * @return Datos firmados (PKCS#1 v1.5)
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema durante la firma.
-     * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado es incorrecto
+     * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo
      * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando el usuario
      * cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
     byte[] sign(byte[] data, String algorithm, PrivateKeyReference keyRef) throws CryptoCardException, PinException;
@@ -86,7 +86,7 @@ public interface CryptoCard {
 	 * @param newPin PIN nuevo.
 	 * @return Estado de la operaci&oacute;n.
 	 * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
-	 * @throws es.gob.jmulticard.card.PinException Si el PIN actual es incorrecto
+	 * @throws es.gob.jmulticard.card.PinException Si el PIN actual es incorrecto o no es posible obtenerlo
 	 * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
 	byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException, PinException, AuthenticationModeLockedException;
 

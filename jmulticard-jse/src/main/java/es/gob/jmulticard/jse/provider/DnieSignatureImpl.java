@@ -51,7 +51,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.SignatureSpi;
 
-import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.dnie.Dni;

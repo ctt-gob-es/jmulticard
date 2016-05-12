@@ -1,6 +1,6 @@
 /**
  *  Copyright 2011, Tobias Senger
- *  
+ *
  *  This file is part of animamea.
  *
  *  Animamea is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License   
+ *  You should have received a copy of the GNU General Public License
  *  along with animamea.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -31,7 +31,7 @@ import org.spongycastle.crypto.params.ParametersWithIV;
 
 /**
  * @author Tobias Senger (tobias@t-senger.de)
- * 
+ *
  */
 
 public class AmAESCrypto extends AmCryptoProvider {
@@ -41,69 +41,70 @@ public class AmAESCrypto extends AmCryptoProvider {
 	private byte[] IV = null;
 	private byte[] sscBytes = null;
 
+	/** Tama&ntilde;o de bloque de cifrado */
 	public static int blockSize = 16;
 
-	private void initCiphers(byte[] key, byte[] iv) {
+	private void initCiphers(final byte[] key, final byte[] iv) {
 
 		// get the keyBytes
-		keyBytes = new byte[key.length];
-		System.arraycopy(key, 0, keyBytes, 0, key.length);
+		this.keyBytes = new byte[key.length];
+		System.arraycopy(key, 0, this.keyBytes, 0, key.length);
 
-		keyP = new KeyParameter(keyBytes);
+		this.keyP = new KeyParameter(this.keyBytes);
 
 		// get the IV
-		IV = new byte[blockSize];
-		System.arraycopy(iv, 0, IV, 0, IV.length);
+		this.IV = new byte[blockSize];
+		System.arraycopy(iv, 0, this.IV, 0, this.IV.length);
 
 		// create the ciphers
 		// AES block cipher in CBC mode with ISO7816d4 padding
-		encryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
+		this.encryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
 				new AESFastEngine()), new ISO7816d4Padding());
 
-		decryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
+		this.decryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
 				new AESFastEngine()), new ISO7816d4Padding());
 
 		// create the IV parameter
-		ParametersWithIV parameterIV = new ParametersWithIV(keyP, IV);
+		final ParametersWithIV parameterIV = new ParametersWithIV(this.keyP, this.IV);
 
-		encryptCipher.init(true, parameterIV);
-		decryptCipher.init(false, parameterIV);
+		this.encryptCipher.init(true, parameterIV);
+		this.decryptCipher.init(false, parameterIV);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tsenger.animamea.crypto.AmCryptoProvider#init(byte[], byte[])
 	 */
 	@Override
-	public void init(byte[] keyBytes, byte[] ssc) {
+	public void init(final byte[] keyBytes1, final byte[] ssc) {
 
-		sscBytes = ssc.clone();
+		this.sscBytes = ssc.clone();
 
-		byte[] iv = encryptBlock(keyBytes, sscBytes);
+		final byte[] iv = encryptBlock(keyBytes1, this.sscBytes);
 
-		initCiphers(keyBytes, iv);
+		initCiphers(keyBytes1, iv);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tsenger.animamea.crypto.AmCryptoProvider#getMAC(byte[])
 	 */
 	@Override
-	public byte[] getMAC(byte[] data) {
+	public byte[] getMAC(final byte[] data) {
 
-		byte[] n = new byte[sscBytes.length + data.length];
-		System.arraycopy(sscBytes, 0, n, 0, sscBytes.length);
-		System.arraycopy(data, 0, n, sscBytes.length, data.length);
+		byte[] n = new byte[this.sscBytes.length + data.length];
+		System.arraycopy(this.sscBytes, 0, n, 0, this.sscBytes.length);
+		System.arraycopy(data, 0, n, this.sscBytes.length, data.length);
 		n = addPadding(n);
 
-		BlockCipher cipher = new AESFastEngine();
-		Mac mac = new CMac(cipher, 64);
+		final BlockCipher cipher = new AESFastEngine();
+		final Mac mac = new CMac(cipher, 64);
 
-		mac.init(keyP);
+		mac.init(this.keyP);
 		mac.update(n, 0, n.length);
-		byte[] out = new byte[mac.getMacSize()];
+		final byte[] out = new byte[mac.getMacSize()];
 
 		mac.doFinal(out, 0);
 
@@ -112,20 +113,20 @@ public class AmAESCrypto extends AmCryptoProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tsenger.animamea.crypto.AmCryptoProvider#getMAC(byte[], byte[])
 	 */
 	@Override
-	public byte[] getMAC(byte[] key, byte[] data) {
-		BlockCipher cipher = new AESFastEngine();
-		Mac mac = new CMac(cipher, 64);
+	public byte[] getMAC(final byte[] key, final byte[] data) {
+		final BlockCipher cipher = new AESFastEngine();
+		final Mac mac = new CMac(cipher, 64);
 
-		KeyParameter keyP1 = new KeyParameter(key);
+		final KeyParameter keyP1 = new KeyParameter(key);
 		mac.init(keyP1);
 
 		mac.update(data, 0, data.length);
 
-		byte[] out = new byte[8];
+		final byte[] out = new byte[8];
 
 		mac.doFinal(out, 0);
 
@@ -134,7 +135,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 
 	/**
 	 * Dekodiert einen Block mit AES
-	 * 
+	 *
 	 * @param key
 	 *            Byte-Array enthält den AES-Schlüssel
 	 * @param z
@@ -142,10 +143,10 @@ public class AmAESCrypto extends AmCryptoProvider {
 	 * @return entschlüsselter block
 	 */
 	@Override
-	public byte[] decryptBlock(byte[] key, byte[] z) {
-		byte[] s = new byte[blockSize];
-		KeyParameter encKey = new KeyParameter(key);
-		BlockCipher cipher = new AESFastEngine();
+	public byte[] decryptBlock(final byte[] key, final byte[] z) {
+		final byte[] s = new byte[blockSize];
+		final KeyParameter encKey = new KeyParameter(key);
+		final BlockCipher cipher = new AESFastEngine();
 		cipher.init(false, encKey);
 		cipher.processBlock(z, 0, s, 0);
 		return s;
@@ -153,7 +154,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 
 	/**
 	 * Kodiert einen Block mit AES
-	 * 
+	 *
 	 * @param key
 	 *            Byte-Array enthält den AES-Schlüssel
 	 * @param z
@@ -161,10 +162,10 @@ public class AmAESCrypto extends AmCryptoProvider {
 	 * @return entschlüsselter block
 	 */
 
-	public byte[] encryptBlock(byte[] key, byte[] z) {
-		byte[] s = new byte[blockSize];
-		KeyParameter encKey = new KeyParameter(key);
-		BlockCipher cipher = new AESFastEngine();
+	public static byte[] encryptBlock(final byte[] key, final byte[] z) {
+		final byte[] s = new byte[blockSize];
+		final KeyParameter encKey = new KeyParameter(key);
+		final BlockCipher cipher = new AESFastEngine();
 		cipher.init(true, encKey);
 		cipher.processBlock(z, 0, s, 0);
 		return s;
@@ -172,7 +173,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.tsenger.animamea.crypto.AmCryptoProvider#getBlockSize()
 	 */
 	@Override

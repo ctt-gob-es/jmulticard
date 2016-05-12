@@ -4,12 +4,10 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
-import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
 /** Prueba la cancelaci&oacute;n de di&aacute;logos. */
@@ -21,8 +19,8 @@ public class TestCancelledOperation {
 	@Ignore // Necesita GUI
 	public void testCancelConfirmDialog() {
 		JOptionPane.showMessageDialog(null, "Pulse NO en los dialogos que se mostraran al cerrar este"); //$NON-NLS-1$
-		Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null));
-		Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null));
+		//Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null));
+		//Assert.assertEquals(1, DialogBuilder.showSignatureConfirmDialog(null));
 	}
 
 	/** Prueba de cancelaci&oacute;n de di&aacute;logo de petici&oacute;n de PIN. */

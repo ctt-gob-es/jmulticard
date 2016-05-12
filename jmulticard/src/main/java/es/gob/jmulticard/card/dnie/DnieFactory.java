@@ -1,26 +1,15 @@
 package es.gob.jmulticard.card.dnie;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.card.Atr;
-import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.pace.PaceException;
 
@@ -96,7 +85,7 @@ public final class DnieFactory {
 			final byte[] actualAtrBytes = actualAtr.getBytes();
 			if(ATR_NFC.equals(actualAtr)) {
 				try {
-					return new DnieNFC(conn, pwc, cryptoHelper, ch); //$NON-NLS-1$
+					return new DnieNFC(conn, pwc, cryptoHelper, ch);
 				} 
 				catch (PaceException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE: " + e); //$NON-NLS-1$

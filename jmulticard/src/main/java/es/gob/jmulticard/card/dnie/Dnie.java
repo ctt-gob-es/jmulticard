@@ -42,10 +42,7 @@ package es.gob.jmulticard.card.dnie;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.security.AccessControlException;
-import java.security.KeyStore;
-import java.security.KeyStore.CallbackHandlerProtection;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -111,9 +108,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
-    
+
     private CallbackHandler callh;
-    
+
 	private String[] aliases = null;
 
     private static final CertificateFactory certFactory;
@@ -232,7 +229,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         super((byte) 0x00, conn);
         conn.reset();
         connect(conn);
-        
+
         this.callh = ch;
 
         try {
@@ -577,35 +574,42 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		);
         }
 
-        if (callh != null) {
-        	ConfirmationCallback cc = new ConfirmationCallback(
-				"Desea realizar una operacion de firma con la clave privada de su DNIe?", // TODO
-				ConfirmationCallback.WARNING, 
+        if (this.callh != null) {
+        	String prompt;
+        	if(((DniePrivateKeyReference) privateKeyReference).toString().equals(AUTH_KEY_LABEL)) {
+        		prompt = Messages.getString("DialogBuilder.3"); //$NON-NLS-1$
+        	}
+        	else {
+        		prompt = Messages.getString("DialogBuilder.2"); //$NON-NLS-1$
+        	}
+        	final ConfirmationCallback cc = new ConfirmationCallback(
+				prompt,
+				ConfirmationCallback.WARNING,
 				ConfirmationCallback.YES_NO_OPTION,
 				ConfirmationCallback.YES
 			);
         	System.out.println(((DniePrivateKeyReference)privateKeyReference).getLabel());
         	try {
-				callh.handle(
+				this.callh.handle(
 					new Callback[] {
 						cc
 					}
 				);
 				if (ConfirmationCallback.YES != cc.getSelectedIndex()) {
 					throw new AccessControlException(
-						"El usuario ha denegado la operacion de firma"
+						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
 					);
 				}
 			}
-        	catch (Exception e) {
+        	catch (final Exception e) {
 				LOGGER.severe(
-					"No ha sido posible pedir la confirmacion de firma al usuario: " + e
+					"No ha sido posible pedir la confirmacion de firma al usuario: " + e //$NON-NLS-1$
 				);
 			}
         }
         else {
         	LOGGER.warning(
-    			"No se ha proporcionado un CallbackHandler para mostrar el dialogo de confirmacion de firma"
+    			"No se ha proporcionado un CallbackHandler para mostrar el dialogo de confirmacion de firma" //$NON-NLS-1$
 			);
         }
 
@@ -709,24 +713,24 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             }
         }
     }
-    
+
     private int getPinRetriesLeft() throws PinException {
-    	CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
+    	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
 
     	ResponseApdu verifyResponse = null;
 		try {
 			verifyResponse = this.getConnection().transmit(
 				verifyCommandApdu
 			);
-		} catch (ApduConnectionException e) {
+		} catch (final ApduConnectionException e) {
 			throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e 
+					"Error obteniendo el PIN del CallbackHandler: " + e  //$NON-NLS-1$
 				);
 		}
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
     }
-    
-    protected PasswordCallback getInternalPasswordCallback(boolean badPin) throws PinException {
+
+    protected PasswordCallback getInternalPasswordCallback(final boolean badPin) throws PinException {
     	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
     		if(retriesLeft == 0) {
@@ -742,34 +746,34 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         	PasswordCallback  pwc;
         	if(badPin) {
 	    		pwc = new PasswordCallback(
-					Messages.getString("CommonPasswordCallback.0") + retriesLeft, 
+					Messages.getString("CommonPasswordCallback.0") + retriesLeft,  //$NON-NLS-1$
 					false
 				);
         	}
         	else {
         		pwc = new PasswordCallback(
-    					Messages.getString("CommonPasswordCallback.4") + retriesLeft, 
+    					Messages.getString("CommonPasswordCallback.4") + retriesLeft,  //$NON-NLS-1$
     					false
     				);
         	}
 			try {
-				callh.handle(new Callback[] { pwc });
-			} 
-			catch (IOException e) {
+				this.callh.handle(new Callback[] { pwc });
+			}
+			catch (final IOException e) {
 				throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e,
+					"Error obteniendo el PIN del CallbackHandler: " + e, //$NON-NLS-1$
 					e
 				);
-			} 
-			catch (UnsupportedCallbackException e) {
+			}
+			catch (final UnsupportedCallbackException e) {
 				throw new PinException(
-					"El CallbackHandler no soporta pedir el PIN al usuario: " + e,
+					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, //$NON-NLS-1$
 					e
 				);
 			}
 			return pwc;
     	}
-    	throw new PinException("No hay ningun metodo para obtener el PIN");
+    	throw new PinException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
     }
 
     private X509Certificate loadCertificate(final Location location) throws IOException,
@@ -863,7 +867,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     protected boolean isSecurityChannelOpen() {
-	    //Devuelve true si el canal actual es de PIN o de usuario	
+	    //Devuelve true si el canal actual es de PIN o de usuario
         return this.getConnection() instanceof Cwa14890Connection && this.getConnection().isOpen() && !(this.getConnection() instanceof PaceConnection);
     }
 
@@ -877,7 +881,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	}
     	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
 
-    	ResponseApdu verifyResponse = this.getConnection().transmit(
+    	final ResponseApdu verifyResponse = this.getConnection().transmit(
 			verifyCommandApdu
     	);
     	verifyCommandApdu = null;
@@ -921,8 +925,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 		try {
 			System.out.println(HexUtils.hexify(selectFileByLocationAndRead(new Location("50156005")), false)); //$NON-NLS-1$
-		} 
-		catch (final Exception e1) {}
+		}
+		catch (final Exception e1) {
+			//Problema al leer el fichero de la tarjeta inteligente
+		}
 		ResponseApdu res = null;
 		try {
 			//Seleccion de directorio maestro
@@ -938,6 +944,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 						"Error en el establecimiento de las variables de entorno para el cambio de PIN", res.getStatusWord() //$NON-NLS-1$
 						);
 			}
+			return res.getData();
 		}
 		catch(final LostChannelException e) {
 			LOGGER.warning("Se ha perdido el canal seguro para firmar. Se procede a recuperarlo: " + e); //$NON-NLS-1$
@@ -957,15 +964,20 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		catch (final Iso7816FourCardException e) {
 			throw new DnieCardException("No se pudo seleccionar el fichero de PIN de la tarjeta: " + e, e); //$NON-NLS-1$
 		}
-
-		return res.getData();
+		return null;
 	}
-	
+
+    /** Asigna un CallbackHandler a la tarjeta
+     * @param handler CallbackHandler a asignar
+     */
     public void setCallbackHandler(final CallbackHandler handler) {
     	this.callh = handler;
     }
 
-	public void setPasswordCallback(PasswordCallback pwc) {
+	/** Asigna un PasswordCallback a la tarjeta
+	 * @param pwc PasswordCallback a asignar
+	 */
+	public void setPasswordCallback(final PasswordCallback pwc) {
 		this.passwordCallback = pwc;
 	}
 }

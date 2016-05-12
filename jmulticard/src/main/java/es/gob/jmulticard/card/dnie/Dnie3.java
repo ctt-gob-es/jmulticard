@@ -39,26 +39,18 @@
  */
 package es.gob.jmulticard.card.dnie;
 
-import java.io.IOException;
-import java.security.AccessControlException;
-
-import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
-import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -175,6 +167,8 @@ public class Dnie3 extends Dnie {
         LOGGER.info("Canal seguro de Usuario para DNIe establecido"); //$NON-NLS-1$
     }
 
+	/** {@inheritDoc} */
+	@Override
 	protected byte[] signInternal(final byte[] data,
             final String signAlgorithm,
             final PrivateKeyReference privateKeyReference) throws CryptoCardException,

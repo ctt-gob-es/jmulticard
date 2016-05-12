@@ -1,6 +1,5 @@
 package es.gob.jmulticard;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -8,8 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 import org.spongycastle.jce.ECNamedCurveTable;
@@ -21,11 +18,10 @@ import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.TestCeres.CachePasswordCallback;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.CryptoCard;
-import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.dnie.DnieFactory;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import junit.framework.Assert;
 
 /** pruebas de PACE con DNIe 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -38,7 +34,7 @@ public final class TestPaceDnie {
 		final ApduConnection conn = new SmartcardIoConnection();
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
 		CryptoCard dni = null;
-		
+
 		try {
 			dni = DnieFactory.getDnie(
 					conn,
@@ -49,7 +45,7 @@ public final class TestPaceDnie {
 		} catch (final Exception e) {
 			throw new Exception(e.getMessage());
 		}
-		
+
 		System.out.println("Canal PACE abierto"); //$NON-NLS-1$
 		dni.changePIN("password", "1234512345"); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println("Se ha realizado el cambio de PIN correctamente"); //$NON-NLS-1$

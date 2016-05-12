@@ -39,14 +39,12 @@
  */
 package es.gob.jmulticard.apdu.dnie;
 
-import javax.security.auth.callback.PasswordCallback;
-
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 de verificaci&oacute;n de intentos restantes de PIN.
  * <b>Importante</b>: La implementaci&oacute;n actual solo funciona bajo CWA-14890, para un
  * funcionamiento con canal no cifrado es necesario sobrecargar <code>getBytes()</code>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Sergio Mart&iacute;nez Rico */
 public final class RetriesLeftApduCommand extends CommandApdu {
 
     private static final byte INS_VERIFY = (byte) 0x20;

@@ -14,11 +14,18 @@ public class PaceException extends Iso7816FourCardException {
         super(retCode, origin, description);
 	}
 
+	/** Excepci&oacute;n de error relacionado con el protocolo PACE.
+	 * @param description Detalle de la excepci&oacute;n.
+	 * @param e Excepci&oacute;n a lanzar.
+	 */
 	public PaceException(final String description, final Throwable e) {
 		super(description, e);
 	}
-	
-	PaceException(final String description) {
+
+	/** Excepci&oacute;n de error relacionado con el protocolo PACE.
+	 * @param description Detalle de la excepci&oacute;n.
+	 */
+	public PaceException(final String description) {
 		super(description);
 	}
 

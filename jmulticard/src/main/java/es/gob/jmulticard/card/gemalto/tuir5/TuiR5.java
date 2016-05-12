@@ -18,11 +18,9 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
-import es.gob.jmulticard.apdu.gemalto.CheckVerifyRetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.gemalto.VerifyApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
-import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
@@ -33,7 +31,6 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
 
 /** Tarjeta Gemalto TUI R5 MPCOS.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -56,7 +53,6 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	};
 
     private static final Location   CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
-    private static final Location PRKDF_LOCATION = new Location("50005001"); //$NON-NLS-1$
 
     private static byte CLA = (byte) 0x00;
 
@@ -191,22 +187,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
     	throw new InvalidCardException("La tarjeta no contiene ningun Applet PKCS#15 de identificador conocido"); //$NON-NLS-1$
     }
 
-    /** Carga la informaci&oacute;n p&uacute;blica con la referencia a las claves de firma. */
-    private void loadKeyReferences() {
-        final PrKdf prKdf = new PrKdf();
-        try {
-            prKdf.setDerValue(selectFileByLocationAndRead(PRKDF_LOCATION));
-        }
-        catch(final RequiredSecurityStateNotSatisfiedException e) {
-        	throw new SecurityException("Se necesita PIN"); //$NON-NLS-1$
-        }
-        catch (final Exception e) {
-            throw new IllegalStateException("No se ha podido cargar el PrKDF de la tarjeta: " + e.toString()); //$NON-NLS-1$
-        }
-        System.out.println(prKdf.toString());
-    }
-
-	@Override
+    @Override
 	public String[] getAliases() {
 		return certificatesByAlias.keySet().toArray(new String[0]);
 	}
@@ -291,21 +272,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		return "Gemalto TUI R5 (MPCOS)"; //$NON-NLS-1$
 	}
 
-    /** Obtiene el n&uacute;mero de intentos restantes para introducci&oacute;n del PIN.
-     * @return N&uacute;mero de intentos restantes para introducci&oacute;n del PIN
-     * @throws ApduConnectionException Si se recibe una respuesta inesperada o hay errores de comunicaci&oacute; con la tarjeta */
-    private int getRemainingPinRetries() throws ApduConnectionException {
-    	final CheckVerifyRetriesLeftApduCommand retriesLeftCommandApdu = new CheckVerifyRetriesLeftApduCommand((byte) 0x00);
-    	final ResponseApdu verifyResponse = this.getConnection().transmit(
-			retriesLeftCommandApdu
-    	);
-    	if (verifyResponse.getStatusWord().getMsb() == (byte) 0x63) {
-    		return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
-    	}
-    	throw new ApduConnectionException("Respuesta desconocida: " + HexUtils.hexify(verifyResponse.getBytes(), true)); //$NON-NLS-1$
-    }
-
-	@Override
+    @Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
 		final VerifyApduCommand verifyPinApduCommand = new VerifyApduCommand(
 			CLA,

@@ -50,9 +50,8 @@ import java.security.PrivilegedAction;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.TextInputCallback;
+import javax.security.sasl.AuthorizeCallback;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -85,37 +84,32 @@ private static boolean headless = false;
     }
 
     /** Muestra un di&aacute;logo para la confirmaci&oacute;n de una operaci&oacute;n con clave privada.
-     * @param parent Componente padre para la modalidad.
-     * @param digitalSignCert <code>true</code> si la operaci&oacute;n se hace con una clave destinada a
-     *        firmas electr&oacute;nicas, <code>false</code> si la clave est&aacute;
-     *        destinada a la autenticaci&oacute;n
-     * @return <code>0</code> si el usuario acepta, <code>1</code> si rechaza hacer la operaci&oacute;n con
-     *         clave privada */
-    public static int showSignatureConfirmDialog(final Callback callBack) {
+     * @param callBack Callback que obtiene la confirmaci&oacute;n del usuario. */
+    public static void showSignatureConfirmDialog(final AuthorizeCallback callBack) {
         if (!headless) {
             try {
-                return CustomDialog.showConfirmDialog(
+            	final int i = CustomDialog.showConfirmDialog(
             		 PasswordCallbackManager.getDialogOwner(),
                      true,
-                     ((ConfirmationCallback) callBack).getPrompt(),
-	                 "Mensaje de seguridad",
-	                 ((ConfirmationCallback) callBack).getMessageType()
+                     Messages.getString("CustomDialog.confirmDialog.prompt"), //$NON-NLS-1$
+	                 Messages.getString("CustomDialog.confirmDialog.title"), //$NON-NLS-1$
+	                 JOptionPane.YES_NO_OPTION
                  );
-
+            	callBack.setAuthorized(i == JOptionPane.YES_OPTION);
             }
             catch (final java.awt.HeadlessException e) {
                 Logger.getLogger("es.gob.jmulticard").info("No hay entorno grafico, se revierte a consola: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+                final Console console = System.console();
+                if (console == null) {
+                    throw new NoConsoleException("No hay consola para solicitar el PIN"); //$NON-NLS-1$
+                }
+                callBack.setAuthorized(getConsoleConfirm(console, callBack) == JOptionPane.YES_OPTION);
             }
         }
-        final Console console = System.console();
-        if (console == null) {
-            throw new NoConsoleException("No hay consola para solicitar el PIN"); //$NON-NLS-1$
-        }
-        return getConsoleConfirm(console, callBack);
     }
 
-    private static int getConsoleConfirm(final Console console, final Callback callBack) {
-        console.printf(((ConfirmationCallback)callBack).getPrompt());
+    private static int getConsoleConfirm(final Console console, final AuthorizeCallback callBack) {
+        console.printf(Messages.getString("CustomDialog.confirmDialog.prompt")); //$NON-NLS-1$
         final String confirm = console.readLine().replace("\n", "").replace("\r", "").trim().toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ("si".equals(confirm) //$NON-NLS-1$
                 || "s".equals(confirm) //$NON-NLS-1$
@@ -129,9 +123,11 @@ private static boolean headless = false;
 		}
     }
 
-    public static String getCan(final Callback callBack) {
+    /** Obtiene el c&oacute;digo CAN de la Callback.
+     * @param callBack Callback que permite obtener el c&oacute;digo CAN. */
+    public static void getCan(final TextInputCallback callBack) {
 			final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
-			final JLabel label1 = new JLabel(((TextInputCallback)callBack).getPrompt());
+			final JLabel label1 = new JLabel(callBack.getPrompt());
 			final ImageIcon icon = new ImageIcon(DialogBuilder.class.getResource(CAN_EXAMPLE));
 			final Image img = icon.getImage();
 			final Image newimg = img.getScaledInstance(230, 140,  java.awt.Image.SCALE_SMOOTH);
@@ -149,7 +145,7 @@ private static boolean headless = false;
 			constraints.gridy++;
 			constraints.insets = new Insets(20,0,0,20);
 			panel.add(label2, constraints);
-			return JOptionPane.showInputDialog(null, panel, ((TextInputCallback)callBack).getText(), JOptionPane.PLAIN_MESSAGE);//"DNI Electr\u00f3nico: Introducci\u00f3n de CAN",
-
+			final String can = JOptionPane.showInputDialog(null, panel, callBack.getText(), JOptionPane.PLAIN_MESSAGE);
+			callBack.setText(can);
     }
 }

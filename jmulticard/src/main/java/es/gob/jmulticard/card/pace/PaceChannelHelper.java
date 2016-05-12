@@ -13,11 +13,9 @@ import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.math.ec.ECPoint;
 import org.spongycastle.util.Arrays;
 
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
@@ -25,6 +23,8 @@ import es.gob.jmulticard.apdu.iso7816four.GeneralAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
+import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
@@ -202,7 +202,7 @@ public final class PaceChannelHelper {
 		// La publica de la tarjeta sera devuelta por ella misma al enviar nuesra publica (pukIFDDH1)
 		final Random rnd = new Random();
 		rnd.setSeed(rnd.nextLong());
-		final byte[] x1 = new byte[(curve.getFieldSize()/8)];
+		final byte[] x1 = new byte[curve.getFieldSize()/8];
 		rnd.nextBytes(x1);
 		final BigInteger PrkIFDDH1 = new BigInteger(1, x1);
 		// Enviamos nuestra clave publica (pukIFDDH1 = G*PrkIFDDH1)
@@ -212,7 +212,7 @@ public final class PaceChannelHelper {
 				TAG_DYNAMIC_AUTHENTICATION_DATA,
 				new Tlv(
 					TAG_GEN_AUTH_2,
-					pukIFDDH1.getEncoded()
+					pukIFDDH1.getEncoded(false)
 				).getBytes()
 			);
 
@@ -259,7 +259,7 @@ public final class PaceChannelHelper {
 		//Se calcula la coordenada X de G' y generamos con la tarjeta un nuevo acuerdo de claves
 		// La privada del terminal se genera aleatoriamente (PrkIFDDH2)
 		// La publica de la tarjeta sera devuelta por ella misma al enviar nuesra publica (pukIFDDH2)
-		final byte[] x2 = new byte[(curve.getFieldSize()/8)];
+		final byte[] x2 = new byte[curve.getFieldSize()/8];
 		rnd.setSeed(rnd.nextLong());
 		rnd.nextBytes(x2);
 		final BigInteger PrkIFDDH2 = new BigInteger(1, x2);
@@ -272,7 +272,7 @@ public final class PaceChannelHelper {
 					TAG_DYNAMIC_AUTHENTICATION_DATA,
 					new Tlv(
 						TAG_GEN_AUTH_3,
-						pukIFDDH2.getEncoded()
+						pukIFDDH2.getEncoded(false)
 					).getBytes()
 				);
 
@@ -299,7 +299,7 @@ public final class PaceChannelHelper {
 
 			// Se calcula el secreto k = PukICCDH2 * PrkIFDDH2
 			final ECPoint.Fp SharedSecret_K = (org.spongycastle.math.ec.ECPoint.Fp) y2FromNewG.multiply(PrkIFDDH2);
-			final byte[] secretK = bigIntToByteArray(SharedSecret_K.getX().toBigInteger());
+			final byte[] secretK = bigIntToByteArray(SharedSecret_K.normalize().getXCoord().toBigInteger());
 
 			// 1.3.6 Cuarto comando General Authenticate
 			// Se validan las claves de sesion generadas en el paso anterior,
@@ -413,7 +413,7 @@ public final class PaceChannelHelper {
 		return new SecureMessaging(crypto, kenc, kmac, new byte[crypto.getBlockSize()]);
 	}
 
-	private static byte[] bigIntToByteArray(BigInteger bi) {
+	private static byte[] bigIntToByteArray(final BigInteger bi) {
 		final byte[] temp = bi.toByteArray();
 		byte[] returnbytes = null;
 		if (temp[0] == 0) {
@@ -429,7 +429,7 @@ public final class PaceChannelHelper {
 	}
 
 
-	private static ECPoint byteArrayToECPoint(byte[] value, ECCurve.Fp curve)
+	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve)
 			throws IllegalArgumentException {
 		final byte[] x = new byte[(value.length - 1) / 2];
 		final byte[] y = new byte[(value.length - 1) / 2];
@@ -437,15 +437,12 @@ public final class PaceChannelHelper {
 			throw new IllegalArgumentException("No uncompressed Point found!"); //$NON-NLS-1$
 		}
 		System.arraycopy(value, 1, x, 0, (value.length - 1) / 2);
-		System.arraycopy(value, 1 + ((value.length - 1) / 2), y, 0,
+		System.arraycopy(value, 1 + (value.length - 1) / 2, y, 0,
 				(value.length - 1) / 2);
-		final ECFieldElement.Fp xE = new ECFieldElement.Fp(curve.getQ(),
-				new BigInteger(1, x));
-		final ECFieldElement.Fp yE = new ECFieldElement.Fp(curve.getQ(),
-				new BigInteger(1, y));
-		final ECPoint point = new ECPoint.Fp(curve, xE, yE);
+		final ECFieldElement.Fp xE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, x));
+		final ECFieldElement.Fp yE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, y));
+
+		final ECPoint point = curve.createPoint(xE.toBigInteger(), yE.toBigInteger());
 		return point;
-
 	}
-
 }

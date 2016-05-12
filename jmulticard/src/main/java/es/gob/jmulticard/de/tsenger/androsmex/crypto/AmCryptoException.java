@@ -1,6 +1,6 @@
 /**
  *  Copyright 2011, Tobias Senger
- *  
+ *
  *  This file is part of animamea.
  *
  *  Animamea is free software: you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License   
+ *  You should have received a copy of the GNU General Public License
  *  along with animamea.  If not, see <http://www.gnu.org/licenses/>.
  */
 package es.gob.jmulticard.de.tsenger.androsmex.crypto;
@@ -26,30 +26,30 @@ package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 public class AmCryptoException extends Exception {
 
 	/**
-	 * 
+	 *
 	 */
 	public AmCryptoException() {
 	}
 
 	/**
-	 * @param message Descripci&oacute;n del problema
+	 * @param message Descripci&oacute;n del problema.
 	 */
-	public AmCryptoException(String message) {
+	public AmCryptoException(final String message) {
 		super(message);
 	}
 
 	/**
-	 * @param cause Causa del lanzamiento de la excepci&oacute;n
+	 * @param cause Causa del lanzamiento de la excepci&oacute;n.
 	 */
-	public AmCryptoException(Throwable cause) {
+	public AmCryptoException(final Throwable cause) {
 		super(cause);
 	}
 
 	/**
-	 * @param message Descripci&oacute;n del problema
-	 * @param cause Causa del lanzamiento de la excepci&oacute;n
+	 * @param message Descripci&oacute;n del problema.
+	 * @param cause Causa del lanzamiento de la excepci&oacute;n.
 	 */
-	public AmCryptoException(String message, Throwable cause) {
+	public AmCryptoException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 

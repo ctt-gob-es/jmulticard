@@ -250,23 +250,21 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
     	if(protParam instanceof KeyStore.CallbackHandlerProtection) {
     		// Establecemos el CallbackHandler
-    		CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
+    		final CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
     		if(chp != null) {
     			this.cryptoCard.setCallbackHandler(chp);
     		}
     	}
     	else if (protParam instanceof KeyStore.PasswordProtection) {
     		// Establecemos el PasswordCallback
-    		PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
-    		if(pwc != null) {
-    			this.cryptoCard.setPasswordCallback(pwc);
-    		}
+    		final PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
+    		this.cryptoCard.setPasswordCallback(pwc);
     	}
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
     	final PrivateKey key = (PrivateKey) engineGetKey(
-			alias, 
+			alias,
 			null // Le pasamos null porque ya hemos establecido el PasswordCallback o el CallbackHander antes
 		);
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
@@ -288,10 +286,10 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException, NoSuchAlgorithmException, CertificateException {
     	if (param != null) {
-    		ProtectionParameter pp = param.getProtectionParameter();
+    		final ProtectionParameter pp = param.getProtectionParameter();
     		if (pp instanceof KeyStore.CallbackHandlerProtection) {
     			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
-    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo");
+    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
     			}
     			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
@@ -301,7 +299,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
-    			PasswordCallback pwc = new PasswordProtectionPasswordCallback((PasswordProtection) pp);
+    			final PasswordCallback pwc = new PasswordProtectionPasswordCallback((PasswordProtection) pp);
     			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					pwc,
@@ -311,7 +309,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		}
     		else {
 	       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
 				);
     		}
     	}

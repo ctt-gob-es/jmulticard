@@ -2,20 +2,20 @@ package es.gob.jmulticard.card.pace;
 
 import java.util.logging.Logger;
 
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksum;
-import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 
+/** Conexi&oacute;n PACE para establecimiento de canal seguro por NFC.
+ * @author Sergio Mart&iacute;nez Rico */
 public class PaceConnection extends Cwa14890OneV2Connection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
@@ -26,7 +26,12 @@ public class PaceConnection extends Cwa14890OneV2Connection {
 	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
 	private final SecureMessaging sm;
 
-	public PaceConnection(ApduConnection connection, CryptoHelper cryptoHelper, SecureMessaging secMsg) {
+	/** Conexi&oacute;n PACE para establecimiento de canal seguro por NFC.
+	 * @param connection Conexi&oacute;n base sobre la que crear el nuevo canal.
+	 * @param cryptoHelper Clase para el cifrado de datos.
+	 * @param secMsg Clase contenedora de las variables para establecer el canal PACE (Kenc, Kmac, Ssc).
+	 */
+	public PaceConnection(final ApduConnection connection, final CryptoHelper cryptoHelper, final SecureMessaging secMsg) {
 		super(connection, cryptoHelper);
 		this.sm = secMsg;
 		this.subConnection = connection;

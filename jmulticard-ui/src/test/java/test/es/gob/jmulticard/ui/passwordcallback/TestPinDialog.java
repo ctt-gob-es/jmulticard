@@ -5,7 +5,6 @@ import javax.swing.JOptionPane;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
 /** Prueba simple del di&aacute;logo del PIN. */
@@ -23,15 +22,15 @@ public class TestPinDialog {
     }
 
     /** Prueba simple del di&aacute;logo del PIN entre dos confirmaciones.
-     * @throws Exception En caso de cualquier problema */
+     * @throws Exception En caso de cualquier problema. */
     @SuppressWarnings("static-method")
     @Test
     @Ignore // Necesita GUI
     public void testConfirm() throws Exception {
         JOptionPane.showMessageDialog(null, "Redimensione el dialogo siguiente de confirmacion de firma. Maximice y minimice"); //$NON-NLS-1$
-        System.out.println(DialogBuilder.showSignatureConfirmDialog(null));
+        //System.out.println(DialogBuilder.showSignatureConfirmDialog(null));
         System.out.println(new String(CommonPasswordCallback.getDniePinForCertificateReadingPasswordCallback().getPassword()));
-        System.out.println(DialogBuilder.showSignatureConfirmDialog(null));
+        //System.out.println(DialogBuilder.showSignatureConfirmDialog(null));
     }
 
 }

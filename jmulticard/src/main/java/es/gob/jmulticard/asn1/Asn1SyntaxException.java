@@ -53,7 +53,7 @@ public final class Asn1SyntaxException extends Exception {
     }
 
     /** Sintaxis ASN&#46;1 incorrecta.
-     * @see Exception#Exception(Throwable).
+     * @see Exception#Exception(Throwable) .
      * @param cause Causa inicial de la excepci&oacute;n. */
     public Asn1SyntaxException(final Throwable cause) {
         super(cause.getMessage());
