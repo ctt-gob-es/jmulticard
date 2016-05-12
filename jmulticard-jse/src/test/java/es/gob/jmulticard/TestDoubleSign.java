@@ -14,7 +14,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class TestDoubleSign {
 
-	private static final char[] PASSWORD = "rock2048".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "password".toCharArray(); //$NON-NLS-1$
 
 	/** Main parta pruebas.
 	 * @param args No se usa.

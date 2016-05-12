@@ -1,5 +1,6 @@
 package es.gob.jmulticard;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -17,8 +18,12 @@ import org.spongycastle.jce.spec.ECParameterSpec;
 import org.spongycastle.jce.spec.ECPrivateKeySpec;
 
 import es.gob.jmulticard.CryptoHelper.EcCurve;
+import es.gob.jmulticard.TestCeres.CachePasswordCallback;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.card.pace.PaceChannelHelper;
+import es.gob.jmulticard.card.CryptoCard;
+import es.gob.jmulticard.card.Location;
+import es.gob.jmulticard.card.dnie.DnieFactory;
+import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
@@ -31,14 +36,22 @@ public final class TestPaceDnie {
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
 		final ApduConnection conn = new SmartcardIoConnection();
-//		System.out.println(conn.getTerminalInfo((int) conn.getTerminals(true)[0]));
-//		conn.setTerminal((int) conn.getTerminals(true)[0]);
-		PaceChannelHelper.openPaceChannel(
-			(byte)0x00,//(byte)0x10,
-			"739712", // CAN //$NON-NLS-1$
-			conn,
-			new JseCryptoHelper()
-		);
+		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
+		CryptoCard dni = null;
+		
+		try {
+			dni = DnieFactory.getDnie(
+					conn,
+					cpc,
+					new JseCryptoHelper()
+				);
+		} catch (final Exception e) {
+			throw new Exception(e.getMessage());
+		}
+		
+		System.out.println("Canal PACE abierto"); //$NON-NLS-1$
+		dni.changePIN("password", "1234512345"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.out.println("Se ha realizado el cambio de PIN correctamente"); //$NON-NLS-1$
 	}
 
 	/** Prueba de cifrado AES seg&uacute;n valores del manual.
