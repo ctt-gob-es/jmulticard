@@ -12,7 +12,7 @@ import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
 import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
-/** Prueba la cancelaci&oacue;n de di&aacute;logos. */
+/** Prueba la cancelaci&oacute;n de di&aacute;logos. */
 public class TestCancelledOperation {
 
 	/** Prueba de cancelaci&oacute;n de di&aacute;logo de confirmaci&oacute;n. */
