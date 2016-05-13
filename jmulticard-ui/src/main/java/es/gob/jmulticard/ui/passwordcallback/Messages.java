@@ -79,7 +79,7 @@ public final class Messages {
     private static ClassLoader getCleanClassLoader() {
         ClassLoader classLoader = Messages.class.getClassLoader();
         if (classLoader instanceof URLClassLoader && !classLoader.getClass().toString().contains("sun.plugin2.applet.JNLP2ClassLoader")) { //$NON-NLS-1$
-        	final List<URL> urls = new ArrayList<URL>();
+        	final List<URL> urls = new ArrayList<>();
         	for (final URL url : ((URLClassLoader) classLoader).getURLs()) {
         		if (url.toString().endsWith(".jar")) { //$NON-NLS-1$
         			urls.add(url);
