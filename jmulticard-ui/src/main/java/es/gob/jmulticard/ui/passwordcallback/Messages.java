@@ -39,10 +39,6 @@
  */
 package es.gob.jmulticard.ui.passwordcallback;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -56,8 +52,7 @@ public final class Messages {
 
     private static ResourceBundle bundle = ResourceBundle.getBundle(
 		"properties/jmulticardmessages", //$NON-NLS-1$
-		Locale.getDefault(),
-		getCleanClassLoader()
+		Locale.getDefault()
 	);
 
     /** Recupera el texto identificado con la clave proporcionada.
@@ -70,23 +65,5 @@ public final class Messages {
         catch (final MissingResourceException e) {
             return "##ERROR## Cadena no disponible: " + codeString; //$NON-NLS-1$
         }
-    }
-
-
-    /** Obtiene un ClassLoader que no incluye URL que no referencien directamente a ficheros JAR.
-     * @return ClassLoader sin URL adicionales a directorios sueltos Web
-     */
-    private static ClassLoader getCleanClassLoader() {
-        ClassLoader classLoader = Messages.class.getClassLoader();
-        if (classLoader instanceof URLClassLoader && !classLoader.getClass().toString().contains("sun.plugin2.applet.JNLP2ClassLoader")) { //$NON-NLS-1$
-        	final List<URL> urls = new ArrayList<URL>();
-        	for (final URL url : ((URLClassLoader) classLoader).getURLs()) {
-        		if (url.toString().endsWith(".jar")) { //$NON-NLS-1$
-        			urls.add(url);
-        		}
-        	}
-        	classLoader = new URLClassLoader(urls.toArray(new URL[0]));
-        }
-        return classLoader;
     }
 }
