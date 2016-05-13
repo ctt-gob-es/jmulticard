@@ -6,5 +6,11 @@
 	<artifactId>jmulticard-ui</artifactId>
 	<version>1.4</version>
 	<name>jmulticard-ui</name>
+
+	<parent>
+		<groupId>es.gob</groupId>
+		<artifactId>jmulticard-base</artifactId>
+		<version>1.4</version>
+	</parent>
 	
 </project>
