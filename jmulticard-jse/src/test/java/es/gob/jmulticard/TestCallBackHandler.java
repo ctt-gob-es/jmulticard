@@ -55,7 +55,7 @@ public class TestCallBackHandler {
 				@Override
 				public ProtectionParameter getProtectionParameter() {
 					return new KeyStore.PasswordProtection(
-						new CommonPasswordCallback("Introduzca el PIN de su DNIe", "PIN").getPassword() //$NON-NLS-1$ //$NON-NLS-2$
+						new CommonPasswordCallback("Introduzca el PIN de su DNIe", "PIN", true).getPassword() //$NON-NLS-1$ //$NON-NLS-2$
 					);
 				}
 			}
@@ -98,7 +98,7 @@ public class TestCallBackHandler {
 				"DNI", //$NON-NLS-1$
 				new DnieProvider(),
 				new KeyStore.PasswordProtection(
-						new CommonPasswordCallback("Introduzca el PIN de su DNIe", "PIN").getPassword() //$NON-NLS-1$ //$NON-NLS-2$
+						new CommonPasswordCallback("Introduzca el PIN de su DNIe", "PIN", true).getPassword() //$NON-NLS-1$ //$NON-NLS-2$
 					)
 			);
 		final Enumeration<String> aliases = kb.getKeyStore().aliases();
