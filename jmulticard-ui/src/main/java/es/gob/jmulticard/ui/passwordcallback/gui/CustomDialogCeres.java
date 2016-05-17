@@ -73,7 +73,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Componente dialogo que define los alerts de la aplicaci&oacute;n.
  * @author inteco */
-public final class CustomDialog extends JAccessibilityCustomDialog implements ActionListener {
+public class CustomDialogCeres extends JAccessibilityCustomDialog implements ActionListener {
 
     /** UID. */
     private static final long serialVersionUID = 1L;
@@ -101,7 +101,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     }
 
     /** Etiqueta que contiene el icono de la alerta. */
-    private final IconLabel iconLabel = new IconLabel();
+    protected final IconLabel iconLabel = new IconLabel();
 
     /** Boton de OK. */
     private static JButton okButton = null;
@@ -151,7 +151,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param message mensaje
      * @param title T&iacute;tulo
      * @param isInputDialog indica sies una alerta de tipo input */
-    private CustomDialog(final JDialog componentParent,
+    protected CustomDialogCeres(final JDialog componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
@@ -168,7 +168,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param message mensaje
      * @param title titulo
      * @param isInputDialog indica sies una alerta de tipo input */
-    private CustomDialog(final Component componentParent,
+    protected CustomDialogCeres(final Component componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
@@ -186,7 +186,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param message Mensaje del di&aacute;logo.
      * @param title T&iacute;tulo del di&aacute;logo.
      * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos. */
-    private CustomDialog(final JFrame componentParent,
+    private CustomDialogCeres(final JFrame componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
@@ -218,7 +218,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param message mensaje que se mostrara en la alerta
      * @param title T&iacute;tulo de la alerta
      * @param isInputDialog indica sies una alerta de tipo input */
-    private void initComponents(
+    protected void initComponents(
     		final String message,
     		final String title,
     		final boolean isInputDialog) {
@@ -346,10 +346,10 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     /**
      * Se asigna el icono a la etiqueta.
      */
-    private void setIconLabel() {
+    protected void setIconLabel() {
         // Segun el tipo de mensaje se selecciona el icono
-        ImageIcon icon = new ImageIcon(CustomDialog.class.getResource("/images/dnie.png")); //$NON-NLS-1$
-        final Dimension dimensionInicial = new Dimension((int) 100f, (int)(100f / icon.getIconWidth() * icon.getIconHeight()));
+        ImageIcon icon = new ImageIcon(CustomDialogCeres.class.getResource("/images/ceres.png")); //$NON-NLS-1$
+        final Dimension dimensionInicial = new Dimension((int) 65f, (int)(65f / icon.getIconWidth() * icon.getIconHeight()));
         this.iconLabel.setOriginalIcon(icon);
         this.iconLabel.setOriginalDimension(dimensionInicial);
         icon = new ImageIcon(icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH));
@@ -378,7 +378,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
 
         // Restore button
         final JPanel restorePanel = new JPanel();
-        final ImageIcon imageIconRestore = new ImageIcon(CustomDialog.class.getResource("/images/restore.png")); //$NON-NLS-1$
+        final ImageIcon imageIconRestore = new ImageIcon(CustomDialogCeres.class.getResource("/images/restore.png")); //$NON-NLS-1$
         this.restoreButton = new JButton(imageIconRestore);
         this.restoreButton.setMnemonic(KeyEvent.VK_R);
         this.restoreButton.setToolTipText(Messages.getString("Wizard.restaurar.description")); //$NON-NLS-1$
@@ -389,13 +389,13 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
             /** Evento que se produce cuando el componente pierde el foco. */
             @Override
             public void focusLost(final FocusEvent e) {
-                Utils.showToolTip(false, tip, CustomDialog.this.getRestoreButton(), tipText);
+                Utils.showToolTip(false, tip, CustomDialogCeres.this.getRestoreButton(), tipText);
             }
 
             /** Evento que se produce cuando el componente tiene el foco. */
             @Override
             public void focusGained(final FocusEvent e) {
-                Utils.showToolTip(true, tip, CustomDialog.this.getRestoreButton(), tipText);
+                Utils.showToolTip(true, tip, CustomDialogCeres.this.getRestoreButton(), tipText);
             }
         });
         final Dimension dimension = new Dimension(20, 20);
@@ -431,7 +431,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
         // Maximize button
         final JPanel maximizePanel = new JPanel();
 
-        final ImageIcon imageIconMaximize = new ImageIcon(CustomDialog.class.getResource("/images/maximize.png")); //$NON-NLS-1$
+        final ImageIcon imageIconMaximize = new ImageIcon(CustomDialogCeres.class.getResource("/images/maximize.png")); //$NON-NLS-1$
         this.maximizeButton = new JButton(imageIconMaximize);
         this.maximizeButton.setMnemonic(KeyEvent.VK_M);
         this.maximizeButton.setToolTipText(Messages.getString("Wizard.maximizar.description")); //$NON-NLS-1$
@@ -460,13 +460,13 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
             /** Evento que se produce cuando el componente pierde el foco. */
             @Override
             public void focusLost(final FocusEvent e) {
-                Utils.showToolTip(false, tip, CustomDialog.this.getMaximizeButton(), tipText);
+                Utils.showToolTip(false, tip, CustomDialogCeres.this.getMaximizeButton(), tipText);
             }
 
             /** Evento que se produce cuando el componente tiene el foco. */
             @Override
             public void focusGained(final FocusEvent e) {
-                Utils.showToolTip(true, tip, CustomDialog.this.getMaximizeButton(), tipText);
+                Utils.showToolTip(true, tip, CustomDialogCeres.this.getMaximizeButton(), tipText);
             }
         });
 
@@ -522,7 +522,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
 
         // OK button
         final JPanel okPanel = new JPanel();
-        CustomDialog.okButton = getButton(Messages.getString("PrincipalGUI.aceptar"), KeyEvent.VK_A); //$NON-NLS-1$
+        CustomDialogCeres.okButton = getButton(Messages.getString("PrincipalGUI.aceptar"), KeyEvent.VK_A); //$NON-NLS-1$
         okButton.addKeyListener(new KeyListener() {
 
 			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
@@ -536,10 +536,10 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
 			}
 		});
 
-        okPanel.add(CustomDialog.okButton);
+        okPanel.add(CustomDialogCeres.okButton);
         this.buttonsPanel.add(okPanel, consButtons);
 
-        CustomDialog.okButton.addActionListener(this);
+        CustomDialogCeres.okButton.addActionListener(this);
 
     }
 
@@ -556,8 +556,8 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
                                         final String title,
                                         final int typeOption) {
 
-        final CustomDialog customDialog = CustomDialog.getInstanceCustomDialog(componentParent, modal, message, title, false);
-        CustomDialog.okButton.setEnabled(true);
+        final CustomDialogCeres customDialog = CustomDialogCeres.getInstanceCustomDialog(componentParent, modal, message, title, false);
+        CustomDialogCeres.okButton.setEnabled(true);
         customDialog.getRootPane().setDefaultButton(null);
 
         // Restricciones
@@ -569,8 +569,8 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
         // Se comprueba el tipo de dialogo
         if (typeOption == JOptionPane.YES_NO_OPTION) {
             // Boton Si
-            CustomDialog.okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
-            CustomDialog.okButton.setMnemonic(KeyEvent.VK_S);
+            CustomDialogCeres.okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
+            CustomDialogCeres.okButton.setMnemonic(KeyEvent.VK_S);
             // Boton no
             customDialog.noButton = customDialog.getButton(Messages.getString("CustomDialog.confirmDialog.no"), KeyEvent.VK_N); //$NON-NLS-1$
             customDialog.noButton.addKeyListener(new KeyListener() {
@@ -615,14 +615,14 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
                                                  final String message,
                                                  final int mnemonic,
                                                  final String title) {
-    	final CustomDialog customDialog = CustomDialog.getInstanceCustomDialog(
+    	final CustomDialogCeres customDialog = CustomDialogCeres.getInstanceCustomDialog(
     			componentParent,
     			modal,
     			message,
     			title,
     			true
     	);
-        CustomDialog.okButton.setEnabled(false);
+        CustomDialogCeres.okButton.setEnabled(false);
         customDialog.getRootPane().setDefaultButton(null);
 
         // Restricciones para el panel de datos
@@ -822,21 +822,21 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
      * @param title titulo del dialogo
      * @param isInputDialog indica sies una alerta de tipo input
      * @return instancia de CustomDialog. */
-    static CustomDialog getInstanceCustomDialog(final Component componentParent,
+    static CustomDialogCeres getInstanceCustomDialog(final Component componentParent,
                                                 final boolean modal,
                                                 final String message,
                                                 final String title,
                                                 final boolean isInputDialog) {
-        CustomDialog customDialog = null;
+        CustomDialogCeres customDialog = null;
         // Se chequea cual sera el componente padre.
         if (componentParent instanceof JDialog) {
-            customDialog = new CustomDialog((JDialog) componentParent, modal, message, title, isInputDialog);
+            customDialog = new CustomDialogCeres((JDialog) componentParent, modal, message, title, isInputDialog);
         }
         else if (componentParent instanceof JFrame) {
-            customDialog = new CustomDialog((JFrame) componentParent, modal, message, title, isInputDialog);
+            customDialog = new CustomDialogCeres((JFrame) componentParent, modal, message, title, isInputDialog);
         }
         else {
-            customDialog = new CustomDialog(componentParent, modal, message, title, isInputDialog);
+            customDialog = new CustomDialogCeres(componentParent, modal, message, title, isInputDialog);
         }
         return customDialog;
     }
@@ -845,7 +845,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
     @Override
     public void actionPerformed(final ActionEvent e) {
 
-        if (e.getSource().equals(CustomDialog.okButton)) {
+        if (e.getSource().equals(CustomDialogCeres.okButton)) {
             this.answer = JOptionPane.YES_OPTION;
         }
         else if (e.getSource().equals(this.noButton)) {
@@ -868,7 +868,7 @@ public final class CustomDialog extends JAccessibilityCustomDialog implements Ac
         /** Indica que la accion es la de pulsar el boton cancelar. */
         @Override
         public void actionPerformed(final ActionEvent event) {
-            CustomDialog.getCancelButton().doClick();
+            CustomDialogCeres.getCancelButton().doClick();
         }
     }
 

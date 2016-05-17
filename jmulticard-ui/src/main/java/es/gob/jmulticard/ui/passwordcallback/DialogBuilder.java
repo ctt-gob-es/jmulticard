@@ -57,14 +57,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialog;
+import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogDnie;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class DialogBuilder {
 
 private static boolean headless = false;
-
     static void setHeadLess(final boolean hl) {
         headless = hl;
     }
@@ -88,7 +87,7 @@ private static boolean headless = false;
     public static void showSignatureConfirmDialog(final AuthorizeCallback callBack) {
         if (!headless) {
             try {
-            	final int i = CustomDialog.showConfirmDialog(
+            	final int i = CustomDialogDnie.showConfirmDialog(
             		 PasswordCallbackManager.getDialogOwner(),
                      true,
                      Messages.getString("CustomDialog.confirmDialog.prompt"), //$NON-NLS-1$
@@ -124,8 +123,9 @@ private static boolean headless = false;
     }
 
     /** Obtiene el c&oacute;digo CAN de la Callback.
-     * @param callBack Callback que permite obtener el c&oacute;digo CAN. */
-    public static void getCan(final TextInputCallback callBack) {
+     * @param callBack Callback que permite obtener el c&oacute;digo CAN.
+     * @param title T&iacute;tulo para el di&aacute;logo de PIN. */
+    public static void getCan(final TextInputCallback callBack, final String title) {
 			final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
 			final JLabel label1 = new JLabel(callBack.getPrompt());
 			final ImageIcon icon = new ImageIcon(DialogBuilder.class.getResource(CAN_EXAMPLE));
@@ -145,7 +145,7 @@ private static boolean headless = false;
 			constraints.gridy++;
 			constraints.insets = new Insets(20,0,0,20);
 			panel.add(label2, constraints);
-			final String can = JOptionPane.showInputDialog(null, panel, callBack.getText(), JOptionPane.PLAIN_MESSAGE);
+			final String can = JOptionPane.showInputDialog(null, panel, title, JOptionPane.PLAIN_MESSAGE);
 			callBack.setText(can);
     }
 }

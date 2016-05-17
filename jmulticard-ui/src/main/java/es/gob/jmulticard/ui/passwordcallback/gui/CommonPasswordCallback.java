@@ -55,6 +55,8 @@ public final class CommonPasswordCallback extends PasswordCallback {
 
     private static boolean headless = false;
 
+	private boolean isDnie;
+	
     static void setHeadLess(final boolean hl) {
         headless = hl;
     }
@@ -78,8 +80,9 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
      * en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
-	 * @param title T&iacute;tulo de la ventana gr&aacute;fica. */
-	public CommonPasswordCallback(final String prompt, final String title) {
+	 * @param title T&iacute;tulo de la ventana gr&aacute;fica. 
+	 * @param isDnie Si es un Dnie. */
+	public CommonPasswordCallback(final String prompt, final String title, boolean isDnie) {
 		super(prompt, true);
 		if (prompt == null) {
 			throw new IllegalArgumentException("El texto de solicitud no puede ser nulo"); //$NON-NLS-1$
@@ -90,19 +93,33 @@ public final class CommonPasswordCallback extends PasswordCallback {
 		else {
 			this.title = title;
 		}
+		
+		this.isDnie = isDnie;
 	}
 
 	@Override
     public char[] getPassword() {
 	    if (!headless) {
     		try {
-    			UIPasswordCallbackAccessibility psc = new UIPasswordCallbackAccessibility(
-					getPrompt(),
-					PasswordCallbackManager.getDialogOwner(),
-					getPrompt(),
-					'P',
-					this.title
-				);
+    			PasswordCallback psc;
+    			if(this.isDnie) {
+	    			psc = new UIPasswordCallbackAccessibility(
+						getPrompt(),
+						PasswordCallbackManager.getDialogOwner(),
+						getPrompt(),
+						'P',
+						this.title
+					);
+    			}
+    			else {
+    				psc = new UIPasswordCallbackAccessibilityCeres(
+    						getPrompt(),
+    						PasswordCallbackManager.getDialogOwner(),
+    						getPrompt(),
+    						'P',
+    						this.title
+    					);
+    			}
     			final char[] pss = psc.getPassword();
     			psc.clearPassword();
     			psc = null;
@@ -127,7 +144,8 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	public static PasswordCallback getDnieBadPinPasswordCallback(final int retriesLeft) {
 		return new CommonPasswordCallback(
 			Messages.getString("CommonPasswordCallback.0") + " " + Integer.toString(retriesLeft), //$NON-NLS-1$ //$NON-NLS-2$
-			Messages.getString("CommonPasswordCallback.1") //$NON-NLS-1$
+			Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
+			true
 		); // TODO eliminar
 	}
 
@@ -136,7 +154,8 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	public static PasswordCallback getDniePinForCertificateReadingPasswordCallback() {
 		return new CommonPasswordCallback(
 			Messages.getString("CommonPasswordCallback.4"), //$NON-NLS-1$
-			Messages.getString("CommonPasswordCallback.1") //$NON-NLS-1$
+			Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
+			true
 		); // TODO Eliminar
 	}
 

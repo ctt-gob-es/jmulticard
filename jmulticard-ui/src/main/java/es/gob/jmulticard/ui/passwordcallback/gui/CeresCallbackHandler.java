@@ -6,41 +6,28 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.TextInputCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.sasl.AuthorizeCallback;
 
-import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
-/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario
+/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario en tarjetas CERES
  * @author Sergio Mart&iacute;nez Rico
  */
-public class DnieCallbackHandler implements CallbackHandler {
+public class CeresCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	@Override
 	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
-				if (cb instanceof TextInputCallback) {
-					DialogBuilder.getCan((TextInputCallback)cb, Messages.getString("CanPasswordCallback.2")); //$NON-NLS-1$
-					return;
-				}
-				else if (cb instanceof AuthorizeCallback) {
-					DialogBuilder.showSignatureConfirmDialog((AuthorizeCallback)cb);
-					return;
-				}
-				else if (cb instanceof PasswordCallback) {
+				if (cb instanceof PasswordCallback) {
 					final CommonPasswordCallback uip = new CommonPasswordCallback(((PasswordCallback)cb).getPrompt(),
-													Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-													true);
+													Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
+													false); 
 					((PasswordCallback)cb).setPassword(uip.getPassword());
 					return;
 				}
-				else {
-					LOGGER.severe(cb.getClass().getName());
-				}
+				LOGGER.severe(cb.getClass().getName());
 			}
 		}
 		else {

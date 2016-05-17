@@ -44,7 +44,7 @@ import java.awt.Component;
 import javax.security.auth.callback.PasswordCallback;
 
 /** <i>PasswordCallbak</i> que muestra un di&aacute;logo para solicitar una
- * contrase&ntilde;a. */
+ * contrase&ntilde;a para DNIe. */
 public class UIPasswordCallbackAccessibility extends PasswordCallback {
 
     private static final long serialVersionUID = 1719174318602363633L;
@@ -89,7 +89,7 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
 
     @Override
     public char[] getPassword() {
-    	return CustomDialog.showInputPasswordDialog(
+    	return CustomDialogDnie.showInputPasswordDialog(
 			this.parent,
 			true, // Modal
 			this.message,
