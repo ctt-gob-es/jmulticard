@@ -62,9 +62,7 @@ public final class TestCeres {
 			new JseCryptoHelper()
 		);
 		ceres.setPasswordCallback(
-			new UIPasswordCallback(
-				"PIN de la tarjeta CERES", null, "PIN de la tarjeta CERES", "PIN de la tarjeta" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			)
+			new PasswordCallback("PIN de la tarjeta CERES", false) //$NON-NLS-1$
 		);
 		System.out.println(ceres.getCardName());
 		System.out.println(Arrays.asList(ceres.getAliases()));

@@ -226,7 +226,6 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	if (password != null) {
     		// Establecemos un nuevo PasswordCallback
     		//TODO:XXX
-    		new CachePasswordCallback(password);
     	}
         final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof DniePrivateKeyReference)) {
@@ -299,7 +298,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
-    			final PasswordCallback pwc = new PasswordProtectionPasswordCallback((PasswordProtection) pp);
+    			final PasswordCallback pwc = new DniePasswordCallback((PasswordProtection) pp);
     			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					pwc,

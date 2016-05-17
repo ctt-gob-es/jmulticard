@@ -4,25 +4,28 @@ import java.security.KeyStore.PasswordProtection;
 
 import javax.security.auth.callback.PasswordCallback;
 
-final class PasswordProtectionPasswordCallback extends PasswordCallback {
-	
+final class DniePasswordCallback extends PasswordCallback {
+
 	private static final long serialVersionUID = -2511696590746468782L;
-	
+
 	private final PasswordProtection passp;
-	
-	PasswordProtectionPasswordCallback(PasswordProtection pp) {
-		super("Por favor, introduzca el PIN del DNIe", false);
+
+	/**
+	 * @param pp PasswordProtection para solicitar la contraseña
+	 */
+	DniePasswordCallback(final PasswordProtection pp) {
+		super("Por favor, introduzca el PIN del DNIe", false); //$NON-NLS-1$
 		if (pp == null) {
 			throw new IllegalArgumentException(
-				"El PasswordProtection no puede ser nulo"
+				"El PasswordProtection no puede ser nulo" //$NON-NLS-1$
 			);
 		}
-		passp = pp;
+		this.passp = pp;
 	}
-	
+
 	@Override
 	public char[] getPassword() {
-		return passp.getPassword();
+		return this.passp.getPassword();
 	}
 
 }

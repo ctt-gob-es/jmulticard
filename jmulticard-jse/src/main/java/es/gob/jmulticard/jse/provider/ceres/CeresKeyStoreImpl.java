@@ -3,10 +3,10 @@ package es.gob.jmulticard.jse.provider.ceres;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.KeyStoreException;
@@ -21,10 +21,12 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.x500.X500Principal;
@@ -137,26 +139,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     		if ("Dalvik".equals(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
     			throw new IllegalArgumentException("Es necesario proporcionar el PIN de la tarjeta"); //$NON-NLS-1$
     		}
-    		try {
-    			final Class<?> uiPasswordCallbackClass = Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.UIPasswordCallback"); //$NON-NLS-1$
-    			final Constructor<?> uiPasswordCallbackConstructor = uiPasswordCallbackClass.getConstructor(
-					String.class,
-					Object.class,
-					String.class,
-					String.class
-				);
-
-    			final PasswordCallback passwordCallback = (PasswordCallback) uiPasswordCallbackConstructor.newInstance(
-					CeresMessages.getString("CeresKeyStoreImpl.0"), //$NON-NLS-1$
-					null,
-					null,
-					CeresMessages.getString("CeresKeyStoreImpl.1") //$NON-NLS-1$
-				);
-    			this.cryptoCard.setPasswordCallback(passwordCallback);
-    		}
-    		catch (final Exception e) {
-    			throw new IllegalArgumentException("Se ha proporcionado un PIN nulo y no se ha podido solicitar al usuario: " + e, e); //$NON-NLS-1$
-    		}
     	}
     	else {
     		this.cryptoCard.setPasswordCallback(
@@ -185,17 +167,16 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     		                             final ProtectionParameter protParam) throws KeyStoreException,
     		                                                                         NoSuchAlgorithmException,
     		                                                                         UnrecoverableEntryException {
-    	if (!(protParam instanceof KeyStore.PasswordProtection)) {
-    		throw new KeyStoreException(
-				"Se necesita un ProtectionParameter de tipo KeyStore.PasswordProtection" //$NON-NLS-1$
-			);
+    	if (protParam instanceof KeyStore.PasswordProtection) {
+	    	final PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
+			this.cryptoCard.setPasswordCallback(pwc);
     	}
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
     	final PrivateKey key = (PrivateKey) engineGetKey(
 			alias,
-			((KeyStore.PasswordProtection)protParam).getPassword()
+			null // Le pasamos null porque ya hemos establecido el PasswordCallback o el CallbackHander antes
 		);
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
     }
@@ -219,9 +200,40 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException, NoSuchAlgorithmException, CertificateException {
-    	throw new UnsupportedOperationException(
-			"No soportado, se debe usar 'engineLoad(InputStream stream, char[] password)'" //$NON-NLS-1$
-    	);
+    	if (param != null) {
+    		final ProtectionParameter pp = param.getProtectionParameter();
+    		if (pp instanceof KeyStore.CallbackHandlerProtection) {
+    			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
+    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
+    			}
+    			this.cryptoCard = new Ceres(
+    					CeresProvider.getDefaultApduConnection(),
+    					new JseCryptoHelper()
+    				);
+    			this.cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
+    		}
+    		else if (pp instanceof KeyStore.PasswordProtection) {
+    			final PasswordCallback pwc = new CeresPasswordCallback((PasswordProtection) pp);
+    			this.cryptoCard = new Ceres(
+    					CeresProvider.getDefaultApduConnection(),
+    					new JseCryptoHelper()
+    				);
+    			this.cryptoCard.setPasswordCallback(pwc);
+    		}
+    		else {
+	       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+				);
+    		}
+    	}
+    	else {
+	    	this.cryptoCard = new Ceres(
+				CeresProvider.getDefaultApduConnection(),
+				new JseCryptoHelper()
+			);
+    	}
+
+    	userCertAliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     /** {@inheritDoc} */
