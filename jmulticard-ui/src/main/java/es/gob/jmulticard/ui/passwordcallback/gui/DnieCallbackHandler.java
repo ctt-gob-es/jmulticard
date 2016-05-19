@@ -24,7 +24,13 @@ public class DnieCallbackHandler implements CallbackHandler {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof TextInputCallback) {
-					DialogBuilder.getCan((TextInputCallback)cb, Messages.getString("CanPasswordCallback.2")); //$NON-NLS-1$
+					final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
+							((TextInputCallback)cb).getPrompt(),
+							null,
+							((TextInputCallback)cb).getPrompt(),
+							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
+							);
+					((TextInputCallback)cb).setText(new String(uip.getPassword()));
 					return;
 				}
 				else if (cb instanceof AuthorizeCallback) {

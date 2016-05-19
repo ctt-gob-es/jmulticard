@@ -39,24 +39,14 @@
  */
 package es.gob.jmulticard.ui.passwordcallback;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
 import java.io.Console;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import javax.security.auth.callback.TextInputCallback;
 import javax.security.sasl.AuthorizeCallback;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogDnie;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
@@ -120,32 +110,5 @@ private static boolean headless = false;
         } else {
 			return getConsoleConfirm(console, callBack);
 		}
-    }
-
-    /** Obtiene el c&oacute;digo CAN de la Callback.
-     * @param callBack Callback que permite obtener el c&oacute;digo CAN.
-     * @param title T&iacute;tulo para el di&aacute;logo de PIN. */
-    public static void getCan(final TextInputCallback callBack, final String title) {
-			final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
-			final JLabel label1 = new JLabel(callBack.getPrompt());
-			final ImageIcon icon = new ImageIcon(DialogBuilder.class.getResource(CAN_EXAMPLE));
-			final Image img = icon.getImage();
-			final Image newimg = img.getScaledInstance(230, 140,  java.awt.Image.SCALE_SMOOTH);
-			final JLabel label2 = new JLabel(new ImageIcon(newimg));
-			final JPanel panel = new JPanel();
-			panel.setLayout(new GridBagLayout());
-			panel.setPreferredSize(new Dimension(350, 210));
-			final GridBagConstraints constraints = new GridBagConstraints();
-			constraints.fill = GridBagConstraints.HORIZONTAL;
-			constraints.weightx = 1.0;
-			constraints.anchor = GridBagConstraints.CENTER;
-			panel.add(label1, constraints);
-			constraints.gridy++;
-			constraints.gridy++;
-			constraints.gridy++;
-			constraints.insets = new Insets(20,0,0,20);
-			panel.add(label2, constraints);
-			final String can = JOptionPane.showInputDialog(null, panel, title, JOptionPane.PLAIN_MESSAGE);
-			callBack.setText(can);
     }
 }
