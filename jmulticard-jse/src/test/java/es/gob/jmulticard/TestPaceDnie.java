@@ -8,6 +8,7 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
@@ -21,7 +22,6 @@ import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
-import junit.framework.Assert;
 
 /** pruebas de PACE con DNIe 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
