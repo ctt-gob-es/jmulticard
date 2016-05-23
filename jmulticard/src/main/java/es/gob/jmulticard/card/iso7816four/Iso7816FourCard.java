@@ -79,12 +79,9 @@ public abstract class Iso7816FourCard extends SmartCard {
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Construye una tarjeta compatible ISO 7816-4.
-     * @param c Octeto de clase (CLA) de las APDU
-     * @param conn Connexi&oacute;n con la tarjeta
-     * @throws ApduConnectionException
-     *         Si la conexi&oacute;n con la tarjeta se proporciona cerrada y
-     *         no se posible abrirla */
-    public Iso7816FourCard(final byte c, final ApduConnection conn) throws ApduConnectionException {
+     * @param c Octeto de clase (CLA) de las APDU.
+     * @param conn Connexi&oacute;n con la tarjeta. */
+    public Iso7816FourCard(final byte c, final ApduConnection conn) {
         super(c, conn);
     }
 
@@ -155,11 +152,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @param len Longitud del fichero a leer.
      * @return APDU de respuesta.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
-     * @throws IOException Si hay problemas en el <i>buffer</i> de lectura.
-     * @throws RequiredSecurityStateNotSatisfiedException Si la lectura requiere el cumplimiento.
-     *                                                    de una condici&oacute;n de seguridad y esta
-     *                                                    no se ha satisfecho. */
-    public byte[] readBinaryComplete(final int len) throws IOException, RequiredSecurityStateNotSatisfiedException {
+     * @throws IOException Si hay problemas en el <i>buffer</i> de lectura. */
+    public byte[] readBinaryComplete(final int len) throws IOException {
 
         int off = 0;
         ResponseApdu readedResponse = null;

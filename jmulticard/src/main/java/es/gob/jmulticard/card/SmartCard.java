@@ -76,9 +76,8 @@ public abstract class SmartCard implements Card {
 
     /** Construye una tarjeta inteligente gen&eacute;rica.
      * @param c Octeto de clase (CLA) de las APDU
-     * @param conn Connexi&oacute;n con la tarjeta
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla */
-    public SmartCard(final byte c, final ApduConnection conn) throws ApduConnectionException {
+     * @param conn Connexi&oacute;n con la tarjeta. */
+    public SmartCard(final byte c, final ApduConnection conn) {
         if (conn == null) {
             throw new IllegalArgumentException("La conexion con la tarjeta no puede ser nula"); //$NON-NLS-1$
         }

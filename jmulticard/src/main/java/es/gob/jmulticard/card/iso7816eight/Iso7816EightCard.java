@@ -53,9 +53,8 @@ public abstract class Iso7816EightCard extends Iso7816FourCard {
 
     /** Construye una tarjeta compatible ISO 7816-8.
      * @param c Clase (CLA) de la APDU
-     * @param conn Connexi&oacute;n con la tarjeta
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no se posible abrirla */
-    public Iso7816EightCard(final byte c, final ApduConnection conn) throws ApduConnectionException {
+     * @param conn Connexi&oacute;n con la tarjeta. */
+    public Iso7816EightCard(final byte c, final ApduConnection conn) {
         super(c, conn);
     }
 

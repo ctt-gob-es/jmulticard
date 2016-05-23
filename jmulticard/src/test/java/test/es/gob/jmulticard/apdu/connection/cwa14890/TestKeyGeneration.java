@@ -2,8 +2,7 @@ package test.es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import es.gob.jmulticard.CryptoHelper;

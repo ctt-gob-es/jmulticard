@@ -52,7 +52,7 @@ public class CommandApdu extends Apdu {
 	private Integer le;
 	private final byte[] body;
 
-	
+
 	private static byte[] getBody(final byte[] bytes) {
 		if (bytes == null || bytes.length < 5) {
 			throw new IllegalArgumentException("La longitud del array de octetos debe ser igual o mayor que 5."); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class CommandApdu extends Apdu {
 		}
 		return null;
 	}
-	
+
 	private static Integer getLength(final byte[] bytes) {
 
 		if (bytes == null || bytes.length < 5) {
@@ -74,14 +74,14 @@ public class CommandApdu extends Apdu {
 		}
 		final int i = (bytes[4]) & 0xff;
 		if (bytes.length>5 && bytes.length>i+5) {
-			return new Integer(bytes[i+5]);
+			return Integer.valueOf(bytes[i+5]);
 		}
 		else if (bytes.length==5) {
-			return new Integer(i);
+			return Integer.valueOf(i);
 		}
 		return null;
 	}
-	
+
 	/** Construye una APDU en base a un array de octetos.
 	 * @param bytes Array de octetos para la construcci&oacute;n del objeto. */
 	public CommandApdu(final byte[] bytes) {

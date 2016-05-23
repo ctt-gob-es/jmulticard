@@ -61,6 +61,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.Messages;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -84,7 +85,6 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
-import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -93,7 +93,6 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.pace.PaceConnection;
-import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -201,12 +200,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** Conecta con el lector del sistema que tenga un DNIe insertado.
      * @param conn Conexi&oacute;n hacia el DNIe.
-     * @throws BurnedDnieCardException Si el DNIe tiene su memoria vol&aacute;til borrada.
-     * @throws InvalidCardException Si la tarjeta no es un DNIe.
      * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta. */
-    public static void connect(final ApduConnection conn) throws BurnedDnieCardException,
-                                                                 InvalidCardException,
-                                                                 ApduConnectionException {
+    public static void connect(final ApduConnection conn) throws ApduConnectionException {
     	if (!conn.isOpen()) {
     		conn.open();
     	}
@@ -217,15 +212,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
      * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.
-     * @throws es.gob.jmulticard.card.InvalidCardException Si la tarjeta conectada no es un DNIe.
-     * @throws BurnedDnieCardException Si la tarjeta conectada es un DNIe con la memoria vol&aacute;til borrada. */
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
     Dnie(final ApduConnection conn,
     	 final PasswordCallback pwc,
     	 final CryptoHelper cryptoHelper,
-    	 final CallbackHandler ch) throws ApduConnectionException,
-                                          InvalidCardException,
-                                          BurnedDnieCardException {
+    	 final CallbackHandler ch) throws ApduConnectionException {
         super((byte) 0x00, conn);
         conn.reset();
         connect(conn);
@@ -407,13 +398,13 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** {@inheritDoc} */
     @Override
-    public void verifyCaIntermediateIcc() throws CertificateException, IOException {
+    public void verifyCaIntermediateIcc() {
         // No se comprueba
     }
 
     /** {@inheritDoc} */
     @Override
-    public void verifyIcc() throws CertificateException, IOException {
+    public void verifyIcc() {
         // No se comprueba
     }
 

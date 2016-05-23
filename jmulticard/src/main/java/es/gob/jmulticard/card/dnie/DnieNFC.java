@@ -12,7 +12,6 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.card.CryptoCardException;
-import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.pace.InvalidCanException;
@@ -33,8 +32,6 @@ public final class DnieNFC extends Dnie3 {
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch) throws ApduConnectionException,
-	                                    InvalidCardException,
-	                                    BurnedDnieCardException,
 	                                    PaceException {
 		super(paceConnection(conn, ch), pwc, cryptoHelper, ch);
 	}

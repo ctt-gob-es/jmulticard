@@ -112,7 +112,7 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 			                         final byte[] keyCipher,
 			                         final byte[] ssc,
 			                         final byte[] kMac,
-			                         final CryptoHelper cryptoHelper) throws IOException {
+			                         final CryptoHelper cryptoHelper) {
 		return null;
 	}
 

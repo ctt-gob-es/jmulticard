@@ -5,8 +5,7 @@ import java.io.IOException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
@@ -257,7 +256,7 @@ public final class TestApduEncrypter extends ApduEncrypter {
 	}
 
 	@Override
-	public ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu, final byte[] keyCipher, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) throws IOException {
+	public ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu, final byte[] keyCipher, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) {
 		throw new UnsupportedOperationException();
 	}
 

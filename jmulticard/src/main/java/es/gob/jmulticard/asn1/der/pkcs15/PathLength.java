@@ -64,7 +64,7 @@ public final class PathLength extends ContextSpecific {
 	}
 
 	@Override
-    protected void decodeValue() throws Asn1Exception, TlvException {
+    protected void decodeValue() throws TlvException {
 		this.value = Integer.valueOf(String.valueOf(HexUtils.getUnsignedInt(new Tlv(this.getRawDerValue()).getValue(), 0)));
 	}
 

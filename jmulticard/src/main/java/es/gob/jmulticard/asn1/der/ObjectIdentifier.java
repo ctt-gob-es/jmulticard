@@ -68,7 +68,7 @@ public final class ObjectIdentifier extends DecoderObject {
     }
 
 	@Override
-    protected void decodeValue() throws Asn1Exception, TlvException {
+    protected void decodeValue() throws TlvException {
 		this.rawValue = new Tlv(this.getRawDerValue()).getValue();
 	}
 

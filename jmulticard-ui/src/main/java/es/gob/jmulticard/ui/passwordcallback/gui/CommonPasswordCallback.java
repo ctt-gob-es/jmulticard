@@ -45,7 +45,6 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.ui.passwordcallback.Messages;
 import es.gob.jmulticard.ui.passwordcallback.PasswordCallbackManager;
 
 /** <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
@@ -55,8 +54,8 @@ public final class CommonPasswordCallback extends PasswordCallback {
 
     private static boolean headless = false;
 
-	private boolean isDnie;
-	
+	private final boolean isDnie;
+
     static void setHeadLess(final boolean hl) {
         headless = hl;
     }
@@ -80,9 +79,9 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
      * en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
-	 * @param title T&iacute;tulo de la ventana gr&aacute;fica. 
+	 * @param title T&iacute;tulo de la ventana gr&aacute;fica.
 	 * @param isDnie Si es un Dnie. */
-	public CommonPasswordCallback(final String prompt, final String title, boolean isDnie) {
+	public CommonPasswordCallback(final String prompt, final String title, final boolean isDnie) {
 		super(prompt, true);
 		if (prompt == null) {
 			throw new IllegalArgumentException("El texto de solicitud no puede ser nulo"); //$NON-NLS-1$
@@ -93,7 +92,7 @@ public final class CommonPasswordCallback extends PasswordCallback {
 		else {
 			this.title = title;
 		}
-		
+
 		this.isDnie = isDnie;
 	}
 
@@ -137,26 +136,5 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	    cpc = null;
 	    return pss;
     }
-
-	/** Obtiene un di&aacute;logo de solicitd de PIN tras una introducci&oacute;n erronea.
-	 * @param retriesLeft Intentos restantes antes de bloquear el DNIe
-	 * @return <i>PasswordCallback</i> de solicitd de PIN */
-	public static PasswordCallback getDnieBadPinPasswordCallback(final int retriesLeft) {
-		return new CommonPasswordCallback(
-			Messages.getString("CommonPasswordCallback.0") + " " + Integer.toString(retriesLeft), //$NON-NLS-1$ //$NON-NLS-2$
-			Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-			true
-		); // TODO eliminar
-	}
-
-	/** Obtiene un di&aacute;logo de solicitd de PIN para realizar una lectura de certificados.
-	 * @return <i>PasswordCallback</i> de solicitd de PIN */
-	public static PasswordCallback getDniePinForCertificateReadingPasswordCallback() {
-		return new CommonPasswordCallback(
-			Messages.getString("CommonPasswordCallback.4"), //$NON-NLS-1$
-			Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-			true
-		); // TODO Eliminar
-	}
 
 }

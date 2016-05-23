@@ -41,7 +41,6 @@ package es.gob.jmulticard.asn1.der;
 
 import java.math.BigInteger;
 
-import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
@@ -55,7 +54,7 @@ public class DerInteger extends DecoderObject {
 	private BigInteger value = null;
 
 	@Override
-    protected void decodeValue() throws Asn1Exception, TlvException {
+    protected void decodeValue() throws TlvException {
 		this.value = new BigInteger(new Tlv(this.getRawDerValue()).getValue());
 	}
 

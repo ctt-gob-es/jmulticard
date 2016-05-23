@@ -38,10 +38,9 @@ public class PaceConnection extends Cwa14890OneV2Connection {
 	}
 
 	/** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
-	 * a la apertura del canal.
-	 * @throws ApduConnectionException */
+	 * a la apertura del canal. */
 	@Override
-	public void open() throws ApduConnectionException {
+	public void open() {
 			// Mantenemos el canal como cerrado al ser unicamente un canal previo al canal seguro
 			this.openState = false;
 	}

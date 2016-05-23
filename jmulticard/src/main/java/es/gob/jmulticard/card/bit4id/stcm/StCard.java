@@ -13,11 +13,9 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
-import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
@@ -50,9 +48,8 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 
     /** Conecta con el lector del sistema que tenga una CardOS insertada.
      * @param conn Conexi&oacute;n hacia la tarjeta.
-     * @throws Iso7816FourCardException Si hay errores en el di&aacute;logo ISO 7816-4.
      * @throws IOException Cuando hay errores de entrada / salida. */
-    private static void connect(final ApduConnection conn) throws Iso7816FourCardException, IOException {
+    private static void connect(final ApduConnection conn) throws IOException {
     	if (conn == null) {
     		throw new IllegalArgumentException("La conexion no puede ser nula"); //$NON-NLS-1$
     	}
@@ -60,30 +57,28 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
     }
 
 	@Override
-	public String[] getAliases() throws CryptoCardException {
+	public String[] getAliases() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
+	public X509Certificate getCertificate(final String alias) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
+	public PrivateKeyReference getPrivateKey(final String alias) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public byte[] sign(final byte[] data, final String algorithm,
-			           final PrivateKeyReference keyRef) throws CryptoCardException, BadPinException {
+			           final PrivateKeyReference keyRef) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected void selectMasterFile() throws ApduConnectionException,
-	                                         FileNotFoundException,
-	                                         Iso7816FourCardException {
+	protected void selectMasterFile() {
 		//throw new UnsupportedOperationException();
 	}
 
@@ -109,7 +104,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 	public String getCardName() {
 		return "Bit4ID con chip ST para CamerFirma"; //$NON-NLS-1$
 	}
-	
+
 	/** {@inheritDoc}
 	 */
 	@Override

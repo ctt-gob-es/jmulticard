@@ -84,8 +84,6 @@ import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
 
-import es.gob.jmulticard.CryptoHelper;
-
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE6.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class JseCryptoHelper extends CryptoHelper {
@@ -344,23 +342,14 @@ public final class JseCryptoHelper extends CryptoHelper {
 	}
 
 	@Override
-	public byte[] doAesCmac(byte[] data, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
-		/* No calcula bien el CMAC
-		 * final Mac eng = Mac.getInstance("AESCMAC", new BouncyCastleProvider()); //$NON-NLS-1$
-		eng.init(new SecretKeySpec(key, "AES")); //$NON-NLS-1$
-		return eng.doFinal(data);*/
+	public byte[] doAesCmac(final byte[] data, final byte[] key) {
 		final BlockCipher cipher = new AESFastEngine();
 		final org.spongycastle.crypto.Mac mac = new CMac(cipher, 64);
-
 		final KeyParameter keyP = new KeyParameter(key);
 		mac.init(keyP);
-		
 		mac.update(data, 0, data.length);
-
 		final byte[] out = new byte[8];
-
 		mac.doFinal(out, 0);
-
 		return out;
 	}
 

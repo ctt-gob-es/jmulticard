@@ -25,9 +25,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
 import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
 import es.gob.jmulticard.card.Atr;
-import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCard;
-import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
@@ -84,9 +82,8 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
     /** Conecta con el lector del sistema que tenga una CardOS insertada.
      * @param conn Conexi&oacute;n hacia la tarjeta.
-     * @throws Iso7816FourCardException Si hay errores en el di&aacute;logo ISO 7816-4.
      * @throws IOException Cuando hay errores de entrada / salida. */
-    private void connect(final ApduConnection conn) throws Iso7816FourCardException, IOException {
+    private void connect(final ApduConnection conn) throws IOException {
     	if (conn == null) {
     		throw new IllegalArgumentException("La conexion no puede ser nula"); //$NON-NLS-1$
     	}
@@ -243,7 +240,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	}
 
 	@Override
-	public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
+	public X509Certificate getCertificate(final String alias) {
 		return certificatesByAlias.get(alias);
 	}
 
@@ -269,20 +266,20 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	//************ NO IMPLEMENTADAS AUN ***************************
 
 	@Override
-	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
+	public PrivateKeyReference getPrivateKey(final String alias) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference keyRef) throws CryptoCardException, BadPinException {
+	public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference keyRef) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
+	public void verifyPin(final PasswordCallback pinPc) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/** {@inheritDoc}
 	 */
 	@Override

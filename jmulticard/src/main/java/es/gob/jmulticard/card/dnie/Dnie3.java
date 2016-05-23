@@ -48,7 +48,6 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
-import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 
@@ -63,15 +62,11 @@ public class Dnie3 extends Dnie {
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
      * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.
-     * @throws es.gob.jmulticard.card.InvalidCardException Si la tarjeta conectada no es un DNIe.
-     * @throws BurnedDnieCardException Si la tarjeta conectada es un DNIe con la memoria vol&aacute;til borrada. */
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
     Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
     	  final CryptoHelper cryptoHelper,
-    	  final CallbackHandler ch) throws ApduConnectionException,
-                                                  InvalidCardException,
-                                                  BurnedDnieCardException {
+    	  final CallbackHandler ch) throws ApduConnectionException {
         super(conn, pwc, cryptoHelper, ch);
         this.rawConnection = conn;
     }
@@ -180,9 +175,9 @@ public class Dnie3 extends Dnie {
         }
         return signOperation(data, signAlgorithm, privateKeyReference);
 	}
-	
+
     /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados).
-     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta. 
+     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta.
      * @throws BadPinException */
     @Override
 	protected void loadCertificates() throws CryptoCardException, PinException {
@@ -201,7 +196,7 @@ public class Dnie3 extends Dnie {
 
         // Reestablecemos el canal inicial, para que en una segunda firma se tenga que volver a pedir
     	// el PIN y rehacer los canales CWA
-        try {   	
+        try {
         	this.rawConnection.reset();
 			setConnection(this.rawConnection);
 		}
@@ -210,7 +205,7 @@ public class Dnie3 extends Dnie {
         		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
     		);
 		}
-        
+
     	return ret;
     }
 }

@@ -19,6 +19,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.Messages;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
@@ -46,7 +47,6 @@ import es.gob.jmulticard.card.fnmt.ceres.asn1.CeresPrKdf;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Tarjeta FNMT-RCM CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -265,17 +265,17 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	}
 
 	@Override
-	public String[] getAliases() throws CryptoCardException {
+	public String[] getAliases() {
 		return this.certs.keySet().toArray(new String[0]);
 	}
 
 	@Override
-	public X509Certificate getCertificate(final String alias) throws CryptoCardException, BadPinException {
+	public X509Certificate getCertificate(final String alias) {
 		return this.certs.get(alias);
 	}
 
 	@Override
-	public PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException {
+	public PrivateKeyReference getPrivateKey(final String alias) {
 		return new CeresPrivateKeyReference(
 			this.keys.get(alias).byteValue(),
 			((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
@@ -474,9 +474,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	}
         	else {
         		pwc = new PasswordCallback(
-    					Messages.getString("CommonPasswordCallback.3") + retriesLeft,  //$NON-NLS-1$
-    					false
-    				);
+					Messages.getString("CommonPasswordCallback.3") + retriesLeft,  //$NON-NLS-1$
+					false
+				);
         	}
 			try {
 				this.callh.handle(
@@ -552,7 +552,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	/** {@inheritDoc}
 	 */
 	@Override
-	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException, BadPinException, AuthenticationModeLockedException {
+	public byte[] changePIN(final String oldPin, final String newPin) throws AuthenticationModeLockedException {
 		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
 	}
 

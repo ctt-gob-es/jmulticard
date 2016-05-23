@@ -95,9 +95,8 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     /** Conecta con el lector del sistema que tenga una TUI insertada.
      * @param conn Conexi&oacute;n hacia la TUI
-     * @throws Iso7816FourCardException Si hay errores en el di&aacute;logo ISO 7816-4
-     * @throws IOException Cuando hay errores de entrada / salida */
-    private void connect(final ApduConnection conn) throws Iso7816FourCardException, IOException {
+     * @throws IOException Cuando hay errores de entrada / salida. */
+    private void connect(final ApduConnection conn) throws IOException {
     	if (conn == null) {
     		throw new IllegalArgumentException("La conexion no puede ser nula"); //$NON-NLS-1$
     	}
@@ -240,8 +239,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	@Override
 	public byte[] sign(final byte[] data,
 			           final String algorithm,
-			           final PrivateKeyReference keyRef) throws CryptoCardException,
-			                                                    BadPinException {
+			           final PrivateKeyReference keyRef) throws CryptoCardException {
 		if (keyRef == null) {
 			throw new IllegalArgumentException("La referencia a la clave privada no puede ser nula"); //$NON-NLS-1$
 		}
@@ -255,7 +253,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	}
 
 	@Override
-	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException {
+	protected void selectMasterFile() throws ApduConnectionException {
 		final CommandApdu selectMf = new CommandApdu(
 			CLA,
 			(byte) 0xA4,
