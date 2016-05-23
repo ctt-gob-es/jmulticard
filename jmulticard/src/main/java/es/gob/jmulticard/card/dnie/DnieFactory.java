@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
+
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
@@ -24,10 +25,15 @@ public final class DnieFactory {
 			(byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
 	};
 
+	private static final byte[] ATR_NFC_MASK = new byte[] {
+			(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+			(byte) 0x00, (byte) 0xFF, (byte) 0x00
+	};
+
 	private static final Atr ATR_NFC = new Atr(new byte[] {
 			(byte) 0x3B, (byte) 0x88, (byte) 0x80, (byte) 0x01, (byte) 0xE1, (byte) 0xF3, (byte) 0x5E, (byte) 0x11, (byte) 0x77, (byte) 0x81,
 			(byte) 0xA1, (byte) 0x00, (byte) 0x03
-	}, ATR_MASK);
+	}, ATR_NFC_MASK);
 
 	private static final Atr ATR = new Atr(new byte[] {
 			(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
@@ -86,8 +92,8 @@ public final class DnieFactory {
 			if(ATR_NFC.equals(actualAtr)) {
 				try {
 					return new DnieNFC(conn, pwc, cryptoHelper, ch);
-				} 
-				catch (PaceException e) {
+				}
+				catch (final PaceException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE: " + e); //$NON-NLS-1$
 				}
 			}
