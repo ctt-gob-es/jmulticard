@@ -55,9 +55,9 @@ import java.util.zip.Inflater;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.ConfirmationCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.sasl.AuthorizeCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -566,27 +566,17 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
 
         if (this.callh != null) {
-        	String prompt;
-        	if(((DniePrivateKeyReference) privateKeyReference).toString().equals(AUTH_KEY_LABEL)) {
-        		prompt = Messages.getString("DialogBuilder.3"); //$NON-NLS-1$
-        	}
-        	else {
-        		prompt = Messages.getString("DialogBuilder.2"); //$NON-NLS-1$
-        	}
-        	final ConfirmationCallback cc = new ConfirmationCallback(
-				prompt,
-				ConfirmationCallback.WARNING,
-				ConfirmationCallback.YES_NO_OPTION,
-				ConfirmationCallback.YES
+        	final AuthorizeCallback cc = new AuthorizeCallback(
+        			null,
+        			null
 			);
-        	System.out.println(((DniePrivateKeyReference)privateKeyReference).getLabel());
         	try {
 				this.callh.handle(
 					new Callback[] {
 						cc
 					}
 				);
-				if (ConfirmationCallback.YES != cc.getSelectedIndex()) {
+				if (!cc.isAuthorized()) {
 					throw new AccessControlException(
 						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
 					);
