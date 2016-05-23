@@ -132,22 +132,24 @@ final class Utils {
             }
             if (component instanceof JTextField) {
                 final JTextField textField = (JTextField) component;
-                textField.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusLost(final FocusEvent e) {
-                        textField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-                    }
+                textField.addFocusListener(
+            		new FocusListener() {
+	                    @Override
+	                    public void focusLost(final FocusEvent e) {
+	                        textField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+	                    }
 
-                    @Override
-                    public void focusGained(final FocusEvent e) {
-                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
-                            textField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-                        }
-                        else {
-                            textField.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-                        }
-                    }
-                });
+	                    @Override
+	                    public void focusGained(final FocusEvent e) {
+	                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
+	                            textField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+	                        }
+	                        else {
+	                            textField.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+	                        }
+	                    }
+	                }
+        		);
             }
             if (component instanceof JComboBox) {
                 final JComboBox comboBox = (JComboBox) component;
@@ -170,22 +172,24 @@ final class Utils {
             }
             if (component instanceof JLabel) {
                 final JLabel label = (JLabel) component;
-                label.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusLost(final FocusEvent e) {
-                        label.setBorder(BorderFactory.createEmptyBorder());
-                    }
+                label.addFocusListener(
+            		new FocusListener() {
+	                    @Override
+	                    public void focusLost(final FocusEvent e) {
+	                        label.setBorder(BorderFactory.createEmptyBorder());
+	                    }
 
-                    @Override
-                    public void focusGained(final FocusEvent e) {
-                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
-                            label.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-                        }
-                        else {
-                            label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-                        }
-                    }
-                });
+	                    @Override
+	                    public void focusGained(final FocusEvent e) {
+	                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
+	                            label.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+	                        }
+	                        else {
+	                            label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+	                        }
+	                    }
+	                }
+        		);
             }
             if (component instanceof JCheckBox) {
                 final JCheckBox checkBox = (JCheckBox) component;

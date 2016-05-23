@@ -12,9 +12,8 @@ import javax.security.sasl.AuthorizeCallback;
 import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
-/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario
- * @author Sergio Mart&iacute;nez Rico
- */
+/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
+ * @author Sergio Mart&iacute;nez Rico. */
 public class DnieCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
@@ -24,11 +23,11 @@ public class DnieCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof TextInputCallback) {
 					final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
-							((TextInputCallback)cb).getPrompt(),
-							null,
-							((TextInputCallback)cb).getPrompt(),
-							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
-							);
+						((TextInputCallback)cb).getPrompt(),
+						null,
+						((TextInputCallback)cb).getPrompt(),
+						Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
+					);
 					((TextInputCallback)cb).setText(new String(uip.getPassword()));
 					return;
 				}
@@ -37,9 +36,11 @@ public class DnieCallbackHandler implements CallbackHandler {
 					return;
 				}
 				else if (cb instanceof PasswordCallback) {
-					final CommonPasswordCallback uip = new CommonPasswordCallback(((PasswordCallback)cb).getPrompt(),
-													Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-													true);
+					final CommonPasswordCallback uip = new CommonPasswordCallback(
+						((PasswordCallback)cb).getPrompt(),
+						Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
+						true
+					);
 					((PasswordCallback)cb).setPassword(uip.getPassword());
 					return;
 				}
@@ -49,7 +50,7 @@ public class DnieCallbackHandler implements CallbackHandler {
 			}
 		}
 		else {
-			LOGGER.severe("Callbacks nulas"); //$NON-NLS-1$
+			LOGGER.warning("Se ha revibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
 		throw new UnsupportedCallbackException(null);
 	}
