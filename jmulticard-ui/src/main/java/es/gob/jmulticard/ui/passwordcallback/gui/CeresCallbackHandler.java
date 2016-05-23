@@ -1,6 +1,5 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -17,13 +16,13 @@ public class CeresCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	@Override
-	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof PasswordCallback) {
 					final CommonPasswordCallback uip = new CommonPasswordCallback(((PasswordCallback)cb).getPrompt(),
 													Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
-													false); 
+													false);
 					((PasswordCallback)cb).setPassword(uip.getPassword());
 					return;
 				}

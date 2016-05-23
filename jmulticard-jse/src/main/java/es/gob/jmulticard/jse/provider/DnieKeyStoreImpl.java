@@ -48,15 +48,10 @@ import java.security.KeyStore;
 import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStore.ProtectionParameter;
-import java.security.KeyStoreException;
 import java.security.KeyStoreSpi;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.ProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -103,7 +98,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineDeleteEntry(final String alias) throws KeyStoreException {
+    public void engineDeleteEntry(final String alias) {
         throw new UnsupportedOperationException();
     }
 
@@ -218,8 +213,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** {@inheritDoc} */
     @Override
-    public Key engineGetKey(final String alias, final char[] password) throws NoSuchAlgorithmException,
-                                                                              UnrecoverableKeyException {
+    public Key engineGetKey(final String alias, final char[] password) {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
@@ -239,9 +233,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public KeyStore.Entry engineGetEntry(final String alias,
-    		                             final ProtectionParameter protParam) throws KeyStoreException,
-    		                                                                         NoSuchAlgorithmException,
-    		                                                                         UnrecoverableEntryException {
+    		                             final ProtectionParameter protParam) {
     	if (protParam != null) {
     		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
 				"Se ha proporcionado un ProtectionParameter, pero este se ignorara, ya que el PIN se gestiona internamente" //$NON-NLS-1$
@@ -283,7 +275,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** {@inheritDoc} */
     @Override
-    public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException, NoSuchAlgorithmException, CertificateException {
+    public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
     	if (param != null) {
     		final ProtectionParameter pp = param.getProtectionParameter();
     		if (pp instanceof KeyStore.CallbackHandlerProtection) {
@@ -326,9 +318,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** {@inheritDoc} */
     @Override
-    public void engineLoad(final InputStream stream, final char[] password) throws IOException,
-                                                                                   NoSuchAlgorithmException,
-                                                                                   CertificateException {
+    public void engineLoad(final InputStream stream, final char[] password) throws IOException {
     	// Ponemos la conexion por defecto
     	final ApduConnection conn;
     	try {
@@ -355,19 +345,19 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineSetCertificateEntry(final String alias, final Certificate cert) throws KeyStoreException {
+    public void engineSetCertificateEntry(final String alias, final Certificate cert) {
         throw new UnsupportedOperationException();
     }
 
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineSetKeyEntry(final String alias, final byte[] key, final Certificate[] chain) throws KeyStoreException {
+    public void engineSetKeyEntry(final String alias, final byte[] key, final Certificate[] chain) {
         throw new UnsupportedOperationException();
     }
 
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineSetKeyEntry(final String alias, final Key key, final char[] pass, final Certificate[] chain) throws KeyStoreException {
+    public void engineSetKeyEntry(final String alias, final Key key, final char[] pass, final Certificate[] chain) {
         throw new UnsupportedOperationException();
     }
 
@@ -379,7 +369,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineStore(final OutputStream os, final char[] pass) throws IOException, NoSuchAlgorithmException, CertificateException {
+    public void engineStore(final OutputStream os, final char[] pass) {
         throw new UnsupportedOperationException();
     }
 

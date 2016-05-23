@@ -122,13 +122,13 @@ abstract class CeresSignatureImpl extends SignatureSpi {
 
     /** {@inheritDoc} */
     @Override
-    protected void engineUpdate(final byte b) throws SignatureException {
+    protected void engineUpdate(final byte b) {
         this.data.write(b);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void engineUpdate(final byte[] b, final int off, final int len) throws SignatureException {
+    protected void engineUpdate(final byte[] b, final int off, final int len) {
         this.data.write(b, off, len);
     }
 

@@ -345,7 +345,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 	}
 
 	@Override
-	public byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
+	public byte[] doAesCmac(final byte[] data, final byte[] key) {
 		final BlockCipher cipher = new AESFastEngine();
 		final org.spongycastle.crypto.Mac mac = new CMac(cipher, 64);
 

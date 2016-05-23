@@ -1,6 +1,5 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -20,7 +19,7 @@ public class DnieCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	@Override
-	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof TextInputCallback) {
