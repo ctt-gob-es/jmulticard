@@ -88,6 +88,7 @@ public final class DnieFactory {
 				continue;
 			}
 			actualAtr = new Atr(responseAtr, ATR_MASK);
+			LOGGER.info("ATR obtenido: " + actualAtr); //$NON-NLS-1$
 			final byte[] actualAtrBytes = actualAtr.getBytes();
 			if(ATR_NFC.equals(actualAtr)) {
 				try {
