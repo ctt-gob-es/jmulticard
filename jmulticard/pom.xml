@@ -16,6 +16,11 @@
 	
 	<dependencies>
 		<dependency>
+			<groupId>es.gob</groupId>
+			<artifactId>jmulticard-ui</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.madgag.spongycastle</groupId>
 			<artifactId>core</artifactId>
 			<version>1.54.0.0</version>
