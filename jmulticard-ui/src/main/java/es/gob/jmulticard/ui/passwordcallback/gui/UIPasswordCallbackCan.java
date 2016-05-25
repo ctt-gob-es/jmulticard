@@ -39,12 +39,16 @@
  */
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.image.BufferedImage;
 
 import javax.security.auth.callback.PasswordCallback;
 import javax.swing.ImageIcon;
@@ -52,6 +56,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.SwingConstants;
 
 import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
 
@@ -101,35 +106,58 @@ public final class UIPasswordCallbackCan extends PasswordCallback {
         lbText.setLabelFor(pwd);
         final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        GridBagConstraints constraints = new GridBagConstraints();
-        
+        final GridBagConstraints constraints = new GridBagConstraints();
+
         constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.weightx = 1.0;
 		constraints.anchor = GridBagConstraints.CENTER;
-		
+
         panel.add(lbText, constraints);
-        
+
         constraints.gridy++;
 		constraints.gridy++;
 		constraints.gridy++;
 		constraints.insets = new Insets(20,0,0,20);
-        
+
         panel.add(pwd, constraints);
-        
+
         constraints.gridy++;
 		constraints.gridy++;
 		constraints.gridy++;
-		
+
 		final ImageIcon icon = new ImageIcon(this.getClass().getResource(CAN_EXAMPLE));
-		final Image img = icon.getImage();
-		final Image newimg = img.getScaledInstance(230, 140,  java.awt.Image.SCALE_SMOOTH);
-		final JLabel labelImage = new JLabel(new ImageIcon(newimg));
-		panel.add(labelImage, constraints);
-		
+		final Image image = icon.getImage().getScaledInstance(230, 140, Image.SCALE_SMOOTH);
+		icon.setImage(image);
+
+		final int borderWidth = 1;
+		final int spaceAroundIcon = 0;
+		final Color borderColor = Color.LIGHT_GRAY;
+
+		final BufferedImage bi = new BufferedImage(
+				icon.getIconWidth() + 2 * borderWidth + 2 * spaceAroundIcon,
+				icon.getIconHeight() + 2 * borderWidth + 2 * spaceAroundIcon,
+				BufferedImage.TYPE_INT_ARGB);
+
+		final Graphics2D g = bi.createGraphics();
+		g.setColor(borderColor);
+		g.drawImage(icon.getImage(), borderWidth + spaceAroundIcon, borderWidth + spaceAroundIcon, null);
+
+		final BasicStroke stroke = new BasicStroke(5);
+		g.setStroke(stroke);
+
+		g.drawRect(0, 0, bi.getWidth() - 1, bi.getHeight() - 1);
+		g.dispose();
+
+		final JLabel label = new JLabel(new ImageIcon(bi), SwingConstants.LEFT);
+		label.setVerticalAlignment(SwingConstants.TOP);
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+
+		panel.add(label, constraints);
+
 		constraints.gridy++;
 		constraints.gridy++;
 		constraints.gridy++;
-		
+
         final JOptionPane pane = new JOptionPane(
     		panel,
     		JOptionPane.PLAIN_MESSAGE,
@@ -141,10 +169,9 @@ public final class UIPasswordCallbackCan extends PasswordCallback {
                 pwd.requestFocusInWindow();
             }
         };
-        //pane.setSize(new Dimension(350, 300));
-        pane.setPreferredSize(new Dimension(350, 300));
+        pane.setPreferredSize(new Dimension(350, 310));
         pane.createDialog(this.parent, this.title).setVisible(true);
-        
+
         final Object selectedValue = pane.getValue();
         if (selectedValue == null) {
             return new char[0];
