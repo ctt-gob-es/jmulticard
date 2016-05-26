@@ -30,7 +30,7 @@
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
  * Este programa es distribuido con la esperanza de que sea util, pero
- * SIN NINGUNA GARANTIA; incluso sin la garanti­a implicita de comercializacion
+ * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
 
