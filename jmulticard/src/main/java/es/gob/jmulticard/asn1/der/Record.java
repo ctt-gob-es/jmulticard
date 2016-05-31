@@ -101,7 +101,7 @@ public abstract class Record extends DecoderObject {
 	            System.arraycopy(this.getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
 	            tlv = new Tlv(remainingBytes);
 	            try {
-	                tmpDo = this.elementsTypes[i].getElementType().newInstance();
+	                tmpDo = this.elementsTypes[i].getElementType().getConstructor().newInstance();
 	            }
 	            catch (final Exception e) {
 	                throw new Asn1Exception(

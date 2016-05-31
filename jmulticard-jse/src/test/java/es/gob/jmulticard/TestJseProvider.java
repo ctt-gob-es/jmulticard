@@ -21,8 +21,8 @@ public final class TestJseProvider {
 	private static final char[] PASSWORD = "password".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
-	 * @param args
-	 * @throws Exception */
+	 * @param args No se usa.
+	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
 		TestJseProvider.testProviderWithCustomConnection();
 		//TestJseProvider.testProviderWithDefaultConnection();

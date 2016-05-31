@@ -63,7 +63,7 @@ public abstract class ContextSpecific extends DecoderObject {
         final Tlv tlv = new Tlv(this.getRawDerValue());
         final DecoderObject tmpDo;
         try {
-            tmpDo = this.elementType.newInstance();
+            tmpDo = this.elementType.getConstructor().newInstance();
         }
         catch (final Exception e) {
             throw new Asn1Exception(

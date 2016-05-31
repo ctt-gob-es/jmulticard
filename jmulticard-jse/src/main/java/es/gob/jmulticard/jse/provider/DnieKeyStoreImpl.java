@@ -323,7 +323,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	final ApduConnection conn;
     	try {
 	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").newInstance() : //$NON-NLS-1$
+				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
 					DnieProvider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {

@@ -70,7 +70,7 @@ public abstract class SequenceOf extends DecoderObject {
         	System.arraycopy(valueBytes, offset, remainingBytes, 0, remainingBytes.length);
     		tlv = new Tlv(remainingBytes);
         	try {
-        		tmpDo = this.elementsType.newInstance();
+        		tmpDo = this.elementsType.getConstructor().newInstance();
         	}
         	catch (final Exception e) {
         		throw new Asn1Exception(

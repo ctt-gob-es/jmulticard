@@ -23,11 +23,11 @@ import java.io.IOException;
 
 import org.spongycastle.asn1.ASN1InputStream;
 
+import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
 import es.gob.jmulticard.de.tsenger.androsmex.tools.HexString;
-import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.apdu.ResponseApdu;
 
 /**
  * Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
@@ -67,7 +67,7 @@ public class SecureMessaging {
 	 *
 	 * @param capdu Apdu en claro
 	 * @return CommandApdu APDU protegida
-	 * @throws SecureMessagingException
+	 * @throws SecureMessagingException En cualquier error.
 	 */
 	public CommandApdu wrap(final CommandApdu capdu) throws SecureMessagingException {
 
@@ -129,9 +129,9 @@ public class SecureMessaging {
 	 *
 	 * @param responseApduEncrypted APDU protegida
 	 * @return plain APDU en claro
-	 * @throws SecureMessagingException
+	 * @throws SecureMessagingException En cualquier error.
 	 */
-	public ResponseApdu unwrap(ResponseApdu responseApduEncrypted) throws SecureMessagingException{
+	public ResponseApdu unwrap(final ResponseApdu responseApduEncrypted) throws SecureMessagingException{
 
 		DO87 do87 = null;
 		DO99 do99 = null;
@@ -256,7 +256,7 @@ public class SecureMessaging {
 	 * @return DO87 Par&aacute;metros del comando
 	 * @throws SecureMessagingException Error en el cifrado
 	 */
-	private DO87 buildDO87(byte[] data) throws SecureMessagingException  {
+	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
 
 		this.crypto.init(this.kenc, this.ssc);
 		byte[] enc_data;
@@ -270,7 +270,7 @@ public class SecureMessaging {
 
 	}
 
-	private DO8E buildDO8E(byte[] header, DO87 do87, DO97 do97) throws SecureMessagingException {
+	private DO8E buildDO8E(final byte[] header, final DO87 do87, final DO97 do97) throws SecureMessagingException {
 
 		final ByteArrayOutputStream m = new ByteArrayOutputStream();
 
@@ -301,7 +301,7 @@ public class SecureMessaging {
 		return new DO8E(this.crypto.getMAC(m.toByteArray()));
 	}
 
-	private static DO97 buildDO97(int le) {
+	private static DO97 buildDO97(final int le) {
 		return new DO97(le);
 	}
 
@@ -310,7 +310,7 @@ public class SecureMessaging {
 	 *
 	 * @return Tipo de estructura (1 = CASE1, ...)
 	 */
-	private static byte getAPDUStructure(CommandApdu capdu) {
+	private static byte getAPDUStructure(final CommandApdu capdu) {
 		final byte[] cardcmd = capdu.getBytes();
 
 		if (cardcmd.length == 4) {
@@ -339,7 +339,7 @@ public class SecureMessaging {
 		return 0;
 	}
 
-	private void incrementAtIndex(byte[] array, int index) {
+	private void incrementAtIndex(final byte[] array, final int index) {
 		if (array[index] == Byte.MAX_VALUE) {
 			array[index] = 0;
 			if (index > 0) {

@@ -18,8 +18,8 @@ public final class TestJseProviderCeres {
 	private static final char[] PASSWORD = "1234".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
-	 * @param args
-	 * @throws Exception */
+	 * @param args No se usa.
+	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
 		//TestJseProviderCeres.testProviderWithCustomConnection();
 		//TestJseProviderCeres.testProviderWithDefaultConnection();

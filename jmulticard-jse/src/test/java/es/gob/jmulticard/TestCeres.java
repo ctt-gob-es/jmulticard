@@ -31,8 +31,8 @@ public final class TestCeres {
 	}
 
 	/** Main.
-	 * @param args
-	 * @throws Exception */
+	 * @param args No se usa.
+	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
 		final Ceres ceres = new Ceres(
 			new SmartcardIoConnection(),

@@ -14,15 +14,15 @@ public final class TestDnieChangePIN {
 
 	/**
 	 * Llamada a los test a ejecutar
-	 * @param args
-	 * @throws Exception
+	 * @param args No se usa.
+	 * @throws Exception En cualquier error.
 	 */
 	public static void main(final String[] args) throws Exception {
 		TestDnieChangePIN.testChangePIN();
 	}
 	/**
 	 * Test para probar el cambio de PIN tras la apertura del canal seguro
-	 * @throws Exception
+	 * @throws Exception En cualquier error.
 	 */
 	@Test
 	public static void testChangePIN() throws Exception {

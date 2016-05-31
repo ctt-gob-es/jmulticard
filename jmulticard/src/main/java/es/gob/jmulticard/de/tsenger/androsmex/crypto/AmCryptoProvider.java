@@ -102,7 +102,7 @@ public abstract class AmCryptoProvider {
 	 * @param in
 	 *            ByteArray mit den zu verschlüsselnden Daten
 	 * @return ByteArray mit den entschlüsselten Daten.
-	 * @throws AmCryptoException
+	 * @throws AmCryptoException On any error.
 	 */
 	public byte[] encrypt(final byte[] in) throws AmCryptoException {
 
@@ -155,7 +155,7 @@ public abstract class AmCryptoProvider {
 	 * @param in
 	 *            BytrArray mit den verschlüsselten Daten
 	 * @return ByteArray mit den entschlüsselten Daten
-	 * @throws AmCryptoException
+	 * @throws AmCryptoException On any error.
 	 */
 	public byte[] decrypt(final byte[] in) throws AmCryptoException {
 
