@@ -582,8 +582,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     				"No ha sido posible pedir la confirmacion de firma al usuario: " + e //$NON-NLS-1$
     			);
 			}
+
 			if (!cc.isAuthorized()) {
-				throw new AccessControlException(
+				throw new CancelledSignOperationException(
 					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
 				);
 			}
@@ -807,7 +808,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws es.gob.jmulticard.card.BadPinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; ha bloqueado
-     * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando se ha cancelado la inserci&oacute;n del PIN
+     * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando se ha cancelado la inserci&oacute;n del PIN
      *                                                                           usando el di&aacute;logo gr&aacute;fico integrado. */
     protected void loadCertificates() throws CryptoCardException, PinException {
     	// Abrimos el canal si es necesario
