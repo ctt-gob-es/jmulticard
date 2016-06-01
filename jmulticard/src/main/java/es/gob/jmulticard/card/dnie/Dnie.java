@@ -576,15 +576,15 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 						cc
 					}
 				);
-				if (!cc.isAuthorized()) {
-					throw new AccessControlException(
-						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
-					);
-				}
 			}
         	catch (final Exception e) {
-				LOGGER.severe(
-					"No ha sido posible pedir la confirmacion de firma al usuario: " + e //$NON-NLS-1$
+    			throw new AccessControlException(
+    				"No ha sido posible pedir la confirmacion de firma al usuario: " + e //$NON-NLS-1$
+    			);
+			}
+			if (!cc.isAuthorized()) {
+				throw new AccessControlException(
+					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
 				);
 			}
         }
