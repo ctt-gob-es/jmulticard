@@ -57,7 +57,7 @@ public interface CryptoCard {
      * @throws CryptoCardException Si ocurre alg&uacute;n problema al recuperar el certificado.
      * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto.
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
-     * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando el usuario
+     * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando el usuario
      * cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
     X509Certificate getCertificate(final String alias) throws CryptoCardException, PinException;
 
@@ -77,10 +77,10 @@ public interface CryptoCard {
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema durante la firma.
      * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo
-     * @throws es.gob.jmulticard.ui.passwordcallback.CancelledOperationException Cuando el usuario
+     * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando el usuario
      * cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
     byte[] sign(byte[] data, String algorithm, PrivateKeyReference keyRef) throws CryptoCardException, PinException;
-    
+
 	/** Realiza la operaci&oacute;n de cambio de PIN
 	 * @param oldPin PIN actual.
 	 * @param newPin PIN nuevo.
