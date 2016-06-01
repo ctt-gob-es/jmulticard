@@ -1,6 +1,8 @@
 package es.gob.jmulticard;
 
 import java.security.KeyStore;
+import java.security.KeyStore.LoadStoreParameter;
+import java.security.KeyStore.ProtectionParameter;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
@@ -8,6 +10,8 @@ import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
+
+import javax.security.auth.callback.CallbackHandler;
 
 import org.junit.Test;
 
@@ -32,7 +36,15 @@ public final class TestJseProvider {
 		final Provider p = new DnieProvider(new SmartcardIoConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
-		ks.load(null, PASSWORD);
+    	final CallbackHandler callbackHandler;
+    	callbackHandler = (CallbackHandler) Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.DnieCallbackHandler").getConstructor().newInstance(); //$NON-NLS-1$
+		final LoadStoreParameter lsp = new LoadStoreParameter() {
+			@Override
+			public ProtectionParameter getProtectionParameter() {
+				return new KeyStore.CallbackHandlerProtection(callbackHandler);
+			}
+		};
+		ks.load(lsp);
 		final Enumeration<String> aliases = ks.aliases();
 		while (aliases.hasMoreElements()) {
 			System.out.println(aliases.nextElement());

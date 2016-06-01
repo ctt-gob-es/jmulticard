@@ -1,8 +1,9 @@
 package es.gob.jmulticard;
 
+import javax.security.auth.callback.PasswordCallback;
+
 import org.junit.Test;
 
-import es.gob.jmulticard.TestCeres.CachePasswordCallback;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.dnie.DnieFactory;
@@ -12,6 +13,18 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class TestDnieChangePIN {
 
+	final static class CachePasswordCallback extends PasswordCallback {
+
+	    private static final long serialVersionUID = 816457144215238935L;
+
+	    /** Contruye una Callback con una contrase&ntilde; preestablecida.
+	     * @param password Contrase&ntilde;a por defecto. */
+	    public CachePasswordCallback(final char[] password) {
+	        super(">", false); //$NON-NLS-1$
+	        this.setPassword(password);
+	    }
+	}
+
 	/**
 	 * Llamada a los test a ejecutar
 	 * @param args No se usa.
@@ -20,6 +33,7 @@ public final class TestDnieChangePIN {
 	public static void main(final String[] args) throws Exception {
 		TestDnieChangePIN.testChangePIN();
 	}
+
 	/**
 	 * Test para probar el cambio de PIN tras la apertura del canal seguro
 	 * @throws Exception En cualquier error.
