@@ -92,6 +92,7 @@ public final class DnieFactory {
 			final byte[] actualAtrBytes = actualAtr.getBytes();
 			if(ATR_NFC.equals(actualAtr)) {
 				try {
+					LOGGER.info("Detectado DNIe 3.0 por NFC"); //$NON-NLS-1$
 					return new DnieNFC(conn, pwc, cryptoHelper, ch);
 				}
 				catch (final PaceException e) {
@@ -104,9 +105,11 @@ public final class DnieFactory {
 					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
 					return new Dnie3(conn, pwc, cryptoHelper, ch);
 				}
+				LOGGER.info("Detectado DNIe 2.0"); //$NON-NLS-1$
 				return new Dnie(conn, pwc, cryptoHelper, ch);
 			}
 			else if (ATR_TIF.equals(actualAtr)) {
+				LOGGER.info("Detectada tarjeta TIF"); //$NON-NLS-1$
 				return new Tif(conn, pwc, cryptoHelper, ch);
 			}
 			else { // La tarjeta encontrada no es un DNIe
