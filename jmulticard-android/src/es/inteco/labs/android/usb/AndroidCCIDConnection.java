@@ -130,12 +130,12 @@ public final class AndroidCCIDConnection implements ApduConnection {
 					throw new CardNotPresentException();
 				}
 				//Hay tarjeta, pero no esta activa
-				Log.i("es.gob.afirma", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.i("es.gob.jmulticard", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
 				this.reset();
 			}
 
 			if (DEBUG) {
-				Log.d("es.gob.afirma", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.d("es.gob.jmulticard", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			final ResponseApdu response;
@@ -143,7 +143,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				response = new ResponseApdu(this.ccidReader.transmit(command.getBytes()));
 
 				if (DEBUG) {
-					Log.d("es.gob.afirma", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.d("es.gob.jmulticard", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 		        // Solicitamos el resultado de la operacion si es necesario
@@ -223,7 +223,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				}
 			}
 			catch (final NotAvailableUSBDeviceException e) {
-				Log.e("es.gob.afirma", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.e("es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				return new long[0];
 			}
 		}
