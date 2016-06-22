@@ -70,10 +70,21 @@ public final class DnieFactory {
 				"La conexion no puede ser nula" //$NON-NLS-1$
 			);
 		}
-		byte[] responseAtr;
+
+		byte[] responseAtr = new byte[]{};
 		Atr actualAtr;
 		InvalidCardException invalidCardException = null;
 		CardNotPresentException cardNotPresentException = null;
+		//Si es en Android una comunicacion por NFC no reseteamos la tarjeta
+		/*if(conn.getClass().getName().contains("AndroidNfcConnection")) { //$NON-NLS-1$
+			try {
+				LOGGER.info("Detectado DNIe 3.0 por NFC"); //$NON-NLS-1$
+				return new DnieNFC(conn, pwc, cryptoHelper, ch);
+			}
+			catch (final PaceException e) {
+				throw new ApduConnectionException("No se ha podido abrir el canal PACE: " + e); //$NON-NLS-1$
+			}
+		}*/
 		final long[] terminals = conn.getTerminals(false);
 		if (terminals.length < 1) {
 			throw new NoReadersFoundException();

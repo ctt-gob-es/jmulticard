@@ -57,7 +57,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.sasl.AuthorizeCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -126,13 +125,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     private static final boolean PIN_AUTO_RETRY;
     static {
-    	// No hacemos el reintento de PIN en Android
-    	if ("Dalvik".equals(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
-    		PIN_AUTO_RETRY = false;
-    	}
-    	else {
-    		PIN_AUTO_RETRY = true;
-    	}
+    	PIN_AUTO_RETRY = true;
     }
 
     /** Identificador del fichero del certificado de componente del DNIe. */
@@ -566,10 +559,21 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
 
         if (this.callh != null) {
-        	final AuthorizeCallback cc = new AuthorizeCallback(
-        			null,
-        			null
-			);
+        	Callback cc;
+        	// Filtramos si la ejecucion es en Android
+        	if("Dalvik".equalsIgnoreCase(System.getProperty("java.vm.name"))) {//$NON-NLS-1$ //$NON-NLS-2$
+    			cc = new AuthorizeCallback(
+            			null,
+            			null
+    			);
+    		}
+    		else {
+    			cc = new javax.security.sasl.AuthorizeCallback(
+            			null,
+            			null
+    			);
+    		}
+
         	try {
 				this.callh.handle(
 					new Callback[] {
@@ -583,11 +587,20 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     			);
 			}
 
-			if (!cc.isAuthorized()) {
-				throw new CancelledSignOperationException(
-					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
-				);
-			}
+        	if("Dalvik".equalsIgnoreCase(System.getProperty("java.vm.name"))) {//$NON-NLS-1$ //$NON-NLS-2$
+				if (!((AuthorizeCallback)cc).isAuthorized()) {
+					throw new CancelledSignOperationException(
+						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
+					);
+				}
+        	}
+        	else {
+        		if (!((javax.security.sasl.AuthorizeCallback)cc).isAuthorized()) {
+					throw new CancelledSignOperationException(
+						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
+					);
+				}
+        	}
         }
         else {
         	LOGGER.warning(
@@ -885,6 +898,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
             	throw new AuthenticationModeLockedException();
+            }
+            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x00 && verifyResponse.getStatusWord().getLsb() == (byte)0x00) {
+            	throw new ApduConnectionException("Se ha perdido el canal NFC"); //$NON-NLS-1$
             }
         }
     }

@@ -3,7 +3,6 @@ package es.gob.jmulticard.card.dnie;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.TextInputCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.JseCryptoHelper;
@@ -27,6 +26,8 @@ public final class DnieNFC extends Dnie3 {
 	// Se guarda el codigo CAN para establecer un canal PACE cada vez que se quiere
 	// realizar una operacion de firma
 	private static String can;
+	private static String ANDROID_OS_NAME = "Dalvik"; //$NON-NLS-1$
+	private static String OS_NAME_PROPERTY = "java.vm.name"; //$NON-NLS-1$
 
 	DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
@@ -38,9 +39,15 @@ public final class DnieNFC extends Dnie3 {
 
 	private static ApduConnection paceConnection(final ApduConnection con, final CallbackHandler ch) throws ApduConnectionException, PaceException {
 
-		TextInputCallback tic;
+		Callback tic;
 		// Primero obtenemos el CAN
-		tic = new TextInputCallback(Messages.getString("CanPasswordCallback.0")); //$NON-NLS-1$
+		// Filtramos si la ejecucion es en Android
+		if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
+			tic = new TextInputCallback();
+		}
+		else {
+			tic = new javax.security.auth.callback.TextInputCallback(Messages.getString("CanPasswordCallback.0")); //$NON-NLS-1$
+		}
 		SecureMessaging sm = null;
 		boolean wrongCan = true;
 		int counter = 0;
@@ -59,7 +66,13 @@ public final class DnieNFC extends Dnie3 {
 				catch (final Exception e) {
 					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
 				}
-				can = tic.getText();
+				if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
+					can = ((TextInputCallback)tic).getText();
+				}
+				else {
+					can = ((javax.security.auth.callback.TextInputCallback)tic).getText();
+				}
+
 				if (can == null || can.isEmpty()) {
 					throw new InvalidCanException("El CAN no puede ser nulo ni vacio"); //$NON-NLS-1$
 				}
@@ -76,7 +89,12 @@ public final class DnieNFC extends Dnie3 {
 			catch(final PaceException e) {
 				//Si el CAN es incorrecto modificamos el mensaje del dialogo y volvemos a pedirlo
 				wrongCan = true;
-				tic = new TextInputCallback(Messages.getString("CanPasswordCallback.1")); //$NON-NLS-1$
+				if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
+					tic = new TextInputCallback();
+				}
+				else {
+					tic = new javax.security.auth.callback.TextInputCallback(Messages.getString("CanPasswordCallback.1")); //$NON-NLS-1$
+				}
 				counter++;
 			}
 		}

@@ -198,7 +198,7 @@ public class Dnie3 extends Dnie {
     	// el PIN y rehacer los canales CWA
         try {
         	this.rawConnection.reset();
-			setConnection(this.rawConnection);
+    		setConnection(this.rawConnection);
 		}
         catch (final ApduConnectionException e) {
         	throw new CryptoCardException(
