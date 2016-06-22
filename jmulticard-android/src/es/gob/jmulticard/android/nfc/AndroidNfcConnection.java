@@ -133,7 +133,7 @@ public final class AndroidNfcConnection implements ApduConnection {
         if (misoDep != null) {
             try {
                 if (misoDep.isConnected()) {
-                    misoDep.close();
+                    //misoDep.close();
                 }
             }
             catch (final Exception e) {
@@ -144,8 +144,8 @@ public final class AndroidNfcConnection implements ApduConnection {
 
     @Override
     public byte[] reset() throws ApduConnectionException {
-        this.closeConnection(true);
-        this.open();
+        //this.closeConnection(true);
+        //this.open();
         if (misoDep != null) {
         	if (misoDep.getHistoricalBytes() != null) {
         		return misoDep.getHistoricalBytes();
@@ -153,6 +153,7 @@ public final class AndroidNfcConnection implements ApduConnection {
 			return misoDep.getHiLayerResponse();
         }
         throw new ApduConnectionException("Error indefinido reiniciando la conexion con la tarjeta"); //$NON-NLS-1$
+
     }
 
 	@Override

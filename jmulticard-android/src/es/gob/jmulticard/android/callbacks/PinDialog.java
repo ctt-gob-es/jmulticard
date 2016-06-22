@@ -124,7 +124,9 @@ public class PinDialog extends DialogFragment {
 				else {
 					//TODO: Gestionar este caso
 					Log.e("es.gob.jmulticard", "El pin no puede ser vacio o nulo"); //$NON-NLS-1$ //$NON-NLS-2$
-					return;
+					synchronized(PinDialog.this.dialogDone) {
+						PinDialog.this.dialogDone.notify();
+					}
 				}
 			}
 		});
