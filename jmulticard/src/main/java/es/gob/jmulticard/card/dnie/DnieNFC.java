@@ -6,7 +6,6 @@ import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.JseCryptoHelper;
-import es.gob.jmulticard.Messages;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
@@ -46,7 +45,7 @@ public final class DnieNFC extends Dnie3 {
 			tic = new TextInputCallback();
 		}
 		else {
-			tic = new javax.security.auth.callback.TextInputCallback(Messages.getString("CanPasswordCallback.0")); //$NON-NLS-1$
+			tic = new javax.security.auth.callback.TextInputCallback(null);
 		}
 		SecureMessaging sm = null;
 		boolean wrongCan = true;
@@ -93,7 +92,7 @@ public final class DnieNFC extends Dnie3 {
 					tic = new TextInputCallback();
 				}
 				else {
-					tic = new javax.security.auth.callback.TextInputCallback(Messages.getString("CanPasswordCallback.1")); //$NON-NLS-1$
+					tic = new javax.security.auth.callback.TextInputCallback(null);
 				}
 				counter++;
 			}

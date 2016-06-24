@@ -60,7 +60,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.Messages;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -701,7 +700,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                 }
             }
             try {
-                verifyPin(getInternalPasswordCallback(false));
+                verifyPin(getInternalPasswordCallback());
             }
             catch (final ApduConnectionException e) {
                 throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
@@ -725,7 +724,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
     }
 
-    protected PasswordCallback getInternalPasswordCallback(final boolean badPin) throws PinException {
+    protected PasswordCallback getInternalPasswordCallback() throws PinException {
     	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
     		if(retriesLeft == 0) {
@@ -739,18 +738,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		throw new AuthenticationModeLockedException();
         	}
         	PasswordCallback  pwc;
-        	if(badPin) {
-	    		pwc = new PasswordCallback(
-					Messages.getString("CommonPasswordCallback.0") + retriesLeft,  //$NON-NLS-1$
-					false
-				);
-        	}
-        	else {
-        		pwc = new PasswordCallback(
-    					Messages.getString("CommonPasswordCallback.4") + retriesLeft,  //$NON-NLS-1$
-    					false
-    				);
-        	}
+
+        	pwc = new PasswordCallback(
+    				retriesLeft+"",  //$NON-NLS-1$
+    				false
+    			);
 			try {
 				this.callh.handle(new Callback[] { pwc });
 			}
@@ -893,7 +885,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             	}
             	// Si hay reintento automatico volvemos a pedir el PIN con la misma CallBack
             	verifyPin(
-            		getInternalPasswordCallback(true)
+            		getInternalPasswordCallback()
             	);
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {

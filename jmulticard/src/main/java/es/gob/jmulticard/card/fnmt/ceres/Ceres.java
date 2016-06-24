@@ -19,7 +19,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.Messages;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
@@ -302,7 +301,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		// Pedimos el PIN si no se ha pedido antes
 		if (!this.authenticated) {
 			try {
-				verifyPin(getInternalPasswordCallback(false));
+				verifyPin(getInternalPasswordCallback());
 				this.authenticated = true;
 			}
 			catch (final ApduConnectionException e1) {
@@ -434,7 +433,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
             	if(AUTO_RETRY) {
             		this.passwordCallback = null;
             		verifyPin(
-                    		getInternalPasswordCallback(true)
+                    		getInternalPasswordCallback()
                     	);
             		return;
             	}
@@ -452,7 +451,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         }
 	}
 
-    protected PasswordCallback getInternalPasswordCallback(final boolean badPin) throws PinException {
+    protected PasswordCallback getInternalPasswordCallback() throws PinException {
     	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
     		if(retriesLeft == 0) {
@@ -466,18 +465,10 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         		throw new AuthenticationModeLockedException();
         	}
         	PasswordCallback  pwc;
-        	if(badPin) {
-	    		pwc = new PasswordCallback(
-					Messages.getString("CommonPasswordCallback.0") + retriesLeft,  //$NON-NLS-1$
+        	pwc = new PasswordCallback(
+					retriesLeft+"",  //$NON-NLS-1$
 					false
 				);
-        	}
-        	else {
-        		pwc = new PasswordCallback(
-					Messages.getString("CommonPasswordCallback.3") + retriesLeft,  //$NON-NLS-1$
-					false
-				);
-        	}
 			try {
 				this.callh.handle(
 					new Callback[] {

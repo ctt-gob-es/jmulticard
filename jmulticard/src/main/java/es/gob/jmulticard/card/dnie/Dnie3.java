@@ -125,7 +125,7 @@ public class Dnie3 extends Dnie {
         LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
 
         try {
-            verifyPin(getInternalPasswordCallback(false));
+            verifyPin(getInternalPasswordCallback());
         }
         catch (final ApduConnectionException e) {
             throw new CryptoCardException(
