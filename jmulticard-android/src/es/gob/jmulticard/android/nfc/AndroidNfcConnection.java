@@ -19,42 +19,47 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class AndroidNfcConnection implements ApduConnection {
     static final String TAG = "NfcConnection"; //$NON-NLS-1$
-    private static IsoDep misoDep;
-    private static final byte TAG_RESPONSE_PENDING = 97;
-    private static final byte TAG_RESPONSE_INVALID_LENGTH = 108;
-    private static boolean DEBUG = true;
-
+    private final IsoDep misoDep;
+    /** Obtiene la conexi&oacute;n NFC actual.
+     * @return El objeto IsoDep para la conexi&oacute;n por NFC.
+     */
     public IsoDep getIsoDep() {
-        return misoDep;
+        return this.misoDep;
     }
 
+    /**
+     * Contructor por defecto de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
+     */
     public AndroidNfcConnection() {
-        misoDep = null;
+        this.misoDep = null;
     }
 
+    /** Contructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
+     * @param tag Tag para obtener el objeto IsoDep y establecer la conexi&oacute;n.
+     * @throws IOException Se produduce ante un fallo en el establecimiento de la conexi&oacute;n.
+     */
     public AndroidNfcConnection(final Tag tag) throws IOException {
         if (tag == null) {
             throw new IllegalArgumentException("El tag NFC no puede ser nulo"); //$NON-NLS-1$
         }
-        misoDep = IsoDep.get(tag);
-        misoDep.connect();
-        misoDep.setTimeout(3000);
+        this.misoDep = IsoDep.get(tag);
+        this.misoDep.connect();
+        this.misoDep.setTimeout(3000);
     }
 
     @Override
     public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
-        if (misoDep == null) {
+        if (this.misoDep == null) {
             throw new ApduConnectionException("No se puede transmitir sobre una conexion NFC cerrada"); //$NON-NLS-1$
         }
         if (command == null) {
             throw new IllegalArgumentException("No se puede transmitir una APDU nula"); //$NON-NLS-1$
         }
-        if(!misoDep.isConnected()) {
+        if(!this.misoDep.isConnected()) {
         	try {
-				misoDep.connect();
+				this.misoDep.connect();
 			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new ApduConnectionException("Se ha producido un problema al intentar establecer la conexion por NFC"); //$NON-NLS-1$
 			}
         }
         try {
@@ -68,7 +73,7 @@ public final class AndroidNfcConnection implements ApduConnection {
                 baos.write(bdata);
                 byte[] bResp = new byte[]{0, 0};
                 try {
-                    bResp = misoDep.transceive(baos.toByteArray());
+                    bResp = this.misoDep.transceive(baos.toByteArray());
                     if (bResp.length < 2) {
                         throw new ApduConnectionException("No se ha recibido respuesta al env\u00edo del comando."); //$NON-NLS-1$
                     }
@@ -80,7 +85,7 @@ public final class AndroidNfcConnection implements ApduConnection {
             } else {
             	byte[] bResp = new byte[]{0, 0};
                 try {
-                    bResp = misoDep.transceive(command.getBytes());
+                    bResp = this.misoDep.transceive(command.getBytes());
                     if (bResp.length < 2) {
                         throw new ApduConnectionException("No se ha recibido respuesta al env\u00edo del comando."); //$NON-NLS-1$
                     }
@@ -115,8 +120,8 @@ public final class AndroidNfcConnection implements ApduConnection {
     @Override
     public void open() throws ApduConnectionException {
         try {
-            if (!misoDep.isConnected()) {
-                misoDep.connect();
+            if (!this.misoDep.isConnected()) {
+                this.misoDep.connect();
             }
         }
         catch (final Exception e) {
@@ -126,31 +131,17 @@ public final class AndroidNfcConnection implements ApduConnection {
 
     @Override
     public void close() throws ApduConnectionException {
-        this.closeConnection(false);
-    }
-
-    private void closeConnection(final boolean resetCard) throws ApduConnectionException {
-        if (misoDep != null) {
-            try {
-                if (misoDep.isConnected()) {
-                    //misoDep.close();
-                }
-            }
-            catch (final Exception e) {
-                throw new ApduConnectionException("Error intentando cerrar el objeto de tarjeta inteligente, la conexion puede quedar abierta pero inutil", e); //$NON-NLS-1$
-            }
-        }
+    	//No se cierran las conexiones por NFC
     }
 
     @Override
     public byte[] reset() throws ApduConnectionException {
-        //this.closeConnection(true);
-        //this.open();
-        if (misoDep != null) {
-        	if (misoDep.getHistoricalBytes() != null) {
-        		return misoDep.getHistoricalBytes();
+    	//No se cierran las conexiones por NFC
+        if (this.misoDep != null) {
+        	if (this.misoDep.getHistoricalBytes() != null) {
+        		return this.misoDep.getHistoricalBytes();
         	}
-			return misoDep.getHiLayerResponse();
+			return this.misoDep.getHiLayerResponse();
         }
         throw new ApduConnectionException("Error indefinido reiniciando la conexion con la tarjeta"); //$NON-NLS-1$
 
@@ -183,7 +174,7 @@ public final class AndroidNfcConnection implements ApduConnection {
 
 	@Override
 	public boolean isOpen() {
-		return misoDep.isConnected();
+		return this.misoDep.isConnected();
 	}
 
 	@Override

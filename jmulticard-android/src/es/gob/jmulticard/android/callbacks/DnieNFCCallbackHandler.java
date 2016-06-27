@@ -21,6 +21,9 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 	private final Activity activity;
 	private final DialogDoneChecker dialogDone;
 
+	/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
+	 * @param ac Handler de la actividad desde la que se llama.
+	 * @param ddc Instancia de la clase utilizada para utilizar wait() y notify() al esperar el PIN. */
 	public DnieNFCCallbackHandler(final Activity ac, final DialogDoneChecker ddc) {
 		this.activity = ac;
 		this.dialogDone = ddc;
@@ -38,7 +41,6 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 							cb,
 							this.dialogDone
 						);
-
 					final FragmentTransaction ft = ((FragmentActivity)this.activity).getSupportFragmentManager().beginTransaction();
 					final ShowPinDialogTask spdt = new ShowPinDialogTask(dialog, ft, this.activity, this.dialogDone);
 					final String input = spdt.getInput();

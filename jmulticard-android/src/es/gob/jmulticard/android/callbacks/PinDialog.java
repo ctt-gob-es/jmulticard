@@ -58,16 +58,17 @@ public class PinDialog extends DialogFragment {
 	}
 
 	/** Construye un di&acute;logo para introducir el PIN.
-	 * @param title T&iacute;tulo del di&aacute;logo.
-	 * @param cb
-	 * @param prompt Contenido del di&aacute;logo. */
+	 * @param isCan true si es di&acute;logo para introducir el CAN y false para introducir el PIN.
+	 * @param activity Listener de la actividad desde la que se llama.
+	 * @param cb Callback para guardar el PIN pedido al usuario.
+	 * @param ddc Instancia de la clase utilizada para utilizar wait() y notify() al esperar el PIN. */
 	public PinDialog(final boolean isCan, final Activity activity, final Callback cb, final DialogDoneChecker ddc) {
         this.isCan=isCan;
         if(isCan) {
-        	this.title = "Introducci\u00f3n de CAN";//getString(R.string.can_intro);
+        	this.title = "Introducci\u00f3n de CAN"; //$NON-NLS-1$
         }
         else {
-        	this.title = "Introducci\u00f3n de PIN";//getString(R.string.pin_intro);
+        	this.title = "Introducci\u00f3n de PIN (" + ((PasswordCallback)cb).getPrompt() + " intentos)"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         this.activity = activity;
         callback = cb;
@@ -95,6 +96,9 @@ public class PinDialog extends DialogFragment {
 				@Override
 				public void onClick(final DialogInterface dialog, final int id) {
 					dialog.dismiss();
+					synchronized(PinDialog.this.dialogDone) {
+						PinDialog.this.dialogDone.notify();
+					}
 				}
 			}
 		);
@@ -109,12 +113,10 @@ public class PinDialog extends DialogFragment {
 					if (callback instanceof PasswordCallback) {
 						final PasswordCallback pc = (PasswordCallback) callback;
 						pc.setPassword(editTextPin.getText().toString().toCharArray());
-						PinDialog.this.dialogDone.setPinReady(true);
 					}
 					else if (callback instanceof TextInputCallback) {
 						final TextInputCallback pc = (TextInputCallback) callback;
 						pc.setText(editTextPin.getText().toString());
-						PinDialog.this.dialogDone.setCanReady(true);
 					}
 					synchronized(PinDialog.this.dialogDone) {
 						PinDialog.this.dialogDone.notify();

@@ -15,26 +15,11 @@ package es.gob.jmulticard.android.callbacks;
  * Clase para instanciar un objeto mutable y crear una sincronizaci&oacute;n durante las llamadas a di&aacute;logo mediante callbacks
  */
 public class DialogDoneChecker {
-    boolean canReady = false;
-    boolean pinReady = false;
 
+    /**
+     * Case utilizada para utilizar wait() y notify() al esperar el PIN.
+     */
     public DialogDoneChecker() {
 
-    }
-
-    public void setCanReady(final boolean cr) {
-        this.canReady = cr;
-    }
-
-    public void setPinReady(final boolean pr) {
-        this.pinReady = pr;
-    }
-
-    public boolean getCanReady() {
-        return this.canReady;
-    }
-
-    public boolean getPinReady() {
-        return this.pinReady;
     }
 }
