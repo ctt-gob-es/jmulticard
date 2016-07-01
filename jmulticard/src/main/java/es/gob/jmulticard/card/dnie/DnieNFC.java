@@ -54,7 +54,7 @@ public final class DnieNFC extends Dnie3 {
 		{
 			//Pide el codigo can en caso de que no haya sido introducido con anterioridad
 			//El contador permite hacer dos verificaciones del can por si en la primera no se hubiera reseteado la tarjeta
-			if(can == null || counter > 1) {
+			if(can == null || counter > 0) {
 				try {
 					ch.handle(
 						new Callback[] {
@@ -83,6 +83,9 @@ public final class DnieNFC extends Dnie3 {
 					con,
 					new JseCryptoHelper()
 				);
+				// En caso de establecer correctamente el canal inicializamos el contador para que
+				// siempre obtenga el can mediante el callback
+				counter = 0;
 				wrongCan = false;
 			}
 			catch(final PaceException e) {
