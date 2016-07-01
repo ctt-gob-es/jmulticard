@@ -36,7 +36,7 @@ public final class AOUtil {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final Logger LOGGER = Logger.getLogger("es.gob.afirma"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     private static final String[] SUPPORTED_URI_SCHEMES = new String[] {
             "http", "https", "file", "urn" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
