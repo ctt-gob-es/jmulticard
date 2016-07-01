@@ -23,9 +23,9 @@ public class DnieCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof TextInputCallback) {
 					final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
-						((TextInputCallback)cb).getPrompt(),
+						Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
 						null,
-						((TextInputCallback)cb).getPrompt(),
+						Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
 						Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
 					);
 					((TextInputCallback)cb).setText(new String(uip.getPassword()));
@@ -37,7 +37,7 @@ public class DnieCallbackHandler implements CallbackHandler {
 				}
 				else if (cb instanceof PasswordCallback) {
 					final CommonPasswordCallback uip = new CommonPasswordCallback(
-						((PasswordCallback)cb).getPrompt(),
+						Messages.getString("CommonPasswordCallback.4") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
 						Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
 						true
 					);
