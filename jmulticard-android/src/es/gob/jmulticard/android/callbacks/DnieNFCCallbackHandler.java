@@ -20,13 +20,16 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	private final Activity activity;
 	private final DialogDoneChecker dialogDone;
+	private CachePasswordCallback passwordCallback;
 
 	/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
 	 * @param ac Handler de la actividad desde la que se llama.
-	 * @param ddc Instancia de la clase utilizada para utilizar wait() y notify() al esperar el PIN. */
-	public DnieNFCCallbackHandler(final Activity ac, final DialogDoneChecker ddc) {
+	 * @param ddc Instancia de la clase utilizada para utilizar wait() y notify() al esperar el PIN.
+	 * @param passwordCallback Instancia que contiene el CAN pedido antes a la lectura NFC.*/
+	public DnieNFCCallbackHandler(final Activity ac, final DialogDoneChecker ddc, final CachePasswordCallback passwordCallback) {
 		this.activity = ac;
 		this.dialogDone = ddc;
+		this.passwordCallback = passwordCallback;
 	}
 
 	@Override
@@ -49,18 +52,25 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 
 					return;
 				}
-
+				String input;
 				if (cb instanceof TextInputCallback) {
-					final PinDialog dialog = new PinDialog(
-						true,
-						this.activity,
-						cb,
-						this.dialogDone
-					);
+					if(this.passwordCallback == null) {
+						final PinDialog dialog = new PinDialog(
+							true,
+							this.activity,
+							cb,
+							this.dialogDone
+						);
 
-					final FragmentTransaction ft = ((FragmentActivity)this.activity).getSupportFragmentManager().beginTransaction();
-					final ShowPinDialogTask spdt = new ShowPinDialogTask(dialog, ft, this.activity, this.dialogDone);
-					final String input = spdt.getInput();
+						final FragmentTransaction ft = ((FragmentActivity)this.activity).getSupportFragmentManager().beginTransaction();
+						final ShowPinDialogTask spdt = new ShowPinDialogTask(dialog, ft, this.activity, this.dialogDone);
+						input = spdt.getInput();
+					}
+					else {
+						input = new String(this.passwordCallback.getPassword());
+						// En caso de fallar el primer CAN lo pedira de nuevo al ususario
+						this.passwordCallback = null;
+					}
 
 					((TextInputCallback) cb).setText(input);
 
