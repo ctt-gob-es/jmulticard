@@ -117,13 +117,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	}
 
     	// No permitimos PIN nulo, si llega nulo pedimos por dialogo grafico
-    	if (password == null) {
-    		// En Android damos directamente un fallo
-    		if ("Dalvik".equals(System.getProperty("java.vm.name"))) { //$NON-NLS-1$ //$NON-NLS-2$
-    			throw new IllegalArgumentException("Es necesario proporcionar el PIN de la tarjeta"); //$NON-NLS-1$
-    		}
-    	}
-    	else {
+    	if (password != null) {
     		this.cryptoCard.setPasswordCallback(
 				new CachePasswordCallback(password)
 			);
