@@ -50,6 +50,7 @@ public final class DnieNFC extends Dnie3 {
 		SecureMessaging sm = null;
 		boolean wrongCan = true;
 		int counter = 0;
+		can = null;
 		while(wrongCan)
 		{
 			//Pide el codigo can en caso de que no haya sido introducido con anterioridad
