@@ -21,7 +21,7 @@ public class CeresCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof PasswordCallback) {
 					final CommonPasswordCallback uip = new CommonPasswordCallback(
-						((PasswordCallback)cb).getPrompt(),
+						Messages.getString("CommonPasswordCallback.3") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
 						Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
 						false
 					);
@@ -32,7 +32,7 @@ public class CeresCallbackHandler implements CallbackHandler {
 			}
 		}
 		else {
-			LOGGER.warning("Se ha revibido un array de Callbacks nulo"); //$NON-NLS-1$
+			LOGGER.warning("Se ha recibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
 		throw new UnsupportedCallbackException(null);
 	}
