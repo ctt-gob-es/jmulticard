@@ -740,7 +740,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         	PasswordCallback  pwc;
 
         	pwc = new PasswordCallback(
-    				retriesLeft+"",  //$NON-NLS-1$
+    				retriesLeft + "",  //$NON-NLS-1$
     				false
     			);
 			try {
@@ -756,6 +756,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 				throw new PinException(
 					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, //$NON-NLS-1$
 					e
+				);
+			}
+			if (pwc.getPassword() == null || pwc.getPassword().toString().isEmpty()) {
+				throw new PinException("El PIN no puede ser nulo ni vacio" //$NON-NLS-1$
 				);
 			}
 			return pwc;
