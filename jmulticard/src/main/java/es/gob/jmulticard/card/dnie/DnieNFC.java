@@ -45,7 +45,7 @@ public final class DnieNFC extends Dnie3 {
 			tic = new TextInputCallback();
 		}
 		else {
-			tic = new javax.security.auth.callback.TextInputCallback(null);
+			tic = new javax.security.auth.callback.TextInputCallback("."); //$NON-NLS-1$
 		}
 		SecureMessaging sm = null;
 		boolean wrongCan = true;
@@ -96,7 +96,7 @@ public final class DnieNFC extends Dnie3 {
 					tic = new TextInputCallback();
 				}
 				else {
-					tic = new javax.security.auth.callback.TextInputCallback(null);
+					tic = new javax.security.auth.callback.TextInputCallback(".");
 				}
 				counter++;
 			}
