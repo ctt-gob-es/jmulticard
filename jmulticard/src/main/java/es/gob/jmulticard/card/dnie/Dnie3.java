@@ -71,6 +71,40 @@ public class Dnie3 extends Dnie {
         this.rawConnection = conn;
     }
 
+    /**
+     * @return M&eacute;todo usado por las clases test para obtener los objetos del DNIe
+     * @throws CryptoCardException
+     * @throws PinException
+     */
+    public ApduConnection openUserChannel() throws CryptoCardException, PinException {
+    	//openSecureChannelIfNotAlreadyOpened();
+    	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
+        		this,
+        		this.getConnection(),
+        		getCryptoHelper(),
+        		new Dnie3UsrCwa14890Constants()
+    		);
+
+    		try {
+    			selectMasterFile();
+    		}
+    		catch (final Exception e) {
+    			throw new CryptoCardException(
+            		"Error seleccionado el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		);
+    		}
+
+            try {
+                setConnection(usrSecureConnection);
+            }
+            catch (final ApduConnectionException e) {
+                throw new CryptoCardException(
+            		"Error en el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		);
+            }
+    	return this.getConnection();
+    }
+
     /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
      * solicita y comprueba el PIN e inmediatamente despu&eacute;s y, si la verificaci&oacute;n es correcta,
      * establece el canal de USUARIO CWA-14890.
