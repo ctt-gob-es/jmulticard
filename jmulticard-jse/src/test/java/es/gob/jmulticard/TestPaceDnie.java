@@ -8,6 +8,8 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 
+import javax.security.auth.callback.PasswordCallback;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.spongycastle.jce.ECNamedCurveTable;
@@ -16,7 +18,6 @@ import org.spongycastle.jce.spec.ECParameterSpec;
 import org.spongycastle.jce.spec.ECPrivateKeySpec;
 
 import es.gob.jmulticard.CryptoHelper.EcCurve;
-import es.gob.jmulticard.TestCeres.CachePasswordCallback;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.dnie.DnieFactory;
@@ -26,6 +27,18 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 /** pruebas de PACE con DNIe 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestPaceDnie {
+
+	final static class CachePasswordCallback extends PasswordCallback {
+
+	    private static final long serialVersionUID = 816457144215238935L;
+
+	    /** Contruye una Callback con una contrase&ntilde; preestablecida.
+	     * @param password Contrase&ntilde;a por defecto. */
+	    public CachePasswordCallback(final char[] password) {
+	        super(">", false); //$NON-NLS-1$
+	        this.setPassword(password);
+	    }
+	}
 
 	/** Main.
 	 * @param args No se usa.
