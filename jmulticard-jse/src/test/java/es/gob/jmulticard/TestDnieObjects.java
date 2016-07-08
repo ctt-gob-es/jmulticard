@@ -8,6 +8,8 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import org.junit.Test;
+
 import de.tsenger.androsmex.mrtd.DG11;
 import de.tsenger.androsmex.mrtd.DG1_Dnie;
 import de.tsenger.androsmex.mrtd.DG2;
@@ -40,10 +42,10 @@ public final class TestDnieObjects {
         ID_FILE_DG7 = new byte[]{1, 7};
         ID_FILE_DG11 = new byte[]{1, 11};
     }
-	/** Main.
-	 * @param args No se usa.
-	 * @throws Exception En cualquier error. */
-	public static void main(final String[] args) throws Exception {
+	/** Prueba la obtenci&oacute;n de los objetos del DNIe */
+    @SuppressWarnings("static-method")
+	@Test
+	public void testDnieObjects() throws Exception {
 		ApduConnection conn = new SmartcardIoConnection();
 		Dnie3 dni = null;
 
