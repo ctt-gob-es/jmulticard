@@ -24,5 +24,10 @@
 			<artifactId>jmulticard-jsr268</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>es.gob</groupId>
+			<artifactId>jmulticard-ui</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
