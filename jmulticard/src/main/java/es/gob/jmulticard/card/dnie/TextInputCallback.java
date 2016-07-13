@@ -41,20 +41,10 @@ public class TextInputCallback implements Callback, java.io.Serializable {
 
     private static final long serialVersionUID = -8064222478852811804L;
 
-    /**
-     * @serial
-     * @since 1.4
-     */
     private final String prompt;
-    /**
-     * @serial
-     * @since 1.4
-     */
+
     private String defaultText;
-    /**
-     * @serial
-     * @since 1.4
-     */
+
     private String inputText;
 
     /**

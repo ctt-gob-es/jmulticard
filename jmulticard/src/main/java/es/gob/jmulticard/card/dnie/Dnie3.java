@@ -71,37 +71,34 @@ public class Dnie3 extends Dnie {
         this.rawConnection = conn;
     }
 
-    /**
-     * @return M&eacute;todo usado por las clases test para obtener los objetos del DNIe
-     * @throws CryptoCardException
-     * @throws PinException
-     */
-    public ApduConnection openUserChannel() throws CryptoCardException, PinException {
-    	//openSecureChannelIfNotAlreadyOpened();
+    /** Abre el canal seguro de usuario.
+     * @return Nueva conexi&oacute;n establecida.
+     * @throws CryptoCardException Si hay problemas en la apertura de canal. */
+    public ApduConnection openUserChannel() throws CryptoCardException {
     	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
-        		this,
-        		this.getConnection(),
-        		getCryptoHelper(),
-        		new Dnie3UsrCwa14890Constants()
+    		this,
+    		this.getConnection(),
+    		getCryptoHelper(),
+    		new Dnie3UsrCwa14890Constants()
+		);
+
+		try {
+			selectMasterFile();
+		}
+		catch (final Exception e) {
+			throw new CryptoCardException(
+        		"Error seleccionado el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
     		);
+		}
 
-    		try {
-    			selectMasterFile();
-    		}
-    		catch (final Exception e) {
-    			throw new CryptoCardException(
-            		"Error seleccionado el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
-        		);
-    		}
-
-            try {
-                setConnection(usrSecureConnection);
-            }
-            catch (final ApduConnectionException e) {
-                throw new CryptoCardException(
-            		"Error en el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
-        		);
-            }
+        try {
+            setConnection(usrSecureConnection);
+        }
+        catch (final ApduConnectionException e) {
+            throw new CryptoCardException(
+        		"Error en el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+    		);
+        }
     	return this.getConnection();
     }
 

@@ -51,8 +51,7 @@ public final class DnieNFC extends Dnie3 {
 		boolean wrongCan = true;
 		int counter = 0;
 		can = null;
-		while(wrongCan)
-		{
+		while(wrongCan) {
 			//Pide el codigo can en caso de que no haya sido introducido con anterioridad
 			//El contador permite hacer dos verificaciones del can por si en la primera no se hubiera reseteado la tarjeta
 			if(can == null || counter > 0) {
@@ -96,59 +95,58 @@ public final class DnieNFC extends Dnie3 {
 					tic = new TextInputCallback();
 				}
 				else {
-					tic = new javax.security.auth.callback.TextInputCallback(".");
+					tic = new javax.security.auth.callback.TextInputCallback("."); //$NON-NLS-1$
 				}
 				counter++;
 			}
 		}
 
         // Establecemos el canal PACE
-    	final PaceConnection paceSecureConnection = new PaceConnection(
+		return new PaceConnection(
     		con,
     		new JseCryptoHelper(),
     		sm
 		);
 
-        return paceSecureConnection;
 	}
 
 	private static ApduConnection paceConnection(final ApduConnection con, final String can1) throws ApduConnectionException, PaceException {
-		SecureMessaging sm = null;
 
-		sm = PaceChannelHelper.openPaceChannel(
-				(byte)0x00,//(byte)0x10,
-				can1, // CAN
-				con,
-				new JseCryptoHelper()
-			);
+		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
+			(byte)0x00,//(byte)0x10,
+			can1, // CAN
+			con,
+			new JseCryptoHelper()
+		);
 
         // Establecemos el canal PACE
-    	final PaceConnection paceSecureConnection = new PaceConnection(
+    	return new PaceConnection(
     		con,
     		new JseCryptoHelper(),
     		sm
 		);
 
-        return paceSecureConnection;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
 																PinException {
-			if(!(getConnection() instanceof Cwa14890Connection)) {
-				try {
-					this.rawConnection = paceConnection(getConnection(), can);
-				} catch (final ApduConnectionException e) {
-					throw new CryptoCardException(
-							"Error en la transmision de la APDU: " + e //$NON-NLS-1$
-					);
-				} catch (final PaceException e) {
-					throw new CryptoCardException(
-							"Error en el establecimiento del canal PACE: " + e //$NON-NLS-1$
-					);
-				}
+		if(!(getConnection() instanceof Cwa14890Connection)) {
+			try {
+				this.rawConnection = paceConnection(getConnection(), can);
 			}
+			catch (final ApduConnectionException e) {
+				throw new CryptoCardException(
+					"Error en la transmision de la APDU: " + e //$NON-NLS-1$
+				);
+			}
+			catch (final PaceException e) {
+				throw new CryptoCardException(
+					"Error en el establecimiento del canal PACE: " + e //$NON-NLS-1$
+				);
+			}
+		}
 
 		super.openSecureChannelIfNotAlreadyOpened();
 	}
@@ -166,8 +164,11 @@ public final class DnieNFC extends Dnie3 {
     		setConnection(((Cwa14890Connection)getConnection()).getSubConnection());
     		//Resetea la tarjeta intentando leer un fichero sin cifrar el canal (se obtiene error 69 87)
     		resetCard();
-		} catch (final ApduConnectionException e) {
-			e.printStackTrace();
+		}
+    	catch (final ApduConnectionException e) {
+			LOGGER.warning(
+				"Fallo en el reinicio del canal seguro: " + e //$NON-NLS-1$
+			);
 		}
 
     	return ret;
@@ -178,7 +179,7 @@ public final class DnieNFC extends Dnie3 {
 			selectMasterFile();
 		}
 		catch (final Exception e1) {
-			//Error al pasar de un canal cifrado a uno no cifrado. Se usa para reiniciar la tarjeta inteligente por NFC
+			// Error al pasar de un canal cifrado a uno no cifrado. Se usa para reiniciar la tarjeta inteligente por NFC
 		}
 	}
 }
