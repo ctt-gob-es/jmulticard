@@ -95,7 +95,7 @@ public final class DnieNFC extends Dnie3 {
 					tic = new TextInputCallback();
 				}
 				else {
-					tic = new javax.security.auth.callback.TextInputCallback("."); //$NON-NLS-1$
+					tic = new javax.security.auth.callback.TextInputCallback("dummy"); //$NON-NLS-1$
 				}
 				counter++;
 			}
