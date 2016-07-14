@@ -37,14 +37,24 @@ import javax.security.auth.callback.Callback;
  *
  * @see javax.security.auth.callback.CallbackHandler
  */
-public class TextInputCallback implements Callback, java.io.Serializable {
+public class CustomTextInputCallback implements Callback, java.io.Serializable {
 
     private static final long serialVersionUID = -8064222478852811804L;
 
+    /**
+     * @serial
+     * @since 1.4
+     */
     private final String prompt;
-
+    /**
+     * @serial
+     * @since 1.4
+     */
     private String defaultText;
-
+    /**
+     * @serial
+     * @since 1.4
+     */
     private String inputText;
 
     /**
@@ -55,7 +65,7 @@ public class TextInputCallback implements Callback, java.io.Serializable {
      * @exception IllegalArgumentException if <code>prompt</code> is null
      *                  or if <code>prompt</code> has a length of 0.
      */
-    public TextInputCallback() {
+    public CustomTextInputCallback() {
         this.prompt = null;
     }
 
@@ -75,7 +85,7 @@ public class TextInputCallback implements Callback, java.io.Serializable {
      *                  if <code>defaultText</code> is null
      *                  or if <code>defaultText</code> has a length of 0.
      */
-    public TextInputCallback(final String prompt, final String defaultText) {
+    public CustomTextInputCallback(final String prompt, final String defaultText) {
         if (prompt == null || prompt.length() == 0 ||
                 defaultText == null || defaultText.length() == 0) {
 			throw new IllegalArgumentException();

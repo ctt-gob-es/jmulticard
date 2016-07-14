@@ -40,7 +40,7 @@ public final class DnieNFC extends Dnie3 {
 
 		Callback tic;
 		// Primero obtenemos el CAN
-		tic = new TextInputCallback();
+		tic = new CustomTextInputCallback();
 
 		SecureMessaging sm = null;
 		boolean wrongCan = true;
@@ -60,7 +60,7 @@ public final class DnieNFC extends Dnie3 {
 				catch (final Exception e) {
 					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
 				}
-				can = ((TextInputCallback)tic).getText();
+				can = ((CustomTextInputCallback)tic).getText();
 
 				if (can == null || can.isEmpty()) {
 					throw new InvalidCanException("El CAN no puede ser nulo ni vacio"); //$NON-NLS-1$
@@ -82,7 +82,7 @@ public final class DnieNFC extends Dnie3 {
 				//Si el CAN es incorrecto modificamos el mensaje del dialogo y volvemos a pedirlo
 				wrongCan = true;
 				if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
-					tic = new TextInputCallback();
+					tic = new CustomTextInputCallback();
 				}
 				else {
 					tic = new javax.security.auth.callback.TextInputCallback("dummy"); //$NON-NLS-1$

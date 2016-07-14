@@ -45,7 +45,7 @@ import javax.security.sasl.SaslServer;
  * (identified by an authenticated authentication ID) can act on behalf of
  * another entity (identified by an authorization ID).
  */
-public class AuthorizeCallback implements Callback
+public class CustomAuthorizeCallback implements Callback
 {
 
     // Constants and variables
@@ -78,7 +78,7 @@ public class AuthorizeCallback implements Callback
      * @param authnID the (authenticated) authentication ID.
      * @param authzID the authorization ID.
      */
-    public AuthorizeCallback(final String authnID, final String authzID)
+    public CustomAuthorizeCallback(final String authnID, final String authzID)
     {
         super();
 

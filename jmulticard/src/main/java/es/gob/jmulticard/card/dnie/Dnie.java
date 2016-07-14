@@ -560,7 +560,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         if (this.callh != null) {
         	Callback cc;
         	// Callback para autorizar la firma
-    		cc = new AuthorizeCallback(
+    		cc = new CustomAuthorizeCallback(
             		null,
             		null
     		);
@@ -578,7 +578,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     			);
 			}
 
-        	if (!((AuthorizeCallback)cc).isAuthorized()) {
+        	if (!((CustomAuthorizeCallback)cc).isAuthorized()) {
 				throw new CancelledSignOperationException(
 					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
 				);
