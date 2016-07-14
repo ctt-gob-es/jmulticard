@@ -26,7 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import es.gob.jmulticard.android.R;
-import es.gob.jmulticard.card.dnie.TextInputCallback;
+import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
 
 /** Di&acute;logo para introducir el PIN.
  * Se usa en almacenes distintos al del propio sistema operativo Android.
@@ -114,8 +114,8 @@ public class PinDialog extends DialogFragment {
 						final PasswordCallback pc = (PasswordCallback) callback;
 						pc.setPassword(editTextPin.getText().toString().toCharArray());
 					}
-					else if (callback instanceof TextInputCallback) {
-						final TextInputCallback pc = (TextInputCallback) callback;
+					else if (callback instanceof CustomTextInputCallback) {
+						final CustomTextInputCallback pc = (CustomTextInputCallback) callback;
 						pc.setText(editTextPin.getText().toString());
 					}
 					synchronized(PinDialog.this.dialogDone) {

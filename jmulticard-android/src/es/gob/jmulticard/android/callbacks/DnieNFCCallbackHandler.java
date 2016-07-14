@@ -10,8 +10,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import es.gob.jmulticard.card.dnie.AuthorizeCallback;
-import es.gob.jmulticard.card.dnie.TextInputCallback;
+import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
+import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */
@@ -53,7 +53,7 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 					return;
 				}
 				String input;
-				if (cb instanceof TextInputCallback) {
+				if (cb instanceof CustomTextInputCallback) {
 					if(this.passwordCallback == null) {
 						final PinDialog dialog = new PinDialog(
 							true,
@@ -72,12 +72,12 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 						this.passwordCallback = null;
 					}
 
-					((TextInputCallback) cb).setText(input);
+					((CustomTextInputCallback) cb).setText(input);
 
 					return;
 				}
 
-				if (cb instanceof AuthorizeCallback) {
+				if (cb instanceof CustomAuthorizeCallback) {
 					return;
 				}
 
