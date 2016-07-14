@@ -578,20 +578,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     			);
 			}
 
-        	if("Dalvik".equalsIgnoreCase(System.getProperty("java.vm.name"))) {//$NON-NLS-1$ //$NON-NLS-2$
-				if (!((AuthorizeCallback)cc).isAuthorized()) {
-					throw new CancelledSignOperationException(
-						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
-					);
-				}
-        	}
-        	else {
-        		if (!((javax.security.sasl.AuthorizeCallback)cc).isAuthorized()) {
-					throw new CancelledSignOperationException(
-						"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
-					);
-				}
-        	}
+        	if (!((AuthorizeCallback)cc).isAuthorized()) {
+				throw new CancelledSignOperationException(
+					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
+				);
+			}
         }
         else {
         	LOGGER.warning(
