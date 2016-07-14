@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import es.gob.jmulticard.card.dnie.AuthorizeCallback;
+import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
 import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogDnie;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
@@ -75,7 +75,7 @@ private static boolean headless = false;
 
     /** Muestra un di&aacute;logo para la confirmaci&oacute;n de una operaci&oacute;n con clave privada.
      * @param callBack Callback que obtiene la confirmaci&oacute;n del usuario. */
-    public static void showSignatureConfirmDialog(final AuthorizeCallback callBack) {
+    public static void showSignatureConfirmDialog(final CustomAuthorizeCallback callBack) {
         if (!headless) {
             try {
             	final int i = CustomDialogDnie.showConfirmDialog(
@@ -98,7 +98,7 @@ private static boolean headless = false;
         }
     }
 
-    private static int getConsoleConfirm(final Console console, final AuthorizeCallback callBack) {
+    private static int getConsoleConfirm(final Console console, final CustomAuthorizeCallback callBack) {
         console.printf(Messages.getString("CustomDialog.confirmDialog.prompt")); //$NON-NLS-1$
         final String confirm = console.readLine().replace("\n", "").replace("\r", "").trim().toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ("si".equals(confirm) //$NON-NLS-1$
