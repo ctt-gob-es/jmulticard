@@ -48,12 +48,38 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Dnie3 extends Dnie {
+
+    protected static final Location FILE_DG01_LOCATION_MRZ   = new Location("3F010101"); //$NON-NLS-1$
+    protected static final Location FILE_DG02_LOCATION_PHOTO = new Location("3F010102"); //$NON-NLS-1$
+    protected static final Location FILE_DG07_LOCATION_SIGN  = new Location("3F010107"); //$NON-NLS-1$
+
+    /** Obtiene la foto del titular en formato JPEG2000.
+     * @return Foto del titular en formato JPEG2000. */
+	@SuppressWarnings("static-method")
+	public byte[] getSubjectPhotoAsJpeg2k() {
+		throw new UnsupportedOperationException();
+	}
+
+	/** Obtiene la MRZ del DNIe 3.0.
+	 * @return MRZ del DNIe 3.0. */
+	@SuppressWarnings("static-method")
+	public Dnie3Dg01Mrz getMrz() {
+		throw new UnsupportedOperationException();
+	}
+
+	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
+     * @return Imagen de la firma del titular en formato JPEG2000. */
+	@SuppressWarnings("static-method")
+	public byte[] getSubjectSignatureImageAsJpen2k() {
+		throw new UnsupportedOperationException();
+	}
 
     /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
     protected ApduConnection rawConnection;
