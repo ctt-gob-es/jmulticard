@@ -39,10 +39,13 @@
  */
 package es.gob.jmulticard.card.dnie;
 
+import java.io.IOException;
+
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
@@ -51,35 +54,80 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
+import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3.0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Dnie3 extends Dnie {
 
-    protected static final Location FILE_DG01_LOCATION_MRZ   = new Location("3F010101"); //$NON-NLS-1$
-    protected static final Location FILE_DG02_LOCATION_PHOTO = new Location("3F010102"); //$NON-NLS-1$
-    protected static final Location FILE_DG07_LOCATION_SIGN  = new Location("3F010107"); //$NON-NLS-1$
+    private static final Location FILE_DG01_LOCATION_MRZ   = new Location("3F010101"); //$NON-NLS-1$
+    private static final Location FILE_DG02_LOCATION_PHOTO = new Location("3F010102"); //$NON-NLS-1$
+    private static final Location FILE_DG07_LOCATION_SIGN  = new Location("3F010107"); //$NON-NLS-1$
 
     /** Obtiene la foto del titular en formato JPEG2000.
-     * @return Foto del titular en formato JPEG2000. */
-	@SuppressWarnings("static-method")
-	public byte[] getSubjectPhotoAsJpeg2k() {
-		throw new UnsupportedOperationException();
+     * @return Foto del titular en formato JPEG2000.
+     * @throws IOException Si no se puede leer la foto del titular. */
+	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
+		// Abrimos canal de usuario solo si es necesario
+		//TODO: POR HACER
+
+		byte[] photo;
+		try {
+			photo = selectFileByLocationAndRead(FILE_DG02_LOCATION_PHOTO);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG2 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+		return extractImage(photo);
 	}
 
 	/** Obtiene la MRZ del DNIe 3.0.
-	 * @return MRZ del DNIe 3.0. */
-	@SuppressWarnings("static-method")
-	public Dnie3Dg01Mrz getMrz() {
-		throw new UnsupportedOperationException();
+	 * @return MRZ del DNIe 3.0.
+	 * @throws IOException Si no se puede leer el fichero con el MRZ del DNIe. */
+	public Dnie3Dg01Mrz getMrz() throws IOException {
+		// Abrimos canal de usuario solo si es necesario
+		//TODO: POR HACER
+
+		final byte[] mrz;
+		try {
+			mrz = selectFileByLocationAndRead(FILE_DG01_LOCATION_MRZ);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG1 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+		return new Dnie3Dg01Mrz(mrz);
 	}
 
 	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
-     * @return Imagen de la firma del titular en formato JPEG2000. */
-	@SuppressWarnings("static-method")
-	public byte[] getSubjectSignatureImageAsJpen2k() {
-		throw new UnsupportedOperationException();
+     * @return Imagen de la firma del titular en formato JPEG2000.
+	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
+	public byte[] getSubjectSignatureImageAsJpen2k() throws IOException {
+		// Abrimos canal de usuario solo si es necesario
+		//TODO: POR HACER
+
+		byte[] photo;
+		try {
+			photo = selectFileByLocationAndRead(FILE_DG07_LOCATION_SIGN);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG7 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+		return extractImage(photo);
 	}
+
+    private static final String JPEG2K_HEADER = "0000000C6A502020"; //$NON-NLS-1$
+
+    private static final byte[] extractImage(final byte[] photo) {
+    	if (photo == null) {
+    		throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
+    	}
+    	final int headerSize = (HexUtils.hexify(photo, false).indexOf(JPEG2K_HEADER) / 2);
+    	final byte[] pj2kPhoto = new byte[photo.length - headerSize];
+        System.arraycopy(photo, headerSize, pj2kPhoto, 0, pj2kPhoto.length);
+
+        // En este punto pj2kPhoto contiene la imagen en JPEG2000
+        return pj2kPhoto;
+    }
 
     /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
     protected ApduConnection rawConnection;
