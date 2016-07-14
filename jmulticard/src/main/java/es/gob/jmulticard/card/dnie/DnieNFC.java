@@ -40,13 +40,8 @@ public final class DnieNFC extends Dnie3 {
 
 		Callback tic;
 		// Primero obtenemos el CAN
-		// Filtramos si la ejecucion es en Android
-		if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
-			tic = new TextInputCallback();
-		}
-		else {
-			tic = new javax.security.auth.callback.TextInputCallback("dummy"); //$NON-NLS-1$
-		}
+		tic = new TextInputCallback();
+
 		SecureMessaging sm = null;
 		boolean wrongCan = true;
 		int counter = 0;
@@ -65,12 +60,7 @@ public final class DnieNFC extends Dnie3 {
 				catch (final Exception e) {
 					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
 				}
-				if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
-					can = ((TextInputCallback)tic).getText();
-				}
-				else {
-					can = ((javax.security.auth.callback.TextInputCallback)tic).getText();
-				}
+				can = ((TextInputCallback)tic).getText();
 
 				if (can == null || can.isEmpty()) {
 					throw new InvalidCanException("El CAN no puede ser nulo ni vacio"); //$NON-NLS-1$

@@ -559,19 +559,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         if (this.callh != null) {
         	Callback cc;
-        	// Filtramos si la ejecucion es en Android
-        	if("Dalvik".equalsIgnoreCase(System.getProperty("java.vm.name"))) {//$NON-NLS-1$ //$NON-NLS-2$
-    			cc = new AuthorizeCallback(
-            			null,
-            			null
-    			);
-    		}
-    		else {
-    			cc = new javax.security.sasl.AuthorizeCallback(
-            			null,
-            			null
-    			);
-    		}
+        	// Callback para autorizar la firma
+    		cc = new AuthorizeCallback(
+            		null,
+            		null
+    		);
 
         	try {
 				this.callh.handle(
