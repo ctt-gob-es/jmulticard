@@ -45,8 +45,9 @@ import java.security.PrivilegedAction;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import javax.security.sasl.AuthorizeCallback;
 import javax.swing.JOptionPane;
+
+import es.gob.jmulticard.card.dnie.AuthorizeCallback;
 import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogDnie;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
