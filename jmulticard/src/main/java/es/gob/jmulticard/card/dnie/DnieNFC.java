@@ -25,9 +25,6 @@ public final class DnieNFC extends Dnie3 {
 	// Se guarda el codigo CAN para establecer un canal PACE cada vez que se quiere
 	// realizar una operacion de firma
 	private static String can;
-	private static String ANDROID_OS_NAME = "Dalvik"; //$NON-NLS-1$
-	private static String OS_NAME_PROPERTY = "java.vm.name"; //$NON-NLS-1$
-
 	DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
@@ -81,12 +78,7 @@ public final class DnieNFC extends Dnie3 {
 			catch(final PaceException e) {
 				//Si el CAN es incorrecto modificamos el mensaje del dialogo y volvemos a pedirlo
 				wrongCan = true;
-				if(ANDROID_OS_NAME.equalsIgnoreCase(System.getProperty(OS_NAME_PROPERTY))) {
-					tic = new CustomTextInputCallback();
-				}
-				else {
-					tic = new javax.security.auth.callback.TextInputCallback("dummy"); //$NON-NLS-1$
-				}
+				tic = new CustomTextInputCallback();
 				counter++;
 			}
 		}

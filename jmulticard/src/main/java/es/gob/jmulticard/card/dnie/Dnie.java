@@ -560,10 +560,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         if (this.callh != null) {
         	Callback cc;
         	// Callback para autorizar la firma
-    		cc = new CustomAuthorizeCallback(
-            		null,
-            		null
-    		);
+    		cc = new CustomAuthorizeCallback();
 
         	try {
 				this.callh.handle(

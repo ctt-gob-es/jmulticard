@@ -21,31 +21,33 @@ public class DnieCallbackHandler implements CallbackHandler {
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
-				if (cb instanceof CustomTextInputCallback) {
-					final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
-						Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-						null,
-						Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-						Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
-					);
-					((CustomTextInputCallback)cb).setText(new String(uip.getPassword()));
-					return;
-				}
-				else if (cb instanceof CustomAuthorizeCallback) {
-					DialogBuilder.showSignatureConfirmDialog((CustomAuthorizeCallback)cb);
-					return;
-				}
-				else if (cb instanceof PasswordCallback) {
-					final CommonPasswordCallback uip = new CommonPasswordCallback(
-						Messages.getString("CommonPasswordCallback.4") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
-						Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-						true
-					);
-					((PasswordCallback)cb).setPassword(uip.getPassword());
-					return;
-				}
-				else {
-					LOGGER.severe(cb.getClass().getName());
+				if (cb != null) {
+					if (cb instanceof CustomTextInputCallback) {
+						final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
+							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
+							null,
+							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
+							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
+						);
+						((CustomTextInputCallback)cb).setText(new String(uip.getPassword()));
+						return;
+					}
+					else if (cb instanceof CustomAuthorizeCallback) {
+						DialogBuilder.showSignatureConfirmDialog((CustomAuthorizeCallback)cb);
+						return;
+					}
+					else if (cb instanceof PasswordCallback) {
+						final CommonPasswordCallback uip = new CommonPasswordCallback(
+							Messages.getString("CommonPasswordCallback.4") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
+							Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
+							true
+						);
+						((PasswordCallback)cb).setPassword(uip.getPassword());
+						return;
+					}
+					else {
+						LOGGER.severe("Callback no soportada: " + cb.getClass().getName()); //$NON-NLS-1$
+					}
 				}
 			}
 		}

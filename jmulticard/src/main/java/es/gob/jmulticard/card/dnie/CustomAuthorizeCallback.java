@@ -40,133 +40,33 @@ package es.gob.jmulticard.card.dnie;
 import javax.security.auth.callback.Callback;
 import javax.security.sasl.SaslServer;
 
-/**
- * This callback is used by {@link SaslServer} to determine whether one entity
+/** This callback is used by {@link SaslServer} to determine whether one entity
  * (identified by an authenticated authentication ID) can act on behalf of
- * another entity (identified by an authorization ID).
- */
-public class CustomAuthorizeCallback implements Callback
-{
+ * another entity (identified by an authorization ID). */
+public final class CustomAuthorizeCallback implements Callback {
 
-    // Constants and variables
-    // -------------------------------------------------------------------------
-
-    /** @serial The (authenticated) authentication id to check. */
-    private String authenticationID = null;
-
-    /** @serial The authorization id to check. */
-    private String authorizationID  = null;
-
-    /**
-     * @serial The id of the authorized entity. If null, the id of the authorized
-     * entity is authorizationID.
-     */
-    private String authorizedID  = null;
-
-    /**
-     * @serial A flag indicating whether the authentication id is allowed to act
-     * on behalf of the authorization id.
-     */
+    /** @serial A flag indicating whether the authentication id is allowed to act
+     * on behalf of the authorization id. */
     private boolean authorized = false;
 
-    // Constructor(s)
-    // -------------------------------------------------------------------------
 
-    /**
-     * Constructs an instance of <code>AuthorizeCallback</code>.
-     *
-     * @param authnID the (authenticated) authentication ID.
-     * @param authzID the authorization ID.
-     */
-    public CustomAuthorizeCallback(final String authnID, final String authzID)
-    {
-        super();
-
-        this.authenticationID = authnID;
-        this.authorizationID  = authzID;
-    }
-
-    // Class methods
-    // -------------------------------------------------------------------------
-
-    // Instance methods
-    // -------------------------------------------------------------------------
-
-    /**
-     * Returns the authentication ID to check.
-     *
-     * @return the authentication ID to check
-     */
-    public String getAuthenticationID()
-    {
-        return this.authenticationID;
-    }
-
-    /**
-     * Returns the authorization ID to check.
-     *
-     * @return the authorization ID to check.
-     */
-    public String getAuthorizationID()
-    {
-        return this.authorizationID;
-    }
-
-    /**
-     * Determines if the identity represented by authentication ID is allowed to
-     * act on behalf of the authorization ID.
-     *
+    /** Determines if the identity represented by authentication ID is allowed to
+     * act on behalf of the authorization ID.     *
      * @return <code>true</code> if authorization is allowed; <code>false</code>
-     * otherwise.
+     *         otherwise.
      * @see #setAuthorized(boolean)
-     * @see #getAuthorizedID()
-     */
-    public boolean isAuthorized()
-    {
+     * @see #getAuthorizedID() */
+    public boolean isAuthorized() {
         return this.authorized;
     }
 
-    /**
-     * Sets if authorization is allowed or not.
-     *
+    /** Sets if authorization is allowed or not.
      * @param authorized <code>true</code> if authorization is allowed;
-     * <code>false</code> otherwise.
+     *                   <code>false</code> otherwise.
      * @see #isAuthorized()
-     * @see #setAuthorizedID(String)
-     */
-    public void setAuthorized(final boolean authorized)
-    {
+     * @see #setAuthorizedID(String) */
+    public void setAuthorized(final boolean authorized) {
         this.authorized = authorized;
     }
 
-    /**
-     * Returns the ID of the authorized user.
-     *
-     * @return the ID of the authorized user. <code>null</code> means the
-     * authorization failed.
-     * @see #setAuthorized(boolean)
-     * @see #setAuthorizedID(String)
-     */
-    public String getAuthorizedID()
-    {
-        if (!this.authorized)
-        {
-            return null;
-        }
-        return this.authorizedID != null ? this.authorizedID : this.authorizationID;
-    }
-
-    /**
-     * Sets the ID of the authorized entity. Called by handler only when the ID
-     * is different from {@link #getAuthorizationID()}. For example, the ID might
-     * need to be canonicalized for the environment in which it will be used.
-     * @param id Authorization ID
-     *
-     * @see #setAuthorized(boolean)
-     * @see #getAuthorizedID()
-     */
-    public void setAuthorizedID(final String id)
-    {
-        this.authorizedID = id;
-    }
 }
