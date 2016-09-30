@@ -12,12 +12,12 @@
 		<artifactId>jmulticard-base</artifactId>
 		<version>1.4</version>
 	</parent>
+
 	<dependencies>
 		<dependency>
 			<groupId>es.gob</groupId>
-			<artifactId>jmulticard-jse</artifactId>
+			<artifactId>jmulticard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
 </project>
