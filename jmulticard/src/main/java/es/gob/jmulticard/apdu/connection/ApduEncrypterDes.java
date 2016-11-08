@@ -70,7 +70,8 @@ public class ApduEncrypterDes extends ApduEncrypter {
 
     /** Devuelve la longitud de la MAC de las APDU cifradas.
      * @return Longitud de la MAC de las APDU cifradas. */
-    protected int getMacLength() {
+    @SuppressWarnings("static-method")
+	protected int getMacLength() {
     	return MAC_LENGTH_4;
     }
 

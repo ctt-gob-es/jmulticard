@@ -44,7 +44,8 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduEncrypter;
 import es.gob.jmulticard.apdu.connection.ApduEncrypterDesMac8;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
-import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
+import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
+import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente y MAC de 8 octetos. */
@@ -55,7 +56,7 @@ public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
     	return new ApduEncrypterDesMac8();
     }
 
-    
+
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
@@ -66,18 +67,20 @@ public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 			final CryptoHelper cryptoHelper) {
 		super(connection, cryptoHelper);
 	}
-	
+
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
      * @param card Tarjeta con la funcionalidad CWA-14890.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas.
-     * @param cwaConsts Clase de claves CWA-14890. */
+     * @param cwaConsts Clase de claves p&uacute;blicas CWA-14890.
+     * @param cwaPrivConsts Clase de claves privadas CWA-14890. */
 	public Cwa14890OneV2Connection(final Cwa14890Card card,
 			                       final ApduConnection connection,
 			                       final CryptoHelper cryptoHelper,
-			                       final Cwa14890Constants cwaConsts) {
-		super(card, connection, cryptoHelper, cwaConsts);
+			                       final Cwa14890PublicConstants cwaConsts,
+			                       final Cwa14890PrivateConstants cwaPrivConsts) {
+		super(card, connection, cryptoHelper, cwaConsts, cwaPrivConsts);
 	}
 }

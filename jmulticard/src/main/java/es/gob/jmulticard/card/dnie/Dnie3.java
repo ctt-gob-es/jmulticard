@@ -153,6 +153,7 @@ public class Dnie3 extends Dnie {
     		this,
     		this.getConnection(),
     		getCryptoHelper(),
+    		new Dnie3UsrCwa14890Constants(),
     		new Dnie3UsrCwa14890Constants()
 		);
 
@@ -206,6 +207,7 @@ public class Dnie3 extends Dnie {
     		this,
     		this.getConnection(),
     		getCryptoHelper(),
+    		new Dnie3PinCwa14890Constants(),
     		new Dnie3PinCwa14890Constants()
 		);
 
@@ -243,6 +245,7 @@ public class Dnie3 extends Dnie {
     		this,
     		this.getConnection(),
     		getCryptoHelper(),
+    		new Dnie3UsrCwa14890Constants(),
     		new Dnie3UsrCwa14890Constants()
 		);
 

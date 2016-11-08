@@ -40,11 +40,10 @@
 package es.gob.jmulticard.card.cwa14890;
 
 import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
 
-/** Gestiona las constantes para el establecimiento de canal seguro CWA-14890.
+/** Gestiona las constantes p&uacute;blicas para el establecimiento de canal seguro CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.  */
-public interface Cwa14890Constants {
+public interface Cwa14890PublicConstants {
 
     /** Obtiene la referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
      * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.
@@ -77,10 +76,6 @@ public interface Cwa14890Constants {
      * utiliza).
      * @return Identificador de la CA intermedia (CHR). */
     byte[] getChrCCvIfd();
-
-    /** Obtiene la clave privada del certificado de Terminal.
-     * @return Clave privada del certificado de Terminal. */
-    RSAPrivateKey getIfdPrivateKey();
 
     /** Obtiene la clave p&uacute;blica del certificado de componente del terminal.
      * @return Clave p&uacute;blica del certificado de componente del terminal. */

@@ -87,7 +87,8 @@ import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
-import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
+import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
+import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.pace.PaceConnection;
@@ -97,7 +98,12 @@ import es.gob.jmulticard.card.pace.PaceConnection;
 public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 	@SuppressWarnings("static-method")
-	protected Cwa14890Constants getCwa14890Constants() {
+	protected Cwa14890PublicConstants getCwa14890PublicConstants() {
+		return new DnieCwa14890Constants();
+	}
+
+	@SuppressWarnings("static-method")
+	protected Cwa14890PrivateConstants getCwa14890PrivateConstants() {
 		return new DnieCwa14890Constants();
 	}
 
@@ -421,7 +427,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** {@inheritDoc} */
     @Override
-    public void verifyIfdCertificateChain(final Cwa14890Constants consts) throws ApduConnectionException {
+    public void verifyIfdCertificateChain(final Cwa14890PublicConstants consts) throws ApduConnectionException {
 
         // Seleccionamos en la tarjeta la clave publica de la CA raiz del controlador
     	// (clave publica de la autoridad certificadora raiz de la jerarquia de certificados
@@ -470,19 +476,19 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getRefIccPrivateKey(final Cwa14890Constants consts) {
+    public byte[] getRefIccPrivateKey(final Cwa14890PublicConstants consts) {
         return consts.getRefIccPrivateKey();
     }
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getChrCCvIfd(final Cwa14890Constants consts) {
+    public byte[] getChrCCvIfd(final Cwa14890PublicConstants consts) {
         return consts.getChrCCvIfd();
     }
 
     /** {@inheritDoc} */
     @Override
-    public RSAPrivateKey getIfdPrivateKey(final Cwa14890Constants consts) {
+    public RSAPrivateKey getIfdPrivateKey(final Cwa14890PrivateConstants consts) {
         return consts.getIfdPrivateKey();
     }
 
@@ -670,7 +676,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		this,
             		this.getConnection(),
             		this.cryptoHelper,
-            		getCwa14890Constants()
+            		getCwa14890PublicConstants(),
+            		getCwa14890PrivateConstants()
         		);
                 try {
                     this.setConnection(secureConnection);
@@ -882,7 +889,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
 	@Override
-	public int getIfdKeyLength(final Cwa14890Constants consts) {
+	public int getIfdKeyLength(final Cwa14890PublicConstants consts) {
 		return consts.getIfdKeyLength();
 	}
 

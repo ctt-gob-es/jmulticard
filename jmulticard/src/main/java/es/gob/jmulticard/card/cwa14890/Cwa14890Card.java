@@ -79,7 +79,7 @@ public interface Cwa14890Card {
      *         comunicaci&oacute;n con la tarjeta
      * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre alg&uacute;n error en la
      *         verificaci&oacute;n de los certificados */
-    void verifyIfdCertificateChain(final Cwa14890Constants consts) throws ApduConnectionException;
+    void verifyIfdCertificateChain(final Cwa14890PublicConstants consts) throws ApduConnectionException;
 
     /** Obtiene el mensaje de autenticaci&oacute;n interna de la tarjeta.
      * @param randomIfd Bytes aleatorios generados
@@ -117,22 +117,22 @@ public interface Cwa14890Card {
     /** Recupera la referencia a la clave privada del certificado de Componente.
      * @param consts Clase de claves.
      * @return Referencia a clave privada */
-    byte[] getRefIccPrivateKey(final Cwa14890Constants consts);
+    byte[] getRefIccPrivateKey(final Cwa14890PublicConstants consts);
 
     /** Recupera el CHR de la clave p&uacute;blica del certificado de Terminal.
      * @param consts Clase de claves.
      * @return Referencia a clave p&uacute;blica */
-    byte[] getChrCCvIfd(final Cwa14890Constants consts);
+    byte[] getChrCCvIfd(final Cwa14890PublicConstants consts);
 
     /** Recupera la clave privada del certificado de componente del terminal.
-     * @param consts Clase de claves.
+     * @param consts Clase de claves privadas.
      * @return Clave privada */
-    RSAPrivateKey getIfdPrivateKey(final Cwa14890Constants consts);
+    RSAPrivateKey getIfdPrivateKey(final Cwa14890PrivateConstants consts);
 
     /** Obtiene la longitud, <u>en octetos</u>, de las claves RSA del certificado de
      * comnponente del terminal.
      * @param consts Clase de claves.
      * @return Longitud, <u>en octetos</u>, de las claves RSA del certificado de
      *         comnponente del terminal. */
-    int getIfdKeyLength(final Cwa14890Constants consts);
+    int getIfdKeyLength(final Cwa14890PublicConstants consts);
 }
