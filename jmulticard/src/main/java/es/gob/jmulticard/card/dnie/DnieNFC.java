@@ -95,7 +95,7 @@ public final class DnieNFC extends Dnie3 {
 	private static ApduConnection paceConnection(final ApduConnection con, final String can1) throws ApduConnectionException, PaceException {
 
 		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
-			(byte)0x00,//(byte)0x10,
+			(byte) 0x00,
 			can1, // CAN
 			con,
 			new JseCryptoHelper()
