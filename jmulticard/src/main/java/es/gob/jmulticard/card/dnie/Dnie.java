@@ -344,13 +344,21 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             }
             else if (CERT_ALIAS_INTERMEDIATE_CA.equals(currentAlias)) {
             	try {
-            		final byte[] intermediateCaCertEncoded = deflate(
-        				selectFileByLocationAndRead(
-    						new Location(
-								cdf.getCertificatePath(i)
-							)
-        				)
+            		byte[] intermediateCaCertEncoded = selectFileByLocationAndRead(
+						new Location(
+							cdf.getCertificatePath(i)
+						)
     				);
+            		try {
+	            		intermediateCaCertEncoded = deflate(
+	        				intermediateCaCertEncoded
+	    				);
+            		}
+                    catch(final Exception e) {
+                    	LOGGER.warning(
+                			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir" //$NON-NLS-1$
+            			);
+                    }
             		this.intermediateCaCert = (X509Certificate) certFactory.generateCertificate(
     					new ByteArrayInputStream(intermediateCaCertEncoded)
 					);
@@ -757,9 +765,17 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     private X509Certificate loadCertificate(final Location location) throws IOException,
                                                                             Iso7816FourCardException,                                                                         CertificateException {
     	selectMasterFile();
-        final byte[] certEncoded = deflate(
-    		selectFileByLocationAndRead(location)
-		);
+        byte[] certEncoded = selectFileByLocationAndRead(location);
+        try {
+	        certEncoded = deflate(
+        		certEncoded
+			);
+        }
+        catch(final Exception e) {
+        	LOGGER.warning(
+    			"Ha fallado la descompresion del certificado, se probara sin descomprimir" //$NON-NLS-1$
+			);
+        }
         return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
     }
 
