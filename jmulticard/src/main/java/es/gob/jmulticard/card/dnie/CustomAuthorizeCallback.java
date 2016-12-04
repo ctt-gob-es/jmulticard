@@ -38,9 +38,8 @@ exception statement from your version. */
 package es.gob.jmulticard.card.dnie;
 
 import javax.security.auth.callback.Callback;
-import javax.security.sasl.SaslServer;
 
-/** This callback is used by {@link SaslServer} to determine whether one entity
+/** This callback is used by <code>SaslServer</code> to determine whether one entity
  * (identified by an authenticated authentication ID) can act on behalf of
  * another entity (identified by an authorization ID). */
 public final class CustomAuthorizeCallback implements Callback {
@@ -54,8 +53,7 @@ public final class CustomAuthorizeCallback implements Callback {
      * act on behalf of the authorization ID.     *
      * @return <code>true</code> if authorization is allowed; <code>false</code>
      *         otherwise.
-     * @see #setAuthorized(boolean)
-     * @see #getAuthorizedID() */
+     * @see #setAuthorized(boolean) */
     public boolean isAuthorized() {
         return this.authorized;
     }
@@ -63,8 +61,7 @@ public final class CustomAuthorizeCallback implements Callback {
     /** Sets if authorization is allowed or not.
      * @param authorized <code>true</code> if authorization is allowed;
      *                   <code>false</code> otherwise.
-     * @see #isAuthorized()
-     * @see #setAuthorizedID(String) */
+     * @see #isAuthorized() */
     public void setAuthorized(final boolean authorized) {
         this.authorized = authorized;
     }
