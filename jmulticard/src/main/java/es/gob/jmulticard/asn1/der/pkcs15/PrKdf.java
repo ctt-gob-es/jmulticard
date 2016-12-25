@@ -44,7 +44,7 @@ import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class PrKdf extends Record {
+public final class PrKdf extends Record implements Pkcs15PrKdf {
 
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
 	public PrKdf() {
@@ -67,6 +67,7 @@ public final class PrKdf extends Record {
 
 	/** Obtiene el n&uacute;mero de claves del PrKDF.
 	 * @return N&uacute;mero de claves del PrKDF */
+	@Override
 	public int getKeyCount() {
 		return getElementCount();
 	}
@@ -118,6 +119,22 @@ public final class PrKdf extends Record {
 			}
 		}
 		return sb.toString();
+	}
+
+	/** Obtiene la referencia de la clave indicada.
+	 * @param index &Iacute;ndice de la clave.
+	 * @return Referencia de la clave indicada. */
+	@Override
+	public byte getKeyReference(final int index) {
+		return ((PrivateKeyObject) getElementAt(index)).getKeyReference();
+	}
+
+	/** Obtiene el identificador de la clave indicada.
+	 * @param index &Iacute;ndice de la clave.
+	 * @return Identificador de la clave indicada. */
+	@Override
+	public byte[] getKeyId(final int index) {
+		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
 
 }

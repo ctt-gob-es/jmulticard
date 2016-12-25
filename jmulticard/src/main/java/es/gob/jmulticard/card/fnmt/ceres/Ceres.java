@@ -32,6 +32,10 @@ import es.gob.jmulticard.apdu.iso7816eight.EnvelopeDataApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
+import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
+import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
+import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
+import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
@@ -192,12 +196,20 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         // Nos vamos al raiz antes de nada
         selectMasterFile();
 
-		// Cargamos el CDF
-        final CeresCdf cdf = new CeresCdf();
-
+        // Leemos el CDF
         final byte[] cdfBytes = selectFileByLocationAndRead(CDF_LOCATION);
 
-        cdf.setDerValue(cdfBytes);
+		// Cargamos el CDF
+        Pkcs15Cdf cdf = new CeresCdf();
+        try {
+        	cdf.setDerValue(cdfBytes);
+        }
+        catch(final Exception e) {
+        	// Si ha fallado la inicializacion del CDF tipo CERES probamos con el CDF generico PKCS#15,
+        	// presente en las nuevas tarjetas FNMT-CERES
+        	cdf = new Cdf();
+        	cdf.setDerValue(cdfBytes);
+        }
 
         // Leemos los certificados segun las rutas del CDF
 
@@ -225,10 +237,20 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	this.certs.put(alias, cert);
         }
 
-        final CeresPrKdf prkdf = new CeresPrKdf();
+        // Leemos el PrKDF
         final byte[] prkdfValue =  selectFileByLocationAndRead(PRKDF_LOCATION);
 
-        prkdf.setDerValue(prkdfValue);
+        // Establecemos el valor del PrKDF
+        Pkcs15PrKdf prkdf = new CeresPrKdf();
+        try {
+        	prkdf.setDerValue(prkdfValue);
+        }
+        catch(final Exception e) {
+        	// Si no carga el estructura PrKDF especifica de CERES probamos con la
+        	// generica PKCS#15, presente en las ultimas versiones de la tarjeta
+        	prkdf = new PrKdf();
+        	prkdf.setDerValue(prkdfValue);
+        }
 
         this.keys = new LinkedHashMap<String, Byte>();
         for (int i=0; i<prkdf.getKeyCount(); i++) {
@@ -433,8 +455,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
             	if(AUTO_RETRY) {
             		this.passwordCallback = null;
             		verifyPin(
-                    		getInternalPasswordCallback()
-                    	);
+                		getInternalPasswordCallback()
+                	);
             		return;
             	}
 				throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
@@ -444,7 +466,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
             }
             throw new ApduConnectionException(
         		new Iso7816FourCardException(
-	        		"Error en la verificacion de PIN", //$NON-NLS-1$
+	        		"Error en la verificacion de PIN (" + verifyResponse.getStatusWord() + ")", //$NON-NLS-1$ //$NON-NLS-2$
 	        		verifyResponse.getStatusWord()
 				)
     		);

@@ -42,6 +42,7 @@ package es.gob.jmulticard.card.fnmt.ceres.asn1;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
+import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
@@ -65,7 +66,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  * </pre>
  * En este caso, las claves siempre ser&aacute;n de tipo RSA.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CeresPrKdf extends Record {
+public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
 
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
 	public CeresPrKdf() {
@@ -91,6 +92,7 @@ public final class CeresPrKdf extends Record {
 
 	/** Obtiene el n&uacute;mero de claves del PrKDF.
 	 * @return N&uacute;mero de claves del PrKDF */
+	@Override
 	public int getKeyCount() {
 		return getElementCount();
 	}
@@ -105,6 +107,7 @@ public final class CeresPrKdf extends Record {
 	/** Obtiene el identificador de la clave indicada.
 	 * @param index &Iacute;ndice de la clave.
 	 * @return Identificador de la clave indicada. */
+	@Override
 	public byte[] getKeyId(final int index) {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
@@ -112,6 +115,7 @@ public final class CeresPrKdf extends Record {
 	/** Obtiene la referencia de la clave indicada.
 	 * @param index &Iacute;ndice de la clave.
 	 * @return Referencia de la clave indicada. */
+	@Override
 	public byte getKeyReference(final int index) {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyReference();
 	}

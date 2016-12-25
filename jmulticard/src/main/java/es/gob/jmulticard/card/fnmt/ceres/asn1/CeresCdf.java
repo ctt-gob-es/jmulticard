@@ -43,10 +43,11 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
+import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 
 /** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1 (<i>EF.CD</i> en ISO 7816-15).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CeresCdf extends Record {
+public final class CeresCdf extends Record implements Pkcs15Cdf {
 
     private static final int BUFFER_SIZE = 150;
 
@@ -73,14 +74,16 @@ public final class CeresCdf extends Record {
 
     /** Obtiene el n&uacute;mero de certificados del CDF.
      * @return N&uacute;mero de certificados del CDF */
-    public int getCertificateCount() {
+    @Override
+	public int getCertificateCount() {
         return getElementCount();
     }
 
     /** Obtiene el identificador del certificado indicado.
      * @param index &Iacute;ndice del certificado.
      * @return Identificador del certificado indicado. */
-    public byte[] getCertificateId(final int index) {
+    @Override
+	public byte[] getCertificateId(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
     		return tmpCo.getIdentifier();
@@ -91,7 +94,8 @@ public final class CeresCdf extends Record {
     /** Obtiene la ruta PKCS#15 hacia el certificado indicado.
      * @param index &Iacute;ndice del certificado.
      * @return Ruta PKCS#15 hacia el certificado indicado. */
-    public String getCertificatePath(final int index) {
+    @Override
+	public String getCertificatePath(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
     		return tmpCo.getPath();
