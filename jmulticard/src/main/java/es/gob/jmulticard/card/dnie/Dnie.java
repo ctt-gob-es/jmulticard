@@ -141,8 +141,12 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Nombre del Master File del DNIe. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
-    private static final String CERT_ALIAS_AUTH = "CertAutenticacion"; //$NON-NLS-1$
-    private static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
+    /** Alias del certficado de autenticaci&oacute;n del DNIe. */
+    public static final String CERT_ALIAS_AUTH = "CertAutenticacion"; //$NON-NLS-1$
+
+    /** Alias del certificado de firma del DNIe. */
+    public static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
+
     private static final String CERT_ALIAS_SIGNALIAS = "CertFirmaSeudonimo"; //$NON-NLS-1$
     private static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
     private static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
