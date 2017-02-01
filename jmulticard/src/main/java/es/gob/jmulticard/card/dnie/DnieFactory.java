@@ -21,28 +21,28 @@ public final class DnieFactory {
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final byte[] ATR_MASK = new byte[] {
-			(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-			(byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
+		(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+		(byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
 	};
 
 	private static final byte[] ATR_NFC_MASK = new byte[] {
-			(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
-			(byte) 0x00, (byte) 0xFF, (byte) 0x00
+		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+		(byte) 0x00, (byte) 0xFF, (byte) 0x00
 	};
 
 	private static final Atr ATR_NFC = new Atr(new byte[] {
-			(byte) 0x3B, (byte) 0x88, (byte) 0x80, (byte) 0x01, (byte) 0xE1, (byte) 0xF3, (byte) 0x5E, (byte) 0x11, (byte) 0x77, (byte) 0x81,
-			(byte) 0xA1, (byte) 0x00, (byte) 0x03
+		(byte) 0x3B, (byte) 0x88, (byte) 0x80, (byte) 0x01, (byte) 0xE1, (byte) 0xF3, (byte) 0x5E, (byte) 0x11, (byte) 0x77, (byte) 0x81,
+		(byte) 0xA1, (byte) 0x00, (byte) 0x03
 	}, ATR_NFC_MASK);
 
 	private static final Atr ATR = new Atr(new byte[] {
-			(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
-			(byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
+		(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
+		(byte) 0x65, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
 	}, ATR_MASK);
 
 	private static final Atr ATR_TIF = new Atr(new byte[] {
-			(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x54, (byte) 0x49, (byte) 0x46,
-			(byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
+		(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x54, (byte) 0x49, (byte) 0x46,
+		(byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
 	}, ATR_MASK);
 
 	private DnieFactory() {
@@ -60,11 +60,11 @@ public final class DnieFactory {
 	 * @throws BurnedDnieCardException Si se ha detectado un DNIe con su memoria vol&aacute;til borrada.
 	 * @throws ApduConnectionException Si no se puede conectar con el lector de tarjetas. */
 	public static Dnie getDnie(final ApduConnection conn,
-			final PasswordCallback pwc,
-			final CryptoHelper cryptoHelper,
-			final CallbackHandler ch) throws InvalidCardException,
-											 BurnedDnieCardException,
-											 ApduConnectionException {
+			                   final PasswordCallback pwc,
+			                   final CryptoHelper cryptoHelper,
+			                   final CallbackHandler ch) throws InvalidCardException,
+											                    BurnedDnieCardException,
+											                    ApduConnectionException {
 		if (conn == null) {
 			throw new IllegalArgumentException(
 				"La conexion no puede ser nula" //$NON-NLS-1$
@@ -97,12 +97,13 @@ public final class DnieFactory {
 					return new DnieNFC(conn, pwc, cryptoHelper, ch);
 				}
 				catch (final PaceException e) {
-					throw new ApduConnectionException("No se ha podido abrir el canal PACE: " + e); //$NON-NLS-1$
+					throw new ApduConnectionException(
+						"No se ha podido abrir el canal PACE: " + e //$NON-NLS-1$
+					);
 				}
 			}
 			else if (ATR.equals(actualAtr)) {
-				if (actualAtrBytes[15] == 0x04 /*&&
-						actualAtrBytes[16] == 0x00*/) {
+				if (actualAtrBytes[15] == 0x04) {
 					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
 					return new Dnie3(conn, pwc, cryptoHelper, ch);
 				}
@@ -113,7 +114,8 @@ public final class DnieFactory {
 				LOGGER.info("Detectada tarjeta TIF"); //$NON-NLS-1$
 				return new Tif(conn, pwc, cryptoHelper, ch);
 			}
-			else { // La tarjeta encontrada no es un DNIe
+			else {
+				// La tarjeta encontrada no es un DNIe
 				// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
 				// en 90-00
 				if (actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&

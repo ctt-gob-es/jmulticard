@@ -112,7 +112,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private CallbackHandler callh;
+    private CallbackHandler callbackHandler;
 
 	private String[] aliases = null;
 
@@ -135,7 +135,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
-            (byte) 0x60, (byte) 0x1F
+        (byte) 0x60, (byte) 0x1F
     };
 
     /** Nombre del Master File del DNIe. */
@@ -223,7 +223,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         conn.reset();
         connect(conn);
 
-        this.callh = ch;
+        this.callbackHandler = ch;
 
         try {
 			selectMasterFile();
@@ -575,13 +575,13 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		);
         }
 
-        if (this.callh != null) {
+        if (this.callbackHandler != null) {
         	Callback cc;
         	// Callback para autorizar la firma
     		cc = new CustomAuthorizeCallback();
 
         	try {
-				this.callh.handle(
+				this.callbackHandler.handle(
 					new Callback[] {
 						cc
 					}
@@ -731,19 +731,17 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		}
     		return this.passwordCallback;
     	}
-    	if (this.callh != null) {
+    	if (this.callbackHandler != null) {
         	final int retriesLeft = getPinRetriesLeft();
         	if(retriesLeft == 0) {
         		throw new AuthenticationModeLockedException();
         	}
-        	PasswordCallback  pwc;
-
-        	pwc = new PasswordCallback(
-    				retriesLeft + "",  //$NON-NLS-1$
-    				false
-    			);
+        	final PasswordCallback pwc = new PasswordCallback(
+				retriesLeft + "",  //$NON-NLS-1$
+				false
+			);
 			try {
-				this.callh.handle(new Callback[] { pwc });
+				this.callbackHandler.handle(new Callback[] { pwc });
 			}
 			catch (final IOException e) {
 				throw new PinException(
@@ -758,7 +756,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 				);
 			}
 			if (pwc.getPassword() == null || pwc.getPassword().toString().isEmpty()) {
-				throw new PinException("El PIN no puede ser nulo ni vacio" //$NON-NLS-1$
+				throw new PinException(
+					"El PIN no puede ser nulo ni vacio" //$NON-NLS-1$
 				);
 			}
 			return pwc;
@@ -871,11 +870,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     @Override
     public void verifyPin(final PasswordCallback psc) throws ApduConnectionException,
-    		                                             PinException {
+    		                                                 PinException {
     	if(psc == null) {
     		throw new IllegalArgumentException(
-        			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
-            	);
+    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
+        	);
     	}
     	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
 
@@ -930,7 +929,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		catch (final Exception e1) {
 			//Problema al leer el fichero de la tarjeta inteligente
 		}
-		ResponseApdu res = null;
 		try {
 			//Seleccion de directorio maestro
 			selectMasterFile();
@@ -939,7 +937,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			selectFileById(pinFile);
 			//Envio de APDU de cambio de PIN
 			final CommandApdu apdu = new ChangePINApduCommand(oldPin.getBytes(), newPin.getBytes());
-			res = getConnection().transmit(apdu);
+			final ResponseApdu res = getConnection().transmit(apdu);
 			if (!res.isOk()) {
 				throw new DnieCardException(
 						"Error en el establecimiento de las variables de entorno para el cambio de PIN", res.getStatusWord() //$NON-NLS-1$
@@ -968,17 +966,16 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		return null;
 	}
 
-    /** Asigna un CallbackHandler a la tarjeta
-     * @param handler CallbackHandler a asignar
-     */
+    /** Asigna un CallbackHandler a la tarjeta.
+     * @param handler CallbackHandler a asignar. */
     public void setCallbackHandler(final CallbackHandler handler) {
-    	this.callh = handler;
+    	this.callbackHandler = handler;
     }
 
-	/** Asigna un PasswordCallback a la tarjeta
-	 * @param pwc PasswordCallback a asignar
-	 */
+	/** Asigna un <code>PasswordCallback</code> a la tarjeta.
+	 * @param pwc <code>PasswordCallback</code> a asignar. */
 	public void setPasswordCallback(final PasswordCallback pwc) {
 		this.passwordCallback = pwc;
 	}
+
 }

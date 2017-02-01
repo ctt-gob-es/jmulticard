@@ -79,6 +79,8 @@ import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
     private Dnie cryptoCard = null;
@@ -158,7 +160,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		throw new BadPasswordProviderException(e);
     	}
     	catch (final Exception e) {
-    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+    		LOGGER.warning(
 				"No se ha podido cargar el certificado de la CA intermedia: " + e //$NON-NLS-1$
 			);
     		intermediateCaCert = null;
@@ -179,7 +181,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 			}
 	    	catch (final Exception e) {
 	    		sha2DnieRoot = null;
-	    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+	    		LOGGER.warning(
 					"No se ha podido cargar el certificado de la CA raiz: " + e //$NON-NLS-1$
 				);
 			}
@@ -191,7 +193,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				}
 		    	catch (final Exception e) {
 		    		sha2DnieRoot = null;
-		    		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+		    		LOGGER.info(
 						"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + e //$NON-NLS-1$
 					);
 				}
@@ -208,7 +210,10 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** Operaci&oacute;n no soportada. */
     @Override
     public Date engineGetCreationDate(final String alias) {
-        throw new UnsupportedOperationException();
+    	LOGGER.warning(
+			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
+		);
+        return new Date();
     }
 
     /** {@inheritDoc} */
@@ -218,8 +223,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		return null;
     	}
     	if (password != null) {
-    		// Establecemos un nuevo PasswordCallback
-    		//TODO:XXX
+    		// Establecemos el PasswordCallback
+    		final PasswordCallback pwc = new CachePasswordCallback(password);
+    		this.cryptoCard.setPasswordCallback(pwc);
     	}
         final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof DniePrivateKeyReference)) {
@@ -234,11 +240,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     @Override
     public KeyStore.Entry engineGetEntry(final String alias,
     		                             final ProtectionParameter protParam) {
-    	if (protParam != null) {
-    		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-				"Se ha proporcionado un ProtectionParameter, pero este se ignorara, ya que el PIN se gestiona internamente" //$NON-NLS-1$
-			);
-    	}
+
     	if(protParam instanceof KeyStore.CallbackHandlerProtection) {
     		// Establecemos el CallbackHandler
     		final CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
@@ -250,6 +252,11 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		// Establecemos el PasswordCallback
     		final PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
     		this.cryptoCard.setPasswordCallback(pwc);
+    	}
+    	else {
+    		LOGGER.warning(
+   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + (protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+			);
     	}
     	if (!engineContainsAlias(alias)) {
     		return null;
@@ -299,7 +306,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     		else {
-	       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+    			LOGGER.warning(
 	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
 				);
     		}

@@ -1,4 +1,4 @@
-package es.gob.jmulticard.ui.passwordcallback.gui;
+package es.gob.jmulticard;
 
 import java.util.logging.Logger;
 
@@ -9,12 +9,21 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
 import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
-import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
-import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */
-public final class DnieCallbackHandler implements CallbackHandler {
+public final class TestingDnieCallbackHandler implements CallbackHandler {
+
+	private final String can;
+	private final char[] pin;
+
+	/** Construye un CallbackHandler de prueba.
+	 * @param c CAN
+	 * @param p PIN. */
+	public TestingDnieCallbackHandler(final String c, final String p) {
+		this.can = c;
+		this.pin = p.toCharArray();
+	}
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	@Override
@@ -23,26 +32,15 @@ public final class DnieCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
 					if (cb instanceof CustomTextInputCallback) {
-						final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
-							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-							null,
-							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
-						);
-						((CustomTextInputCallback)cb).setText(new String(uip.getPassword()));
+						((CustomTextInputCallback)cb).setText(this.can);
 						return;
 					}
 					else if (cb instanceof CustomAuthorizeCallback) {
-						DialogBuilder.showSignatureConfirmDialog((CustomAuthorizeCallback)cb);
+						((CustomAuthorizeCallback)cb).setAuthorized(true);
 						return;
 					}
 					else if (cb instanceof PasswordCallback) {
-						final CommonPasswordCallback uip = new CommonPasswordCallback(
-							Messages.getString("CommonPasswordCallback.4") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
-							Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-							true
-						);
-						((PasswordCallback)cb).setPassword(uip.getPassword());
+						((PasswordCallback)cb).setPassword(this.pin);
 						return;
 					}
 					else {
