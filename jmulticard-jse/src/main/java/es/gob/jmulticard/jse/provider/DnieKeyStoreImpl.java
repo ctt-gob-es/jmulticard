@@ -72,6 +72,8 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.card.dnie.Dnie3;
+import es.gob.jmulticard.card.dnie.Dnie3Dg01Mrz;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
@@ -85,6 +87,19 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     private Dnie cryptoCard = null;
     private List<String> aliases = null;
+
+    /** Obtiene el objeto DG01 (MRZ de ICAO) del DNIe 3.0.
+     * @return Objeto DG01 (MRZ de ICAO) del DNIe 3.0.
+     * @throws IOException Si no se puede leer el objeto DG01.
+     * @throwe UnsupportedOperationException SI el objeto actual no es un DNIe 3.0. */
+    public Dnie3Dg01Mrz getDnie3Dg01() throws IOException {
+    	if (!(this.cryptoCard instanceof Dnie3)) {
+    		throw new UnsupportedOperationException(
+				"El objeto DG01 solo esta presente en DNIe 3.0" //$NON-NLS-1$
+			);
+    	}
+    	return ((Dnie3)this.cryptoCard).getMrz();
+    }
 
     /** {@inheritDoc} */
     @Override
