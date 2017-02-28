@@ -1,14 +1,13 @@
 package test.es.gob.jmulticard.asn1.der;
 
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.DerBoolean;
+import junit.framework.TestCase;
 
 /** @author Alberto Mart&iacute;nez */
 public class TestDerBoolean extends TestCase {
@@ -27,8 +26,8 @@ public class TestDerBoolean extends TestCase {
     }
 
     /** Test method for {@link es.gob.jmulticard.asn1.DecoderObject#getBytes()}.
-     * @throws TlvException
-     * @throws Asn1Exception */
+     * @throws TlvException Si no se puede crear el TLV.
+     * @throws Asn1Exception Si falla la creaci&oacute;n del tipo ASN1. */
     public final static void testGetBytes() throws Asn1Exception, TlvException {
         final DerBoolean db = new DerBoolean();
         db.setDerValue(new byte[] {

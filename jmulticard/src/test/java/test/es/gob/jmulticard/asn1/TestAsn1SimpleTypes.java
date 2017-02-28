@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 public final class TestAsn1SimpleTypes extends TestCase {
 
 	/** Prueba la creaci&oacute; de un tipo UTF8String con datos incorrectos.
-	 * @throws TlvException */
+	 * @throws TlvException Si no se puede crear el TLV. */
 	@SuppressWarnings("static-method")
     public void testUtf8StringCreationWithBadData() throws TlvException {
 		final Utf8String u = new Utf8String();
@@ -23,11 +23,11 @@ public final class TestAsn1SimpleTypes extends TestCase {
 		catch(final Asn1Exception e) {
 			return;
 		}
-		Assert.fail("Tendria que haber saltado un TlvException"); //$NON-NLS-1$
+		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
 	}
 
 	/** Prueba la creaci&oacute; de un tipo BitString con datos incorrectos.
-	 * @throws TlvException */
+	 * @throws TlvException Si no se puede crear el TLV. */
 	@SuppressWarnings("static-method")
     public void testBitStringCreationWithBadData() throws TlvException {
 		final BitString u = new AccessFlags();
@@ -37,7 +37,7 @@ public final class TestAsn1SimpleTypes extends TestCase {
 		catch(final Asn1Exception e) {
 			return;
 		}
-		Assert.fail("Tendria que haber saltado un TlvException"); //$NON-NLS-1$
+		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
 	}
 
 }
