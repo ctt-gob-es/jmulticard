@@ -1,7 +1,6 @@
 
 package es.gob.jmulticard.card.dnie;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -58,11 +57,9 @@ public final class Dnie3Dg01Mrz {
     	}
     }
 
-
     /** Construye la zona ICAO MRZ del DNIe 3.0 a partir del fichero DG1.
-     * @param rawBytes Contenido del fichero DG1 del DNIe 3.0.
-     * @throws IOException Si no se encuentra la tabla de cosrrespondencias de pa&iacute;ses. */
-    Dnie3Dg01Mrz(final byte[] rawBytes) throws IOException {
+     * @param rawBytes Contenido del fichero DG1 del DNIe 3.0.*/
+    Dnie3Dg01Mrz(final byte[] rawBytes) {
 
         this.rawData = rawBytes.clone();
         final byte[] mrzBytes = new byte[this.rawData[4]];
