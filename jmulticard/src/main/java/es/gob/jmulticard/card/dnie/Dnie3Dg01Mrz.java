@@ -22,10 +22,10 @@ public final class Dnie3Dg01Mrz {
     private String issuer;
     private String optData;
     private static final SimpleDateFormat SDFORMAT = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
-    private final Properties countryNames = new Properties();
+    private final Properties countryNames = CountryCodes.getCountryCodes();
 
     /** Sexo del titular del documento de identidad. */
-    public enum Gender {
+    private enum Gender {
 
     	/** Hombre. */
     	MALE("Hombre"), //$NON-NLS-1$
@@ -35,7 +35,7 @@ public final class Dnie3Dg01Mrz {
 
     	private final String desc;
 
-    	private Gender(final String d) {
+    	Gender(final String d) {
     		this.desc = d;
     	}
 
@@ -62,9 +62,7 @@ public final class Dnie3Dg01Mrz {
     /** Construye la zona ICAO MRZ del DNIe 3.0 a partir del fichero DG1.
      * @param rawBytes Contenido del fichero DG1 del DNIe 3.0.
      * @throws IOException Si no se encuentra la tabla de cosrrespondencias de pa&iacute;ses. */
-    public Dnie3Dg01Mrz(final byte[] rawBytes) throws IOException {
-
-    	this.countryNames.load(Dnie3Dg01Mrz.class.getResourceAsStream("/mrzcountrycodes.properties")); //$NON-NLS-1$
+    Dnie3Dg01Mrz(final byte[] rawBytes) throws IOException {
 
         this.rawData = rawBytes.clone();
         final byte[] mrzBytes = new byte[this.rawData[4]];
@@ -159,8 +157,8 @@ public final class Dnie3Dg01Mrz {
         return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfExpiry);
     }
 
-    /** Obtiene el n&uacute;mero del DNI.
-     * @return N&uacute;mero del DNI. */
+    /** Obtiene el n&uacute;mero de soporte del DNI.
+     * @return N&uacute;mero de soporte del DNI. */
     public String getDocNumber() {
         return this.docNumber;
     }
@@ -171,9 +169,9 @@ public final class Dnie3Dg01Mrz {
         return this.countryNames.getProperty(this.issuer);
     }
 
-    /** Obtiene datos adicionales del DNI.
-     * @return Datos adicionales del DNI. */
-    public String getOptData() {
+    /** Obtiene el n&uacute;mero del DNI.
+     * @return N&uacute;mero del DNI. */
+    public String getSubjectNumber() {
         return this.optData;
     }
 
@@ -182,5 +180,10 @@ public final class Dnie3Dg01Mrz {
     public String getDocType() {
         return this.docType;
     }
-}
 
+    /** Obtiene el contenido binario directo del objeto DG01.
+     * @return Contenido binario directo del objeto DG01. */
+    public byte[] getRawData() {
+        return this.rawData.clone();
+    }
+}
