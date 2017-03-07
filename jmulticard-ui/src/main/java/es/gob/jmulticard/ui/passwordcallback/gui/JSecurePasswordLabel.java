@@ -69,7 +69,7 @@ final class JSecurePasswordLabel extends JLabel {
 	}
 	private final int maxChars;
 	int passwordLength;
-	private Timer timer;
+	private final Timer timer;
 	Timer getTimer() {
 	    return this.timer;
 	}
@@ -86,26 +86,12 @@ final class JSecurePasswordLabel extends JLabel {
 		this.maxChars = maxLength;
 		this.pass = new char[maxLength];
 		clearPassword();
-		this.addKeyListener(new KeyAdapter() {
-			/** Indica si un caracter, encapsulado en el evento de pulsaci&oacute;n de tecla, es v&aacute;lido
-			 * @param k Evento de pulsaci&oacute;n de tecla.
-			 * @return Si el caracter es o no v&aacute;lido. */
-			private boolean isValid(final char c){
-				// Letras y numeros
-				if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
-					return true;
-				}
-				// Especiales permitidos
-				if (c == '.' || c == '!' || c == '?' || c == '&' || c == '%' || c == '=' || c == '+' || c == '-' || c == '_' || c == '(' || c == ')' || c == '<' || c == '>') {
-					return true;
-				}
-				return false;
-			}
+		addKeyListener(new KeyAdapter() {
 
 			@Override
 			public void keyTyped(final KeyEvent ke) {
 				//Caracteres validos password
-				if (isValid(ke.getKeyChar()) && getPasswordLength() < getMaxChars()) {
+				if (getPasswordLength() < getMaxChars()) {
 					JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
 					ke.setKeyChar('\0');
 				}
@@ -125,7 +111,7 @@ final class JSecurePasswordLabel extends JLabel {
 				updateText();
 			}
 		});
-		this.addFocusListener(new FocusListener() {
+		addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(final FocusEvent arg0) {
 				JSecurePasswordLabel.this.setBackground(Color.WHITE);
@@ -140,17 +126,17 @@ final class JSecurePasswordLabel extends JLabel {
 				JSecurePasswordLabel.this.updateText();
 			}
 		});
-		this.addMouseListener(new MouseAdapter() {
+		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				JSecurePasswordLabel.this.requestFocus();
 			}
 		} );
-		this.setFocusable(true);
-		this.setOpaque(true);
-		this.setBackground(Color.WHITE);
-		this.setBorder(BorderFactory.createLoweredBevelBorder());
-		this.setShowCursor(false);
+		setFocusable(true);
+		setOpaque(true);
+		setBackground(Color.WHITE);
+		setBorder(BorderFactory.createLoweredBevelBorder());
+		setShowCursor(false);
 		this.timer = new Timer(this.delay, new ActionListener() {
 			@Override
 			public void actionPerformed(final ActionEvent arg0) {
