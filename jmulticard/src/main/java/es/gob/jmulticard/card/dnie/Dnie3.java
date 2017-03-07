@@ -49,7 +49,6 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
-import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
@@ -121,16 +120,13 @@ public class Dnie3 extends Dnie {
     	if (photo == null) {
     		throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
     	}
-    	final int headerSize = (HexUtils.hexify(photo, false).indexOf(JPEG2K_HEADER) / 2);
+    	final int headerSize = HexUtils.hexify(photo, false).indexOf(JPEG2K_HEADER) / 2;
     	final byte[] pj2kPhoto = new byte[photo.length - headerSize];
         System.arraycopy(photo, headerSize, pj2kPhoto, 0, pj2kPhoto.length);
 
         // En este punto pj2kPhoto contiene la imagen en JPEG2000
         return pj2kPhoto;
     }
-
-    /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
-    protected ApduConnection rawConnection;
 
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
@@ -151,7 +147,7 @@ public class Dnie3 extends Dnie {
     public ApduConnection openUserChannel() throws CryptoCardException {
     	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
     		this,
-    		this.getConnection(),
+    		getConnection(),
     		getCryptoHelper(),
     		new Dnie3UsrCwa14890Constants(),
     		new Dnie3UsrCwa14890Constants()
@@ -174,7 +170,7 @@ public class Dnie3 extends Dnie {
         		"Error en el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
     		);
         }
-    	return this.getConnection();
+    	return getConnection();
     }
 
     /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
@@ -182,12 +178,12 @@ public class Dnie3 extends Dnie {
      * establece el canal de USUARIO CWA-14890.
      * Si falla alg&uacute;n punto del proceso, vuelve al modo inicial de conexi&oacute;n (sin canal seguro).
      * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws BadPinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
 	@Override
 	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
 
         // Si el canal seguro esta ya abierto salimos sin hacer nada
-        if (this.isSecurityChannelOpen()) {
+        if (isSecurityChannelOpen()) {
         	return;
         }
 
@@ -205,7 +201,7 @@ public class Dnie3 extends Dnie {
         // Establecemos el canal PIN y lo verificamos
     	final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
     		this,
-    		this.getConnection(),
+    		getConnection(),
     		getCryptoHelper(),
     		new Dnie3PinCwa14890Constants(),
     		new Dnie3PinCwa14890Constants()
@@ -221,7 +217,7 @@ public class Dnie3 extends Dnie {
 		}
 
         try {
-            this.setConnection(pinSecureConnection);
+            setConnection(pinSecureConnection);
         }
         catch (final ApduConnectionException e) {
             throw new CryptoCardException(
@@ -243,7 +239,7 @@ public class Dnie3 extends Dnie {
         // Y establecemos ahora el canal de usuario
         final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
     		this,
-    		this.getConnection(),
+    		getConnection(),
     		getCryptoHelper(),
     		new Dnie3UsrCwa14890Constants(),
     		new Dnie3UsrCwa14890Constants()
@@ -286,34 +282,11 @@ public class Dnie3 extends Dnie {
 
     /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados).
      * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta.
-     * @throws BadPinException */
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
     @Override
 	protected void loadCertificates() throws CryptoCardException, PinException {
     	// Abrimos el canal si es necesario
     	openSecureChannelIfNotAlreadyOpened();
     	loadCertificatesInternal();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public byte[] sign(final byte[] data,
-    		           final String signAlgorithm,
-    		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
-    		                                                                 PinException {
-    	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
-
-        // Reestablecemos el canal inicial, para que en una segunda firma se tenga que volver a pedir
-    	// el PIN y rehacer los canales CWA
-        try {
-        	this.rawConnection.reset();
-    		setConnection(this.rawConnection);
-		}
-        catch (final ApduConnectionException e) {
-        	throw new CryptoCardException(
-        		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
-    		);
-		}
-
-    	return ret;
     }
 }
