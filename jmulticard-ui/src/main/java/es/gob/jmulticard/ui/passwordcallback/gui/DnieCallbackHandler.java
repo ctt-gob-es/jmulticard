@@ -38,7 +38,7 @@ public final class DnieCallbackHandler implements CallbackHandler {
 					}
 					else if (cb instanceof PasswordCallback) {
 						final CommonPasswordCallback uip = new CommonPasswordCallback(
-							Messages.getString("CommonPasswordCallback.4") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
+							((PasswordCallback)cb).getPrompt(),
 							Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
 							true
 						);

@@ -21,7 +21,7 @@ public class CeresCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb instanceof PasswordCallback) {
 					final CommonPasswordCallback uip = new CommonPasswordCallback(
-						Messages.getString("CommonPasswordCallback.3") + ((PasswordCallback)cb).getPrompt(), //$NON-NLS-1$
+						((PasswordCallback)cb).getPrompt(),
 						Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
 						false
 					);

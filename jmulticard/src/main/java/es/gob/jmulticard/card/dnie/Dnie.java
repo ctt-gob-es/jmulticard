@@ -82,6 +82,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
+import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
@@ -755,9 +756,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		throw new AuthenticationModeLockedException();
         	}
         	final PasswordCallback  pwc = new PasswordCallback(
-    				retriesLeft + "",  //$NON-NLS-1$
-    				false
-    			);
+    			CardMessages.getString("Dnie.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
+				false
+			);
 			try {
 				this.callbackHandler.handle(new Callback[] { pwc });
 			}
@@ -774,7 +775,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 				);
 			}
 			if (pwc.getPassword() == null || pwc.getPassword().toString().isEmpty()) {
-				throw new PinException("El PIN no puede ser nulo ni vacio" //$NON-NLS-1$
+				throw new PinException(
+					"El PIN no puede ser nulo ni vacio" //$NON-NLS-1$
 				);
 			}
 			return pwc;
@@ -954,7 +956,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			selectFileById(pinFile);
 			//Envio de APDU de cambio de PIN
 			final CommandApdu apdu = new ChangePINApduCommand(oldPin.getBytes(), newPin.getBytes());
-			ResponseApdu res = getConnection().transmit(apdu);
+			final ResponseApdu res = getConnection().transmit(apdu);
 			if (!res.isOk()) {
 				throw new DnieCardException(
 						"Error en el establecimiento de las variables de entorno para el cambio de PIN", res.getStatusWord() //$NON-NLS-1$

@@ -39,6 +39,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
+import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
@@ -488,9 +489,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	}
         	PasswordCallback  pwc;
         	pwc = new PasswordCallback(
-					retriesLeft+"",  //$NON-NLS-1$
-					false
-				);
+    			CardMessages.getString("Ceres.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
+				false
+			);
 			try {
 				this.callh.handle(
 					new Callback[] {
