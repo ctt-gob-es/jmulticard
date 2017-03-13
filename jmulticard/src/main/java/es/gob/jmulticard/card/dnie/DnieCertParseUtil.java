@@ -39,6 +39,13 @@ public final class DnieCertParseUtil {
 		if (this.sn1 == null) {
 			this.sn1 = getRDNvalueFromLdapName("SURNAME", dn); //$NON-NLS-1$
 		}
+		if (this.sn1 == null) {
+			// Forma del DN en Android
+            this.sn1 = getRDNvalueFromLdapName("OID.2.5.4.4", dn); //$NON-NLS-1$
+        }
+        if (this.sn1 == null) {
+            this.sn1 = getRDNvalueFromLdapName("2.5.4.4", dn); //$NON-NLS-1$
+        }
 		this.sn2 = cn.replace(",", "").replace(this.name, "").replace(this.sn1, "").trim(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		this.num = getRDNvalueFromLdapName("SERIALNUMBER", dn); //$NON-NLS-1$
 	}
