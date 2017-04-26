@@ -73,7 +73,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.spongycastle.crypto.BlockCipher;
-import org.spongycastle.crypto.engines.AESFastEngine;
+import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.ECNamedCurveTable;
@@ -346,7 +346,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 	@Override
 	public byte[] doAesCmac(final byte[] data, final byte[] key) {
-		final BlockCipher cipher = new AESFastEngine();
+		final BlockCipher cipher = new AESEngine();
 		final org.spongycastle.crypto.Mac mac = new CMac(cipher, 64);
 
 		final KeyParameter keyP = new KeyParameter(key);
@@ -374,9 +374,11 @@ public final class JseCryptoHelper extends CryptoHelper {
 		KeyAgreement ka = null;
 		try {
 			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
-
 		}
 		catch (final NoSuchProviderException e) {
+			LOGGER.warning(
+				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
+			);
 			ka = KeyAgreement.getInstance(ECDH);
 		}
 		ka.init(privateKey);
@@ -393,6 +395,9 @@ public final class JseCryptoHelper extends CryptoHelper {
 			kf = KeyFactory.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
 		catch (final NoSuchProviderException e) {
+			LOGGER.warning(
+				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
+			);
 			kf = KeyFactory.getInstance(ECDH);
 		}
 	    final ECNamedCurveSpec params = new ECNamedCurveSpec(curveName.toString(), spec.getCurve(), spec.getG(), spec.getN());

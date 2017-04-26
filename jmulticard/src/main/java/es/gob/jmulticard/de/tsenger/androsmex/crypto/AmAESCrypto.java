@@ -21,7 +21,7 @@ package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.Mac;
-import org.spongycastle.crypto.engines.AESFastEngine;
+import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
@@ -59,10 +59,10 @@ public class AmAESCrypto extends AmCryptoProvider {
 		// create the ciphers
 		// AES block cipher in CBC mode with ISO7816d4 padding
 		this.encryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
-				new AESFastEngine()), new ISO7816d4Padding());
+				new AESEngine()), new ISO7816d4Padding());
 
 		this.decryptCipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(
-				new AESFastEngine()), new ISO7816d4Padding());
+				new AESEngine()), new ISO7816d4Padding());
 
 		// create the IV parameter
 		final ParametersWithIV parameterIV = new ParametersWithIV(this.keyP, this.IV);
@@ -99,7 +99,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 		System.arraycopy(data, 0, n, this.sscBytes.length, data.length);
 		n = addPadding(n);
 
-		final BlockCipher cipher = new AESFastEngine();
+		final BlockCipher cipher = new AESEngine();
 		final Mac mac = new CMac(cipher, 64);
 
 		mac.init(this.keyP);
@@ -118,7 +118,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 	 */
 	@Override
 	public byte[] getMAC(final byte[] key, final byte[] data) {
-		final BlockCipher cipher = new AESFastEngine();
+		final BlockCipher cipher = new AESEngine();
 		final Mac mac = new CMac(cipher, 64);
 
 		final KeyParameter keyP1 = new KeyParameter(key);
@@ -146,7 +146,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 	public byte[] decryptBlock(final byte[] key, final byte[] z) {
 		final byte[] s = new byte[blockSize];
 		final KeyParameter encKey = new KeyParameter(key);
-		final BlockCipher cipher = new AESFastEngine();
+		final BlockCipher cipher = new AESEngine();
 		cipher.init(false, encKey);
 		cipher.processBlock(z, 0, s, 0);
 		return s;
@@ -165,7 +165,7 @@ public class AmAESCrypto extends AmCryptoProvider {
 	public static byte[] encryptBlock(final byte[] key, final byte[] z) {
 		final byte[] s = new byte[blockSize];
 		final KeyParameter encKey = new KeyParameter(key);
-		final BlockCipher cipher = new AESFastEngine();
+		final BlockCipher cipher = new AESEngine();
 		cipher.init(true, encKey);
 		cipher.processBlock(z, 0, s, 0);
 		return s;
