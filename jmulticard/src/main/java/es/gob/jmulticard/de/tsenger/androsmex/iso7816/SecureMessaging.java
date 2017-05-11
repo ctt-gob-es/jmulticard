@@ -144,10 +144,15 @@ public class SecureMessaging {
 		final byte[] subArray = new byte[rapduBytes.length];
 
 		while (pointer < rapduBytes.length) {
-			System.arraycopy(rapduBytes, pointer, subArray, 0,
-					rapduBytes.length - pointer);
+			System.arraycopy(
+				rapduBytes,
+				pointer,
+				subArray,
+				0,
+				rapduBytes.length - pointer
+			);
 			final ASN1InputStream asn1sp = new ASN1InputStream(subArray);
-			byte[] encodedBytes = null;
+			final byte[] encodedBytes;
 			try {
 				encodedBytes = asn1sp.readObject().getEncoded();
 			}

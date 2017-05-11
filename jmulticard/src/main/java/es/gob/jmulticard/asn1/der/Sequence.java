@@ -55,7 +55,7 @@ public abstract class Sequence extends DecoderObject {
     /** Tipo ASN&#46;1 <i>Sequence</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
+    private final List<DecoderObject> elements = new ArrayList<>();
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 

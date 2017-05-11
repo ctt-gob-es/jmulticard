@@ -171,11 +171,14 @@ public abstract class AmCryptoProvider {
 						this.obuf, 0);
 				bout.write(this.obuf, 0, noBytesProcessed);
 			}
-		} catch (final DataLengthException e) {
+		}
+		catch (final DataLengthException e) {
 			throw new AmCryptoException(e);
-		} catch (final IllegalStateException e) {
+		}
+		catch (final IllegalStateException e) {
 			throw new AmCryptoException(e);
-		} catch (final IOException e) {
+		}
+		catch (final IOException e) {
 			throw new AmCryptoException(e);
 		}
 

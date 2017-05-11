@@ -64,7 +64,7 @@ public abstract class SequenceOf extends DecoderObject {
 		byte[] remainingBytes;
         DecoderObject tmpDo;
         final byte[] valueBytes = tlv.getValue();
-        this.sequenceObjects = new Vector<DecoderObject>();
+        this.sequenceObjects = new Vector<>();
         while (offset < valueBytes.length) {
         	remainingBytes = new byte[valueBytes.length - offset];
         	System.arraycopy(valueBytes, offset, remainingBytes, 0, remainingBytes.length);

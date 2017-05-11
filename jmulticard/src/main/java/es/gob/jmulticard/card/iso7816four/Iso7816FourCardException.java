@@ -49,7 +49,7 @@ import es.gob.jmulticard.apdu.StatusWord;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Iso7816FourCardException extends Exception {
 
-    private static final Hashtable<StatusWord, String> ERRORS = new Hashtable<StatusWord, String>();
+    private static final Hashtable<StatusWord, String> ERRORS = new Hashtable<>();
 
     static {
         ERRORS.put(new StatusWord((byte) 0x62, (byte) 0x83), "El fichero seleccionado esta invalidado."); //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class Iso7816FourCardException extends Exception {
     	super(desc, e);
     	this.returnCode = null;
     }
-    
+
     /** Crea una excepci&oacute;n referente a ISO 7816-4.
      * @param desc Descripci&oacute;n de la excepci&oacute;n. */
     public Iso7816FourCardException(final String desc) {

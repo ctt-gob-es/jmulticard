@@ -216,8 +216,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
         final CertificateFactory cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 
-        this.certs = new LinkedHashMap<String, X509Certificate>(cdf.getCertificateCount());
-        this.aliasByCertAndKeyId = new LinkedHashMap<String, String>(cdf.getCertificateCount());
+        this.certs = new LinkedHashMap<>(cdf.getCertificateCount());
+        this.aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
 
         for (int i=0; i<cdf.getCertificateCount(); i++) {
         	final Location l = new Location(
@@ -253,7 +253,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	prkdf.setDerValue(prkdfValue);
         }
 
-        this.keys = new LinkedHashMap<String, Byte>();
+        this.keys = new LinkedHashMap<>();
         for (int i=0; i<prkdf.getKeyCount(); i++) {
         	final String alias = this.aliasByCertAndKeyId.get(
     			HexUtils.hexify(prkdf.getKeyId(i), false)
