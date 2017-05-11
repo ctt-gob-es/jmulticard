@@ -159,7 +159,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		return null;
     	}
 
-    	final List<X509Certificate> certs = new ArrayList<X509Certificate>();
+    	final List<X509Certificate> certs = new ArrayList<>();
     	certs.add((X509Certificate) engineGetCertificate(alias));
 
     	// La cadena disponible del certificado la componen el propio certificado y el
