@@ -60,7 +60,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     private final PasswordCallback passwordCallback;
 
-    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
+    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<>();
 
 	/** Construye un objeto que representa una tarjeta Gemalto TUI R5 MPCOS.
      * @param conn Conexi&oacute;n con la tarjeta.
@@ -276,7 +276,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 			CLA,
 			this.passwordCallback
 		);
-		final ResponseApdu verifyResponse = this.getConnection().transmit(
+		final ResponseApdu verifyResponse = getConnection().transmit(
 			verifyPinApduCommand
 		);
 		if (!verifyResponse.isOk()) {
