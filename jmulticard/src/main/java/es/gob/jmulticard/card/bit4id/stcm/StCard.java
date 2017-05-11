@@ -38,11 +38,8 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 		super(CLA, conn);
 		connect(conn);
 		final byte[] b1 = selectFileByLocationAndRead(new Location("2FFF0000")); //$NON-NLS-1$
-		try (
-			final java.io.OutputStream fos = new java.io.FileOutputStream(java.io.File.createTempFile("0000_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
-		) {
-			fos.write(b1);
-		}
+		final java.io.FileOutputStream fos = new java.io.FileOutputStream(java.io.File.createTempFile("0000_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+		fos.write(b1);
 
 		System.out.println(HexUtils.hexify(b1, true));
 		System.out.println("LEN: " + b1.length); //$NON-NLS-1$
