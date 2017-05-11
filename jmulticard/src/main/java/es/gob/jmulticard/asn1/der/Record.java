@@ -55,7 +55,7 @@ public abstract class Record extends DecoderObject {
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 
-    private final List<DecoderObject> elements = new ArrayList<>();
+    private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
 
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN&#46;1 que va a contener el registro (que obligatoriamente deben ser
@@ -88,7 +88,7 @@ public abstract class Record extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-        if (this.getRawDerValue().length == 0) {
+        if (getRawDerValue().length == 0) {
             throw new Asn1Exception("El valor del objeto ASN.1 esta vacio"); //$NON-NLS-1$
         }
         int offset = 0;
@@ -97,8 +97,8 @@ public abstract class Record extends DecoderObject {
         DecoderObject tmpDo;
         for (int i = 0; i < this.elementsTypes.length; i++) {
         	try {
-	            remainingBytes = new byte[this.getRawDerValue().length - offset];
-	            System.arraycopy(this.getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
+	            remainingBytes = new byte[getRawDerValue().length - offset];
+	            System.arraycopy(getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
 	            tlv = new Tlv(remainingBytes);
 	            try {
 	                tmpDo = this.elementsTypes[i].getElementType().getConstructor().newInstance();

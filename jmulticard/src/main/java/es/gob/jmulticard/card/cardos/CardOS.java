@@ -55,7 +55,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<>();
+    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<String, X509Certificate>();
 
 	/** Construye un objeto que representa una tarjeta Atos / Siemens CardOS.
      * @param conn Conexi&oacute;n con la tarjeta.

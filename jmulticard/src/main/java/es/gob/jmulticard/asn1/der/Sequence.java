@@ -55,7 +55,7 @@ public abstract class Sequence extends DecoderObject {
     /** Tipo ASN&#46;1 <i>Sequence</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private final List<DecoderObject> elements = new ArrayList<>();
+    private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 
@@ -77,7 +77,7 @@ public abstract class Sequence extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-        final Tlv mainTlv = new Tlv(this.getRawDerValue());
+        final Tlv mainTlv = new Tlv(getRawDerValue());
         checkTag(mainTlv.getTag());
         int offset = 0;
         Tlv tlv;

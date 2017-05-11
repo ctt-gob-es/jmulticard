@@ -54,9 +54,9 @@ public final class Location {
 
     private static final int MASTER_FILE_ID = 0x3F00;
 
-    private Vector<Integer> path = new Vector<>();
+    private Vector<Integer> path = new Vector<Integer>();
 
-    private static final Map<String, Integer> HEXBYTES = new HashMap<>();
+    private static final Map<String, Integer> HEXBYTES = new HashMap<String, Integer>();
 
     static {
         final String hex[] = {
@@ -82,7 +82,7 @@ public final class Location {
     private Location(final Vector<Integer> path) {
         if (path != null) {
             final int numElements = path.size();
-            this.path = new Vector<>(numElements);
+            this.path = new Vector<Integer>(numElements);
             for (int i = 0; i < numElements; i++) {
                 this.path.insertElementAt(path.elementAt(i), i);
             }

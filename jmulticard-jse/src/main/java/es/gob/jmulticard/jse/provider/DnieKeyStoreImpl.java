@@ -159,7 +159,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		return null;
     	}
 
-    	final List<X509Certificate> certs = new ArrayList<>();
+    	final List<X509Certificate> certs = new ArrayList<X509Certificate>();
     	certs.add((X509Certificate) engineGetCertificate(alias));
 
     	// La cadena disponible del certificado la componen el propio certificado y el
@@ -414,7 +414,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
          * @param password Contrase&ntilde;a por defecto. */
         public CachePasswordCallback(final char[] password) {
             super(">", false); //$NON-NLS-1$
-            this.setPassword(password);
+            setPassword(password);
         }
     }
 }

@@ -105,9 +105,9 @@ public abstract class Iso7816FourCard extends SmartCard {
                                                                   RequiredSecurityStateNotSatisfiedException,
                                                                   OffsetOutsideEfException {
     	final CommandApdu apdu = new ReadBinaryApduCommand(
-			this.getCla(), msbOffset, lsbOffset, readLength
+			getCla(), msbOffset, lsbOffset, readLength
 		);
-    	final ResponseApdu res = this.getConnection().transmit(
+    	final ResponseApdu res = getConnection().transmit(
 			apdu
 		);
         if (res.isOk()) {
@@ -131,7 +131,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws Iso7816FourCardException SI ocurren problemas durante la lectura de los registros. */
     public List<byte[]> readAllRecords() throws ApduConnectionException, Iso7816FourCardException {
-    	final List<byte[]> ret = new ArrayList<>();
+    	final List<byte[]> ret = new ArrayList<byte[]>();
     	StatusWord readedResponseSw;
     	final CommandApdu readRecordApduCommand = new ReadRecordApduCommand(getCla());
     	do {
@@ -166,10 +166,10 @@ public abstract class Iso7816FourCard extends SmartCard {
             final int left = len - off;
             try {
 	            if (left < MAX_READ_CHUNK) { // Si es menor que el maximo que podemos leer por iteracion
-	                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) left);
+	                readedResponse = readBinary(msbOffset, lsbOffset, (byte) left);
 	            }
 	            else {
-	                readedResponse = this.readBinary(msbOffset, lsbOffset, (byte) MAX_READ_CHUNK);
+	                readedResponse = readBinary(msbOffset, lsbOffset, (byte) MAX_READ_CHUNK);
 	            }
             }
             catch(final Exception e) {
@@ -215,7 +215,7 @@ public abstract class Iso7816FourCard extends SmartCard {
     public void selectFileByName(final byte[] name) throws ApduConnectionException,
                                                            FileNotFoundException,
                                                            Iso7816FourCardException {
-    	final CommandApdu selectCommand = new SelectDfByNameApduCommand(this.getCla(), name);
+    	final CommandApdu selectCommand = new SelectDfByNameApduCommand(getCla(), name);
     	final ResponseApdu response = sendArbitraryApdu(selectCommand);
     	if (response.isOk()) {
     		return;
@@ -233,8 +233,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero. */
     public int selectFileById(final byte[] id) throws ApduConnectionException, Iso7816FourCardException {
-    	final CommandApdu selectCommand = new SelectFileByIdApduCommand(this.getCla(), id);
-		final ResponseApdu res = this.getConnection().transmit(selectCommand);
+    	final CommandApdu selectCommand = new SelectFileByIdApduCommand(getCla(), id);
+		final ResponseApdu res = getConnection().transmit(selectCommand);
     	if (HexUtils.arrayEquals(res.getBytes(), new byte[] { (byte) 0x6a, (byte) 0x82 })) {
     		throw new FileNotFoundException(id);
     	}
@@ -271,7 +271,7 @@ public abstract class Iso7816FourCard extends SmartCard {
         selectMasterFile();
         while (loc != null) {
             final byte[] id = loc.getFile();
-            fileLength = this.selectFileById(id);
+            fileLength = selectFileById(id);
             loc = loc.getChild();
         }
         return fileLength;
@@ -284,7 +284,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero
      * @throws IOException Si hay problemas en el buffer de lectura */
     public byte[] selectFileByLocationAndRead(final Location location) throws IOException, Iso7816FourCardException {
-        final int fileLenght = this.selectFileByLocation(location);
+        final int fileLenght = selectFileByLocation(location);
         return readBinaryComplete(fileLenght);
     }
 
@@ -321,7 +321,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @return Array de 8 bytes aleatorios.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
     public byte[] getChallenge() throws ApduConnectionException {
-        final ResponseApdu res = this.getConnection().transmit(new GetChallengeApduCommand((byte) 0x00));
+        final ResponseApdu res = getConnection().transmit(new GetChallengeApduCommand((byte) 0x00));
         if (res.isOk()) {
         	return res.getData();
         }

@@ -58,13 +58,13 @@ public abstract class SequenceOf extends DecoderObject {
 
 	@Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-		Tlv tlv = new Tlv(this.getRawDerValue());
+		Tlv tlv = new Tlv(getRawDerValue());
 		checkTag(tlv.getTag());
 		int offset = 0;
 		byte[] remainingBytes;
         DecoderObject tmpDo;
         final byte[] valueBytes = tlv.getValue();
-        this.sequenceObjects = new Vector<>();
+        this.sequenceObjects = new Vector<DecoderObject>();
         while (offset < valueBytes.length) {
         	remainingBytes = new byte[valueBytes.length - offset];
         	System.arraycopy(valueBytes, offset, remainingBytes, 0, remainingBytes.length);

@@ -142,7 +142,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
         try {
         	// Listamos los indices de los lectores que correspondan segun si tienen o no tarjeta insertada
-        	final ArrayList<Long> idsTerminales = new ArrayList<>(terminales.size());
+        	final ArrayList<Long> idsTerminales = new ArrayList<Long>(terminales.size());
         	for (int idx = 0; idx < terminales.size(); idx++) {
         		if (onlyWithCardPresent) {
         			if (terminales.get(idx).isCardPresent()) {

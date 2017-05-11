@@ -49,7 +49,7 @@ import es.gob.jmulticard.apdu.StatusWord;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Iso7816FourCardException extends Exception {
 
-    private static final Hashtable<StatusWord, String> ERRORS = new Hashtable<>();
+    private static final Hashtable<StatusWord, String> ERRORS = new Hashtable<StatusWord, String>();
 
     static {
         ERRORS.put(new StatusWord((byte) 0x62, (byte) 0x83), "El fichero seleccionado esta invalidado."); //$NON-NLS-1$
