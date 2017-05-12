@@ -152,7 +152,7 @@ final class Utils {
         		);
             }
             if (component instanceof JComboBox) {
-                final JComboBox comboBox = (JComboBox) component;
+                final JComboBox<?> comboBox = (JComboBox<?>) component;
                 comboBox.addFocusListener(new FocusListener() {
                     @Override
                     public void focusLost(final FocusEvent e) {
