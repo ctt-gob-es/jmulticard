@@ -137,6 +137,13 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
     	Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
     	if (ATR_TC.equals(tmpAtr)) {
+    		if (atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30) {
+    			throw new InvalidCardException(
+					"Encontrada CERES en version " + //$NON-NLS-1$
+						HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) + //$NON-NLS-1$
+							", pero las versiones iguales o superiores a la 04.30 no estan soportadas por este controlador" //$NON-NLS-1$
+				);
+    		}
     		return;
     	}
     	tmpAtr = new Atr(atrBytes, ATR_MASK_ST);
