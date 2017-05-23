@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import es.gob.jmulticard.android.R;
 import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
 
@@ -68,7 +69,8 @@ public class PinDialog extends DialogFragment {
         	this.title = "Introducci\u00f3n de CAN"; //$NON-NLS-1$
         }
         else {
-        	this.title = "Introducci\u00f3n de PIN (" + ((PasswordCallback)cb).getPrompt() + " intentos)"; //$NON-NLS-1$ //$NON-NLS-2$
+			// Muestra el numero de intentos restantes
+        	this.title = ((PasswordCallback)cb).getPrompt();
         }
         this.activity = activity;
         callback = cb;
@@ -78,17 +80,24 @@ public class PinDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final Builder alertDialogBuilder = new AlertDialog.Builder(this.activity);
-		alertDialogBuilder.setTitle(this.title);
+		
 		final LayoutInflater layoutInflater = LayoutInflater.from(this.activity);
 		final View view;
 		if(this.isCan) {
+			alertDialogBuilder.setTitle(R.string.can_intro);
 			view = layoutInflater.inflate(R.layout.dialog_can, null);
+			final TextView textV = (TextView) view.findViewById(R.id.tvPin);
 		}
 		else {
+			alertDialogBuilder.setTitle(R.string.pin_intro);
 			view = layoutInflater.inflate(R.layout.dialog_pin, null);
+			final TextView textV = (TextView) view.findViewById(R.id.tvPin);
+			textV.setText(this.title);
 		}
 
+		
 		final EditText editTextPin = (EditText) view.findViewById(R.id.etPin);
+		
 		alertDialogBuilder.setView(view);
 		alertDialogBuilder.setNegativeButton(
 				this.activity.getString(R.string.cancel),
