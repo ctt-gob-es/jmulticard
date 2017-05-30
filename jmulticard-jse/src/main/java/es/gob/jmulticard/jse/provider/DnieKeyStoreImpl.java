@@ -245,7 +245,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof DniePrivateKeyReference)) {
 			throw new ProviderException(
-				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName() //$NON-NLS-1$
+				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
 		return new DniePrivateKey((DniePrivateKeyReference) pkRef);

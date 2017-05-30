@@ -149,7 +149,10 @@ abstract class DnieSignatureImpl extends SignatureSpi {
 
     	try {
             return this.privateKey.getCryptoCard().sign(
-            		this.data.toByteArray(), this.signatureAlgo, dniePkRef);
+        		this.data.toByteArray(),
+        		this.signatureAlgo,
+        		dniePkRef
+    		);
         }
         catch (final CryptoCardException e) {
             throw new SignatureException(e);

@@ -13,6 +13,7 @@ import java.util.Enumeration;
 
 import javax.security.auth.callback.CallbackHandler;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
@@ -22,14 +23,14 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProvider {
 
-	private static final char[] PASSWORD = "password".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "12341234".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args No se usa.
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
-		TestJseProvider.testProviderWithCustomConnection();
-		//TestJseProvider.testProviderWithDefaultConnection();
+		//TestJseProvider.testProviderWithCustomConnection();
+		TestJseProvider.testProviderWithDefaultConnection();
 	}
 
 	static void testProviderWithCustomConnection() throws Exception {
@@ -64,19 +65,23 @@ public final class TestJseProvider {
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
 		ks.load(null, PASSWORD);
 		final Enumeration<String> aliases = ks.aliases();
+		String alias = null;
 		while (aliases.hasMoreElements()) {
-			System.out.println(aliases.nextElement());
+			alias = aliases.nextElement();
+			System.out.println(alias);
 		}
 
+		Assert.assertNotNull("La tarjeta debe tener al menos un certificado", alias); //$NON-NLS-1$
+
 		final Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
-		signature.initSign((PrivateKey) ks.getKey("CertFirmaDigital", PASSWORD)); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey(alias, PASSWORD));
 		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
 		signature.sign();
 
 		System.out.println("Firma generada correctamente"); //$NON-NLS-1$
 
 		System.out.println(
-			((X509Certificate)ks.getCertificate("CertFirmaDigital")).getIssuerX500Principal().toString() //$NON-NLS-1$
+			((X509Certificate)ks.getCertificate(alias)).getIssuerX500Principal().toString()
 		);
 	}
 
