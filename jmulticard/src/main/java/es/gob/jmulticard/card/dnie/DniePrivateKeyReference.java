@@ -58,7 +58,10 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	 * @param id Identificador de la clave.
 	 * @param path Ruta interna de la clave.
 	 * @param lbl Etiqueta de la clave. */
-	public DniePrivateKeyReference(final CryptoCard card, final byte[] id, final Location path, final String lbl) {
+	public DniePrivateKeyReference(final CryptoCard card,
+			                       final byte[] id,
+			                       final Location path,
+			                       final String lbl) {
 		this.dnieCard = card;
 		this.identifier = id;
 		this.keyPath = path;
@@ -88,4 +91,5 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	public String getLabel() {
 		return this.label;
 	}
+
 }

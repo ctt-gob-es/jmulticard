@@ -125,6 +125,7 @@ public final class DnieFactory {
 					LOGGER.info("Detectada tarjeta TC-FNMT en version 4.30 o superior (no soportada aun)"); //$NON-NLS-1$
 				}
 				invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$
+				//return new CeresSc(conn, pwc, cryptoHelper, ch);
 			}
 			else {
 				// La tarjeta encontrada no es un DNIe

@@ -110,17 +110,17 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
+    /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
     private CallbackHandler callbackHandler;
 
 	private String[] aliases = null;
 
-    private static final CertificateFactory certFactory;
+    protected static final CertificateFactory CERT_FACTORY;
     static {
     	try {
-			certFactory = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+			CERT_FACTORY = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 		}
     	catch (final Exception e) {
 			throw new IllegalStateException(
@@ -156,9 +156,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     private static final String SIGN_KEY_LABEL = "KprivFirmaDigital"; //$NON-NLS-1$
     private static final String CYPH_KEY_LABEL = "KprivCifrado"; //$NON-NLS-1$
 
-    private static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
-
-    private static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
+    protected static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
+    protected static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
 
     private X509Certificate authCert;
     private X509Certificate signCert;
@@ -192,7 +191,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     protected ApduConnection rawConnection;
 
     /** Manejador de funciones criptograficas. */
-    private final CryptoHelper cryptoHelper;
+    protected final CryptoHelper cryptoHelper;
 
     protected CryptoHelper getCryptoHelper() {
     	return this.cryptoHelper;
@@ -255,7 +254,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     /** Carga la informaci&oacute;n p&uacute;blica con la referencia a las claves de firma. */
-    private void loadKeyReferences() {
+    protected void loadKeyReferences() {
         final PrKdf prKdf = new PrKdf();
         try {
             prKdf.setDerValue(
@@ -270,13 +269,28 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         for (int i = 0; i < prKdf.getKeyCount(); i++) {
             if (AUTH_KEY_LABEL.equals(prKdf.getKeyName(i))) {
-                this.authKeyRef = new DniePrivateKeyReference(this, prKdf.getKeyIdentifier(i), new Location(prKdf.getKeyPath(i)), AUTH_KEY_LABEL);
+                this.authKeyRef = new DniePrivateKeyReference(
+            		this,
+            		prKdf.getKeyIdentifier(i),
+            		new Location(prKdf.getKeyPath(i)),
+            		AUTH_KEY_LABEL
+        		);
             }
             else if (SIGN_KEY_LABEL.equals(prKdf.getKeyName(i))) {
-                this.signKeyRef = new DniePrivateKeyReference(this, prKdf.getKeyIdentifier(i), new Location(prKdf.getKeyPath(i)), SIGN_KEY_LABEL);
+                this.signKeyRef = new DniePrivateKeyReference(
+            		this,
+            		prKdf.getKeyIdentifier(i),
+            		new Location(prKdf.getKeyPath(i)),
+            		SIGN_KEY_LABEL)
+        		;
             }
             else if (CYPH_KEY_LABEL.equals(prKdf.getKeyName(i))) {
-                this.cyphKeyRef = new DniePrivateKeyReference(this, prKdf.getKeyIdentifier(i), new Location(prKdf.getKeyPath(i)), CYPH_KEY_LABEL);
+                this.cyphKeyRef = new DniePrivateKeyReference(
+            		this,
+            		prKdf.getKeyIdentifier(i),
+            		new Location(prKdf.getKeyPath(i)),
+            		CYPH_KEY_LABEL
+        		);
             }
             else {
             	// Certificado de firma con seudonimo
@@ -328,8 +342,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return this.aliases;
     }
 
-    /** Carga el certificado de la CA intermedia y las localizaciones de los certificados de firma y autenticaci&oacute;n. */
-    private void preloadCertificates() {
+    /** Carga el certificado de la CA intermedia y las localizaciones de los
+     * certificados de firma y autenticaci&oacute;n.
+     * @throws ApduConnectionException Si hay problemas en la precarga. */
+    protected void preloadCertificates() throws ApduConnectionException {
         final Cdf cdf = new Cdf();
         try {
         	selectMasterFile();
@@ -337,7 +353,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             cdf.setDerValue(cdfBytes);
         }
         catch (final Exception e) {
-            throw new IllegalStateException("No se ha podido cargar el CDF de la tarjeta: " + e.toString(), e); //$NON-NLS-1$
+            throw new ApduConnectionException (
+        		"No se ha podido cargar el CDF de la tarjeta: " + e.toString(), e //$NON-NLS-1$
+    		);
         }
 
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
@@ -368,7 +386,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                 			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir" //$NON-NLS-1$
             			);
                     }
-            		this.intermediateCaCert = (X509Certificate) certFactory.generateCertificate(
+            		this.intermediateCaCert = (X509Certificate) CERT_FACTORY.generateCertificate(
     					new ByteArrayInputStream(intermediateCaCertEncoded)
 					);
             	}
@@ -634,12 +652,12 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @return Firma de los datos.
      * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
+     *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico.
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
     protected byte[] signOperation(final byte[] data,
     		                       final String signAlgorithm,
     		                       final PrivateKeyReference privateKeyReference) throws CryptoCardException,
-    		                                                                           PinException {
+    		                                                                             PinException {
         openSecureChannelIfNotAlreadyOpened();
 
         ResponseApdu res;
@@ -798,7 +816,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     			"Ha fallado la descompresion del certificado, se probara sin descomprimir" //$NON-NLS-1$
 			);
         }
-        return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(certEncoded));
+        return (X509Certificate) CERT_FACTORY.generateCertificate(new ByteArrayInputStream(certEncoded));
     }
 
     protected void loadCertificatesInternal() throws CryptoCardException {
@@ -860,7 +878,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @param compressedCertificate Certificado comprimido en ZIP a partir del 9 byte.
      * @return Certificado codificado.
      * @throws IOException Cuando se produce un error en la descompresion del certificado. */
-    private static byte[] deflate(final byte[] compressedCertificate) throws IOException {
+    protected static byte[] deflate(final byte[] compressedCertificate) throws IOException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final Inflater decompressor = new Inflater();
         decompressor.setInput(compressedCertificate, 8, compressedCertificate.length - 8);
@@ -892,8 +910,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		                                             PinException {
     	if(psc == null) {
     		throw new IllegalArgumentException(
-        			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
-            	);
+    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
+        	);
     	}
     	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x00, psc);
 
@@ -985,16 +1003,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		return null;
 	}
 
-    /** Asigna un CallbackHandler a la tarjeta
-     * @param handler CallbackHandler a asignar
-     */
+    /** Asigna un CallbackHandler a la tarjeta.
+     * @param handler CallbackHandler a asignar. */
     public void setCallbackHandler(final CallbackHandler handler) {
     	this.callbackHandler = handler;
     }
 
-	/** Asigna un <code>PasswordCallback</code> a la tarjeta
-	 * @param pwc <code>PasswordCallback</code> a asignar
-	 */
+	/** Asigna un <code>PasswordCallback</code> a la tarjeta.
+	 * @param pwc <code>PasswordCallback</code> a asignar. */
 	public void setPasswordCallback(final PasswordCallback pwc) {
 		this.passwordCallback = pwc;
 	}
