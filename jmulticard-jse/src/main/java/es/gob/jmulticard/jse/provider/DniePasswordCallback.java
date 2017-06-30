@@ -10,9 +10,8 @@ final class DniePasswordCallback extends PasswordCallback {
 
 	private final PasswordProtection passp;
 
-	/**
-	 * @param pp PasswordProtection para solicitar la contraseña
-	 */
+	/** Constructor.
+	 * @param pp PasswordProtection para solicitar la contrase&ntilde;a. */
 	DniePasswordCallback(final PasswordProtection pp) {
 		super("Por favor, introduzca el PIN del DNIe", false); //$NON-NLS-1$
 		if (pp == null) {
