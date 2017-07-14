@@ -204,7 +204,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     /** Inicia la conexi&oacute;n con la tarjeta CERES.
      * @param conn Conexi&oacute;n con el lector de tarjetas.
      * @throws ApduConnectionException Si ocurren errores de conexi&oacute;n.
-     * @throws InvalidCardException SI la tarjeta encontrada en el lector no es una tarjeta FNMT-RCM-CERES. */
+     * @throws InvalidCardException Si la tarjeta encontrada en el lector no es una tarjeta FNMT-RCM-CERES. */
     public static void connect(final ApduConnection conn) throws ApduConnectionException, InvalidCardException {
     	conn.open();
     	checkAtr(conn.reset());
