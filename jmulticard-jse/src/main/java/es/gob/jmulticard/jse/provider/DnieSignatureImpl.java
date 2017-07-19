@@ -136,7 +136,7 @@ abstract class DnieSignatureImpl extends SignatureSpi {
 
     	if (!(this.privateKey.getCryptoCard() instanceof Dni)) {
     		throw new ProviderException(
-				"La clave proporcionada no se corresponde con la de un DNIe: " + this.privateKey.getCryptoCard().getClass().getName() //$NON-NLS-1$
+				"La clave proporcionada no es de un DNIe: " + this.privateKey.getCryptoCard().getClass().getName() //$NON-NLS-1$
 			);
     	}
 
@@ -144,7 +144,9 @@ abstract class DnieSignatureImpl extends SignatureSpi {
 			this.privateKey.getCryptoCard(),
 			this.privateKey.getId(),
 			this.privateKey.getPath(),
-			this.privateKey.toString()
+			this.privateKey.toString(),
+			this.privateKey.getKeyReference(),
+			this.privateKey.getKeyBitSize()
 		);
 
     	try {

@@ -68,6 +68,12 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	/** Etiqueta de la clave. */
 	private final String name;
 
+	/** Referencia interna de la clave. */
+	private final byte reference;
+
+	/** Tama&ntilde;o en bits de la clave privada. */
+	private final int keySize;
+
 	/** Crea una clave privada de DNIe.
 	 * @param keyReference Referencia a la clave privada del DNIe. */
 	DniePrivateKey(final DniePrivateKeyReference keyReference) {
@@ -75,6 +81,8 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		this.id = keyReference.getIdentifier();
 		this.path = keyReference.getKeyPath();
 		this.name = keyReference.getLabel();
+		this.reference = keyReference.getKeyReference();
+		this.keySize = keyReference.getKeyBitSize();
 	}
 
 	/** {@inheritDoc} */
@@ -134,5 +142,17 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	@SuppressWarnings({ "static-method", "unused" })
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		throw new NotSerializableException();
+	}
+
+	/** Recupera la referencia de la clave.
+	 * @return Referencia de la clave. */
+	byte getKeyReference() {
+		return this.reference;
+	}
+
+	/** Obtiene el tam&ntilde;o en bits de la clave.
+	 * @return Tam&ntilde;o en bits de la clave. */
+	int getKeyBitSize() {
+		return this.keySize;
 	}
 }

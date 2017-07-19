@@ -47,7 +47,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -98,6 +97,8 @@ import es.gob.jmulticard.card.pace.PaceConnection;
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
+
+	private static final int DEFAULT_KEY_SIZE = 2048;
 
 	@SuppressWarnings("static-method")
 	protected Cwa14890PublicConstants getCwa14890PublicConstants() {
@@ -276,7 +277,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		new Location(prKdf.getKeyPath(i)),
             		AUTH_KEY_LABEL,
             		prKdf.getKeyReference(i),
-            		((RSAPublicKey)this.authCert.getPublicKey()).getModulus().bitLength()
+            		DEFAULT_KEY_SIZE
         		);
             }
             else if (SIGN_KEY_LABEL.equals(prKdf.getKeyName(i))) {
@@ -286,7 +287,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		new Location(prKdf.getKeyPath(i)),
             		SIGN_KEY_LABEL,
             		prKdf.getKeyReference(i),
-            		((RSAPublicKey)this.signCert.getPublicKey()).getModulus().bitLength()
+            		DEFAULT_KEY_SIZE
         		);
             }
             else if (CYPH_KEY_LABEL.equals(prKdf.getKeyName(i))) {
@@ -296,7 +297,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		new Location(prKdf.getKeyPath(i)),
             		CYPH_KEY_LABEL,
             		prKdf.getKeyReference(i),
-            		((RSAPublicKey)this.cyphCert.getPublicKey()).getModulus().bitLength()
+            		DEFAULT_KEY_SIZE
         		);
             }
             else {
@@ -307,7 +308,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         			new Location(prKdf.getKeyPath(i)),
         			prKdf.getKeyName(i),
         			prKdf.getKeyReference(i),
-        			((RSAPublicKey)this.signAliasCert.getPublicKey()).getModulus().bitLength()
+        			DEFAULT_KEY_SIZE
     			);
             }
         }
