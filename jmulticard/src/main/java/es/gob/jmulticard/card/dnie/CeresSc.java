@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -208,7 +209,9 @@ public final class CeresSc extends Dnie {
 						this,
 						prkdf.getKeyIdentifier(i),
 	            		new Location(prkdf.getKeyPath(i)),
-	            		prkdf.getKeyName(i)
+	            		prkdf.getKeyName(i),
+	            		prkdf.getKeyReference(i),
+	            		((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
 					)
 				);
 			}

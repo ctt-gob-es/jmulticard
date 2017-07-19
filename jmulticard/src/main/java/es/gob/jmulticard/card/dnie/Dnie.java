@@ -47,6 +47,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -273,7 +274,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		this,
             		prKdf.getKeyIdentifier(i),
             		new Location(prKdf.getKeyPath(i)),
-            		AUTH_KEY_LABEL
+            		AUTH_KEY_LABEL,
+            		prKdf.getKeyReference(i),
+            		((RSAPublicKey)this.authCert.getPublicKey()).getModulus().bitLength()
         		);
             }
             else if (SIGN_KEY_LABEL.equals(prKdf.getKeyName(i))) {
@@ -281,15 +284,19 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		this,
             		prKdf.getKeyIdentifier(i),
             		new Location(prKdf.getKeyPath(i)),
-            		SIGN_KEY_LABEL)
-        		;
+            		SIGN_KEY_LABEL,
+            		prKdf.getKeyReference(i),
+            		((RSAPublicKey)this.signCert.getPublicKey()).getModulus().bitLength()
+        		);
             }
             else if (CYPH_KEY_LABEL.equals(prKdf.getKeyName(i))) {
                 this.cyphKeyRef = new DniePrivateKeyReference(
             		this,
             		prKdf.getKeyIdentifier(i),
             		new Location(prKdf.getKeyPath(i)),
-            		CYPH_KEY_LABEL
+            		CYPH_KEY_LABEL,
+            		prKdf.getKeyReference(i),
+            		((RSAPublicKey)this.cyphCert.getPublicKey()).getModulus().bitLength()
         		);
             }
             else {
@@ -298,7 +305,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         			this,
         			prKdf.getKeyIdentifier(i),
         			new Location(prKdf.getKeyPath(i)),
-        			prKdf.getKeyName(i)
+        			prKdf.getKeyName(i),
+        			prKdf.getKeyReference(i),
+        			((RSAPublicKey)this.signAliasCert.getPublicKey()).getModulus().bitLength()
     			);
             }
         }

@@ -52,20 +52,28 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	private final byte[] identifier;
 	private final Location keyPath;
 	private final String label;
+	private final byte reference;
+	private final int keySize;
 
 	/** Crea una referencia a una clave privada del DNIe.
 	 * @param card Tarjeta en la que se almacena la clave privada.
 	 * @param id Identificador de la clave.
 	 * @param path Ruta interna de la clave.
-	 * @param lbl Etiqueta de la clave. */
+	 * @param lbl Etiqueta de la clave.
+	 * @param ref Referencia interna de la clave.
+	 * @param keyLength Tama&ntilde;o en bits de la clave privada. */
 	public DniePrivateKeyReference(final CryptoCard card,
 			                       final byte[] id,
 			                       final Location path,
-			                       final String lbl) {
+			                       final String lbl,
+			                       final byte ref,
+			                       final int keyLength) {
 		this.dnieCard = card;
 		this.identifier = id;
 		this.keyPath = path;
 		this.label = lbl;
+		this.reference = ref;
+		this.keySize = keyLength;
 	}
 
 	/** Recupera el manejador de la tarjeta en la que se almacena la clave.
@@ -90,6 +98,18 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	 * @return Etiqueta de la clave. */
 	public String getLabel() {
 		return this.label;
+	}
+
+	/** Recupera la referencia de la clave.
+	 * @return Referencia de la clave. */
+	public byte getKeyReference() {
+		return this.reference;
+	}
+
+	/** Obtiene el tam&ntilde;o en bits de la clave.
+	 * @return Tam&ntilde;o en bits de la clave. */
+	public int getKeyBitSize() {
+		return this.keySize;
 	}
 
 }
