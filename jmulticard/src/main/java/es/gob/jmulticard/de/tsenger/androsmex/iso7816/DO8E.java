@@ -37,26 +37,19 @@ final class DO8E {
 
 	DO8E(){}
 
-	DO8E(byte[] checksum){
+	DO8E(final byte[] checksum){
 		this.data = checksum.clone();
 		this.to = new DERTaggedObject(false, 0x0E, new DEROctetString(checksum));
 	}
 
-	void fromByteArray(byte[] encodedData) throws SecureMessagingException {
-    	final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
-    	try {
+	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
+    	try (
+			final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
+		) {
 			this.to = (DERTaggedObject)asn1in.readObject();
 		}
     	catch (final IOException e) {
 			throw new SecureMessagingException(e);
-		}
-		finally {
-			try {
-				asn1in.close();
-			}
-			catch (final IOException e) {
-				throw new SecureMessagingException(e);
-			}
 		}
 		final DEROctetString ocs = (DEROctetString) this.to.getObject();
 		this.data = ocs.getOctets();

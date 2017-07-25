@@ -177,8 +177,8 @@ public final class CeresSc extends Dnie {
 		final Pkcs15Cdf cdf = new Cdf();
 		cdf.setDerValue(cdfBytes);
 
-		this.certs = new LinkedHashMap<String, X509Certificate>(cdf.getCertificateCount());
-		this.aliasByCertAndKeyId = new LinkedHashMap<String, String>(cdf.getCertificateCount());
+		this.certs = new LinkedHashMap<>(cdf.getCertificateCount());
+		this.aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
 
 		for (int i = 0; i < cdf.getCertificateCount(); i++) {
 			final Location l = new Location(
@@ -199,7 +199,7 @@ public final class CeresSc extends Dnie {
 		final PrKdf prkdf = new PrKdf();
 		prkdf.setDerValue(prkdfValue);
 
-		this.keyReferences = new LinkedHashMap<String, DniePrivateKeyReference>();
+		this.keyReferences = new LinkedHashMap<>();
 		for (int i = 0; i < prkdf.getKeyCount(); i++) {
 			final String alias = this.aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
 			if (alias != null) {

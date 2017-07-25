@@ -55,7 +55,7 @@ public abstract class Record extends DecoderObject {
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 
-    private final List<DecoderObject> elements = new ArrayList<DecoderObject>();
+    private final List<DecoderObject> elements = new ArrayList<>();
 
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN&#46;1 que va a contener el registro (que obligatoriamente deben ser

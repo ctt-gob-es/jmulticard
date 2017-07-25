@@ -42,7 +42,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
     private void loadAliases() {
     	final String[] aliases = this.cryptoCard.getAliases();
-    	userCertAliases = new ArrayList<String>(aliases.length);
+    	userCertAliases = new ArrayList<>(aliases.length);
     	for (final String alias : aliases) {
     		userCertAliases.add(alias);
     	}

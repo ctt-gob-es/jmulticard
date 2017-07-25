@@ -338,7 +338,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     @Override
     public String[] getAliases() {
     	if (this.aliases == null) {
-	    	final List<String> aliasesList = new ArrayList<String>();
+	    	final List<String> aliasesList = new ArrayList<>();
 	    	aliasesList.add(CERT_ALIAS_AUTH);
 	    	aliasesList.add(CERT_ALIAS_SIGN);
 	    	if (this.cyphCertPath != null) {

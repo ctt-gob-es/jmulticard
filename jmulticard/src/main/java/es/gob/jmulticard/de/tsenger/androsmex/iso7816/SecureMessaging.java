@@ -151,25 +151,20 @@ public class SecureMessaging {
 				0,
 				rapduBytes.length - pointer
 			);
-			final ASN1InputStream asn1sp = new ASN1InputStream(subArray);
+
 			final byte[] encodedBytes;
-			try {
+			try (
+				final ASN1InputStream asn1sp = new ASN1InputStream(subArray);
+			) {
 				encodedBytes = asn1sp.readObject().getEncoded();
 			}
 			catch (final IOException e) {
 				throw new SecureMessagingException(e);
 			}
-			finally {
-				try {
-					asn1sp.close();
-				}
-				catch (final IOException e) {
-					throw new SecureMessagingException(e);
-				}
-			}
 
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedBytes);
-			try {
+			try (
+				final ASN1InputStream asn1in = new ASN1InputStream(encodedBytes);
+			) {
 				switch (encodedBytes[0]) {
 				case (byte) 0x87:
 					do87 = new DO87();
@@ -190,20 +185,10 @@ public class SecureMessaging {
 			catch (final IOException e) {
 				throw new SecureMessagingException(e);
 			}
-			finally {
-				try {
-					asn1in.close();
-				}
-				catch (final IOException e) {
-					throw new SecureMessagingException(e);
-				}
-			}
-
 			pointer += encodedBytes.length;
 		}
 
-		if (do99 == null || do8E == null)
-		 {
+		if (do99 == null || do8E == null) {
 			throw new SecureMessagingException("Error en SecureMessaging: DO99 o DO8E no encontrados"); // DO99 es obligatorio //$NON-NLS-1$
 		}
 
@@ -214,7 +199,8 @@ public class SecureMessaging {
 				bout.write(do87.getEncoded());
 			}
 			bout.write(do99.getEncoded());
-		} catch (final IOException e) {
+		}
+		catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
 
@@ -225,7 +211,7 @@ public class SecureMessaging {
 
 		if (!java.util.Arrays.equals(cc, do8eData)) {
 			throw new SecureMessagingException("Checksum incorrecto\n CC Calculado: " //$NON-NLS-1$
-					+ HexString.bufferToHex(cc) + "\nCC en DO8E: " //$NON-NLS-1$
+				+ HexString.bufferToHex(cc) + "\nCC en DO8E: " //$NON-NLS-1$
 					+ HexString.bufferToHex(do8eData));
 		}
 
@@ -238,16 +224,23 @@ public class SecureMessaging {
 			final byte[] do87Data = do87.getData();
 			try {
 				data = this.crypto.decrypt(do87Data);
-			} catch (final AmCryptoException e) {
+			}
+			catch (final AmCryptoException e) {
 				throw new SecureMessagingException(e);
 			}
 			// Construir la respuesta APDU desencriptada
 			unwrappedAPDUBytes = new byte[data.length + 2];
 			System.arraycopy(data, 0, unwrappedAPDUBytes, 0, data.length);
 			final byte[] do99Data = do99.getData();
-			System.arraycopy(do99Data, 0, unwrappedAPDUBytes, data.length,
-					do99Data.length);
-		} else {
+			System.arraycopy(
+				do99Data,
+				0,
+				unwrappedAPDUBytes,
+				data.length,
+				do99Data.length
+			);
+		}
+		else {
 			unwrappedAPDUBytes = do99.getData().clone();
 		}
 
@@ -324,20 +317,20 @@ public class SecureMessaging {
 		if (cardcmd.length == 5) {
 			return 2;
 		}
-		if (cardcmd.length == (5 + (cardcmd[4]&0xff)) && cardcmd[4] != 0) {
+		if (cardcmd.length == 5 + (cardcmd[4]&0xff) && cardcmd[4] != 0) {
 			return 3;
 		}
-		if (cardcmd.length == (6 + (cardcmd[4]&0xff)) && cardcmd[4] != 0) {
+		if (cardcmd.length == 6 + (cardcmd[4]&0xff) && cardcmd[4] != 0) {
 			return 4;
 		}
 		if (cardcmd.length == 7 && cardcmd[4] == 0) {
 			return 5;
 		}
-		if (cardcmd.length == (7 + (cardcmd[5]&0xff) * 256 + (cardcmd[6]&0xff))
+		if (cardcmd.length == 7 + (cardcmd[5]&0xff) * 256 + (cardcmd[6]&0xff)
 				&& cardcmd[4] == 0 && (cardcmd[5] != 0 || cardcmd[6] != 0)) {
 			return 6;
 		}
-		if (cardcmd.length == (9 + (cardcmd[5]&0xff) * 256 + (cardcmd[6]&0xff))
+		if (cardcmd.length == 9 + (cardcmd[5]&0xff) * 256 + (cardcmd[6]&0xff)
 				&& cardcmd[4] == 0 && (cardcmd[5] != 0 || cardcmd[6] != 0)) {
 			return 7;
 		}
