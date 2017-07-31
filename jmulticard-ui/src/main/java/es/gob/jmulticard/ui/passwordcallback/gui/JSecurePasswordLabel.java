@@ -63,7 +63,7 @@ final class JSecurePasswordLabel extends JLabel {
 	private static final long serialVersionUID = -4343328489072897605L;
 
 	private final int delay = 500;
-	private final char[] pass;
+	final char[] pass;
 	char[] getPass() {
 	    return this.pass;
 	}
@@ -92,8 +92,10 @@ final class JSecurePasswordLabel extends JLabel {
 			public void keyTyped(final KeyEvent ke) {
 				//Caracteres validos password
 				if (getPasswordLength() < getMaxChars()) {
-					JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
-					ke.setKeyChar('\0');
+					if(ke.getKeyChar() != KeyEvent.VK_BACK_SPACE && ke.getKeyChar() != KeyEvent.VK_DELETE) {
+						JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
+						ke.setKeyChar('\0');
+					}
 				}
 				updateText();
 			}
@@ -203,7 +205,7 @@ final class JSecurePasswordLabel extends JLabel {
 	}
 
 	/**
-	 * Getter privado para el campo showCursor que indica si ha de mostrarse el cursor o no
+	 * Getter privado para el campo showCursor que indica si ha de mostrarse el cursor o now
 	 * @return Si ha de mostrarse el cursor o no
 	 */
 	synchronized boolean getShowCursor(){
