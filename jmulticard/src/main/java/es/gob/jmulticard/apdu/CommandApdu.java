@@ -72,7 +72,7 @@ public class CommandApdu extends Apdu {
 		if (bytes == null || bytes.length < 5) {
 			throw new IllegalArgumentException("La longitud del array de octetos debe ser igual o mayor que 5."); //$NON-NLS-1$
 		}
-		final int i = (bytes[4]) & 0xff;
+		final int i = bytes[4] & 0xff;
 		if (bytes.length>5 && bytes.length>i+5) {
 			return Integer.valueOf(bytes[i+5]);
 		}
@@ -131,7 +131,17 @@ public class CommandApdu extends Apdu {
 			this.body = new byte[data.length];
 			System.arraycopy(data, 0, this.body, 0, data.length);
 
-			baos.write(Integer.valueOf(String.valueOf(this.body.length)).byteValue());
+			if (data.length <= 0xFF) {
+				baos.write(Integer.valueOf(String.valueOf(this.body.length)).byteValue());
+			}
+			else {
+				baos.write((byte) 0x00);
+				final int dataLength = this.body.length;
+				final byte lc1 = (byte) (dataLength >> 8 & 0xFF);
+				final byte lc2 = (byte) (dataLength & 0xFF);
+				baos.write(lc1);
+				baos.write(lc2);
+			}
 
 			if (this.body.length > 0) {
 				try {

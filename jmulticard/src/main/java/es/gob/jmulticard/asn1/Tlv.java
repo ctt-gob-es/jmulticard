@@ -68,17 +68,35 @@ public final class Tlv {
         this.valueOffset = 2;
         this.tag = t;
         this.length = value.length;
-        int iExtLen = 0;
-        iExtLen = value.length >= 128 ? 3 : 2;
+
+
+        final int iExtLen;
+        if (this.length >= 256) {
+        	iExtLen = 4;
+        }
+        else if (this.length >= 128) {
+        	iExtLen = 3;
+        }
+        else {
+        	iExtLen = 2;
+        }
+
         this.bytes = new byte[value.length + iExtLen];
         this.bytes[0] = t;
-        if (value.length >= 128) {
-            this.bytes[1] = -127;
-            this.bytes[2] = (byte)value.length;
-        } 
+
+        if (this.length >= 256) {
+        	this.bytes[1] = (byte) 0x82;
+        	this.bytes[2] = (byte) (value.length >> 8 & 0xFF);
+        	this.bytes[3] = (byte) (value.length & 0xFF);
+    	}
+        else if (value.length >= 128) {
+        	this.bytes[1] = (byte) 0x81;
+        	this.bytes[2] = (byte)value.length;
+    	}
         else {
             this.bytes[1] = (byte)value.length;
         }
+
         System.arraycopy(value, 0, this.bytes, iExtLen, value.length);
     }
 
