@@ -86,31 +86,36 @@ final class JSecurePasswordLabel extends JLabel {
 		this.maxChars = maxLength;
 		this.pass = new char[maxLength];
 		clearPassword();
-		addKeyListener(new KeyAdapter() {
+        addKeyListener(new KeyAdapter() {
 
-			@Override
-			public void keyTyped(final KeyEvent ke) {
-				//Caracteres validos password
-				if (getPasswordLength() < getMaxChars()) {
-					JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
-					ke.setKeyChar('\0');
-				}
-				updateText();
-			}
+            @Override
+            public void keyTyped(final KeyEvent ke) {
+                //Caracteres validos password
+                if ((ke.getKeyChar() == '\b') ||
+                        (ke.getKeyChar() == '\t') ||
+                        (ke.getKeyChar() == '\n') ||
+                        (ke.getKeyChar() == '\r')) {
+                    // evitar que los caracteres especiales se cuelen en la clave
+                } else if (getPasswordLength() < getMaxChars()) {
+                    JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
+                    ke.setKeyChar('\0');
+                }
+                updateText();
+            }
 
-			@Override
-			public void keyPressed(final KeyEvent arg0) {
-				//Borrar
-				if (arg0.getKeyCode() == KeyEvent.VK_BACK_SPACE && getPasswordLength() > 0) {
-					clearPassword(getPasswordLength() - 1);
-				}
-				//Supr
-				else if(arg0.getKeyCode() == KeyEvent.VK_DELETE) {
-					clearPassword();
-				}
-				updateText();
-			}
-		});
+            @Override
+            public void keyPressed(final KeyEvent ke) {
+                //Borrar
+                if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE && getPasswordLength() > 0) {
+                    clearPassword(getPasswordLength() - 1);
+                }
+                //Supr
+                else if(ke.getKeyCode() == KeyEvent.VK_DELETE) {
+                    clearPassword();
+                }
+                updateText();
+            }
+        });
 		addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(final FocusEvent arg0) {
