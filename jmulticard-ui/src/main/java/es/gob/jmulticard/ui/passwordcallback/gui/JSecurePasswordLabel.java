@@ -44,6 +44,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -90,9 +91,14 @@ final class JSecurePasswordLabel extends JLabel {
 
 			@Override
 			public void keyTyped(final KeyEvent ke) {
-				//Caracteres validos password
-				if (getPasswordLength() < getMaxChars()) {
-					if(ke.getKeyChar() != KeyEvent.VK_BACK_SPACE && ke.getKeyChar() != KeyEvent.VK_DELETE) {
+				// Caracteres validos y con longitud valida de password.
+                 if (getPasswordLength() < getMaxChars()) {
+					// No se escriben: Back space, Supr, Enter, Tab y CTRL+Letra (CTRL+V, etc)
+					if(ke.getKeyChar() != KeyEvent.VK_BACK_SPACE &&
+					   ke.getKeyChar() != KeyEvent.VK_DELETE &&
+					   ke.getKeyChar() != KeyEvent.VK_ENTER &&
+					   ke.getKeyChar() != KeyEvent.VK_TAB &&
+					   ke.getModifiers() != InputEvent.CTRL_MASK) {
 						JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
 						ke.setKeyChar('\0');
 					}
