@@ -38,40 +38,33 @@ final class DO87 {
 
     DO87() {}
 
-	DO87(byte[] data) {
+	DO87(final byte[] data) {
 		this.data = data.clone();
 		this.value_ = addOne(data);
 		this.to = new DERTaggedObject(false, 7, new DEROctetString(this.value_));
 	}
 
-	private static byte[] addOne(byte[] data) {
+	private static byte[] addOne(final byte[] data) {
 		final byte[] ret = new byte[data.length+1];
 		System.arraycopy(data, 0, ret, 1, data.length);
 		ret[0] = 1;
 		return ret;
 	}
 
-	private static byte[] removeOne(byte[] value) {
+	private static byte[] removeOne(final byte[] value) {
 		final byte[] ret = new byte[value.length-1];
 		System.arraycopy(value, 1, ret, 0, ret.length);
 		return ret;
 	}
 
-	void fromByteArray(byte[] encodedData) throws SecureMessagingException {
-    	final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
-    	try {
+	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
+    	try (
+			final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
+		) {
 			this.to = (DERTaggedObject)asn1in.readObject();
 		}
     	catch (final IOException e) {
 			throw new SecureMessagingException(e);
-		}
-		finally {
-			try {
-				asn1in.close();
-			}
-			catch (final IOException e) {
-				throw new SecureMessagingException(e);
-			}
 		}
     	final DEROctetString ocs = (DEROctetString) this.to.getObject();
 		this.value_ = ocs.getOctets();

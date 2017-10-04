@@ -131,7 +131,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws Iso7816FourCardException SI ocurren problemas durante la lectura de los registros. */
     public List<byte[]> readAllRecords() throws ApduConnectionException, Iso7816FourCardException {
-    	final List<byte[]> ret = new ArrayList<byte[]>();
+    	final List<byte[]> ret = new ArrayList<>();
     	StatusWord readedResponseSw;
     	final CommandApdu readRecordApduCommand = new ReadRecordApduCommand(getCla());
     	do {

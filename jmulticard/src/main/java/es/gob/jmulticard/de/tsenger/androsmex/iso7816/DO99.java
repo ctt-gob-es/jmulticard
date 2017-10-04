@@ -36,38 +36,30 @@ final class DO99 {
 
 	DO99() {}
 
-	DO99(byte[] le) {
+	DO99(final byte[] le) {
 		this.data = le.clone();
 		this.to = new DERTaggedObject(false, 0x19, new DEROctetString(le));
 	}
 
-	void fromByteArray(byte[] encodedData) throws SecureMessagingException {
-		final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
-		try {
+	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
+		try (
+			final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
+		) {
 			this.to = (DERTaggedObject) asn1in.readObject();
 			asn1in.close();
 		}
 		catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
-		finally {
-			try {
-				asn1in.close();
-			}
-			catch (final IOException e) {
-				throw new SecureMessagingException(e);
-			}
-		}
-
 		final DEROctetString ocs = (DEROctetString) this.to.getObject();
 		this.data = ocs.getOctets();
-
 	}
 
 	byte[] getEncoded() throws SecureMessagingException {
     	try {
 			return this.to.getEncoded();
-		} catch (final IOException e) {
+		}
+    	catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
     }

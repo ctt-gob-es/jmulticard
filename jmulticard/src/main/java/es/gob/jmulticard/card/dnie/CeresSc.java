@@ -19,6 +19,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -64,6 +65,11 @@ public final class CeresSc extends Dnie {
 	}
 
 	@Override
+	public X509Certificate getCertificate(final String alias) {
+		return this.certs.get(alias);
+	}
+
+	@Override
 	protected byte[] signOperation(final byte[] data,
                                    final String algorithm,
                                    final PrivateKeyReference privateKeyReference) throws CryptoCardException,
@@ -82,9 +88,6 @@ public final class CeresSc extends Dnie {
             		"Error en el establecimiento de las clave de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
         		);
             }
-
-            // TODO: Modificar esta llamada y la clase DigestInfo para que reciba el algoritmo
-            // de digest directamente
 
             final byte[] digestInfo;
             try {
@@ -177,8 +180,8 @@ public final class CeresSc extends Dnie {
 		final Pkcs15Cdf cdf = new Cdf();
 		cdf.setDerValue(cdfBytes);
 
-		this.certs = new LinkedHashMap<String, X509Certificate>(cdf.getCertificateCount());
-		this.aliasByCertAndKeyId = new LinkedHashMap<String, String>(cdf.getCertificateCount());
+		this.certs = new LinkedHashMap<>(cdf.getCertificateCount());
+		this.aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
 
 		for (int i = 0; i < cdf.getCertificateCount(); i++) {
 			final Location l = new Location(
@@ -199,7 +202,7 @@ public final class CeresSc extends Dnie {
 		final PrKdf prkdf = new PrKdf();
 		prkdf.setDerValue(prkdfValue);
 
-		this.keyReferences = new LinkedHashMap<String, DniePrivateKeyReference>();
+		this.keyReferences = new LinkedHashMap<>();
 		for (int i = 0; i < prkdf.getKeyCount(); i++) {
 			final String alias = this.aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
 			if (alias != null) {
@@ -230,5 +233,39 @@ public final class CeresSc extends Dnie {
 			}
 		}
 	}
+
+    /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya hecho.
+     * @throws CryptoCardException Si hay problemas en el proceso.
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
+     * 						un PIN para validar.  */
+    @Override
+	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+        // Abrimos el canal seguro si no lo esta ya
+        if (!isSecurityChannelOpen()) {
+        	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
+            if (!(getConnection() instanceof Cwa14890Connection)) {
+            	final ApduConnection secureConnection;
+        		secureConnection = new Cwa14890OneV2Connection(
+            		this,
+            		getConnection(),
+            		this.cryptoHelper,
+            		getCwa14890PublicConstants(),
+            		getCwa14890PrivateConstants()
+        		);
+                try {
+                    setConnection(secureConnection);
+                }
+                catch (final ApduConnectionException e) {
+                    throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
+                }
+            }
+            try {
+                verifyPin(getInternalPasswordCallback());
+            }
+            catch (final ApduConnectionException e) {
+                throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
+            }
+        }
+    }
 
 }

@@ -122,10 +122,9 @@ public final class DnieFactory {
 			}
 			else if (ATR_TC_430.equals(actualAtr)) {
 				if (actualAtr.getBytes()[15] >= (byte) 0x04 && actualAtr.getBytes()[16] >= (byte) 0x30) {
-					LOGGER.info("Detectada tarjeta TC-FNMT en version 4.30 o superior (no soportada aun)"); //$NON-NLS-1$
+					return new CeresSc(conn, pwc, cryptoHelper, ch);
 				}
 				invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$
-				//return new CeresSc(conn, pwc, cryptoHelper, ch);
 			}
 			else {
 				// La tarjeta encontrada no es un DNIe

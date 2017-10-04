@@ -40,6 +40,7 @@
 package es.gob.jmulticard.jse.smartcardio;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -124,7 +125,9 @@ public final class SmartcardIoConnection implements ApduConnection {
             return null;
         }
         catch (final Exception ex) {
-            throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema: " + ex, ex); //$NON-NLS-1$
+            throw new ApduConnectionException(
+        		"Error recuperando la lista de lectores de tarjetas del sistema: " + ex, ex //$NON-NLS-1$
+    		);
         }
     }
 
@@ -142,7 +145,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
         try {
         	// Listamos los indices de los lectores que correspondan segun si tienen o no tarjeta insertada
-        	final ArrayList<Long> idsTerminales = new ArrayList<Long>(terminales.size());
+        	final ArrayList<Long> idsTerminales = new ArrayList<>(terminales.size());
         	for (int idx = 0; idx < terminales.size(); idx++) {
         		if (onlyWithCardPresent) {
         			if (terminales.get(idx).isCardPresent()) {
@@ -161,7 +164,9 @@ public final class SmartcardIoConnection implements ApduConnection {
         	return ids;
         }
         catch (final Exception ex) {
-            throw new ApduConnectionException("Error recuperando la lista de lectores de tarjetas del sistema: " + ex, ex); //$NON-NLS-1$
+            throw new ApduConnectionException(
+        		"Error recuperando la lista de lectores de tarjetas del sistema: " + ex, ex //$NON-NLS-1$
+    		);
         }
     }
 
@@ -261,12 +266,11 @@ public final class SmartcardIoConnection implements ApduConnection {
         throw new ApduConnectionException("Error indefinido reiniciando la conexion con la tarjeta"); //$NON-NLS-1$
     }
 
-    /** Establece si la conexi&oacute;n se debe abrir en modo exclusivo. Solo
-     * puede establecerse si la conexi&oacute;n aun no ha sido abierta.
-     * @param ex
-     *        <code>true</code> para abrir la conexi&oacute;n en modo
-     *        exclusivo, <code>false</code> para abrirla en modo no
-     *        exclusivo. */
+    /** Establece si la conexi&oacute;n se debe abrir en modo exclusivo.
+     * Solo puede establecerse si la conexi&oacute;n aun no ha sido abierta.
+     * @param ex <code>true</code> para abrir la conexi&oacute;n en modo
+     *           exclusivo, <code>false</code> para abrirla en modo no
+     *           exclusivo. */
     public void setExclusiveUse(final boolean ex) {
         if (this.card == null) {
             this.exclusive = ex;
@@ -278,7 +282,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
     }
 
-    /** Establece el Protocolo de conexi&oacute;n con la tarjeta.
+    /** Establece el protocolo de conexi&oacute;n con la tarjeta.
      * Por defecto, si no se establece ninguno, se indica <i>*</i> para que sea el API subyancente el
      * que detecte el apropiado.
      * @param p Protocolo de conexi&oacute;n con la tarjeta. */
@@ -323,7 +327,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
     }
 
-    /** Tag que identifica que es necesario recuperar el resultado del comando anterior. */
+    /** Etiqueta que identifica que es necesario recuperar el resultado del comando anterior. */
     private static final byte TAG_RESPONSE_PENDING = 0x61;
 
     private static final byte TAG_RESPONSE_INVALID_LENGTH = 0x6C;
@@ -350,7 +354,58 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
 
         try {
-            final ResponseApdu response = new ResponseApdu(this.canal.transmit(new CommandAPDU(command.getBytes())).getBytes());
+        	byte[] sendApdu;
+        	if (command.getData() != null) {
+        		// Si la APDU es mayor que 0xFF la troceamos y la envolvemos
+        		if (command.getData().length > 0xFF) {
+        			int sentLength = 0;
+        			final int totalLength = command.getBytes().length;
+        			final int CONTENT_SIZE_ENVELOPE = 250;
+        			while (totalLength - sentLength > CONTENT_SIZE_ENVELOPE) {
+        				final byte[] apduChunk = Arrays.copyOfRange(
+    						command.getBytes(),
+    						sentLength,
+    						sentLength + CONTENT_SIZE_ENVELOPE
+						);
+        				final CommandAPDU apdu = new CommandAPDU(
+    						(byte) 0x90,
+    						(byte) 0xC2,
+    						(byte) 0x00,
+    						(byte) 0x00,
+    						apduChunk
+						);
+        				final ResponseApdu response = new ResponseApdu(
+    						this.canal.transmit(apdu).getBytes()
+						);
+        				if(!response.isOk()) {
+        					return response;
+        				}
+        				sentLength += CONTENT_SIZE_ENVELOPE;
+        			}
+        			final byte[] apduChunk = Arrays.copyOfRange(
+    					command.getBytes(),
+    					sentLength,
+    					totalLength
+					);
+        			sendApdu = new CommandAPDU(
+    					(byte) 0x90,
+    					(byte) 0xC2,
+    					(byte) 0x00,
+    					(byte) 0x00,
+    					apduChunk
+					).getBytes();
+        		}
+        		// Si es pequena, se envia directamente
+        		else {
+        			sendApdu = command.getBytes();
+        		}
+        	}
+        	else {
+        		sendApdu = command.getBytes();
+        	}
+        	final ResponseApdu response = new ResponseApdu(
+    			this.canal.transmit(new CommandAPDU(sendApdu)).getBytes()
+			);
 
             // Solicitamos el resultado de la operacion si es necesario
             if (response.getStatusWord().getMsb() == TAG_RESPONSE_PENDING) {
@@ -394,12 +449,12 @@ public final class SmartcardIoConnection implements ApduConnection {
                 throw new LostChannelException(t.getMessage());
             }
             throw new ApduConnectionException(
-                    "Error de comunicacion con la tarjeta tratando de transmitir la APDU " + //$NON-NLS-1$
-                    HexUtils.hexify(command.getBytes(), true) +
-                    " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
-                    " en modo EXCLUSIVE=" + //$NON-NLS-1$
-                    Boolean.toString(this.exclusive) +
-                    " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
+                "Error de comunicacion con la tarjeta tratando de transmitir la APDU " + //$NON-NLS-1$
+                HexUtils.hexify(command.getBytes(), true) +
+                " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+                " en modo EXCLUSIVE=" + //$NON-NLS-1$
+                Boolean.toString(this.exclusive) +
+                " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
             );
         }
         catch (final Exception e) {
@@ -414,13 +469,13 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
     }
 
-    /** Devuelve el protocolo de conexi&oacute;n con la tarjeta usado actualmente
+    /** Devuelve el protocolo de conexi&oacute;n con la tarjeta usado actualmente.
      * @return Un objeto de tipo enumerado <code>ConnectionProtocol</code>. */
     public ApduConnectionProtocol getProtocol() {
         return this.protocol;
     }
 
-    /** Indica si la conexi&oacute;n con la tarjeta se ha establecido en modo exclusivo o no
+    /** Indica si la conexi&oacute;n con la tarjeta se ha establecido en modo exclusivo o no.
      * @return <code>true</code> si la conexi&oacute;n est&aacute; establecida en modo exclusivo. */
     public boolean isExclusiveUse() {
         return this.exclusive;

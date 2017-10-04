@@ -56,10 +56,11 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 
-		final OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
-		fos.write(trimmedData);
-		fos.close();
-
+		try (
+			final OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(trimmedData);
+		}
 	}
 
 	/** Prueba de an&aacute;lisis del fichero 2F:FF:80:23.
@@ -76,10 +77,11 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
-
-		final OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
-		fos.write(trimmedData);
-		fos.close();
+		try (
+			final OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(trimmedData);
+		}
 	}
 
 	/** Prueba de an&aacute;lisis del fichero 2F:FF:80:24.
@@ -96,10 +98,11 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
-
-		final OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
-		fos.write(trimmedData);
-		fos.close();
+		try (
+			final OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(trimmedData);
+		}
 	}
 
 	private final static class CachePasswordCallback extends PasswordCallback {
@@ -110,7 +113,7 @@ public final class TestStBit4IdCamerfirma {
 	     * @param password Contrase&ntilde;a por defecto. */
 	    public CachePasswordCallback(final char[] password) {
 	        super(">", false); //$NON-NLS-1$
-	        this.setPassword(password);
+	        setPassword(password);
 	    }
 	}
 
