@@ -93,7 +93,7 @@ final class JSecurePasswordLabel extends JLabel {
 			public void keyTyped(final KeyEvent ke) {
 				// Caracteres validos y con longitud valida de password.
                  if (getPasswordLength() < getMaxChars()) {
-					// No se escriben: Back space, Supr, Enter, Tab y CTRL+Letra (CTRL+V, etc)
+					// No se escriben: Back space, Supr, Enter, Tab y CTRL+Letra
 					if(ke.getKeyChar() != KeyEvent.VK_BACK_SPACE &&
 					   ke.getKeyChar() != KeyEvent.VK_DELETE &&
 					   ke.getKeyChar() != KeyEvent.VK_ENTER &&
