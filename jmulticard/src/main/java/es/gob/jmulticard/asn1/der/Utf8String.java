@@ -39,7 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -85,16 +85,9 @@ public final class Utf8String extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-    	final Tlv tlv = new Tlv(this.getRawDerValue());
-    	checkTag(tlv.getTag());
-    	try {
-			this.stringValue = new String(tlv.getValue(), "UTF-8"); //$NON-NLS-1$
-		}
-    	catch (final UnsupportedEncodingException e) {
-			throw new Asn1Exception(
-				"No se soporta la codificacion UFT8 en el entorno de ejecucion: " + e, e //$NON-NLS-1$
-			);
-		}
+	    	final Tlv tlv = new Tlv(this.getRawDerValue());
+	    	checkTag(tlv.getTag());
+	    	this.stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
     }
 
     /** {@inheritDoc} */
