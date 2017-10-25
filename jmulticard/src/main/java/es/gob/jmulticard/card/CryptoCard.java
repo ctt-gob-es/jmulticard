@@ -51,9 +51,9 @@ public interface CryptoCard {
     String[] getAliases() throws CryptoCardException;
 
     /** Obtiene el certificado correspondiente al alias proporcionado.
-     * @param alias Alias del certificado
+     * @param alias Alias del certificado.
      * @return Certificado correspondiente al alias proporcionado o <code>null</code> si no
-     *         existe ning&uacute;n certificado con ese alias
+     *         existe ning&uacute;n certificado con ese alias.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema al recuperar el certificado.
      * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto.
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
@@ -70,24 +70,15 @@ public interface CryptoCard {
     PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException;
 
     /** Realiza una firma electr&oacute;nica.
-     * @param data Datos a firmar
-     * @param algorithm Algoritmo de firma
-     * @param keyRef Referencia a la clave privada de firma
-     * @return Datos firmados (PKCS#1 v1.5)
+     * @param data Datos a firmar.
+     * @param algorithm Algoritmo de firma.
+     * @param keyRef Referencia a la clave privada de firma.
+     * @return Datos firmados (PKCS#1 v1.5).
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema durante la firma.
-     * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo
+     * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo.
      * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando el usuario
-     * cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
+     *                 cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
     byte[] sign(byte[] data, String algorithm, PrivateKeyReference keyRef) throws CryptoCardException, PinException;
-
-	/** Realiza la operaci&oacute;n de cambio de PIN
-	 * @param oldPin PIN actual.
-	 * @param newPin PIN nuevo.
-	 * @return Estado de la operaci&oacute;n.
-	 * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
-	 * @throws es.gob.jmulticard.card.PinException Si el PIN actual es incorrecto o no es posible obtenerlo
-	 * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
-	byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException, PinException, AuthenticationModeLockedException;
 
 }

@@ -611,13 +611,6 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         }
     }
 
-	/** {@inheritDoc}
-	 */
-	@Override
-	public byte[] changePIN(final String oldPin, final String newPin) throws AuthenticationModeLockedException {
-		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
-	}
-
 	/** Obtiene el CallbackHandler.
 	 * @return CallbackHandler. */
     public CallbackHandler getCallbackHandler() {

@@ -107,11 +107,4 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 		return "Bit4ID con chip ST para CamerFirma"; //$NON-NLS-1$
 	}
 
-	/** {@inheritDoc}
-	 */
-	@Override
-	public byte[] changePIN(final String oldPin, final String newPin) {
-		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
-	}
-
 }

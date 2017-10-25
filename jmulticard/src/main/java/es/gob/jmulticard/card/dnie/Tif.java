@@ -6,7 +6,6 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 
@@ -25,12 +24,6 @@ public final class Tif extends Dnie {
 			   final CryptoHelper cryptoHelper,
 			   final CallbackHandler ch) throws ApduConnectionException {
 		super(conn, pwc, cryptoHelper, ch);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public byte[] changePIN(final String oldPin, final String newPin) throws AuthenticationModeLockedException {
-		throw new UnsupportedOperationException("El cambio de PIN no esta permitido para la tarjeta insertada."); //$NON-NLS-1$
 	}
 
 	@Override

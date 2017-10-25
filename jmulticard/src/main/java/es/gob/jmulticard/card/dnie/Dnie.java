@@ -393,7 +393,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		}
                     catch(final Exception e) {
                     	LOGGER.warning(
-                			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir" //$NON-NLS-1$
+                			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir: " + e //$NON-NLS-1$
             			);
                     }
             		this.intermediateCaCert = (X509Certificate) CERT_FACTORY.generateCertificate(
@@ -823,7 +823,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
         catch(final Exception e) {
         	LOGGER.warning(
-    			"Ha fallado la descompresion del certificado, se probara sin descomprimir" //$NON-NLS-1$
+    			"Ha fallado la descompresion del certificado, se probara sin descomprimir: " + e //$NON-NLS-1$
 			);
         }
         return (X509Certificate) CERT_FACTORY.generateCertificate(new ByteArrayInputStream(certEncoded));
@@ -959,23 +959,17 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		return consts.getIfdKeyLength();
 	}
 
-	/** Realiza la operaci&oacute;n de cambio de PIN
+	/** Realiza la operaci&oacute;n de cambio de PIN. Necesita tener un canal administrativo abierto.
 	 * @param oldPin PIN actual.
 	 * @param newPin PIN nuevo.
-	 * @return Estado de la operaci&oacute;n.
+	 * @return APDU de respuesta de la operaci&oacute;n.
 	 * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
 	 * @throws PinException Si el PIN actual es incorrecto
 	 * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
-	@Override
-	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException, PinException, AuthenticationModeLockedException {
+	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException,
+	                                                                         PinException,
+	                                                                         AuthenticationModeLockedException {
 		openSecureChannelIfNotAlreadyOpened();
-
-		try {
-			System.out.println(HexUtils.hexify(selectFileByLocationAndRead(new Location("50156005")), false)); //$NON-NLS-1$
-		}
-		catch (final Exception e1) {
-			//Problema al leer el fichero de la tarjeta inteligente
-		}
 		try {
 			//Seleccion de directorio maestro
 			selectMasterFile();
@@ -987,18 +981,22 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			final ResponseApdu res = getConnection().transmit(apdu);
 			if (!res.isOk()) {
 				throw new DnieCardException(
-						"Error en el establecimiento de las variables de entorno para el cambio de PIN", res.getStatusWord() //$NON-NLS-1$
-						);
+					"Error en el establecimiento de las variables de entorno para el cambio de PIN", res.getStatusWord() //$NON-NLS-1$
+				);
 			}
 			return res.getData();
 		}
 		catch(final LostChannelException e) {
-			LOGGER.warning("Se ha perdido el canal seguro para firmar. Se procede a recuperarlo: " + e); //$NON-NLS-1$
+			LOGGER.warning("Se ha perdido el canal seguro para cambiar el PIN, se procede a recuperarlo: " + e); //$NON-NLS-1$
 			try {
 				getConnection().close();
 				if (getConnection() instanceof Cwa14890Connection) {
 					setConnection(((Cwa14890Connection) getConnection()).getSubConnection());
 				}
+				// Se vuelve a llamar ya con el canal recuperado.
+				// Como no hay control de la recursividad, si hay continuas perdidas de canal
+				// se terminara provocando un desbordamiento de pila.
+				return changePIN(oldPin, newPin);
 			}
 			catch (final Exception ex) {
 				throw new DnieCardException("No se pudo recuperar el canal seguro para firmar: " + ex, ex); //$NON-NLS-1$
@@ -1010,7 +1008,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		catch (final Iso7816FourCardException e) {
 			throw new DnieCardException("No se pudo seleccionar el fichero de PIN de la tarjeta: " + e, e); //$NON-NLS-1$
 		}
-		return null;
 	}
 
     /** Asigna un CallbackHandler a la tarjeta.
