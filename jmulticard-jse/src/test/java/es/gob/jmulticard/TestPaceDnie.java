@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
+import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
@@ -19,7 +20,7 @@ import org.spongycastle.jce.spec.ECPrivateKeySpec;
 
 import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.card.CryptoCard;
+import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
@@ -36,7 +37,7 @@ public final class TestPaceDnie {
 	     * @param password Contrase&ntilde;a por defecto. */
 	    public CachePasswordCallback(final char[] password) {
 	        super(">", false); //$NON-NLS-1$
-	        this.setPassword(password);
+	        setPassword(password);
 	    }
 	}
 
@@ -46,19 +47,12 @@ public final class TestPaceDnie {
 	public static void main(final String[] args) throws Exception {
 		final ApduConnection conn = new SmartcardIoConnection();
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
-		CryptoCard dni = null;
-
-		try {
-			dni = DnieFactory.getDnie(
-					conn,
-					cpc,
-					new JseCryptoHelper(),
-					null
-				);
-		} catch (final Exception e) {
-			throw new Exception(e.getMessage());
-		}
-
+		final Dnie dni = DnieFactory.getDnie(
+			conn,
+			cpc,
+			new JseCryptoHelper(),
+			null
+		);
 		System.out.println("Canal PACE abierto"); //$NON-NLS-1$
 		dni.changePIN("password", "1234512345"); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println("Se ha realizado el cambio de PIN correctamente"); //$NON-NLS-1$
@@ -138,6 +132,9 @@ public final class TestPaceDnie {
 			kf = KeyFactory.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
 		}
 		catch (final NoSuchProviderException e) {
+			Logger.getLogger("es.gob.afirma").warning( //$NON-NLS-1$
+				"No esta instalado el proveedor BouncyCastle / SpongyCastle: " + e //$NON-NLS-1$
+			);
 			kf = KeyFactory.getInstance("ECDH"); //$NON-NLS-1$
 		}
 		return kf.generatePrivate(prvkey);
