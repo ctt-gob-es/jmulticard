@@ -159,7 +159,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 			odf.setDerValue(odfBytes);
 
 			// Sacamos del ODF la ruta del CDF
-			final Path cdfPath = odf.getCertificatesPath();
+			final Path cdfPath = odf.getCdfPath();
 
 			// Seleccionamos el CDF
 			selectFileById(cdfPath.getPathBytes());

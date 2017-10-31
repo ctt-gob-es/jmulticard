@@ -32,4 +32,15 @@ public final class PrivateKeysContextSpecific extends ContextSpecific {
 		}
 	}
 
+	/** Obtiene la ruta (Path ASN&#46;1 PKCS#15) hacia el PrKDF.
+	 * @return Ruta (Path ASN&#46;1 PKCS#15) hacia el PrKDF. */
+	public Path getPrivateKeysPath() {
+		if (getObject() instanceof Path) {
+			return (Path) getObject();
+		}
+		throw new IllegalStateException(
+			"El objeto interno no es de tipo Path PKCS#15" //$NON-NLS-1$
+		);
+	}
+
 }

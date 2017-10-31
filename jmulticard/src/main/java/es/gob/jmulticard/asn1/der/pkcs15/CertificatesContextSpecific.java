@@ -21,8 +21,8 @@ public final class CertificatesContextSpecific extends ContextSpecific {
 		super(Path.class);
 	}
 
-	/** Obtiene la ruta (Path ASN&#46;1 PKCS#15) hacia los certificados.
-	 * @return Ruta (Path ASN&#46;1 PKCS#15) hacia los certificados. */
+	/** Obtiene la ruta (Path ASN&#46;1 PKCS#15) hacia el CDF.
+	 * @return Ruta (Path ASN&#46;1 PKCS#15) hacia el CDF. */
 	public Path getCertificatesPath() {
 		if (getObject() instanceof Path) {
 			return (Path) getObject();
