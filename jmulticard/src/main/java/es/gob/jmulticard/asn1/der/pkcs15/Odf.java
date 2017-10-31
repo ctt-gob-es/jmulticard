@@ -26,6 +26,14 @@ import es.gob.jmulticard.asn1.der.Record;
  * Certificates ::= PathOrObjects {CertificateType}
  * DataObjects  ::= PathOrObjects {DataType}
  * AuthObjects  ::= PathOrObjects {AuthenticationType}
+ *
+ * PathOrObjects {ObjectType} ::= CHOICE {
+ *   path    Path,
+ *   objects [0] SEQUENCE OF ObjectType,
+ *   ...,
+ *   indirect-protected [1] ReferencedValue {EnvelopedData {SEQUENCE OF ObjectType}},
+ *   direct-protected   [2] EnvelopedData   {SEQUENCE OF ObjectType},
+ * }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Odf extends Record {

@@ -250,11 +250,11 @@ public abstract class Iso7816FourCard extends SmartCard {
     }
 
     /** Selecciona un fichero y lo lee por completo.
-     * @param id Identificador del fichero a leer
-     * @return Contenido del fichero apuntado por la direccion id
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero
-     * @throws IOException Si hay problemas en el buffer de lectura */
+     * @param id Identificador del fichero a leer.
+     * @return Contenido del fichero apuntado por la direcci&oacute;n <code>id</code>.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero.
+     * @throws IOException Si hay problemas en el <i>buffer</i> de lectura. */
     public byte[] selectFileByIdAndRead(final byte[] id) throws Iso7816FourCardException, IOException {
         final int fileLength = selectFileById(id);
         return readBinaryComplete(fileLength);
@@ -278,11 +278,11 @@ public abstract class Iso7816FourCard extends SmartCard {
     }
 
     /** Selecciona un fichero y lo lee por completo.
-     * @param location Ruta absoluta del fichero a leer
-     * @return Contenido del fichero apuntado por la ruta location
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero
-     * @throws IOException Si hay problemas en el buffer de lectura */
+     * @param location Ruta absoluta del fichero a leer.
+     * @return Contenido del fichero apuntado por la ruta <code>location</code>.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero.
+     * @throws IOException Si hay problemas en el <i>buffer</i> de lectura. */
     public byte[] selectFileByLocationAndRead(final Location location) throws IOException, Iso7816FourCardException {
         final int fileLenght = selectFileByLocation(location);
         return readBinaryComplete(fileLenght);
@@ -333,7 +333,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
      * @param pinPc PIN de la tarjeta
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
+     * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
      *                                  el n&uacute;mero m&aacute;ximo de intentos) */

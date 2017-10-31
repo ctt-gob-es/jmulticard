@@ -21,6 +21,7 @@ public final class TestAsn1SimpleTypes extends TestCase {
 			u.setDerValue(new byte[] { (byte)0x00, (byte) 0x01, (byte) 0xff});
 		}
 		catch(final Asn1Exception e) {
+			System.out.println("Fallo esperado: " + e); //$NON-NLS-1$
 			return;
 		}
 		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
@@ -35,6 +36,7 @@ public final class TestAsn1SimpleTypes extends TestCase {
 			u.setDerValue(new byte[] { (byte)0x00, (byte) 0x01, (byte) 0xff});
 		}
 		catch(final Asn1Exception e) {
+			System.out.println("Fallo esperado: " + e); //$NON-NLS-1$
 			return;
 		}
 		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$

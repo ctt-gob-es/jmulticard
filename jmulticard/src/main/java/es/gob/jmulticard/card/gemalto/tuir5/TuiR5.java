@@ -180,6 +180,9 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 				return;
 			}
     		catch (final FileNotFoundException e) {
+    			LOGGER.info(
+					"Aplicacion no encontrada con AID '" + HexUtils.hexify(aid, false) + "': " + e //$NON-NLS-1$ //$NON-NLS-2$
+				);
 				continue;
 			}
     	}
