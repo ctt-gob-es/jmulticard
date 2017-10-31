@@ -44,7 +44,7 @@ public final class Odf extends Record {
 			new OptionalDecoderObjectElement[] {
 				new OptionalDecoderObjectElement(PrivateKeysContextSpecific.class, true),
 				new OptionalDecoderObjectElement(PublicKeysContextSpecific.class, true),
-				//new OptionalDecoderObjectElement(TrustedPublicKeysContextSpecific.class, true),
+				new OptionalDecoderObjectElement(TrustedPublicKeysContextSpecific.class, true),
 				new OptionalDecoderObjectElement(SecretKeysContextSpecific.class, true),
 				new OptionalDecoderObjectElement(CertificatesContextSpecific.class, true)
 			}
