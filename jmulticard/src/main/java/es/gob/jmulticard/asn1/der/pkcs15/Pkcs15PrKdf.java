@@ -1,5 +1,7 @@
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import javax.security.auth.x500.X500Principal;
+
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 
@@ -29,5 +31,10 @@ public interface Pkcs15PrKdf {
 	 * @param index &Iacute;ndice de la clave.
 	 * @return Referencia de la clave indicada. */
 	byte getKeyReference(final int index);
+
+	/** Obtiene el <i>X&#46;500 Principal</i> de la clave.
+	 * @param index &Iacute;ndice de la clave.
+	 * @return <i>X&#46;500 Principal</i> de la clave. */
+	X500Principal getKeyPrincipal(final int index);
 
 }

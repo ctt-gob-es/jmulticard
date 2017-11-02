@@ -6,7 +6,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 
 /** Pruebas de ODF PKCS#15.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class TestPkcsOdfCreation {
+public final class TestOdfCreation {
 
 	/** ODF obtenido de una tarjeta GyD SmartCafe de ACCV. */
 	private static final byte[] SAMPLE_ODF = new byte[] {

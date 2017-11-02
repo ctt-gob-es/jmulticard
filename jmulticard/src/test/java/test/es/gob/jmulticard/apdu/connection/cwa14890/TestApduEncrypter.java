@@ -6,6 +6,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
@@ -56,6 +57,7 @@ public final class TestApduEncrypter extends ApduEncrypter {
 	/** Prueba la generaci&oacute;n de CMAC con datos dependientes del SSC.
 	 * @throws IOException En cualquier error. */
 	@Test
+	@Ignore // Necesita el proveedor BC/SC firmado
 	public void testCMacGeneration() throws IOException {
 		final byte[] data = new byte[] {
 			(byte)0x0c, (byte)0xa4, (byte)0x04, (byte)0x00, (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x00,
@@ -77,6 +79,7 @@ public final class TestApduEncrypter extends ApduEncrypter {
 	/** Prueba de cifrado AES de una APDU.
 	 * @throws Exception En cualquier error. */
 	@Test
+	@Ignore // Necesita el proveedor BC/SC firmado
 	public void testEncryptionAes() throws Exception {
 
 		this.paddingLength = 16;

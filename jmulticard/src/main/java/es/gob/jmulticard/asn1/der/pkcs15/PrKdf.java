@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import javax.security.auth.x500.X500Principal;
+
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
@@ -110,6 +112,10 @@ public final class PrKdf extends Record implements Pkcs15PrKdf {
 			sb.append(Integer.toString(index));
 			sb.append("\n  Nombre de la clave: "); //$NON-NLS-1$
 			sb.append(getKeyName(index));
+			if (getKeyPrincipal(index) != null) {
+				sb.append("\n  RDN de la clave: "); //$NON-NLS-1$
+				sb.append(getKeyPrincipal(index).toString());
+			}
 			sb.append("\n  Longitud de la clave: "); //$NON-NLS-1$
 			sb.append(getKeyLength(index));
 			sb.append("\n  Ruta hacia la clave: "); //$NON-NLS-1$
@@ -135,6 +141,11 @@ public final class PrKdf extends Record implements Pkcs15PrKdf {
 	@Override
 	public byte[] getKeyId(final int index) {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
+	}
+
+	@Override
+	public X500Principal getKeyPrincipal(final int index) {
+		return ((PrivateKeyObject) getElementAt(index)).getKeyPrincipal();
 	}
 
 }

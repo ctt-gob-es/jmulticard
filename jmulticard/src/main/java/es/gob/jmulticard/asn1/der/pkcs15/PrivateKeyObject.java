@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import javax.security.auth.x500.X500Principal;
+
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
@@ -79,16 +81,16 @@ public class PrivateKeyObject extends Pkcs15Object {
 	public PrivateKeyObject() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
-			CommonKeyAttributes.class,
-			CommonPrivateKeyAttributesContextSpecific.class,
-			PrivateRsaKeyAttributesContextSpecific.class
+			CommonKeyAttributes.class,                       // classAttributes
+			CommonPrivateKeyAttributesContextSpecific.class, // subclassAttributes
+			PrivateRsaKeyAttributesContextSpecific.class     // typeAttributes
 		);
 	}
 
 	/** Obtiene el identificador de la clave privada.
 	 * @return Nombre de la clave privada */
 	public byte[] getKeyIdentifier() {
-		return ((CommonKeyAttributes) this.getClassAttributes()).getIdentifier();
+		return ((CommonKeyAttributes) getClassAttributes()).getIdentifier();
 	}
 
 	/** Obtiene el nombre de la clave privada.
@@ -107,10 +109,19 @@ public class PrivateKeyObject extends Pkcs15Object {
 		return ((PrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getKeyLength();
 	}
 
+	X500Principal getKeyPrincipal() {
+		final Object o = getSubclassAttributes();
+		if (o instanceof CommonPrivateKeyAttributesContextSpecific) {
+			return ((CommonPrivateKeyAttributesContextSpecific)o).getKeyRdn();
+		}
+		return null;
+	}
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
-    	return "Nombre de la clave privada: " + getCommonObjectAttributes().getLabel(); //$NON-NLS-1$
+    	return "Nombre de la clave privada: " + getCommonObjectAttributes().getLabel() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+			((CommonPrivateKeyAttributesContextSpecific)getSubclassAttributes()).getKeyRdn();
     }
 
 	/** Obtiene la referencia de la clave.

@@ -39,10 +39,11 @@
  */
 package es.gob.jmulticard.asn1.der.pkcs15;
 
+import javax.security.auth.x500.X500Principal;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
-import es.gob.jmulticard.asn1.der.Null;
 
 /** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>.
  * <pre>
@@ -53,15 +54,14 @@ import es.gob.jmulticard.asn1.der.Null;
  *    ... -- For future extensions
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA0;
 
 	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>. */
 	public CommonPrivateKeyAttributesContextSpecific() {
-		// Sin implementar, este campo acostumbra a ser una secuencia vacia
-		super(Null.class);
+		super(CommonPrivateKeyAttributes.class);
 	}
 
 	/** {@inheritDoc} */
@@ -81,12 +81,8 @@ public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpec
 		return getObject().toString();
 	}
 
-	String getPath() {
-		return ((PrivateRsaKeyAttributes)getObject()).getPath();
-	}
-
-	int getKeyLength() {
-		return ((PrivateRsaKeyAttributes)getObject()).getKeyLength();
+	X500Principal getKeyRdn() {
+		return ((CommonPrivateKeyAttributes)getObject()).getKeyPrincipal();
 	}
 
 }

@@ -88,22 +88,33 @@ public abstract class Pkcs15Object extends Sequence {
     /** Obtiene los atributos comunes (<i>CommonObjectAttributes</i>).
      * @return Atributos comunes */
     CommonObjectAttributes getCommonObjectAttributes() {
-        return (CommonObjectAttributes) this.getElementAt(0);
+        return (CommonObjectAttributes) getElementAt(0);
     }
 
     /** Obtiene los atributos espec&iacute;ficos de clase.
      * @return Atributos espec&iacute;ficos de clase */
     public DecoderObject getClassAttributes() {
-        return this.getElementAt(1);
+        return getElementAt(1);
+    }
+
+    /** Obtiene los atributos espec&iacute;ficos de subclase.
+     * @return Atributos espec&iacute;ficos de subclase */
+    public DecoderObject getSubclassAttributes() {
+    	// Si solo hay tres elementos, es que no hay SubclassAttributes,
+    	// ya que es el unico elemento opcional
+    	if (getElementCount() == 3) {
+    		return null;
+    	}
+    	return getElementAt(2);
     }
 
     /** Obtiene los atributos espec&iacute;ficos del tipo.
      * @return Atributos espec&iacute;ficos del tipo */
     public DecoderObject getTypeAttributes() {
     	if (getElementCount() == 3) {
-    		return this.getElementAt(2);
+    		return getElementAt(2);
     	}
-    	return this.getElementAt(3);
+    	return getElementAt(3);
     }
 
 }

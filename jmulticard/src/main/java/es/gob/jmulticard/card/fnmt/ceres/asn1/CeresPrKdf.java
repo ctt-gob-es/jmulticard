@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.card.fnmt.ceres.asn1;
 
+import javax.security.auth.x500.X500Principal;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
@@ -139,6 +141,11 @@ public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public X500Principal getKeyPrincipal(final int index) {
+		return null;
 	}
 
 }

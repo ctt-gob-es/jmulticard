@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.asn1.der.x509;
 
+import javax.security.auth.x500.X500Principal;
+
 import es.gob.jmulticard.asn1.der.SequenceOf;
 
 /** Tipo ASN&#46;1 X&#46;509 <i>RdnSequence</i> (secuencia de <i>RelativeDistinguishedName</i>).
@@ -62,6 +64,12 @@ public final class RdnSequence extends SequenceOf {
 			}
 		}
 		return sb.toString();
+	}
+
+	/** Obtiene el <i>X&#46;500 Principal</i> de la clave.
+	 * @return <i>X&#46;500 Principal</i> de la clave. */
+	public X500Principal getKeyprincipal() {
+		return new X500Principal(toString());
 	}
 
 }

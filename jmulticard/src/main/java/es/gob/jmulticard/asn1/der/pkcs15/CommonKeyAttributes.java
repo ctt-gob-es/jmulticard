@@ -60,7 +60,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *  KeyAccessFlags ::= BIT STRING
  *  PKCS15Reference  ::= INTEGER (0..pkcs15-ub-reference)
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CommonKeyAttributes extends Sequence {
 
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>CommonKeyAttributes</i>. */
