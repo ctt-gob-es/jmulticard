@@ -45,6 +45,14 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.Null;
 
 /** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>.
+ * <pre>
+ *  CommonPrivateKeyAttributes ::= SEQUENCE {
+ *    name Name OPTIONAL,
+ *    keyIdentifiers [0] SEQUENCE OF CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
+ *    generalName [1] GeneralNames OPTIONAL,
+ *    ... -- For future extensions
+ *  }
+ * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpecific {
 
@@ -52,6 +60,7 @@ public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpec
 
 	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>. */
 	public CommonPrivateKeyAttributesContextSpecific() {
+		// Sin implementar, este campo acostumbra a ser una secuencia vacia
 		super(Null.class);
 	}
 

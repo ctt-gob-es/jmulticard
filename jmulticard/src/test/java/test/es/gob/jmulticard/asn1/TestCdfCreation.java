@@ -19,7 +19,7 @@ public class TestCdfCreation extends TestCase {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final String[] TEST_FILES = new String[] {
+    private static final String[] CDF_TEST_FILES = new String[] {
         "CDF_GSD.BER", //$NON-NLS-1$
         "CDF_EEE.BER", //$NON-NLS-1$
         "CDF_GVA.BER", //$NON-NLS-1$
@@ -82,7 +82,7 @@ public class TestCdfCreation extends TestCase {
     @Test
     public static void testCdf() throws Exception {
         byte[] cdfdata;
-        for (final String element : TEST_FILES) {
+        for (final String element : CDF_TEST_FILES) {
             cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
             LOGGER.info("\n\nCDF completo (" + Integer.toString(cdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.info(HexUtils.hexify(cdfdata, true));

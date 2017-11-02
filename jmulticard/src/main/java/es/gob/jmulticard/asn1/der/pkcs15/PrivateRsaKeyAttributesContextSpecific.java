@@ -44,6 +44,14 @@ import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
 /** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>.
+ * <PRE>
+ *   PrivateRSAKeyAttributes ::= SEQUENCE {
+ *     value          ObjectValue {RSAPrivateKeyObject},
+ *     modulusLength  INTEGER, -- modulus length in bits, e.g. 1024
+ *     keyInfo        KeyInfo {NULL, PublicKeyOperations} OPTIONAL,
+ *     ... -- For future extensions
+ *   }
+ * </PRE>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class PrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 

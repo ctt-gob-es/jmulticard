@@ -44,12 +44,14 @@ import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.Sequence;
 
 /** Tipo ASN&#46;1 PKCS#15 <i>PrivateRsaKeyAttributes</i>.
- * <pre>
- *  PrivateRSAKeyAttributes ::= SEQUENCE {
- *   value   ObjectValue {RSAPrivateKeyObject},
- *   modulusLength  INTEGER -- modulus length in bits, e.g. 1024
- *  }
- * </pre>
+ * <PRE>
+ *   PrivateRSAKeyAttributes ::= SEQUENCE {
+ *     value          ObjectValue {RSAPrivateKeyObject},
+ *     modulusLength  INTEGER, -- modulus length in bits, e.g. 1024
+ *     keyInfo        KeyInfo {NULL, PublicKeyOperations} OPTIONAL,
+ *     ... -- For future extensions
+ *   }
+ * </PRE>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class PrivateRsaKeyAttributes extends Sequence {
 
@@ -65,6 +67,8 @@ public final class PrivateRsaKeyAttributes extends Sequence {
 					DerInteger.class,
 					false
 				)
+				// Faltaria el KeyInfo, pero es un campo
+				// que normalmente no esta
 			}
 		);
 	}

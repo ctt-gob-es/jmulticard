@@ -4,10 +4,11 @@ import org.junit.Test;
 
 import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 
-/** Pruebas de de ODF PKCS#15.
+/** Pruebas de ODF PKCS#15.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class TestOdfCreation {
+public final class TestPkcsOdfCreation {
 
+	/** ODF obtenido de una tarjeta GyD SmartCafe de ACCV. */
 	private static final byte[] SAMPLE_ODF = new byte[] {
 		(byte) 0xA0, (byte) 0x06, (byte) 0x30, (byte) 0x04, (byte) 0x04, (byte) 0x02, (byte) 0x44, (byte) 0x00,
 		(byte) 0xA1, (byte) 0x06, (byte) 0x30, (byte) 0x04, (byte) 0x04, (byte) 0x02, (byte) 0x44, (byte) 0x01,

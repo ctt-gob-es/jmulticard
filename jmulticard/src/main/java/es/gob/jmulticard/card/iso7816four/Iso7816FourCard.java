@@ -66,8 +66,8 @@ import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.SmartCard;
 
 /** Tarjeta compatible ISO-7816-4.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Alberto Mart&iacute;nez */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ * @author Alberto Mart&iacute;nez. */
 public abstract class Iso7816FourCard extends SmartCard {
 
     private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
@@ -289,9 +289,9 @@ public abstract class Iso7816FourCard extends SmartCard {
     }
 
     /** Selecciona el fichero maestro.
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws FileNotFoundException Si no se encuentra el MF
-     * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa */
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws FileNotFoundException Si no se encuentra el MF.
+     * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa. */
     protected abstract void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException;
 
     /** Establece una clave p&uacute;blica para la la verificaci&oacute;n posterior de
@@ -331,12 +331,12 @@ public abstract class Iso7816FourCard extends SmartCard {
     /** Verifica el PIN de la tarjeta. El m&eacute;todo reintenta hasta que se introduce el PIN correctamente,
      * se bloquea la tarjeta por exceso de intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
-     * @param pinPc PIN de la tarjeta
+     * @param pinPc PIN de la tarjeta.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
-     *                                  el n&uacute;mero m&aacute;ximo de intentos) */
+     *                                  el n&uacute;mero m&aacute;ximo de intentos). */
     public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, PinException;
 
 }
