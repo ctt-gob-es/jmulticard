@@ -252,9 +252,6 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
             	throw new AuthenticationModeLockedException();
             }
-            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x00 && verifyResponse.getStatusWord().getLsb() == (byte)0x00) {
-            	throw new ApduConnectionException("Se ha perdido el canal NFC"); //$NON-NLS-1$
-            }
             else {
             	throw new ApduConnectionException(
         			new Iso7816FourCardException(
