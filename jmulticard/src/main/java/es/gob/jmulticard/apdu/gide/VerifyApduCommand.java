@@ -37,53 +37,52 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.apdu.dnie;
+package es.gob.jmulticard.apdu.gide;
 
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
- * <b>Importante</b>: La implementaci&oacute;n actual solo funciona bajo CWA-14890, para un
- * funcionamiento con canal no cifrado es necesario sobrecargar <code>getBytes()</code>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class VerifyApduCommand extends CommandApdu {
 
     private static final byte INS_VERIFY = (byte) 0x20;
 
-    private final PasswordCallback pwc;
-
     /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
-     * @param cla Clase (CLA) de la APDU
-     * @param pinPc Pin de la tarjeta inteligente */
+     * @param cla Clase (CLA) de la APDU.
+     * @param pinPc Pin de la tarjeta inteligente. */
     public VerifyApduCommand(final byte cla, final PasswordCallback pinPc) {
         super(
-    		cla,																// CLA
-    		VerifyApduCommand.INS_VERIFY, 										// INS
-    		(byte)0x00, 														// P1
-    		(byte)0x00,															// P2
-    		new byte[] { (byte) 0x00 },                                         // Data
-    		null																// Le
+    		cla,							// CLA
+    		VerifyApduCommand.INS_VERIFY, 	// INS
+    		(byte)0x00, 					// P1
+    		(byte)0x02,						// P2
+    		charArrayToByteArray(pinPc),	// Data
+    		null							// Le
 		);
         if (pinPc == null) {
         	throw new IllegalArgumentException(
     			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
         }
-        this.pwc = pinPc;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public byte[] getData() {
-        final char[] p = this.pwc.getPassword();
-        final byte[] k = new byte[p.length];
-        for (int i=0; i<k.length;i++) {
-            k[i] = (byte) p[i];
-        }
-        for (int i=0;i<k.length;i++) {
-            p[i] = '\0';
-        }
-        return k;
+    private static byte[] charArrayToByteArray(final PasswordCallback pinPc) {
+    	if (pinPc == null) {
+    		throw new IllegalArgumentException(
+				"El PasswordCallback del PIN no puede ser nulo" //$NON-NLS-1$
+			);
+    	}
+    	final char[] in = pinPc.getPassword();
+    	if (in == null) {
+    		return new byte[0];
+    	}
+    	final byte[] ret = new byte[in.length];
+    	for (int i=0; i<in.length; i++) {
+    		ret[i] = (byte) in[i];
+    	}
+    	return ret;
     }
+
 }

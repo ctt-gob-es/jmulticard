@@ -29,28 +29,21 @@ import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
 import es.gob.jmulticard.de.tsenger.androsmex.tools.HexString;
 
-/**
- * Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
+/** Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
  * para establecer una mensajer&iacute;a segura.
- *
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
-public class SecureMessaging {
+ * @author Tobias Senger (tobias@t-senger.de). */
+public final class SecureMessaging {
 
 	private byte[] kenc = null;
 	private byte[] kmac = null;
 	private byte[] ssc = null;
 	private AmCryptoProvider crypto = null;
 
-	/**
-	 * Constructor
-	 *
+	/** Constructor.
 	 * @param acp Instancia AmDESCrypto o AmAESCrypto.
 	 * @param ksenc Clave de sesi&oacute;n para encriptar.
-	 * @param ksmac Clave de sesi&oacute;n para el checksum.
-	 * @param initialSSC Contador de sequencia de env&iacute;o.
-	 */
+	 * @param ksmac Clave de sesi&oacute;n para el <i>checksum</i>.
+	 * @param initialSSC Contador de sequencia de env&iacute;o. */
 	public SecureMessaging(final AmCryptoProvider acp,
 							final byte[] ksenc,
 							final byte[] ksmac,
@@ -62,13 +55,10 @@ public class SecureMessaging {
 		this.ssc = initialSSC.clone();
 	}
 
-	/**
-	 * Transforma un Comando APDU en claro a Comando APDU protegido
-	 *
-	 * @param capdu Apdu en claro
-	 * @return CommandApdu APDU protegida
-	 * @throws SecureMessagingException En cualquier error.
-	 */
+	/** Transforma un Comando APDU en claro a Comando APDU protegido.
+	 * @param capdu APDU en claro.
+	 * @return CommandApdu APDU protegida.
+	 * @throws SecureMessagingException En cualquier error. */
 	public CommandApdu wrap(final CommandApdu capdu) throws SecureMessagingException {
 
 		byte[] header = null;
@@ -124,13 +114,10 @@ public class SecureMessaging {
 		return new CommandApdu(bOut.toByteArray());
 	}
 
-	/**
-	 * Obtiene la APDU de respuesta en claro a partir de una APDU protegida.
-	 *
-	 * @param responseApduEncrypted APDU protegida
-	 * @return plain APDU en claro
-	 * @throws SecureMessagingException En cualquier error.
-	 */
+	/** Obtiene la APDU de respuesta en claro a partir de una APDU protegida.
+	 * @param responseApduEncrypted APDU protegida.
+	 * @return plain APDU en claro.
+	 * @throws SecureMessagingException En cualquier error. */
 	public ResponseApdu unwrap(final ResponseApdu responseApduEncrypted) throws SecureMessagingException{
 
 		DO87 do87 = null;
@@ -248,12 +235,10 @@ public class SecureMessaging {
 	}
 
 
-	/**
-	 * Encriptar los datos con kenc y para construir el DO87.
-	 * @param data Datos a encriptar
-	 * @return DO87 Par&aacute;metros del comando
-	 * @throws SecureMessagingException Error en el cifrado
-	 */
+	/** Encripta los datos con <code>kenc</code> para construir el DO87.
+	 * @param data Datos a encriptar.
+	 * @return DO87 Par&aacute;metros del comando.
+	 * @throws SecureMessagingException En caso de error en el cifrado. */
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
 
 		this.crypto.init(this.kenc, this.ssc);
@@ -303,11 +288,9 @@ public class SecureMessaging {
 		return new DO97(le);
 	}
 
-	/**
-	 * Determina el equivalente a la CAPDU (ISO / IEC 7816-3 Cap&iacute;tulo 12.1)
-	 *
-	 * @return Tipo de estructura (1 = CASE1, ...)
-	 */
+	/** Determina el equivalente a la APDU (ISO / IEC 7816-3 Cap&iacute;tulo 12&#46;1).
+	 * @param capdu Comando APDU.
+	 * @return Tipo de estructura (1 = CASE1, etc.). */
 	private static byte getAPDUStructure(final CommandApdu capdu) {
 		final byte[] cardcmd = capdu.getBytes();
 

@@ -124,14 +124,16 @@ public final class DnieFactory {
 				if (actualAtr.getBytes()[15] >= (byte) 0x04 && actualAtr.getBytes()[16] >= (byte) 0x30) {
 					return new CeresSc(conn, pwc, cryptoHelper, ch);
 				}
-				invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$
+				invalidCardException = new InvalidCardException("FNMT CERES 4.30", ATR, responseAtr); //$NON-NLS-1$
 			}
 			else {
 				// La tarjeta encontrada no es un DNIe
 				// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
 				// en 90-00
-				if (actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
-						actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65) {
+				if (
+					actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
+					actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65
+				) {
 					throw new BurnedDnieCardException(actualAtr);
 				}
 				invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$

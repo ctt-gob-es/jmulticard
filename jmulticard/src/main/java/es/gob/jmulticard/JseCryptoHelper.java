@@ -408,7 +408,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 	}
 
 	/** Convierte un Octet String de ASN&#46;1 en un entero
-	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3.1.2).
+	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3&#46;1&#46;2).
 	 * @param bytes Octet String de ASN&#46;1.
 	 * @return Entero (siempre positivo). */
 	private static BigInteger os2i(final byte[] bytes) {
@@ -417,10 +417,10 @@ public final class JseCryptoHelper extends CryptoHelper {
 	}
 
 	/** Convierte un Octet String de ASN&#46;1 en un entero
-	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3.1.2).
-	 * @param Octet String de ASN&#46;1.
-	 * @param offset posici&oacute;n de inicio-
-	 * @param length longitud del Octet String.
+	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3&#46;1&#46;2).
+	 * @param bytes <i>OctetString</i> de ASN&#46;1.
+	 * @param offset Desplazamiento (posici&oacute;n de inicio).
+	 * @param length Longitud del <i>OctetString</i>.
 	 * @return Entero (siempre positivo). */
 	private static BigInteger os2i(final byte[] bytes, final int offset, final int length) {
 		if (bytes == null) {

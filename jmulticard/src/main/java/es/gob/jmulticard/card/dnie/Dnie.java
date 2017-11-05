@@ -951,6 +951,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x00 && verifyResponse.getStatusWord().getLsb() == (byte)0x00) {
             	throw new ApduConnectionException("Se ha perdido el canal NFC"); //$NON-NLS-1$
             }
+            else {
+            	throw new ApduConnectionException(
+        			new Iso7816FourCardException(
+    	        		"Error en la verificacion de PIN (" + verifyResponse.getStatusWord() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+    	        		verifyResponse.getStatusWord()
+    				)
+    			);
+            }
         }
     }
 

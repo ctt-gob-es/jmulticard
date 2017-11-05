@@ -120,8 +120,10 @@ public class PrivateKeyObject extends Pkcs15Object {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-    	return "Nombre de la clave privada: " + getCommonObjectAttributes().getLabel() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			((CommonPrivateKeyAttributesContextSpecific)getSubclassAttributes()).getKeyRdn();
+    	return "Nombre de la clave privada: " + getCommonObjectAttributes().getLabel() + //$NON-NLS-1$
+			(getSubclassAttributes() != null ?
+			 "\n" + ((CommonPrivateKeyAttributesContextSpecific)getSubclassAttributes()).getKeyRdn() : //$NON-NLS-1$
+				 ""); //$NON-NLS-1$
     }
 
 	/** Obtiene la referencia de la clave.
