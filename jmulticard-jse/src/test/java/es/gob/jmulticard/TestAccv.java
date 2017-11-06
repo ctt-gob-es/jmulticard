@@ -49,4 +49,17 @@ public final class TestAccv {
 		card.verifyPin(new CachePasswordCallback(pin));
 	}
 
+//	/** Prueba de verificaci&oacute;n de PIN.
+//	 * @throws Exception En cualquier error. */
+//	@SuppressWarnings("static-method")
+//	@Test
+//	public void testPinRetriesLeft() throws Exception {
+//		final AetPkcs15Applet card = new AetPkcs15Applet(
+//			new SmartcardIoConnection()
+//		);
+//		System.out.println(
+//			"INTENTOS DE PIN RESTANTES: " + card.getPinRetriesLeft() //$NON-NLS-1$
+//		);
+//	}
+
 }

@@ -5,7 +5,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 
 /** Clave privada de una tarjeta CERES. La clase no contiene la clave privada en si, sino una referencia a ella.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class CeresPrivateKeyReference implements PrivateKeyReference {
+public final class CeresPrivateKeyReference implements PrivateKeyReference {
 
 	private final byte reference;
 	private final int keySize;

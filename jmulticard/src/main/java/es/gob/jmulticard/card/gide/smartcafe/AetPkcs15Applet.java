@@ -9,7 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -17,6 +20,7 @@ import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.gide.RetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.gide.VerifyApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
@@ -27,7 +31,9 @@ import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
+import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCard;
+import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -56,6 +62,11 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
+
+    private PasswordCallback passwordCallback = null;
+    private CallbackHandler callbackHandler = null;
+
+    private boolean authenticated = false;
 
     /** Construye un objeto que representa una tarjeta G&amp;D SmartCafe con el
      * Applet PKCS#15 de AET.
@@ -88,6 +99,18 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
         }
 
     }
+
+	/** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.
+     * @param pwc <code>PasswordCallback</code> para el PIN de la tarjeta. */
+    public void setPasswordCallback(final PasswordCallback pwc) {
+    	this.passwordCallback = pwc;
+    }
+
+    /** Establece el <code>CallbackHandler</code>.
+     * @param callh <code>CallbackHandler</code> a estabecer. */
+	public void setCallbackHandler(final CallbackHandler callh) {
+		this.callbackHandler = callh;
+	}
 
     /** Conecta con el lector del sistema que tenga una tarjeta insertada.
      * @param conn Conexi&oacute;n hacia la tarjeta.
@@ -221,18 +244,6 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
         throw new Iso7816FourCardException(sw, selectCommand);
     }
 
-    //************ NO IMPLEMENTADAS AUN ***************************
-
-    @Override
-    public PrivateKeyReference getPrivateKey(final String alias) {
-    	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public byte[] sign(final byte[] data, final String algorithm, final PrivateKeyReference keyRef) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public void verifyPin(final PasswordCallback psc) throws ApduConnectionException, PinException {
     	if(psc == null) {
@@ -240,7 +251,7 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
     			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
     	}
-    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand((byte) 0x01, psc);
+    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand(psc);
     	final ResponseApdu verifyResponse = getConnection().transmit(
 			verifyCommandApdu
     	);
@@ -249,7 +260,10 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
     		if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
     			throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
     		}
-            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
+            else if (
+        		verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&
+        		verifyResponse.getStatusWord().getLsb() == (byte)0x83
+    		) {
             	throw new AuthenticationModeLockedException();
             }
             else {
@@ -261,6 +275,106 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
     			);
             }
     	}
+    }
+
+    //************ NO IMPLEMENTADAS AUN ***************************
+
+    @Override
+    public PrivateKeyReference getPrivateKey(final String alias) {
+    	throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public byte[] sign(final byte[] data,
+    		           final String algorithm,
+    		           final PrivateKeyReference keyRef) throws CryptoCardException, PinException {
+		if (data == null) {
+			throw new CryptoCardException("Los datos a firmar no pueden ser nulos"); //$NON-NLS-1$
+		}
+		if (keyRef == null) {
+			throw new IllegalArgumentException("La clave privada no puede ser nula"); //$NON-NLS-1$
+		}
+		if (!(keyRef instanceof AetPrivateKeyReference)) {
+			throw new IllegalArgumentException(
+				"La clave proporcionada debe ser de tipo AetPrivateKeyReference, pero se ha recibido de tipo " + keyRef.getClass().getName() //$NON-NLS-1$
+			);
+		}
+
+		final AetPrivateKeyReference aetPrivateKey = (AetPrivateKeyReference) keyRef;
+
+		// Pedimos el PIN si no se ha pedido antes
+		if (!this.authenticated) {
+			try {
+				verifyPin(getInternalPasswordCallback());
+				this.authenticated = true;
+			}
+			catch (final ApduConnectionException e1) {
+				throw new CryptoCardException("Error en la verificacion de PIN: " + e1, e1); //$NON-NLS-1$
+			}
+		}
+
+        throw new UnsupportedOperationException();
+    }
+
+    private int getPinRetriesLeft() throws PinException {
+    	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
+    	final ResponseApdu verifyResponse;
+		try {
+			verifyResponse = getConnection().transmit(
+				verifyCommandApdu
+			);
+		}
+		catch (final ApduConnectionException e) {
+			throw new PinException(
+				"Error obteniendo el PIN del CallbackHandler: " + e, e  //$NON-NLS-1$
+			);
+		}
+		if (verifyResponse.isOk() || verifyResponse.getBytes().length > 2) {
+			return verifyResponse.getBytes()[1];
+		}
+		throw new PinException(
+			"Error comprobando los intentos restantes de PIN con respuesta: " + //$NON-NLS-1$
+				HexUtils.hexify(verifyResponse.getBytes(), true)
+		);
+    }
+
+    private PasswordCallback getInternalPasswordCallback() throws PinException {
+    	if (this.passwordCallback != null) {
+    		final int retriesLeft = getPinRetriesLeft();
+    		if(retriesLeft == 0) {
+    			throw new AuthenticationModeLockedException();
+    		}
+    		return this.passwordCallback;
+    	}
+    	if (this.callbackHandler != null) {
+        	final int retriesLeft = getPinRetriesLeft();
+        	if(retriesLeft == 0) {
+        		throw new AuthenticationModeLockedException();
+        	}
+        	final PasswordCallback pwc = new PasswordCallback(
+    			CardMessages.getString("Gen.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
+				false
+			);
+			try {
+				this.callbackHandler.handle(
+					new Callback[] {
+						pwc
+					}
+				);
+			}
+			catch (final IOException e) {
+				throw new PinException(
+					"Error obteniendo el PIN del CallbackHandler: " + e, e//$NON-NLS-1$
+				);
+			}
+			catch (final UnsupportedCallbackException e) {
+				throw new PinException(
+					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, e //$NON-NLS-1$
+				);
+			}
+			return pwc;
+    	}
+    	throw new PinException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
     }
 
 }

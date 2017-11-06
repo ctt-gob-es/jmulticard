@@ -44,20 +44,20 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class VerifyApduCommand extends CommandApdu {
 
     private static final byte INS_VERIFY = (byte) 0x20;
+    private static final byte CLA = (byte) 0x01;
 
     /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
-     * @param cla Clase (CLA) de la APDU.
      * @param pinPc Pin de la tarjeta inteligente. */
-    public VerifyApduCommand(final byte cla, final PasswordCallback pinPc) {
+    public VerifyApduCommand(final PasswordCallback pinPc) {
         super(
-    		cla,							// CLA
+    		CLA,							// CLA
     		VerifyApduCommand.INS_VERIFY, 	// INS
     		(byte)0x00, 					// P1
-    		(byte)0x02,						// P2
+    		(byte)0x02,	// 02=PIN, 01=PUK	// P2
     		charArrayToByteArray(pinPc),	// Data
     		null							// Le
 		);

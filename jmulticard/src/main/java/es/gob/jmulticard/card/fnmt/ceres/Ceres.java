@@ -146,10 +146,12 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     /** Nombre del Fichero Maestro. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
-    /** Octeto que identifica una verificaci&oacute;n fallida del PIN por PIN de longitud incorrecta. */
+    /** Octeto que identifica una verificaci&oacute;n fallida del
+     * PIN por PIN de longitud incorrecta. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x67;
 
-    /** Octeto que identifica una verificaci&oacute;n fallida del PIN por PIN incorrecto. */
+    /** Octeto que identifica una verificaci&oacute;n fallida del
+     * PIN por PIN incorrecto. */
     private final static byte ERROR_PIN_SW2 = (byte) 0x63;
 
 	private static final boolean AUTO_RETRY = true;
@@ -157,16 +159,18 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     /** Certificados de la tarjeta indexados por su alias. */
     private Map<String, X509Certificate> certs;
 
-    /** Alias de los certificados de la tarjeta indexados por el identificador interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
+    /** Alias de los certificados de la tarjeta indexados por el identificador
+     * interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
     private Map<String, String> aliasByCertAndKeyId;
 
-    /** Claves privadas de la tarjeta indexadas por el alias de su certificado asociado. */
+    /** Claves privadas de la tarjeta indexadas por el alias de su certificado
+     * asociado. */
     private Map<String, Byte> keys;
 
     private PasswordCallback passwordCallback = null;
 
     private boolean authenticated = false;
-	private CallbackHandler callh;
+	private CallbackHandler callbackHandler;
 
 	/** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.
      * @param pwc <code>PasswordCallback</code> para el PIN de la tarjeta. */
@@ -214,8 +218,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	 * @param conn Conexi&oacute;n con la tarjeta.
 	 * @param ch Clase para la realizaci&oacute;n de las huellas digitales del <i>DigestInfo</i>.
 	 * @throws ApduConnectionException Si hay problemas con la conexi&oacute;n proporcionada.
-	 * @throws InvalidCardException Si la tarjeta conectada no es una FNMT-RCM CERES.
-	 */
+	 * @throws InvalidCardException Si la tarjeta conectada no es una FNMT-RCM CERES. */
 	public Ceres(final ApduConnection conn,
 			     final CryptoHelper ch) throws ApduConnectionException, InvalidCardException {
 		super(CLA, conn);
@@ -229,7 +232,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			preload();
 		}
 		catch (final Exception e) {
-			throw new ApduConnectionException("Error cargando las estructuras iniciales de la tarjeta: " + e, e); //$NON-NLS-1$
+			throw new ApduConnectionException(
+				"Error cargando las estructuras iniciales de la tarjeta: " + e, e //$NON-NLS-1$
+			);
 		}
 		this.cryptoHelper = ch;
 	}
@@ -324,7 +329,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			aliases = getAliases();
 		}
 		catch (final Exception e) {
-			throw new IllegalStateException("No se han podido leer los alias de los certificados de la tarjeta CERES: " + e, e); //$NON-NLS-1$
+			throw new IllegalStateException(
+				"No se han podido leer los alias de los certificados de la tarjeta CERES: " + e, e //$NON-NLS-1$
+			);
 		}
 		for (final String alias : aliases) {
 			if (this.keys.get(alias) == null) {
@@ -405,7 +412,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			throw new CryptoCardException("Error firmando los datos: " + e, e); //$NON-NLS-1$
 		}
 		if (!res.isOk()) {
-			throw new CryptoCardException("No se han podido firmar los datos. Respuesta: " + HexUtils.hexify(res.getBytes(), true)); //$NON-NLS-1$
+			throw new CryptoCardException(
+				"No se han podido firmar los datos. Respuesta: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+			);
 		}
 		return res.getData();
 	}
@@ -420,8 +429,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		catch (final Exception e1) {
 			throw new CryptoCardException(
-				"Error realizando el relleno PKCS#1 de los datos a firmar: " + e1, //$NON-NLS-1$
-				e1
+				"Error realizando el relleno PKCS#1 de los datos a firmar: " + e1, e1 //$NON-NLS-1$
 			);
 		}
 
@@ -433,10 +441,14 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				res = sendArbitraryApdu(new LoadDataApduCommand(paddedData));
 			}
 			catch (final Exception e) {
-				throw new CryptoCardException("Error enviando los datos a firmar a la tarjeta: " + e, e); //$NON-NLS-1$
+				throw new CryptoCardException(
+					"Error enviando los datos a firmar a la tarjeta: " + e, e //$NON-NLS-1$
+				);
 			}
 			if (!res.isOk()) {
-				throw new CryptoCardException("No se han podido enviar los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true)); //$NON-NLS-1$
+				throw new CryptoCardException(
+					"No se han podido enviar los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+				);
 			}
 		}
 		// Pero si es de 2048 hacen falta dos APDU, envolviendo la APDU de carga de datos
@@ -455,7 +467,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
 			}
 			catch (final Exception e) {
-				throw new CryptoCardException("Error en el primer envio a la tarjeta de los datos a firmar: " + e, e); //$NON-NLS-1$
+				throw new CryptoCardException(
+					"Error en el primer envio a la tarjeta de los datos a firmar: " + e, e //$NON-NLS-1$
+				);
 			}
 			if (!res.isOk()) {
 				throw new CryptoCardException(
@@ -471,7 +485,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
 			}
 			catch (final Exception e) {
-				throw new CryptoCardException("Error en el segundo envio a la tarjeta de los datos a firmar: " + e, e); //$NON-NLS-1$
+				throw new CryptoCardException(
+					"Error en el segundo envio a la tarjeta de los datos a firmar: " + e, e //$NON-NLS-1$
+				);
 			}
 			if (!res.isOk()) {
 				throw new CryptoCardException(
@@ -488,7 +504,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	}
 
 	@Override
-	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException {
+	protected void selectMasterFile() throws ApduConnectionException,
+	                                         FileNotFoundException,
+	                                         Iso7816FourCardException {
 		selectFileByName(MASTER_FILE_NAME);
 	}
 
@@ -500,7 +518,10 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		final CommandApdu chv = new CeresVerifyApduCommand(CLA, pinPc);
 		final ResponseApdu verifyResponse = sendArbitraryApdu(chv);
         if (!verifyResponse.isOk()) {
-            if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1 || verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW2) {
+            if (
+        		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1 ||
+        		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW2
+    		) {
             	if(AUTO_RETRY) {
             		this.passwordCallback = null;
             		verifyPin(
@@ -530,18 +551,17 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     		}
     		return this.passwordCallback;
     	}
-    	if (this.callh != null) {
+    	if (this.callbackHandler != null) {
         	final int retriesLeft = getPinRetriesLeft();
         	if(retriesLeft == 0) {
         		throw new AuthenticationModeLockedException();
         	}
-        	PasswordCallback  pwc;
-        	pwc = new PasswordCallback(
+        	final PasswordCallback pwc = new PasswordCallback(
     			CardMessages.getString("Ceres.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
 				false
 			);
 			try {
-				this.callh.handle(
+				this.callbackHandler.handle(
 					new Callback[] {
 						pwc
 					}
@@ -549,14 +569,12 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			}
 			catch (final IOException e) {
 				throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e, //$NON-NLS-1$
-					e
+					"Error obteniendo el PIN del CallbackHandler: " + e, e //$NON-NLS-1$
 				);
 			}
 			catch (final UnsupportedCallbackException e) {
 				throw new PinException(
-					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, //$NON-NLS-1$
-					e
+					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, e //$NON-NLS-1$
 				);
 			}
 			return pwc;
@@ -566,16 +584,16 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
     private int getPinRetriesLeft() throws PinException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
-
-    	ResponseApdu verifyResponse = null;
+    	final ResponseApdu verifyResponse;
 		try {
 			verifyResponse = getConnection().transmit(
 				verifyCommandApdu
 			);
-		} catch (final ApduConnectionException e) {
+		}
+		catch (final ApduConnectionException e) {
 			throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e  //$NON-NLS-1$
-				);
+				"Error obteniendo el PIN del CallbackHandler: " + e, e  //$NON-NLS-1$
+			);
 		}
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
     }
@@ -611,16 +629,16 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         }
     }
 
-	/** Obtiene el CallbackHandler.
-	 * @return CallbackHandler. */
+	/** Obtiene el <code>CallbackHandler</code>.
+	 * @return <code>CallbackHandler</code>. */
     public CallbackHandler getCallbackHandler() {
-		return this.callh;
+		return this.callbackHandler;
 	}
 
-    /** Define el CallbackHandler.
-     * @param callh CallbackHandler a definir. */
+    /** Define el <code>CallbackHandler</code>.
+     * @param callh <code>CallbackHandler</code> a definir. */
 	public void setCallbackHandler(final CallbackHandler callh) {
-		this.callh = callh;
+		this.callbackHandler = callh;
 	}
 
 }
