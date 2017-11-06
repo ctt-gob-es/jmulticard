@@ -45,7 +45,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 
 /** Clave privada de un DNIe. La clase no contiene la clave privada en si, sino una referencia a ella
  * y una referencia al propio DNIe, con el canal seguro establecido.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DniePrivateKeyReference implements PrivateKeyReference {
 
 	private final CryptoCard dnieCard;

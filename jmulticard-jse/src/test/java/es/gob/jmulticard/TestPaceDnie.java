@@ -25,7 +25,7 @@ import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
-/** pruebas de PACE con DNIe 3.0.
+/** pruebas de PACE con DNIe 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestPaceDnie {
 
@@ -33,7 +33,7 @@ public final class TestPaceDnie {
 
 	    private static final long serialVersionUID = 816457144215238935L;
 
-	    /** Contruye una Callback con una contrase&ntilde; preestablecida.
+	    /** Contruye una <code>Callback</code> con una contrase&ntilde; preestablecida.
 	     * @param password Contrase&ntilde;a por defecto. */
 	    public CachePasswordCallback(final char[] password) {
 	        super(">", false); //$NON-NLS-1$

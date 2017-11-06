@@ -25,19 +25,20 @@ public final class DnieNFC extends Dnie3 {
 	// Se guarda el codigo CAN para establecer un canal PACE cada vez que se quiere
 	// realizar una operacion de firma
 	private static String can;
+
 	DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch) throws ApduConnectionException,
-	                                    PaceException {
+	                                         PaceException {
 		super(paceConnection(conn, ch), pwc, cryptoHelper, ch);
 	}
 
-	private static ApduConnection paceConnection(final ApduConnection con, final CallbackHandler ch) throws ApduConnectionException, PaceException {
-
-		Callback tic;
+	private static ApduConnection paceConnection(final ApduConnection con,
+			                                     final CallbackHandler ch) throws ApduConnectionException,
+	                                                                              PaceException {
 		// Primero obtenemos el CAN
-		tic = new CustomTextInputCallback();
+		Callback tic = new CustomTextInputCallback();
 
 		SecureMessaging sm = null;
 		boolean wrongCan = true;

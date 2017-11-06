@@ -141,7 +141,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             (byte) 0x60, (byte) 0x1F
     };
 
-    /** Nombre del Master File del DNIe. */
+    /** Nombre del <i>Master File</i> del DNIe. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
 	/** Alias del certificado de autenticaci&oacute;n del DNIe. */
@@ -217,9 +217,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
+     *                     pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
+     *                                 cerrada y no es posible abrirla.*/
     Dnie(final ApduConnection conn,
     	 final PasswordCallback pwc,
     	 final CryptoHelper cryptoHelper,

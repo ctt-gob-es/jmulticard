@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-/** Zona ICAO MRZ del DNIe 3.0.*/
+/** Zona ICAO MRZ del DNIe 3&#46;0.*/
 public final class Dnie3Dg01Mrz {
 
     private final byte[] rawData;
@@ -57,8 +57,8 @@ public final class Dnie3Dg01Mrz {
     	}
     }
 
-    /** Construye la zona ICAO MRZ del DNIe 3.0 a partir del fichero DG1.
-     * @param rawBytes Contenido del fichero DG1 del DNIe 3.0.*/
+    /** Construye la zona ICAO MRZ del DNIe 3&#46;0 a partir del fichero DG1.
+     * @param rawBytes Contenido del fichero DG1 del DNIe 3&#46;0. */
     Dnie3Dg01Mrz(final byte[] rawBytes) {
 
         this.rawData = rawBytes.clone();
@@ -109,8 +109,8 @@ public final class Dnie3Dg01Mrz {
         }
     }
 
-    /** Obtiene el contenido binario del fichero DG1 del DNIe 3.0.
-     * @return Contenido binario del fichero DG1 del DNIe 3.0. */
+    /** Obtiene el contenido binario del fichero DG1 del DNIe 3&#46;0.
+     * @return Contenido binario del fichero DG1 del DNIe 3&#46;0. */
     public byte[] getBytes() {
         return this.rawData.clone();
     }
@@ -129,7 +129,8 @@ public final class Dnie3Dg01Mrz {
 
     /** Obtiene la fecha de nacimiento del titular.
      * @return Fecha de nacimiento del titular.
-     * @throws ParseException Si la fecha encontrada en el fichero DG1 del DNIe 3.0 no est&aacute; en el formato esperado. */
+     * @throws ParseException Si la fecha encontrada en el fichero DG1 del DNIe 3&#46;0
+     *                        no est&aacute; en el formato esperado. */
     public Date getDateOfBirth() throws ParseException {
         return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfBirth);
     }
@@ -147,9 +148,10 @@ public final class Dnie3Dg01Mrz {
     	return Gender.getGender(this.sex);
     }
 
-    /** Obtiene la fecha de caducidad del DNIe 3.0.
-     * @return Fecha de caducidad del DNIe 3.0.
-     * @throws ParseException Si la fecha encontrada en el fichero DG1 del DNIe 3.0 no est&aacute; en el formato esperado. */
+    /** Obtiene la fecha de caducidad del DNIe 3&#46;0.
+     * @return Fecha de caducidad del DNIe 3&#46;0.
+     * @throws ParseException Si la fecha encontrada en el fichero DG1 del
+     *                        DNIe 3&#46;0 no est&aacute; en el formato esperado. */
     public Date getDateOfExpiry() throws ParseException {
         return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfExpiry);
     }

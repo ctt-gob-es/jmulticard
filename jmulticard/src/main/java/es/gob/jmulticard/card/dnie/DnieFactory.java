@@ -15,7 +15,7 @@ import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.pace.PaceException;
 
 /** Factor&iacute;a para la obtenci&oacute;n de DNIe.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieFactory {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$

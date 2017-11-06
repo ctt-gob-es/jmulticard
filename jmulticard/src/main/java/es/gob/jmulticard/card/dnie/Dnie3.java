@@ -55,7 +55,7 @@ import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
-/** DNI Electr&oacute;nico versi&oacute;n 3.0.
+/** DNI Electr&oacute;nico versi&oacute;n 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Dnie3 extends Dnie {
 
@@ -80,8 +80,8 @@ public class Dnie3 extends Dnie {
 		return extractImage(photo);
 	}
 
-	/** Obtiene la MRZ del DNIe 3.0.
-	 * @return MRZ del DNIe 3.0.
+	/** Obtiene la MRZ del DNIe 3&#46;0.
+	 * @return MRZ del DNIe 3&#46;0.
 	 * @throws IOException Si no se puede leer el fichero con el MRZ del DNIe. */
 	public Dnie3Dg01Mrz getMrz() throws IOException {
 		// Abrimos canal de usuario solo si es necesario
