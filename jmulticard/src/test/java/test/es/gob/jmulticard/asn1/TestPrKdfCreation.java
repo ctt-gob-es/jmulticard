@@ -120,11 +120,9 @@ public class TestPrKdfCreation extends TestCase {
     /** Lee un flujo de datos de entrada y los recupera en forma de array de
      * bytes. Este m&eacute;todo consume pero no cierra el flujo de datos de
      * entrada.
-     * @param input
-     *        Flujo de donde se toman los datos.
+     * @param input Flujo de donde se toman los datos.
      * @return Los datos obtenidos del flujo.
-     * @throws IOException
-     *         Cuando ocurre un problema durante la lectura */
+     * @throws IOException Cuando ocurre un problema durante la lectura */
     private static byte[] getDataFromInputStream(final InputStream input) throws IOException {
         if (input == null) {
             return new byte[0];

@@ -29,6 +29,8 @@ import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
+import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
+import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CardMessages;
@@ -53,6 +55,8 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
 
     private static final byte[] ODF_PATH = new byte[] { (byte) 0x50, (byte) 0x31 };
     private static final byte[] MF_PATH  = new byte[] { (byte) 0x3F, (byte) 0x00 };
+
+    private static final Location PRKDF_LOCATION = new Location("3F004400"); //$NON-NLS-1$
 
     private static byte CLA = (byte) 0x00;
 
@@ -97,6 +101,32 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
         		"No se han podido leer los certificados: " + e, e //$NON-NLS-1$
     		);
         }
+
+        // Leemos el PrKDF
+        final byte[] prKdfValue;
+        try {
+        	prKdfValue = selectFileByLocationAndRead(PRKDF_LOCATION);
+		}
+        catch (final Iso7816FourCardException e) {
+			throw new IOException(
+				"Error leyendo el PrKDF: " + e, e //$NON-NLS-1$
+			);
+		}
+        final Pkcs15PrKdf prKdf = new PrKdf();
+    	try {
+			prKdf.setDerValue(prKdfValue);
+		}
+    	catch (final Exception e) {
+    		throw new IOException(
+				"Error analizando el PrKDF: " + e, e //$NON-NLS-1$
+			);
+		}
+
+    	// Las claves parecen referenciarse por nombre, coincidiendo el nombre de la clave
+    	// con el alias del certificado.
+    	System.out.println();
+    	System.out.println(prKdf);
+    	System.out.println();
 
     }
 

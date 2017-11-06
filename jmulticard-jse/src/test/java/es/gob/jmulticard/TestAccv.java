@@ -49,7 +49,7 @@ public final class TestAccv {
 		card.verifyPin(new CachePasswordCallback(pin));
 	}
 
-//	/** Prueba de verificaci&oacute;n de PIN.
+//	/** Prueba de verificaci&oacute;n de intentos restantes de PIN.
 //	 * @throws Exception En cualquier error. */
 //	@SuppressWarnings("static-method")
 //	@Test
