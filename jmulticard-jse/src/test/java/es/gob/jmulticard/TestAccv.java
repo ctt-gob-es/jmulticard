@@ -5,7 +5,7 @@ import java.security.cert.X509Certificate;
 import org.junit.Test;
 
 import es.gob.jmulticard.card.CryptoCard;
-import es.gob.jmulticard.card.gide.smartcafe.AetPkcs15Applet;
+import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 import test.es.gob.jmulticard.apdu.connection.cwa14890.CachePasswordCallback;
@@ -19,7 +19,7 @@ public final class TestAccv {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testReadCertificates() throws Exception {
-		final CryptoCard card = new AetPkcs15Applet(
+		final CryptoCard card = new SmartCafePkcs15Applet(
 			new SmartcardIoConnection()
 		);
 		final String[] aliases = card.getAliases();
@@ -43,7 +43,7 @@ public final class TestAccv {
 	@Test
 	public void testVerifyPin() throws Exception {
 		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
-		final Iso7816FourCard card = new AetPkcs15Applet(
+		final Iso7816FourCard card = new SmartCafePkcs15Applet(
 			new SmartcardIoConnection()
 		);
 		card.verifyPin(new CachePasswordCallback(pin));
@@ -54,7 +54,7 @@ public final class TestAccv {
 //	@SuppressWarnings("static-method")
 //	@Test
 //	public void testPinRetriesLeft() throws Exception {
-//		final AetPkcs15Applet card = new AetPkcs15Applet(
+//		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
 //			new SmartcardIoConnection()
 //		);
 //		System.out.println(

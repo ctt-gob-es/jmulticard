@@ -31,11 +31,13 @@ import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
+import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -43,10 +45,46 @@ import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
-/** Tarjeta G&amp;D SmartCafe con el Applet PKCS#15 de AET.
+/** Tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Vicente Ortiz
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard {
+public final class SmartCafePkcs15Applet extends Iso7816FourCard implements CryptoCard {
+
+	private static final byte[] ATR_MASK = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xf
+	};
+
+	/** ATR de tarjeta G&amp;D SmartCafe 3&#46;2. */
+	private static final Atr ATR = new Atr(new byte[] {
+		(byte) 0x3b, (byte) 0xf7, (byte) 0x18, (byte) 0x00, (byte) 0x00, (byte) 0x80,
+		(byte) 0x31, (byte) 0xfe, (byte) 0x45, (byte) 0x73, (byte) 0x66, (byte) 0x74,
+		(byte) 0x65, (byte) 0x2d, (byte) 0x6e, (byte) 0x66, (byte) 0xc4
+	}, ATR_MASK);
+
+	private static final byte[] ATR_MASK_MSC = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
+	};
+
+	/** ATR de tarjeta MicroSD G&amp;D Mobile Security Card. */
+	private static final Atr ATR_MSC = new Atr(new byte[] {
+		(byte) 0x3b, (byte) 0x80, (byte) 0x80, (byte) 0x01, (byte) 0x01
+	}, ATR_MASK_MSC);
+
+	/** ATR de tarjeta G&amp;D SmartCafe 3&#46;2 con T=CL (v&iacute;a inal&aacute;mbrica). */
+	private static final byte[] ATR_MASK_TCL = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xf
+	};
+
+	private static final Atr ATR_TCL = new Atr(new byte[] {
+		(byte) 0x3b, (byte) 0xf7, (byte) 0x18, (byte) 0x00, (byte) 0x00, (byte) 0x80,
+		(byte) 0x31, (byte) 0xfe, (byte) 0x45, (byte) 0x73, (byte) 0x66, (byte) 0x74,
+		(byte) 0x65, (byte) 0x2d, (byte) 0x6e, (byte) 0x66, (byte) 0xc4
+	}, ATR_MASK_TCL);
+
 
     private static final byte[] PKCS15_NAME = new byte[] {
         (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x63, (byte) 0x50,
@@ -76,7 +114,7 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
      * Applet PKCS#15 de AET.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @throws IOException Si hay errores de entrada / salida. */
-    public AetPkcs15Applet(final ApduConnection conn) throws IOException {
+    public SmartCafePkcs15Applet(final ApduConnection conn) throws IOException {
         super(CLA, conn);
 
         // Conectamos
@@ -152,6 +190,7 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
         if (!conn.isOpen()) {
             conn.open();
         }
+        checkAtr(conn.reset());
     }
 
     private void preloadCertificates() throws FileNotFoundException,
@@ -219,7 +258,7 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
 
     @Override
     public String getCardName() {
-        return "G&D SmartCafe 3.2 (AET PKCS#15 Applet)"; //$NON-NLS-1$
+        return "G&D SmartCafe 3.2 (PKCS#15 Applet)"; //$NON-NLS-1$
     }
 
     @Override
@@ -324,13 +363,16 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
 		if (keyRef == null) {
 			throw new IllegalArgumentException("La clave privada no puede ser nula"); //$NON-NLS-1$
 		}
-		if (!(keyRef instanceof AetPrivateKeyReference)) {
+		if (!(keyRef instanceof SmartCafePrivateKeyReference)) {
 			throw new IllegalArgumentException(
-				"La clave proporcionada debe ser de tipo AetPrivateKeyReference, pero se ha recibido de tipo " + keyRef.getClass().getName() //$NON-NLS-1$
+				"La clave proporcionada debe ser de tipo " + //$NON-NLS-1$
+					SmartCafePrivateKeyReference.class.getName() +
+						", pero se ha recibido de tipo " + //$NON-NLS-1$
+							keyRef.getClass().getName()
 			);
 		}
 
-		final AetPrivateKeyReference aetPrivateKey = (AetPrivateKeyReference) keyRef;
+		final SmartCafePrivateKeyReference scPrivateKey = (SmartCafePrivateKeyReference) keyRef;
 
 		// Pedimos el PIN si no se ha pedido antes
 		if (!this.authenticated) {
@@ -405,6 +447,24 @@ public final class AetPkcs15Applet extends Iso7816FourCard implements CryptoCard
 			return pwc;
     	}
     	throw new PinException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
+    }
+
+    private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
+    	final Atr tmpAtr = new Atr(atrBytes, ATR_MASK);
+    	if (ATR.equals(tmpAtr)) {
+    		LOGGER.info("Detectada G&D SmartCafe 3.2"); //$NON-NLS-1$
+    	}
+    	else if (ATR_MSC.equals(tmpAtr)) {
+    		LOGGER.info("Detectada G&D Mobile Security Card"); //$NON-NLS-1$
+    	}
+    	else if (ATR_TCL.equals(tmpAtr)) {
+    		LOGGER.info("Detectada G&D SmartCafe 3.2 via T=CL (conexion inalambrica)"); //$NON-NLS-1$
+    	}
+    	else {
+	    	throw new InvalidCardException(
+				"La tarjeta no es una SmartCafe 3.2 (ATR encontrado: " + HexUtils.hexify(atrBytes, false) + ")" //$NON-NLS-1$ //$NON-NLS-2$
+			);
+    	}
     }
 
 }

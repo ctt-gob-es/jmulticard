@@ -91,7 +91,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** Obtiene el objeto DG01 (MRZ de ICAO) del DNIe 3.0.
      * @return Objeto DG01 (MRZ de ICAO) del DNIe 3.0.
      * @throws IOException Si no se puede leer el objeto DG01.
-     * @throwe UnsupportedOperationException SI el objeto actual no es un DNIe 3.0. */
+     * @throws UnsupportedOperationException Si el objeto actual no es un DNIe 3.0. */
     public Dnie3Dg01Mrz getDnie3Dg01() throws IOException {
     	if (!(this.cryptoCard instanceof Dnie3)) {
     		throw new UnsupportedOperationException(
