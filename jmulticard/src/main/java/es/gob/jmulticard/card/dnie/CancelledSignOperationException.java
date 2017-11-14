@@ -52,8 +52,7 @@ public final class CancelledSignOperationException extends RuntimeException {
     }
 
     /** Crea la excepci&oacute;n con un mensaje determinado.
-     * @param msg
-     *        Mensaje descriptivo de la excepci&oacute;n. */
+     * @param msg Mensaje descriptivo de la excepci&oacute;n. */
     public CancelledSignOperationException(final String msg) {
         super(msg);
     }

@@ -6,7 +6,7 @@ import java.security.ProviderException;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 
-/** Proveedor criptogr&aacute;fico JCA para tarjeta FNMT-RCM.CERES.
+/** Proveedor criptogr&aacute;fico JCA para tarjeta FNMT-RCM-CERES.
  * Crea dos servicios:
  * <dl>
  * <dt><code>KeyStore</code></dt>
@@ -14,7 +14,7 @@ import es.gob.jmulticard.card.fnmt.ceres.Ceres;
  * <dt><code>Signature</code></dt>
  * <dd><i>SHA1withRSA</i>, <i>SHA256withRSA</i>, <i>SHA384withRSA</i>, <i>SHA512withRSA</i></dd>
  * </dl>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresProvider extends Provider {
 
     private static final String SHA512WITH_RSA = "SHA512withRSA"; //$NON-NLS-1$
@@ -38,7 +38,7 @@ public final class CeresProvider extends Provider {
     /** Obtiene de forma est&aacute;tica el tipo de conexi&oacute;n de APDU que debe usar el <i>keyStore</i>.
      * Si es nula (se ha invocado al constructor por defecto), es el propio <code>KeyStore</code> el que decide que
      * conexi&oacute;n usar.
-     * @return Conexi&oacute;n por defecto */
+     * @return Conexi&oacute;n por defecto. */
     static ApduConnection getDefaultApduConnection() {
     	return defaultConnection;
     }

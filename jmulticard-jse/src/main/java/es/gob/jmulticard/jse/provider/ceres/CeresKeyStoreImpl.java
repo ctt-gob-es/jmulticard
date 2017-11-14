@@ -32,8 +32,8 @@ import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
 import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 
-/** Implementaci&oacute;n del SPI KeyStore para tarjeta FNMT-RCM-CERES.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+/** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjeta FNMT-RCM-CERES.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
     private static List<String> userCertAliases = null;

@@ -18,7 +18,7 @@ import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
 import es.gob.jmulticard.jse.provider.SignatureAuthException;
 
-/** Implementaci&oacute;n del SPI Signature para tarjeta FNMT-RCM-CERES.
+/** Implementaci&oacute;n del SPI <code>Signature</code> para tarjeta FNMT-RCM-CERES.
  * Realiza firmas RSA con relleno PKCS#1 v1.5. Se soportan los siguientes algoritmos de firma:
  * <ul>
  *  <li>SHA1withRSA</li>

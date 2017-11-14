@@ -10,7 +10,7 @@ import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
 
-/** Clave privada de una tarjeta FNMT-RCM-CERES. La clase no contiene la clave privada en si, sino
+/** Clave privada de una tarjeta FNMT-RCM-CERES. La clase no contiene la clave privada en s&iacute;, sino
  * una referencia a ella y una referencia a la propia tarjeta.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresPrivateKey implements RSAPrivateKey {

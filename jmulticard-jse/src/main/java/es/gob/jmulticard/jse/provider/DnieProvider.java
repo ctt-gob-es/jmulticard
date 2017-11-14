@@ -53,7 +53,7 @@ import es.gob.jmulticard.card.dnie.Dnie;
  * <dt><code>Signature</code></dt>
  * <dd><i>SHA1withRSA</i>, <i>SHA256withRSA</i>, <i>SHA384withRSA</i>, <i>SHA512withRSA</i></dd>
  * </dl>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieProvider extends Provider {
 
     private static final String SHA512WITH_RSA = "SHA512withRSA"; //$NON-NLS-1$

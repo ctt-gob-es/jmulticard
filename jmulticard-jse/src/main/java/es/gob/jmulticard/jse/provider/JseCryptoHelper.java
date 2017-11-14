@@ -87,7 +87,7 @@ import org.spongycastle.math.ec.ECFieldElement;
 import es.gob.jmulticard.CryptoHelper;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE6.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class JseCryptoHelper extends CryptoHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$

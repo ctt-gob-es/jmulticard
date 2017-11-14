@@ -64,7 +64,7 @@ import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
  *  <li>SHA384withRSA</li>
  *  <li>SHA512withRSA</li>
  * </ul>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 abstract class DnieSignatureImpl extends SignatureSpi {
 
     private final ByteArrayOutputStream data = new ByteArrayOutputStream();
