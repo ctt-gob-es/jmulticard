@@ -42,26 +42,20 @@ package es.gob.jmulticard.apdu.iso7816four;
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad orientada a
  * establecer una clave p&uacute;blica para autenticaci&oacute;n interna y
  * externa.
- * @author Carlos Gamuci Mill&aacute;n */
+ * @author Carlos Gamuci Mill&aacute;n. */
 public final class MseSetAuthenticationKeyApduCommand extends MseSetAuthenticationTemplateApduCommand {
-
-    /** Tag para identificar un identificador de fichero. */
-    private static final byte TAG_FILE_ID = (byte) 0x83;
-
-    /** Etiqueta para hacer referencia a un fichero dedicado. */
-    private static final byte TAG_DF_NAME = (byte) 0x84;
 
     /** Crea un objeto para la gesti&oacute;n del entorno de seguridad.
      * @param cla Clase (CLA) de la APDU
-     * @param publicKeyFileId Identificador de campo de clave publica (CHR). Se utilizan los 12 bytes,
+     * @param publicKeyFileId Identificador de campo de clave p&uacute;blica (CHR). Se utilizan los 12 bytes,
      *        rellenando con ceros por la izquierda desde los 8 m&iacute;nimos si es necesario
-     * @param privateKeyRef Referencia a clave privada */
+     * @param privateKeyRef Referencia a clave privada. */
     public MseSetAuthenticationKeyApduCommand(final byte cla,
     		                                  final byte[] publicKeyFileId,
     		                                  final byte[] privateKeyRef) {
-
-        super(cla,                                     // CLA
-        		buidData(publicKeyFileId, privateKeyRef) // Data
+        super(
+    		cla,                                     // CLA
+    		buidData(publicKeyFileId, privateKeyRef) // Data
         );
     }
 
@@ -73,18 +67,18 @@ public final class MseSetAuthenticationKeyApduCommand extends MseSetAuthenticati
              publicKeyFileIdCompleted,
              publicKeyFileIdCompleted.length - publicKeyFileId.length,
              publicKeyFileId.length
-         );
+        );
         for (int i = 0; i < publicKeyFileIdCompleted.length - publicKeyFileId.length; i++) {
             publicKeyFileIdCompleted[i] = (byte) 0x00;
         }
 
         final byte[] ret = new byte[publicKeyFileIdCompleted.length + privateKeyRef.length + 4];
-        ret[0] = TAG_FILE_ID;
+        ret[0] = PUBLIC_KEY_REFERENCE;
         ret[1] = (byte) publicKeyFileIdCompleted.length;
         System.arraycopy(publicKeyFileIdCompleted, 0, ret, 2, publicKeyFileIdCompleted.length);
 
         int idx = 1 + publicKeyFileIdCompleted.length;
-        ret[++idx] = TAG_DF_NAME;
+        ret[++idx] = PRIVATE_KEY_REFERENCE;
         ret[++idx] = (byte) privateKeyRef.length;
         System.arraycopy(privateKeyRef, 0, ret, ++idx, privateKeyRef.length);
 

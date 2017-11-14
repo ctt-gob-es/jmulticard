@@ -5,10 +5,12 @@ package es.gob.jmulticard.apdu.iso7816four;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class MseSetAuthenticationTemplateApduCommand extends MseSetApduCommand {
 
-	/** Control Reference Template for Authentication (AT) */
-    private static final byte AT = (byte) 0xa4;
-
     protected MseSetAuthenticationTemplateApduCommand(final byte cla, final byte[] data) {
-		super(cla, AT, data);
+		super(
+			cla,                    // CLA
+    		SET_FOR_AUTHENTICATION, // P1
+			AT,                     // P2
+			data
+		);
 	}
 }

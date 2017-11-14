@@ -64,4 +64,9 @@ public final class AlgorithmIdentifer extends Sequence {
 		);
 	}
 
+	@Override
+	public String toString() {
+		return getElementAt(0).toString();
+	}
+
 }

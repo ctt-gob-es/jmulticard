@@ -43,19 +43,19 @@ import java.io.IOException;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.DigestAlgorithm;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
 
 /** Tipo ASN&#46;1 PKCS#1 <i>DigestInfo</i>.
- *
  * <pre>
  *  DigestInfo::=SEQUENCE {
  *    digestAlgorithm  AlgorithmIdentifier,
  *    digest OCTET STRING
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DigestInfo extends Sequence {
 
     private static final String SHA1WITHRSA_NORMALIZED_ALGO_NAME = "SHA1withRSA"; //$NON-NLS-1$
@@ -64,23 +64,26 @@ public final class DigestInfo extends Sequence {
     private static final String SHA512WITHRSA_NORMALIZED_ALGO_NAME = "SHA512withRSA"; //$NON-NLS-1$
 
     private static final byte[] SHA1_DIGESTINFO_HEADER = new byte[] {
-            (byte) 0x30, (byte) 0x21, (byte) 0x30, (byte) 0x09, (byte) 0x06, (byte) 0x05, (byte) 0x2B, (byte) 0x0E, (byte) 0x03, (byte) 0x02,
-            (byte) 0x1A, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x14
+        (byte) 0x30, (byte) 0x21, (byte) 0x30, (byte) 0x09, (byte) 0x06, (byte) 0x05, (byte) 0x2B, (byte) 0x0E,
+        (byte) 0x03, (byte) 0x02, (byte) 0x1A, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x14
     };
 
     private static final byte[] SHA256_DIGESTINFO_HEADER = new byte[] {
-            (byte) 0x30, (byte) 0x31, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x60, (byte) 0x86, (byte) 0x48, (byte) 0x01,
-            (byte) 0x65, (byte) 0x03, (byte) 0x04, (byte) 0x02, (byte) 0x01, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x20
+        (byte) 0x30, (byte) 0x31, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x60, (byte) 0x86,
+        (byte) 0x48, (byte) 0x01, (byte) 0x65, (byte) 0x03, (byte) 0x04, (byte) 0x02, (byte) 0x01, (byte) 0x05,
+        (byte) 0x00, (byte) 0x04, (byte) 0x20
     };
 
     private static final byte[] SHA384_DIGESTINFO_HEADER = new byte[] {
-            (byte) 0x30, (byte) 0x41, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x60, (byte) 0x86, (byte) 0x48, (byte) 0x01,
-            (byte) 0x65, (byte) 0x03, (byte) 0x04, (byte) 0x02, (byte) 0x02, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x30
+        (byte) 0x30, (byte) 0x41, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x60, (byte) 0x86,
+        (byte) 0x48, (byte) 0x01, (byte) 0x65, (byte) 0x03, (byte) 0x04, (byte) 0x02, (byte) 0x02, (byte) 0x05,
+        (byte) 0x00, (byte) 0x04, (byte) 0x30
     };
 
     private static final byte[] SHA512_DIGESTINFO_HEADER = new byte[] {
-            (byte) 0x30, (byte) 0x51, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x60, (byte) 0x86, (byte) 0x48, (byte) 0x01,
-            (byte) 0x65, (byte) 0x03, (byte) 0x04, (byte) 0x02, (byte) 0x03, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x40
+        (byte) 0x30, (byte) 0x51, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x60, (byte) 0x86,
+        (byte) 0x48, (byte) 0x01, (byte) 0x65, (byte) 0x03, (byte) 0x04, (byte) 0x02, (byte) 0x03, (byte) 0x05,
+        (byte) 0x00, (byte) 0x04, (byte) 0x40
     };
 
     /** @return the sha1DigestinfoHeader */
@@ -127,16 +130,22 @@ public final class DigestInfo extends Sequence {
 		);
     }
 
-    // TODO: Modificar este metodo y las llamadas al mismo para que reciba el algoritmo
-    // de digest directamente
+	@Override
+	public String toString() {
+		return "DigestInfo:\n  Datos=" + //$NON-NLS-1$
+			HexUtils.hexify(((OctectString)getElementAt(1)).getOctectStringByteValue(), false) +
+				"\n  Algoritmo=" + ((AlgorithmIdentifer)getElementAt(0)).toString(); //$NON-NLS-1$
+	}
 
-    /** Codifica una estructura DigestInfo.
-     * @param signingAlgorithm Algoritmo de huella digital.
+    /** Codifica una estructura <code>DigestInfo</code>.
+     * @param signingAlgorithm Algoritmo de huella digital o de firma electr&oacute;nica.
      * @param data Datos de los que obtener la estructura.
      * @param cryptoHelper Manejador de operaciones criptogr&aacute;ficas.
      * @return Estructura DigestInfo.
      * @throws IOException Cuando se produce algun error en la estrucura de la estructura. */
-    public static byte[] encode(final String signingAlgorithm, final byte[] data, final CryptoHelper cryptoHelper) throws IOException {
+    public static byte[] encode(final String signingAlgorithm,
+    		                    final byte[] data,
+    		                    final CryptoHelper cryptoHelper) throws IOException {
 
         final String normalizedSignningAlgorithm = getNormalizedSigningAlgorithm(signingAlgorithm);
         final DigestAlgorithm digestAlgorithm = getDigestAlgorithm(normalizedSignningAlgorithm);
@@ -154,29 +163,46 @@ public final class DigestInfo extends Sequence {
      * @param algorithm Nombre de algoritmo.
      * @return Nombre de algoritmo normalizado. */
     private static String getNormalizedSigningAlgorithm(final String algorithm) {
-        if ("SHA1withRSA".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-            "SHAwithRSA".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-            "SHA-1withRSA".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
+        if (
+        	"SHA1".equalsIgnoreCase(algorithm)                  || //$NON-NLS-1$
+        	"SHA-1".equalsIgnoreCase(algorithm)                 || //$NON-NLS-1$
+        	"SHA".equalsIgnoreCase(algorithm)                   || //$NON-NLS-1$
+    		"SHA1withRSA".equalsIgnoreCase(algorithm)           || //$NON-NLS-1$
+            "SHAwithRSA".equalsIgnoreCase(algorithm)            ||  //$NON-NLS-1$
+            "SHA-1withRSA".equalsIgnoreCase(algorithm)          ||  //$NON-NLS-1$
             "SHA1withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-            "SHA-1withRSAEncryption".equalsIgnoreCase(algorithm)) { //$NON-NLS-1$
+            "SHA-1withRSAEncryption".equalsIgnoreCase(algorithm) //$NON-NLS-1$
+        ) {
             return SHA1WITHRSA_NORMALIZED_ALGO_NAME;
         }
-        else if ("SHA256withRSA".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-                 "SHA-256withRSA".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-                 "SHA-256withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-                 "SHA256withRSAEncryption".equalsIgnoreCase(algorithm)) { //$NON-NLS-1$
+        else if (
+    		"SHA256".equalsIgnoreCase(algorithm)                   || //$NON-NLS-1$
+    		"SHA-256".equalsIgnoreCase(algorithm)                  || //$NON-NLS-1$
+    		"SHA256withRSA".equalsIgnoreCase(algorithm)            || //$NON-NLS-1$
+            "SHA-256withRSA".equalsIgnoreCase(algorithm)           ||  //$NON-NLS-1$
+            "SHA-256withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
+            "SHA256withRSAEncryption".equalsIgnoreCase(algorithm) //$NON-NLS-1$
+        ) {
             return SHA256WITHRSA_NORMALIZED_ALGO_NAME;
         }
-        else if ("SHA384withRSA".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-                 "SHA-384withRSA".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-                 "SHA-384withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-                 "SHA384withRSAEncryption".equalsIgnoreCase(algorithm)) { //$NON-NLS-1$
+        else if (
+    		"SHA384".equalsIgnoreCase(algorithm)                   || //$NON-NLS-1$
+    		"SHA-384".equalsIgnoreCase(algorithm)                  || //$NON-NLS-1$
+    		"SHA384withRSA".equalsIgnoreCase(algorithm)            || //$NON-NLS-1$
+            "SHA-384withRSA".equalsIgnoreCase(algorithm)           ||  //$NON-NLS-1$
+            "SHA-384withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
+            "SHA384withRSAEncryption".equalsIgnoreCase(algorithm) //$NON-NLS-1$
+        ) {
             return SHA384WITHRSA_NORMALIZED_ALGO_NAME;
         }
-        else if ("SHA512withRSA".equalsIgnoreCase(algorithm) || //$NON-NLS-1$
-                 "SHA-512withRSA".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-                 "SHA-512withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
-                 "SHA512withRSAEncryption".equalsIgnoreCase(algorithm)) { //$NON-NLS-1$
+        else if (
+    		"SHA512".equalsIgnoreCase(algorithm)                   || //$NON-NLS-1$
+    		"SHA-512".equalsIgnoreCase(algorithm)                  || //$NON-NLS-1$
+    		"SHA512withRSA".equalsIgnoreCase(algorithm)            || //$NON-NLS-1$
+            "SHA-512withRSA".equalsIgnoreCase(algorithm)           ||  //$NON-NLS-1$
+            "SHA-512withRSAEncryption".equalsIgnoreCase(algorithm) ||  //$NON-NLS-1$
+            "SHA512withRSAEncryption".equalsIgnoreCase(algorithm) //$NON-NLS-1$
+        ) {
             return SHA512WITHRSA_NORMALIZED_ALGO_NAME;
         }
         return algorithm;

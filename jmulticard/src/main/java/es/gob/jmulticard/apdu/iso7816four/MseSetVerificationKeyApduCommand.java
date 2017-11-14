@@ -43,24 +43,20 @@ import es.gob.jmulticard.asn1.Tlv;
 
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad orientada a
  * establecer una clave p&uacute;blica para verificaci&oacute;n.
- * @author Carlos Gamuci Mill&aacute;n */
+ * @author Carlos Gamuci Mill&aacute;n. */
 public final class MseSetVerificationKeyApduCommand extends MseSetApduCommand {
 
-    /** Control Reference Template for Digital Signature (DST) */
-    private static final byte DST = (byte) 0xB6;
-
-    /** Tag para identificar un identificador de fichero. */
-    private static final byte TAG_FILE_ID = (byte) 0x83;
-
     /** Crea un objeto para el establecimiento de una clave p&uacute;blica para verificaci&oacute;n.
-     * @param cla Clase (CLA) de la APDU
-     * @param keyFileId Identificador de campo con la clave p&uacute;blica. Puede ser
-     *        una referencia a la direcci&oacute;n en donde se almacena o un CHR para su carga
-     *        desde memoria */
+     * @param cla Clase (CLA) de la APDU.
+     * @param keyFileId Identificador de campo con la clave p&uacute;blica.
+     *                  Puede ser una referencia a la direcci&oacute;n en donde se almacena o un CHR
+     *                  para su carga desde memoria. */
     public MseSetVerificationKeyApduCommand(final byte cla, final byte[] keyFileId) {
-        super(cla,                                       // CLA
-              DST,                                       // P2
-              new Tlv(TAG_FILE_ID, keyFileId).getBytes() // Data
+        super(
+    		cla,                                       // CLA
+    		SET_FOR_AUTHENTICATION,                    // P1
+    		DST,                                       // P2
+            new Tlv(PUBLIC_KEY_REFERENCE, keyFileId).getBytes() // Data
         );
     }
 }
