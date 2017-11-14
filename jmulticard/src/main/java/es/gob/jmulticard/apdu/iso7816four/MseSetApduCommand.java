@@ -18,7 +18,7 @@ abstract class MseSetApduCommand extends CommandApdu {
     /** Control Reference Template for Digital Signature (DST). */
     protected static final byte DST = (byte) 0xB6;
 
-	/** Control Reference Template for Authentication (AT) */
+	/** Control Reference Template for Authentication (AT). */
     protected static final byte AT = (byte) 0xa4;
 
     /** Referencia a una clave para uso directo en modo sim&eacute;trico o referencia a una clave

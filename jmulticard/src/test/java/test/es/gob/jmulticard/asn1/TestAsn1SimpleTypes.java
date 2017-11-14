@@ -10,7 +10,7 @@ import es.gob.jmulticard.asn1.der.Utf8String;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.AccessFlags;
 
-/** Prueba del tipos simples ASN.1. */
+/** Prueba del tipos simples ASN&#46;1. */
 public final class TestAsn1SimpleTypes {
 
 	private static final byte[] SAMPLE_DIGEST_INFO = new byte[] {
@@ -28,10 +28,10 @@ public final class TestAsn1SimpleTypes {
 	public void testDigestInfoCreation() throws Exception {
 		final DigestInfo di = new DigestInfo();
 		di.setDerValue(SAMPLE_DIGEST_INFO);
-		System.out.println("DigestInfo: " + di); //$NON-NLS-1$
+		System.out.println(di);
 	}
 
-	/** Prueba la creaci&oacute; de un tipo UTF8String con datos incorrectos.
+	/** Prueba la creaci&oacute; de un tipo <code>UTF8String</code> con datos incorrectos.
 	 * @throws TlvException Si no se puede crear el TLV. */
 	@Test
 	@SuppressWarnings("static-method")
@@ -47,7 +47,7 @@ public final class TestAsn1SimpleTypes {
 		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
 	}
 
-	/** Prueba la creaci&oacute; de un tipo BitString con datos incorrectos.
+	/** Prueba la creaci&oacute; de un tipo <code>BitString</code> con datos incorrectos.
 	 * @throws TlvException Si no se puede crear el TLV. */
 	@Test
 	@SuppressWarnings("static-method")

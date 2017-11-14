@@ -43,7 +43,7 @@ import es.gob.jmulticard.HexUtils;
 
 /** Objeto ASN&#46;1 gen&eacute;rico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Alberto Mart&iacute;nez */
+ * @author Alberto Mart&iacute;nez. */
 public abstract class DecoderObject {
 
     private byte[] rawDerValue = null;
