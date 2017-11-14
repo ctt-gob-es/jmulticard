@@ -161,7 +161,7 @@ public final class Cdf extends Record implements Pkcs15Cdf {
             sb.append("\n  Numero de serie: "); //$NON-NLS-1$
             sb.append(getCertificateSerialNumber(index));
             sb.append("\n  Identificador: "); //$NON-NLS-1$
-            sb.append(HexUtils.hexify(getCertificateIdentifier(index), true));
+            sb.append(HexUtils.hexify(getCertificateIdentifier(index), false));
             sb.append("\n  Ruta PKCS#15: "); //$NON-NLS-1$
             sb.append(getCertificatePath(index));
 			if (index != getCertificateCount() -1) {

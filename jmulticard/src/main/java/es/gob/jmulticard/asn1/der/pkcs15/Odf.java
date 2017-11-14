@@ -42,11 +42,11 @@ public final class Odf extends Record {
 	public Odf() {
 		super(
 			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(PrivateKeysContextSpecific.class, true),
+				new OptionalDecoderObjectElement(PrivateKeysContextSpecific.class, true),       // PrKDF
 				new OptionalDecoderObjectElement(PublicKeysContextSpecific.class, true),
 				new OptionalDecoderObjectElement(TrustedPublicKeysContextSpecific.class, true),
 				new OptionalDecoderObjectElement(SecretKeysContextSpecific.class, true),
-				new OptionalDecoderObjectElement(CertificatesContextSpecific.class, true)
+				new OptionalDecoderObjectElement(CertificatesContextSpecific.class, true)       // CDF
 			}
 		);
 	}
@@ -77,12 +77,26 @@ public final class Odf extends Record {
 		return null;
 	}
 
+	/** Obtiene la ruta (Path ASN&#46;1 PKCS#15) hacia el PuKDF.
+	 * @return Ruta (Path ASN&#46;1 PKCS#15) hacia el PuKDF, o <code>null</code>
+	 *         si este ODF no contiene esta ruta. */
+	public Path getPuKdfPath() {
+		for (int i=0;i<getElementCount();i++) {
+			final DecoderObject dobj = getElementAt(i);
+			if (dobj instanceof PublicKeysContextSpecific) {
+				return ((PublicKeysContextSpecific)dobj).getPublicKeysPath();
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return
 			"ODF: \n" + //$NON-NLS-1$
 			" Ruta hacia el CDF: " + getCdfPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			" Ruta hacia el PrKDF: " + getPrKdfPath() //$NON-NLS-1$
+			" Ruta hacia el PrKDF: " + getPrKdfPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+			" Ruta hacia el PuKDF: " + getPuKdfPath() //$NON-NLS-1$
 		;
 	}
 

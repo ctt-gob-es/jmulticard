@@ -161,7 +161,7 @@ abstract class CeresSignatureImpl extends SignatureSpi {
 
     /** Firma SHA384withRSA. */
     public static final class Sha384 extends CeresSignatureImpl {
-        /** Constructor */
+        /** Constructor. */
         public Sha384() {
             super("SHA384withRSA"); //$NON-NLS-1$
         }
@@ -169,7 +169,7 @@ abstract class CeresSignatureImpl extends SignatureSpi {
 
     /** Firma SHA512withRSA. */
     public static final class Sha512 extends CeresSignatureImpl {
-        /** Constructor */
+        /** Constructor. */
         public Sha512() {
             super("SHA512withRSA"); //$NON-NLS-1$
         }

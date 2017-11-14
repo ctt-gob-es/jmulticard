@@ -35,7 +35,7 @@ public final class CeresProvider extends Provider {
 
     private static ApduConnection defaultConnection = null;
 
-    /** Obtiene de forma est&aacute;tica el tipo de conexi&oacute;n de APDU que debe usar el <i>keyStore</i>.
+    /** Obtiene de forma est&aacute;tica el tipo de conexi&oacute;n de APDU que debe usar el <i>KeyStore</i>.
      * Si es nula (se ha invocado al constructor por defecto), es el propio <code>KeyStore</code> el que decide que
      * conexi&oacute;n usar.
      * @return Conexi&oacute;n por defecto. */
@@ -55,7 +55,7 @@ public final class CeresProvider extends Provider {
 
         try {
 			defaultConnection = conn == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection() :
 					conn;
 		}
         catch (final Exception e) {

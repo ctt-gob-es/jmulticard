@@ -4,8 +4,8 @@ import java.security.KeyStore.PasswordProtection;
 
 import javax.security.auth.callback.PasswordCallback;
 
-/** <code>PasswordCallback</code> para tarjetas CERES.
- * @author Sergio Mart&iacute;nez Rico, */
+/** <code>PasswordCallback</code> para tarjetas FNMT-CERES.
+ * @author Sergio Mart&iacute;nez Rico. */
 final class CeresPasswordCallback extends PasswordCallback {
 
 	private static final long serialVersionUID = -2511696590746468782L;

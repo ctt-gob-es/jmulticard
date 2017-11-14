@@ -94,8 +94,6 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     private static final byte[] ODF_PATH = new byte[] { (byte) 0x50, (byte) 0x31 };
     private static final byte[] MF_PATH  = new byte[] { (byte) 0x3F, (byte) 0x00 };
 
-    private static final Location PRKDF_LOCATION = new Location("3F004400"); //$NON-NLS-1$
-
     private static byte CLA = (byte) 0x00;
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
@@ -130,7 +128,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
             );
         }
 
-        // Cargamos la localizacion de los certificados
+        // Cargamos los certificados
         try {
             preloadCertificates();
         }
@@ -140,32 +138,62 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     		);
         }
 
-        // Leemos el PrKDF
-        final byte[] prKdfValue;
-        try {
-        	prKdfValue = selectFileByLocationAndRead(PRKDF_LOCATION);
-		}
-        catch (final Iso7816FourCardException e) {
-			throw new IOException(
-				"Error leyendo el PrKDF: " + e, e //$NON-NLS-1$
+        // Miramos cuantas claves hay en la tarjeta
+        final int keyCount = getKeyCount(
+    		sendArbitraryApdu(
+	    		new CommandApdu(
+					new byte[] {
+						(byte) 0x00, (byte)0xCA, (byte)0x01, (byte)0x02, (byte)0x06
+					}
+				)
+    		)
+		);
+
+        System.out.println(
+    		"Se ha" + (keyCount > 1 ? "n" : "") + " encontrado " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				keyCount + " clave" + (keyCount > 1 ? "s" : "") + " y " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    				CERTS_BY_ALIAS.size() + " certificado" + (CERTS_BY_ALIAS.size() > 1 ? "s" : "") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    					" en la tarjeta"); //$NON-NLS-1$
+
+        // Buscamos las claves publicas de las claves y guardamos su ordinal comparado
+        // con el alias del certificado que tenga la misma clave publica
+        for (int i=0;i<keyCount;i++) {
+        	final ResponseApdu res = sendArbitraryApdu(
+    			new CommandApdu(
+					new byte[] {
+						(byte) 0x81,
+						(byte) 0x3A,
+						(byte) i,    // Ordinal de la clave
+						(byte) 0x01, // 02=Exponente, 01=Modulo
+						(byte) 0x00
+					}
+				)
 			);
-		}
-        final Pkcs15PrKdf prKdf = new PrKdf();
-    	try {
-			prKdf.setDerValue(prKdfValue);
-		}
-    	catch (final Exception e) {
+        	System.out.println(res);
+        }
+
+    }
+
+    private static int getKeyCount(final ResponseApdu ra) throws IOException {
+    	if (!ra.isOk()) {
     		throw new IOException(
-				"Error analizando el PrKDF: " + e, e //$NON-NLS-1$
+				"No se ha podido determinar el numero de claves en tarjeta: " + HexUtils.hexify(ra.getBytes(), true) //$NON-NLS-1$
 			);
-		}
-
-    	// Las claves parecen referenciarse por nombre, coincidiendo el nombre de la clave
-    	// con el alias del certificado.
-    	System.out.println();
-    	System.out.println(prKdf);
-    	System.out.println();
-
+    	}
+    	final byte[] res = ra.getData();
+    	if (
+			res.length == 6 &&
+			res[0] == (byte)0x7F &&
+			res[1] == (byte)0xFF &&
+			res[2] == (byte)0x20 &&
+			res[4] == (byte)0x0C &&
+			res[5] == (byte)0x0B
+		) {
+    		return 0x20 - res[3];
+    	}
+    	throw new IOException(
+			"No se ha podido determinar el numero de claves en tarjeta: " + HexUtils.hexify(ra.getBytes(), true) //$NON-NLS-1$
+		);
     }
 
 	/** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.
@@ -253,6 +281,48 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         		);
             }
         }
+
+        // Leemos el PrKDF
+        final byte[] prKdfValue;
+        try {
+        	prKdfValue = selectFileByLocationAndRead(
+    			new Location(HexUtils.hexify(MF_PATH, false) + odf.getPrKdfPath())
+			);
+		}
+        catch (final Iso7816FourCardException e) {
+			throw new IOException(
+				"Error leyendo el PrKDF: " + e, e //$NON-NLS-1$
+			);
+		}
+        final Pkcs15PrKdf prKdf = new PrKdf();
+    	try {
+			prKdf.setDerValue(prKdfValue);
+		}
+    	catch (final Exception e) {
+    		throw new IOException(
+				"Error analizando el PrKDF: " + e, e //$NON-NLS-1$
+			);
+		}
+    	System.out.println();
+    	System.out.println(prKdf);
+    	System.out.println();
+    	System.out.println(cdf);
+    	System.out.println();
+    	System.out.println(odf);
+
+    	// Leemos el PuKDF
+    	final byte[] puKdfValue;
+        try {
+        	puKdfValue = selectFileByLocationAndRead(
+    			new Location(HexUtils.hexify(MF_PATH, false) + odf.getPuKdfPath())
+			);
+		}
+        catch (final Iso7816FourCardException e) {
+			throw new IOException(
+				"Error leyendo el PuKDF: " + e, e //$NON-NLS-1$
+			);
+		}
+        //System.out.println(HexUtils.hexify(puKdfValue, true));
 
     }
 

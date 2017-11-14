@@ -177,17 +177,17 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
     			}
     			this.cryptoCard = new Ceres(
-    					CeresProvider.getDefaultApduConnection(),
-    					new JseCryptoHelper()
-    				);
+					CeresProvider.getDefaultApduConnection(),
+					new JseCryptoHelper()
+				);
     			this.cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
     			final PasswordCallback pwc = new CeresPasswordCallback((PasswordProtection) pp);
     			this.cryptoCard = new Ceres(
-    					CeresProvider.getDefaultApduConnection(),
-    					new JseCryptoHelper()
-    				);
+					CeresProvider.getDefaultApduConnection(),
+					new JseCryptoHelper()
+				);
     			this.cryptoCard.setPasswordCallback(pwc);
     		}
     		else {
@@ -258,13 +258,13 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         return entryClass.equals(PrivateKeyEntry.class);
     }
 
-    /** PasswordCallbak que almacena internamente y devuelve la contrase&ntilde;a con la que se
+    /** <code>PasswordCallbak</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
      * construy&oacute; o la que se le establece posteriormente. */
     private static final class CachePasswordCallback extends PasswordCallback {
 
         private static final long serialVersionUID = 816457144215238935L;
 
-        /** Contruye una Callback con una contrase&ntilde;a pre-establecida.
+        /** Contruye una <code>Callback</code> con una contrase&ntilde;a pre-establecida.
          * @param password Contrase&ntilde;a por defecto. */
         CachePasswordCallback(final char[] password) {
             super(">", false); //$NON-NLS-1$
