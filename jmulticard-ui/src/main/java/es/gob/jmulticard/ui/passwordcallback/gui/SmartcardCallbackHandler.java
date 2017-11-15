@@ -9,10 +9,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
-/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n
- * al usuario en tarjetas CERES.
+/** CallbackHandler que gestiona los <i>Callbacks</i> de petici&oacute;n de informaci&oacute;n
+ * al usuario en tarjetas inteligentes.
  * @author Sergio Mart&iacute;nez Rico. */
-public class CeresCallbackHandler implements CallbackHandler {
+public class SmartcardCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	@Override
