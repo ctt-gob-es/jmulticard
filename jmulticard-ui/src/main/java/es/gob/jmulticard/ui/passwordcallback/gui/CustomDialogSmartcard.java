@@ -68,12 +68,11 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
-import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
+import es.gob.jmulticard.CancelledOperationException;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
-/** Componente dialogo que define los alerts de la aplicaci&oacute;n.
- * @author inteco */
-public class CustomDialogCeres extends JAccessibilityCustomDialog implements ActionListener {
+/** Componente di&aacute;logo que define las alertas de la aplicaci&oacute;n. */
+public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements ActionListener {
 
     /** UID. */
     private static final long serialVersionUID = 1L;
@@ -103,35 +102,35 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
     /** Etiqueta que contiene el icono de la alerta. */
     protected final IconLabel iconLabel = new IconLabel();
 
-    /** Boton de OK. */
+    /** Bot&oacute;n de aceptar. */
     private static JButton okButton = null;
 
     static JButton getOkButton() {
         return okButton;
     }
 
-    /** Boton de NO. */
+    /** Bot&oacute;n de NO. */
     private JButton noButton = null;
 
     JButton getNoButton() {
     	return this.noButton;
     }
 
-    /** Boton de Cancel. */
+    /** Bot&oacute;n de cancelar. */
     private static JButton cancelButton = null;
 
     static JButton getCancelButton() {
         return cancelButton;
     }
 
-    /** Boton de restaurar. */
+    /** Bot&oacute;n de restaurar. */
     private JButton restoreButton = null;
 
     JButton getRestoreButton() {
         return this.restoreButton;
     }
 
-    /** Boton de maximizar. */
+    /** Bot&oacute;n de maximizar. */
     private JButton maximizeButton = null;
 
     JButton getMaximizeButton() {
@@ -151,13 +150,14 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
      * @param message mensaje
      * @param title T&iacute;tulo
      * @param isInputDialog indica sies una alerta de tipo input */
-    protected CustomDialogCeres(final JDialog componentParent,
+    protected CustomDialogSmartcard(final JDialog componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
-                         final boolean isInputDialog) {
+                         final boolean isInputDialog,
+                         final String iconPath) {
         super(componentParent, modal, isInputDialog);
-        initComponents(message, title, isInputDialog);
+        initComponents(message, title, isInputDialog, iconPath);
         setLocationRelativeTo(componentParent);
         pack();
     }
@@ -168,14 +168,15 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
      * @param message mensaje
      * @param title titulo
      * @param isInputDialog indica sies una alerta de tipo input */
-    protected CustomDialogCeres(final Component componentParent,
+    protected CustomDialogSmartcard(final Component componentParent,
                          final boolean modal,
                          final String message,
                          final String title,
-                         final boolean isInputDialog) {
+                         final boolean isInputDialog,
+                         final String iconPath) {
         super(isInputDialog);
-        this.setModal(modal);
-        initComponents(message, title, isInputDialog);
+        setModal(modal);
+        initComponents(message, title, isInputDialog, iconPath);
         setLocationRelativeTo(componentParent);
         pack();
     }
@@ -186,13 +187,14 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
      * @param message Mensaje del di&aacute;logo.
      * @param title T&iacute;tulo del di&aacute;logo.
      * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos. */
-    private CustomDialogCeres(final JFrame componentParent,
-                         final boolean modal,
-                         final String message,
-                         final String title,
-                         final boolean isInputDialog) {
+    private CustomDialogSmartcard(final JFrame componentParent,
+                             final boolean modal,
+                             final String message,
+                             final String title,
+                             final boolean isInputDialog,
+                             final String iconPath) {
         super(componentParent, modal, isInputDialog);
-        initComponents(message, title, isInputDialog);
+        initComponents(message, title, isInputDialog, iconPath);
         setLocationRelativeTo(componentParent);
         pack();
     }
@@ -208,27 +210,27 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
     /** Posici&oacute;n Y inicial de la ventana dependiendo del sistema operativo y de la
      * resoluci&oacute;n de pantalla.
      * @param height Alto de la ventana.
-     * @return int Posici&oacute;n Y */
+     * @return int Posici&oacute;n Y. */
     private static int getInitialY(final int height) {
         final Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         return screenSize.height / 2 - height / 2;
     }
 
-    /** Metodo que inicializa los componentes de la alerta.
-     * @param message mensaje que se mostrara en la alerta
-     * @param title T&iacute;tulo de la alerta
-     * @param isInputDialog indica sies una alerta de tipo input */
-    protected void initComponents(
-    		final String message,
-    		final String title,
-    		final boolean isInputDialog) {
+    /** Inicializa los componentes de la alerta.
+     * @param message mensaje que se mostrara en la alerta.
+     * @param title T&iacute;tulo de la alerta.
+     * @param isInputDialog indica si es una alerta de tipo input. */
+    protected void initComponents(final String message,
+    		                      final String title,
+    		                      final boolean isInputDialog,
+    		                      final String iconPath) {
         // Se obtienen las dimensiones de maximizado
-        final int maxWidth = this.getMaxWidth();
-        final int maxHeight = this.getMaxHeight();
+        final int maxWidth = getMaxWidth();
+        final int maxHeight = getMaxHeight();
 
         // Se establece el tamano minimo
-        setMinimumSize(new Dimension(this.getInitialWidth(), this.getInitialHeight()));
-        setPreferredSize(new Dimension(this.getInitialWidth(), this.getInitialHeight()));
+        setMinimumSize(new Dimension(getInitialWidth(), getInitialHeight()));
+        setPreferredSize(new Dimension(getInitialWidth(), getInitialHeight()));
         // Se establece el tamano maximo
         setMaximumSize(new Dimension(maxWidth, maxHeight));
 
@@ -244,7 +246,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
             }
         }
 
-        this.setTitle(title);
+        setTitle(title);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         this.answer = JOptionPane.NO_OPTION;
@@ -264,7 +266,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         c.insets = new Insets(5, 10, 0, 10);
 
         // Icono del dialogo
-        setIconLabel();
+        setIconLabel(iconPath);
         final JPanel iconPanel = new JPanel(new GridBagLayout());
         final GridBagConstraints consIconPanel = new GridBagConstraints();
         consIconPanel.fill = GridBagConstraints.BOTH;
@@ -343,17 +345,21 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         pack();
     }
 
-    /**
-     * Se asigna el icono a la etiqueta.
-     */
-    protected void setIconLabel() {
-        // Segun el tipo de mensaje se selecciona el icono
-        ImageIcon icon = new ImageIcon(CustomDialogCeres.class.getResource("/images/ceres.png")); //$NON-NLS-1$
-        final Dimension dimensionInicial = new Dimension((int) 65f, (int)(65f / icon.getIconWidth() * icon.getIconHeight()));
-        this.iconLabel.setOriginalIcon(icon);
-        this.iconLabel.setOriginalDimension(dimensionInicial);
-        icon = new ImageIcon(icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH));
-        this.iconLabel.setIcon(icon);
+    /** Asigna el icono a la etiqueta. */
+    protected void setIconLabel(final String iconPath) {
+    	if (iconPath != null) {
+	        // Segun el tipo de mensaje se selecciona el icono
+	        ImageIcon icon = new ImageIcon(
+	    		CustomDialogSmartcard.class.getResource(
+					iconPath
+				)
+			);
+	        final Dimension dimensionInicial = new Dimension(100, (int)(100f / icon.getIconWidth() * icon.getIconHeight()));
+	        this.iconLabel.setOriginalIcon(icon);
+	        this.iconLabel.setOriginalDimension(dimensionInicial);
+	        icon = new ImageIcon(icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH));
+	        this.iconLabel.setIcon(icon);
+    	}
     }
 
     /** Se crea el panel de botones de accesibilidad. */
@@ -378,7 +384,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
 
         // Restore button
         final JPanel restorePanel = new JPanel();
-        final ImageIcon imageIconRestore = new ImageIcon(CustomDialogCeres.class.getResource("/images/restore.png")); //$NON-NLS-1$
+        final ImageIcon imageIconRestore = new ImageIcon(CustomDialogSmartcard.class.getResource("/images/restore.png")); //$NON-NLS-1$
         this.restoreButton = new JButton(imageIconRestore);
         this.restoreButton.setMnemonic(KeyEvent.VK_R);
         this.restoreButton.setToolTipText(Messages.getString("Wizard.restaurar.description")); //$NON-NLS-1$
@@ -389,13 +395,13 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
             /** Evento que se produce cuando el componente pierde el foco. */
             @Override
             public void focusLost(final FocusEvent e) {
-                Utils.showToolTip(false, tip, CustomDialogCeres.this.getRestoreButton(), tipText);
+                Utils.showToolTip(false, tip, CustomDialogSmartcard.this.getRestoreButton(), tipText);
             }
 
             /** Evento que se produce cuando el componente tiene el foco. */
             @Override
             public void focusGained(final FocusEvent e) {
-                Utils.showToolTip(true, tip, CustomDialogCeres.this.getRestoreButton(), tipText);
+                Utils.showToolTip(true, tip, CustomDialogSmartcard.this.getRestoreButton(), tipText);
             }
         });
         final Dimension dimension = new Dimension(20, 20);
@@ -431,7 +437,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         // Maximize button
         final JPanel maximizePanel = new JPanel();
 
-        final ImageIcon imageIconMaximize = new ImageIcon(CustomDialogCeres.class.getResource("/images/maximize.png")); //$NON-NLS-1$
+        final ImageIcon imageIconMaximize = new ImageIcon(CustomDialogSmartcard.class.getResource("/images/maximize.png")); //$NON-NLS-1$
         this.maximizeButton = new JButton(imageIconMaximize);
         this.maximizeButton.setMnemonic(KeyEvent.VK_M);
         this.maximizeButton.setToolTipText(Messages.getString("Wizard.maximizar.description")); //$NON-NLS-1$
@@ -460,13 +466,13 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
             /** Evento que se produce cuando el componente pierde el foco. */
             @Override
             public void focusLost(final FocusEvent e) {
-                Utils.showToolTip(false, tip, CustomDialogCeres.this.getMaximizeButton(), tipText);
+                Utils.showToolTip(false, tip, CustomDialogSmartcard.this.getMaximizeButton(), tipText);
             }
 
             /** Evento que se produce cuando el componente tiene el foco. */
             @Override
             public void focusGained(final FocusEvent e) {
-                Utils.showToolTip(true, tip, CustomDialogCeres.this.getMaximizeButton(), tipText);
+                Utils.showToolTip(true, tip, CustomDialogSmartcard.this.getMaximizeButton(), tipText);
             }
         });
 
@@ -522,7 +528,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
 
         // OK button
         final JPanel okPanel = new JPanel();
-        CustomDialogCeres.okButton = getButton(Messages.getString("PrincipalGUI.aceptar"), KeyEvent.VK_A); //$NON-NLS-1$
+        CustomDialogSmartcard.okButton = getButton(Messages.getString("PrincipalGUI.aceptar"), KeyEvent.VK_A); //$NON-NLS-1$
         okButton.addKeyListener(new KeyListener() {
 
 			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
@@ -536,28 +542,30 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
 			}
 		});
 
-        okPanel.add(CustomDialogCeres.okButton);
+        okPanel.add(CustomDialogSmartcard.okButton);
         this.buttonsPanel.add(okPanel, consButtons);
 
-        CustomDialogCeres.okButton.addActionListener(this);
+        CustomDialogSmartcard.okButton.addActionListener(this);
 
     }
 
-    /** Muestra un dialogo con un mensaje que pide la interacion del usuario.
-     * @param componentParent componente padre
-     * @param modal modal
-     * @param message mensaje a mostrar
-     * @param title titulo del dialogo
-     * @param typeOption opciones de interacion
+    /** Muestra un di&aacute;logo con un mensaje que pide la interaci&oacute;n del usuario.
+     * @param componentParent Componente padre.
+     * @param modal Modal.
+     * @param message Mensaje a mostrar.
+     * @param title Titulo del di&aacute;logo.
+     * @param typeOption Opciones de interaci&oacute;n.
+     * @param iconPath Ruta hacia el icono del di&aacute;logo.
      * @return respuesta del usuario. */
     public static int showConfirmDialog(final Component componentParent,
                                         final boolean modal,
                                         final String message,
                                         final String title,
-                                        final int typeOption) {
+                                        final int typeOption,
+                                        final String iconPath) {
 
-        final CustomDialogCeres customDialog = CustomDialogCeres.getInstanceCustomDialog(componentParent, modal, message, title, false);
-        CustomDialogCeres.okButton.setEnabled(true);
+        final CustomDialogSmartcard customDialog = CustomDialogSmartcard.getInstanceCustomDialog(componentParent, modal, message, title, false, iconPath);
+        CustomDialogSmartcard.okButton.setEnabled(true);
         customDialog.getRootPane().setDefaultButton(null);
 
         // Restricciones
@@ -569,8 +577,8 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         // Se comprueba el tipo de dialogo
         if (typeOption == JOptionPane.YES_NO_OPTION) {
             // Boton Si
-            CustomDialogCeres.okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
-            CustomDialogCeres.okButton.setMnemonic(KeyEvent.VK_S);
+            CustomDialogSmartcard.okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
+            CustomDialogSmartcard.okButton.setMnemonic(KeyEvent.VK_S);
             // Boton no
             customDialog.noButton = customDialog.getButton(Messages.getString("CustomDialog.confirmDialog.no"), KeyEvent.VK_N); //$NON-NLS-1$
             customDialog.noButton.addKeyListener(new KeyListener() {
@@ -609,20 +617,23 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
      * @param message Mensaje a mostrar.
      * @param mnemonic Atajo de teclado.
      * @param title T&iacute;tulo del di&aacute;logo.
-     * @return Contrase&ntilde;a introducida por el usuario */
+     * @param iconPath Ruta hacia el icono del di&aacute;logo.
+     * @return Contrase&ntilde;a introducida por el usuario. */
     public static char[] showInputPasswordDialog(final Component componentParent,
                                                  final boolean modal,
                                                  final String message,
                                                  final int mnemonic,
-                                                 final String title) {
-    	final CustomDialogCeres customDialog = CustomDialogCeres.getInstanceCustomDialog(
+                                                 final String title,
+                                                 final String iconPath) {
+    	final CustomDialogSmartcard customDialog = CustomDialogSmartcard.getInstanceCustomDialog(
     			componentParent,
     			modal,
     			message,
     			title,
-    			true
+    			true,
+    			iconPath
     	);
-        CustomDialogCeres.okButton.setEnabled(false);
+        CustomDialogSmartcard.okButton.setEnabled(false);
         customDialog.getRootPane().setDefaultButton(null);
 
         // Restricciones para el panel de datos
@@ -753,8 +764,8 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         if (text.equalsIgnoreCase(cancellText)) {
             // Se asigna la tecla escape a dicho boton
             final String cancelKey = "cancel"; //$NON-NLS-1$
-            this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelKey);
-            this.getRootPane().getActionMap().put(cancelKey, new ButtonAbstractAction());
+            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelKey);
+            getRootPane().getActionMap().put(cancelKey, new ButtonAbstractAction());
         }
 
         return button;
@@ -772,14 +783,14 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
 
     /** Cambia el tama&ntilde;o de la ventana al tama&ntilde;o m&aacute;ximo de pantalla menos el tama&ntilde;o de la barra de tareas de windows */
     void maximizarActionPerformed() {
-        setActualPositionX(this.getX());
-        setActualPositionY(this.getY());
-        setActualWidth(this.getWidth());
-        setActualHeight(this.getHeight());
+        setActualPositionX(getX());
+        setActualPositionY(getY());
+        setActualWidth(getWidth());
+        setActualHeight(getHeight());
 
         // Se obtienen las dimensiones de maximizado
-        final int maxWidth = this.getMaxWidth();
-        final int maxHeight = this.getMaxHeight();
+        final int maxWidth = getMaxWidth();
+        final int maxHeight = getMaxHeight();
 
         // Se hace el resize
         this.setBounds(getInitialX(maxWidth), getInitialY(maxHeight), maxWidth, maxHeight);
@@ -792,8 +803,8 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
     /** Restaura el tama&ntilde;o de la ventana a la posicion anterior al maximizado */
     void restaurarActionPerformed() {
         // Dimensiones de restaurado
-        int minWidth = this.getInitialWidth();
-        int minHeight = this.getInitialHeight();
+        int minWidth = getInitialWidth();
+        int minHeight = getInitialHeight();
         // Se comprueba las opciones de accesibilidad activas
         if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold() || isBigSizeDefault()) {
             minWidth = Constants.CUSTOMDIALOG_FONT_INITIAL_WIDTH;
@@ -815,28 +826,29 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         this.restoreButton.setEnabled(false);
     }
 
-    /** Metodo que devuelve una instancia de CustomDialog.
-     * @param componentParent Componente padre
-     * @param modal modal
-     * @param message mensaje
-     * @param title titulo del dialogo
-     * @param isInputDialog indica sies una alerta de tipo input
+    /** Devuelve una instancia de CustomDialog.
+     * @param componentParent Componente padre.
+     * @param modal Modal.
+     * @param message Mensaje.
+     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param isInputDialog Indica si es una alerta de tipo input.
      * @return instancia de CustomDialog. */
-    static CustomDialogCeres getInstanceCustomDialog(final Component componentParent,
+    static CustomDialogSmartcard getInstanceCustomDialog(final Component componentParent,
                                                 final boolean modal,
                                                 final String message,
                                                 final String title,
-                                                final boolean isInputDialog) {
-        CustomDialogCeres customDialog = null;
+                                                final boolean isInputDialog,
+                                                final String iconPath) {
+        final CustomDialogSmartcard customDialog;
         // Se chequea cual sera el componente padre.
         if (componentParent instanceof JDialog) {
-            customDialog = new CustomDialogCeres((JDialog) componentParent, modal, message, title, isInputDialog);
+            customDialog = new CustomDialogSmartcard(componentParent, modal, message, title, isInputDialog, iconPath);
         }
         else if (componentParent instanceof JFrame) {
-            customDialog = new CustomDialogCeres((JFrame) componentParent, modal, message, title, isInputDialog);
+            customDialog = new CustomDialogSmartcard(componentParent, modal, message, title, isInputDialog, iconPath);
         }
         else {
-            customDialog = new CustomDialogCeres(componentParent, modal, message, title, isInputDialog);
+            customDialog = new CustomDialogSmartcard(componentParent, modal, message, title, isInputDialog, iconPath);
         }
         return customDialog;
     }
@@ -845,7 +857,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
     @Override
     public void actionPerformed(final ActionEvent e) {
 
-        if (e.getSource().equals(CustomDialogCeres.okButton)) {
+        if (e.getSource().equals(CustomDialogSmartcard.okButton)) {
             this.answer = JOptionPane.YES_OPTION;
         }
         else if (e.getSource().equals(this.noButton)) {
@@ -868,7 +880,7 @@ public class CustomDialogCeres extends JAccessibilityCustomDialog implements Act
         /** Indica que la accion es la de pulsar el boton cancelar. */
         @Override
         public void actionPerformed(final ActionEvent event) {
-            CustomDialogCeres.getCancelButton().doClick();
+            CustomDialogSmartcard.getCancelButton().doClick();
         }
     }
 

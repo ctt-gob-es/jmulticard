@@ -107,17 +107,19 @@ public final class CommonPasswordCallback extends PasswordCallback {
 						PasswordCallbackManager.getDialogOwner(),
 						getPrompt(),
 						'P',
-						this.title
+						this.title,
+						"/images/dnie.png" //$NON-NLS-1$
 					);
     			}
     			else {
-    				psc = new UIPasswordCallbackAccessibilityCeres(
-    						getPrompt(),
-    						PasswordCallbackManager.getDialogOwner(),
-    						getPrompt(),
-    						'P',
-    						this.title
-    					);
+    				psc = new UIPasswordCallbackAccessibility(
+						getPrompt(),
+						PasswordCallbackManager.getDialogOwner(),
+						getPrompt(),
+						'P',
+						this.title,
+						"/images/chipcard.png" //$NON-NLS-1$
+					);
     			}
     			final char[] pss = psc.getPassword();
     			psc.clearPassword();

@@ -58,6 +58,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import es.gob.jmulticard.CancelledOperationException;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -643,7 +644,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			}
 
         	if (!((CustomAuthorizeCallback)cc).isAuthorized()) {
-				throw new CancelledSignOperationException(
+				throw new CancelledOperationException(
 					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
 				);
 			}
@@ -869,9 +870,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; ha bloqueado
-     * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando se ha cancelado la inserci&oacute;n del PIN
-     *                                                                           usando el di&aacute;logo gr&aacute;fico integrado. */
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
     protected void loadCertificates() throws CryptoCardException, PinException {
     	// Abrimos el canal si es necesario
     	openSecureChannelIfNotAlreadyOpened();

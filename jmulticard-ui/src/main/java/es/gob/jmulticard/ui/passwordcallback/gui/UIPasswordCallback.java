@@ -50,7 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 
-import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
+import es.gob.jmulticard.CancelledOperationException;
 
 /** <i>PasswordCallbak</i> que muestra un di&aacute;logo para solicitar una
  * contrase&ntilde;a. */

@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
-import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogDnie;
+import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogSmartcard;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -74,16 +74,17 @@ private static boolean headless = false;
     }
 
     /** Muestra un di&aacute;logo para la confirmaci&oacute;n de una operaci&oacute;n con clave privada.
-     * @param callBack Callback que obtiene la confirmaci&oacute;n del usuario. */
+     * @param callBack <i>Callback</i> que obtiene la confirmaci&oacute;n del usuario. */
     public static void showSignatureConfirmDialog(final CustomAuthorizeCallback callBack) {
         if (!headless) {
             try {
-            	final int i = CustomDialogDnie.showConfirmDialog(
+            	final int i = CustomDialogSmartcard.showConfirmDialog(
             		 PasswordCallbackManager.getDialogOwner(),
                      true,
                      Messages.getString("CustomDialog.confirmDialog.prompt"), //$NON-NLS-1$
 	                 Messages.getString("CustomDialog.confirmDialog.title"), //$NON-NLS-1$
-	                 JOptionPane.YES_NO_OPTION
+	                 JOptionPane.YES_NO_OPTION,
+	                 "/images/dnie.png" //$NON-NLS-1$
                  );
             	callBack.setAuthorized(i == JOptionPane.YES_OPTION);
             }

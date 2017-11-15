@@ -56,9 +56,7 @@ public interface CryptoCard {
      *         existe ning&uacute;n certificado con ese alias.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema al recuperar el certificado.
      * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto.
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
-     * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando el usuario
-     * cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
     X509Certificate getCertificate(final String alias) throws CryptoCardException, PinException;
 
     /** Obtiene una referencia a la clave privada correspondiente al alias proporcionado.
@@ -76,9 +74,7 @@ public interface CryptoCard {
      * @return Datos firmados (PKCS#1 v1.5).
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema durante la firma.
-     * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo.
-     * @throws es.gob.jmulticard.card.dnie.CancelledSignOperationException Cuando el usuario
-     *                 cancela la operaci&oacute;n o el di&aacute;logo de inserci&oacute;n de contrase&ntilde;a. */
+     * @throws es.gob.jmulticard.card.PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo. */
     byte[] sign(byte[] data, String algorithm, PrivateKeyReference keyRef) throws CryptoCardException, PinException;
 
 }

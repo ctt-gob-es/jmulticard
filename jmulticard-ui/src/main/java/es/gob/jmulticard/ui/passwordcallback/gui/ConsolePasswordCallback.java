@@ -43,7 +43,7 @@ import java.io.Console;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
+import es.gob.jmulticard.CancelledOperationException;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 import es.gob.jmulticard.ui.passwordcallback.NoConsoleException;
 

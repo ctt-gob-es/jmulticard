@@ -38,22 +38,22 @@
  * o idoneidad para un proposito particular.
  */
 
-package es.gob.jmulticard.card.dnie;
+package es.gob.jmulticard;
 
-/** Excepci&oacute;n que indica una operaci&oacute;n de firma cancelada voluntariamente
+/** Excepci&oacute;n que indica una operaci&oacute;n cancelada voluntariamente
  * por el usuario. */
-public final class CancelledSignOperationException extends RuntimeException {
+public final class CancelledOperationException extends RuntimeException {
 
     private static final long serialVersionUID = 4447842480432712246L;
 
     /** Crea una excepci&oacute;n sin informaci&oacute;n adicional. */
-    public CancelledSignOperationException() {
+    public CancelledOperationException() {
         super();
     }
 
     /** Crea la excepci&oacute;n con un mensaje determinado.
      * @param msg Mensaje descriptivo de la excepci&oacute;n. */
-    public CancelledSignOperationException(final String msg) {
+    public CancelledOperationException(final String msg) {
         super(msg);
     }
 

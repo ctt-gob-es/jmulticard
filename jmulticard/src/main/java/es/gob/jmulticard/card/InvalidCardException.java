@@ -68,7 +68,7 @@ public final class InvalidCardException extends CardException {
         super("Se esperaba una tarjeta de tipo '" + //$NON-NLS-1$
               expectedCardName
               + "' pero se encontro otra con ATR=" + //$NON-NLS-1$
-              (foundAtr == null ? "NULO" : HexUtils.hexify(foundAtr, true)) //$NON-NLS-1$
+              (foundAtr == null ? "NULO" : HexUtils.hexify(foundAtr, false)) //$NON-NLS-1$
         );
         this.atr = expectedAtr;
         this.name = expectedCardName;

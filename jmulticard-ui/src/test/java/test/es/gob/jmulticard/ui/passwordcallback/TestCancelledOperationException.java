@@ -1,20 +1,20 @@
 package test.es.gob.jmulticard.ui.passwordcallback;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 
-import es.gob.jmulticard.ui.passwordcallback.CancelledOperationException;
+import es.gob.jmulticard.CancelledOperationException;
+import junit.framework.TestCase;
 
-/** @author Alberto Mart&iacute;nez */
+/** Pruebas de cancelaci&oacute;n de operaciones.
+ * @author Alberto Mart&iacute;nez. */
 public class TestCancelledOperationException extends TestCase {
 
-    /** Test method for {@link es.gob.jmulticard.ui.passwordcallback.CancelledOperationException#CancelledOperationException()}. */
+    /** Test method. */
     public final static void testCancelledOperationException() {
         Assert.assertNotNull(new CancelledOperationException());
     }
 
-    /** Test method for {@link es.gob.jmulticard.ui.passwordcallback.CancelledOperationException#CancelledOperationException(java.lang.String)}. */
+    /** Test method. */
     public final static void testCancelledOperationExceptionString() {
         Assert.assertNotNull(new CancelledOperationException("Operacion cancelada")); //$NON-NLS-1$
     }
