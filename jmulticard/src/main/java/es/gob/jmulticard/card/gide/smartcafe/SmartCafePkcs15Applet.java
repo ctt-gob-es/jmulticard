@@ -264,7 +264,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     /** Conecta con el lector del sistema que tenga una tarjeta insertada.
      * @param conn Conexi&oacute;n hacia la tarjeta.
      * @throws IOException Cuando hay errores de entrada / salida. */
-    private static void connect(final ApduConnection conn) throws IOException {
+    public static void connect(final ApduConnection conn) throws IOException {
         if (conn == null) {
             throw new IllegalArgumentException("La conexion no puede ser nula"); //$NON-NLS-1$
         }

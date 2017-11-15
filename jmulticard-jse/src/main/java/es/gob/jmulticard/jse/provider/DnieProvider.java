@@ -64,7 +64,7 @@ public final class DnieProvider extends Provider {
 
     private static final String SHA1WITH_RSA = "SHA1withRSA"; //$NON-NLS-1$
 
-    private static final String ES_GOB_JMULTICARD_CARD_DNIE_DNIE_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$
+    private static final String DNIE_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$
 
     private static final long serialVersionUID = -1046745919235177156L;
 
@@ -121,10 +121,10 @@ public final class DnieProvider extends Provider {
         put("Signature.SHA512withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Claves soportadas
-        put("Signature.SHA1withRSA SupportedKeyClasses", DnieProvider.ES_GOB_JMULTICARD_CARD_DNIE_DNIE_PRIVATE_KEY); //$NON-NLS-1$
-        put("Signature.SHA256withRSA SupportedKeyClasses", DnieProvider.ES_GOB_JMULTICARD_CARD_DNIE_DNIE_PRIVATE_KEY); //$NON-NLS-1$
-        put("Signature.SHA384withRSA SupportedKeyClasses", DnieProvider.ES_GOB_JMULTICARD_CARD_DNIE_DNIE_PRIVATE_KEY); //$NON-NLS-1$
-        put("Signature.SHA512withRSA SupportedKeyClasses", DnieProvider.ES_GOB_JMULTICARD_CARD_DNIE_DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA1withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA256withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA384withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA512withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
 
         // Alias de los nombres de algoritmos de firma
         put("Alg.Alias.Signature.1.2.840.113549.1.1.5", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$

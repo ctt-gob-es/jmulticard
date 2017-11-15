@@ -45,6 +45,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.KeyStoreSpi;
@@ -52,6 +53,7 @@ import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -61,6 +63,8 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
@@ -71,10 +75,8 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
-
-    private final SmartCafePkcs15Applet cryptoCard = null;
-    private final List<String> aliases = null;
+    private SmartCafePkcs15Applet cryptoCard = null;
+    private List<String> aliases = null;
 
     /** {@inheritDoc} */
     @Override
@@ -155,7 +157,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 						(pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$
 			);
 		}
-		return new SmartCafePkcs15PrivateKey((SmartCafePrivateKeyReference) pkRef);
+		return new SmartCafePrivateKey((SmartCafePrivateKeyReference) pkRef, this.cryptoCard);
     }
 
     /** {@inheritDoc} */
@@ -203,76 +205,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return this.aliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
-//    	if (param != null) {
-//    		final ProtectionParameter pp = param.getProtectionParameter();
-//    		if (pp instanceof KeyStore.CallbackHandlerProtection) {
-//    			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
-//    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
-//    			}
-//    			this.cryptoCard = DnieFactory.getDnie(
-//					DnieProvider.getDefaultApduConnection(),
-//					null,
-//					new JseCryptoHelper(),
-//					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
-//				);
-//    		}
-//    		else if (pp instanceof KeyStore.PasswordProtection) {
-//    			final PasswordCallback pwc = new DniePasswordCallback((PasswordProtection) pp);
-//    			this.cryptoCard = DnieFactory.getDnie(
-//					DnieProvider.getDefaultApduConnection(),
-//					pwc,
-//					new JseCryptoHelper(),
-//					null
-//				);
-//    		}
-//    		else {
-//    			LOGGER.warning(
-//	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
-//				);
-//    		}
-//    	}
-//    	else {
-//	    	this.cryptoCard = DnieFactory.getDnie(
-//				DnieProvider.getDefaultApduConnection(),
-//				null,
-//				new JseCryptoHelper(),
-//				null
-//			);
-//    	}
-//
-//    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void engineLoad(final InputStream stream, final char[] password) throws IOException {
-//    	// Ponemos la conexion por defecto
-//    	final ApduConnection conn;
-//    	try {
-//	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
-//				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
-//					DnieProvider.getDefaultApduConnection();
-//    	}
-//    	catch(final Exception e) {
-//    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
-//    	}
-//
-//        // Aqui se realiza el acceso e inicializacion del DNIe
-//    	this.cryptoCard = DnieFactory.getDnie(
-//    		conn,
-//    		password != null ?
-//				new CachePasswordCallback(password) :
-//					null,
-//    		new JseCryptoHelper(),
-//    		null
-//		);
-//
-//    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
-    }
-
     /** Operaci&oacute;n no soportada. */
     @Override
     public void engineSetCertificateEntry(final String alias, final Certificate cert) {
@@ -312,7 +244,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return entryClass.equals(PrivateKeyEntry.class);
     }
 
-    /** PasswordCallback que almacena internamente y devuelve la contrase&ntilde;a con la que se
+    /** <code>PasswordCallback</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
      * construy&oacute; o la que se le establece posteriormente. */
     private static final class CachePasswordCallback extends PasswordCallback {
 
@@ -325,4 +257,45 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
             setPassword(password);
         }
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void engineLoad(final InputStream stream, final char[] password) throws IOException {
+    	// Ponemos la conexion por defecto
+    	final ApduConnection conn = new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection();
+
+        // Aqui se realiza el acceso e inicializacion de la tarjeta
+    	this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
+    	if (password != null) {
+    		this.cryptoCard.setPasswordCallback(new CachePasswordCallback(password));
+    	}
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
+		final ApduConnection conn = new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection();
+		this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
+    	if (param != null) {
+    		final ProtectionParameter pp = param.getProtectionParameter();
+    		if (pp instanceof KeyStore.CallbackHandlerProtection) {
+    			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
+    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
+    			}
+    			this.cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
+    		}
+    		else if (pp instanceof KeyStore.PasswordProtection) {
+    			final PasswordCallback pwc = new CachePasswordCallback(((PasswordProtection) pp).getPassword());
+    			this.cryptoCard.setPasswordCallback(pwc);
+    		}
+    		else {
+    			LOGGER.warning(
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+				);
+    		}
+    	}
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+    }
+
 }

@@ -45,22 +45,28 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
 
+import es.gob.jmulticard.card.CryptoCard;
+import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
 
 /** Clave privada de una tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * La clase no contiene la clave privada en s&iacute;, sino una referencia a ella.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class SmartCafePkcs15PrivateKey implements RSAPrivateKey {
+public final class SmartCafePrivateKey implements RSAPrivateKey {
 
 	private static final long serialVersionUID = 4403051294889801855L;
 
 	/** Identificador de la clave. */
 	private final int id;
 
+	private final CryptoCard card;
+
 	/** Crea una clave privada de una tarjeta G&amp;D SmartCafe con Applet PKCS#15.
 	 * @param keyReference Referencia a la clave privada. */
-	SmartCafePkcs15PrivateKey(final SmartCafePrivateKeyReference keyReference) {
+	SmartCafePrivateKey(final SmartCafePrivateKeyReference keyReference,
+			            final SmartCafePkcs15Applet cryptoCard) {
 		this.id = keyReference.getKeyOrdinal();
+		this.card = cryptoCard;
 	}
 
 	/** {@inheritDoc} */
@@ -108,6 +114,12 @@ public final class SmartCafePkcs15PrivateKey implements RSAPrivateKey {
 	@SuppressWarnings({ "static-method", "unused" })
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		throw new NotSerializableException();
+	}
+
+	/** Obtiene la tarjeta a la que pertenece esta clave.
+	 * @return Tarjeta a la que pertenece esta clave. */
+	public CryptoCard getCryptoCard() {
+		return this.card;
 	}
 
 }

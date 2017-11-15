@@ -9,7 +9,10 @@ public final class SmartCafePrivateKeyReference implements PrivateKeyReference {
 
 	private final int keyOrdinal;
 
-	SmartCafePrivateKeyReference(final Integer ordinal) {
+	/** Construye una clave privada de una tarjeta G&amp;D con Applet PKCS#15 a partir
+	 * de su ordinal de referencia
+	 * @param ordinal Ordinal de referencia de la clave. */
+	public SmartCafePrivateKeyReference(final Integer ordinal) {
 		if (ordinal == null) {
 			throw new IllegalArgumentException(
 				"El ordinal de la clave no puede ser nulo" //$NON-NLS-1$
