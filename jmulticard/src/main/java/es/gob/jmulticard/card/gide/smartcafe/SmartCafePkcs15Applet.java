@@ -19,6 +19,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -27,11 +28,13 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.gide.RetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.gide.VerifyApduCommand;
+import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
@@ -112,12 +115,22 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 
     private boolean authenticated = false;
 
+    /** Manejador de funciones criptogr&aacute;ficas. */
+    protected final CryptoHelper cryptoHelper;
+
     /** Construye un objeto que representa una tarjeta G&amp;D SmartCafe con el
      * Applet PKCS#15 de AET.
      * @param conn Conexi&oacute;n con la tarjeta.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
+     *                     pueden variar entre m&aacute;quinas virtuales.
      * @throws IOException Si hay errores de entrada / salida. */
-    public SmartCafePkcs15Applet(final ApduConnection conn) throws IOException {
+    public SmartCafePkcs15Applet(final ApduConnection conn, final CryptoHelper cryptoHelper) throws IOException {
         super(CLA, conn);
+
+        if (cryptoHelper == null) {
+            throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
+        }
+        this.cryptoHelper = cryptoHelper;
 
         // Conectamos
         conn.reset();
@@ -476,7 +489,31 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 			);
 		}
 
-        throw new UnsupportedOperationException();
+		// Creamos el DigestInfo
+        final byte[] digestInfo;
+        try {
+            digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
+        }
+        catch (final IOException e) {
+            throw new CryptoCardException("Error en el calculo de la huella para firmar: " + e, e); //$NON-NLS-1$
+        }
+
+        // Y lo enviamos a firmar
+        try {
+			res = sendArbitraryApdu(new PsoSignHashApduCommand((byte) 0x01, digestInfo));
+		}
+        catch (final ApduConnectionException e) {
+        	throw new CryptoCardException(
+				"Error firmando (repuesta=" + res + "): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+			);
+		}
+        if (res == null || !res.isOk()) {
+			throw new CryptoCardException(
+				"No se ha podido firmar el DigestInfo" + (res != null ? " (repuesta=" + res + ")" : "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			);
+		}
+
+        return res.getData();
     }
 
     private int getPinRetriesLeft() throws PinException {

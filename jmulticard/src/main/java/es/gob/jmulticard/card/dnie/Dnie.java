@@ -192,7 +192,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
     protected ApduConnection rawConnection;
 
-    /** Manejador de funciones criptograficas. */
+    /** Manejador de funciones criptogr&aacute;ficas. */
     protected final CryptoHelper cryptoHelper;
 
     protected CryptoHelper getCryptoHelper() {
@@ -691,7 +691,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                 digestInfo = DigestInfo.encode(signAlgorithm, data, this.cryptoHelper);
             }
             catch (final IOException e) {
-                throw new DnieCardException("Error en el calculo del hash para firmar: " + e, e); //$NON-NLS-1$
+                throw new DnieCardException("Error en el calculo de la huella para firmar: " + e, e); //$NON-NLS-1$
             }
 
             apdu = new PsoSignHashApduCommand((byte) 0x00, digestInfo);

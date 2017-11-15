@@ -7,7 +7,7 @@ import es.gob.jmulticard.asn1.Tlv;
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad para c&oacute;mputo de
  * firma electr&oacute;nica.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public class MseSetComputationApduCommand extends MseSetApduCommand {
+public final class MseSetComputationApduCommand extends MseSetApduCommand {
 
 	/** Crea una APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad para
 	 * c&oacute;mputo de firma electr&oacute;nica.
@@ -25,8 +25,8 @@ public class MseSetComputationApduCommand extends MseSetApduCommand {
 		);
 	}
 
-	protected static byte[] createDst(final byte[] privateKeyReference,
-			                          final byte[] algorithmReference) {
+	private static byte[] createDst(final byte[] privateKeyReference,
+			                        final byte[] algorithmReference) {
 
 		if (privateKeyReference == null) {
 			throw new IllegalArgumentException(

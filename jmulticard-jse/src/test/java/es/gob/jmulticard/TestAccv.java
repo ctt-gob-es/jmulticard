@@ -11,8 +11,8 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 import test.es.gob.jmulticard.apdu.connection.cwa14890.CachePasswordCallback;
 
-/** Pruebas de las tarjetas G&amp;D de ACCV
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+/** Pruebas de las tarjetas G&amp;D de ACCV.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestAccv {
 
 	/** Prueba de lectura de certificados.
@@ -21,7 +21,8 @@ public final class TestAccv {
 	@Test
 	public void testReadCertificates() throws Exception {
 		final CryptoCard card = new SmartCafePkcs15Applet(
-			new SmartcardIoConnection()
+			new SmartcardIoConnection(),
+			new JseCryptoHelper()
 		);
 		final String[] aliases = card.getAliases();
 		if (aliases.length < 1) {
@@ -45,7 +46,8 @@ public final class TestAccv {
 	public void testVerifyPin() throws Exception {
 		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
 		final Iso7816FourCard card = new SmartCafePkcs15Applet(
-			new SmartcardIoConnection()
+			new SmartcardIoConnection(),
+			new JseCryptoHelper()
 		);
 		card.verifyPin(new CachePasswordCallback(pin));
 	}
@@ -57,7 +59,8 @@ public final class TestAccv {
 	public void testSign() throws Exception {
 		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
 		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
-			new SmartcardIoConnection()
+			new SmartcardIoConnection(),
+			new JseCryptoHelper()
 		);
 		card.setPasswordCallback(new CachePasswordCallback(pin));
 		final PrivateKeyReference pkr = card.getPrivateKey(card.getAliases()[0]);
@@ -71,7 +74,8 @@ public final class TestAccv {
 //	@Test
 //	public void testPinRetriesLeft() throws Exception {
 //		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
-//			new SmartcardIoConnection()
+//			new SmartcardIoConnection(),
+//	        new JseCryptoHelper()
 //		);
 //		System.out.println(
 //			"INTENTOS DE PIN RESTANTES: " + card.getPinRetriesLeft() //$NON-NLS-1$
