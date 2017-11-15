@@ -7,6 +7,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
+import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Factori&iacute;a de proveedores para todas las tarjetas soportadas.
@@ -197,8 +198,7 @@ public final class JMultiCardProviderFactory {
 			return new CeresProvider();
 		}
 		if (isGiDeSmartCafe(atr)) {
-			//TODO: Devolver proveedor G&D SmartCafe
-			return null;
+			return new SmartCafeProvider();
 		}
 		return null;
 	}
