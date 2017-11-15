@@ -70,13 +70,13 @@ import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.dnie.ChangePINApduCommand;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
-import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.dnie.RetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ExternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.InternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetAuthenticationKeyApduCommand;
+import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
@@ -674,8 +674,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         ResponseApdu res;
         try {
-            CommandApdu apdu = new MseSetSignatureKeyApduCommand(
-        		(byte) 0x00, ((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath()
+            CommandApdu apdu = new MseSetComputationApduCommand(
+        		(byte) 0x00, ((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath(),
+        		null
     		);
 
             res = getConnection().transmit(apdu);
@@ -684,9 +685,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		"Error en el establecimiento de las clave de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
         		);
             }
-
-            // TODO: Modificar esta llamada y la clase DigestInfo para que reciba el algoritmo
-            // de digest directamente
 
             final byte[] digestInfo;
             try {

@@ -7,7 +7,7 @@ import es.gob.jmulticard.asn1.Tlv;
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad para c&oacute;mputo de
  * firma electr&oacute;nica.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class MseSetComputationApduCommand extends MseSetApduCommand {
+public class MseSetComputationApduCommand extends MseSetApduCommand {
 
 	/** Crea una APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad para
 	 * c&oacute;mputo de firma electr&oacute;nica.
@@ -25,22 +25,27 @@ public final class MseSetComputationApduCommand extends MseSetApduCommand {
 		);
 	}
 
-	private static byte[] createDst(final byte[] privateKeyReference,
-			                        final byte[] algorithmReference) {
+	protected static byte[] createDst(final byte[] privateKeyReference,
+			                          final byte[] algorithmReference) {
 
-		if (privateKeyReference == null || algorithmReference == null) {
+		if (privateKeyReference == null) {
 			throw new IllegalArgumentException(
-				"Las referencias al algoritmo y a la clave privada no pueden ser nulas" //$NON-NLS-1$
+				"La referencia a la clave privada no puede ser nula" //$NON-NLS-1$
 			);
 		}
 
 		final Tlv prkRefTlv = new Tlv(PRIVATE_KEY_REFERENCE, privateKeyReference);
-		final Tlv algRefTlv = new Tlv(ALGORITHM_REFERENCE, algorithmReference);
+		Tlv algRefTlv = null;
+		if (algorithmReference != null) {
+			algRefTlv = new Tlv(ALGORITHM_REFERENCE, algorithmReference);
+		}
 
 		final ByteArrayOutputStream dstData = new ByteArrayOutputStream();
 		try {
 			dstData.write(prkRefTlv.getBytes());
-			dstData.write(algRefTlv.getBytes());
+			if (algRefTlv != null) {
+				dstData.write(algRefTlv.getBytes());
+			}
 		}
 		catch(final Exception e) {
 			throw new IllegalStateException(

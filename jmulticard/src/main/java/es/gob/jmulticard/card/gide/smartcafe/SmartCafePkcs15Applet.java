@@ -1,12 +1,17 @@
 package es.gob.jmulticard.card.gide.smartcafe;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -22,6 +27,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.gide.RetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.gide.VerifyApduCommand;
+import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -29,8 +35,6 @@ import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
-import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
-import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
@@ -85,7 +89,6 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		(byte) 0x65, (byte) 0x2d, (byte) 0x6e, (byte) 0x66, (byte) 0xc4
 	}, ATR_MASK_TCL);
 
-
     private static final byte[] PKCS15_NAME = new byte[] {
         (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x63, (byte) 0x50,
         (byte) 0x4B, (byte) 0x43, (byte) 0x53, (byte) 0x2D, (byte) 0x31, (byte) 0x35
@@ -99,6 +102,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     private static final Map<String, X509Certificate> CERTS_BY_ALIAS = new LinkedHashMap<>();
+    private static final Map<String, Integer> KEYNO_BY_ALIAS = new LinkedHashMap<>();
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
@@ -149,7 +153,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     		)
 		);
 
-        System.out.println(
+        LOGGER.info(
     		"Se ha" + (keyCount > 1 ? "n" : "") + " encontrado " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				keyCount + " clave" + (keyCount > 1 ? "s" : "") + " y " + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     				CERTS_BY_ALIAS.size() + " certificado" + (CERTS_BY_ALIAS.size() > 1 ? "s" : "") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -161,7 +165,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         	final ResponseApdu res = sendArbitraryApdu(
     			new CommandApdu(
 					new byte[] {
-						(byte) 0x81,
+						(byte) 0x80,
 						(byte) 0x3A,
 						(byte) i,    // Ordinal de la clave
 						(byte) 0x01, // 02=Exponente, 01=Modulo
@@ -169,9 +173,45 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 					}
 				)
 			);
-        	System.out.println(res);
+        	if (!res.isOk()) {
+        		LOGGER.severe(
+    				"Error obteniendo el modulo de la clave " + i + ": " + res //$NON-NLS-1$ //$NON-NLS-2$
+				);
+        		continue;
+        	}
+
+        	// En Java los BigInteger tienen signo, metemos un 0x00 antes para indicar
+        	// que es positivo
+        	final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        	baos.write((byte)0x00);
+        	baos.write(res.getData());
+        	final BigInteger modulus = new BigInteger(baos.toByteArray());
+
+        	// Almacenamos el numero de clave asociado con el alias del certificado
+        	// correspondiente
+        	storeKeyOrdinal(i, modulus);
         }
 
+    	// Limpiamos los certificados sin claves
+        final Set<String> aliases = CERTS_BY_ALIAS.keySet();
+        for (final String alias : aliases) {
+        	if (!KEYNO_BY_ALIAS.containsKey(alias)) {
+        		CERTS_BY_ALIAS.remove(alias);
+        	}
+        }
+    }
+
+    private static void storeKeyOrdinal(final int ordinal, final BigInteger publicKeyModulus) {
+    	final Set<String> aliases = CERTS_BY_ALIAS.keySet();
+    	for (final String alias : aliases) {
+    		final PublicKey publicKey = CERTS_BY_ALIAS.get(alias).getPublicKey();
+    		if (publicKey instanceof RSAPublicKey) {
+    			final BigInteger certPublicKeyModulus = ((RSAPublicKey)publicKey).getModulus();
+    			if (certPublicKeyModulus.equals(publicKeyModulus)) {
+    				KEYNO_BY_ALIAS.put(alias, Integer.valueOf(ordinal));
+    			}
+    		}
+    	}
     }
 
     private static int getKeyCount(final ResponseApdu ra) throws IOException {
@@ -282,48 +322,6 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
             }
         }
 
-        // Leemos el PrKDF
-        final byte[] prKdfValue;
-        try {
-        	prKdfValue = selectFileByLocationAndRead(
-    			new Location(HexUtils.hexify(MF_PATH, false) + odf.getPrKdfPath())
-			);
-		}
-        catch (final Iso7816FourCardException e) {
-			throw new IOException(
-				"Error leyendo el PrKDF: " + e, e //$NON-NLS-1$
-			);
-		}
-        final Pkcs15PrKdf prKdf = new PrKdf();
-    	try {
-			prKdf.setDerValue(prKdfValue);
-		}
-    	catch (final Exception e) {
-    		throw new IOException(
-				"Error analizando el PrKDF: " + e, e //$NON-NLS-1$
-			);
-		}
-    	System.out.println();
-    	System.out.println(prKdf);
-    	System.out.println();
-    	System.out.println(cdf);
-    	System.out.println();
-    	System.out.println(odf);
-
-    	// Leemos el PuKDF
-    	final byte[] puKdfValue;
-        try {
-        	puKdfValue = selectFileByLocationAndRead(
-    			new Location(HexUtils.hexify(MF_PATH, false) + odf.getPuKdfPath())
-			);
-		}
-        catch (final Iso7816FourCardException e) {
-			throw new IOException(
-				"Error leyendo el PuKDF: " + e, e //$NON-NLS-1$
-			);
-		}
-        //System.out.println(HexUtils.hexify(puKdfValue, true));
-
     }
 
     @Override
@@ -416,11 +414,12 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     	}
     }
 
-    //************ NO IMPLEMENTADAS AUN ***************************
-
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
-    	throw new UnsupportedOperationException();
+    	if (!KEYNO_BY_ALIAS.containsKey(alias)) {
+    		return null;
+    	}
+    	return new SmartCafePrivateKeyReference(KEYNO_BY_ALIAS.get(alias));
     }
 
     @Override
@@ -453,6 +452,28 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 			catch (final ApduConnectionException e1) {
 				throw new CryptoCardException("Error en la verificacion de PIN: " + e1, e1); //$NON-NLS-1$
 			}
+		}
+
+		// Enviamos el MSE SET for Computation
+		ResponseApdu res = null;
+		try {
+			res = sendArbitraryApdu(
+				new MseSetComputationApduCommand(
+					(byte) 0x01, // CLA
+					new byte[] { (byte) scPrivateKey.getKeyOrdinal() },
+					new byte[] { (byte) 0x02 } // RSA
+				)
+			);
+		}
+		catch (final ApduConnectionException e) {
+			throw new CryptoCardException(
+				"Error estableciendo la clave y el algoritmo de firma (repuesta=" + res + "): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+			);
+		}
+		if (res == null || !res.isOk()) {
+			throw new CryptoCardException(
+				"No se ha podido establecer la clave y el algoritmo de firma" + (res != null ? " (repuesta=" + res + ")" : "") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			);
 		}
 
         throw new UnsupportedOperationException();

@@ -20,8 +20,8 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
-import es.gob.jmulticard.apdu.dnie.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
+import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
@@ -78,8 +78,9 @@ public final class CeresSc extends Dnie {
 
         ResponseApdu res;
         try {
-            CommandApdu apdu = new MseSetSignatureKeyApduCommand(
-        		(byte) 0x00, ((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath()
+            CommandApdu apdu = new MseSetComputationApduCommand(
+        		(byte) 0x00, ((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath(),
+        		null
     		);
 
             res = getConnection().transmit(apdu);
