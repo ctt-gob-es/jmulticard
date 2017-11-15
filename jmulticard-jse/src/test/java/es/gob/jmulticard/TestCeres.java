@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
-import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 
@@ -26,7 +25,7 @@ public final class TestCeres {
 	     * @param password Contrase&ntilde;a por defecto. */
 	    public CachePasswordCallback(final char[] password) {
 	        super(">", false); //$NON-NLS-1$
-	        this.setPassword(password);
+	        setPassword(password);
 	    }
 	}
 

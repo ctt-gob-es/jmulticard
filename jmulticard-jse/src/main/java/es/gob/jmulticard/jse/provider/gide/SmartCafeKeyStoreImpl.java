@@ -37,7 +37,7 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.jse.provider;
+package es.gob.jmulticard.jse.provider.gide;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,17 +45,13 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
-import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.KeyStoreSpi;
 import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -65,42 +61,20 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.JseCryptoHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.card.AuthenticationModeLockedException;
-import es.gob.jmulticard.card.BadPinException;
-import es.gob.jmulticard.card.CryptoCardException;
-import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.dnie.Dnie;
-import es.gob.jmulticard.card.dnie.Dnie3;
-import es.gob.jmulticard.card.dnie.Dnie3Dg01Mrz;
-import es.gob.jmulticard.card.dnie.DnieFactory;
-import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
+import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
+import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
 
-/** Implementaci&oacute;n del SPI KeyStore para DNIe.
+/** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class DnieKeyStoreImpl extends KeyStoreSpi {
+public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
-    private Dnie cryptoCard = null;
-    private List<String> aliases = null;
-
-    /** Obtiene el objeto DG01 (MRZ de ICAO) del DNIe 3&#46;0.
-     * @return Objeto DG01 (MRZ de ICAO) del DNIe 3&#46;0.
-     * @throws IOException Si no se puede leer el objeto DG01.
-     * @throws UnsupportedOperationException Si el objeto actual no es un DNIe 3&#46;0. */
-    public Dnie3Dg01Mrz getDnie3Dg01() throws IOException {
-    	if (!(this.cryptoCard instanceof Dnie3)) {
-    		throw new UnsupportedOperationException(
-				"El objeto DG01 solo esta presente en DNIe 3.0" //$NON-NLS-1$
-			);
-    	}
-    	return ((Dnie3)this.cryptoCard).getMrz();
-    }
+    private final SmartCafePkcs15Applet cryptoCard = null;
+    private final List<String> aliases = null;
 
     /** {@inheritDoc} */
     @Override
@@ -126,15 +100,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
-        try {
-			return this.cryptoCard.getCertificate(alias);
-		}
-        catch (final CryptoCardException e) {
-			throw new ProviderException(e);
-		}
-        catch (final PinException e) {
-			throw new BadPasswordProviderException(e);
-		}
+        return this.cryptoCard.getCertificate(alias);
     }
 
     /** {@inheritDoc} */
@@ -155,72 +121,10 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public Certificate[] engineGetCertificateChain(final String alias) {
-
-    	if (!engineContainsAlias(alias)) {
-    		return null;
-    	}
-
-    	final List<X509Certificate> certs = new ArrayList<>();
-    	certs.add((X509Certificate) engineGetCertificate(alias));
-
-    	// La cadena disponible del certificado la componen el propio certificado y el
-    	// certificado de la CA intermedia. Si no se puede recuperar esta ultima, se obvia
-    	X509Certificate intermediateCaCert;
-    	try {
-    		intermediateCaCert = this.cryptoCard.getCertificate(INTERMEDIATE_CA_CERT_ALIAS);
-    	}
-    	catch (final AuthenticationModeLockedException e) {
-    		throw e;
-    	}
-    	catch (final BadPinException e) {
-    		throw new BadPasswordProviderException(e);
-    	}
-    	catch (final Exception e) {
-    		LOGGER.warning(
-				"No se ha podido cargar el certificado de la CA intermedia: " + e //$NON-NLS-1$
-			);
-    		intermediateCaCert = null;
-		}
-
-    	X509Certificate sha2DnieRoot = null;
-
-    	if (intermediateCaCert != null) {
-
-    		certs.add(intermediateCaCert);
-
-    		// Si tenemos CA intermedia probamos con la raiz, incluida estaticamente
-    		// en el proyecto
-	    	try {
-				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
-					DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
-				);
-			}
-	    	catch (final Exception e) {
-	    		sha2DnieRoot = null;
-	    		LOGGER.warning(
-					"No se ha podido cargar el certificado de la CA raiz: " + e //$NON-NLS-1$
-				);
-			}
-
-	    	// Comprobamos que efectivamente sea su raiz
-	    	if (sha2DnieRoot != null) {
-		    	try {
-					intermediateCaCert.verify(sha2DnieRoot.getPublicKey());
-				}
-		    	catch (final Exception e) {
-		    		sha2DnieRoot = null;
-		    		LOGGER.info(
-						"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + e //$NON-NLS-1$
-					);
-				}
-	    	}
-    	}
-
-    	if (sha2DnieRoot != null) {
-    		certs.add(sha2DnieRoot);
-    	}
-
-    	return certs.toArray(new X509Certificate[0]);
+    	LOGGER.warning(
+			"El proveedor no soporta la formacion de cadenas de certificados, se devolvera solo el certificado final" //$NON-NLS-1$
+		);
+    	return new Certificate[] { engineGetCertificate(alias) };
     }
 
     /** Operaci&oacute;n no soportada. */
@@ -244,12 +148,14 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		this.cryptoCard.setPasswordCallback(pwc);
     	}
         final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
-		if (!(pkRef instanceof DniePrivateKeyReference)) {
+		if (!(pkRef instanceof SmartCafePrivateKeyReference)) {
 			throw new ProviderException(
-				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
+				"La clave obtenida de la tarjeta no es del tipo '" + //$NON-NLS-1$
+					SmartCafePrivateKeyReference.class.getName() + "', se ha obtenido: " + //$NON-NLS-1$
+						(pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$
 			);
 		}
-		return new DniePrivateKey((DniePrivateKeyReference) pkRef);
+		return new SmartCafePkcs15PrivateKey((SmartCafePrivateKeyReference) pkRef);
     }
 
     /** {@inheritDoc} */
@@ -271,7 +177,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
     	else {
     		LOGGER.warning(
-   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + (protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + //$NON-NLS-1$
+					(protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$
 			);
     	}
     	if (!engineContainsAlias(alias)) {
@@ -299,71 +206,71 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
-    	if (param != null) {
-    		final ProtectionParameter pp = param.getProtectionParameter();
-    		if (pp instanceof KeyStore.CallbackHandlerProtection) {
-    			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
-    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
-    			}
-    			this.cryptoCard = DnieFactory.getDnie(
-					DnieProvider.getDefaultApduConnection(),
-					null,
-					new JseCryptoHelper(),
-					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
-				);
-    		}
-    		else if (pp instanceof KeyStore.PasswordProtection) {
-    			final PasswordCallback pwc = new DniePasswordCallback((PasswordProtection) pp);
-    			this.cryptoCard = DnieFactory.getDnie(
-					DnieProvider.getDefaultApduConnection(),
-					pwc,
-					new JseCryptoHelper(),
-					null
-				);
-    		}
-    		else {
-    			LOGGER.warning(
-	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
-				);
-    		}
-    	}
-    	else {
-	    	this.cryptoCard = DnieFactory.getDnie(
-				DnieProvider.getDefaultApduConnection(),
-				null,
-				new JseCryptoHelper(),
-				null
-			);
-    	}
-
-    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+//    	if (param != null) {
+//    		final ProtectionParameter pp = param.getProtectionParameter();
+//    		if (pp instanceof KeyStore.CallbackHandlerProtection) {
+//    			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
+//    				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
+//    			}
+//    			this.cryptoCard = DnieFactory.getDnie(
+//					DnieProvider.getDefaultApduConnection(),
+//					null,
+//					new JseCryptoHelper(),
+//					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
+//				);
+//    		}
+//    		else if (pp instanceof KeyStore.PasswordProtection) {
+//    			final PasswordCallback pwc = new DniePasswordCallback((PasswordProtection) pp);
+//    			this.cryptoCard = DnieFactory.getDnie(
+//					DnieProvider.getDefaultApduConnection(),
+//					pwc,
+//					new JseCryptoHelper(),
+//					null
+//				);
+//    		}
+//    		else {
+//    			LOGGER.warning(
+//	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+//				);
+//    		}
+//    	}
+//    	else {
+//	    	this.cryptoCard = DnieFactory.getDnie(
+//				DnieProvider.getDefaultApduConnection(),
+//				null,
+//				new JseCryptoHelper(),
+//				null
+//			);
+//    	}
+//
+//    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     /** {@inheritDoc} */
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException {
-    	// Ponemos la conexion por defecto
-    	final ApduConnection conn;
-    	try {
-	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
-					DnieProvider.getDefaultApduConnection();
-    	}
-    	catch(final Exception e) {
-    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
-    	}
-
-        // Aqui se realiza el acceso e inicializacion del DNIe
-    	this.cryptoCard = DnieFactory.getDnie(
-    		conn,
-    		password != null ?
-				new CachePasswordCallback(password) :
-					null,
-    		new JseCryptoHelper(),
-    		null
-		);
-
-    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+//    	// Ponemos la conexion por defecto
+//    	final ApduConnection conn;
+//    	try {
+//	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
+//				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+//					DnieProvider.getDefaultApduConnection();
+//    	}
+//    	catch(final Exception e) {
+//    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
+//    	}
+//
+//        // Aqui se realiza el acceso e inicializacion del DNIe
+//    	this.cryptoCard = DnieFactory.getDnie(
+//    		conn,
+//    		password != null ?
+//				new CachePasswordCallback(password) :
+//					null,
+//    		new JseCryptoHelper(),
+//    		null
+//		);
+//
+//    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     /** Operaci&oacute;n no soportada. */

@@ -26,11 +26,11 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.x500.X500Principal;
 
+import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
-import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 
 /** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjeta FNMT-RCM-CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

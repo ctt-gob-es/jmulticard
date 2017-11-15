@@ -37,7 +37,7 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.jse.provider;
+package es.gob.jmulticard.jse.provider.gide;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -45,56 +45,28 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
 
-import es.gob.jmulticard.card.CryptoCard;
-import es.gob.jmulticard.card.Location;
-import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
+import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
 
-/** Clave privada de un DNIe. La clase no contiene la clave privada en s&iacute;, sino
- * una referencia a ella y una referencia al propio DNIe, con el canal seguro
- * establecido.
+/** Clave privada de una tarjeta G&amp;D SmartCafe con Applet PKCS#15.
+ * La clase no contiene la clave privada en s&iacute;, sino una referencia a ella.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class DniePrivateKey implements RSAPrivateKey {
+public final class SmartCafePkcs15PrivateKey implements RSAPrivateKey {
 
 	private static final long serialVersionUID = 4403051294889801855L;
 
-	private final CryptoCard dnie;
-
 	/** Identificador de la clave. */
-	private final byte[] id;
+	private final int id;
 
-	/** Ruta de la clave. */
-	private final Location path;
-
-	/** Etiqueta de la clave. */
-	private final String name;
-
-	/** Referencia interna de la clave. */
-	private final byte reference;
-
-	/** Tama&ntilde;o en bits de la clave privada. */
-	private final int keySize;
-
-	/** Crea una clave privada de DNIe.
-	 * @param keyReference Referencia a la clave privada del DNIe. */
-	DniePrivateKey(final DniePrivateKeyReference keyReference) {
-		this.dnie = keyReference.getDnieCard();
-		this.id = keyReference.getIdentifier();
-		this.path = keyReference.getKeyPath();
-		this.name = keyReference.getLabel();
-		this.reference = keyReference.getKeyReference();
-		this.keySize = keyReference.getKeyBitSize();
+	/** Crea una clave privada de una tarjeta G&amp;D SmartCafe con Applet PKCS#15.
+	 * @param keyReference Referencia a la clave privada. */
+	SmartCafePkcs15PrivateKey(final SmartCafePrivateKeyReference keyReference) {
+		this.id = keyReference.getKeyOrdinal();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String getAlgorithm() {
 		return "RSA"; //$NON-NLS-1$
-	}
-
-	/** Obtiene la tarjeta capaz de operar con esta clave.
-	 * @return Tarjeta capaz de operar con esta clave. */
-	CryptoCard getCryptoCard() {
-		return this.dnie;
 	}
 
 	/** {@inheritDoc} */
@@ -111,7 +83,7 @@ public final class DniePrivateKey implements RSAPrivateKey {
 
 	/** Recupera el identificador de la clave.
 	 * @return Identificador de la clave. */
-	byte[] getId() {
+	int getId() {
 		return this.id;
 	}
 
@@ -119,12 +91,6 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	@Override
 	public BigInteger getModulus() {
 		throw new UnsupportedOperationException();
-	}
-
-	/** Recupera la ruta hacia la clave.
-	 * @return Ruta de la clave. */
-	Location getPath() {
-		return this.path;
 	}
 
 	/** M&eacute;todo no soportado. */
@@ -136,7 +102,7 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return this.name;
+		return "Clave privada para G&D SmartCafe (con Applet PKCS#15) con ordinal " + this.id; //$NON-NLS-1$
 	}
 
 	@SuppressWarnings({ "static-method", "unused" })
@@ -144,15 +110,4 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		throw new NotSerializableException();
 	}
 
-	/** Recupera la referencia de la clave.
-	 * @return Referencia de la clave. */
-	byte getKeyReference() {
-		return this.reference;
-	}
-
-	/** Obtiene el tam&ntilde;o en bits de la clave.
-	 * @return Tam&ntilde;o en bits de la clave. */
-	int getKeyBitSize() {
-		return this.keySize;
-	}
 }

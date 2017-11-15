@@ -2,7 +2,7 @@ package es.gob.jmulticard.card.gide.smartcafe;
 
 import es.gob.jmulticard.card.PrivateKeyReference;
 
-/** Clave privada de una tarjeta G&amp;G con Applet PKCS#15.
+/** Clave privada de una tarjeta G&amp;D con Applet PKCS#15.
  * La clase no contiene la clave privada en s&iacute;, sino una referencia a ella.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SmartCafePrivateKeyReference implements PrivateKeyReference {
@@ -18,7 +18,9 @@ public final class SmartCafePrivateKeyReference implements PrivateKeyReference {
 		this.keyOrdinal = ordinal.intValue();
 	}
 
-	int getKeyOrdinal() {
+	/** Obtiene el identificador (ordinal) de la clave.
+	 * @return Identificador (ordinal) de la clave. */
+	public int getKeyOrdinal() {
 		return this.keyOrdinal;
 	}
 

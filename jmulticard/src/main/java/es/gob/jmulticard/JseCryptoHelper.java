@@ -85,7 +85,7 @@ import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE6.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class JseCryptoHelper extends CryptoHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
@@ -207,7 +207,6 @@ public final class JseCryptoHelper extends CryptoHelper {
         catch (final Exception e) {
             throw new IOException("Error cifrando/descifrando los datos mediante la clave RSA: " + e, e); //$NON-NLS-1$
         }
-
     }
 
     /** {@inheritDoc} */
@@ -298,7 +297,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 			return aesCipher.doFinal(data);
 		}
 		catch (final Exception e) {
-			e.printStackTrace();
 			throw new IOException(
 				"Error en el descifrado, posiblemente los datos proporcionados no sean validos: "  + e, e//$NON-NLS-1$
 			);
@@ -318,18 +316,19 @@ public final class JseCryptoHelper extends CryptoHelper {
 	@Override
 	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                 InvalidAlgorithmParameterException {
+		
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
+			Security.insertProviderAt(new BouncyCastleProvider(), 1);
 		}
 		KeyPairGenerator kpg;
 		try {
-			kpg = KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
+			kpg = KeyPairGenerator.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
 		catch (final Exception e) {
 			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
 				"No se ha podido obtener un generador de pares de claves de curva eliptica con SpongyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
 			);
-			kpg = KeyPairGenerator.getInstance("EC"); //$NON-NLS-1$
+			kpg = KeyPairGenerator.getInstance(ECDH);
 		}
 
 		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
@@ -361,7 +360,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 			                                             InvalidKeySpecException {
 
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
+			Security.insertProviderAt(new BouncyCastleProvider(), 1);
 		}
 		KeyAgreement ka;
 		try {
@@ -369,7 +368,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
 		catch (final NoSuchProviderException e) {
 			LOGGER.warning(
-				"No se ha podido obtener el KeyAgreement de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
+				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
 			);
 			ka = KeyAgreement.getInstance(ECDH);
 		}
@@ -418,9 +417,9 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 	/** Convierte un Octet String de ASN&#46;1 en un entero
 	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3&#46;1&#46;2).
-	 * @param bytes <i>OctetString</i> de ASN&#46;1.
+	 * @param bytes <code>Octet String</code> de ASN&#46;1.
 	 * @param offset Desplazamiento (posici&oacute;n de inicio).
-	 * @param length Longitud del <i>OctetString</i>.
+	 * @param length Longitud del <code>Octet String</code>.
 	 * @return Entero (siempre positivo). */
 	private static BigInteger os2i(final byte[] bytes, final int offset, final int length) {
 		if (bytes == null) {

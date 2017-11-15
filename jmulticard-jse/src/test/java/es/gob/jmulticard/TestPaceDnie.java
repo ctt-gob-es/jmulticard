@@ -22,7 +22,6 @@ import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
-import es.gob.jmulticard.jse.provider.JseCryptoHelper;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** pruebas de PACE con DNIe 3&#46;0.

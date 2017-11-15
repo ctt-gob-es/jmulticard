@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JseCryptoHelper;
 
 /** Utilidad de generaci&oacute;n de claves a partir de constantes.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
