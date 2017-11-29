@@ -9,7 +9,6 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
-import test.es.gob.jmulticard.apdu.connection.cwa14890.CachePasswordCallback;
 
 /** Pruebas de las tarjetas G&amp;D de ACCV.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
