@@ -100,7 +100,7 @@ public class Dnie3 extends Dnie {
 	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
      * @return Imagen de la firma del titular en formato JPEG2000.
 	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
-	public byte[] getSubjectSignatureImageAsJpen2k() throws IOException {
+	public byte[] getSubjectSignatureImageAsJpeg2k() throws IOException {
 		// Abrimos canal de usuario solo si es necesario
 		//TODO: POR HACER
 
