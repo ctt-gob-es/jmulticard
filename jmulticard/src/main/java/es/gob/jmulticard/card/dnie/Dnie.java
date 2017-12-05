@@ -625,37 +625,56 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		);
         }
 
-        if (this.callbackHandler != null) {
-        	Callback cc;
-        	// Callback para autorizar la firma
-    		cc = new CustomAuthorizeCallback();
+        // Si la tarjeta requiere autenticacion, la solicitamos
+        if (needAuthorizationToSign()) {
+        	if (this.callbackHandler != null) {
+        		Callback cc;
+        		// Callback para autorizar la firma
+        		cc = new CustomAuthorizeCallback();
 
-        	try {
-				this.callbackHandler.handle(
-					new Callback[] {
-						cc
-					}
-				);
-			}
-        	catch (final Exception e) {
-    			throw new AccessControlException(
-    				"No ha sido posible pedir la confirmacion de firma al usuario: " + e //$NON-NLS-1$
-    			);
-			}
+        		try {
+        			this.callbackHandler.handle(
+        					new Callback[] {
+        							cc
+        					}
+        					);
+        		}
+        		catch (final UnsupportedCallbackException e) {
+        			// Si no se especifica un callback de autorizacion, se omite
+        			LOGGER.warning(
+        					"No se ha proporcionado un CallbackHandler valido para mostrar el dialogo de confirmacion de firma. Se omitira." //$NON-NLS-1$
+        					);
+        		}
+        		catch (final Exception e) {
+        			throw new AccessControlException(
+        					"No ha sido posible pedir la confirmacion de firma al usuario: " + e //$NON-NLS-1$
+        					);
+        		}
 
-        	if (!((CustomAuthorizeCallback)cc).isAuthorized()) {
-				throw new CancelledOperationException(
-					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
-				);
-			}
-        }
-        else {
-        	LOGGER.warning(
-    			"No se ha proporcionado un CallbackHandler para mostrar el dialogo de confirmacion de firma" //$NON-NLS-1$
-			);
+        		if (!((CustomAuthorizeCallback)cc).isAuthorized()) {
+        			throw new CancelledOperationException(
+        					"El usuario ha denegado la operacion de firma" //$NON-NLS-1$
+        					);
+        		}
+        	}
+        	else {
+        		LOGGER.warning(
+        				"No se ha proporcionado un CallbackHandler para mostrar el dialogo de confirmacion de firma. Se omitira." //$NON-NLS-1$
+        				);
+        	}
         }
 
         return signOperation(data, signAlgorithm, privateKeyReference);
+    }
+
+    /**
+     * Indica si la tarjeta requiere autorizaci&oacute;n del usuario para ejecutar una
+     * operaci&oacute;n de firma.
+     * @return
+     */
+    @SuppressWarnings("static-method")
+	protected boolean needAuthorizationToSign() {
+    	return true;
     }
 
     /** Realiza la operaci&oacute;n de firma.
@@ -785,7 +804,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		throw new AuthenticationModeLockedException();
         	}
         	final PasswordCallback  pwc = new PasswordCallback(
-    			CardMessages.getString("Dnie.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
+    			getPinMessage(retriesLeft),
 				false
 			);
 			try {
@@ -811,6 +830,16 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			return pwc;
     	}
     	throw new PinException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
+    }
+
+    /**
+     * Devuelve el texto del dialogo de inserci&oacute;n de PIN.
+     * @param retriesLeft Intentos restantes antes de bloquear la tarjeta.
+     * @return Mensaje que mostrar en el cuerpo del di&aacute;logo de inserci&oacute;n de PIN.
+     */
+    @SuppressWarnings("static-method")
+	protected String getPinMessage(int retriesLeft) {
+    	return CardMessages.getString("Dnie.0", Integer.toString(retriesLeft)); //$NON-NLS-1$
     }
 
     private X509Certificate loadCertificate(final Location location) throws IOException,

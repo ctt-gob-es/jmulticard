@@ -194,6 +194,9 @@ public final class JMultiCardProviderFactory {
 		if (isDni(atr)) {
 			return new DnieProvider();
 		}
+		if (isCeres430(atr)) {
+			return new Ceres430Provider();
+		}
 		if (isCeres(atr)) {
 			return new CeresProvider();
 		}
@@ -211,7 +214,11 @@ public final class JMultiCardProviderFactory {
 		) {
 			return true;
 		}
-		else if (FNMT_TC_430_ATR.equals(atr)) {
+		return false;
+	}
+
+	private static boolean isCeres430(final byte[] atr) {
+		if (FNMT_TC_430_ATR.equals(atr)) {
 			if (atr[15] >= (byte) 0x04 && atr[16] >= (byte) 0x30) {
 				return true;
 			}

@@ -40,6 +40,7 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
 import java.security.AccessController;
+import java.security.KeyStore.PasswordProtection;
 import java.security.PrivilegedAction;
 import java.util.logging.Logger;
 
@@ -94,6 +95,19 @@ public final class CommonPasswordCallback extends PasswordCallback {
 		}
 
 		this.isDnie = isDnie;
+	}
+
+	/** Constructor gen&eacute;rico.
+	 * @param pp PasswordProtection para solicitar la contrase&ntilde;a. */
+	public CommonPasswordCallback(final PasswordProtection pp) {
+		super("Por favor, introduzca el PIN de su tarjeta", false); //$NON-NLS-1$
+		if (pp == null) {
+			throw new IllegalArgumentException(
+				"El PasswordProtection no puede ser nulo" //$NON-NLS-1$
+			);
+		}
+		this.title = getPrompt();
+		this.isDnie = false;
 	}
 
 	@Override

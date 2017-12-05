@@ -28,6 +28,7 @@ import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
+import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
@@ -269,4 +270,13 @@ public final class CeresSc extends Dnie {
         }
     }
 
+    @Override
+	protected boolean needAuthorizationToSign() {
+    	return false;
+    }
+
+    @Override
+    protected String getPinMessage(int retriesLeft) {
+    	return CardMessages.getString("Ceres.0", Integer.toString(retriesLeft)); //$NON-NLS-1$
+    }
 }

@@ -19,16 +19,18 @@ public class SmartcardCallbackHandler implements CallbackHandler {
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
-				if (cb instanceof PasswordCallback) {
-					final CommonPasswordCallback uip = new CommonPasswordCallback(
-						((PasswordCallback)cb).getPrompt(),
-						Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
-						false
-					);
-					((PasswordCallback)cb).setPassword(uip.getPassword());
-					return;
+				if (cb != null) {
+					if (cb instanceof PasswordCallback) {
+						final CommonPasswordCallback uip = new CommonPasswordCallback(
+							((PasswordCallback)cb).getPrompt(),
+							Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
+							false
+						);
+						((PasswordCallback)cb).setPassword(uip.getPassword());
+						return;
+					}
+					LOGGER.severe("Callback no soportada: " + cb.getClass().getName()); //$NON-NLS-1$
 				}
-				LOGGER.severe(cb.getClass().getName());
 			}
 		}
 		else {

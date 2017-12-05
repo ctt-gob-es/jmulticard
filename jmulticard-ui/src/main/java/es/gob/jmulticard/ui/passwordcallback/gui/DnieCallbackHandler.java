@@ -52,7 +52,7 @@ public final class DnieCallbackHandler implements CallbackHandler {
 			}
 		}
 		else {
-			LOGGER.warning("Se ha revibido un array de Callbacks nulo"); //$NON-NLS-1$
+			LOGGER.warning("Se ha recibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
 		throw new UnsupportedCallbackException(null);
 	}

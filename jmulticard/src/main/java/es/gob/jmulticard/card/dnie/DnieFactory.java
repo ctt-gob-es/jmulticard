@@ -119,12 +119,6 @@ public final class DnieFactory {
 				LOGGER.info("Detectada tarjeta TIF"); //$NON-NLS-1$
 				return new Tif(conn, pwc, cryptoHelper, ch);
 			}
-			else if (ATR_TC_430.equals(actualAtr)) {
-				if (actualAtr.getBytes()[15] >= (byte) 0x04 && actualAtr.getBytes()[16] >= (byte) 0x30) {
-					return new CeresSc(conn, pwc, cryptoHelper, ch);
-				}
-				invalidCardException = new InvalidCardException("FNMT CERES 4.30", ATR, responseAtr); //$NON-NLS-1$
-			}
 			else {
 				// La tarjeta encontrada no es un DNIe
 				// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
