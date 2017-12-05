@@ -2,20 +2,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>es.gob</groupId>
 	<artifactId>jmulticard-ui</artifactId>
-	<version>1.4</version>
 	<name>jmulticard-ui</name>
 
 	<parent>
-		<groupId>es.gob</groupId>
+		<groupId>es.gob.afirma.jmulticard</groupId>
 		<artifactId>jmulticard-base</artifactId>
 		<version>1.4</version>
 	</parent>
 
 	<dependencies>
 		<dependency>
-			<groupId>es.gob</groupId>
+			<groupId>es.gob.afirma.jmulticard</groupId>
 			<artifactId>jmulticard</artifactId>
 			<version>${project.version}</version>
 		</dependency>

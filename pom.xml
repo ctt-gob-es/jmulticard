@@ -3,11 +3,40 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>es.gob</groupId>
+	<groupId>es.gob.afirma.jmulticard</groupId>
 	<artifactId>jmulticard-base</artifactId>
 	<version>1.4</version>
-	<name>jmulticard-base</name>
 	<packaging>pom</packaging>
+	
+	<name>jmulticard-base</name>
+	<description>Proyecto Java para el uso de DNIe y tarjetas CERES</description>
+	<url>https://administracionelectronica.gob.es/ctt/clienteafirma</url>
+	
+	<developers>
+		<developer>
+			<name>Secretaría General de Administración Digital</name>
+			<email>soporte.afirma@correo.gob.es</email>
+			<organization>Gobierno de España</organization>
+			<organizationUrl>https://administracionelectronica.gob.es</organizationUrl>
+		</developer>
+	</developers>
+	
+	<licenses>
+		<license>
+			<name>GPL-v2.0</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+		</license>
+		<license>
+			<name>EUPL-v1.1</name>
+			<url>http://joinup.ec.europa.eu/system/files/ES/EUPL%20v.1.1%20-%20Licencia.pdf</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/ctt-gob-es/jmulticard.git</connection>
+		<developerConnection>scm:git:ssh://github.com/ctt-gob-es/jmulticard.git</developerConnection>
+		<url>https://github.com/ctt-gob-es/jmulticard</url>
+	</scm>
 	
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>

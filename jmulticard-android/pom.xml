@@ -3,12 +3,11 @@
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	 
  	<modelVersion>4.0.0</modelVersion>
-    <groupId>es.gob</groupId>
     <artifactId>jmulticard-android</artifactId>
     <packaging>aar</packaging>
 	
 	<parent>
-		<groupId>es.gob</groupId>
+		<groupId>es.gob.afirma.jmulticard</groupId>
 		<artifactId>jmulticard-base</artifactId>
 		<version>1.4</version>
 	</parent>
@@ -26,9 +25,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>es.gob</groupId>
+			<groupId>es.gob.afirma.jmulticard</groupId>
 			<artifactId>jmulticard</artifactId>
-			<version>1.4</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 		
