@@ -301,8 +301,8 @@ public final class CeresSc extends Dnie {
 					"Encontrada TC CERES en version " + //$NON-NLS-1$
 						HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) //$NON-NLS-1$
 				);
+    			return;
     		}
-    		return;
     	}
     	throw new InvalidCardException("CERES", ATR_TC, atrBytes); //$NON-NLS-1$
     }
