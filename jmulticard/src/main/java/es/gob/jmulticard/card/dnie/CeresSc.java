@@ -28,8 +28,10 @@ import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
+import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -40,6 +42,15 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 /** Tarjeta FNMT CERES con canal seguro.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresSc extends Dnie {
+
+	private static final byte[] ATR_MASK_TC = new byte[] {
+		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
+		(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
+	};
+	private static final Atr ATR_TC = new Atr(new byte[] {
+        (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x46, (byte) 0x4E, (byte) 0x4d,
+        (byte) 0x54, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
+    }, ATR_MASK_TC);
 
     /** Certificados de la tarjeta indexados por su alias. */
     private Map<String, X509Certificate> certs;
@@ -57,12 +68,14 @@ public final class CeresSc extends Dnie {
      *                     variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se
-     *                                 proporciona cerrada y no es posible abrirla.*/
+     *                                 proporciona cerrada y no es posible abrirla.
+	 * @throws InvalidCardException Si la tarjeta no es una CERES 4.30 o superior. */
 	public CeresSc(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
-			final CallbackHandler ch) throws ApduConnectionException {
+			final CallbackHandler ch) throws ApduConnectionException, InvalidCardException {
 		super(conn, pwc, cryptoHelper, ch);
+		checkAtr(conn.reset());
 	}
 
 	@Override
@@ -276,7 +289,21 @@ public final class CeresSc extends Dnie {
     }
 
     @Override
-    protected String getPinMessage(int retriesLeft) {
+    protected String getPinMessage(final int retriesLeft) {
     	return CardMessages.getString("Ceres.0", Integer.toString(retriesLeft)); //$NON-NLS-1$
+    }
+
+    private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
+    	final Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
+    	if (ATR_TC.equals(tmpAtr)) {
+    		if (atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30) {
+    			LOGGER.info(
+					"Encontrada TC CERES en version " + //$NON-NLS-1$
+						HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) //$NON-NLS-1$
+				);
+    		}
+    		return;
+    	}
+    	throw new InvalidCardException("CERES", ATR_TC, atrBytes); //$NON-NLS-1$
     }
 }

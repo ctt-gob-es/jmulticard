@@ -74,7 +74,6 @@ import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.CeresSc;
 import es.gob.jmulticard.card.dnie.Dnie;
-import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
@@ -343,7 +342,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
-    	this.cryptoCard = DnieFactory.getDnie(
+    	this.cryptoCard = new CeresSc(
     		conn,
     		password != null ?
 				new CachePasswordCallback(password) :
