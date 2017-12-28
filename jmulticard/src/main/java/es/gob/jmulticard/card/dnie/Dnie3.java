@@ -62,55 +62,171 @@ public class Dnie3 extends Dnie {
     private static final Location FILE_DG01_LOCATION_MRZ   = new Location("3F010101"); //$NON-NLS-1$
     private static final Location FILE_DG02_LOCATION_PHOTO = new Location("3F010102"); //$NON-NLS-1$
     private static final Location FILE_DG07_LOCATION_SIGN  = new Location("3F010107"); //$NON-NLS-1$
+    private static final Location FILE_DG11_LOCATION       = new Location("3F01010B"); //$NON-NLS-1$
+    private static final Location FILE_DG12_LOCATION       = new Location("3F01010C"); //$NON-NLS-1$
+    private static final Location FILE_DG13_LOCATION       = new Location("3F01010D"); //$NON-NLS-1$
+    private static final Location FILE_DG14_LOCATION       = new Location("3F01010E"); //$NON-NLS-1$
+    private static final Location FILE_SOD_LOCATION        = new Location("3F01011D"); //$NON-NLS-1$
+    private static final Location FILE_COM_LOCATION        = new Location("3F01011E"); //$NON-NLS-1$
 
-    /** Obtiene la foto del titular en formato JPEG2000.
-     * @return Foto del titular en formato JPEG2000.
-     * @throws IOException Si no se puede leer la foto del titular. */
-	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
-		// Abrimos canal de usuario solo si es necesario
-		//TODO: POR HACER
-
-		byte[] photo;
+    /** Obtiene el DG1. Devuelve el objeto binario sin tratar.
+     * El DG1 contiene el campo MRZ. Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG1 (con el MRZ).
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg1() throws IOException {
 		try {
-			photo = selectFileByLocationAndRead(FILE_DG02_LOCATION_PHOTO);
-		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG2 del DNIe: " + e, e); //$NON-NLS-1$
-		}
-		return extractImage(photo);
-	}
-
-	/** Obtiene la MRZ del DNIe 3&#46;0.
-	 * @return MRZ del DNIe 3&#46;0.
-	 * @throws IOException Si no se puede leer el fichero con el MRZ del DNIe. */
-	public Dnie3Dg01Mrz getMrz() throws IOException {
-		// Abrimos canal de usuario solo si es necesario
-		//TODO: POR HACER
-
-		final byte[] mrz;
-		try {
-			mrz = selectFileByLocationAndRead(FILE_DG01_LOCATION_MRZ);
+			return selectFileByLocationAndRead(FILE_DG01_LOCATION_MRZ);
 		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG1 del DNIe: " + e, e); //$NON-NLS-1$
 		}
-		return new Dnie3Dg01Mrz(mrz);
 	}
 
-	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
-     * @return Imagen de la firma del titular en formato JPEG2000.
-	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
-	public byte[] getSubjectSignatureImageAsJpeg2k() throws IOException {
-		// Abrimos canal de usuario solo si es necesario
-		//TODO: POR HACER
-
-		byte[] photo;
+    /** Obtiene el DG2. Devuelve el objeto binario sin tratar.
+     * El DG2 contiene la fotograf&iacute;a  del documento.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG2.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg2() throws IOException {
 		try {
-			photo = selectFileByLocationAndRead(FILE_DG07_LOCATION_SIGN);
+			return selectFileByLocationAndRead(FILE_DG02_LOCATION_PHOTO);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG2 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene el DG7. Devuelve el objeto binario sin tratar.
+     * El DG7 contiene la imagen de la firma del poseedor del documento.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG7.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg7() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG07_LOCATION_SIGN);
 		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG7 del DNIe: " + e, e); //$NON-NLS-1$
 		}
+	}
+
+	/** Obtiene el DG11. Devuelve el objeto binario sin tratar.
+     * El DG11 contiene detalles adicionales sobre el poseedor del documento.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG11.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg11() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG11_LOCATION);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG11 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene el DG12. Devuelve el objeto binario sin tratar.
+     * El DG12 contiene datos adicionales del documento.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG12.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg12() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG12_LOCATION);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG12 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene el DG13. Devuelve el objeto binario sin tratar.
+     * El DG12 contiene detalles opcionales.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG13.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg13() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG13_LOCATION);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG13 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene el DG14. Devuelve el objeto binario sin tratar.
+     * El DG12 contiene opciones de seguridad.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return DG14.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getDg14() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG14_LOCATION);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG14 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene el SOD. Devuelve el objeto binario sin tratar.
+     * El SOD contiene las huellas digitales de los DG.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return SOD.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getSOD() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_SOD_LOCATION);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG11 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene el COM. Devuelve el objeto binario sin tratar.
+     * El COM contiene los "datos comunes" (<i>Common Data</i>).
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @author Ignacio Mar&iacute;n.
+     * @return COM.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    public byte[] getCOM() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_COM_LOCATION);
+		}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG11 del DNIe: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    /** Obtiene la foto del titular en formato JPEG2000.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @return Foto del titular en formato JPEG2000.
+     * @throws IOException Si no se puede leer la foto del titular. */
+	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
+		final byte[] photo = getDg2();
+		return extractImage(photo);
+	}
+
+	/** Obtiene la MRZ del DNIe 3&#46;0.
+	 * Necesita que el canal de usuario est&eacute; previamente establecido.
+	 * @return MRZ del DNIe 3&#46;0.
+	 * @throws IOException Si no se puede leer el fichero con el MRZ del DNIe. */
+	public Dnie3Dg01Mrz getMrz() throws IOException {
+		final byte[] mrz = getDg1();
+		return new Dnie3Dg01Mrz(mrz);
+	}
+
+	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
+	 * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @return Imagen de la firma del titular en formato JPEG2000.
+	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
+	public byte[] getSubjectSignatureImageAsJpeg2k() throws IOException {
+		final byte[] photo = getDg7();
 		return extractImage(photo);
 	}
 
