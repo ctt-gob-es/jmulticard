@@ -249,13 +249,32 @@ public class Dnie3 extends Dnie {
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
      * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
+     * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
+     *                         las claves privadas y a los certificados, mientras que si se
+     *                         indica <code>false</code>, no se cargan, permitiendo la
+     *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
+     *                         autenticaci&oacute;n con certificados.
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
+    Dnie3(final ApduConnection conn,
+    	  final PasswordCallback pwc,
+    	  final CryptoHelper cryptoHelper,
+    	  final CallbackHandler ch,
+     	 final boolean loadCertsAndKeys) throws ApduConnectionException {
+        super(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
+        this.rawConnection = conn;
+    }
+
+    /** Construye una clase que representa un DNIe.
+     * @param conn Conexi&oacute;n con la tarjeta.
+     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
+     * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
     Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
     	  final CryptoHelper cryptoHelper,
     	  final CallbackHandler ch) throws ApduConnectionException {
-        super(conn, pwc, cryptoHelper, ch);
-        this.rawConnection = conn;
+        this(conn, pwc, cryptoHelper, ch, true);
     }
 
     /** Abre el canal seguro de usuario.
