@@ -45,12 +45,6 @@ public final class DnieFactory {
 		(byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
 	}, ATR_MASK);
 
-	private static final Atr ATR_TC_430 = new Atr(new byte[] {
-		(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x46, (byte) 0x4E, (byte) 0x4D,
-		(byte) 0x54, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
-	}, ATR_MASK);
-
-
 	private DnieFactory() {
 		// No instanciable
 	}
