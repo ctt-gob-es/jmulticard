@@ -18,27 +18,17 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
-/**
- * Excepci&oacute; que lanza la clase SecureMessaging.
- *
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
-@SuppressWarnings("serial")
-public class SecureMessagingException extends Exception {
+/** Error en un mensaje seguro de canal inal&aacute;mbrico.
+ * @author Tobias Senger (tobias@t-senger.de). */
+public final class SecureMessagingException extends Exception {
 
-	SecureMessagingException() {
-	}
+	private static final long serialVersionUID = 8777014446414362735L;
 
-	SecureMessagingException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	SecureMessagingException(Throwable cause) {
+	SecureMessagingException(final Throwable cause) {
 		super(cause);
 	}
 
-	SecureMessagingException(String message) {
+	SecureMessagingException(final String message) {
 		super(message);
 	}
 }
