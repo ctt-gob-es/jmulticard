@@ -18,39 +18,14 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 
-/**
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
-@SuppressWarnings("serial")
-public class AmCryptoException extends Exception {
+/** Error en operaci&oacute;n criptogr&aacute;fica del canal inal&aacute;mbrico.
+ * @author Tobias Senger (tobias@t-senger.de). */
+public final class AmCryptoException extends Exception {
 
-	/**
-	 *
-	 */
-	public AmCryptoException() {
-	}
+	private static final long serialVersionUID = -1916093589582119573L;
 
-	/**
-	 * @param message Descripci&oacute;n del problema.
-	 */
-	public AmCryptoException(final String message) {
-		super(message);
-	}
-
-	/**
-	 * @param cause Causa del lanzamiento de la excepci&oacute;n.
-	 */
-	public AmCryptoException(final Throwable cause) {
+	AmCryptoException(final Throwable cause) {
 		super(cause);
-	}
-
-	/**
-	 * @param message Descripci&oacute;n del problema.
-	 * @param cause Causa del lanzamiento de la excepci&oacute;n.
-	 */
-	public AmCryptoException(final String message, final Throwable cause) {
-		super(message, cause);
 	}
 
 }

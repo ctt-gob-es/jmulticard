@@ -30,10 +30,8 @@ import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
-/**
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
+/** Operaciones criptogr&aacute;ficas de utilidad para el canal inal&aacute;mbrico.
+ * @author Tobias Senger (tobias@t-senger.de). */
 public abstract class AmCryptoProvider {
 
 	protected PaddedBufferedBlockCipher encryptCipher = null;
@@ -50,7 +48,6 @@ public abstract class AmCryptoProvider {
 
 	/** Initialisiert die Crypto-Engine mit dem angegebenen Schlassel und dem
 	 * Send Sequence Counter (SSC).
-	 *
 	 * @param keyBytes Schlassel.
 	 * @param ssc Send Sequence Counter. */
 	public abstract void init(byte[] keyBytes, byte[] ssc);
@@ -67,7 +64,6 @@ public abstract class AmCryptoProvider {
 
 	/** Berechnet den Mac der abergebenen Daten ohne vorherige Initialisierung
 	 * (@see #init(byte[], long). Es wird daher kein SSC benatigt.
-	 *
 	 * @param key Schlassel
 	 * @param data Die Daten uber die der MAC gebildet werden soll.
 	 * @return MAC */
@@ -76,14 +72,12 @@ public abstract class AmCryptoProvider {
 	/** Berechnet den Message Authentication Code (MAC) aus dem abergebenen
 	 * ByteArray. Die Parametern werden vorher mit der Methode @see
 	 * #init(byte[], long) eingestellt.
-	 *
 	 * @param data Die Daten uber die der MAC gebildet werden soll.
 	 * @return MAC */
 	public abstract byte[] getMAC(byte[] data);
 
 	/** Verschlasselt das abergebene ByteArray mit den Parametern die beim @see
 	 * #init(byte[], long) eingestellt wurden.
-	 *
 	 * @param in ByteArray mit den zu verschlasselnden Daten
 	 * @return ByteArray mit den entschlasselten Daten.
 	 * @throws AmCryptoException On any error. */
@@ -129,7 +123,6 @@ public abstract class AmCryptoProvider {
 
 	/** Entschlasselt das abergebene ByteArray mit den Parametern die beim @see
 	 * #init(byte[], long) eingestellt wurden.
-	 *
 	 * @param in BytrArray mit den verschlasselten Daten
 	 * @return ByteArray mit den entschlasselten Daten
 	 * @throws AmCryptoException On any error. */
@@ -177,7 +170,6 @@ public abstract class AmCryptoProvider {
 	/** Diese Methode fullt ein Byte-Array mit dem Wert 0x80 und mehreren 0x00
 	 * bis die Lange des abergebenen Byte-Array ein Vielfaches der Blocklange
 	 * ist. Dies ist die ISO9797-1 Padding-Methode 2 bzw. ISO7816d4-Padding
-	 *
 	 * @param data Das Byte-Array welches aufgefallt werden soll.
 	 * @return Das gefallte Byte-Array. */
 	public byte[] addPadding(final byte[] data) {
@@ -192,7 +184,6 @@ public abstract class AmCryptoProvider {
 
 	/** Entfernt aus dem abergebenen Byte-Array das Padding nach ISO9797-1
 	 * Padding-Methode 2 bzw. ISO7816d4-Padding.
-	 *
 	 * @param b Byte-Array aus dem das Padding entfernt werden soll.
 	 * @return Padding-bereinigtes Byte-Array. */
 	public static byte[] removePadding(final byte[] b) {
