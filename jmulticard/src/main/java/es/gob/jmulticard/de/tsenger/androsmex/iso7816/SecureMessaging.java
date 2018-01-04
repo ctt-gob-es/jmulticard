@@ -23,11 +23,11 @@ import java.io.IOException;
 
 import org.spongycastle.asn1.ASN1InputStream;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
-import es.gob.jmulticard.de.tsenger.androsmex.tools.HexString;
 
 /** Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
  * para establecer una mensajer&iacute;a segura.
@@ -61,16 +61,14 @@ public final class SecureMessaging {
 	 * @throws SecureMessagingException En cualquier error. */
 	public CommandApdu wrap(final CommandApdu capdu) throws SecureMessagingException {
 
-		byte[] header = null;
 		byte lc = 0;
 		DO97 do97 = null;
 		DO87 do87 = null;
-		DO8E do8E = null;
 
 		incrementAtIndex(this.ssc, this.ssc.length - 1);
 
 		// Enmascara el byte de la clase y hace un padding del comando de cabecera
-		header = new byte[4];
+		final byte[] header = new byte[4];
 
 		// Los primeros 4 bytes de la cabecera son los del Comando APDU
 		System.arraycopy(capdu.getBytes(), 0, header, 0, 4);
@@ -91,7 +89,7 @@ public final class SecureMessaging {
 		}
 
 		// Construye el DO8E (checksum (MAC))
-		do8E = buildDO8E(header, do87, do97);
+		final DO8E do8E = buildDO8E(header, do87, do97);
 		lc += do8E.getEncoded().length;
 
 		// Construye y devuelve la APDU protegida
@@ -107,7 +105,8 @@ public final class SecureMessaging {
 			}
 			bOut.write(do8E.getEncoded());
 			bOut.write(0);
-		} catch (final IOException e) {
+		}
+		catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
 
@@ -197,18 +196,19 @@ public final class SecureMessaging {
 		final byte[] do8eData = do8E.getData();
 
 		if (!java.util.Arrays.equals(cc, do8eData)) {
-			throw new SecureMessagingException("Checksum incorrecto\n CC Calculado: " //$NON-NLS-1$
-				+ HexString.bufferToHex(cc) + "\nCC en DO8E: " //$NON-NLS-1$
-					+ HexString.bufferToHex(do8eData));
+			throw new SecureMessagingException(
+				"Checksum incorrecto\n CC Calculado: " //$NON-NLS-1$
+					+ HexUtils.hexify(cc, false) + "\nCC en DO8E: " //$NON-NLS-1$
+						+ HexUtils.hexify(do8eData, false)
+			);
 		}
 
 		// Desencriptar DO87
-		byte[] data = null;
-		byte[] unwrappedAPDUBytes = null;
-
+		final byte[] unwrappedAPDUBytes;
 		if (do87 != null) {
 			this.crypto.init(this.kenc, this.ssc);
 			final byte[] do87Data = do87.getData();
+			final byte[] data;
 			try {
 				data = this.crypto.decrypt(do87Data);
 			}
@@ -240,32 +240,29 @@ public final class SecureMessaging {
 	 * @return DO87 Par&aacute;metros del comando.
 	 * @throws SecureMessagingException En caso de error en el cifrado. */
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
-
 		this.crypto.init(this.kenc, this.ssc);
 		byte[] enc_data;
 		try {
 			enc_data = this.crypto.encrypt(data);
-		} catch (final AmCryptoException e) {
+		}
+		catch (final AmCryptoException e) {
 			throw new SecureMessagingException(e);
 		}
-
 		return new DO87(enc_data);
-
 	}
 
 	private DO8E buildDO8E(final byte[] header, final DO87 do87, final DO97 do97) throws SecureMessagingException {
 
 		final ByteArrayOutputStream m = new ByteArrayOutputStream();
 
-		/*
-		 * Evita la cabecera doble padding: Solo si do87 o do97
+		/* Evita la cabecera doble padding: Solo si do87 o do97
 		 * estan presentes se le asigna un padding a la cabecera.
-		 * De lo contrario solo se hace padding en el calculo del MAC
-		 */
+		 * De lo contrario solo se hace padding en el calculo del MAC */
 		try {
 			if (do87 != null || do97 != null) {
 				m.write(this.crypto.addPadding(header));
-			} else {
+			}
+			else {
 				m.write(header);
 			}
 
@@ -275,7 +272,8 @@ public final class SecureMessaging {
 			if (do97 != null) {
 				m.write(do97.getEncoded());
 			}
-		} catch (final IOException e) {
+		}
+		catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
 
@@ -326,7 +324,8 @@ public final class SecureMessaging {
 			if (index > 0) {
 				incrementAtIndex(array, index - 1);
 			}
-		} else {
+		}
+		else {
 			array[index]++;
 		}
 	}

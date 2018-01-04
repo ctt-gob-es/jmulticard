@@ -15,12 +15,10 @@ public final class CardMessages {
 	}
 
     /** Recupera el texto identificado con la clave proporcionada y sustituye la
-     * subcadenas "%0" por el texto proporcionado.
-     * @param key
-     *        Clave del texto.
-     * @param text
-     *        Texto que se desea insertar.
-     * @return Recuerso textual con la subcadena sustituida. */
+     * subcadena "%0" por el texto proporcionado.
+     * @param key Clave del texto.
+     * @param text Texto que se desea insertar.
+     * @return Recurso textual con la subcadena sustituida. */
     public static String getString(final String key, final String text) {
         try {
             return RESOURCE_BUNDLE.getString(key).replace("%0", text); //$NON-NLS-1$
