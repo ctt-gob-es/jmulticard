@@ -38,8 +38,8 @@ public final class AmAESCrypto extends AmCryptoProvider {
 	private byte[] IV = null;
 	private byte[] sscBytes = null;
 
-	/** Tama&ntilde;o de bloque de cifrado AES. */
-	public static int blockSize = 16;
+	/** Tama&ntilde;o de bloque de cifrado. */
+	private static final int BLOCK_SIZE = 16;
 
 	private void initCiphers(final byte[] key, final byte[] iv) {
 
@@ -50,7 +50,7 @@ public final class AmAESCrypto extends AmCryptoProvider {
 		this.keyP = new KeyParameter(this.keyBytes);
 
 		// get the IV
-		this.IV = new byte[blockSize];
+		this.IV = new byte[BLOCK_SIZE];
 		System.arraycopy(iv, 0, this.IV, 0, this.IV.length);
 
 		// create the ciphers
@@ -126,7 +126,7 @@ public final class AmAESCrypto extends AmCryptoProvider {
 	 * @return Bloque descifrado. */
 	@Override
 	public byte[] decryptBlock(final byte[] key, final byte[] z) {
-		final byte[] s = new byte[blockSize];
+		final byte[] s = new byte[BLOCK_SIZE];
 		final KeyParameter encKey = new KeyParameter(key);
 		final BlockCipher cipher = new AESEngine();
 		cipher.init(false, encKey);
@@ -139,7 +139,7 @@ public final class AmAESCrypto extends AmCryptoProvider {
 	 * @param z Bloque a crifrar.
 	 * @return Bloque cifrado. */
 	public static byte[] encryptBlock(final byte[] key, final byte[] z) {
-		final byte[] s = new byte[blockSize];
+		final byte[] s = new byte[BLOCK_SIZE];
 		final KeyParameter encKey = new KeyParameter(key);
 		final BlockCipher cipher = new AESEngine();
 		cipher.init(true, encKey);
@@ -149,7 +149,7 @@ public final class AmAESCrypto extends AmCryptoProvider {
 
 	@Override
 	public int getBlockSize() {
-		return blockSize;
+		return BLOCK_SIZE;
 	}
 
 }
