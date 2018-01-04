@@ -290,7 +290,7 @@ public final class CeresSc extends Dnie {
 
     @Override
     protected String getPinMessage(final int retriesLeft) {
-    	return CardMessages.getString("Ceres.0", Integer.toString(retriesLeft)); //$NON-NLS-1$
+    	return CardMessages.getString("Gen.0", Integer.toString(retriesLeft)); //$NON-NLS-1$
     }
 
     private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {

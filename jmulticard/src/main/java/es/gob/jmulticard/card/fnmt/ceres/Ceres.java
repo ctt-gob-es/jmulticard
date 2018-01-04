@@ -553,7 +553,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         		throw new AuthenticationModeLockedException();
         	}
         	final PasswordCallback pwc = new PasswordCallback(
-    			CardMessages.getString("Ceres.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
+    			CardMessages.getString("Gen.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
 				false
 			);
 			try {
