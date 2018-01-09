@@ -30,6 +30,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.CardMessages;
+import es.gob.jmulticard.card.CompressionUtils;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
@@ -203,7 +204,11 @@ public final class CeresSc extends Dnie {
 				cdf.getCertificatePath(i).replace("\\", "").trim() //$NON-NLS-1$ //$NON-NLS-2$
 			);
 			final X509Certificate cert = (X509Certificate) CERT_FACTORY.generateCertificate(
-				new ByteArrayInputStream(deflate(selectFileByLocationAndRead(l)))
+				new ByteArrayInputStream(
+					CompressionUtils.deflate(
+						selectFileByLocationAndRead(l)
+					)
+				)
 			);
 			final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
 			this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);

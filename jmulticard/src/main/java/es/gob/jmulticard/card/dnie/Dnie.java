@@ -40,7 +40,6 @@
 package es.gob.jmulticard.card.dnie;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.AccessControlException;
 import java.security.cert.CertificateException;
@@ -50,8 +49,6 @@ import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -84,6 +81,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CardMessages;
+import es.gob.jmulticard.card.CompressionUtils;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
@@ -414,7 +412,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 						)
     				);
             		try {
-	            		intermediateCaCertEncoded = deflate(
+	            		intermediateCaCertEncoded = CompressionUtils.deflate(
 	        				intermediateCaCertEncoded
 	    				);
             		}
@@ -797,15 +795,16 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     private int getPinRetriesLeft() throws PinException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
 
-    	ResponseApdu verifyResponse = null;
+    	final ResponseApdu verifyResponse;
 		try {
 			verifyResponse = getConnection().transmit(
 				verifyCommandApdu
 			);
-		} catch (final ApduConnectionException e) {
+		}
+		catch (final ApduConnectionException e) {
 			throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e  //$NON-NLS-1$
-				);
+				"Error obteniendo el PIN del CallbackHandler: " + e  //$NON-NLS-1$
+			);
 		}
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
     }
@@ -863,7 +862,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	selectMasterFile();
         byte[] certEncoded = selectFileByLocationAndRead(location);
         try {
-	        certEncoded = deflate(
+	        certEncoded = CompressionUtils.deflate(
         		certEncoded
 			);
         }
@@ -926,32 +925,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	@Override
     protected void selectMasterFile() throws ApduConnectionException, Iso7816FourCardException {
     	selectFileByName(MASTER_FILE_NAME);
-    }
-
-    /** Descomprime un certificado contenido en el DNIe.
-     * @param compressedCertificate Certificado comprimido en ZIP a partir del 9 byte.
-     * @return Certificado codificado.
-     * @throws IOException Cuando se produce un error en la descompresion del certificado. */
-    protected static byte[] deflate(final byte[] compressedCertificate) throws IOException {
-        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final Inflater decompressor = new Inflater();
-        decompressor.setInput(compressedCertificate, 8, compressedCertificate.length - 8);
-        final byte[] buf = new byte[1024];
-        try {
-            // Descomprimimos los datos
-            while (!decompressor.finished()) {
-                final int count = decompressor.inflate(buf);
-                if (count == 0) {
-                    throw new DataFormatException();
-                }
-                buffer.write(buf, 0, count);
-            }
-            // Obtenemos los datos descomprimidos
-            return buffer.toByteArray();
-        }
-        catch (final DataFormatException ex) {
-            throw new IOException("Error al descomprimir el certificado: " + ex, ex); //$NON-NLS-1$
-        }
     }
 
     protected boolean isSecurityChannelOpen() {

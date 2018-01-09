@@ -41,7 +41,6 @@
 package es.gob.jmulticard.card.fnmt.ceres;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -49,8 +48,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -80,6 +77,7 @@ import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CardMessages;
+import es.gob.jmulticard.card.CompressionUtils;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
@@ -273,7 +271,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			);
         	final X509Certificate cert = (X509Certificate) cf.generateCertificate(
     			new ByteArrayInputStream(
-					deflate(
+					CompressionUtils.deflate(
 						selectFileByLocationAndRead(l)
 					)
 				)
@@ -598,32 +596,6 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	public String getCardName() {
 		return "FNMT-RCM CERES"; //$NON-NLS-1$
 	}
-
-    /** Descomprime un certificado contenido en la tarjeta CERES.
-     * @param compressedCertificate Certificado comprimido en ZIP a partir del 9 octeto.
-     * @return Certificado codificado.
-     * @throws IOException Cuando se produce un error en la descompresi&oacute;n del certificado. */
-    private static byte[] deflate(final byte[] compressedCertificate) throws IOException {
-        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final Inflater decompressor = new Inflater();
-        decompressor.setInput(compressedCertificate, 8, compressedCertificate.length - 8);
-        final byte[] buf = new byte[1024];
-        try {
-            // Descomprimimos los datos
-            while (!decompressor.finished()) {
-                final int count = decompressor.inflate(buf);
-                if (count == 0) {
-                    throw new DataFormatException();
-                }
-                buffer.write(buf, 0, count);
-            }
-            // Obtenemos los datos descomprimidos
-            return buffer.toByteArray();
-        }
-        catch (final DataFormatException ex) {
-            throw new IOException("Error al descomprimir el certificado: " + ex, ex); //$NON-NLS-1$
-        }
-    }
 
 	/** Obtiene el <code>CallbackHandler</code>.
 	 * @return <code>CallbackHandler</code>. */
