@@ -39,11 +39,9 @@
  */
 package es.gob.jmulticard.card.dnie;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.AccessControlException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
@@ -117,18 +115,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     private CallbackHandler callbackHandler;
 
 	private String[] aliases = null;
-
-    protected static final CertificateFactory CERT_FACTORY;
-    static {
-    	try {
-			CERT_FACTORY = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-		}
-    	catch (final Exception e) {
-			throw new IllegalStateException(
-				"No se ha podido obtener la factoria de certificados X.509: " + e, e //$NON-NLS-1$
-			);
-		}
-    }
 
     private static final boolean PIN_AUTO_RETRY;
     static {
@@ -406,24 +392,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             }
             else if (CERT_ALIAS_INTERMEDIATE_CA.equals(currentAlias)) {
             	try {
-            		byte[] intermediateCaCertEncoded = selectFileByLocationAndRead(
+            		final byte[] intermediateCaCertEncoded = selectFileByLocationAndRead(
 						new Location(
 							cdf.getCertificatePath(i)
 						)
     				);
-            		try {
-	            		intermediateCaCertEncoded = CompressionUtils.deflate(
-	        				intermediateCaCertEncoded
-	    				);
-            		}
-                    catch(final Exception e) {
-                    	LOGGER.warning(
-                			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir: " + e //$NON-NLS-1$
-            			);
-                    }
-            		this.intermediateCaCert = (X509Certificate) CERT_FACTORY.generateCertificate(
-    					new ByteArrayInputStream(intermediateCaCertEncoded)
-					);
+            		this.intermediateCaCert = CompressionUtils.getCertificateFromCompressedOrNotData(
+        				intermediateCaCertEncoded
+    				);
             	}
             	catch (final Exception e) {
             		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
@@ -858,20 +834,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     private X509Certificate loadCertificate(final Location location) throws IOException,
-                                                                            Iso7816FourCardException,                                                                         CertificateException {
+                                                                            Iso7816FourCardException,
+                                                                            CertificateException {
     	selectMasterFile();
-        byte[] certEncoded = selectFileByLocationAndRead(location);
-        try {
-	        certEncoded = CompressionUtils.deflate(
-        		certEncoded
-			);
-        }
-        catch(final Exception e) {
-        	LOGGER.warning(
-    			"Ha fallado la descompresion del certificado, se probara sin descomprimir: " + e //$NON-NLS-1$
-			);
-        }
-        return (X509Certificate) CERT_FACTORY.generateCertificate(new ByteArrayInputStream(certEncoded));
+        final byte[] certEncoded = selectFileByLocationAndRead(location);
+        return CompressionUtils.getCertificateFromCompressedOrNotData(certEncoded);
     }
 
     protected void loadCertificatesInternal() throws CryptoCardException {

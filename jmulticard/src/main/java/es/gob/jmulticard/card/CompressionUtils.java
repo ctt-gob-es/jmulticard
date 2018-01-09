@@ -1,7 +1,12 @@
 package es.gob.jmulticard.card;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -10,15 +15,59 @@ import java.util.zip.Inflater;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CompressionUtils {
 
+	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
+	protected static final CertificateFactory CERT_FACTORY;
+	static {
+		try {
+			CERT_FACTORY = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+		}
+		catch (final Exception e) {
+			throw new IllegalStateException(
+				"No se ha podido obtener la factoria de certificados X.509: " + e, e //$NON-NLS-1$
+			);
+		}
+	}
+
 	private CompressionUtils() {
 		// No instanciable
+	}
+
+	/** Obtiene un certificado a partir de unos datos que pueden ser, o bien el propio certificado
+	 * X&#46;509 o la codificaci&oacute;n de este comprmida seg&uacute;n esquema FNMT.
+	 * De utilidad en todas las tarjetas FNMT-RCM, incluyendo DNIe.
+	 * @param data Datos del certificado, que pueden estar comprimidos o no.
+	 * @return Certificado X&#46;509.
+	 * @throws IOException Si no pueden leerse los datos.
+	 * @throws CertificateException Si los datos no son, ni comprimidos ni descomprimidos, un
+	 *                              certificado X&#46;509. */
+	public static X509Certificate getCertificateFromCompressedOrNotData(final byte[] data) throws IOException,
+	                                                                                              CertificateException {
+		if (data == null || data.length < 1) {
+			throw new IOException("Los datos del certificado eran nulos o vacios"); //$NON-NLS-1$
+		}
+		byte[] rawData;
+		try {
+    		rawData = CompressionUtils.deflate(
+				data
+			);
+		}
+        catch(final Exception e) {
+        	LOGGER.warning(
+    			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir: " + e //$NON-NLS-1$
+			);
+        	rawData = data;
+        }
+		return (X509Certificate) CERT_FACTORY.generateCertificate(
+			new ByteArrayInputStream(rawData)
+		);
 	}
 
     /** Descomprime un certificado.
      * @param compressedCertificate Certificado comprimido en ZIP a partir del 9 octeto.
      * @return Certificado codificado.
      * @throws IOException Cuando se produce un error en la descompresi&oacute;n del certificado. */
-    public static byte[] deflate(final byte[] compressedCertificate) throws IOException {
+    private static byte[] deflate(final byte[] compressedCertificate) throws IOException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         final Inflater decompressor = new Inflater();
         decompressor.setInput(compressedCertificate, 8, compressedCertificate.length - 8);

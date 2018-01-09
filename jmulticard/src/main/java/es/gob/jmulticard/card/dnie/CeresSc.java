@@ -1,6 +1,5 @@
 package es.gob.jmulticard.card.dnie;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -203,12 +202,8 @@ public final class CeresSc extends Dnie {
 			final Location l = new Location(
 				cdf.getCertificatePath(i).replace("\\", "").trim() //$NON-NLS-1$ //$NON-NLS-2$
 			);
-			final X509Certificate cert = (X509Certificate) CERT_FACTORY.generateCertificate(
-				new ByteArrayInputStream(
-					CompressionUtils.deflate(
-						selectFileByLocationAndRead(l)
-					)
-				)
+			final X509Certificate cert = CompressionUtils.getCertificateFromCompressedOrNotData(
+				selectFileByLocationAndRead(l)
 			);
 			final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
 			this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);

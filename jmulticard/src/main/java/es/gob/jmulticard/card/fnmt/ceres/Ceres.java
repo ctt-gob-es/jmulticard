@@ -40,10 +40,8 @@
 
 package es.gob.jmulticard.card.fnmt.ceres;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
@@ -260,8 +258,6 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
         // Leemos los certificados segun las rutas del CDF
 
-        final CertificateFactory cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-
         this.certs = new LinkedHashMap<>(cdf.getCertificateCount());
         this.aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
 
@@ -269,12 +265,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	final Location l = new Location(
     			cdf.getCertificatePath(i).replace("\\", "").trim() //$NON-NLS-1$ //$NON-NLS-2$
 			);
-        	final X509Certificate cert = (X509Certificate) cf.generateCertificate(
-    			new ByteArrayInputStream(
-					CompressionUtils.deflate(
-						selectFileByLocationAndRead(l)
-					)
-				)
+        	final X509Certificate cert = CompressionUtils.getCertificateFromCompressedOrNotData(
+    			selectFileByLocationAndRead(l)
 			);
         	final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
         	this.aliasByCertAndKeyId.put(
