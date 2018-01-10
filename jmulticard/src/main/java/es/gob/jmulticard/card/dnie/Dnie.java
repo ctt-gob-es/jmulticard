@@ -402,7 +402,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     				);
             	}
             	catch (final Exception e) {
-            		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+            		LOGGER.warning(
         				"No se ha podido cargar el certificado de la autoridad intermedia del CNP: " + e //$NON-NLS-1$
     				);
             		this.intermediateCaCert = null;

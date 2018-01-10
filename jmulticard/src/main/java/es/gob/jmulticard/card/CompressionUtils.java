@@ -54,7 +54,7 @@ public final class CompressionUtils {
 		}
         catch(final Exception e) {
         	LOGGER.warning(
-    			"Ha fallado la descompresion del certificado de CA intermedia de CNP, se probara sin descomprimir: " + e //$NON-NLS-1$
+    			"Ha fallado la descompresion del certificado, se probara sin descomprimir: " + e //$NON-NLS-1$
 			);
         	rawData = data;
         }

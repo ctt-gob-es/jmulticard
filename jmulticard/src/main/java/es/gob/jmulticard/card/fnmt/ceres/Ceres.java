@@ -46,6 +46,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -129,6 +130,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     }, ATR_MASK_SLE_FN19);
 
 	private static final byte CLA = (byte) 0x00;
+
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private final CryptoHelper cryptoHelper;
 
@@ -265,9 +268,17 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         	final Location l = new Location(
     			cdf.getCertificatePath(i).replace("\\", "").trim() //$NON-NLS-1$ //$NON-NLS-2$
 			);
-        	final X509Certificate cert = CompressionUtils.getCertificateFromCompressedOrNotData(
-    			selectFileByLocationAndRead(l)
-			);
+        	X509Certificate cert;
+        	try {
+        		cert = CompressionUtils.getCertificateFromCompressedOrNotData(
+        				selectFileByLocationAndRead(l)
+        				);
+        	}
+        	catch (final IOException e) {
+        		LOGGER.warning("No se ha encontrado un certificado referenciado, se pasa al siguiente: " + e); //$NON-NLS-1$
+           		continue;
+        	}
+
         	final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
         	this.aliasByCertAndKeyId.put(
     			HexUtils.hexify(cdf.getCertificateId(i), false),

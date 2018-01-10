@@ -109,7 +109,7 @@ public final class Ceres430Provider extends Provider {
         	defaultConnection.close();
         }
         catch(final Exception e) {
-        	throw new ProviderException("No se ha podido inicializar el proveedor de DNIe: " + e, e); //$NON-NLS-1$
+        	throw new ProviderException("No se ha podido inicializar el proveedor de Ceres 4.30 y superior: " + e, e); //$NON-NLS-1$
         }
 
         // KeyStore

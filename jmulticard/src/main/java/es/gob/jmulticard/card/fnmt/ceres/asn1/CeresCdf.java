@@ -81,7 +81,8 @@ public final class CeresCdf extends Record implements Pkcs15Cdf {
 
     /** Obtiene el identificador del certificado indicado.
      * @param index &Iacute;ndice del certificado.
-     * @return Identificador del certificado indicado. */
+     * @return Identificador del certificado indicado o {@code null} si no
+     * se encontr&oacute; el certificado. */
     @Override
 	public byte[] getCertificateId(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
@@ -93,7 +94,8 @@ public final class CeresCdf extends Record implements Pkcs15Cdf {
 
     /** Obtiene la ruta PKCS#15 hacia el certificado indicado.
      * @param index &Iacute;ndice del certificado.
-     * @return Ruta PKCS#15 hacia el certificado indicado. */
+     * @return Ruta PKCS#15 hacia el certificado indicado o {@code null} si no
+     * se encontr&oacute; el certificado. */
     @Override
 	public String getCertificatePath(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
