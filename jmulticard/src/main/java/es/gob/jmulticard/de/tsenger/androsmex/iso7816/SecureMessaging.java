@@ -20,6 +20,8 @@ package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Arrays;
 
 import org.spongycastle.asn1.ASN1InputStream;
 
@@ -65,7 +67,7 @@ public final class SecureMessaging {
 		DO97 do97 = null;
 		DO87 do87 = null;
 
-		incrementAtIndex(this.ssc, this.ssc.length - 1);
+		incrementAtIndex(this.ssc);
 
 		// Enmascara el byte de la clase y hace un padding del comando de cabecera
 		final byte[] header = new byte[4];
@@ -123,7 +125,7 @@ public final class SecureMessaging {
 		DO99 do99 = null;
 		DO8E do8E = null;
 
-		incrementAtIndex(this.ssc, this.ssc.length - 1);
+		incrementAtIndex(this.ssc);
 
 		int pointer = 0;
 		final byte[] rapduBytes = responseApduEncrypted.getData();
@@ -318,15 +320,16 @@ public final class SecureMessaging {
 		return 0;
 	}
 
-	private void incrementAtIndex(final byte[] array, final int index) {
-		if (array[index] == Byte.MAX_VALUE) {
-			array[index] = 0;
-			if (index > 0) {
-				incrementAtIndex(array, index - 1);
+	private static void incrementAtIndex(final byte[] array) {
+		final byte[] result = new BigInteger(array).add(BigInteger.ONE).toByteArray();
+		if (result.length > array.length) {
+			Arrays.fill(array, (byte)0);
+		} else {
+			final int lengthA = array.length;
+			final int lengthR = result.length;
+			for (int i = 0; i < lengthR; i++) {
+				array[lengthA - 1 - i] = result[lengthR - 1 - i];
 			}
-		}
-		else {
-			array[index]++;
 		}
 	}
 }
