@@ -46,11 +46,6 @@ public final class CancelledOperationException extends RuntimeException {
 
     private static final long serialVersionUID = 4447842480432712246L;
 
-    /** Crea una excepci&oacute;n sin informaci&oacute;n adicional. */
-    public CancelledOperationException() {
-        super();
-    }
-
     /** Crea la excepci&oacute;n con un mensaje determinado.
      * @param msg Mensaje descriptivo de la excepci&oacute;n. */
     public CancelledOperationException(final String msg) {

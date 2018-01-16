@@ -1,5 +1,7 @@
 package es.gob.jmulticard.card.dnie;
 
+import java.util.logging.Logger;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
@@ -77,6 +79,9 @@ public final class DnieNFC extends Dnie3 {
 				wrongCan = false;
 			}
 			catch(final PaceException e) {
+				Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+					"Error estableciendo canal PACE (probablemente por CAN invalido): " + e //$NON-NLS-1$
+				);
 				//Si el CAN es incorrecto modificamos el mensaje del dialogo y volvemos a pedirlo
 				wrongCan = true;
 				tic = new CustomTextInputCallback();

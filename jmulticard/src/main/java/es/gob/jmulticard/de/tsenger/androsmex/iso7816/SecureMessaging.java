@@ -42,7 +42,8 @@ public final class SecureMessaging {
 	private AmCryptoProvider crypto = null;
 
 	/** Constructor.
-	 * @param acp Instancia AmDESCrypto o AmAESCrypto.
+	 * @param acp Proveedor de operaciones criptogr&aacute;ficas (t&iacute;picamente,
+	 * una instancia de <code>AmAESCrypto</code>).
 	 * @param ksenc Clave de sesi&oacute;n para encriptar.
 	 * @param ksmac Clave de sesi&oacute;n para el <i>checksum</i>.
 	 * @param initialSSC Contador de sequencia de env&iacute;o. */
@@ -117,7 +118,7 @@ public final class SecureMessaging {
 
 	/** Obtiene la APDU de respuesta en claro a partir de una APDU protegida.
 	 * @param responseApduEncrypted APDU protegida.
-	 * @return plain APDU en claro.
+	 * @return APDU en claro.
 	 * @throws SecureMessagingException En cualquier error. */
 	public ResponseApdu unwrap(final ResponseApdu responseApduEncrypted) throws SecureMessagingException{
 
@@ -324,7 +325,8 @@ public final class SecureMessaging {
 		final byte[] result = new BigInteger(array).add(BigInteger.ONE).toByteArray();
 		if (result.length > array.length) {
 			Arrays.fill(array, (byte)0);
-		} else {
+		}
+		else {
 			final int lengthA = array.length;
 			final int lengthR = result.length;
 			for (int i = 0; i < lengthR; i++) {

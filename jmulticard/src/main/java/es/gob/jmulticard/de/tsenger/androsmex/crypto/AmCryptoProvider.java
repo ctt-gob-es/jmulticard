@@ -38,8 +38,8 @@ public abstract class AmCryptoProvider {
 	protected PaddedBufferedBlockCipher decryptCipher = null;
 
 	// Buffer are used to transport the bytes from one stream to another
-	byte[] buf = new byte[16]; // input buffer
-	byte[] obuf = new byte[512]; // output buffer
+	private final byte[] buf = new byte[16]; // input buffer
+	private final byte[] obuf = new byte[512]; // output buffer
 
 	/** Asigna un proveedor criptogr&aacute;fico. */
 	public AmCryptoProvider() {
@@ -56,19 +56,6 @@ public abstract class AmCryptoProvider {
 	 * @return Obtiene el tama&ntilde;o de bloque de cifrado */
 	public abstract int getBlockSize();
 
-	/** Obtiene el array de bytes descifrado.
-	 * @param key Clave de cifrado.
-	 * @param z Clave de cifrado.
-	 * @return Obtiene el array de bytes descifrado. */
-	public abstract byte[] decryptBlock(byte[] key, byte[] z);
-
-	/** Berechnet den Mac der abergebenen Daten ohne vorherige Initialisierung
-	 * (@see #init(byte[], long). Es wird daher kein SSC benatigt.
-	 * @param key Schlassel
-	 * @param data Die Daten uber die der MAC gebildet werden soll.
-	 * @return MAC */
-	public abstract byte[] getMAC(byte[] key, byte[] data);
-
 	/** Berechnet den Message Authentication Code (MAC) aus dem abergebenen
 	 * ByteArray. Die Parametern werden vorher mit der Methode @see
 	 * #init(byte[], long) eingestellt.
@@ -81,7 +68,7 @@ public abstract class AmCryptoProvider {
 	 * @param in ByteArray mit den zu verschlasselnden Daten
 	 * @return ByteArray mit den entschlasselten Daten.
 	 * @throws AmCryptoException On any error. */
-	public byte[] encrypt(final byte[] in) throws AmCryptoException {
+	public final byte[] encrypt(final byte[] in) throws AmCryptoException {
 
 		int noBytesRead = 0; // number of bytes read from input
 		int noBytesProcessed = 0; // number of bytes processed
@@ -126,7 +113,7 @@ public abstract class AmCryptoProvider {
 	 * @param in BytrArray mit den verschlasselten Daten
 	 * @return ByteArray mit den entschlasselten Daten
 	 * @throws AmCryptoException On any error. */
-	public byte[] decrypt(final byte[] in) throws AmCryptoException {
+	public final byte[] decrypt(final byte[] in) throws AmCryptoException {
 
 		int noBytesRead = 0; // number of bytes read from input
 		int noBytesProcessed = 0; // number of bytes processed
@@ -172,7 +159,7 @@ public abstract class AmCryptoProvider {
 	 * ist. Dies ist die ISO9797-1 Padding-Methode 2 bzw. ISO7816d4-Padding
 	 * @param data Das Byte-Array welches aufgefallt werden soll.
 	 * @return Das gefallte Byte-Array. */
-	public byte[] addPadding(final byte[] data) {
+	public final byte[] addPadding(final byte[] data) {
 
 		final int len = data.length;
 		final int nLen = (len / getBlockSize() + 1) * getBlockSize();
@@ -186,7 +173,7 @@ public abstract class AmCryptoProvider {
 	 * Padding-Methode 2 bzw. ISO7816d4-Padding.
 	 * @param b Byte-Array aus dem das Padding entfernt werden soll.
 	 * @return Padding-bereinigtes Byte-Array. */
-	public static byte[] removePadding(final byte[] b) {
+	public static final byte[] removePadding(final byte[] b) {
 		byte[] rd = null;
 		int i = b.length - 1;
 		do {

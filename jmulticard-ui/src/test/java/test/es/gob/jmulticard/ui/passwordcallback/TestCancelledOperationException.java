@@ -7,12 +7,7 @@ import junit.framework.TestCase;
 
 /** Pruebas de cancelaci&oacute;n de operaciones.
  * @author Alberto Mart&iacute;nez. */
-public class TestCancelledOperationException extends TestCase {
-
-    /** Test method. */
-    public final static void testCancelledOperationException() {
-        Assert.assertNotNull(new CancelledOperationException());
-    }
+public final class TestCancelledOperationException extends TestCase {
 
     /** Test method. */
     public final static void testCancelledOperationExceptionString() {

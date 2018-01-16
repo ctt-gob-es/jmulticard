@@ -103,37 +103,6 @@ public final class AmAESCrypto extends AmCryptoProvider {
 		return out;
 	}
 
-	@Override
-	public byte[] getMAC(final byte[] key, final byte[] data) {
-		final BlockCipher cipher = new AESEngine();
-		final Mac mac = new CMac(cipher, 64);
-
-		final KeyParameter keyP1 = new KeyParameter(key);
-		mac.init(keyP1);
-
-		mac.update(data, 0, data.length);
-
-		final byte[] out = new byte[8];
-
-		mac.doFinal(out, 0);
-
-		return out;
-	}
-
-	/** Desencripta un bloque usando AES.
-	 * @param key Clave AES.
-	 * @param z Bloque a descrifrar.
-	 * @return Bloque descifrado. */
-	@Override
-	public byte[] decryptBlock(final byte[] key, final byte[] z) {
-		final byte[] s = new byte[BLOCK_SIZE];
-		final KeyParameter encKey = new KeyParameter(key);
-		final BlockCipher cipher = new AESEngine();
-		cipher.init(false, encKey);
-		cipher.processBlock(z, 0, s, 0);
-		return s;
-	}
-
 	/** Encripta un bloque usando AES.
 	 * @param key Clave AES.
 	 * @param z Bloque a crifrar.
