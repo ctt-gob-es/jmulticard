@@ -18,6 +18,7 @@ import es.gob.jmulticard.card.pace.InvalidCanException;
 import es.gob.jmulticard.card.pace.PaceChannelHelper;
 import es.gob.jmulticard.card.pace.PaceConnection;
 import es.gob.jmulticard.card.pace.PaceException;
+import es.gob.jmulticard.card.pace.PaceInitializerCan;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Lectura de DNIe 3 a partir de un dispositivo con NFC.
@@ -68,8 +69,8 @@ public final class DnieNFC extends Dnie3 {
 			}
 			try {
 				sm = PaceChannelHelper.openPaceChannel(
-					(byte)0x00,//(byte)0x10,
-					can, // CAN
+					(byte)0x00,
+					new PaceInitializerCan(can), // CAN
 					con,
 					new JseCryptoHelper()
 				);
@@ -98,11 +99,12 @@ public final class DnieNFC extends Dnie3 {
 
 	}
 
-	private static ApduConnection paceConnection(final ApduConnection con, final String can1) throws ApduConnectionException, PaceException {
-
+	private static ApduConnection paceConnection(final ApduConnection con,
+			                                     final String can1) throws ApduConnectionException,
+	                                                                       PaceException {
 		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
 			(byte) 0x00,
-			can1, // CAN
+			new PaceInitializerCan(can1), // CAN
 			con,
 			new JseCryptoHelper()
 		);

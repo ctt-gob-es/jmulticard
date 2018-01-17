@@ -68,32 +68,38 @@ public final class PaceChannelHelper {
 
 	/** Abre un canal PACE mediante el CAN (<i>Card Access Number</i>).
 	 * @param cla Clase de APDU para los comandos de establecimiento de canal.
-	 * @param can CAN (<i>Card Access Number</i>).
+	 * @param pi Valor de inicializaci&oacute;n del canal. Puede ser un CAN
+	 *           (<i>Card Access Number</i>) o un MRZ (<i>Machine Readable Zone</i>).
 	 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
 	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas auxiliares.
 	 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.
 	 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
-	 * @throws PaceException Si hay problemas en la apertura del canal.
-	 *
-	 */
+	 * @throws PaceException Si hay problemas en la apertura del canal. */
 	public static SecureMessaging openPaceChannel(final byte cla,
-			                           final String can,
-			                           final ApduConnection conn,
-			                           final CryptoHelper cryptoHelper) throws ApduConnectionException,
-			                                                                   PaceException {
+			                                      final PaceInitializer pi,
+			                                      final ApduConnection conn,
+			                                      final CryptoHelper cryptoHelper) throws ApduConnectionException,
+			                                                                              PaceException {
 		if (conn == null) {
 			throw new IllegalArgumentException(
 				"El canal de conexion no puede ser nulo" //$NON-NLS-1$
 			);
 		}
-		if (can == null || "".equals(can)) { //$NON-NLS-1$
+		if (pi == null) {
 			throw new IllegalArgumentException(
-				"Es necesario proporcionar el CAN para abrir canal PACE" //$NON-NLS-1$
+				"Es necesario proporcionar un inicializador para abrir canal PACE" //$NON-NLS-1$
 			);
 		}
 		if (cryptoHelper == null) {
 			throw new IllegalArgumentException(
 				"El CryptoHelper no puede ser nulo" //$NON-NLS-1$
+			);
+		}
+
+		// Por ahora, solo CAN
+		if (!(pi instanceof PaceInitializerCan)) {
+			throw new UnsupportedOperationException(
+				"Solo se soporta inicializacion mediante CAN" //$NON-NLS-1$
 			);
 		}
 
@@ -104,7 +110,7 @@ public final class PaceChannelHelper {
 		ResponseApdu res;
 		CommandApdu comm;
 
-		// 1.3.2 - Establecemos el algoritmo para PACE con el comando ‘MSE Set’:
+		// 1.3.2 - Establecemos el algoritmo para PACE con el comando MSE Set:
 
 		comm = new MseSetPaceAlgorithmApduCommand(
 			cla,
@@ -158,7 +164,7 @@ public final class PaceChannelHelper {
 				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
-						can.getBytes(),
+						pi.getBytes(),
 						CAN_PADDING
 					)
 				),
@@ -174,7 +180,7 @@ public final class PaceChannelHelper {
 			);
 		}
 
-		// Calcular secret = AES_Dec(?nonce,?sk);
+		// Calcular secret = AES_Dec(nonce,sk);
 
 		final byte[] secret_nonce;
 		try {
@@ -356,7 +362,7 @@ public final class PaceChannelHelper {
 			final byte[] pukIccDh2Descompressed = new byte[pukIccDh2.length-1];
 			System.arraycopy(pukIccDh2, 1, pukIccDh2Descompressed, 0, pukIccDh2.length-1);
 
-			// Se calcula el Mac del terminal: ?data = '7f494F06'. ?oid. '864104'.PukICCDH2;
+			// Se calcula el Mac del terminal: data = '7f494F06' + oid + '864104' + PukICCDH2;
 			final byte[] data = HexUtils.concatenateByteArrays(MAC_PADDING,
 								HexUtils.concatenateByteArrays(MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128.getBytes(),
 								HexUtils.concatenateByteArrays(MAC2_PADDING, pukIccDh2Descompressed)));
@@ -429,12 +435,11 @@ public final class PaceChannelHelper {
 	}
 
 
-	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve)
-			throws IllegalArgumentException {
+	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve) throws IllegalArgumentException {
 		final byte[] x = new byte[(value.length - 1) / 2];
 		final byte[] y = new byte[(value.length - 1) / 2];
 		if (value[0] != (byte) 0x04) {
-			throw new IllegalArgumentException("No uncompressed Point found!"); //$NON-NLS-1$
+			throw new IllegalArgumentException("No se ha encontrado un punto no comprimido"); //$NON-NLS-1$
 		}
 		System.arraycopy(value, 1, x, 0, (value.length - 1) / 2);
 		System.arraycopy(value, 1 + (value.length - 1) / 2, y, 0,
@@ -445,4 +450,5 @@ public final class PaceChannelHelper {
 		final ECPoint point = curve.createPoint(xE.toBigInteger(), yE.toBigInteger());
 		return point;
 	}
+
 }
