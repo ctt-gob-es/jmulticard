@@ -66,10 +66,10 @@ public final class PaceChannelHelper {
 		// No instanciable
 	}
 
-	/** Abre un canal PACE mediante el CAN (<i>Card Access Number</i>).
+	/** Abre un canal PACE.
 	 * @param cla Clase de APDU para los comandos de establecimiento de canal.
 	 * @param pi Valor de inicializaci&oacute;n del canal. Puede ser un CAN
-	 *           (<i>Card Access Number</i>) o un MRZ (<i>Machine Readable Zone</i>).
+	 *           (<i>Card Access Number</i>) o una MRZ (<i>Machine Readable Zone</i>).
 	 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
 	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas auxiliares.
 	 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.

@@ -1,7 +1,7 @@
 package es.gob.jmulticard.card.pace;
 
 /** Valor de inicializaci&oacute;n de un canal PACE.
- * T&iacute;picamente un CAN o un MRZ.
+ * T&iacute;picamente un CAN o una MRZ.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class PaceInitializer {
 
