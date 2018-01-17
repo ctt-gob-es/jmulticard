@@ -53,10 +53,10 @@ import java.security.spec.InvalidKeySpecException;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre
  * JSE/JME/Dalvik.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class CryptoHelper {
 
-	/** Nombre de curva ek&iacute;ptica. */
+	/** Nombre de curva el&iacute;ptica. */
 	protected enum EcCurve {
 
 		/** BrainpoolP256r1. */
@@ -143,8 +143,8 @@ public abstract class CryptoHelper {
      *         digital. */
     public abstract byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException;
 
-    /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con un
-     * salto de (IV) de 8 bytes a cero. Si se le indica una clave de 24 bytes,
+    /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con una
+     * semilla (IV) de 8 bytes establecidos a cero. Si se le indica una clave de 24 bytes,
      * la utilizar&aacute;a tal cual. Si se le indica una clave de 16 bytes,
      * duplicar&aacute; los 8 primeros y los agregar&aacute; al final para
      * obtener una de 24.
@@ -155,8 +155,8 @@ public abstract class CryptoHelper {
      *         encriptado. */
     public abstract byte[] desedeEncrypt(final byte[] data, final byte[] key) throws IOException;
 
-    /** Desencripta datos mediante Triple DES (modo CBC sin relleno) y con un
-     * salto de (IV) de 8 bytes a cero. Si se le indica una clave de 24 bytes,
+    /** Desencripta datos mediante Triple DES (modo CBC sin relleno) y con una
+     * semilla (IV) de 8 bytes establecidos a cero. Si se le indica una clave de 24 bytes,
      * la utilizar&aacute;a tal cual. Si se le indica una clave de 16 bytes,
      * duplicar&aacute; los 8 primeros y los agregar&aacute; al final para obtener una de 24.
      * @param data Datos a desencriptar.
@@ -189,7 +189,7 @@ public abstract class CryptoHelper {
      * @param key Clave AES de cifrado.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         encriptado. */
+     *                     encriptado. */
     public abstract byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException;
 
     /** Encripta datos mediante AES (modo CBC sin relleno).
@@ -199,7 +199,7 @@ public abstract class CryptoHelper {
      * @param key Clave AES de cifrado.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         encriptado. */
+     *                     encriptado. */
     public abstract byte[] aesEncrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException;
 
     /** Desencripta datos mediante RSA.
@@ -207,7 +207,7 @@ public abstract class CryptoHelper {
      * @param key Clava RSA de descifrado.
      * @return Datos descifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         desencriptado. */
+     *                     desencriptado. */
     public abstract byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException;
 
     /** Encripta datos mediante RSA.
@@ -215,17 +215,17 @@ public abstract class CryptoHelper {
      * @param key Clava RSA de cifrado.
      * @return Datos encriptados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         encriptado. */
+     *                     encriptado. */
     public abstract byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException;
 
-    /** Genera un certificado del tipo indicado a partir de su codificaci&oacute;n.
+    /** Genera un certificado X&#46;509 a partir de su codificaci&oacute;n.
      * @param encode Codificaci&oacute;n del certificado.
      * @return Certificado generado.
      * @throws CertificateException Si ocurre alg&uacute;n problema durante la
-     *         generaci&oacute;n. */
+     *                              generaci&oacute;n. */
     public abstract Certificate generateCertificate(byte[] encode) throws CertificateException;
 
-    /** Genera un aleatorio contenido en un array de bytes.
+    /** Genera contenido aleatorio en un array de bytes.
      * @param numBytes N&uacute;mero de bytes aleatorios que generar.
      * @return Array de bytes aleatorios.
      * @throws IOException Si ocurre alg&uacute;n problema durante la
@@ -235,21 +235,23 @@ public abstract class CryptoHelper {
 	/** Genera un par de claves de tipo curva el&iacute;ptica.
 	 * @param curveName Tipo de curva el&iacute;ptica a utilizar.
 	 * @return Par de claves generadas.
-	 * @throws NoSuchAlgorithmException Si el sistema no soporta la generaci&oacute;n de curvas el&iacute;pticas.
-	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva el&iacute;ptica indicada. */
+	 * @throws NoSuchAlgorithmException Si el sistema no soporta la generaci&oacute;n de
+	 *                                  curvas el&iacute;pticas.
+	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva
+	 *                                            el&iacute;ptica indicada. */
 	public abstract KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                          InvalidAlgorithmParameterException;
 
 	/** Realiza un CMAC con AES.
 	 * @param data Datos (deben estar ya con el relleno adecuado).
 	 * @param key Clave AES.
-	 * @return CMAC
+	 * @return CMAC.
 	 * @throws NoSuchAlgorithmException Si no se encuentra un proveedor que permita realizar
 	 *                                  CMAC con AES.
 	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
 	public abstract byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException, InvalidKeyException;
 
-	/** Realiza un acuerdo de claves Diffie Hellman con algoritmo de curva el&iacute;ptica.
+	/** Realiza un acuerdo de claves <i>Diffie Hellman</i> con algoritmo de curva el&iacute;ptica.
 	 * @param privateKey Clave privada.
 	 * @param publicKey Clave p&uacute;blica.
 	 * @param curveName Nombre de la curva a usar.
