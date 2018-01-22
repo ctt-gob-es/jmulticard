@@ -29,12 +29,13 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. 
+*/
 public final class PaceChannelHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	private static final byte[] CAN_PADDING = new byte[] {
+	private static final byte[] CAN_MRZ_PADDING = new byte[] {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
 	};
 
@@ -96,13 +97,6 @@ public final class PaceChannelHelper {
 			);
 		}
 
-		// Por ahora, solo CAN
-		if (!(pi instanceof PaceInitializerCan)) {
-			throw new UnsupportedOperationException(
-				"Solo se soporta inicializacion mediante CAN" //$NON-NLS-1$
-			);
-		}
-
 		if (!conn.isOpen()) {
 			conn.open();
 		}
@@ -115,7 +109,7 @@ public final class PaceChannelHelper {
 		comm = new MseSetPaceAlgorithmApduCommand(
 			cla,
 			MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128,
-			MseSetPaceAlgorithmApduCommand.PacePasswordType.CAN,
+			pi.getPasswordType(),
 			MseSetPaceAlgorithmApduCommand.PaceAlgorithmParam.BRAINPOOL_256_R1
 		);
 		res = conn.transmit(comm);
@@ -165,7 +159,7 @@ public final class PaceChannelHelper {
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						pi.getBytes(),
-						CAN_PADDING
+						CAN_MRZ_PADDING
 					)
 				),
 				0,

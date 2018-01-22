@@ -4,7 +4,8 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.iso7816four.MseSetAuthenticationTemplateApduCommand;
 
 /** APDU de establecmiiento de algoritmo para PACE.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. 
+*/
 public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplateApduCommand {
 
 	/** Par&aacute;metro para el algoritmo de establecimiento de canal PACE. */
@@ -35,6 +36,14 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 	/** Tipo de contrase&ntilde;a que se va a usar para establecer el canal PACE. */
 	public enum PacePasswordType {
 
+		/** MRZ <i>Machine-Readable Zone</i>. */
+		MRZ(
+			new byte[] {
+				/* T */ (byte) 0x83,
+				/* L */ (byte) 0x01,
+				/* V */ (byte) 0x01
+			}
+		),
 		/** CAN <i>Card Access Number</i>. */
 		CAN(
 			new byte[] {
