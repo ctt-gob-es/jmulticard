@@ -26,7 +26,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /** Data structure for storing the MRZ information
@@ -286,7 +285,7 @@ final class MrzInfo {
      * @return The resulting check digit (in '0' - '9', '&lt;'). */
     private static char checkDigit(final String str, final boolean preferFillerOverZero) {
         try {
-            final byte[] chars = str == null ? new byte[] { } : str.getBytes("UTF-8"); //$NON-NLS-1$
+            final byte[] chars = str == null ? new byte[] { } : str.getBytes(StandardCharsets.UTF_8);
             final int[] weights = { 7, 3, 1 };
             int result = 0;
             for (int i = 0; i < chars.length; i++) {
@@ -296,7 +295,7 @@ final class MrzInfo {
             if (checkDigitString.length() != 1) {
                 throw new IllegalStateException("Error in computing check digit."); /* NOTE: Never happens. */ //$NON-NLS-1$
             }
-            char checkDigit = (char)checkDigitString.getBytes("UTF-8")[0]; //$NON-NLS-1$
+            char checkDigit = (char)checkDigitString.getBytes(StandardCharsets.UTF_8)[0];
             if (preferFillerOverZero && checkDigit == '0') {
                 checkDigit = '<';
             }
@@ -305,10 +304,6 @@ final class MrzInfo {
         catch (final NumberFormatException nfe) {
             /* NOTE: never happens. */
             throw new IllegalStateException("Error in computing check digit", nfe); //$NON-NLS-1$
-        }
-        catch (final UnsupportedEncodingException usee) {
-            /* NOTE: never happens. */
-            throw new IllegalStateException("Error in computing check digit", usee); //$NON-NLS-1$
         }
         catch (final Exception e) {
             throw new IllegalArgumentException("Error in computing check digit", e); //$NON-NLS-1$
