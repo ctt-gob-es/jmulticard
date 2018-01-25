@@ -6,8 +6,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import java.lang.Character;
-
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -27,9 +25,8 @@ import es.gob.jmulticard.card.pace.PaceInitializerMrz;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Lectura de DNIe 3 a partir de un dispositivo con NFC.
- * @author Sergio Mart&iacute;nez Rico.
- * @author Ignacio Mar&iacute;n 
-*/
+ * @author Sergio Mart&iacute;nez Rico
+ * @author Ignacio Mar&iacute;n. */
 public final class DnieNFC extends Dnie3 {
 
 	// Se guarda el codigo CAN para establecer un canal PACE cada vez que se quiere
@@ -45,7 +42,8 @@ public final class DnieNFC extends Dnie3 {
 	}
 
 	private static ApduConnection paceConnection(final ApduConnection con,
-			                                     final CallbackHandler ch) throws ApduConnectionException, PaceException{
+			                                     final CallbackHandler ch) throws ApduConnectionException,
+	                                                                              PaceException {
 		// Primero obtenemos el CAN/MRZ
 		Callback tic = new CustomTextInputCallback();
 
@@ -54,6 +52,7 @@ public final class DnieNFC extends Dnie3 {
 		int counter = 0;
 		paceInitValue = null;
 		paceInitType = null;
+
 		while(wrongInit) {
 			//Pide el codigo can en caso de que no haya sido introducido con anterioridad
 			//El contador permite hacer dos verificaciones del can por si en la primera no se hubiera reseteado la tarjeta
@@ -69,24 +68,28 @@ public final class DnieNFC extends Dnie3 {
 					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
 				}
 				paceInitValue = ((CustomTextInputCallback)tic).getText();
-				//Se obtiene el tipo de inicializador analizando el valor introducido. 
+				//Se obtiene el tipo de inicializador analizando el valor introducido.
 				paceInitType = getPasswordType(paceInitValue);
-				
-				//Se decide el tipo de contraseña
 
-				if ((paceInitValue == null || paceInitValue.isEmpty()) || (paceInitType == null))  {
+				//Se decide el tipo de contrasena
+
+				if (paceInitValue == null || paceInitValue.isEmpty() || paceInitType == null)  {
 					throw new InvalidCanException("El CAN/MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
 				}
 			}
 			try {
-				PaceInitializer paceInitializer;
+				final PaceInitializer paceInitializer;
 				switch (paceInitType) {
 					case MRZ:
 						paceInitializer = PaceInitializerMrz.deriveMrz(paceInitValue);
 						break;
 					case CAN:
-					default:
 						paceInitializer = new PaceInitializerCan(paceInitValue);
+						break;
+					default:
+						throw new UnsupportedOperationException(
+							"Tipo de inicializador PACE no soportado: " + paceInitType //$NON-NLS-1$
+						);
 				}
 				sm = PaceChannelHelper.openPaceChannel(
 					(byte)0x00,
@@ -177,7 +180,6 @@ public final class DnieNFC extends Dnie3 {
     		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
     		                                                                 PinException {
     	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
-
     	try {
     		//Define el canal sin cifrar para resetearlo tras cada firma
     		setConnection(((Cwa14890Connection)getConnection()).getSubConnection());
@@ -201,33 +203,28 @@ public final class DnieNFC extends Dnie3 {
 			// Error al pasar de un canal cifrado a uno no cifrado. Se usa para reiniciar la tarjeta inteligente por NFC
 		}
 	}
-	
-	private static PacePasswordType getPasswordType(String paceInitValue){
-		PacePasswordType type = null;
-		if(isNumeric(paceInitValue) && paceInitValue.length() <= 6){
-			type = PacePasswordType.CAN;
-		}else{
-			type = PacePasswordType.MRZ;
+
+	private static PacePasswordType getPasswordType(final String paceInitializationValue){
+		if(isNumeric(paceInitializationValue) && paceInitializationValue.length() <= 6){
+			return PacePasswordType.CAN;
 		}
-		return type;
+		return PacePasswordType.MRZ;
 	}
-	
-	/**
-	 * Analiza el valor introducido y devuelve true si es un valor num&eacute;rico.
-	 *
-	 * @param cs
-	 * @return If cs is numeric or not.
-	 */
-	 private static  boolean isNumeric(final CharSequence cs) {
-	        if (cs == null || cs.length() == 0) {
-	            return false;
-	        }
-	        final int sz = cs.length();
-	        for (int i = 0; i < sz; i++) {
-	            if (!Character.isDigit(cs.charAt(i))) {
-	                return false;
-	            }
-	        }
-	        return true;
-	    }
+
+	/** Indica si un texto es num&eacute;rico.
+	 * @param cs Texto a analizar
+	 * @return <code>true</code> si el texto es num&eacute;rico,
+	 *         <code>false</code> en caso contrario. */
+	 private static boolean isNumeric(final CharSequence cs) {
+        if (cs == null || cs.length() == 0) {
+            return false;
+        }
+        final int sz = cs.length();
+        for (int i = 0; i < sz; i++) {
+            if (!Character.isDigit(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

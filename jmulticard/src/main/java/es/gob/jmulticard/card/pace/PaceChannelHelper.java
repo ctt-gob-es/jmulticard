@@ -29,8 +29,7 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. 
-*/
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PaceChannelHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$

@@ -4,8 +4,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.iso7816four.MseSetAuthenticationTemplateApduCommand;
 
 /** APDU de establecmiiento de algoritmo para PACE.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. 
-*/
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplateApduCommand {
 
 	/** Par&aacute;metro para el algoritmo de establecimiento de canal PACE. */
@@ -72,7 +71,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 		/** PACE-ECDH-GM-AES-CBC-CMAC-128. */
 		PACE_ECDH_GM_AES_CBC_CMAC128(
 			new byte[] {
-				/* T */ 
+				/* T */
 				/* L */ (byte) 0x0A,
 				/* V */ (byte) 0x04, (byte) 0x00, (byte) 0x7f, (byte) 0x00, (byte) 0x07,
 				        (byte) 0x02, (byte) 0x02, (byte) 0x04, (byte) 0x02, (byte) 0x02
