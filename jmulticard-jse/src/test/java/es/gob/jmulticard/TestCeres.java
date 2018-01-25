@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -55,6 +56,7 @@ public final class TestCeres {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testCeresUIPasswordCallbackSpecialCharsOnPin() throws Exception {
 		final Ceres ceres = new Ceres(
 			new SmartcardIoConnection(),

@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import javax.security.auth.callback.CallbackHandler;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
@@ -89,6 +90,7 @@ public final class TestJseProvider {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testGetCertificateChain() throws Exception {
 		final Provider p = new DnieProvider();
 		Security.addProvider(p);

@@ -2,6 +2,7 @@ package es.gob.jmulticard;
 
 import java.security.KeyStore;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
@@ -14,6 +15,7 @@ public final class TestKeyStoreBuilder {
 	 * @throws Exception En cualquier error.*/
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testKeyStoreBuilderCreation() throws Exception {
 		final KeyStore.Builder builder = KeyStore.Builder.newInstance(
 			"DNI", //$NON-NLS-1$

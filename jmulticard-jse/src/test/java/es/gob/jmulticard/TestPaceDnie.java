@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.PasswordCallback;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
@@ -83,6 +84,7 @@ public final class TestPaceDnie {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDhEc() throws Exception {
 		final byte[] prkIfcDh1 = new byte[] {
 			(byte)0x04,

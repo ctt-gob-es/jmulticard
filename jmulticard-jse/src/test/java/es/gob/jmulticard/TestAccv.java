@@ -2,6 +2,7 @@ package es.gob.jmulticard;
 
 import java.security.cert.X509Certificate;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.card.CryptoCard;
@@ -18,6 +19,7 @@ public final class TestAccv {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testReadCertificates() throws Exception {
 		final CryptoCard card = new SmartCafePkcs15Applet(
 			new SmartcardIoConnection(),
@@ -42,6 +44,7 @@ public final class TestAccv {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testVerifyPin() throws Exception {
 		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
 		final Iso7816FourCard card = new SmartCafePkcs15Applet(
@@ -55,6 +58,7 @@ public final class TestAccv {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testSign() throws Exception {
 		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
 		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(

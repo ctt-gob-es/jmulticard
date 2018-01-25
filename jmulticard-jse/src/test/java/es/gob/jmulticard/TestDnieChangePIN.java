@@ -2,6 +2,7 @@ package es.gob.jmulticard;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -29,13 +30,15 @@ public final class TestDnieChangePIN {
 	 * @param args No se usa.
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
-		TestDnieChangePIN.testChangePIN();
+		new TestDnieChangePIN().testChangePIN();
 	}
 
 	/** Test para probar el cambio de PIN tras la apertura del canal seguro.
 	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
 	@Test
-	public static void testChangePIN() throws Exception {
+	@Ignore
+	public void testChangePIN() throws Exception {
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
 		final ApduConnection ac = new SmartcardIoConnection();
 		final Dnie dni = DnieFactory.getDnie(ac , cpc, new JseCryptoHelper(), null);
