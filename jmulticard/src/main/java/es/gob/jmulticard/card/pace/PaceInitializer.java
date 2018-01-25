@@ -1,30 +1,24 @@
 package es.gob.jmulticard.card.pace;
 
+import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
+
 /** Valor de inicializaci&oacute;n de un canal PACE.
  * T&iacute;picamente un CAN o una MRZ.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ * @author Ignacio Mar&iacute;n 
+*/
+
 public abstract class PaceInitializer {
-
-	private final String value;
-
-	protected PaceInitializer(final String val) {
-		if (val == null || val.isEmpty()) {
-			throw new IllegalArgumentException(
-				"El valor no puede ser nulo ni vacio" //$NON-NLS-1$
-			);
-		}
-		this.value = val;
-	}
-
-	@Override
-	public String toString() {
-		return this.value;
-	}
 
 	/** Obtiene la codificaci&oacute;n binaria del valor con la codificaci&oacute;n por defecto.
 	 * @return Codificaci&oacute;n binaria del valor con la codificaci&oacute;n por defecto. */
-	public byte[] getBytes() {
-		return this.value.getBytes();
-	}
+	public abstract byte[] getBytes();
+	
+	
+	/**
+	 * Obtiene el tipo de contrase&ntilde;a asociada a esta inicializaci&oacute;n.
+	 * @return tipo de contrase&ntilde;a.
+	 */
+	public abstract PacePasswordType getPasswordType();
 
 }
