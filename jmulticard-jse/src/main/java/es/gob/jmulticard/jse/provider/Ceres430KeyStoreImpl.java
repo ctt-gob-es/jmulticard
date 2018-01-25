@@ -77,7 +77,7 @@ import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
-/** Implementaci&oacute;n del SPI KeyStore para tarjetas CERES 4.30 o superiores.
+/** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjetas CERES 4.30 o superiores.
  * Esta implementaci&oacute;n es una copia del de DNIe, ya que estas tarjetas son
  * iguales internamente que el DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -100,12 +100,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     @Override
     public boolean engineContainsAlias(final String alias) {
         return this.aliases.contains(alias);
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineDeleteEntry(final String alias) {
-        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -209,15 +203,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	}
 
     	return certs.toArray(new X509Certificate[0]);
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public Date engineGetCreationDate(final String alias) {
-    	LOGGER.warning(
-			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
-		);
-        return new Date();
     }
 
     /** {@inheritDoc} */
@@ -354,6 +339,54 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public int engineSize() {
+        return this.aliases.size();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
+        if (!engineContainsAlias(alias)) {
+            return false;
+        }
+        return entryClass.equals(PrivateKeyEntry.class);
+    }
+
+    /** <code>PasswordCallback</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
+     * construy&oacute; o la que se le establece posteriormente. */
+    private static final class CachePasswordCallback extends PasswordCallback {
+
+        private static final long serialVersionUID = 816457144215238935L;
+
+        /** Contruye una <code>Callback</code> con una contrase&ntilde;a preestablecida.
+         * @param password Contrase&ntilde;a por defecto. */
+        public CachePasswordCallback(final char[] password) {
+            super(">", false); //$NON-NLS-1$
+            setPassword(password);
+        }
+    }
+
+    // ******************************************
+    // ******* OPERACIONES NO SOPORTADAS ********
+    // ******************************************
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public Date engineGetCreationDate(final String alias) {
+    	LOGGER.warning(
+			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
+		);
+        return new Date();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineStore(final OutputStream os, final char[] pass) {
+        throw new UnsupportedOperationException();
+    }
+
     /** Operaci&oacute;n no soportada. */
     @Override
     public void engineSetCertificateEntry(final String alias, final Certificate cert) {
@@ -372,38 +405,10 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
         throw new UnsupportedOperationException();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public int engineSize() {
-        return this.aliases.size();
-    }
-
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineStore(final OutputStream os, final char[] pass) {
+    public void engineDeleteEntry(final String alias) {
         throw new UnsupportedOperationException();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
-        if (!engineContainsAlias(alias)) {
-            return false;
-        }
-        return entryClass.equals(PrivateKeyEntry.class);
-    }
-
-    /** PasswordCallback que almacena internamente y devuelve la contrase&ntilde;a con la que se
-     * construy&oacute; o la que se le establece posteriormente. */
-    private static final class CachePasswordCallback extends PasswordCallback {
-
-        private static final long serialVersionUID = 816457144215238935L;
-
-        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
-         * @param password Contrase&ntilde;a por defecto. */
-        public CachePasswordCallback(final char[] password) {
-            super(">", false); //$NON-NLS-1$
-            setPassword(password);
-        }
-    }
 }

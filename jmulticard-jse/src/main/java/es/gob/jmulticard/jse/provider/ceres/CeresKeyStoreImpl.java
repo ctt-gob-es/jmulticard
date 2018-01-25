@@ -60,12 +60,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         return userCertAliases.contains(alias);
     }
 
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineDeleteEntry(final String alias) {
-        throw new UnsupportedOperationException();
-    }
-
     /** {@inheritDoc} */
     @Override
     public Certificate engineGetCertificate(final String alias) {
@@ -101,12 +95,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 		return new X509Certificate[] {
 			(X509Certificate) engineGetCertificate(alias)
 		};
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public Date engineGetCreationDate(final String alias) {
-        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -219,34 +207,10 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         loadAliases();
     }
 
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineSetCertificateEntry(final String alias, final Certificate cert) {
-        throw new UnsupportedOperationException();
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineSetKeyEntry(final String alias, final byte[] key, final Certificate[] chain) {
-        throw new UnsupportedOperationException();
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineSetKeyEntry(final String alias, final Key key, final char[] pass, final Certificate[] chain) {
-        throw new UnsupportedOperationException();
-    }
-
     /** {@inheritDoc} */
     @Override
     public int engineSize() {
         return userCertAliases.size();
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineStore(final OutputStream os, final char[] pass) {
-        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -271,4 +235,48 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
             setPassword(password);
         }
     }
+
+    // ******************************************
+    // ******* OPERACIONES NO SOPORTADAS ********
+    // ******************************************
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineDeleteEntry(final String alias) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineStore(final OutputStream os, final char[] pass) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineSetCertificateEntry(final String alias, final Certificate cert) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineSetKeyEntry(final String alias, final byte[] key, final Certificate[] chain) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineSetKeyEntry(final String alias, final Key key, final char[] pass, final Certificate[] chain) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public Date engineGetCreationDate(final String alias) {
+    	Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
+		);
+        return new Date();
+    }
+
 }
