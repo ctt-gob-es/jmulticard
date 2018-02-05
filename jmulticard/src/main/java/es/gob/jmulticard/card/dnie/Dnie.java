@@ -92,7 +92,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.pace.PaceConnection;
 
 /** DNI Electr&oacute;nico.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 	private static final int DEFAULT_KEY_SIZE = 2048;
@@ -327,7 +327,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** Recupera el n&uacute;mero de serie de un DNIe.
      * @return Un array de bytes que contiene el n&uacute;mero de serie del DNIe.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla. */
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
+     *                                 cerrada y no es posible abrirla. */
     @Override
     public byte[] getSerialNumber() throws ApduConnectionException {
         final ResponseApdu response = getConnection().transmit(new GetChipInfoApduCommand());
@@ -712,7 +713,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
-                	"Error durante la operacion de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
+                	"Error durante la operacion de firma con respuesta: " + res.getStatusWord(), //$NON-NLS-1$
+                	res.getStatusWord()
                 );
             }
         }
@@ -876,11 +878,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	}
     }
 
-    /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados), abriendo el canal seguro de
-     * la tarjeta si fuese necesario, mediante el PIN de usuario.
-     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta
+    /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados),
+     * abriendo el canal seguro de la tarjeta si fuese necesario, mediante el PIN de usuario.
+     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
+     *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico.
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
     protected void loadCertificates() throws CryptoCardException, PinException {
     	// Abrimos el canal si es necesario
@@ -896,7 +898,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     protected boolean isSecurityChannelOpen() {
 	    //Devuelve true si el canal actual es de PIN o de usuario
-        return getConnection() instanceof Cwa14890Connection && getConnection().isOpen() && !(getConnection() instanceof PaceConnection);
+        return getConnection() instanceof Cwa14890Connection &&
+        		getConnection().isOpen() &&
+        			!(getConnection() instanceof PaceConnection);
     }
 
     @Override
@@ -929,10 +933,12 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		getInternalPasswordCallback()
             	);
             }
-            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 && verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
+            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&
+            		 verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
             	throw new AuthenticationModeLockedException();
             }
-            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x00 && verifyResponse.getStatusWord().getLsb() == (byte)0x00) {
+            else if (verifyResponse.getStatusWord().getMsb() == (byte)0x00 &&
+            		 verifyResponse.getStatusWord().getLsb() == (byte)0x00) {
             	throw new ApduConnectionException("Se ha perdido el canal NFC"); //$NON-NLS-1$
             }
             else {
@@ -955,8 +961,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	 * @param oldPin PIN actual.
 	 * @param newPin PIN nuevo.
 	 * @return APDU de respuesta de la operaci&oacute;n.
-	 * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
-	 * @throws PinException Si el PIN actual es incorrecto
+	 * @throws CryptoCardException Cuando se produce un error en el cambio de PIN.
+	 * @throws PinException Si el PIN actual es incorrecto.
 	 * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
 	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException,
 	                                                                         PinException,
@@ -1002,8 +1008,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		}
 	}
 
-    /** Asigna un CallbackHandler a la tarjeta.
-     * @param handler CallbackHandler a asignar. */
+    /** Asigna un <code>CallbackHandler</code> a la tarjeta.
+     * @param handler <code>CallbackHandler</code> a asignar. */
     public void setCallbackHandler(final CallbackHandler handler) {
     	this.callbackHandler = handler;
     }
