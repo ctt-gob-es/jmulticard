@@ -318,20 +318,35 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
             try {
                 selectMasterFile();
+
+                // En la ruta de la tarjeta pone 3FFF... en vez de 3F00, parece que el CDF es incorrecto
+                final byte[] certBytes = selectFileByLocationAndRead(
+            		new Location("3F00" + cdf.getCertificatePath(i).substring(4)) //$NON-NLS-1$
+        		);
+
+                if (certBytes.length < 1) {
+                	// A veces hay punteros que apuntan a localizaciones vacias
+                	LOGGER.warning(
+            			"El certificado " + i + " del dispositivo esta vacio" //$NON-NLS-1$ //$NON-NLS-2$
+        			);
+                	continue;
+                }
+
                 CERTS_BY_ALIAS.put(
                     cdf.getCertificateAlias(i),
                     (X509Certificate) cf.generateCertificate(
                         new ByteArrayInputStream(
-                    		// En la ruta de la tarjeta pone 3FFF... en vez de 3F00, parece que el CDF es incorrecto
-                            selectFileByLocationAndRead(new Location("3F00" + cdf.getCertificatePath(i).substring(4))) //$NON-NLS-1$
+                    		certBytes
                         )
                     )
                 );
             }
             catch (final CertificateException e) {
-                throw new IOException(
-            		"Error en la lectura del certificado " + i + " del dispositivo: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+            	// Puede darse el caso de que el puntero apunte a algo que no es un certificado
+                LOGGER.severe(
+            		"Error en la lectura del certificado " + i + " del dispositivo: " + e //$NON-NLS-1$ //$NON-NLS-2$
         		);
+                continue;
             }
         }
 
