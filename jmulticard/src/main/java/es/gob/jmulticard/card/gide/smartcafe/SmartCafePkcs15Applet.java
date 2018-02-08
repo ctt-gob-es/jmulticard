@@ -124,7 +124,25 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
      * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
      *                     pueden variar entre m&aacute;quinas virtuales.
      * @throws IOException Si hay errores de entrada / salida. */
-    public SmartCafePkcs15Applet(final ApduConnection conn, final CryptoHelper cryptoHelper) throws IOException {
+    public SmartCafePkcs15Applet(final ApduConnection conn,
+    		                     final CryptoHelper cryptoHelper) throws IOException {
+    	this(conn, cryptoHelper, true);
+    }
+
+    /** Construye un objeto que representa una tarjeta G&amp;D SmartCafe con el
+     * Applet PKCS#15 de AET.
+     * @param conn Conexi&oacute;n con la tarjeta.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
+     *                     pueden variar entre m&aacute;quinas virtuales.
+     * @param failIfNoCerts Si se establece a <code>true</code> y la tarjeta no
+     *                      contiene ningun par certificado + clave privada la
+     *                      inicializaci&oacute;n falla con un <code>IOException</code>,
+     *                      si se establece a <code>false</code>, la inicializaci&oacute;n
+     *                      se completa haya o no haya claves y certificados.
+     * @throws IOException Si hay errores de entrada / salida. */
+    public SmartCafePkcs15Applet(final ApduConnection conn,
+    		                     final CryptoHelper cryptoHelper,
+    		                     final boolean failIfNoCerts) throws IOException {
         super(CLA, conn);
 
         if (cryptoHelper == null) {
@@ -147,9 +165,9 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 
         // Cargamos los certificados
         try {
-            preloadCertificates();
-        }
-        catch (final Exception e) {
+			preloadCertificates();
+		}
+        catch (final Iso7816FourCardException | Asn1Exception | TlvException e) {
             throw new IOException(
         		"No se han podido leer los certificados: " + e, e //$NON-NLS-1$
     		);
@@ -209,8 +227,17 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         final Set<String> aliases = CERTS_BY_ALIAS.keySet();
         for (final String alias : aliases) {
         	if (!KEYNO_BY_ALIAS.containsKey(alias)) {
+        		LOGGER.info(
+    				"El certificado '" + alias + "' se descarta por carecer de clave privada" //$NON-NLS-1$ //$NON-NLS-2$
+				);
         		CERTS_BY_ALIAS.remove(alias);
         	}
+        }
+
+        if (aliases.isEmpty()) {
+        	throw new IOException(
+    			"La tarjeta no contiene claves" //$NON-NLS-1$
+			);
         }
     }
 
@@ -256,7 +283,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     }
 
     /** Establece el <code>CallbackHandler</code>.
-     * @param callh <code>CallbackHandler</code> a estabecer. */
+     * @param callh <code>CallbackHandler</code> a establecer. */
 	public void setCallbackHandler(final CallbackHandler callh) {
 		this.callbackHandler = callh;
 	}
@@ -341,7 +368,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
                     )
                 );
             }
-            catch (final CertificateException e) {
+            catch (final Exception e) {
             	// Puede darse el caso de que el puntero apunte a algo que no es un certificado
                 LOGGER.severe(
             		"Error en la lectura del certificado " + i + " del dispositivo: " + e //$NON-NLS-1$ //$NON-NLS-2$
@@ -453,7 +480,8 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     @Override
     public byte[] sign(final byte[] data,
     		           final String algorithm,
-    		           final PrivateKeyReference keyRef) throws CryptoCardException, PinException {
+    		           final PrivateKeyReference keyRef) throws CryptoCardException,
+                                                                PinException {
 		if (data == null) {
 			throw new CryptoCardException("Los datos a firmar no pueden ser nulos"); //$NON-NLS-1$
 		}
