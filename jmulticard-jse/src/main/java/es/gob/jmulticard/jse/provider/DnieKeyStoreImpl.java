@@ -78,7 +78,7 @@ import es.gob.jmulticard.card.dnie.Dnie3Dg01Mrz;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 
-/** Implementaci&oacute;n del SPI KeyStore para DNIe.
+/** Implementaci&oacute;n del SPI <code>KeyStore</code> para DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
@@ -112,12 +112,6 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     @Override
     public boolean engineContainsAlias(final String alias) {
         return this.aliases.contains(alias);
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineDeleteEntry(final String alias) {
-        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -223,15 +217,6 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	return certs.toArray(new X509Certificate[0]);
     }
 
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public Date engineGetCreationDate(final String alias) {
-    	LOGGER.warning(
-			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
-		);
-        return new Date();
-    }
-
     /** {@inheritDoc} */
     @Override
     public Key engineGetKey(final String alias, final char[] password) {
@@ -271,7 +256,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
     	else {
     		LOGGER.warning(
-   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + (protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + //$NON-NLS-1$
+					(protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$
 			);
     	}
     	if (!engineContainsAlias(alias)) {
@@ -323,7 +309,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		}
     		else {
     			LOGGER.warning(
-	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + //$NON-NLS-1$
+   						(pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$
 				);
     		}
     	}
@@ -366,6 +353,44 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public int engineSize() {
+        return this.aliases.size();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
+        if (!engineContainsAlias(alias)) {
+            return false;
+        }
+        return entryClass.equals(PrivateKeyEntry.class);
+    }
+
+    /** <code>PasswordCallback</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
+     * construy&oacute; o la que se le establece posteriormente. */
+    private static final class CachePasswordCallback extends PasswordCallback {
+
+        private static final long serialVersionUID = 816457144215238935L;
+
+        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
+         * @param password Contrase&ntilde;a por defecto. */
+        public CachePasswordCallback(final char[] password) {
+            super(">", false); //$NON-NLS-1$
+            setPassword(password);
+        }
+    }
+
+    //***************************************************************************************
+    //*************** OPERACIONES NO SOPORTADAS *********************************************
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineStore(final OutputStream os, final char[] pass) {
+        throw new UnsupportedOperationException();
+    }
+
     /** Operaci&oacute;n no soportada. */
     @Override
     public void engineSetCertificateEntry(final String alias, final Certificate cert) {
@@ -384,38 +409,19 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         throw new UnsupportedOperationException();
     }
 
-    /** {@inheritDoc} */
+    /** Operaci&oacute;n no soportada. */
     @Override
-    public int engineSize() {
-        return this.aliases.size();
+    public void engineDeleteEntry(final String alias) {
+        throw new UnsupportedOperationException();
     }
 
     /** Operaci&oacute;n no soportada. */
     @Override
-    public void engineStore(final OutputStream os, final char[] pass) {
-        throw new UnsupportedOperationException();
+    public Date engineGetCreationDate(final String alias) {
+    	LOGGER.warning(
+			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
+		);
+        return new Date();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
-        if (!engineContainsAlias(alias)) {
-            return false;
-        }
-        return entryClass.equals(PrivateKeyEntry.class);
-    }
-
-    /** PasswordCallback que almacena internamente y devuelve la contrase&ntilde;a con la que se
-     * construy&oacute; o la que se le establece posteriormente. */
-    private static final class CachePasswordCallback extends PasswordCallback {
-
-        private static final long serialVersionUID = 816457144215238935L;
-
-        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
-         * @param password Contrase&ntilde;a por defecto. */
-        public CachePasswordCallback(final char[] password) {
-            super(">", false); //$NON-NLS-1$
-            setPassword(password);
-        }
-    }
 }

@@ -244,7 +244,8 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	}
     	else {
     		LOGGER.warning(
-   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + (protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+   				"Se ha proporcionado un ProtectionParameter de tipo no soportado, se ignorara: " + //$NON-NLS-1$
+					(protParam != null ? protParam.getClass().getName() : "NULO") //$NON-NLS-1$
 			);
     	}
     	if (!engineContainsAlias(alias)) {

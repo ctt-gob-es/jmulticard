@@ -41,6 +41,7 @@ package es.gob.jmulticard.apdu.gide;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
@@ -54,12 +55,12 @@ public final class VerifyApduCommand extends CommandApdu {
      * @param pinPc Pin de la tarjeta inteligente. */
     public VerifyApduCommand(final PasswordCallback pinPc) {
         super(
-    		CLA,							// CLA
-    		VerifyApduCommand.INS_VERIFY, 	// INS
-    		(byte)0x00, 					// P1
-    		(byte)0x02,	// 02=PIN, 01=PUK	// P2
-    		charArrayToByteArray(pinPc),	// Data
-    		null							// Le
+    		CLA,                          // CLA
+    		VerifyApduCommand.INS_VERIFY, // INS
+    		(byte)0x00, 				  // P1
+    		(byte)0x02,	// 02=PIN, 01=PUK // P2
+    		getPin(pinPc),	              // Data
+    		null						  // Le
 		);
         if (pinPc == null) {
         	throw new IllegalArgumentException(
@@ -68,21 +69,14 @@ public final class VerifyApduCommand extends CommandApdu {
         }
     }
 
-    private static byte[] charArrayToByteArray(final PasswordCallback pinPc) {
+    private static byte[] getPin(final PasswordCallback pinPc) {
     	if (pinPc == null) {
     		throw new IllegalArgumentException(
 				"El PasswordCallback del PIN no puede ser nulo" //$NON-NLS-1$
 			);
     	}
     	final char[] in = pinPc.getPassword();
-    	if (in == null) {
-    		return new byte[0];
-    	}
-    	final byte[] ret = new byte[in.length];
-    	for (int i=0; i<in.length; i++) {
-    		ret[i] = (byte) in[i];
-    	}
-    	return ret;
+    	return HexUtils.charArrayToByteArray(in);
     }
 
 }

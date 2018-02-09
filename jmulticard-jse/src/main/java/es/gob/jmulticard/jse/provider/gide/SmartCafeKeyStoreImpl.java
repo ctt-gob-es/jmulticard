@@ -90,12 +90,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return this.aliases.contains(alias);
     }
 
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineDeleteEntry(final String alias) {
-        throw new UnsupportedOperationException();
-    }
-
     /** {@inheritDoc} */
     @Override
     public Certificate engineGetCertificate(final String alias) {
@@ -127,15 +121,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 			"El proveedor no soporta la formacion de cadenas de certificados, se devolvera solo el certificado final" //$NON-NLS-1$
 		);
     	return new Certificate[] { engineGetCertificate(alias) };
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public Date engineGetCreationDate(final String alias) {
-    	LOGGER.warning(
-			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
-		);
-        return new Date();
     }
 
     /** {@inheritDoc} */
@@ -205,34 +190,10 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return this.aliases.contains(alias);
     }
 
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineSetCertificateEntry(final String alias, final Certificate cert) {
-        throw new UnsupportedOperationException();
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineSetKeyEntry(final String alias, final byte[] key, final Certificate[] chain) {
-        throw new UnsupportedOperationException();
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineSetKeyEntry(final String alias, final Key key, final char[] pass, final Certificate[] chain) {
-        throw new UnsupportedOperationException();
-    }
-
     /** {@inheritDoc} */
     @Override
     public int engineSize() {
         return this.aliases.size();
-    }
-
-    /** Operaci&oacute;n no soportada. */
-    @Override
-    public void engineStore(final OutputStream os, final char[] pass) {
-        throw new UnsupportedOperationException();
     }
 
     /** {@inheritDoc} */
@@ -296,6 +257,48 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     		}
     	}
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+    }
+
+    //***********************************************************************
+    //********* OPERACIONES NO SOPORTADAS ***********************************
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineSetCertificateEntry(final String alias, final Certificate cert) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineSetKeyEntry(final String alias, final byte[] key, final Certificate[] chain) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineSetKeyEntry(final String alias, final Key key, final char[] pass, final Certificate[] chain) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineStore(final OutputStream os, final char[] pass) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public void engineDeleteEntry(final String alias) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** Operaci&oacute;n no soportada. */
+    @Override
+    public Date engineGetCreationDate(final String alias) {
+    	LOGGER.warning(
+			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
+		);
+        return new Date();
     }
 
 }

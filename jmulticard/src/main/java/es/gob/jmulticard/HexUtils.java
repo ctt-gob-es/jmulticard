@@ -42,12 +42,15 @@ package es.gob.jmulticard;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.logging.Logger;
 
 /** Utilidades varias de tratamiento de datos binarios y hexadecimales.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez
- * @author Carlos Gamuci */
+ * @author Carlos Gamuci. */
 public final class HexUtils {
+
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector. Para
      * ser usado en <code>hexify()</code>. */
@@ -59,22 +62,22 @@ public final class HexUtils {
         /* Constructor privado. No se permite instanciacion en una clase de utilidades. */
     }
 
-    /** Comprueba si dos arrays de octetos son iguales.
-     * @param v Primer array de octetos.
-     * @param w Segundo array de octetos.
-     * @return <code>true</code> si los arrays son iguales, <code>false</code> en caso contrario. */
+    /** Comprueba si dos <i>arrays</i> de octetos son iguales.
+     * @param v Primer <i>array</i> de octetos.
+     * @param w Segundo <i>array</i> de octetos.
+     * @return <code>true</code> si los <i>arrays</i> son iguales, <code>false</code> en caso contrario. */
     public static boolean arrayEquals(final byte[] v, final byte[] w) {
         return HexUtils.arrayEquals(v, 0, v.length, w, 0, w.length);
     }
 
-    /** Comprueba si dos arrays de octetos son iguales.
-     * @param v Primer array de octetos.
-     * @param vOffset Desplazamiento (<i>offset</i>) de inicio para el primer array.
-     * @param vLen Longitud de los datos en el primer array.
-     * @param w Segundo array de octetos.
-     * @param wOffset Desplazamiento (<i>offset</i>) de inicio para el segundo array.
-     * @param wLen Longitud de los datos en el segundo array.
-     * @return <code>true</code> si los arrays son iguales en longitudes y valores comparados desde
+    /** Comprueba si dos <i>arrays</i> de octetos son iguales.
+     * @param v Primer <i>array</i> de octetos.
+     * @param vOffset Desplazamiento (<i>offset</i>) de inicio para el primer <i>array</i>.
+     * @param vLen Longitud de los datos en el primer <i>array</i>.
+     * @param w Segundo <i>array</i> de octetos.
+     * @param wOffset Desplazamiento (<i>offset</i>) de inicio para el segundo <i>array</i>.
+     * @param wLen Longitud de los datos en el segundo <i>array</i>.
+     * @return <code>true</code> si los <i>arrays</i> son iguales en longitudes y valores comparados desde
      *         los respectivos desplazamientos, <code>false</code> en caso contrario. */
     public static boolean arrayEquals(final byte[] v, final int vOffset, final int vLen, final byte[] w, final int wOffset, final int wLen) {
         if (vLen != wLen || v.length < vOffset + vLen || w.length < wOffset + wLen) {
@@ -89,16 +92,16 @@ public final class HexUtils {
         return true;
     }
 
-    /** Obtiene un <code>short</code> a partir de un array de octetos.
-     * @param data Array de octetos.
+    /** Obtiene un <code>short</code> a partir de un <i>array</i> de octetos.
+     * @param data <i>Array</i> de octetos.
      * @param offset Desplazamiento (<i>offset</i>) hasta el inicio de los datos a tratar.
      * @return Valor <code>short</code>. */
     public static short getShort(final byte[] data, final int offset) {
         return (short) HexUtils.getUnsignedInt(data, offset);
     }
 
-    /** Obtiene un entero sin signo (doble octeto) a partir de un array de octetos.
-     * @param data Array de octetos.
+    /** Obtiene un entero sin signo (doble octeto) a partir de un <i>array</i> de octetos.
+     * @param data <i>Array</i> de octetos.
      * @param offset Desplazamiento (<i>offset</i>) hasta el inicio de los datos a tratar.
      * @return Valor entero sin signo (<i>2-byte unsigned int</i>). */
     public static int getUnsignedInt(final byte[] data, final int offset) {
@@ -106,10 +109,10 @@ public final class HexUtils {
     }
 
 
-    /** Convierte un vector de octetos en una cadena de caracteres que contiene la
+    /** Convierte un vector de octetos en una cadena de caracteres que contiene su
      * representaci&oacute;n hexadecimal. Copiado directamente de <a href="http://www.openscdp.org/ocf/api/opencard/core/util/HexString.html">
      * <code>opencard.core.util.HexString</code></a>.
-     * @param abyte Array de octetos que deseamos representar textualmente.
+     * @param abyte <i>Array</i> de octetos que deseamos representar textualmente.
      * @param separator Indica si han de separarse o no los octetos con un gui&oacute;n y en
      *        l&iacute;neas de 16.
      * @return Representaci&oacute;n textual del vector de octetos de entrada. */
@@ -135,11 +138,11 @@ public final class HexUtils {
         return stringbuffer.toString();
     }
 
-    /** Devuelve una porci&oacute;n del array especificado.
-     * @param src Array de octetos original.
-     * @param srcPos Posici&oacute;n de origen de la porci&oacute;n del array de octetos a obtener.
+    /** Devuelve una porci&oacute;n del <i>array</i> especificado.
+     * @param src <i>Array</i> de octetos original.
+     * @param srcPos Posici&oacute;n de origen de la porci&oacute;n del <i>array</i> de octetos a obtener.
      * @param length N&uacute;mero de octetos de la porci&oacute;n a obtener.
-     * @return Una porci&oacute;n del array especificado. */
+     * @return Una porci&oacute;n del <i>array</i> especificado. */
     public static byte[] subArray(final byte[] src, final int srcPos, final int length) {
         if (length == 0) {
             return null;
@@ -152,12 +155,12 @@ public final class HexUtils {
         return temp;
     }
 
-    /** Realiza la operacion XOR entre dos array de bytes. El resultado se recortar&aacute; para
-     * ser del tama&ntilde;o del primer array recibido tomando los bytes menos significativos
+    /** Realiza la operacion XOR entre dos <i>array</i> de octetos. El resultado se recortar&aacute; para
+     * ser del tama&ntilde;o del primer <i>array</i> recibido tomando los octetos menos significativos
      * del resultado.
-     * @param v Primer array de bytes.
-     * @param w Segundo array de bytes.
-     * @return Resultado del XOR de los arrays de entrada. */
+     * @param v Primer <i>array</i> de bytes.
+     * @param w Segundo <i>array</i> de bytes.
+     * @return Resultado del XOR de los <i>arrays</i> de entrada. */
     public static byte[] xor(final byte[] v, final byte[] w) {
 
         byte[] xored = null;
@@ -173,10 +176,10 @@ public final class HexUtils {
         return trimmedXor;
     }
 
-    /** Convierte un entero a un array de bytes de 4 posiciones, ordenado de
+    /** Convierte un entero a un <i>array</i> de octetos de 4 posiciones, ordenado de
      * izquierda a derecha.
      * @param value Entero a convertir.
-     * @return Array de octetos resultante. */
+     * @return <i>Array</i> de octetos resultante. */
     public static byte[] intToByteArray(final int value) {
         final byte[] b = new byte[4];
         for (int i = 0; i < 4; i++) {
@@ -186,9 +189,9 @@ public final class HexUtils {
         return b;
     }
 
-	/** Concatena arrays de octetos.
-	 * @param arrays Arrays de octetos a concatenar, en el orden de concatenaci&oacute;n.
-	 * @return Arrays concatenados. */
+	/** Concatena <i>arrays</i> de octetos.
+	 * @param arrays <i>Arrays</i> de octetos a concatenar, en el orden de concatenaci&oacute;n.
+	 * @return <i>Arrays</i> concatenados. */
 	public static byte[] concatenateByteArrays(final byte[]... arrays) {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		for (final byte[] array : arrays) {
@@ -203,5 +206,29 @@ public final class HexUtils {
 		}
 		return baos.toByteArray();
 	}
+
+    /** Convierte un <i>array</i> de caracteres en otro de octetos.
+     * @param in El <i>array</i> de <code>char</code> de entrada.
+     * @return <i>Array</i> de <code>byte</code> correspondiente al
+     *         <i>array</i> de <code>char</code> de entrada. */
+    public static byte[] charArrayToByteArray(final char[] in) {
+    	if (in == null) {
+    		LOGGER.warning(
+				"Se ha pedido convertir un array de caracteres nulo, se devolvera otro vacio de octetos" //$NON-NLS-1$
+			);
+    		return new byte[0];
+    	}
+    	if (in.length < 1) {
+    		LOGGER.warning(
+				"El array de caracteres proporcionado esta vacio, se devolvera otro vacio de octetos" //$NON-NLS-1$
+			);
+    		return new byte[0];
+    	}
+    	final byte[] ret = new byte[in.length];
+    	for (int i=0; i<in.length; i++) {
+    		ret[i] = (byte) in[i];
+    	}
+    	return ret;
+    }
 
 }
