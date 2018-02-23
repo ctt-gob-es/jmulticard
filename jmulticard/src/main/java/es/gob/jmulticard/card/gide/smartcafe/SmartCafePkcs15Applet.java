@@ -344,14 +344,26 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         }
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
             try {
-                selectMasterFile();
+            	int fileLength = -1;
+            	Location certLocation = new Location(cdf.getCertificatePath(i));
+                while (certLocation != null) {
+                    final byte[] id = certLocation.getFile();
+                    try {
+                    	fileLength = selectFileById(id);
+                    }
+                    catch(final FileNotFoundException e) {
+                    	System.out.println(
+                			"El CDF indicaba un certificado en la ruta '" + certLocation + "', pero un elemento de esta no existe, se ignorara: " + e //$NON-NLS-1$//$NON-NLS-2$
+            			);
+                    }
+                    certLocation = certLocation.getChild();
+                }
 
-                // En la ruta de la tarjeta pone 3FFF... en vez de 3F00, parece que el CDF es incorrecto
-                final byte[] certBytes = selectFileByLocationAndRead(
-            		new Location("3F00" + cdf.getCertificatePath(i).substring(4)) //$NON-NLS-1$
-        		);
-
-                if (certBytes.length < 1) {
+                final byte[] certBytes;
+                if (fileLength > 0) {
+                	certBytes = readBinaryComplete(fileLength);
+                }
+                else {
                 	// A veces hay punteros que apuntan a localizaciones vacias
                 	LOGGER.warning(
             			"El certificado " + i + " del dispositivo esta vacio" //$NON-NLS-1$ //$NON-NLS-2$
@@ -427,7 +439,13 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         }
         final SelectFileApduResponse response = new SelectFileApduResponse(res);
         if (response.isOk()) {
-            return response.getData()[4] << 8 + response.getData()[5];
+        	return HexUtils.getUnsignedInt(
+    			new byte[] {
+					response.getData()[4],
+					response.getData()[5]
+				},
+    			0 // Offset
+			);
         }
         final StatusWord sw = response.getStatusWord();
         if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
