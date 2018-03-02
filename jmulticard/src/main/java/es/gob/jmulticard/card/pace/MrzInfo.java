@@ -114,6 +114,9 @@ final class MrzInfo {
 
             /* line 2, pos 1 to 6, Date of birth */
             this.dateOfBirth = readDateOfBirth(dataIn);
+			
+			/*Date of birth check digit */
+			dataIn.readUnsignedByte();
 
             /* line 2, pos 8, Sex */
             readGender(dataIn);
@@ -135,6 +138,7 @@ final class MrzInfo {
             this.documentNumberCheckDigit = (char)dataIn.readUnsignedByte();
             readCountry(dataIn);
             this.dateOfBirth = readDateOfBirth(dataIn);
+			dataIn.readUnsignedByte();
             readGender(dataIn);
             this.dateOfExpiry = readDateOfExpiry(dataIn);
         }
