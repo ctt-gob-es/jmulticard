@@ -33,12 +33,19 @@ public final class DnieNFC extends Dnie3 {
 	// realizar una operacion de firma
 	private static PacePasswordType paceInitType;
 	private static String paceInitValue;
+	
+	DnieNFC(final ApduConnection conn,
+			final PasswordCallback pwc,
+			final CryptoHelper cryptoHelper,
+			final CallbackHandler ch, final boolean loadCertsAndKeys) throws PaceException, ApduConnectionException {
+		super(paceConnection(conn, ch), pwc, cryptoHelper, ch, loadCertsAndKeys);
+	}
 
 	DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch) throws PaceException, ApduConnectionException {
-		super(paceConnection(conn, ch), pwc, cryptoHelper, ch,false);
+		this(paceConnection(conn, ch), pwc, cryptoHelper, ch,true);
 	}
 
 	private static ApduConnection paceConnection(final ApduConnection con,
