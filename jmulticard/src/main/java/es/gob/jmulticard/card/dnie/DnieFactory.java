@@ -48,6 +48,15 @@ public final class DnieFactory {
 	private DnieFactory() {
 		// No instanciable
 	}
+	
+	public static Dnie getDnie(final ApduConnection conn,
+            final PasswordCallback pwc,
+            final CryptoHelper cryptoHelper,
+            final CallbackHandler ch) throws InvalidCardException,
+							                    BurnedDnieCardException,
+							                    ApduConnectionException {
+		return getDnie(conn,pwc,cryptoHelper,ch,true);
+	}
 
 	/** Obtiene la clase de DNIe apropiada (seg&uacute;n su ATR).
 	 * @param conn Conexi&oacute;n con el lector de tarjetas.
@@ -62,7 +71,7 @@ public final class DnieFactory {
 	public static Dnie getDnie(final ApduConnection conn,
 			                   final PasswordCallback pwc,
 			                   final CryptoHelper cryptoHelper,
-			                   final CallbackHandler ch) throws InvalidCardException,
+			                   final CallbackHandler ch, final boolean loadCertsAndKeys) throws InvalidCardException,
 											                    BurnedDnieCardException,
 											                    ApduConnectionException {
 		if (conn == null) {
@@ -93,7 +102,7 @@ public final class DnieFactory {
 			if(ATR_NFC.equals(actualAtr)) {
 				try {
 					LOGGER.info("Detectado DNIe 3.0 por NFC"); //$NON-NLS-1$
-					return new DnieNFC(conn, pwc, cryptoHelper, ch);
+					return new DnieNFC(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
 				catch (final PaceException e) {
 					throw new ApduConnectionException(
@@ -104,10 +113,10 @@ public final class DnieFactory {
 			else if (ATR.equals(actualAtr)) {
 				if (actualAtrBytes[15] == 0x04) {
 					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
-					return new Dnie3(conn, pwc, cryptoHelper, ch);
+					return new Dnie3(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
 				LOGGER.info("Detectado DNIe 2.0"); //$NON-NLS-1$
-				return new Dnie(conn, pwc, cryptoHelper, ch);
+				return new Dnie(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 			}
 			else if (ATR_TIF.equals(actualAtr)) {
 				LOGGER.info("Detectada tarjeta TIF"); //$NON-NLS-1$
