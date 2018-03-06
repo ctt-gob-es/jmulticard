@@ -38,12 +38,12 @@ public final class DnieNFC extends Dnie3 {
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch) throws PaceException, ApduConnectionException {
-		super(paceConnection(conn, ch), pwc, cryptoHelper, ch,false);
+		super(getPaceConnection(conn, ch), pwc, cryptoHelper, ch,false);
 	}
 
-	private static ApduConnection paceConnection(final ApduConnection con,
-			                                     final CallbackHandler ch) throws ApduConnectionException,
-	                                                                              PaceException {
+	private static ApduConnection getPaceConnection(final ApduConnection con,
+			                                        final CallbackHandler ch) throws ApduConnectionException,
+	                                                                                 PaceException {
 		// Primero obtenemos el CAN/MRZ
 		Callback tic = new CustomTextInputCallback();
 
@@ -122,9 +122,9 @@ public final class DnieNFC extends Dnie3 {
 
 	}
 
-	private static ApduConnection paceConnection(final ApduConnection con) throws ApduConnectionException,
-	                                                                       PaceException {
-		PaceInitializer paceInitializer;
+	private static ApduConnection getPaceConnection(final ApduConnection con) throws ApduConnectionException,
+	                                                                                 PaceException {
+		final PaceInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
 				paceInitializer = PaceInitializerMrz.deriveMrz(paceInitValue);
@@ -156,7 +156,7 @@ public final class DnieNFC extends Dnie3 {
 																PinException {
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
-				this.rawConnection = paceConnection(getConnection());
+				this.rawConnection = getPaceConnection(getConnection());
 			}
 			catch (final ApduConnectionException e) {
 				throw new CryptoCardException(
@@ -191,7 +191,6 @@ public final class DnieNFC extends Dnie3 {
 				"Fallo en el reinicio del canal seguro: " + e //$NON-NLS-1$
 			);
 		}
-
     	return ret;
     }
 
