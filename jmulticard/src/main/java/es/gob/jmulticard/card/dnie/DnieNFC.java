@@ -38,7 +38,22 @@ public final class DnieNFC extends Dnie3 {
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch) throws PaceException, ApduConnectionException {
-		super(getPaceConnection(conn, ch), pwc, cryptoHelper, ch,false);
+		this(getPaceConnection(conn, ch), pwc, cryptoHelper, ch, true);
+	}
+
+	DnieNFC(final ApduConnection conn,
+			final PasswordCallback pwc,
+			final CryptoHelper cryptoHelper,
+			final CallbackHandler ch,
+			final boolean loadCertsAndKeys) throws PaceException,
+	                                               ApduConnectionException {
+		super(
+			getPaceConnection(conn, ch),
+			pwc,
+			cryptoHelper,
+			ch,
+			loadCertsAndKeys
+		);
 	}
 
 	private static ApduConnection getPaceConnection(final ApduConnection con,
