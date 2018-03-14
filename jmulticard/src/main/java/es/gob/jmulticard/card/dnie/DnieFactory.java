@@ -65,6 +65,31 @@ public final class DnieFactory {
 			                   final CallbackHandler ch) throws InvalidCardException,
 											                    BurnedDnieCardException,
 											                    ApduConnectionException {
+		return getDnie(conn, pwc, cryptoHelper, ch, true);
+	}
+
+	/** Obtiene la clase de DNIe apropiada (seg&uacute;n su ATR).
+	 * @param conn Conexi&oacute;n con el lector de tarjetas.
+	 * @param pwc <i>PasswordCallback</i> para la obtenci&oacute;n del PIN.
+	 * @param cryptoHelper Clase de apoyo para operaciones criptogr&aacute;ficas.
+	 * @param ch Gestor de <i>callbacks</i> para la obtenci&oacute;n de datos adicionales por parte
+	 *           del titular del DNIe.
+	 * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
+     *                         las claves privadas y a los certificados, mientras que si se
+     *                         indica <code>false</code>, no se cargan, permitiendo la
+     *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
+     *                         autenticaci&oacute;n con certificados.
+	 * @return Clase de DNIe apropiada (seg&uacute;n su ATR).
+	 * @throws InvalidCardException Si se ha detectado al menos una tarjeta, pero no es un DNIe.
+	 * @throws BurnedDnieCardException Si se ha detectado un DNIe con su memoria vol&aacute;til borrada.
+	 * @throws ApduConnectionException Si no se puede conectar con el lector de tarjetas. */
+	public static Dnie getDnie(final ApduConnection conn,
+			                   final PasswordCallback pwc,
+			                   final CryptoHelper cryptoHelper,
+			                   final CallbackHandler ch,
+			              	   final boolean loadCertsAndKeys) throws InvalidCardException,
+											                          BurnedDnieCardException,
+											                          ApduConnectionException {
 		if (conn == null) {
 			throw new IllegalArgumentException(
 				"La conexion no puede ser nula" //$NON-NLS-1$
@@ -93,7 +118,7 @@ public final class DnieFactory {
 			if(ATR_NFC.equals(actualAtr)) {
 				try {
 					LOGGER.info("Detectado DNIe 3.0 por NFC"); //$NON-NLS-1$
-					return new DnieNFC(conn, pwc, cryptoHelper, ch);
+					return new DnieNFC(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
 				catch (final PaceException e) {
 					throw new ApduConnectionException(
@@ -104,13 +129,15 @@ public final class DnieFactory {
 			else if (ATR.equals(actualAtr)) {
 				if (actualAtrBytes[15] == 0x04) {
 					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
-					return new Dnie3(conn, pwc, cryptoHelper, ch);
+					return new Dnie3(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
 				LOGGER.info("Detectado DNIe 2.0"); //$NON-NLS-1$
-				return new Dnie(conn, pwc, cryptoHelper, ch);
+				return new Dnie(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 			}
 			else if (ATR_TIF.equals(actualAtr)) {
 				LOGGER.info("Detectada tarjeta TIF"); //$NON-NLS-1$
+				// Las tarjetas TIF siempre se instancian con precarga de claves y certificados
+				// (no se aplica el parametro 'loadCertsAndKeys')
 				return new Tif(conn, pwc, cryptoHelper, ch);
 			}
 			else {
