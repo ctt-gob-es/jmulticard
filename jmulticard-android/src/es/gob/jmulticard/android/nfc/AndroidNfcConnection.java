@@ -35,6 +35,11 @@ public final class AndroidNfcConnection implements ApduConnection {
         this.mIsoDep = IsoDep.get(tag);
         this.mIsoDep.connect();
         this.mIsoDep.setTimeout(ISODEP_TIMEOUT);
+
+        // Retenemos la conexion hasta nuestro siguiente envio
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
+            NFCWatchdogRefresher.holdConnection(this.mIsoDep);
+        }
     }
 
     @Override
@@ -167,6 +172,13 @@ public final class AndroidNfcConnection implements ApduConnection {
         // Liberamos la conexion para transmitir
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             NFCWatchdogRefresher.stopHoldingConnection();
+        }
+        try{
+        	this.mIsoDep.close();
+        }catch(IOException ioe){
+        	throw new ApduConnectionException(
+                    "Error indefinido cerrando la conexion con la tarjeta" //$NON-NLS-1$
+            );
         }
     }
 
