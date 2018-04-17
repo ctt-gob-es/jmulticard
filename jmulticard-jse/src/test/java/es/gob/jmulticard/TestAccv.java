@@ -15,6 +15,10 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestAccv {
 
+	private static final char[] PIN = "11111111".toCharArray(); //$NON-NLS-1$
+	//private static final char[] PIN = "96824042".toCharArray(); //$NON-NLS-1$
+	//private static final char[] PIN = "77772916".toCharArray(); //$NON-NLS-1$
+
 	/** Prueba de lectura de certificados.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
@@ -46,12 +50,11 @@ public final class TestAccv {
 	@Test
 	@Ignore
 	public void testVerifyPin() throws Exception {
-		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
 		final Iso7816FourCard card = new SmartCafePkcs15Applet(
 			new SmartcardIoConnection(),
 			new JseCryptoHelper()
 		);
-		card.verifyPin(new CachePasswordCallback(pin));
+		card.verifyPin(new CachePasswordCallback(PIN));
 	}
 
 	/** Prueba de firma.
@@ -60,12 +63,11 @@ public final class TestAccv {
 	@Test
 	@Ignore
 	public void testSign() throws Exception {
-		final char[] pin = "11111111".toCharArray(); //$NON-NLS-1$
 		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
 			new SmartcardIoConnection(),
 			new JseCryptoHelper()
 		);
-		card.setPasswordCallback(new CachePasswordCallback(pin));
+		card.setPasswordCallback(new CachePasswordCallback(PIN));
 		final PrivateKeyReference pkr = card.getPrivateKey(card.getAliases()[0]);
 		final byte[] sign = card.sign("Hola mundo!".getBytes(), "SHA512withRSA", pkr); //$NON-NLS-1$ //$NON-NLS-2$
 		System.out.println(HexUtils.hexify(sign, false));
