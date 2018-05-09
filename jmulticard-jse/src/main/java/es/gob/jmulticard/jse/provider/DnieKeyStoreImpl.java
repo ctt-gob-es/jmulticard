@@ -273,7 +273,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
-        return this.aliases.contains(alias);
+    	// El DNIe solo tiene entradas con clave privada (en este proveedor)
+        return false;
     }
 
     /** {@inheritDoc} */

@@ -181,7 +181,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
-        return this.aliases.contains(alias);
+        return false;
     }
 
     /** {@inheritDoc} */
