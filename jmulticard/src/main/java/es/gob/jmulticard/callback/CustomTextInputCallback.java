@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.dnie;
+package es.gob.jmulticard.callback;
 
 /*
  * Copyright (c) 1999, 2003, Oracle and/or its affiliates. All rights reserved.

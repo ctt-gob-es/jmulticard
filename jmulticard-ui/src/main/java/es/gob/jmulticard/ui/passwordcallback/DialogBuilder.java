@@ -47,7 +47,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
+import es.gob.jmulticard.callback.CustomAuthorizeCallback;
 import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogSmartcard;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.

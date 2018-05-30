@@ -7,8 +7,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
-import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
+import es.gob.jmulticard.callback.CustomAuthorizeCallback;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */

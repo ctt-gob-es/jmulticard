@@ -7,8 +7,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import es.gob.jmulticard.card.dnie.CustomAuthorizeCallback;
-import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
+import es.gob.jmulticard.callback.CustomAuthorizeCallback;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
