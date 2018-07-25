@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1 (<i>EF.CD</i> en ISO 7816-15).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Cdf extends Record implements Pkcs15Cdf {
 
     private static final int BUFFER_SIZE = 150;
@@ -71,16 +71,16 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     }
 
     /** Obtiene el n&uacute;mero de certificados del CDF.
-     * @return N&uacute;mero de certificados del CDF */
+     * @return N&uacute;mero de certificados del CDF. */
     @Override
 	public int getCertificateCount() {
         return getElementCount();
     }
 
-    /** Obtiene el nombre X.500 del emisor del certificado indicado.
-     * @param index &Iacute;ndice del certificado
-     * @return Nombre X.500 del emisor del certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+    /** Obtiene el nombre X&#46;500 del emisor del certificado indicado.
+     * @param index &Iacute;ndice del certificado.
+     * @return Nombre X&#46;500 del emisor del certificado indicado o {@code null} si no
+     *         se encontr&oacute; el certificado. */
     public String getCertificateIssuerPrincipal(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
@@ -89,10 +89,10 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     	return null;
     }
 
-    /** Obtiene el nombre X.500 del titular del certificado indicado.
-     * @param index &Iacute;ndice del certificado
-     * @return Nombre X.500 del titular del certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+    /** Obtiene el nombre X&#46;500 del titular del certificado indicado.
+     * @param index &Iacute;ndice del certificado.
+     * @return Nombre X&#46;500 del titular del certificado indicado o {@code null} si no
+     *         se encontr&oacute; el certificado. */
     public String getCertificateSubjectPrincipal(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
@@ -102,9 +102,9 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     }
 
     /** Obtiene el n&uacute;mero de serie del certificado indicado.
-     * @param index &Iacute;ndice del certificado
+     * @param index &Iacute;ndice del certificado.
      * @return N&uacute;mero de serie del certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+     *         se encontr&oacute; el certificado. */
     public BigInteger getCertificateSerialNumber(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
@@ -114,9 +114,9 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     }
 
     /** Obtiene el identificador binario del certificado indicado.
-     * @param index &Iacute;ndice del certificado
+     * @param index &Iacute;ndice del certificado.
      * @return Identificador binario del certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+     *         se encontr&oacute; el certificado. */
     public byte[] getCertificateIdentifier(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
     	if (tmpCo != null) {
@@ -128,7 +128,7 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     /** Obtiene la ruta PKCS#15 hacia el certificado indicado.
      * @param index &Iacute;ndice del certificado.
      * @return Ruta PKCS#15 hacia el certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+     *         se encontr&oacute; el certificado. */
     @Override
 	public String getCertificatePath(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
@@ -139,8 +139,8 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     }
 
     /** Obtiene el alias del certificado indicado.
-     * @param index &Iacute;ndice del certificado
-     * @return Alias del certificado indicado */
+     * @param index &Iacute;ndice del certificado.
+     * @return Alias del certificado indicado. */
     public String getCertificateAlias(final int index) {
 		final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
 		if (tmpCo != null) {
@@ -179,7 +179,7 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     /** Obtiene el identificador del certificado indicado.
      * @param index &Iacute;ndice del certificado.
      * @return Identificador del certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+     *         se encontr&oacute; el certificado. */
     @Override
 	public byte[] getCertificateId(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);

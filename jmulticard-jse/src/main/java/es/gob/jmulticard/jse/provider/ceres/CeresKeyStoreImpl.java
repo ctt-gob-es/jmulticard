@@ -142,7 +142,8 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
-        return userCertAliases.contains(alias);
+    	// Solo se soportan certificados con clave privada
+        return false;
     }
 
     /** {@inheritDoc} */

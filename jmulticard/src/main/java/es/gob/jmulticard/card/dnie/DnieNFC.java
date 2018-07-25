@@ -12,6 +12,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -38,7 +39,22 @@ public final class DnieNFC extends Dnie3 {
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch) throws PaceException, ApduConnectionException {
-		super(getPaceConnection(conn, ch), pwc, cryptoHelper, ch,false);
+		this(getPaceConnection(conn, ch), pwc, cryptoHelper, ch, true);
+	}
+
+	DnieNFC(final ApduConnection conn,
+			final PasswordCallback pwc,
+			final CryptoHelper cryptoHelper,
+			final CallbackHandler ch,
+			final boolean loadCertsAndKeys) throws PaceException,
+	                                               ApduConnectionException {
+		super(
+			getPaceConnection(conn, ch),
+			pwc,
+			cryptoHelper,
+			ch,
+			loadCertsAndKeys
+		);
 	}
 
 	private static ApduConnection getPaceConnection(final ApduConnection con,

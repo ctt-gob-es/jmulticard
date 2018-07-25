@@ -76,6 +76,7 @@ import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
+import es.gob.jmulticard.callback.CustomAuthorizeCallback;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CardMessages;
@@ -364,10 +365,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return this.aliases;
     }
 
-    /** Carga el certificado de la CA intermedia y las localizaciones de los
-     * certificados de firma y autenticaci&oacute;n.
-     * @throws ApduConnectionException Si hay problemas en la precarga. */
-    protected void preloadCertificates() throws ApduConnectionException {
+    /** Obtiene el CDF PKCS#15 del DNIe.
+     * @return CDF PKCS#15 del DNIe.
+     * @throws ApduConnectionException Si no se puede conectar con el DNIe. */
+    public Cdf getCdf() throws ApduConnectionException {
         final Cdf cdf = new Cdf();
         try {
         	selectMasterFile();
@@ -379,6 +380,15 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		"No se ha podido cargar el CDF de la tarjeta: " + e.toString(), e //$NON-NLS-1$
     		);
         }
+        return cdf;
+    }
+
+    /** Carga el certificado de la CA intermedia y las localizaciones de los
+     * certificados de firma y autenticaci&oacute;n.
+     * @throws ApduConnectionException Si hay problemas en la precarga. */
+    protected void preloadCertificates() throws ApduConnectionException {
+
+        final Cdf cdf = getCdf();
 
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
         	final String currentAlias = cdf.getCertificateAlias(i);
@@ -737,7 +747,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         return res.getData();
     }
 
-    /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya hecho.
+    /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
      * 						un PIN para validar.  */

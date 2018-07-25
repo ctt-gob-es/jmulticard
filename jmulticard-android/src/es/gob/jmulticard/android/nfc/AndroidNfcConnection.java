@@ -35,6 +35,11 @@ public final class AndroidNfcConnection implements ApduConnection {
         this.mIsoDep = IsoDep.get(tag);
         this.mIsoDep.connect();
         this.mIsoDep.setTimeout(ISODEP_TIMEOUT);
+
+        // Retenemos la conexion hasta nuestro siguiente envio
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
+            NFCWatchdogRefresher.holdConnection(this.mIsoDep);
+        }
     }
 
     @Override
@@ -55,7 +60,7 @@ public final class AndroidNfcConnection implements ApduConnection {
 			}
 			catch (final IOException e) {
 				throw new ApduConnectionException(
-                    "Se ha producido un problema al intentar establecer la conexion por NFC: " + e //$NON-NLS-1$
+                    "Se ha producido un problema al intentar establecer la conexion por NFC: " + e, e //$NON-NLS-1$
                 );
 			}
         }
@@ -168,6 +173,14 @@ public final class AndroidNfcConnection implements ApduConnection {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             NFCWatchdogRefresher.stopHoldingConnection();
         }
+        try{
+        	this.mIsoDep.close();
+        }
+	catch(final IOException ioe){
+        	throw new ApduConnectionException(
+                    "Error indefinido cerrando la conexion con la tarjeta: " + ioe, ioe //$NON-NLS-1$
+            );
+        }
     }
 
     @Override
@@ -177,7 +190,7 @@ public final class AndroidNfcConnection implements ApduConnection {
         	if (this.mIsoDep.getHistoricalBytes() != null) {
         		return this.mIsoDep.getHistoricalBytes();
         	}
-			return this.mIsoDep.getHiLayerResponse();
+		return this.mIsoDep.getHiLayerResponse();
         }
         throw new ApduConnectionException(
             "Error indefinido reiniciando la conexion con la tarjeta" //$NON-NLS-1$

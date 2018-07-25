@@ -10,8 +10,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
@@ -35,22 +33,16 @@ final class NFCWatchdogRefresher {
     private static final String TAG = NFCWatchdogRefresher.class.getSimpleName();
     private static final int TECHNOLOGY_ISO_DEP = 3;
 
-    @Nullable
     private static HandlerThread sHandlerThread;
-
-    @Nullable
     private static Handler sHandler;
-
-    @Nullable
     private static WatchdogRefresher sRefresher;
-
     private static volatile boolean sIsRunning = false;
 
     /** <p>Should be called as soon as possible after the last NFC communication.</p>
      * <p>If this method is called multiple times without any calls to
      * {@link #stopHoldingConnection()}, each subsequent call will automatically
      * cancel the previous one.</p> */
-    static void holdConnection(IsoDep isoDep) {
+    static void holdConnection(final IsoDep isoDep) {
         Log.v(TAG, "holdConnection()");
         if (sHandlerThread != null || sHandler != null || sRefresher != null) {
             Log.d(TAG, "holdConnection(): Existing background thread found, stopping!");
@@ -121,7 +113,7 @@ final class NFCWatchdogRefresher {
         private final WeakReference<IsoDep> mIsoDep;
         private int mCurrentRuntime;
 
-        private WatchdogRefresher(@NonNull Handler handler, @NonNull IsoDep isoDep) {
+        private WatchdogRefresher(final Handler handler, final IsoDep isoDep) {
             mHandler = new WeakReference<Handler>(handler);
             mIsoDep = new WeakReference<IsoDep>(isoDep);
             mCurrentRuntime = 0;
@@ -155,12 +147,10 @@ final class NFCWatchdogRefresher {
             }
         }
 
-        @Nullable
         private Handler getHandler() {
             return mHandler.get();
         }
 
-        @Nullable
         private Tag getTag() {
             final IsoDep isoDep = mIsoDep.get();
             if (isoDep != null) {
