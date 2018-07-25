@@ -5,6 +5,13 @@
  	<modelVersion>4.0.0</modelVersion>
     <artifactId>jmulticard-android</artifactId>
     <packaging>aar</packaging>
+
+	<repositories>
+		<repository>
+		  <id>Google</id>
+		  <url>https://maven.google.com</url>
+		</repository>
+	</repositories>
 	
 	<parent>
 		<groupId>es.gob.afirma.jmulticard</groupId>
@@ -19,11 +26,15 @@
 			<version>4.1.1.4</version>
 		</dependency>
 		<dependency>
+			<groupId>com.android.support</groupId>
+			<artifactId>support-annotations</artifactId>
+			<version>27.1.1</version>
+		</dependency>
+		<dependency>
 		    <groupId>com.google.android</groupId>
 		    <artifactId>support-v4</artifactId>
 		    <version>r6</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>es.gob.afirma.jmulticard</groupId>
 			<artifactId>jmulticard</artifactId>
@@ -40,13 +51,14 @@
 				<plugin>
 				    <groupId>com.simpligility.maven.plugins</groupId>
 				    <artifactId>android-maven-plugin</artifactId>
-				    <version>4.1.1</version>
+				    <version>4.3.0</version>
+			        <extensions>true</extensions>
 				</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-            </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.0</version>
+				</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
