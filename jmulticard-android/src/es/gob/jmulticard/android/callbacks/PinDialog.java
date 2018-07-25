@@ -27,7 +27,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import es.gob.jmulticard.android.R;
-import es.gob.jmulticard.card.dnie.CustomTextInputCallback;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** Di&acute;logo para introducir el PIN.
  * Se usa en almacenes distintos al del propio sistema operativo Android.
