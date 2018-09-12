@@ -1,5 +1,6 @@
 package es.gob.jmulticard;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
@@ -16,6 +17,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDnieReadSubject() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			new SmartcardIoConnection(),
