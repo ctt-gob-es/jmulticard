@@ -27,6 +27,7 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Lectura de DNIe 3 a partir de un dispositivo con NFC.
  * @author Sergio Mart&iacute;nez Rico
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
 public final class DnieNFC extends Dnie3 {
 
@@ -168,8 +169,8 @@ public final class DnieNFC extends Dnie3 {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
-																PinException {
+	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
+															 PinException {
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
 				this.rawConnection = getPaceConnection(getConnection());
@@ -227,7 +228,7 @@ public final class DnieNFC extends Dnie3 {
 	}
 
 	/** Indica si un texto es num&eacute;rico.
-	 * @param cs Texto a analizar
+	 * @param cs Texto a analizar.
 	 * @return <code>true</code> si el texto es num&eacute;rico,
 	 *         <code>false</code> en caso contrario. */
 	 private static boolean isNumeric(final CharSequence cs) {

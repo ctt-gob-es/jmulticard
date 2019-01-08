@@ -54,7 +54,7 @@ public final class InternalAuthenticateApduCommand extends CommandApdu {
 
 	/** Crea un objeto para la autenticaci&oacute;n interna.
 	 * @param cla Clase (CLA) de la APDU.
-	 * @param randomBytes Array de 8 bytes aleatorios para la autenticaci&oacute;n.
+	 * @param randomBytes Array de 8 octetos aleatorios para la autenticaci&oacute;n.
 	 * @param privateKeyRef Referencia a la clave privada del certificado a autenticar. */
 	public InternalAuthenticateApduCommand(final byte cla, final byte[] randomBytes, final byte[] privateKeyRef) {
 		super(

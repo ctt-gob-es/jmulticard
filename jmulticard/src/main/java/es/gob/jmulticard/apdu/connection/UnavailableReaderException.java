@@ -1,7 +1,7 @@
 package es.gob.jmulticard.apdu.connection;
 
 /** Excepci&oacute;n lanzada cuando se intenta acceder a un lector que ya no est&aacute; disponible.
- * @author Jose Luis Escanciano */
+ * @author Jose Luis Escanciano. */
 public final class UnavailableReaderException extends ApduConnectionException {
 
 	private static final long serialVersionUID = 4033742751748929273L;

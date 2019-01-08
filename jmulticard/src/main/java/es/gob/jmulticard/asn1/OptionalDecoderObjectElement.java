@@ -1,7 +1,7 @@
 package es.gob.jmulticard.asn1;
 
 /** Tipo de objeto ASN&#46;1 gen&eacute;rico opcional dentro de un objeto compuesto.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class OptionalDecoderObjectElement {
 
 	private final Class<? extends DecoderObject> elementType;

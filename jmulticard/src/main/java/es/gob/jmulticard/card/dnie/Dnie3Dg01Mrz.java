@@ -9,6 +9,8 @@ import java.util.Properties;
 /** Zona ICAO MRZ del DNIe 3&#46;0.*/
 public final class Dnie3Dg01Mrz {
 
+	private final String mrzString;
+
     private final byte[] rawData;
     private String name;
     private String surname;
@@ -64,10 +66,10 @@ public final class Dnie3Dg01Mrz {
         this.rawData = rawBytes.clone();
         final byte[] mrzBytes = new byte[this.rawData[4]];
         System.arraycopy(this.rawData, 5, mrzBytes, 0, mrzBytes.length);
-        final String mrzString = new String(mrzBytes);
+        this.mrzString = new String(mrzBytes);
         if (this.rawData[4] == 88) {
-            final String mrz1 = mrzString.substring(0, 44);
-            final String mrz2 = mrzString.substring(44, 88);
+            final String mrz1 = this.mrzString.substring(0, 44);
+            final String mrz2 = this.mrzString.substring(44, 88);
             this.docType = mrz1.substring(0, 2).replace('<', ' ').trim();
             this.issuer = mrz1.substring(2, 5).replace('<', ' ').trim();
             final String helpName = mrz1.substring(5, 44);
@@ -87,9 +89,9 @@ public final class Dnie3Dg01Mrz {
             this.optData = mrz2.substring(28, 42).replace('<', ' ').trim();
         }
         else {
-            final String mrz1 = mrzString.substring(0, 30);
-            final String mrz2 = mrzString.substring(30, 60);
-            final String mrz3 = mrzString.substring(60, 90);
+            final String mrz1 = this.mrzString.substring(0, 30);
+            final String mrz2 = this.mrzString.substring(30, 60);
+            final String mrz3 = this.mrzString.substring(60, 90);
             this.docType = mrz1.substring(0, 2).replace('<', ' ').trim();
             this.issuer = mrz1.substring(2, 5).replace('<', ' ').trim();
             this.docNumber = mrz1.substring(5, 14).replace('<', ' ').trim();
@@ -107,6 +109,11 @@ public final class Dnie3Dg01Mrz {
                 break;
             }
         }
+    }
+
+    @Override
+	public String toString() {
+    	return this.mrzString;
     }
 
     /** Obtiene el contenido binario del fichero DG1 del DNIe 3&#46;0.

@@ -191,6 +191,18 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return this.passwordCallback;
     }
 
+	@Override
+	public String toString() {
+		try {
+			final Cdf cdf = getCdf();
+			return getCardName() + "\n" + new DnieSubjectPrincipalParser(cdf.getCertificateSubjectPrincipal(0)).toString(); //$NON-NLS-1$
+		}
+		catch (final ApduConnectionException e) {
+			LOGGER.warning("No se ha podido leer el CDF del DNIe: " + e); //$NON-NLS-1$
+		}
+		return getCardName();
+	}
+
     /** Conecta con el lector del sistema que tenga un DNIe insertado.
      * @param conn Conexi&oacute;n hacia el DNIe.
      * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta. */
@@ -751,7 +763,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
      * 						un PIN para validar.  */
-    protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+    public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!isSecurityChannelOpen()) {
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado

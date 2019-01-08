@@ -52,7 +52,7 @@ public final class GeneralAuthenticateApduCommand extends CommandApdu {
 	private static final byte NO_INFORMATION_GIVEN = (byte) 0x00;
 
 	/** Crea un objeto para la auitenticaci&oacute;n interna.
-	 * @param cla Clase (CLA) de la APDU
+	 * @param cla Clase (CLA) de la APDU.
 	 * @param data Datos de autenticaci&oacute;n. */
 	public GeneralAuthenticateApduCommand(final byte cla, final byte[] data) {
 		super(

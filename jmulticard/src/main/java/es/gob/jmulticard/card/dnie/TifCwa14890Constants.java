@@ -81,7 +81,7 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
         (byte) 0x42, (byte) 0x08, (byte) 0x65, (byte) 0x73, (byte) 0x52, (byte) 0x43, (byte) 0x50, (byte) 0x60, (byte) 0x00, (byte) 0x07
     };
 
-    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el numero de serie es
+    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza). */
@@ -94,7 +94,7 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
             (byte) 0x02, (byte) 0x1f
     };
 
-    /** Certificado de Terminal verificable por la tarjeta. */
+    /** Certificado de terminal verificable por la tarjeta. */
     private static final byte[] C_CV_IFD = new byte[] {
     	(byte) 0x7F, (byte) 0x21, (byte) 0x81, (byte) 0xCD, (byte) 0x5F, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x04, (byte) 0xBA,
     	(byte) 0x10, (byte) 0xA1, (byte) 0xED, (byte) 0xDF, (byte) 0x61, (byte) 0xBC, (byte) 0xCF, (byte) 0x06, (byte) 0x99, (byte) 0xAF,
@@ -119,7 +119,7 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
     	(byte) 0x08, (byte) 0x65, (byte) 0x73, (byte) 0x53, (byte) 0x43, (byte) 0x50, (byte) 0x60, (byte) 0x00, (byte) 0x07
     };
 
-    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el numero de serie es
+    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza). */
@@ -127,7 +127,7 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
         (byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
     };
 
-    /** Clave privada del certificado de Terminal. */
+    /** Clave privada del certificado de terminal. */
     private static final RSAPrivateKey IFD_PRIVATE_KEY = new RSAPrivateKey() {
 
 		private static final long serialVersionUID = 7871208407563977221L;

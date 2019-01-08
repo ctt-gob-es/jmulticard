@@ -10,7 +10,7 @@ import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksum;
+import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksumException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 
@@ -88,7 +88,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 		}
 
 		if (INVALID_CRYPTO_CHECKSUM.equals(decipherApdu.getStatusWord())) {
-			throw new InvalidCryptographicChecksum();
+			throw new InvalidCryptographicChecksumException();
 		}
 
 		// Si la APDU descifrada indicase que no se indico bien el tamano de la respuesta, volveriamos

@@ -62,7 +62,8 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente.
- * @author Carlos Gamuci */
+ * @author Carlos Gamuci
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
 	private static final int SHA1_LENGTH = 20;
@@ -73,23 +74,23 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
-	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
+	/** Byte de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
 
-	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
+	/** Byte de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE_PACE = (byte) 0x62;
 
-    /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kenc del canal seguro. */
+    /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave <code>Kenc</code> del canal seguro. */
     private static final byte[] SECURE_CHANNEL_KENC_AUX = new byte[] {
         (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
     };
 
-    /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kmac del canal seguro. */
+    /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave <code>Kmac</code> del canal seguro. */
     private static final byte[] SECURE_CHANNEL_KMAC_AUX = new byte[] {
         (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
     };
 
-    /** Helper para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
+    /** Utilidad para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
     protected final CryptoHelper cryptoHelper;
 
     /** Tarjeta CWA-14890 con la que se desea establecer el canal seguro. */
@@ -115,7 +116,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     private Cwa14890PublicConstants pubConsts;
     private Cwa14890PrivateConstants privConsts;
 
-
     @SuppressWarnings("static-method")
 	protected ApduEncrypter instantiateApduEncrypter() {
     	return new ApduEncrypterDes();
@@ -123,7 +123,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
-     * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
+     * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas. */
     public Cwa14890OneV1Connection(final ApduConnection connection,
@@ -144,7 +144,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
-     * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
+     * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
      * @param card Tarjeta con la funcionalidad CWA-14890.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas.
@@ -274,7 +274,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
         final byte[] kicc;
         try {
-            kicc = this.internalAuthentication(randomIfd, iccPublicKey);
+            kicc = internalAuthentication(randomIfd, iccPublicKey);
         }
         catch (final Exception e) {
             conn.close();
@@ -289,7 +289,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         final byte[] randomIcc = this.card.getChallenge();
         final byte[] kifd;
         try {
-            kifd = this.externalAuthentication(serial, randomIcc, iccPublicKey);
+            kifd = externalAuthentication(serial, randomIcc, iccPublicKey);
         }
         catch (final Exception e) {
             conn.close();
@@ -334,9 +334,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         this.openState = true;
     }
 
-    /** Genera la clave KENC para encriptar y desencriptar criptogramas.
-     * @param kidficc XOR de los valores Kifd y Kicc.
-     * @return Clave TripleDES.
+    /** Genera la clave <code>KENC</code> para encriptar y desencriptar criptogramas.
+     * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
+     * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
         // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-1 de la
@@ -359,9 +359,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return keyEnc;
     }
 
-    /** Genera la clave KMAC para calcular y verificar checksums.
-     * @param kidficc XOR de los valores Kifd y Kicc.
-     * @return Clave TripleDES.
+    /** Genera la clave <code>KMAC</code> para calcular y verificar checksums.
+     * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
+     * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
         // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
@@ -384,8 +384,8 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     }
 
     /** Genera el contador de secuencia SSC a partir de los semillas aleatorias calculadas
-     * en los procesos de autenticacion interna y externa.
-     * @param randomIfd Aleatorio del desaf&iacute;o del Terminal.
+     * en los procesos de autenticaci&oacute;n interna y externa.
+     * @param randomIfd Aleatorio del desaf&iacute;o del terminal.
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
     private static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
@@ -555,10 +555,10 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Lleva a cabo el proceso de autenticaci&oacute;n externa mediante el cual la tarjeta
      * comprueba el controlador.
-     * @param serial Numero de serie de la tarjeta.
+     * @param serial N&uacute;mero de serie de la tarjeta.
      * @param randomIcc Array de 8 bytes aleatorios generados por la tarjeta.
      * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
-     * @return Semilla de 32 [KIFD_LENGTH] bytes, generada por el Terminal, para la derivacion de claves del
+     * @return Semilla de 32 [KIFD_LENGTH] bytes, generada por el Terminal, para la derivaci&oacute;n de claves del
      *         canal seguro.
      * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error en el establecimiento de claves.
      * @throws es.gob.jmulticard.apdu.connection.ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
@@ -649,7 +649,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return kifd;
     }
 
-    /** Obtiene el numero de serie de la tarjeta en un array de 8 bytes, completando
+    /** Obtiene el n&uacute;mero de serie de la tarjeta en un array de 8 bytes, completando
      * con ceros a la izquierda si es necesario.
      * @return N&uacute;mero de serie en formato de 8 bytes.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
@@ -701,7 +701,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
         final ResponseApdu responseApdu = this.subConnection.transmit(protectedApdu);
         if (INVALID_CRYPTO_CHECKSUM.equals(responseApdu.getStatusWord())) {
-        	throw new InvalidCryptographicChecksum();
+        	throw new InvalidCryptographicChecksumException();
         }
 
         // Desencriptamos la respuesta
@@ -744,7 +744,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         final byte[] atr = this.subConnection.reset();
 
         // Volvemos a abrir la conexion
-        this.open();
+        open();
 
         return atr;
     }

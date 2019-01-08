@@ -44,7 +44,7 @@ import es.gob.jmulticard.HexUtils;
 /** <i>Application Programming Data Unit</i> (APDU) para comunicaci&oacute;n con
  * tarjeta inteligente.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Alberto Mart&iacute;nez */
+ * @author Alberto Mart&iacute;nez. */
 public class Apdu {
 
     private byte[] apduBytes = null;

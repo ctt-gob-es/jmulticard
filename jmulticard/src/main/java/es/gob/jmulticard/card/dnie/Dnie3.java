@@ -244,6 +244,12 @@ public class Dnie3 extends Dnie {
         return pj2kPhoto;
     }
 
+    /** {@inheritDoc} */
+	@Override
+    public String getCardName() {
+        return "DNIe 3.0"; //$NON-NLS-1$
+    }
+
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
@@ -317,7 +323,7 @@ public class Dnie3 extends Dnie {
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
 	@Override
-	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
 
         // Si el canal seguro esta ya abierto salimos sin hacer nada
         if (isSecurityChannelOpen()) {
@@ -335,45 +341,55 @@ public class Dnie3 extends Dnie {
     		);
 		}
 
-        // Establecemos el canal PIN y lo verificamos
-    	final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
-    		this,
-    		getConnection(),
-    		getCryptoHelper(),
-    		new Dnie3PinCwa14890Constants(),
-    		new Dnie3PinCwa14890Constants()
-		);
-
-		try {
-			selectMasterFile();
-		}
-		catch (final Exception e) {
-			throw new CryptoCardException(
-        		"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
-    		);
-		}
-
+        PasswordCallback pwc;
         try {
-            setConnection(pinSecureConnection);
+        	pwc = getInternalPasswordCallback();
         }
-        catch (final ApduConnectionException e) {
-            throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
-    		);
+        catch(final PinException e) {
+        	pwc = null;
         }
 
-        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
+        if (pwc != null) {
+	        // Establecemos el canal PIN y lo verificamos
+	    	final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
+	    		this,
+	    		getConnection(),
+	    		getCryptoHelper(),
+	    		new Dnie3PinCwa14890Constants(),
+	    		new Dnie3PinCwa14890Constants()
+			);
 
-        try {
-            verifyPin(getInternalPasswordCallback());
-        }
-        catch (final ApduConnectionException e) {
-            throw new CryptoCardException(
-        		"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
-    		);
+			try {
+				selectMasterFile();
+			}
+			catch (final Exception e) {
+				throw new CryptoCardException(
+	        		"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
+	    		);
+			}
+
+	        try {
+	            setConnection(pinSecureConnection);
+	        }
+	        catch (final ApduConnectionException e) {
+	            throw new CryptoCardException(
+	        		"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
+	    		);
+	        }
+
+	        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
+
+	        try {
+	            verifyPin(getInternalPasswordCallback());
+	        }
+	        catch (final ApduConnectionException e) {
+	            throw new CryptoCardException(
+	        		"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
+	    		);
+	        }
         }
 
-        // Y establecemos ahora el canal de usuario
+        // Establecemos ahora el canal de usuario
         final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
     		this,
     		getConnection(),

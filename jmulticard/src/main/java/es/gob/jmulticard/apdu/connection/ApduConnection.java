@@ -90,7 +90,7 @@ public interface ApduConnection {
     /** Devuelve informaci&oacute;n sobre un terminal.
      * @param terminal N&uacute;mero de terminal que se desea obtener informaci&oacute;n.
      * @return Una descripci&oacute;n del terminal especificado.
-     * @throws ApduConnectionException Cuando ocurran problemas en la conexi&oacute;n con los lectores. */
+     * @throws ApduConnectionException Cuando ocurren problemas en la conexi&oacute;n con los lectores. */
     String getTerminalInfo(int terminal) throws ApduConnectionException;
 
     /** Establece el lector de tarjetas que se usar&aacute; para la conexi&oacute;n. Si se cambia el terminal

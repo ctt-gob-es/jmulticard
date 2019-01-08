@@ -42,13 +42,13 @@ package es.gob.jmulticard.apdu.connection.cwa14890;
 /** Excepci&oacute;n relacionada con la recepci&oacute;n de un <i>Status Word</i> <code>6688</code>,
  * indicativo de que el <i>checksum</i> criptogr&aacute;fico es inv&aacute;lido.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class InvalidCryptographicChecksum extends SecurityException {
+public final class InvalidCryptographicChecksumException extends SecurityException {
 
 	private static final long serialVersionUID = -366110067889217051L;
 
 	/** Construye una excepci&oacute;n relacionada con un <i>checksum</i> criptogr&aacute;fico inv&aacute;lido
 	 * en una APDU protegida seg&uacute;n CWA-14890. */
-	public InvalidCryptographicChecksum() {
+	public InvalidCryptographicChecksumException() {
 		super("Checksum criptografico invalido (APDU respuesta = 6688)"); //$NON-NLS-1$
 	}
 
