@@ -237,7 +237,6 @@ public final class SecureMessaging {
 		return new ResponseApdu(unwrappedAPDUBytes);
 	}
 
-
 	/** Encripta los datos con <code>kenc</code> para construir el DO87.
 	 * @param data Datos a encriptar.
 	 * @return DO87 Par&aacute;metros del comando.

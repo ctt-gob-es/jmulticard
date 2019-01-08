@@ -84,7 +84,8 @@ import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
 
-/** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE6.
+/** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE
+ * (6 y superiores).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class JseCryptoHelper extends CryptoHelper {
 
@@ -316,7 +317,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 	@Override
 	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                 InvalidAlgorithmParameterException {
-		
+
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.insertProviderAt(new BouncyCastleProvider(), 1);
 		}
@@ -362,6 +363,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.insertProviderAt(new BouncyCastleProvider(), 1);
 		}
+
 		KeyAgreement ka;
 		try {
 			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);

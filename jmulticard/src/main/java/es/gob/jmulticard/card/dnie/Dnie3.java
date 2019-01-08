@@ -281,6 +281,7 @@ public class Dnie3 extends Dnie {
      * @return Nueva conexi&oacute;n establecida.
      * @throws CryptoCardException Si hay problemas en la apertura de canal. */
     public ApduConnection openUserChannel() throws CryptoCardException {
+
     	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
     		this,
     		getConnection(),
@@ -311,7 +312,7 @@ public class Dnie3 extends Dnie {
 
     /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
      * solicita y comprueba el PIN e inmediatamente despu&eacute;s y, si la verificaci&oacute;n es correcta,
-     * establece el canal de USUARIO CWA-14890.
+     * establece el canal de <b>usuario</b> CWA-14890.
      * Si falla alg&uacute;n punto del proceso, vuelve al modo inicial de conexi&oacute;n (sin canal seguro).
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */

@@ -108,7 +108,6 @@ public final class HexUtils {
         return (data[offset] & 0xff) << 8 | data[offset + 1] & 0xff;
     }
 
-
     /** Convierte un vector de octetos en una cadena de caracteres que contiene su
      * representaci&oacute;n hexadecimal. Copiado directamente de <a href="http://www.openscdp.org/ocf/api/opencard/core/util/HexString.html">
      * <code>opencard.core.util.HexString</code></a>.

@@ -15,22 +15,23 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 
 /** Conexi&oacute;n PACE para establecimiento de canal seguro por NFC.
- * @author Sergio Mart&iacute;nez Rico */
-public class PaceConnection extends Cwa14890OneV2Connection {
+ * @author Sergio Mart&iacute;nez Rico. */
+public final class PaceConnection extends Cwa14890OneV2Connection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
+
 	private static final boolean DEBUG = false;
-	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
+
+	/** Byte de valor m&aacute;s significativo que indica un <i>Le</i> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
 
-	/** Byte de valor m&aacute;s significativo que indica un Le incorrecto en la petici&oacute;n. */
+	/** Byte de valor m&aacute;s significativo que indica un <i>Le</i> incorrecto en la petici&oacute;n. */
 	private final SecureMessaging sm;
 
 	/** Conexi&oacute;n PACE para establecimiento de canal seguro por NFC.
 	 * @param connection Conexi&oacute;n base sobre la que crear el nuevo canal.
 	 * @param cryptoHelper Clase para el cifrado de datos.
-	 * @param secMsg Clase contenedora de las variables para establecer el canal PACE (Kenc, Kmac, Ssc).
-	 */
+	 * @param secMsg Clase contenedora de las variables para establecer el canal PACE (Kenc, Kmac, Ssc). */
 	public PaceConnection(final ApduConnection connection, final CryptoHelper cryptoHelper, final SecureMessaging secMsg) {
 		super(connection, cryptoHelper);
 		this.sm = secMsg;
@@ -41,8 +42,8 @@ public class PaceConnection extends Cwa14890OneV2Connection {
 	 * a la apertura del canal. */
 	@Override
 	public void open() {
-			// Mantenemos el canal como cerrado al ser unicamente un canal previo al canal seguro
-			this.openState = false;
+		// Mantenemos el canal como cerrado al ser unicamente un canal previo al canal seguro
+		this.openState = false;
 	}
 
 	/** {@inheritDoc} */
@@ -52,12 +53,13 @@ public class PaceConnection extends Cwa14890OneV2Connection {
 		// CommandApdu ya que la clase VerifyApduCommand no incluye la contrasena como parte
 		// la APDU, sino en un attributo aparte
 		final CommandApdu finalCommand = new CommandApdu(
-					command.getCla(),
-					command.getIns(),
-					command.getP1(),
-					command.getP2(),
-					command.getData(),
-					command.getLe());
+			command.getCla(),
+			command.getIns(),
+			command.getP1(),
+			command.getP2(),
+			command.getData(),
+			command.getLe()
+		);
 		// Encriptacion de la APDU para su envio por el canal seguro
 		CommandApdu protectedApdu = null;
 
@@ -73,15 +75,18 @@ public class PaceConnection extends Cwa14890OneV2Connection {
 
 		final ResponseApdu responseApdu = this.subConnection.transmit(protectedApdu);
 
-		ResponseApdu decipherApdu = null;
+		final ResponseApdu decipherApdu;
 		try {
 			decipherApdu = this.sm.unwrap(responseApdu);
-		} catch (final SecureMessagingException e1) {
+		}
+		catch (final SecureMessagingException e1) {
 			throw new ApduConnectionException("No ha sido posible descifrar un mensaje seguro con el canal PACE: " + e1); //$NON-NLS-1$
 		}
+
 		if(DEBUG) {
-		Logger.getLogger("es.gob.jmulticard").info(HexUtils.hexify(decipherApdu.getBytes(), true)); //$NON-NLS-1$
+			Logger.getLogger("es.gob.jmulticard").info(HexUtils.hexify(decipherApdu.getBytes(), true)); //$NON-NLS-1$
 		}
+
 		if (INVALID_CRYPTO_CHECKSUM.equals(decipherApdu.getStatusWord())) {
 			throw new InvalidCryptographicChecksum();
 		}

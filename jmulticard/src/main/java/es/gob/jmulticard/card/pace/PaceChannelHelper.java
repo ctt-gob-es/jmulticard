@@ -39,20 +39,20 @@ public final class PaceChannelHelper {
 	};
 
 	private static final byte[] KENC_PADDING = new byte[] {
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
-		};
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
+	};
 
 	private static final byte[] KMAC_PADDING = new byte[] {
-			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
-		};
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
+	};
 
 	private static final byte[] MAC_PADDING = new byte[] {
-			(byte) 0x7F, (byte) 0x49, (byte) 0x4F, (byte) 0x06
-		};
+		(byte) 0x7F, (byte) 0x49, (byte) 0x4F, (byte) 0x06
+	};
 
 	private static final byte[] MAC2_PADDING = new byte[] {
-			(byte) 0x86, (byte) 0x41, (byte) 0x04
-		};
+		(byte) 0x86, (byte) 0x41, (byte) 0x04
+	};
 
 	private static final byte TAG_DYNAMIC_AUTHENTICATION_DATA = (byte) 0x7C;
 
@@ -208,12 +208,12 @@ public final class PaceChannelHelper {
 		final ECPoint pukIFDDH1 = pointG.multiply(PrkIFDDH1);
 
 		Tlv tlv = new Tlv(
-				TAG_DYNAMIC_AUTHENTICATION_DATA,
-				new Tlv(
-					TAG_GEN_AUTH_2,
-					pukIFDDH1.getEncoded(false)
-				).getBytes()
-			);
+			TAG_DYNAMIC_AUTHENTICATION_DATA,
+			new Tlv(
+				TAG_GEN_AUTH_2,
+				pukIFDDH1.getEncoded(false)
+			).getBytes()
+		);
 
 		// ... Y la enviamos a la tarjeta
 		comm = new GeneralAuthenticateApduCommand(
@@ -268,125 +268,132 @@ public final class PaceChannelHelper {
 
 		// ... La metemos en un TLV de autenticacion ...
 		tlv = new Tlv(
-					TAG_DYNAMIC_AUTHENTICATION_DATA,
-					new Tlv(
-						TAG_GEN_AUTH_3,
-						pukIFDDH2.getEncoded(false)
-					).getBytes()
-				);
+			TAG_DYNAMIC_AUTHENTICATION_DATA,
+			new Tlv(
+				TAG_GEN_AUTH_3,
+				pukIFDDH2.getEncoded(false)
+			).getBytes()
+		);
 
 
 		comm = new GeneralAuthenticateApduCommand(
-				(byte) 0x10,
-				tlv.getBytes()
+			(byte) 0x10,
+			tlv.getBytes()
+		);
+
+		res = conn.transmit(comm);
+
+		// Se obtiene la clave publica de la tarjeta (pukIccDh2) que es la coordenada Y del nuevo Punto G'
+		final byte[] pukIccDh2;
+		try {
+			pukIccDh2 = unwrapEcKey(res.getData());
+		}
+		catch(final Exception e) {
+			throw new PaceException(
+				"Error obteniendo la clave efimera EC publica de la tarjeta: " + e, e //$NON-NLS-1$
 			);
+		}
 
-			res = conn.transmit(comm);
+		final ECPoint y2FromNewG = byteArrayToECPoint(pukIccDh2, curve);
 
-			// Se obtiene la clave publica de la tarjeta (pukIccDh2) que es la coordenada Y del nuevo Punto G'
-			final byte[] pukIccDh2;
-			try {
-				pukIccDh2 = unwrapEcKey(res.getData());
-			}
-			catch(final Exception e) {
-				throw new PaceException(
-					"Error obteniendo la clave efimera EC publica de la tarjeta: " + e, e //$NON-NLS-1$
-				);
-			}
+		// Se calcula el secreto k = PukICCDH2 * PrkIFDDH2
+		final ECPoint.Fp SharedSecret_K = (org.spongycastle.math.ec.ECPoint.Fp) y2FromNewG.multiply(PrkIFDDH2);
+		final byte[] secretK = bigIntToByteArray(SharedSecret_K.normalize().getXCoord().toBigInteger());
 
-			final ECPoint y2FromNewG = byteArrayToECPoint(pukIccDh2, curve);
+		// 1.3.6 Cuarto comando General Authenticate
+		// Se validan las claves de sesion generadas en el paso anterior,
+		// por medio de un MAC que calcula el terminal y comprueba la tarjeta,
+		// la cual devolvera un segundo MAC.
 
-			// Se calcula el secreto k = PukICCDH2 * PrkIFDDH2
-			final ECPoint.Fp SharedSecret_K = (org.spongycastle.math.ec.ECPoint.Fp) y2FromNewG.multiply(PrkIFDDH2);
-			final byte[] secretK = bigIntToByteArray(SharedSecret_K.normalize().getXCoord().toBigInteger());
-
-			// 1.3.6 Cuarto comando General Authenticate
-			// Se validan las claves de sesion generadas en el paso anterior,
-			// por medio de un MAC que calcula el terminal y comprueba la tarjeta,
-			// la cual devolvera un segundo MAC.
-
-			// Calcular kenc = SHA-1( k || 00000001 );
-			final byte[] kenc = new byte[16];
-			try {
-				System.arraycopy(
-					cryptoHelper.digest(
-						CryptoHelper.DigestAlgorithm.SHA1,
-						HexUtils.concatenateByteArrays(
-							secretK,
-							KENC_PADDING
-						)
-					),
-					0,
-					kenc,
-					0,
-					16
-				);
-			}
-			catch (final IOException e) {
-				throw new PaceException(
-					"Error obteniendo el 'kenc' a partir del CAN: " + e, e //$NON-NLS-1$
-				);
-			}
-
-			// Calcular kmac = SHA-1( k || 00000002 );
-			final byte[] kmac = new byte[16];
-			try {
-				System.arraycopy(
-					cryptoHelper.digest(
-						CryptoHelper.DigestAlgorithm.SHA1,
-						HexUtils.concatenateByteArrays(
-							secretK,
-							KMAC_PADDING
-						)
-					),
-					0,
-					kmac,
-					0,
-					16
-				);
-			}
-			catch (final IOException e) {
-				throw new PaceException(
-					"Error obteniendo el 'kmac' a partir del CAN: " + e, e //$NON-NLS-1$
-				);
-			}
-
-			//Elimina el byte '04' del inicio que es el indicador de punto descomprimido
-			final byte[] pukIccDh2Descompressed = new byte[pukIccDh2.length-1];
-			System.arraycopy(pukIccDh2, 1, pukIccDh2Descompressed, 0, pukIccDh2.length-1);
-
-			// Se calcula el Mac del terminal: data = '7f494F06' + oid + '864104' + PukICCDH2;
-			final byte[] data = HexUtils.concatenateByteArrays(MAC_PADDING,
-								HexUtils.concatenateByteArrays(MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128.getBytes(),
-								HexUtils.concatenateByteArrays(MAC2_PADDING, pukIccDh2Descompressed)));
-
-			byte[] mac8bytes;
-			try {
-				mac8bytes = cryptoHelper.doAesCmac(
-					data,
-					kmac
-				);
-			}
-			catch (final Exception e) {
-				throw new PaceException(
-					"Error descifrando el 'nonce': " + e, e //$NON-NLS-1$
-				);
-			}
-
-			// ... La metemos en un TLV de autenticacion ...
-			tlv = new Tlv(
-				TAG_DYNAMIC_AUTHENTICATION_DATA,
-				new Tlv(
-					TAG_GEN_AUTH_4,
-					mac8bytes
-				).getBytes()
+		// Calcular kenc = SHA-1( k || 00000001 );
+		final byte[] kenc = new byte[16];
+		try {
+			System.arraycopy(
+				cryptoHelper.digest(
+					CryptoHelper.DigestAlgorithm.SHA1,
+					HexUtils.concatenateByteArrays(
+						secretK,
+						KENC_PADDING
+					)
+				),
+				0,
+				kenc,
+				0,
+				16
 			);
+		}
+		catch (final IOException e) {
+			throw new PaceException(
+				"Error obteniendo el 'kenc' a partir del CAN: " + e, e //$NON-NLS-1$
+			);
+		}
 
-			// Se envia el comando General Authenticate y se recupera el MAC devuelto por la tarjeta.
-			comm = new GeneralAuthenticateApduCommand(
+		// Calcular kmac = SHA-1( k || 00000002 );
+		final byte[] kmac = new byte[16];
+		try {
+			System.arraycopy(
+				cryptoHelper.digest(
+					CryptoHelper.DigestAlgorithm.SHA1,
+					HexUtils.concatenateByteArrays(
+						secretK,
+						KMAC_PADDING
+					)
+				),
+				0,
+				kmac,
+				0,
+				16
+			);
+		}
+		catch (final IOException e) {
+			throw new PaceException(
+				"Error obteniendo el 'kmac' a partir del CAN: " + e, e //$NON-NLS-1$
+			);
+		}
+
+		//Elimina el byte '04' del inicio que es el indicador de punto descomprimido
+		final byte[] pukIccDh2Descompressed = new byte[pukIccDh2.length-1];
+		System.arraycopy(pukIccDh2, 1, pukIccDh2Descompressed, 0, pukIccDh2.length-1);
+
+		// Se calcula el Mac del terminal: data = '7f494F06' + oid + '864104' + PukICCDH2;
+		final byte[] data = HexUtils.concatenateByteArrays(
+			MAC_PADDING,
+			HexUtils.concatenateByteArrays(
+				MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128.getBytes(),
+				HexUtils.concatenateByteArrays(
+					MAC2_PADDING,
+					pukIccDh2Descompressed
+				)
+			)
+		);
+
+		byte[] mac8bytes;
+		try {
+			mac8bytes = cryptoHelper.doAesCmac(
+				data,
+				kmac
+			);
+		}
+		catch (final Exception e) {
+			throw new PaceException(
+				"Error descifrando el 'nonce': " + e, e //$NON-NLS-1$
+			);
+		}
+
+		// ... La metemos en un TLV de autenticacion ...
+		tlv = new Tlv(
+			TAG_DYNAMIC_AUTHENTICATION_DATA,
+			new Tlv(
+				TAG_GEN_AUTH_4,
+				mac8bytes
+			).getBytes()
+		);
+
+		// Se envia el comando General Authenticate y se recupera el MAC devuelto por la tarjeta.
+		comm = new GeneralAuthenticateApduCommand(
 			(byte) 0x00,
 			tlv.getBytes()
-			);
+		);
 
 		res = conn.transmit(comm);
 
@@ -427,7 +434,6 @@ public final class PaceChannelHelper {
 		return new Tlv(new Tlv(key).getValue()).getValue();
 	}
 
-
 	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve) throws IllegalArgumentException {
 		final byte[] x = new byte[(value.length - 1) / 2];
 		final byte[] y = new byte[(value.length - 1) / 2];
@@ -435,8 +441,7 @@ public final class PaceChannelHelper {
 			throw new IllegalArgumentException("No se ha encontrado un punto no comprimido"); //$NON-NLS-1$
 		}
 		System.arraycopy(value, 1, x, 0, (value.length - 1) / 2);
-		System.arraycopy(value, 1 + (value.length - 1) / 2, y, 0,
-				(value.length - 1) / 2);
+		System.arraycopy(value, 1 + (value.length - 1) / 2, y, 0, (value.length - 1) / 2);
 		final ECFieldElement.Fp xE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, x));
 		final ECFieldElement.Fp yE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, y));
 

@@ -43,18 +43,18 @@ public final class AmAESCrypto extends AmCryptoProvider {
 
 	private void initCiphers(final byte[] key, final byte[] iv) {
 
-		// get the keyBytes
+		// Obtenemos los octetos de la clave
 		this.keyBytes = new byte[key.length];
 		System.arraycopy(key, 0, this.keyBytes, 0, key.length);
 
 		this.keyP = new KeyParameter(this.keyBytes);
 
-		// get the IV
+		// Obtenemos el vector de inicializacion (IV)
 		this.IV = new byte[BLOCK_SIZE];
 		System.arraycopy(iv, 0, this.IV, 0, this.IV.length);
 
-		// create the ciphers
-		// AES block cipher in CBC mode with ISO7816d4 padding
+		// Creamos los cifradores
+		// AES block cipher en modo CBC con padding ISO7816d4
 		this.encryptCipher = new PaddedBufferedBlockCipher(
 			new CBCBlockCipher(
 				new AESEngine()
@@ -69,7 +69,7 @@ public final class AmAESCrypto extends AmCryptoProvider {
 			new ISO7816d4Padding()
 		);
 
-		// create the IV parameter
+		// Creamos el parametro con el vector de inicializacion (IV)
 		final ParametersWithIV parameterIV = new ParametersWithIV(this.keyP, this.IV);
 
 		this.encryptCipher.init(true, parameterIV);

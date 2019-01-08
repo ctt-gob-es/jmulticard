@@ -112,28 +112,28 @@ final class MrzInfo {
             }
             this.documentNumber = trimFillerChars(this.documentNumber);
 
-            /* line 2, pos 1 to 6, Date of birth */
+            // line 2, pos 1 to 6, Date of birth
             this.dateOfBirth = readDateOfBirth(dataIn);
-			
-			/*Date of birth check digit */
+
+			// Date of birth check digit
 			dataIn.readUnsignedByte();
 
-            /* line 2, pos 8, Sex */
+            // line 2, pos 8, Sex
             readGender(dataIn);
 
-            /* line 2, Pos 9 to 14, Date of expiry */
+            // line 2, Pos 9 to 14, Date of expiry
             this.dateOfExpiry = readDateOfExpiry(dataIn);
 
         }
         else {
-        	/* Assume it's a ID3 document, i.e. 2-line MRZ. */
+        	// Assume it's a ID3 document, i.e. 2-line MRZ.
 
         	readCountry(dataIn);
 
-            /* line 1, pos 6 to 44 */
+            // line 1, pos 6 to 44
             readNameIdentifiers(readString(dataIn, 39));
 
-            /* line 2 */
+            // line 2
             this.documentNumber = trimFillerChars(readString(dataIn, 9));
             this.documentNumberCheckDigit = (char)dataIn.readUnsignedByte();
             readCountry(dataIn);

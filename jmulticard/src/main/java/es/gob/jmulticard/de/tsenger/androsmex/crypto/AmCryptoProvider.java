@@ -22,6 +22,7 @@ package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Security;
 
 import org.spongycastle.crypto.DataLengthException;
@@ -46,8 +47,8 @@ public abstract class AmCryptoProvider {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	/** Initialisiert die Crypto-Engine mit dem angegebenen Schlassel und dem
-	 * Send Sequence Counter (SSC).
+	/** Inicializa el motor criptogr&aacute;fico con la clave y el contador de secuencia de env&iacute;os
+	 * (<i>Send Sequence Counter</i>: SSC).
 	 * @param keyBytes Schlassel.
 	 * @param ssc Send Sequence Counter. */
 	public abstract void init(byte[] keyBytes, byte[] ssc);
@@ -67,14 +68,14 @@ public abstract class AmCryptoProvider {
 	 * #init(byte[], long) eingestellt wurden.
 	 * @param in ByteArray mit den zu verschlasselnden Daten
 	 * @return ByteArray mit den entschlasselten Daten.
-	 * @throws AmCryptoException On any error. */
+	 * @throws AmCryptoException En cualquier error. */
 	public final byte[] encrypt(final byte[] in) throws AmCryptoException {
 
-		int noBytesRead = 0; // number of bytes read from input
-		int noBytesProcessed = 0; // number of bytes processed
+		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		try (
-			final ByteArrayInputStream bin = new ByteArrayInputStream(in);
+			final InputStream bin = new ByteArrayInputStream(in);
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		) {
 			try {
@@ -115,8 +116,8 @@ public abstract class AmCryptoProvider {
 	 * @throws AmCryptoException On any error. */
 	public final byte[] decrypt(final byte[] in) throws AmCryptoException {
 
-		int noBytesRead = 0; // number of bytes read from input
-		int noBytesProcessed = 0; // number of bytes processed
+		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		try (
 			final ByteArrayInputStream bin = new ByteArrayInputStream(in);

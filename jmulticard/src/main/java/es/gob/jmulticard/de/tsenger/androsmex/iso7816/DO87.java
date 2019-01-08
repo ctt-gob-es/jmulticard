@@ -24,19 +24,17 @@ import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
-/**
- * Par&aacute;metros de comando
- *
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
+/** Par&aacute;metros de comando
+ * @author Tobias Senger (tobias@t-senger.de). */
 final class DO87 {
 
     private byte[] value_ = null;
     private byte[] data = null;
     private DERTaggedObject to = null;
 
-    DO87() {}
+    DO87() {
+    	// Vacio
+    }
 
 	DO87(final byte[] data) {
 		this.data = data.clone();
@@ -82,6 +80,5 @@ final class DO87 {
 	byte[] getData() {
     	return this.data;
     }
-
 
 }

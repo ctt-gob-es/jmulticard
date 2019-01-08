@@ -55,7 +55,7 @@ public interface Cwa14890PublicConstants {
      * @return Certificado de la CA intermedia de terminal verificable por la tarjeta.*/
     byte[] getCCvCa();
 
-    /** Obtiene el identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el numero de serie es
+    /** Obtiene el identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; se obtienen los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
@@ -70,7 +70,7 @@ public interface Cwa14890PublicConstants {
      * @return Certificado de Terminal verificable por la tarjeta. */
     byte[] getCCvIfd();
 
-    /** Obtiene el identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el numero de serie es
+    /** Obtiene el identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).

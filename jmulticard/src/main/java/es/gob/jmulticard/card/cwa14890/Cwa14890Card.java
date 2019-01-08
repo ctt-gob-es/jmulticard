@@ -47,7 +47,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 
 /** Interfaz con los m&eacute;todos necesarios para la operaci&oacute;n de las tarjetas
  * acordes a la especificaci&oacute;n CWA-14890.
- * @author Carlos Gamuci */
+ * @author Carlos Gamuci. */
 public interface Cwa14890Card {
 
     /** Verifica la CA intermedia del certificado de componente de la tarjeta.
@@ -73,7 +73,7 @@ public interface Cwa14890Card {
     byte[] getIccCertEncoded() throws IOException;
 
     /** Verifica que los certificados declarados por el controlador (certificados de
-     * Terminal) sean v&aacute;lidos para el uso de la tarjeta.
+     * terminal) sean v&aacute;lidos para el uso de la tarjeta.
      * @param consts Clase de claves.
      * @throws ApduConnectionException Cuando ocurre alg&iacute;n error en la
      *         comunicaci&oacute;n con la tarjeta
@@ -83,7 +83,7 @@ public interface Cwa14890Card {
 
     /** Obtiene el mensaje de autenticaci&oacute;n interna de la tarjeta.
      * @param randomIfd Bytes aleatorios generados
-     * @param chrCCvIfd CHR de la clave p&uacute;blica del certificado de Terminal
+     * @param chrCCvIfd CHR de la clave p&uacute;blica del certificado de terminal
      * @return Mensaje cifrado con la clave privada de componente de la tarjeta
      * @throws ApduConnectionException Cuando ocurre un error de comunicaci&oacute;n con la tarjeta */
     byte[] getInternalAuthenticateMessage(final byte[] randomIfd, final byte[] chrCCvIfd) throws ApduConnectionException;
@@ -108,18 +108,18 @@ public interface Cwa14890Card {
      * @throws ApduConnectionException Cuando ocurre un error de comunicaci&oacute;n con la tarjeta */
     byte[] getChallenge() throws ApduConnectionException;
 
-    /** Recupera el numero de serie de la tarjeta.
+    /** Recupera el n&uacute;mero de serie de la tarjeta.
      * @return N&uacute;mero de serie
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
      *         la tarjeta */
     byte[] getSerialNumber() throws ApduConnectionException;
 
-    /** Recupera la referencia a la clave privada del certificado de Componente.
+    /** Recupera la referencia a la clave privada del certificado de componente.
      * @param consts Clase de claves.
      * @return Referencia a clave privada */
     byte[] getRefIccPrivateKey(final Cwa14890PublicConstants consts);
 
-    /** Recupera el CHR de la clave p&uacute;blica del certificado de Terminal.
+    /** Recupera el CHR de la clave p&uacute;blica del certificado de terminal.
      * @param consts Clase de claves.
      * @return Referencia a clave p&uacute;blica */
     byte[] getChrCCvIfd(final Cwa14890PublicConstants consts);

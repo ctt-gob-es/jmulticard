@@ -24,18 +24,16 @@ import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
-/**
- * Checksum
- *
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
+/** Checksum.
+ * @author Tobias Senger (tobias@t-senger.de). */
 final class DO8E {
 
     private byte[] data = null;
     private DERTaggedObject to = null;
 
-	DO8E(){}
+	DO8E() {
+		// Vacio
+	}
 
 	DO8E(final byte[] checksum){
 		this.data = checksum.clone();
@@ -58,7 +56,8 @@ final class DO8E {
 	byte[] getEncoded() throws SecureMessagingException {
     	try {
 			return this.to.getEncoded();
-		} catch (final IOException e) {
+		}
+    	catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
     }
@@ -66,7 +65,5 @@ final class DO8E {
 	byte[] getData() {
     	return this.data;
     }
-
-
 
 }
