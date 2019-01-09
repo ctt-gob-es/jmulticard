@@ -241,10 +241,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla.*/
     protected Dnie(final ApduConnection conn,
-    	 final PasswordCallback pwc,
-    	 final CryptoHelper cryptoHelper,
-    	 final CallbackHandler ch,
-    	 final boolean loadCertsAndKeys) throws ApduConnectionException {
+    	           final PasswordCallback pwc,
+    	           final CryptoHelper cryptoHelper,
+    	           final CallbackHandler ch,
+    	           final boolean loadCertsAndKeys) throws ApduConnectionException {
         super((byte) 0x00, conn);
         conn.reset();
         connect(conn);
@@ -262,6 +262,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		}
 
         this.passwordCallback = pwc;
+
         if (cryptoHelper == null) {
             throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
@@ -339,7 +340,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     /** Recupera el n&uacute;mero de serie de un DNIe.
-     * @return Un array de bytes que contiene el n&uacute;mero de serie del DNIe.
+     * @return Un array de octetos que contiene el n&uacute;mero de serie del DNIe.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla. */
     @Override
@@ -794,7 +795,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     private int getPinRetriesLeft() throws PinException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
-
     	final ResponseApdu verifyResponse;
 		try {
 			verifyResponse = getConnection().transmit(

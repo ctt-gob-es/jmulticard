@@ -1,5 +1,7 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -8,7 +10,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
@@ -22,19 +23,33 @@ public final class DnieCallbackHandler implements CallbackHandler {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
-					if (cb instanceof CustomTextInputCallback) {
+					if (
+						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
+						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
+					) {
 						final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
 							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
 							null,
 							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
 							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
 						);
-						((CustomTextInputCallback)cb).setText(new String(uip.getPassword()));
-						return;
+						try {
+							final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
+							m.invoke(cb, new String(uip.getPassword()));
+						}
+						catch (final NoSuchMethodException    |
+							         SecurityException        |
+							         IllegalAccessException   |
+							         IllegalArgumentException |
+							         InvocationTargetException e) {
+							throw new UnsupportedCallbackException(
+								cb,
+								"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
+							);
+						}
 					}
 					else if (cb instanceof CustomAuthorizeCallback) {
 						DialogBuilder.showSignatureConfirmDialog((CustomAuthorizeCallback)cb);
-						return;
 					}
 					else if (cb instanceof PasswordCallback) {
 						final CommonPasswordCallback uip = new CommonPasswordCallback(
@@ -43,10 +58,9 @@ public final class DnieCallbackHandler implements CallbackHandler {
 							true
 						);
 						((PasswordCallback)cb).setPassword(uip.getPassword());
-						return;
 					}
 					else {
-						LOGGER.severe("Callback no soportada: " + cb.getClass().getName()); //$NON-NLS-1$
+						throw new UnsupportedCallbackException(cb);
 					}
 				}
 			}
@@ -54,6 +68,5 @@ public final class DnieCallbackHandler implements CallbackHandler {
 		else {
 			LOGGER.warning("Se ha recibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
-		throw new UnsupportedCallbackException(null);
 	}
 }

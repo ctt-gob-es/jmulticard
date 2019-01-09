@@ -1,5 +1,7 @@
 package es.gob.jmulticard;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -8,7 +10,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */
@@ -31,27 +32,39 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
-					if (cb instanceof CustomTextInputCallback) {
-						((CustomTextInputCallback)cb).setText(this.can);
-						return;
+					if (
+						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
+						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
+					) {
+						try {
+							final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
+							m.invoke(cb, this.can);
+						}
+						catch (final NoSuchMethodException    |
+							         SecurityException        |
+							         IllegalAccessException   |
+							         IllegalArgumentException |
+							         InvocationTargetException e) {
+							throw new UnsupportedCallbackException(
+								cb,
+								"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
+							);
+						}
 					}
 					else if (cb instanceof CustomAuthorizeCallback) {
 						((CustomAuthorizeCallback)cb).setAuthorized(true);
-						return;
 					}
 					else if (cb instanceof PasswordCallback) {
 						((PasswordCallback)cb).setPassword(this.pin);
-						return;
 					}
 					else {
-						LOGGER.severe("Callback no soportada: " + cb.getClass().getName()); //$NON-NLS-1$
+						throw new UnsupportedCallbackException(cb);
 					}
 				}
 			}
 		}
 		else {
-			LOGGER.warning("Se ha revibido un array de Callbacks nulo"); //$NON-NLS-1$
+			LOGGER.warning("Se ha recibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
-		throw new UnsupportedCallbackException(null);
 	}
 }

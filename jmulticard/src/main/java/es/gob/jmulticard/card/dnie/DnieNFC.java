@@ -29,7 +29,7 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
  * @author Sergio Mart&iacute;nez Rico
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
-public final class DnieNFC extends Dnie3 {
+public class DnieNFC extends Dnie3 {
 
 	// Se guarda el codigo CAN para establecer un canal PACE cada vez que se quiere
 	// realizar una operacion de firma
@@ -58,6 +58,12 @@ public final class DnieNFC extends Dnie3 {
 		);
 	}
 
+    /** {@inheritDoc} */
+	@Override
+    public String getCardName() {
+        return "DNIe 3.0 accedido de forma inalambrica"; //$NON-NLS-1$
+    }
+
 	private static ApduConnection getPaceConnection(final ApduConnection con,
 			                                        final CallbackHandler ch) throws ApduConnectionException,
 	                                                                                 PaceException {
@@ -85,10 +91,9 @@ public final class DnieNFC extends Dnie3 {
 					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
 				}
 				paceInitValue = ((CustomTextInputCallback)tic).getText();
+
 				//Se obtiene el tipo de inicializador analizando el valor introducido.
 				paceInitType = getPasswordType(paceInitValue);
-
-				//Se decide el tipo de contrasena
 
 				if (paceInitValue == null || paceInitValue.isEmpty() || paceInitType == null)  {
 					throw new InvalidCanException("El CAN/MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$

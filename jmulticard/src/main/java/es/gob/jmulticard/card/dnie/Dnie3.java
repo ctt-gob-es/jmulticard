@@ -265,7 +265,7 @@ public class Dnie3 extends Dnie {
     	  final PasswordCallback pwc,
     	  final CryptoHelper cryptoHelper,
     	  final CallbackHandler ch,
-     	 final boolean loadCertsAndKeys) throws ApduConnectionException {
+     	  final boolean loadCertsAndKeys) throws ApduConnectionException {
         super(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
         this.rawConnection = conn;
     }
