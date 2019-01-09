@@ -8,12 +8,13 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.pace.PaceException;
 
-/** Pasaporte espa&ntilde;ol (de ciudadano) accedido de forma inal&aacute;mbrica.
+/** Pasaporte espa&ntilde;ol (con soporte de criptograf&iacute;a de curva el&iacute;ptica)
+ * accedido de forma inal&aacute;mbrica.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class SpanishPassport extends DnieNFC {
+public final class SpanishPassportWithEC extends DnieNFC {
 
-	/** Construye una clase que representa un pasaporte espa&ntilde;ol accedido
-	 * de forma inal&aacute;mbrica.
+	/** Construye una clase que representa un pasaporte espa&ntilde;ol (con soporte de criptograf&iacute;a de curva
+	 * el&iacute;ptica) accedido de forma inal&aacute;mbrica.
 	 * @param conn Conexi&oacute;n con el lector NFC.
 	 * @param cryptoHelper Clase de utilidad de funciones criptogr&aacute;ficas.
 	 * @param ch <code>CallbackHandler</code> que debe proporcionar, mediante un
@@ -21,7 +22,7 @@ public final class SpanishPassport extends DnieNFC {
 	 *           CAN o la MRZ del pasaporte.
 	 * @throws PaceException Si no se puede establecer el canal PACE.
 	 * @throws ApduConnectionException Si no se puede establecer la conexi&oacute;n NFC. */
-	public SpanishPassport(final ApduConnection conn,
+	public SpanishPassportWithEC(final ApduConnection conn,
 			               final CryptoHelper cryptoHelper,
 			               final CallbackHandler ch) throws PaceException,
 	                                                        ApduConnectionException {
@@ -37,7 +38,7 @@ public final class SpanishPassport extends DnieNFC {
     /** {@inheritDoc} */
 	@Override
     public String getCardName() {
-        return "Pasaporte espanol (de ciudadano) accedido de forma inalambrica"; //$NON-NLS-1$
+        return "Pasaporte espanol (con soporte de criptografia curva eliptica) accedido de forma inalambrica"; //$NON-NLS-1$
     }
 
 	/** {@inheritDoc} */
