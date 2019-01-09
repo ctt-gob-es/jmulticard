@@ -117,7 +117,7 @@ public final class PaceChannelHelper {
 			throw new PaceException(
 				res.getStatusWord(),
 				comm,
-				"Error estableciendo el algoritmo del protocolo PACE." //$NON-NLS-1$
+				"Error estableciendo el algoritmo del protocolo PACE (fallo en el MSE Set)" //$NON-NLS-1$
 			);
 		}
 
@@ -148,7 +148,7 @@ public final class PaceChannelHelper {
 			);
 		}
 
-		// Calcular sk = SHA-1( CAN || 00000003 );
+		// Calcular sk = SHA-1( CAN/MRZ || 00000003 );
 		// La clave son los 16 bytes MSB del hash
 
 		final byte[] sk = new byte[16];
@@ -169,7 +169,7 @@ public final class PaceChannelHelper {
 		}
 		catch (final IOException e) {
 			throw new PaceException(
-				"Error obteniendo el 'sk' a partir del CAN: " + e, e //$NON-NLS-1$
+				"Error obteniendo el 'sk' a partir del CAN/MRZ: " + e, e //$NON-NLS-1$
 			);
 		}
 
@@ -230,6 +230,7 @@ public final class PaceChannelHelper {
 				"Error mapeando el aleatorio de calculo PACE (Nonce)" //$NON-NLS-1$
 			);
 		}
+
 		// Se obtiene la clave publica de la tarjeta
 		final byte[] pukIccDh1;
 		try {
@@ -324,7 +325,7 @@ public final class PaceChannelHelper {
 		}
 		catch (final IOException e) {
 			throw new PaceException(
-				"Error obteniendo el 'kenc' a partir del CAN: " + e, e //$NON-NLS-1$
+				"Error obteniendo el 'kenc' a partir del CAN/MRZ: " + e, e //$NON-NLS-1$
 			);
 		}
 
@@ -399,10 +400,10 @@ public final class PaceChannelHelper {
 
 		// Se obtiene un MAC con respuesta 90-00 indicando que se ha establecido el canal correctamente
 		if (!res.isOk()) {
-			throw new PaceException(
+			throw new InvalidCanOrMrzException(
 				res.getStatusWord(),
 				comm,
-				"Error estableciendo el algoritmo del protocolo PACE." //$NON-NLS-1$
+				"Error estableciendo el algoritmo del protocolo PACE (fallo en el General Authenticate)" //$NON-NLS-1$
 			);
 		}
 

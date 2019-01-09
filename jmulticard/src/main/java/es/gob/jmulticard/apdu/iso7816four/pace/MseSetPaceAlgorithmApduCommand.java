@@ -10,7 +10,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 	/** Par&aacute;metro para el algoritmo de establecimiento de canal PACE. */
 	public enum PaceAlgorithmParam {
 
-		/** CAN <i>Card Access Number</i>. */
+		/** Curva <i>brainpool256r1</i>. */
 		BRAINPOOL_256_R1(
 			new byte[] {
 				/* T */ (byte) 0x84,
