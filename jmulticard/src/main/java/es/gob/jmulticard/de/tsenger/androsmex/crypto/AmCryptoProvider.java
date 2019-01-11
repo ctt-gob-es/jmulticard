@@ -38,13 +38,15 @@ public abstract class AmCryptoProvider {
 	protected PaddedBufferedBlockCipher encryptCipher = null;
 	protected PaddedBufferedBlockCipher decryptCipher = null;
 
-	// Buffer are used to transport the bytes from one stream to another
-	private final byte[] buf = new byte[16]; // input buffer
-	private final byte[] obuf = new byte[512]; // output buffer
+	// Buffers para moves octetor de un flujo a otro
+	private final byte[] buf = new byte[16]; // Buffer de entrada
+	private final byte[] obuf = new byte[512]; // Buffer de salida
 
 	/** Asigna un proveedor criptogr&aacute;fico. */
 	public AmCryptoProvider() {
-		Security.addProvider(new BouncyCastleProvider());
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
 	}
 
 	/** Inicializa el motor criptogr&aacute;fico con la clave y el contador de secuencia de env&iacute;os
@@ -120,9 +122,8 @@ public abstract class AmCryptoProvider {
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		try (
-			final ByteArrayInputStream bin = new ByteArrayInputStream(in);
+			final InputStream bin = new ByteArrayInputStream(in);
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
 		) {
 			try {
 				while ((noBytesRead = bin.read(this.buf)) >= 0) {
@@ -170,10 +171,9 @@ public abstract class AmCryptoProvider {
 		return n;
 	}
 
-	/** Entfernt aus dem abergebenen Byte-Array das Padding nach ISO9797-1
-	 * Padding-Methode 2 bzw. ISO7816d4-Padding.
-	 * @param b Byte-Array aus dem das Padding entfernt werden soll.
-	 * @return Padding-bereinigtes Byte-Array. */
+	/** Retira un relleno (<i>padding</i>) ISO9797-1 o ISO7816d4-Padding.
+	 * @param b Array de octetos con relleno.
+	 * @return Array de octetos sin relleno. */
 	public static final byte[] removePadding(final byte[] b) {
 		byte[] rd = null;
 		int i = b.length - 1;

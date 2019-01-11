@@ -60,12 +60,13 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			command.getData(),
 			command.getLe()
 		);
-		// Encriptacion de la APDU para su envio por el canal seguro
-		CommandApdu protectedApdu = null;
 
 		if(DEBUG) {
 			Logger.getLogger("es.gob.jmulticard").info(HexUtils.hexify(finalCommand.getBytes(), true)); //$NON-NLS-1$
 		}
+
+		// Encriptacion de la APDU para su envio por el canal seguro
+		final CommandApdu protectedApdu;
 		try {
 			protectedApdu = this.sm.wrap(finalCommand);
 		}

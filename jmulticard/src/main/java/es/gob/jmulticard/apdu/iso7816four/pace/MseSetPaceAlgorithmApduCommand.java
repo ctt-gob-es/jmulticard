@@ -65,16 +65,42 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 		}
 	}
 
-	/** Algoritmo de establecimiento de canal PACE. */
+	/** Algoritmo de establecimiento de canal PACE.
+	 * <p>Los OID son una combinaci&oacute;n de:</p>
+	 * <ul>
+	 *   <li>0.4.0.127.0.7 (bsi-de)</li>
+	 *   <li>
+	 *     <ul>
+	 *       <li>2.2.4 (id_PACE)</li>
+	 *       <li>
+	 *         <ul>
+	 *           <li>1 (id_PACE_DH_GM)</li>
+	 *           <li>2 (id_PACE_ECDH_GM)</li>
+	 *           <li>3 (id_PACE_DH_IM)</li>
+	 *           <lI>4 (id_PACE_ECDH_IM)</li>
+	 *         </ul>
+	 *       </li>
+	 *     </ul>
+	 *   </li>
+	 * </ul> */
 	public enum PaceAlgorithmOid {
 
-		/** PACE-ECDH-GM-AES-CBC-CMAC-128. */
-		PACE_ECDH_GM_AES_CBC_CMAC128(
+		/** id_PACE_ECDH_GM_AES_CBC_CMAC_128 (OID 0.4.0.127.0.7.2.2.4.2.2). */
+		PACE_ECDH_GM_AES_CBC_CMAC_128(
 			new byte[] {
 				/* T */
 				/* L */ (byte) 0x0A,
 				/* V */ (byte) 0x04, (byte) 0x00, (byte) 0x7f, (byte) 0x00, (byte) 0x07,
 				        (byte) 0x02, (byte) 0x02, (byte) 0x04, (byte) 0x02, (byte) 0x02
+			}
+		),
+		/** id_PACE_DH_GM_AES_CBC_CMAC_128 (OID 0.4.0.127.0.7.2.2.4.1.2). */
+		PACE_DH_GM_AES_CBC_CMAC_128(
+			new byte[] {
+				/* T */
+				/* L */ (byte) 0x0A,
+				/* V */ (byte) 0x04, (byte) 0x00, (byte) 0x7f, (byte) 0x00, (byte) 0x07,
+				        (byte) 0x02, (byte) 0x02, (byte) 0x04, (byte) 0x01, (byte) 0x02
 			}
 		);
 

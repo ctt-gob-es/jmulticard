@@ -107,7 +107,7 @@ public final class PaceChannelHelper {
 
 		comm = new MseSetPaceAlgorithmApduCommand(
 			cla,
-			MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128,
+			MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC_128,
 			pi.getPasswordType(),
 			MseSetPaceAlgorithmApduCommand.PaceAlgorithmParam.BRAINPOOL_256_R1
 		);
@@ -360,7 +360,7 @@ public final class PaceChannelHelper {
 		final byte[] data = HexUtils.concatenateByteArrays(
 			MAC_PADDING,
 			HexUtils.concatenateByteArrays(
-				MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC128.getBytes(),
+				MseSetPaceAlgorithmApduCommand.PaceAlgorithmOid.PACE_ECDH_GM_AES_CBC_CMAC_128.getBytes(),
 				HexUtils.concatenateByteArrays(
 					MAC2_PADDING,
 					pukIccDh2Descompressed

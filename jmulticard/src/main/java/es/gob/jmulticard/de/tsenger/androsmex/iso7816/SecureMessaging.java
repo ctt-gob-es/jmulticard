@@ -36,10 +36,10 @@ import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class SecureMessaging {
 
-	private byte[] kenc = null;
-	private byte[] kmac = null;
-	private byte[] ssc = null;
-	private AmCryptoProvider crypto = null;
+	private final byte[] kenc;
+	private final byte[] kmac;
+	private final byte[] ssc;
+	private final AmCryptoProvider crypto;
 
 	/** Constructor.
 	 * @param acp Proveedor de operaciones criptogr&aacute;ficas (t&iacute;picamente,
@@ -181,7 +181,7 @@ public final class SecureMessaging {
 			throw new SecureMessagingException("Error en SecureMessaging: DO99 o DO8E no encontrados"); // DO99 es obligatorio //$NON-NLS-1$
 		}
 
-		// Construct K (SSC||DO87||DO99)
+		// Calcula K (SSC||DO87||DO99)
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		try {
 			if (do87 != null) {
@@ -288,7 +288,7 @@ public final class SecureMessaging {
 		return new DO97(le);
 	}
 
-	/** Determina el equivalente a la APDU (ISO / IEC 7816-3 Cap&iacute;tulo 12&#46;1).
+	/** Determina el equivalente a la APDU (ISO/IEC 7816-3 Cap&iacute;tulo 12&#46;1).
 	 * @param capdu Comando APDU.
 	 * @return Tipo de estructura (1 = CASE1, etc.). */
 	private static byte getAPDUStructure(final CommandApdu capdu) {

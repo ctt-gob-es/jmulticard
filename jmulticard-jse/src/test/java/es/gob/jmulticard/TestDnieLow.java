@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.dnie.Dnie;
@@ -20,7 +21,8 @@ import es.gob.jmulticard.card.dnie.Dnie3;
 import es.gob.jmulticard.card.dnie.Dnie3Dg01Mrz;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
-import es.gob.jmulticard.card.dnie.SpanishPassport;
+import es.gob.jmulticard.card.dnie.SpanishPassportWithBac;
+import es.gob.jmulticard.card.dnie.SpanishPassportWithPace;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Pruebas de operaciones en DNIe sin PIN.
@@ -28,6 +30,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestDnieLow {
 
 	private static final String MRZ = ""; //$NON-NLS-1$
+	private static final String CAN = ""; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -52,13 +55,38 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieReadDgs() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			new SmartcardIoConnection(),
 			null,
 			new JseCryptoHelper(),
-			null,
+			new CallbackHandler() {
+				@Override
+				public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+					for (final Callback cb : callbacks) {
+						if (
+							"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
+							"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
+						) {
+							try {
+								final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
+								m.invoke(cb, CAN);
+							}
+							catch (final NoSuchMethodException    |
+								         SecurityException        |
+								         IllegalAccessException   |
+								         IllegalArgumentException |
+								         InvocationTargetException e) {
+								throw new UnsupportedCallbackException(
+									cb,
+									"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
+								);
+							}
+						}
+					}
+				}
+			},
 			false
 		);
 		System.out.println();
@@ -87,7 +115,7 @@ public final class TestDnieLow {
 
 	}
 
-	/** Prueba de <code>CallbackHandler</code> que capeta distintas clases para <code>TextInputCallback</code>.
+	/** Prueba de <code>CallbackHandler</code> con distintas clases para <code>TextInputCallback</code>.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
@@ -136,10 +164,48 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testPassportReadDgs() throws Exception {
-		final SpanishPassport dnie3 = new SpanishPassport(
-			new SmartcardIoConnection(),
+		final ApduConnection conn = new SmartcardIoConnection();
+		System.out.println(HexUtils.hexify(conn.reset(), true));
+		System.out.println();
+		final SpanishPassportWithBac passport = new SpanishPassportWithBac(
+			conn,
+			new JseCryptoHelper()
+		);
+
+		System.out.println();
+		System.out.println(passport);
+		System.out.println();
+
+		final byte[] com = passport.getCOM();
+		System.out.println(new String(com));
+		System.out.println();
+
+		final Dnie3Dg01Mrz dg1 = passport.getMrz();
+		System.out.println(dg1);
+		System.out.println();
+
+		final byte[] dg11 = passport.getDg11();
+		System.out.println(new String(dg11));
+		System.out.println();
+
+	}
+
+	/** Prueba de lectura de DG en Pasaporte con PACE.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	//@Ignore
+	public void testPassportWithPaceReadDgs() throws Exception {
+
+		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77
+
+		final ApduConnection conn = new SmartcardIoConnection();
+		System.out.println(HexUtils.hexify(conn.reset(), true));
+		System.out.println();
+		final SpanishPassportWithPace passport = new SpanishPassportWithPace(
+			conn,
 			new JseCryptoHelper(),
 			new CallbackHandler() {
 				@Override
@@ -170,20 +236,18 @@ public final class TestDnieLow {
 		);
 
 		System.out.println();
-		System.out.println(dnie3);
+		System.out.println(passport);
 		System.out.println();
 
-		dnie3.openSecureChannelIfNotAlreadyOpened();
-
-		final byte[] com = dnie3.getCOM();
+		final byte[] com = passport.getCOM();
 		System.out.println(new String(com));
 		System.out.println();
 
-		final Dnie3Dg01Mrz dg1 = dnie3.getMrz();
+		final Dnie3Dg01Mrz dg1 = passport.getMrz();
 		System.out.println(dg1);
 		System.out.println();
 
-		final byte[] dg11 = dnie3.getDg11();
+		final byte[] dg11 = passport.getDg11();
 		System.out.println(new String(dg11));
 		System.out.println();
 

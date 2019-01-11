@@ -11,7 +11,7 @@ import es.gob.jmulticard.card.pace.PaceException;
 /** Pasaporte espa&ntilde;ol (con soporte de criptograf&iacute;a de curva el&iacute;ptica)
  * accedido de forma inal&aacute;mbrica.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class SpanishPassportWithEC extends DnieNFC {
+public final class SpanishPassportWithPace extends DnieNFC {
 
 	/** Construye una clase que representa un pasaporte espa&ntilde;ol (con soporte de criptograf&iacute;a de curva
 	 * el&iacute;ptica) accedido de forma inal&aacute;mbrica.
@@ -22,7 +22,7 @@ public final class SpanishPassportWithEC extends DnieNFC {
 	 *           CAN o la MRZ del pasaporte.
 	 * @throws PaceException Si no se puede establecer el canal PACE.
 	 * @throws ApduConnectionException Si no se puede establecer la conexi&oacute;n NFC. */
-	public SpanishPassportWithEC(final ApduConnection conn,
+	public SpanishPassportWithPace(final ApduConnection conn,
 			               final CryptoHelper cryptoHelper,
 			               final CallbackHandler ch) throws PaceException,
 	                                                        ApduConnectionException {
@@ -57,5 +57,10 @@ public final class SpanishPassportWithEC extends DnieNFC {
 			"No se permite firmar con pasaporte" //$NON-NLS-1$
 		);
     }
+
+	@Override
+	public String toString() {
+		return getCardName();
+	}
 
 }
