@@ -11,6 +11,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksumException;
+import es.gob.jmulticard.card.SmartCard;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 
@@ -19,8 +20,6 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 public final class PaceConnection extends Cwa14890OneV2Connection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
-
-	private static final boolean DEBUG = false;
 
 	/** Byte de valor m&aacute;s significativo que indica un <i>Le</i> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
@@ -61,8 +60,10 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			command.getLe()
 		);
 
-		if(DEBUG) {
-			Logger.getLogger("es.gob.jmulticard").info(HexUtils.hexify(finalCommand.getBytes(), true)); //$NON-NLS-1$
+		if (SmartCard.DEBUG) {
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+				"APDU de comando en claro: " + HexUtils.hexify(finalCommand.getBytes(), true) //$NON-NLS-1$
+			);
 		}
 
 		// Encriptacion de la APDU para su envio por el canal seguro
@@ -84,8 +85,10 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			throw new ApduConnectionException("No ha sido posible descifrar un mensaje seguro con el canal PACE: " + e1); //$NON-NLS-1$
 		}
 
-		if(DEBUG) {
-			Logger.getLogger("es.gob.jmulticard").info(HexUtils.hexify(decipherApdu.getBytes(), true)); //$NON-NLS-1$
+		if (SmartCard.DEBUG) {
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+				"APDU de respuesta en claro: " + HexUtils.hexify(decipherApdu.getBytes(), true) //$NON-NLS-1$
+			);
 		}
 
 		if (INVALID_CRYPTO_CHECKSUM.equals(decipherApdu.getStatusWord())) {

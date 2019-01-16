@@ -27,12 +27,18 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
+
+import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.card.SmartCard;
 
 /** Estructura de datos para almacenar la informaci&oacute;n de la MRZ,
  * tal y como se encuentra en el DG1. Basado en el documento 9303 de ICAO, partes 1 y 3.
  * @author The JMRTD team (info@jmrtd.org)
  * @version $Revision: 1712. */
-final class MrzInfo {
+public final class MrzInfo {
 
     /** Tipo de documento no especificado (no usar, especificar ID1 o ID3). */
     private static final int DOC_TYPE_UNSPECIFIED = 0;
@@ -58,14 +64,54 @@ final class MrzInfo {
     /** Contiene el n&uacute;mero del titular en ciertos pa&iacute;ses (como Holanda), pero normalmente contiene parte del n&uacute;mero de documento. */
     private String optionalData1;
 
-    /** Crea una MRZ a partir de su texto.
+    /** Devuelve el 'MRZ Information' como array de octetos.
+     * @return 'MRZ Information' (binario). */
+    public byte[] getBytes() {
+		final byte[] numberBytes = getDocumentNumber().getBytes();
+		final byte[] numberCheck = new byte [] { (byte) checkDigit(getDocumentNumber()) };
+		final byte[] birthBytes  = getDateOfBirth().getBytes();
+		final byte[] birthCheck = new byte [] { (byte) MrzInfo.checkDigit(getDateOfBirth()) };
+		final byte[] expiryBytes = getDateOfExpiry().getBytes();
+		final byte[] expiryCheck = new byte[] { (byte) MrzInfo.checkDigit(getDateOfExpiry()) };
+
+		if (SmartCard.DEBUG) {
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+				"Info de la MRZ: numero=" + new String(numberBytes) + //$NON-NLS-1$
+					"; nacimiento=" + new String(birthBytes) + //$NON-NLS-1$
+						"; caducidad=" + new String(expiryBytes) //$NON-NLS-1$
+			);
+		}
+
+		return HexUtils.concatenateByteArrays(
+			numberBytes,
+			numberCheck,
+			birthBytes,
+			birthCheck,
+			expiryBytes,
+			expiryCheck
+		);
+    }
+
+	/** Calcula el valor de inicializaci&oacute;n (BAC, EAC, PACE) de la MRZ.
+	 * Siguiendo la especificaci&oacute;n ICAO 9303:<br>
+	 * <code>KDF&pi;(&pi;) = KDF(f(&pi;),3)</code><br>
+	 * <code>K= f(&pi;) = SHA-1(Serial Number || Date of Birth || Date of Expiry)</code><br>
+	 * En este m&eacute;todo se genera el valor de K que deber&aacute; posteriormente ser
+	 * pasado como par&aacute;metro de la funci&oacute;n KDF(K,3) para generar la contrase&ntilde;a.
+	 * @return K Valor de inicializaci&oacute;n.
+	 * @throws IOException Si no se puede obtener el valor. */
+	public byte[] getMrzPswd() throws IOException {
+		return new JseCryptoHelper().digest(CryptoHelper.DigestAlgorithm.SHA1, getBytes());
+	}
+
+    /** Crea la MRZ.
      * Si este texto contiene retornos de carro o tabuladores, estos se ignoran.
-     * @param str texto de entrada. */
-    void setMrz(final String str) {
-        if (str == null || str.isEmpty()) {
+     * @param mrzStr texto de la MRZ. */
+    public MrzInfo(final String mrzStr) {
+        if (mrzStr == null || mrzStr.isEmpty()) {
             throw new IllegalArgumentException("El texto del MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
         }
-        final String strMrz = str.trim().replace("\n", "").replace("\r", "").replaceAll("\t", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+        final String strMrz = mrzStr.trim().replace("\n", "").replace("\r", "").replaceAll("\t", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
         try {
             readObject(
         		new ByteArrayInputStream(strMrz.getBytes(StandardCharsets.UTF_8)),
@@ -149,24 +195,24 @@ final class MrzInfo {
 
     /** Obtiene la fecha de nacimiento del titular.
      * @return Fecha de nacimiento del titular. */
-    String getDateOfBirth() {
+    public String getDateOfBirth() {
         return this.dateOfBirth;
     }
 
     /** Obtiene la fecha de caducidad del documento.
      * @return Fecha de caducidad del documento. */
-    String getDateOfExpiry() {
+    public String getDateOfExpiry() {
         return this.dateOfExpiry;
     }
 
     /** Obtiene el n&uacute;mero del documento.
      * @return N&uacute;mero del documento. */
-    String getDocumentNumber() {
+    public String getDocumentNumber() {
         return this.documentNumber;
     }
 
     /** Calcula el d&iacute;gito de control 7-3-1 de un fragmento la MRZ.
-     * @param str Fragmento de la MRZ (n&uacute;mero del documento).
+     * @param str Fragmento de la MRZ.
      * @return D&iacute;gito de control (de '0' a '9'). */
     static char checkDigit(final String str) {
         return checkDigit(str, false);

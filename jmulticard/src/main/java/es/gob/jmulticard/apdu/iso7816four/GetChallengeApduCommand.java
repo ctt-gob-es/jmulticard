@@ -41,36 +41,39 @@ package es.gob.jmulticard.apdu.iso7816four;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-/** APDU ISO 7816-4 para la obtenci&oacute;n de una cadena de bytes aleatoria de desaf&iacute;o.
- * @author Alberto Mart&iacute;nez Cerquero. */
+/** APDU ISO 7816-4 para la obtenci&oacute;n de una cadena de octetos aleatoria de desaf&iacute;o.
+ * @author Alberto Mart&iacute;nez Cerquero
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class GetChallengeApduCommand extends CommandApdu {
 
     private static final byte INS_GET_CHALLENGE = (byte) 0x84;
 
-    /** Crea una APDU ISO 7816-4 para la obtenci&oacute;n de un n&uacute;mero aleatorio de 8 bytes a
+    /** Crea una APDU ISO 7816-4 para la obtenci&oacute;n de un n&uacute;mero aleatorio de 8 octetos a
      * trav&eacute;s de la tarjeta.
      * @param cla Clase (CLA) de la APDU. */
     public GetChallengeApduCommand(final byte cla) {
-        super(cla,                                  // CLA
-              INS_GET_CHALLENGE,                    // INS
-              (byte) 0x00,                          // P1
-              (byte) 0x00,                          // P2
-              null,                                 // Data
-              Integer.valueOf(String.valueOf(8))    // Le
+        super(
+    		cla,               // CLA
+            INS_GET_CHALLENGE, // INS
+            (byte) 0x00,       // P1
+            (byte) 0x00,       // P2
+            null,              // Data
+            Integer.valueOf(8) // Le
         );
     }
 
     /** Crea una APDU ISO 7816-4 para la obtenci&oacute;n de un n&uacute;mero aleatorio de n octetos a
      * trav&eacute;s de la tarjeta.
      * @param cla Clase (CLA) de la APDU.
-     * @param numBytes N&uacute;mero de bytes del desafio generado */
+     * @param numBytes N&uacute;mero de octetos del desaf&iacute;so generado */
     public GetChallengeApduCommand(final byte cla, final int numBytes) {
-        super(cla,                                  // CLA
-              INS_GET_CHALLENGE,                    // INS
-              (byte) 0x00,                          // P1
-              (byte) 0x00,                          // P2
-              null,                                 // Data
-              Integer.valueOf(String.valueOf(numBytes))    // Le
+        super(
+    		cla,                      // CLA
+            INS_GET_CHALLENGE,        // INS
+            (byte) 0x00,              // P1
+            (byte) 0x00,              // P2
+            null,                     // Data
+            Integer.valueOf(numBytes) // Le
         );
     }
 }

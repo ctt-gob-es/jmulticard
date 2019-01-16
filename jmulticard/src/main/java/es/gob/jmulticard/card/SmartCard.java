@@ -48,6 +48,9 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class SmartCard implements Card {
 
+	/** Establece el modo de depuraci&oacute;n para todo el proyecto. */
+	public static boolean DEBUG = true;
+
     private final byte cla;
     private ApduConnection connection;
 

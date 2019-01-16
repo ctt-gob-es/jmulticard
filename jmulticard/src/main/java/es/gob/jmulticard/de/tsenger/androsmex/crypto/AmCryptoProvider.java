@@ -38,11 +38,13 @@ public abstract class AmCryptoProvider {
 	protected PaddedBufferedBlockCipher encryptCipher = null;
 	protected PaddedBufferedBlockCipher decryptCipher = null;
 
-	// Buffers para moves octetor de un flujo a otro
+	// Buffers para mover octetos de un flujo a otro
 	private final byte[] buf = new byte[16]; // Buffer de entrada
 	private final byte[] obuf = new byte[512]; // Buffer de salida
 
-	/** Asigna un proveedor criptogr&aacute;fico. */
+	/** Crea el objeto de operaciones criptogr&aacute;ficas.
+	 * &Uacute;nicamente a&ntilde;ade BouncyCastle si no estaba ya a&ntilde;adido como
+	 * proveedor. */
 	public AmCryptoProvider() {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
@@ -51,25 +53,23 @@ public abstract class AmCryptoProvider {
 
 	/** Inicializa el motor criptogr&aacute;fico con la clave y el contador de secuencia de env&iacute;os
 	 * (<i>Send Sequence Counter</i>: SSC).
-	 * @param keyBytes Schlassel.
-	 * @param ssc Send Sequence Counter. */
+	 * @param keyBytes Clave.
+	 * @param ssc Contador de secuencia de env&iacute;os (Send Sequence Counter). */
 	public abstract void init(byte[] keyBytes, byte[] ssc);
 
 	/** Obtiene el tama&ntilde;o de bloque de cifrado.
 	 * @return Obtiene el tama&ntilde;o de bloque de cifrado */
 	public abstract int getBlockSize();
 
-	/** Berechnet den Message Authentication Code (MAC) aus dem abergebenen
-	 * ByteArray. Die Parametern werden vorher mit der Methode @see
-	 * #init(byte[], long) eingestellt.
-	 * @param data Die Daten uber die der MAC gebildet werden soll.
-	 * @return MAC */
+	/** Obtiene el Codigo de Autenticaci&oacute;n de Mensaje (MAC) de los datos proporcionados.
+	 * El algoritmo depende de la implementaci&oacute;n concreta de la clase.
+	 * @param data Datos sobre los que calcular el MAC.
+	 * @return MAC de los datos. */
 	public abstract byte[] getMAC(byte[] data);
 
-	/** Verschlasselt das abergebene ByteArray mit den Parametern die beim @see
-	 * #init(byte[], long) eingestellt wurden.
-	 * @param in ByteArray mit den zu verschlasselnden Daten
-	 * @return ByteArray mit den entschlasselten Daten.
+	/** Encripta datos (el algoritmo depende de la implementaci&oacute;n concreta de la clase).
+	 * @param in Datos en claro (a cifrar).
+	 * @return Datos cifrados.
 	 * @throws AmCryptoException En cualquier error. */
 	public final byte[] encrypt(final byte[] in) throws AmCryptoException {
 
@@ -111,11 +111,10 @@ public abstract class AmCryptoProvider {
 		}
 	}
 
-	/** Entschlasselt das abergebene ByteArray mit den Parametern die beim @see
-	 * #init(byte[], long) eingestellt wurden.
-	 * @param in BytrArray mit den verschlasselten Daten
-	 * @return ByteArray mit den entschlasselten Daten
-	 * @throws AmCryptoException On any error. */
+	/** Desencripta datos (el algoritmo depende de la implementaci&oacute;n concreta de la clase).
+	 * @param in Datos cifrados.
+	 * @return Datos descifrados (en claro).
+	 * @throws AmCryptoException En cualquier error. */
 	public final byte[] decrypt(final byte[] in) throws AmCryptoException {
 
 		int noBytesRead = 0; // Numero de octetos leidos de la entrada
@@ -156,13 +155,10 @@ public abstract class AmCryptoProvider {
 		}
 	}
 
-	/** Diese Methode fullt ein Byte-Array mit dem Wert 0x80 und mehreren 0x00
-	 * bis die Lange des abergebenen Byte-Array ein Vielfaches der Blocklange
-	 * ist. Dies ist die ISO9797-1 Padding-Methode 2 bzw. ISO7816d4-Padding
-	 * @param data Das Byte-Array welches aufgefallt werden soll.
-	 * @return Das gefallte Byte-Array. */
+	/** A&ntilde;ade un rellano ISO9797-1 (m&eacute;todo 2) / ISO7816d4-Padding a los datos proporcionados.
+	 * @param data Datos a rellenar.
+	 * @return Datos con el relleno aplicado. */
 	public final byte[] addPadding(final byte[] data) {
-
 		final int len = data.length;
 		final int nLen = (len / getBlockSize() + 1) * getBlockSize();
 		final byte[] n = new byte[nLen];
@@ -171,18 +167,17 @@ public abstract class AmCryptoProvider {
 		return n;
 	}
 
-	/** Retira un relleno (<i>padding</i>) ISO9797-1 o ISO7816d4-Padding.
+	/** Retira un relleno (<i>padding</i>) ISO9797-1 / ISO7816d4-Padding.
 	 * @param b Array de octetos con relleno.
 	 * @return Array de octetos sin relleno. */
 	public static final byte[] removePadding(final byte[] b) {
-		byte[] rd = null;
 		int i = b.length - 1;
 		do {
 			i--;
 		} while (b[i] == (byte) 0x00);
 
 		if (b[i] == (byte) 0x80) {
-			rd = new byte[i];
+			final byte[] rd = new byte[i];
 			System.arraycopy(b, 0, rd, 0, rd.length);
 			return rd;
 		}
