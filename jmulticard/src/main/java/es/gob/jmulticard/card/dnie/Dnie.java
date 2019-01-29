@@ -798,6 +798,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     protected PasswordCallback getInternalPasswordCallback() throws PinException {
+    	return getInternalPasswordCallback(false);
+    }
+
+    protected PasswordCallback getInternalPasswordCallback(final boolean reset) throws PinException {
     	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
     		if(retriesLeft == 0) {
@@ -806,10 +810,18 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		return this.passwordCallback;
     	}
     	if (this.callbackHandler != null) {
+
+    		// Si se ha pedido resetear los valores predefinidos, comprobamos si teniamos un
+    		// callbackHandler que cachease los resultados y los reseteamos en tal caso
+    		if (reset && this.callbackHandler instanceof CacheElement) {
+    			((CacheElement) this.callbackHandler).reset();
+    		}
+
         	final int retriesLeft = getPinRetriesLeft();
         	if(retriesLeft == 0) {
         		throw new AuthenticationModeLockedException();
         	}
+
         	final PasswordCallback  pwc = new PasswordCallback(
     			getPinMessage(retriesLeft),
 				false
@@ -934,13 +946,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
             	// Si no hay reintento automatico se lanza la excepcion
             	// Incluimos una proteccion en el caso de usar algun "CachePasswordCallback" del
-            	// Cliente @firma, que derivaria en DNI bloqueado
+            	// Cliente @firma o un callback personalizado que indicaba que debia almacenarse el PIN,
+            	// ya que en caso de reutilizarlos se bloquearia el DNI
             	if (!PIN_AUTO_RETRY || psc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
             		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             	}
             	// Si hay reintento automatico volvemos a pedir el PIN con la misma CallBack
             	verifyPin(
-            		getInternalPasswordCallback()
+            		getInternalPasswordCallback(true)
             	);
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&

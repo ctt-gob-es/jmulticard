@@ -54,8 +54,8 @@ import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogSmartcard;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class DialogBuilder {
 
-private static boolean headless = false;
-    static void setHeadLess(final boolean hl) {
+	private static boolean headless = false;
+    public static void setHeadLess(final boolean hl) {
         headless = hl;
     }
 
