@@ -54,11 +54,11 @@ public final class GetChallengeApduCommand extends CommandApdu {
     public GetChallengeApduCommand(final byte cla) {
         super(
     		cla,               // CLA
-            INS_GET_CHALLENGE, // INS
-            (byte) 0x00,       // P1
-            (byte) 0x00,       // P2
-            null,              // Data
-            Integer.valueOf(8) // Le
+    		INS_GET_CHALLENGE, // INS
+    		(byte) 0x00,       // P1
+    		(byte) 0x00,       // P2
+    		null,              // Data
+    		Integer.valueOf(8) // Le
         );
     }
 
@@ -69,11 +69,11 @@ public final class GetChallengeApduCommand extends CommandApdu {
     public GetChallengeApduCommand(final byte cla, final int numBytes) {
         super(
     		cla,                      // CLA
-            INS_GET_CHALLENGE,        // INS
-            (byte) 0x00,              // P1
-            (byte) 0x00,              // P2
-            null,                     // Data
-            Integer.valueOf(numBytes) // Le
+    		INS_GET_CHALLENGE,        // INS
+    		(byte) 0x00,              // P1
+    		(byte) 0x00,              // P2
+    		null,                     // Data
+    		Integer.valueOf(numBytes) // Le
         );
     }
 }
