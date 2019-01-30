@@ -1,5 +1,7 @@
 package es.gob.jmulticard.card.dnie;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -12,11 +14,11 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
+import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.pace.InvalidCanException;
+import es.gob.jmulticard.card.pace.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.pace.PaceChannelHelper;
 import es.gob.jmulticard.card.pace.PaceConnection;
 import es.gob.jmulticard.card.pace.PaceException;
@@ -27,10 +29,13 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Lectura de DNIe 3 a partir de un dispositivo con NFC.
  * @author Sergio Mart&iacute;nez Rico
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
-public final class DnieNFC extends Dnie3 {
+public class DnieNFC extends Dnie3 {
 
-	// Se guarda el codigo CAN para establecer un canal PACE cada vez que se quiere
+	private static final int MAX_PACE_RETRIES = 2;
+
+	// Se guarda el codigo CAN o MRZ para establecer un canal PACE cada vez que se quiere
 	// realizar una operacion de firma
 	private static PacePasswordType paceInitType;
 	private static String paceInitValue;
@@ -57,22 +62,55 @@ public final class DnieNFC extends Dnie3 {
 		);
 	}
 
+    /** {@inheritDoc} */
+	@Override
+    public String getCardName() {
+        return "DNIe 3.0 accedido de forma inalambrica"; //$NON-NLS-1$
+    }
+
 	private static ApduConnection getPaceConnection(final ApduConnection con,
 			                                        final CallbackHandler ch) throws ApduConnectionException,
 	                                                                                 PaceException {
 		// Primero obtenemos el CAN/MRZ
-		Callback tic = new CustomTextInputCallback();
+		final String prompt = CardMessages.getString("DnieNFC.0"); //$NON-NLS-1$
+		Callback tic;
+		try {
+			tic = (Callback) Class.forName("javax.security.auth.callback.TextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
+		}
+		catch(final ClassNotFoundException    |
+				    InstantiationException    |
+				    IllegalAccessException    |
+				    IllegalArgumentException  |
+				    InvocationTargetException |
+				    NoSuchMethodException     |
+				    SecurityException e) {
+			LOGGER.info(
+				"No se ha encontrado la clase 'javax.security.auth.callback.TextInputCallback', se usara 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e //$NON-NLS-1$
+			);
+			try {
+				tic = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
+			}
+			catch (InstantiationException |
+				   IllegalAccessException |
+				   IllegalArgumentException |
+				   InvocationTargetException |
+				   NoSuchMethodException |
+				   SecurityException |
+				   ClassNotFoundException e1) {
+				throw new IllegalStateException(
+					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e1, e1 //$NON-NLS-1$
+				);
+			}
+		}
 
-		SecureMessaging sm = null;
-		boolean wrongInit = true;
 		int counter = 0;
 		paceInitValue = null;
 		paceInitType = null;
 
-		while(wrongInit) {
-			//Pide el codigo can en caso de que no haya sido introducido con anterioridad
-			//El contador permite hacer dos verificaciones del can por si en la primera no se hubiera reseteado la tarjeta
-			if(paceInitValue == null || paceInitType == null|| counter > 0) {
+		while(true) {
+			// Pide el codigo CAN o MRZ en caso de que no haya sido introducido con anterioridad
+			// El contador permite hacer varias verificaciones del CAN/MRZ por si en la primera no se hubiera reseteado la tarjeta
+			if (paceInitValue == null || paceInitType == null) {
 				try {
 					ch.handle(
 						new Callback[] {
@@ -83,14 +121,34 @@ public final class DnieNFC extends Dnie3 {
 				catch (final Exception e) {
 					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
 				}
-				paceInitValue = ((CustomTextInputCallback)tic).getText();
+
+				try {
+					final Method m = tic.getClass().getMethod("getText"); //$NON-NLS-1$
+					final Object o = m.invoke(tic);
+					if (o instanceof String) {
+						paceInitValue = (String)o;
+					}
+					else {
+						throw new IllegalStateException(
+							"El TextInputCallback ha devuelto un dato de tipo " + (o == null ? "null" : o.getClass().getName()) //$NON-NLS-1$ //$NON-NLS-2$
+						);
+					}
+				}
+				catch (final NoSuchMethodException |
+					         SecurityException |
+					         IllegalAccessException |
+					         IllegalArgumentException |
+					         InvocationTargetException e) {
+					throw new IllegalStateException(
+						"El TextInputCallback no tiene un metodo 'getText': " + e //$NON-NLS-1$
+					);
+				}
+
 				//Se obtiene el tipo de inicializador analizando el valor introducido.
 				paceInitType = getPasswordType(paceInitValue);
 
-				//Se decide el tipo de contrasena
-
 				if (paceInitValue == null || paceInitValue.isEmpty() || paceInitType == null)  {
-					throw new InvalidCanException("El CAN/MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
+					throw new InvalidCanOrMrzException("El CAN/MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
 				}
 			}
 			try {
@@ -107,34 +165,40 @@ public final class DnieNFC extends Dnie3 {
 							"Tipo de inicializador PACE no soportado: " + paceInitType //$NON-NLS-1$
 						);
 				}
-				sm = PaceChannelHelper.openPaceChannel(
+
+				final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
 					(byte)0x00,
 					paceInitializer,
 					con,
 					new JseCryptoHelper()
 				);
-				// En caso de establecer correctamente el canal inicializamos el contador para que
-				// siempre obtenga el can mediante el callback
-				counter = 0;
-				wrongInit = false;
-			}
-			catch(final PaceException e) {
-				Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-					"Error estableciendo canal PACE (probablemente por CAN/MRZ invalido): " + e //$NON-NLS-1$
-				);
-				//Si el CAN/MRZ es incorrecto modificamos el mensaje del dialogo y volvemos a pedirlo
-				wrongInit = true;
-				tic = new CustomTextInputCallback();
-				counter++;
-			}
-		}
 
-        // Establecemos el canal PACE
-		return new PaceConnection(
-    		con,
-    		new JseCryptoHelper(),
-    		sm
-		);
+				return new PaceConnection(
+		    		con,
+		    		new JseCryptoHelper(),
+		    		sm
+				);
+
+			}
+			catch(final InvalidCanOrMrzException e) {
+
+				// En cualquier caso, si da esta excepcion, no guardamos el CAN/MRZ
+				paceInitValue = null;
+				paceInitType = null;
+
+				if (counter < MAX_PACE_RETRIES) {
+					Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+						"Error en el intento " + Integer.toString(counter + 1) + " de establecimiento de canal PACE (probablemente por CAN/MRZ invalido): " + e //$NON-NLS-1$ //$NON-NLS-2$
+					);
+					//Si el CAN/MRZ es incorrecto volvemos a pedirlo
+					counter++;
+				}
+				else {
+					throw e;
+				}
+			}
+
+		}
 
 	}
 
@@ -146,8 +210,10 @@ public final class DnieNFC extends Dnie3 {
 				paceInitializer = PaceInitializerMrz.deriveMrz(paceInitValue);
 				break;
 			case CAN:
-			default:
 				paceInitializer = new PaceInitializerCan(paceInitValue);
+				break;
+			default:
+				throw new UnsupportedOperationException("No se soporta el codigo de inicializacion de PACE: " + paceInitType); //$NON-NLS-1$
 		}
 
 		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
@@ -168,8 +234,8 @@ public final class DnieNFC extends Dnie3 {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
-																PinException {
+	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
+															 PinException {
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
 				this.rawConnection = getPaceConnection(getConnection());
@@ -227,7 +293,7 @@ public final class DnieNFC extends Dnie3 {
 	}
 
 	/** Indica si un texto es num&eacute;rico.
-	 * @param cs Texto a analizar
+	 * @param cs Texto a analizar.
 	 * @return <code>true</code> si el texto es num&eacute;rico,
 	 *         <code>false</code> en caso contrario. */
 	 private static boolean isNumeric(final CharSequence cs) {

@@ -62,7 +62,8 @@ public final class SmartCafePrivateKey implements RSAPrivateKey {
 	private final CryptoCard card;
 
 	/** Crea una clave privada de una tarjeta G&amp;D SmartCafe con Applet PKCS#15.
-	 * @param keyReference Referencia a la clave privada. */
+	 * @param keyReference Referencia a la clave privada.
+	 * @param cryptoCard Tarjeta sobre la que crear la clave. */
 	SmartCafePrivateKey(final SmartCafePrivateKeyReference keyReference,
 			            final SmartCafePkcs15Applet cryptoCard) {
 		this.id = keyReference.getKeyOrdinal();

@@ -191,6 +191,18 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return this.passwordCallback;
     }
 
+	@Override
+	public String toString() {
+		try {
+			final Cdf cdf = getCdf();
+			return getCardName() + "\n" + new DnieSubjectPrincipalParser(cdf.getCertificateSubjectPrincipal(0)).toString(); //$NON-NLS-1$
+		}
+		catch (final ApduConnectionException e) {
+			LOGGER.warning("No se ha podido leer el CDF del DNIe: " + e); //$NON-NLS-1$
+		}
+		return getCardName();
+	}
+
     /** Conecta con el lector del sistema que tenga un DNIe insertado.
      * @param conn Conexi&oacute;n hacia el DNIe.
      * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta. */
@@ -229,10 +241,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla.*/
     protected Dnie(final ApduConnection conn,
-    	 final PasswordCallback pwc,
-    	 final CryptoHelper cryptoHelper,
-    	 final CallbackHandler ch,
-    	 final boolean loadCertsAndKeys) throws ApduConnectionException {
+    	           final PasswordCallback pwc,
+    	           final CryptoHelper cryptoHelper,
+    	           final CallbackHandler ch,
+    	           final boolean loadCertsAndKeys) throws ApduConnectionException {
         super((byte) 0x00, conn);
         conn.reset();
         connect(conn);
@@ -250,6 +262,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		}
 
         this.passwordCallback = pwc;
+
         if (cryptoHelper == null) {
             throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
@@ -327,7 +340,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     /** Recupera el n&uacute;mero de serie de un DNIe.
-     * @return Un array de bytes que contiene el n&uacute;mero de serie del DNIe.
+     * @return Un array de octetos que contiene el n&uacute;mero de serie del DNIe.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla. */
     @Override
@@ -751,7 +764,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
      * 						un PIN para validar.  */
-    protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+    public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!isSecurityChannelOpen()) {
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
@@ -782,7 +795,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     private int getPinRetriesLeft() throws PinException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
-
     	final ResponseApdu verifyResponse;
 		try {
 			verifyResponse = getConnection().transmit(

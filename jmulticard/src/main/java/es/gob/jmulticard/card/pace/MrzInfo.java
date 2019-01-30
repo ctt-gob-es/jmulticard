@@ -27,23 +27,30 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
-/** Data structure for storing the MRZ information
- * as found in DG1. Based on ICAO Doc 9303 part 1 and 3.
+import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.card.SmartCard;
+
+/** Estructura de datos para almacenar la informaci&oacute;n de la MRZ,
+ * tal y como se encuentra en el DG1. Basado en el documento 9303 de ICAO, partes 1 y 3.
  * @author The JMRTD team (info@jmrtd.org)
  * @version $Revision: 1712. */
-final class MrzInfo {
+public final class MrzInfo {
 
-    /** Unspecified document type (do not use, choose ID1 or ID3). */
+    /** Tipo de documento no especificado (no usar, especificar ID1 o ID3). */
     private static final int DOC_TYPE_UNSPECIFIED = 0;
 
-    /** ID1 document type for credit card sized identity cards. Specifies a 3-line MRZ, 30 characters wide. */
+    /** Tipo de documento ID1 (tama&ntilde;o CR80, MRZ de 3 l&iacute;neas de 30 caracteres). */
     private static final int DOC_TYPE_ID1 = 1;
 
-    /** ID3 document type for passport booklets. Specifies a 2-line MRZ, 44 characters wide. */
+    /** Tipo de documento ID3 (libretas de pasaporte, MRZ de dos l&iacute;neas de 44 caracteres). */
     private static final int DOC_TYPE_ID3 = 3;
 
-    /** @deprecated to be replaced with documentCode */
+    /** @deprecated
+     * A reemplazar por <code>documentCode</code>. */
     @Deprecated
     private int documentType;
 
@@ -53,16 +60,58 @@ final class MrzInfo {
 
     private String dateOfExpiry;
     private char documentNumberCheckDigit;
-    private String optionalData1; /* NOTE: holds personal number for some issuing states (e.g. NL), but is used to hold (part of) document number for others. */
 
-    /** Creates a new MRZ based on the text input.
-     * The text input may contain newlines, which will be ignored.
-     * @param str Input text. */
-    void setMrz(final String str) {
-        if (str == null) {
-            throw new IllegalArgumentException("Null string"); //$NON-NLS-1$
+    /** Contiene el n&uacute;mero del titular en ciertos pa&iacute;ses (como Holanda), pero normalmente contiene parte del n&uacute;mero de documento. */
+    private String optionalData1;
+
+    /** Devuelve el 'MRZ Information' como array de octetos.
+     * @return 'MRZ Information' (binario). */
+    public byte[] getBytes() {
+		final byte[] numberBytes = getDocumentNumber().getBytes();
+		final byte[] numberCheck = new byte [] { (byte) checkDigit(getDocumentNumber()) };
+		final byte[] birthBytes  = getDateOfBirth().getBytes();
+		final byte[] birthCheck = new byte [] { (byte) MrzInfo.checkDigit(getDateOfBirth()) };
+		final byte[] expiryBytes = getDateOfExpiry().getBytes();
+		final byte[] expiryCheck = new byte[] { (byte) MrzInfo.checkDigit(getDateOfExpiry()) };
+
+		if (SmartCard.DEBUG) {
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+				"Info de la MRZ: numero=" + new String(numberBytes) + //$NON-NLS-1$
+					"; nacimiento=" + new String(birthBytes) + //$NON-NLS-1$
+						"; caducidad=" + new String(expiryBytes) //$NON-NLS-1$
+			);
+		}
+
+		return HexUtils.concatenateByteArrays(
+			numberBytes,
+			numberCheck,
+			birthBytes,
+			birthCheck,
+			expiryBytes,
+			expiryCheck
+		);
+    }
+
+	/** Calcula el valor de inicializaci&oacute;n (BAC, EAC, PACE) de la MRZ.
+	 * Siguiendo la especificaci&oacute;n ICAO 9303:<br>
+	 * <code>KDF&pi;(&pi;) = KDF(f(&pi;),3)</code><br>
+	 * <code>K= f(&pi;) = SHA-1(Serial Number || Date of Birth || Date of Expiry)</code><br>
+	 * En este m&eacute;todo se genera el valor de K que deber&aacute; posteriormente ser
+	 * pasado como par&aacute;metro de la funci&oacute;n KDF(K,3) para generar la contrase&ntilde;a.
+	 * @return K Valor de inicializaci&oacute;n.
+	 * @throws IOException Si no se puede obtener el valor. */
+	public byte[] getMrzPswd() throws IOException {
+		return new JseCryptoHelper().digest(CryptoHelper.DigestAlgorithm.SHA1, getBytes());
+	}
+
+    /** Crea la MRZ.
+     * Si este texto contiene retornos de carro o tabuladores, estos se ignoran.
+     * @param mrzStr texto de la MRZ. */
+    public MrzInfo(final String mrzStr) {
+        if (mrzStr == null || mrzStr.isEmpty()) {
+            throw new IllegalArgumentException("El texto del MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
         }
-        final String strMrz = str.trim().replace("\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        final String strMrz = mrzStr.trim().replace("\n", "").replace("\r", "").replaceAll("\t", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
         try {
             readObject(
         		new ByteArrayInputStream(strMrz.getBytes(StandardCharsets.UTF_8)),
@@ -78,7 +127,7 @@ final class MrzInfo {
 
         final DataInputStream dataIn = new DataInputStream(inputStream);
 
-        /* line 1, pos 1 to 2, Document code */
+        // Linea 1, posiciones del 1 al 2: Codigo de documento
         this.documentCode = readStringWithFillers(dataIn, 2);
         this.documentType = getDocumentTypeFromDocumentCode(this.documentCode);
         switch (length) {
@@ -95,45 +144,45 @@ final class MrzInfo {
         if (this.documentType == DOC_TYPE_ID1) {
         	readCountry(dataIn);
 
-            /* line 1, pos 6 to 14 Document number */
+            // Linea 1, posiciones del 6 al 14: Numero de documento
             this.documentNumber = readString(dataIn, 9);
 
-            /* line 1, pos 15 Check digit */
+            // Linea 1, posicion 15: Digito de control */
             this.documentNumberCheckDigit = (char)dataIn.readUnsignedByte();
 
-            /* line 1, pos 16 to 30, Optional data elements */
+            // Linea 1, posiciones del 16 al 30: Elementos de datos opcionales
             this.optionalData1 = readStringWithFillers(dataIn, 15);
 
             if (this.documentNumberCheckDigit == '<') {
-            	/* Interpret personal number as part of document number, see note j. */
+            	// Se interpreta el n&uacute;mero del titular como el n&uacute;mero del documento, ver nota j.
                 this.documentNumber += this.optionalData1.substring(0, this.optionalData1.length() - 1);
                 this.documentNumberCheckDigit = this.optionalData1.charAt(this.optionalData1.length() - 1);
                 this.optionalData1 = null;
             }
             this.documentNumber = trimFillerChars(this.documentNumber);
 
-            /* line 2, pos 1 to 6, Date of birth */
+            // Linea 2, posiciones del 1 al 6: Fecha de nacimiento
             this.dateOfBirth = readDateOfBirth(dataIn);
-			
-			/*Date of birth check digit */
+
+			// Digito de control de la fecha de nacimiento
 			dataIn.readUnsignedByte();
 
-            /* line 2, pos 8, Sex */
+            // Linea 2, posicion 8: Sexo
             readGender(dataIn);
 
-            /* line 2, Pos 9 to 14, Date of expiry */
+            // Linea 2, posiciones del 9 al 14: fecha de caducidad
             this.dateOfExpiry = readDateOfExpiry(dataIn);
 
         }
         else {
-        	/* Assume it's a ID3 document, i.e. 2-line MRZ. */
+        	// Asumimos aqui que es un documento de tipo ID3 (MRZ de dos lineas).
 
         	readCountry(dataIn);
 
-            /* line 1, pos 6 to 44 */
+            // Linea 1, posiciones del 6 al 44
             readNameIdentifiers(readString(dataIn, 39));
 
-            /* line 2 */
+            // Linea 2
             this.documentNumber = trimFillerChars(readString(dataIn, 9));
             this.documentNumberCheckDigit = (char)dataIn.readUnsignedByte();
             readCountry(dataIn);
@@ -144,32 +193,32 @@ final class MrzInfo {
         }
     }
 
-    /** Gets the date of birth of the passport holder.
-     * @return Date of birth. */
-    String getDateOfBirth() {
+    /** Obtiene la fecha de nacimiento del titular.
+     * @return Fecha de nacimiento del titular. */
+    public String getDateOfBirth() {
         return this.dateOfBirth;
     }
 
-    /** Gets the date of expiry.
-     * @return Date of expiry. */
-    String getDateOfExpiry() {
+    /** Obtiene la fecha de caducidad del documento.
+     * @return Fecha de caducidad del documento. */
+    public String getDateOfExpiry() {
         return this.dateOfExpiry;
     }
 
-    /** Gets the document number.
-     * @return Document number. */
-    String getDocumentNumber() {
+    /** Obtiene el n&uacute;mero del documento.
+     * @return N&uacute;mero del documento. */
+    public String getDocumentNumber() {
         return this.documentNumber;
     }
 
-    /** Computes the 7-3-1 check digit for part of the MRZ.
-     * @param str A part of the MRZ.
-     * @return The resulting check digit (in '0' - '9'). */
-    public static char checkDigit(final String str) {
+    /** Calcula el d&iacute;gito de control 7-3-1 de un fragmento la MRZ.
+     * @param str Fragmento de la MRZ.
+     * @return D&iacute;gito de control (de '0' a '9'). */
+    static char checkDigit(final String str) {
         return checkDigit(str, false);
     }
 
-    /* ONLY PRIVATE METHODS BELOW */
+    // Metodos privados
 
     private static void readNameIdentifiers(final String mrzNameString) {
         final int delimIndex = mrzNameString.indexOf("<<"); //$NON-NLS-1$
@@ -190,87 +239,88 @@ final class MrzInfo {
         return trimFillerChars(readString(in, count));
     }
 
-    /** Reads the issuing state as a three letter string.
-     * @param inputStream The inpt string stream.
-     * @return A string of length 3 containing an abbreviation
-     *         of the issuing state or organization.
-     * @throws IOException If something goes wrong. */
+    /** Lee el c&oacute;digo de estado emisor (tres letras) del flujo de entrada.
+     * @param inputStream Flujo de entrada (como texto).
+     * @return Estado u organizaci&oacute;n emisora del documento (c&oacute;digo de tres letras).
+     * @throws IOException En cualquier error. */
     private static String readCountry(final DataInputStream inputStream) throws IOException {
         return readString(inputStream, 3);
     }
 
-    /** Reads The 1 letter gender information.
-     * @param inputStream The input source.
-     * @return The gender of the passport holder.
-     * @throws IOException If something goes wrong. */
+    /** Lee el sexo del titular (una letra) del flujo de entrada.
+     * @param inputStream Flujo de entrada (como texto).
+     * @return Sexto del titular del documento.
+     * @throws IOException En cualquier error. */
     private static String readGender(final DataInputStream inputStream) throws IOException {
         final String genderStr = readString(inputStream, 1);
         return genderStr;
     }
 
-    /** Reads the date of birth of the passport holder.
-     * As only the rightmost two digits are stored,
-     * the assumption that this is a date in the recent
-     * past is made.
-     * @param in The input string stream.
-     * @return The date of birth.
-     * @throws IOException If something goes wrong.
-     * @throws NumberFormatException If a data could not be constructed. */
-    private static String readDateOfBirth(final DataInputStream in) throws IOException, NumberFormatException {
+    /** Lee la fecha de nacimiento del titular (seis d&iacute;gitos) del flujo de entrada.
+     * No se comprueba que realmente sean valores num&eacute;ricos.
+     * @param in Flujo de entrada (como texto).
+     * @return Fecha de nacimiento del titular.
+     * @throws IOException En cualquier error. */
+    private static String readDateOfBirth(final DataInputStream in) throws IOException {
         return readString(in, 6);
     }
 
-    /** Reads the date of expiry of this document.
-     * As only the rightmost two digits are stored,
-     * the assumption that this is a date in the near
-     * future is made.
-     * @param in The input string stream.
-     * @return The date of expiry.
-     * @throws IOException If something goes wrong.
-     * @throws NumberFormatException If a date could not be constructed. */
-    private static String readDateOfExpiry(final DataInputStream in) throws IOException, NumberFormatException {
+    /** Lee la fecha de caducidad del documento (seis d&iacute;gitos) del flujo de entrada.
+     * No se comprueba que realmente sean valores num&eacute;ricos.
+     * @param in Flujo de entrada (como texto).
+     * @return Fecha de caducidad del documento.
+     * @throws IOException En cualquier error. */
+    private static String readDateOfExpiry(final DataInputStream in) throws IOException {
         return readString(in, 6);
     }
 
-    /** Determines the document type based on the document code (the first two characters of the MRZ).
-     * ICAO Doc 9303 part 3 vol 1 defines MRTDs with 3-line MRZs,
-     * in this case the document code starts with "A", "C", or "I"
-     * according to note j to Section 6.6 (page V-9).
-     *
-     * ICAO Doc 9303 part 2 defines MRVs with 2-line MRZs,
-     * in this case the document code starts with "V".
-     *
-     * ICAO Doc 9303 part 1 vol 1 defines MRPs with 2-line MRZs,
-     * in this case the document code starts with "P"
-     * according to Section 9.6 (page IV-15).
-     *
-     * @param documentCode A two letter code.
-     * @return A document type, one of {@link #DOC_TYPE_ID1},
-     * 		   {@link #DOC_TYPE_ID3}, or {@link #DOC_TYPE_UNSPECIFIED} */
+    /** Determina el tipo de documento seg&uacute;n el c&oacute;digo de documento (pimeros
+     * dos caracteres de la MRZ).
+     * <ul>
+     *  <li>
+     *   El documento ICAO 9303 parte 3 volumen 1 define MRTD con MRZ de tres l&iacute;neas si
+     *   el c&oacute;digo de documento empieza por "A", "C", o "I"
+     *   (nota j, secti&oacute;n 6.6, p&aacute;gina V-9).
+     *  </li>
+     *  <li>
+     *   El documento ICAO 9303 parte 2 define MRV con MRZ de dos l&iacute;neas si
+     *   el c&oacute;digo de documento empieza por "V".
+     *  </li>
+     *  <li>
+     *   El documento ICAO 9303 parte 1 volumen 1 define MRP con MRZ de dos l&iacute;neas si
+     *   el c&oacute;digo de documento empieza por "P"
+     *   (secci&oacute;n 9.6, p&aacute;gina IV-15).
+     *  </li>
+     * </ul>
+     * @param documentCode C&oacute;digo de documento (de dos letras).
+     * @return Tipo de documento, que puese ser {@link #DOC_TYPE_ID1},
+     * 		   {@link #DOC_TYPE_ID3} o {@link #DOC_TYPE_UNSPECIFIED}. */
     private static int getDocumentTypeFromDocumentCode(final String documentCode) {
         if (documentCode == null || documentCode.length() < 1 || documentCode.length() > 2) {
-            throw new IllegalArgumentException("Was expecting 1 or 2 digit document code, got " + documentCode); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+        		"El tipo de documento debe tener uno o dos caracteres, pero se recibio: " + documentCode //$NON-NLS-1$
+    		);
         }
         if (documentCode.startsWith("A") || //$NON-NLS-1$
             documentCode.startsWith("C") || //$NON-NLS-1$
             documentCode.startsWith("I")) { //$NON-NLS-1$
-            	/* MRTD according to ICAO Doc 9303 part 3 vol 1 */
+            	/* MRTD segun ICAO Doc 9303 parte 3 vol 1 */
             	return DOC_TYPE_ID1;
         }
         else if (documentCode.startsWith("V")) { //$NON-NLS-1$
-        		/* MRV according to ICAO Doc 9303 part 2 */
+        		/* MRV segun ICAO Doc 9303 parte 2 */
         		return DOC_TYPE_ID1;
         }
         else if (documentCode.startsWith("P")) { //$NON-NLS-1$
-        		/* MRP according to ICAO Doc 9303 part 1 vol 1 */
+        		/* MRP segun ICAO Doc 9303 parte 1 vol 1 */
             	return DOC_TYPE_ID3;
         }
         return DOC_TYPE_UNSPECIFIED;
     }
 
-    /** Replaces '&lt;' with ' ' and trims leading and trailing whitespace.
-     * @param str The input string.
-     * @return Trimmed string. */
+    /** reemplaza el caracter '&lt;' por ' ' y elimina los espacios en blanco al principio y al final.
+     * @param str Texto de entrada.
+     * @return Texto con las sustituciones hechas. */
     private static String trimFillerChars(final String str) {
         final byte[] chars = str.trim().getBytes();
         for (int i = 0; i < chars.length; i++) {
@@ -281,12 +331,12 @@ final class MrzInfo {
         return new String(chars).trim();
     }
 
-    /** Computes the 7-3-1 check digit for part of the MRZ.
-     * If <code>preferFillerOverZero</code> is <code>true</code> then '&lt;' will be
-     * returned on check digit 0.
-     * @param str A part of the MRZ.
-     * @param preferFillerOverZero Fill preference.
-     * @return The resulting check digit (in '0' - '9', '&lt;'). */
+    /** Calcula el d&iacute;gito de control 7-3-1 para un fragmento de la MRZ.
+     * Si <code>preferFillerOverZero</code> est&aacute; establecido a <code>true</code> entonces
+     * '&lt;' se devolver&aacute; en la comprobaci&oacute;n del d&iacute;gito 0.
+     * @param str Porci&oacute;n de la MRZ.
+     * @param preferFillerOverZero Preferencia de relleno.
+     * @return D&iacute;gito de control (del '0' al '9' o '&lt;'). */
     private static char checkDigit(final String str, final boolean preferFillerOverZero) {
         try {
             final byte[] chars = str == null ? new byte[] { } : str.getBytes(StandardCharsets.UTF_8);
@@ -297,7 +347,8 @@ final class MrzInfo {
             }
             final String checkDigitString = Integer.toString(result);
             if (checkDigitString.length() != 1) {
-                throw new IllegalStateException("Error in computing check digit."); /* NOTE: Never happens. */ //$NON-NLS-1$
+            	// No deberia pasar
+                throw new IllegalStateException("Error calculando el digito de control"); //$NON-NLS-1$
             }
             char checkDigit = (char)checkDigitString.getBytes(StandardCharsets.UTF_8)[0];
             if (preferFillerOverZero && checkDigit == '0') {
@@ -306,20 +357,19 @@ final class MrzInfo {
             return checkDigit;
         }
         catch (final NumberFormatException nfe) {
-            /* NOTE: never happens. */
-            throw new IllegalStateException("Error in computing check digit", nfe); //$NON-NLS-1$
+            // No deberia pasar
+            throw new IllegalStateException("Error calculando el digito de control: " + nfe, nfe); //$NON-NLS-1$
         }
         catch (final Exception e) {
-            throw new IllegalArgumentException("Error in computing check digit", e); //$NON-NLS-1$
+            throw new IllegalArgumentException("Error calculando el digito de control: " + e, e); //$NON-NLS-1$
         }
     }
 
-    /** Looks up the numerical value for MRZ characters. In order to be able
-     * to compute check digits.
-     * @param ch A character from the MRZ.
-     * @return The numerical value of the character.
-     * @throws NumberFormatException If <code>ch</code> is not a valid MRZ
-     *                               character. */
+    /** Obtiene el valor num&eacute;rico de un carcater MRZ (para el c&aacute;lculo de
+     * los d&iacute;gitos de control)
+     * @param ch caracter de la MRZ.
+     * @return Valor num&eacute;rico del caracter.
+     * @throws NumberFormatException Si el caracter no es v&aacute;lido para una MRZ. */
     private static int decodeMRZDigit(final byte ch) throws NumberFormatException {
         switch (ch) {
             case '<':
@@ -422,7 +472,9 @@ final class MrzInfo {
             case 'Z':
                 return 35;
             default:
-                throw new NumberFormatException("Could not decode MRZ character " + ch + " ('" + Character.toString((char) ch) + "')"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                throw new NumberFormatException(
+            		"No se ha podido decodificar el caracter del MRZ '" + ch + "' ('" + Character.toString((char) ch) + "')" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        		);
         }
     }
 }

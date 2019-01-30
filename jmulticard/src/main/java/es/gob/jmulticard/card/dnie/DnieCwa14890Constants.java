@@ -85,7 +85,7 @@ final class DnieCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pr
         (byte) 0x42, (byte) 0x08, (byte) 0x65, (byte) 0x73, (byte) 0x52, (byte) 0x44, (byte) 0x49, (byte) 0x60, (byte) 0x00, (byte) 0x06
     };
 
-    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el numero de serie es
+    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
@@ -126,7 +126,7 @@ final class DnieCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pr
             (byte) 0x08, (byte) 0x65, (byte) 0x73, (byte) 0x53, (byte) 0x44, (byte) 0x49, (byte) 0x60, (byte) 0x00, (byte) 0x06
     };
 
-    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el numero de serie es
+    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).

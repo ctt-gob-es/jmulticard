@@ -107,10 +107,12 @@ public abstract class CryptoHelper {
 
 	/** A&ntilde;ade relleno PKCS#1 para operaciones con clave privada.
 	 * @param in Datos a los que se quiere a&ntilde;adir relleno PKCS#1.
-	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente con estos datos con relleno.
+	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente con estos datos con
+	 *                relleno.
 	 * @return Datos con el relleno PKCS#1 a&ntilde;adido.
 	 * @throws IOException En caso de error el el tratamiento de datos. */
-	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] in, final int keySize) throws IOException {
+	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] in,
+			                                                         final int keySize) throws IOException {
 		if (in == null) {
 			throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
 		}
@@ -249,7 +251,8 @@ public abstract class CryptoHelper {
 	 * @throws NoSuchAlgorithmException Si no se encuentra un proveedor que permita realizar
 	 *                                  CMAC con AES.
 	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
-	public abstract byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException, InvalidKeyException;
+	public abstract byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException,
+	                                                                             InvalidKeyException;
 
 	/** Realiza un acuerdo de claves <i>Diffie Hellman</i> con algoritmo de curva el&iacute;ptica.
 	 * @param privateKey Clave privada.
@@ -260,13 +263,19 @@ public abstract class CryptoHelper {
 	 *                                  algoritmo <i>ECDH</i>.
 	 * @throws InvalidKeySpecException Si alguna de las claves es inv&aacute;lida.
 	 * @throws InvalidKeyException Si alguna de las claves es inv&aacute;lida. */
-	public abstract byte[] doEcDh(Key privateKey, byte[] publicKey, final EcCurve curveName) throws NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException;
+	public abstract byte[] doEcDh(final Key privateKey,
+			                      final byte[] publicKey,
+			                      final EcCurve curveName) throws NoSuchAlgorithmException,
+	                                                              InvalidKeyException,
+	                                                              InvalidKeySpecException;
 
 	/** Obtiene un punto en una curva el&iacute;ptica.
 	 * @param nonceS Aleatorio de un solo uso.
 	 * @param sharedSecretH Secreto compartido.
 	 * @param curveName Nombre de la curva.
 	 * @return Punto encapsulado. */
-	public abstract AlgorithmParameterSpec getEcPoint(byte[] nonceS, byte[] sharedSecretH, final EcCurve curveName);
+	public abstract AlgorithmParameterSpec getEcPoint(final byte[] nonceS,
+			                                          final byte[] sharedSecretH,
+			                                          final EcCurve curveName);
 
 }

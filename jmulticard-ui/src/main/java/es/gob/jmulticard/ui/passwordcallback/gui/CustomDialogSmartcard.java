@@ -144,12 +144,13 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
     private static String cancellText = Messages.getString("PrincipalGUI.cancelar"); //$NON-NLS-1$
 
     /** Constructor.
-     * @param componentParent componente padre.
-     * @param modal <code>true</code> si se desea que el di&aacute;logo sea modal,
+     * @param componentParent Componente padre para la modalidad.
+     * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
      *              <code>false</code> en caso contrario.
-     * @param message mensaje
-     * @param title T&iacute;tulo
-     * @param isInputDialog indica sies una alerta de tipo input */
+     * @param message Mensaje del di&aacute;logo.
+     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos.
+     * @param iconPath Ruta hacia el recurso de fichero de icono. */
     protected CustomDialogSmartcard(final JDialog componentParent,
                          final boolean modal,
                          final String message,
@@ -163,11 +164,13 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
     }
 
     /** Constructor.
-     * @param componentParent componente padre.
-     * @param modal modal
-     * @param message mensaje
-     * @param title titulo
-     * @param isInputDialog indica sies una alerta de tipo input */
+     * @param componentParent Componente padre para la modalidad.
+     * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
+     *              <code>false</code> en caso contrario.
+     * @param message Mensaje del di&aacute;logo.
+     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos.
+     * @param iconPath Ruta hacia el recurso de fichero de icono. */
     protected CustomDialogSmartcard(final Component componentParent,
                          final boolean modal,
                          final String message,
@@ -183,10 +186,12 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
 
     /** Constructor.
      * @param componentParent Componente padre para la modalidad.
-     * @param modal modal
+     * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
+     *              <code>false</code> en caso contrario.
      * @param message Mensaje del di&aacute;logo.
      * @param title T&iacute;tulo del di&aacute;logo.
-     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos. */
+     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos.
+     * @param iconPath Ruta hacia el recurso de fichero de icono. */
     private CustomDialogSmartcard(final JFrame componentParent,
                              final boolean modal,
                              final String message,
@@ -217,9 +222,10 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
     }
 
     /** Inicializa los componentes de la alerta.
-     * @param message mensaje que se mostrara en la alerta.
-     * @param title T&iacute;tulo de la alerta.
-     * @param isInputDialog indica si es una alerta de tipo input. */
+     * @param message Mensaje del di&aacute;logo.
+     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos.
+     * @param iconPath Ruta hacia el recurso de fichero de icono. */
     protected void initComponents(final String message,
     		                      final String title,
     		                      final boolean isInputDialog,
@@ -345,7 +351,8 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
         pack();
     }
 
-    /** Asigna el icono a la etiqueta. */
+    /** Asigna el icono a la etiqueta.
+     * @param iconPath Ruta hacia el recurso de fichero de icono. */
     protected void setIconLabel(final String iconPath) {
     	if (iconPath != null) {
 	        // Segun el tipo de mensaje se selecciona el icono
@@ -827,12 +834,14 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
     }
 
     /** Devuelve una instancia de CustomDialog.
-     * @param componentParent Componente padre.
-     * @param modal Modal.
-     * @param message Mensaje.
+     * @param componentParent Componente padre para la modalidad.
+     * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
+     *              <code>false</code> en caso contrario.
+     * @param message Mensaje del di&aacute;logo.
      * @param title T&iacute;tulo del di&aacute;logo.
-     * @param isInputDialog Indica si es una alerta de tipo input.
-     * @return instancia de CustomDialog. */
+     * @param isInputDialog Indica si es un di&aacute;logo de entrada de datos.
+     * @param iconPath Ruta hacia el recurso de fichero de icono.
+     * @return Instancia del di&aacute;logo. */
     static CustomDialogSmartcard getInstanceCustomDialog(final Component componentParent,
                                                 final boolean modal,
                                                 final String message,
@@ -853,7 +862,7 @@ public class CustomDialogSmartcard extends JAccessibilityCustomDialog implements
         return customDialog;
     }
 
-    /** Accion correspondiente a los botones de las alertas. */
+    /** Acci&oacute;n correspondiente a los botones de las alertas. */
     @Override
     public void actionPerformed(final ActionEvent e) {
 

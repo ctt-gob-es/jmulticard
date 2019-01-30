@@ -48,7 +48,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
 /** Clase para operaciones de cifrado cifrado AES.
- * @author Sergio Mart&iacute;nez Rico */
+ * @author Sergio Mart&iacute;nez Rico. */
 public final class ApduEncrypterAes extends ApduEncrypter {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$

@@ -24,18 +24,16 @@ import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
-/**
- * Payload de respuesta
- *
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
+/** <i>Payload</i> de respuesta.
+ * @author Tobias Senger (tobias@t-senger.de). */
 final class DO97 {
 
     private byte[] data = null;
     private DERTaggedObject to = null;
 
-	DO97(){}
+	DO97() {
+		// Vacio
+	}
 
 	DO97(final byte[] le) {
 		this.data = le.clone();
@@ -73,6 +71,5 @@ final class DO97 {
 	byte[] getData() {
     	return this.data;
     }
-
 
 }

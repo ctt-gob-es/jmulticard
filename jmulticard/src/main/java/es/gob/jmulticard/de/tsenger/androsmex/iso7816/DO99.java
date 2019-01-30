@@ -25,16 +25,15 @@ import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
 /**
- *
- * @author Tobias Senger (tobias@t-senger.de)
- *
- */
+ * @author Tobias Senger (tobias@t-senger.de). */
 final class DO99 {
 
 	private byte[] data = null;
 	private DERTaggedObject to = null;
 
-	DO99() {}
+	DO99() {
+		// Vacio
+	}
 
 	DO99(final byte[] le) {
 		this.data = le.clone();

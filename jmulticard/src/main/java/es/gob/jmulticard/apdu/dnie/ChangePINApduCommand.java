@@ -2,9 +2,8 @@ package es.gob.jmulticard.apdu.dnie;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-
-/** Clase que define la estructura de una Apdu para el cambio de PIN 
- * @author Sergio Mart&iacute;nez Rico */
+/** APDU para el cambio de PIN
+ * @author Sergio Mart&iacute;nez Rico. */
 public class ChangePINApduCommand extends CommandApdu {
 
 	private static final byte INS_CHANGE_PIN = (byte) 0x24;
@@ -16,15 +15,15 @@ public class ChangePINApduCommand extends CommandApdu {
 	/** Construye una APDU ISO 7816-4 de cambio de PIN
 	 * @param oldPIN Pin actual de la tarjeta inteligente
 	 * @param newPIN Pin nuevo de la tarjeta inteligente */
-	public ChangePINApduCommand(final byte[] oldPIN, byte[] newPIN) {
+	public ChangePINApduCommand(final byte[] oldPIN, final byte[] newPIN) {
 		super(
-				(byte) 0x90,								// CLA
-				INS_CHANGE_PIN, 							// INS
-				INSTRUCTION_PARAMETER_P1, 					// P1
-				INSTRUCTION_PARAMETER_P2,					// P2
-				buidData(oldPIN, newPIN),					// Data
-				null										// Le
-				);
+			(byte) 0x90,			  // CLA
+			INS_CHANGE_PIN, 		  // INS
+			INSTRUCTION_PARAMETER_P1, // P1
+			INSTRUCTION_PARAMETER_P2, // P2
+			buidData(oldPIN, newPIN), // Data
+			null					  // Le
+		);
 	}
 
 	private static byte[] buidData(final byte[] oldPIN, final byte[] newPIN) {

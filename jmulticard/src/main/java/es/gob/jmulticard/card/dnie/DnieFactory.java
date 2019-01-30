@@ -96,7 +96,7 @@ public final class DnieFactory {
 			);
 		}
 
-		byte[] responseAtr = new byte[]{};
+		byte[] responseAtr;
 		Atr actualAtr;
 		InvalidCardException invalidCardException = null;
 		CardNotPresentException cardNotPresentException = null;

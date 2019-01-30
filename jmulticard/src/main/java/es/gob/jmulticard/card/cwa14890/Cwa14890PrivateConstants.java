@@ -6,7 +6,7 @@ import java.security.interfaces.RSAPrivateKey;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.  */
 public interface Cwa14890PrivateConstants {
 
-    /** Obtiene la clave privada del certificado de Terminal.
+    /** Obtiene la clave privada del certificado de terminal.
      * @return Clave privada del certificado de Terminal. */
     RSAPrivateKey getIfdPrivateKey();
 

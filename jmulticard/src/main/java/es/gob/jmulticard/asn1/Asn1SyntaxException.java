@@ -41,7 +41,7 @@ package es.gob.jmulticard.asn1;
 
 /** Excepci&oacute;n gen&eacute;rica de sintaxis ASN&#46;1.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Alberto Mart&iacute;nez */
+ * @author Alberto Mart&iacute;nez. */
 public final class Asn1SyntaxException extends Exception {
 
     private static final long serialVersionUID = 2189471462653074438L;

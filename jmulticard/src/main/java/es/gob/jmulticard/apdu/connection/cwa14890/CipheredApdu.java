@@ -45,7 +45,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU cifrada para su env&iacute;o a trav&eacute;s de un canal seguro.
  * @author Carlos Gamuci
- * @author Alberto Mart&iacute;nez */
+ * @author Alberto Mart&iacute;nez
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CipheredApdu extends CommandApdu {
 
 	private static final byte TAG_CRYPTOGRAPHIC_CHECKSUM = (byte) 0x8E;

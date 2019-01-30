@@ -45,7 +45,7 @@ import java.io.IOException;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksum;
+import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksumException;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.asn1.bertlv.BerTlv;
 
@@ -222,7 +222,7 @@ public class ApduEncrypterDes extends ApduEncrypter {
 
     	// Comparamos que el MAC recibido sea igual que el MAC que debimos recibir
         if (!HexUtils.arrayEquals(macTlvBytes, calculatedMac)) {
-            throw new InvalidCryptographicChecksum();
+            throw new InvalidCryptographicChecksumException();
         }
 	}
 }

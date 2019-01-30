@@ -255,7 +255,7 @@ public final class CeresSc extends Dnie {
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
      * 						un PIN para validar.  */
     @Override
-	protected void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!isSecurityChannelOpen()) {
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado

@@ -62,7 +62,7 @@ package es.gob.jmulticard.asn1.bertlv;
 import java.io.ByteArrayInputStream;
 
 /** TLV seg&uacute;n ASN&#46;1 BER.
- * @author Isaac Levin */
+ * @author Isaac Levin. */
 public final class BerTlv {
     private BerTlvIdentifier tag;
     private int length;

@@ -57,7 +57,7 @@ public final class PsoSignHashApduCommand extends CommandApdu {
 
 	/** Crea una APDU de firma de una huella digital.
 	 * @param cla Clase (CLA) de la APDU
-	 * @param digestInfo Objeto ASN&#46;1 de tipo DigestInfo generado a partir de la huella digital. */
+	 * @param digestInfo Objeto ASN&#46;1 de tipo <i>DigestInfo</i> generado a partir de la huella digital. */
 	public PsoSignHashApduCommand(final byte cla, final byte[] digestInfo) {
 		super(
 			cla,									// CLA

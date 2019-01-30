@@ -102,7 +102,7 @@ public final class Tlv {
 
     /** Construye un TLV simple a partir de su representaci&oacute;n binaria directa.
      * @param buffer Representaci&oacute;n binaria del TLV.
-     * @throws TlvException en caso de error analizando el TLV. */
+     * @throws TlvException En caso de error analizando el TLV. */
     public Tlv(final byte[] buffer) throws TlvException {
         if (buffer == null || buffer.length == 0) {
             throw new IllegalArgumentException("El TLV no puede ser nulo ni vacio"); //$NON-NLS-1$
@@ -156,7 +156,7 @@ public final class Tlv {
     }
 
     /** Devuelve el TLV directamente en binario.
-     * @return Valor finario completo del TLV. */
+     * @return Valor binario completo del TLV. */
     public byte[] getBytes() {
         final byte[] out = new byte[this.bytes.length];
         System.arraycopy(this.bytes, 0, out, 0, this.bytes.length);
@@ -183,7 +183,7 @@ public final class Tlv {
         return out;
     }
 
-    /** Obtiene un TLV de un flujo de entrada, leyendo del mismo s&oacute;lo los bytes
+    /** Obtiene un TLV de un flujo de entrada, leyendo del mismo s&oacute;lo los octetos
      * correspondientes al TLV en cuesti&oacute;n.
      * @param recordOfTlv Flujo de entrada.
      * @return TLV recuperado del flujo.

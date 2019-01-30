@@ -27,26 +27,44 @@ package es.gob.jmulticard.callback;
 
 import javax.security.auth.callback.Callback;
 
-/** <p> Underlying security services instantiate and pass a
- * <code>TextInputCallback</code> to the <code>handle</code>
- * method of a <code>CallbackHandler</code> to retrieve generic text
- * information. */
+/** <i>Callback</i> de solicitud de texto.
+ * &Uacute;til en el caso de Android, que carece de la clase de Java
+ * <code>javax.security.auth.callback.TextInputCallback</code>. */
 public final class CustomTextInputCallback implements Callback, java.io.Serializable {
 
     private static final long serialVersionUID = -8064222478852811804L;
+
+    private final String prompt;
     private String inputText;
 
-    /** Set the retrieved text.
-     * @param text the retrieved text, which may be null.
+    /** Crea una <i>callback</i> de solicitud de texto.
+     * @param p Mensaje a mostrar al usuario para solicitarle el texto. Puede ser nulo. */
+    public CustomTextInputCallback(final String p) {
+    	this.prompt = p;
+    }
+
+    /** Crea una <i>callback</i> de solicitud de texto. */
+    public CustomTextInputCallback() {
+    	this.prompt = null;
+    }
+
+    /** Establece el texto recuperado.
+     * @param text Texto recuperado. Puede ser nulo.
      * @see #getText */
     public void setText(final String text) {
         this.inputText = text;
     }
 
-    /** Get the retrieved text.
-     * @return the retrieved text, which may be null.
+    /** Obtiene el texto recuperado.
+     * @return Texto recuperado, puede ser nulo.
      * @see #setText */
     public String getText() {
         return this.inputText;
+    }
+
+    /** Obtiene el mensaje a mostrar al usuario para solicitarle el texto.
+     * @return Mensaje a mostrar al usuario para solicitarle el texto. Puede ser nulo. */
+    public String getPrompt() {
+    	return this.prompt;
     }
 }
