@@ -8,25 +8,20 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.dnie.CacheElement;
-import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario
- * cuando utiliza un DNIe. Esta clase cachea las respuestas de confirmaci&oacute;n y contrase&mtilde;a
- * del usuario de tal forma que no requerir&aacute;a que las vuelva a introducir. La cach&eacute; se
- * borra autom&aacute;ticamente pasado un tiempo determinado. */
-public final class DnieCacheCallbackHandler implements CallbackHandler, CacheElement {
+ * cuando utiliza una tarjeta inteligente. Esta clase cachea las respuestas de confirmaci&oacute;n y
+ * contrase&mtilde;a del usuario de tal forma que no requerir&aacute;a que las vuelva a introducir.
+ * La cach&eacute; se borra autom&aacute;ticamente pasado un tiempo determinado. */
+public class SmartcardCacheCallbackHandler implements CallbackHandler, CacheElement {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final long CACHE_TIMEOUT = 3600 * 1000;	// 1 hora
 
 	private char[] currentPassword = null;
-
-	private boolean confirmed = false;
 
 	private Timer timer = null;
 
@@ -36,32 +31,14 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
-					if (cb instanceof CustomTextInputCallback) {
-						final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
-							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-							null,
-							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
-						);
-						((CustomTextInputCallback) cb).setText(new String(uip.getPassword()));
-						return;
-					}
-					else if (cb instanceof CustomAuthorizeCallback) {
-						if (!this.confirmed) {
-							DialogBuilder.showSignatureConfirmDialog((CustomAuthorizeCallback) cb);
-							this.confirmed = ((CustomAuthorizeCallback) cb).isAuthorized();
-						}
-						((CustomAuthorizeCallback) cb).setAuthorized(this.confirmed);
-						return;
-					}
-					else if (cb instanceof PasswordCallback) {
+					if (cb instanceof PasswordCallback) {
 
 						synchronized (LOGGER) {
 							if (this.currentPassword == null) {
 								final CommonPasswordCallback uip = new CommonPasswordCallback(
 										((PasswordCallback)cb).getPrompt(),
-										Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-										true
+										Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
+										false
 										);
 								this.currentPassword = uip.getPassword();
 
@@ -95,7 +72,6 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 
 		synchronized (LOGGER) {
 			this.currentPassword = null;
-			this.confirmed = false;
 		}
 
 		if (this.timer != null) {
