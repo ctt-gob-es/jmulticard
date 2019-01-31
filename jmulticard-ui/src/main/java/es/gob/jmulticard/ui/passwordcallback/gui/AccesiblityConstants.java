@@ -53,9 +53,9 @@ import javax.swing.ImageIcon;
 /**
  *	Constantes para contrase&ntilde;as
  */
-final class Constants {
+final class AccesiblityConstants {
 
-	private Constants() {
+	private AccesiblityConstants() {
 		// No permitimos la instanciacion
 	}
 
@@ -160,12 +160,12 @@ final class Constants {
 	 /**
 	 * Variable que almacena el icono original del boton de maximizar.
 	 */
-	static final ImageIcon IMAGEICON_MAXIMIZE = new ImageIcon(Constants.class.getResource("/images/maximize.png")); //$NON-NLS-1$
+	static final ImageIcon IMAGEICON_MAXIMIZE = new ImageIcon(AccesiblityConstants.class.getResource("/images/maximize.png")); //$NON-NLS-1$
 
 	 /**
 	 * Variable que almacena el icono original del boton de restaurar.
 	 */
-	static final ImageIcon IMAGEICONRESTORE = new ImageIcon(Constants.class.getResource("/images/restore.png")); //$NON-NLS-1$
+	static final ImageIcon IMAGEICONRESTORE = new ImageIcon(AccesiblityConstants.class.getResource("/images/restore.png")); //$NON-NLS-1$
 
 	/**
 	 * C&oacute;digo HTML para el salto de l&iacute;nea

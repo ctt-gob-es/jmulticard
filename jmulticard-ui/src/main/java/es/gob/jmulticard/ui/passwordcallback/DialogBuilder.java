@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import es.gob.jmulticard.ui.passwordcallback.gui.CustomDialogSmartcard;
+import es.gob.jmulticard.ui.passwordcallback.gui.ConfirmSmartcardDialog;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -78,7 +78,7 @@ public final class DialogBuilder {
     public static void showSignatureConfirmDialog(final CustomAuthorizeCallback callBack) {
         if (!headless) {
             try {
-            	final int i = CustomDialogSmartcard.showConfirmDialog(
+            	final int i = ConfirmSmartcardDialog.showConfirmDialog(
             		 PasswordCallbackManager.getDialogOwner(),
                      true,
                      Messages.getString("CustomDialog.confirmDialog.prompt"), //$NON-NLS-1$

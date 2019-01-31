@@ -98,7 +98,8 @@ final class JSecurePasswordLabel extends JLabel {
 					   ke.getKeyChar() != KeyEvent.VK_DELETE &&
 					   ke.getKeyChar() != KeyEvent.VK_ENTER &&
 					   ke.getKeyChar() != KeyEvent.VK_TAB &&
-					   ke.getModifiers() != InputEvent.CTRL_MASK) {
+					   ke.getModifiers() != InputEvent.CTRL_MASK &&
+					   ke.getModifiers() != InputEvent.ALT_MASK) {
 						JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
 						ke.setKeyChar('\0');
 					}

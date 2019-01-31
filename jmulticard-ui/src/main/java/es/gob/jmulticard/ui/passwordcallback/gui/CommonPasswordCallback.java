@@ -53,13 +53,23 @@ import es.gob.jmulticard.ui.passwordcallback.PasswordCallbackManager;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CommonPasswordCallback extends PasswordCallback {
 
+	private static final long serialVersionUID = 5514503307266079255L;
+
     private static boolean headless = false;
+
+	private final String title;
 
 	private final boolean isDnie;
 
-    static void setHeadLess(final boolean hl) {
-        headless = hl;
-    }
+	/** Indica si se debe dar al usuario la opcion de recordar el PIN. */
+	private final boolean allowUseCache;
+
+	/** Indica el valor por defecto de la opci&oacute;n de guardar el PIN que se le
+	 * presentar&aacute; al usuario en caso de que se le permita configurarlo. */
+	private final boolean defaultUseCacheValue;
+
+	/** Indica si el usuario configur&oacute; que desea recordar el PIN. */
+	private boolean useCacheChecked;
 
     static {
         AccessController.doPrivileged(
@@ -73,9 +83,11 @@ public final class CommonPasswordCallback extends PasswordCallback {
 		);
     }
 
-	private static final long serialVersionUID = 5514503307266079255L;
 
-	private final String title;
+    static void setHeadLess(final boolean hl) {
+        headless = hl;
+    }
+
 
 	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
      * en caso de un <code>java.awt.HeadLessException</code>.
@@ -83,6 +95,15 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	 * @param title T&iacute;tulo de la ventana gr&aacute;fica.
 	 * @param isDnie Si es un Dnie. */
 	public CommonPasswordCallback(final String prompt, final String title, final boolean isDnie) {
+		this(prompt, title, isDnie, false, false);
+	}
+
+	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
+     * en caso de un <code>java.awt.HeadLessException</code>.
+	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
+	 * @param title T&iacute;tulo de la ventana gr&aacute;fica.
+	 * @param isDnie Si es un Dnie. */
+	public CommonPasswordCallback(final String prompt, final String title, final boolean isDnie, final boolean allowUseCache, final boolean defaultUseCacheValue) {
 		super(prompt, true);
 		if (prompt == null) {
 			throw new IllegalArgumentException("El texto de solicitud no puede ser nulo"); //$NON-NLS-1$
@@ -95,6 +116,9 @@ public final class CommonPasswordCallback extends PasswordCallback {
 		}
 
 		this.isDnie = isDnie;
+		this.allowUseCache = allowUseCache;
+		this.defaultUseCacheValue = defaultUseCacheValue;
+		this.useCacheChecked = this.defaultUseCacheValue;
 	}
 
 	/** Constructor gen&eacute;rico.
@@ -108,21 +132,26 @@ public final class CommonPasswordCallback extends PasswordCallback {
 		}
 		this.title = getPrompt();
 		this.isDnie = false;
+		this.allowUseCache = false;
+		this.defaultUseCacheValue = false;
+		this.useCacheChecked = this.defaultUseCacheValue;
 	}
 
 	@Override
     public char[] getPassword() {
 	    if (!headless) {
     		try {
-    			PasswordCallback psc;
-    			if(this.isDnie) {
+    			UIPasswordCallbackAccessibility psc;
+    			if (this.isDnie) {
 	    			psc = new UIPasswordCallbackAccessibility(
 						getPrompt(),
 						PasswordCallbackManager.getDialogOwner(),
 						getPrompt(),
 						'P',
 						this.title,
-						"/images/dnie.png" //$NON-NLS-1$
+						"/images/dnie.png", //$NON-NLS-1$
+						this.allowUseCache,
+						this.defaultUseCacheValue
 					);
     			}
     			else {
@@ -132,12 +161,17 @@ public final class CommonPasswordCallback extends PasswordCallback {
 						getPrompt(),
 						'P',
 						this.title,
-						"/images/chipcard.png" //$NON-NLS-1$
+						"/images/chipcard.png", //$NON-NLS-1$
+						this.allowUseCache,
+						this.defaultUseCacheValue
 					);
     			}
+
     			final char[] pss = psc.getPassword();
+    			this.useCacheChecked = psc.isUseCacheChecked();
     			psc.clearPassword();
     			psc = null;
+
     			return pss;
     		}
     		catch(final java.awt.HeadlessException e) {
@@ -152,5 +186,16 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	    cpc = null;
 	    return pss;
     }
+
+	/**
+	 * Indica si el usuario configur&oacute; que se recordase ka contrase&ntilde;a almacenada.
+	 * @return {@code true} si el usuario seleccion&oacute; que se recordase la contrase&ntilde;a,
+	 * {@code false} en caso contrario. En caso de que no se haya permitido al usuario
+	 * seleccionar o no esta opci&oacute;n, se devolver&iacute;a el valor por defecto
+	 * configurado.
+	 */
+	public boolean isUseCacheChecked() {
+		return this.useCacheChecked;
+	}
 
 }

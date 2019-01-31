@@ -2,6 +2,7 @@ package es.gob.jmulticard.ui.passwordcallback.gui;
 
 import java.util.Timer;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -24,7 +25,9 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 
 	private static final long CACHE_TIMEOUT = 3600 * 1000;	// 1 hora
 
-	private char[] currentPassword = null;
+	private static final String PREFERENCE_KEY_USE_CACHE = "useCacheDni"; //$NON-NLS-1$
+
+	private char[] cachedPassword = null;
 
 	private boolean confirmed = false;
 
@@ -57,17 +60,38 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 					else if (cb instanceof PasswordCallback) {
 
 						synchronized (LOGGER) {
-							if (this.currentPassword == null) {
+							char[] pin;
+							if (this.cachedPassword == null) {
+
+								// Comprobamos si anteriormente se activo la opcion de usar cache para
+								// poner este valor por defecto
+								final boolean useCacheDefaultValue = loadUseCachePreference();
+
 								final CommonPasswordCallback uip = new CommonPasswordCallback(
 										((PasswordCallback)cb).getPrompt(),
 										Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-										true
+										true,
+										true,
+										useCacheDefaultValue
 										);
-								this.currentPassword = uip.getPassword();
 
-								LOGGER.info("Guardamos en cache la contrasena de la tarjeta"); //$NON-NLS-1$
+								pin = uip.getPassword();
+
+								// Si se encuentra marcada la opcion de usar cache, guardamos el PIN
+								final boolean newUseCacheDefaultValue = uip.isUseCacheChecked();
+								if (newUseCacheDefaultValue) {
+									LOGGER.info("Guardamos en cache la contrasena de la tarjeta"); //$NON-NLS-1$
+									this.cachedPassword = pin;
+								}
+								// Si se ha cambiado el valor de la opcion de usar cache, guardamos este valor
+								if (useCacheDefaultValue != newUseCacheDefaultValue) {
+									setUseCachePreference(newUseCacheDefaultValue);
+								}
 							}
-							((PasswordCallback)cb).setPassword(this.currentPassword);
+							else {
+								pin = this.cachedPassword;
+							}
+							((PasswordCallback)cb).setPassword(pin);
 						}
 
 						 // Si no se ha hecho ya, programamos una tarea para el borrado de la contrasena cacheada para
@@ -94,7 +118,7 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 		LOGGER.info("Eliminamos de cache la contrasena de la tarjeta"); //$NON-NLS-1$
 
 		synchronized (LOGGER) {
-			this.currentPassword = null;
+			this.cachedPassword = null;
 			this.confirmed = false;
 		}
 
@@ -102,6 +126,25 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 			this.timer.cancel();
 			this.timer.purge();
 			this.timer = null;
+		}
+	}
+
+	private static boolean loadUseCachePreference() {
+		try {
+			return Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).getBoolean(PREFERENCE_KEY_USE_CACHE, false);
+		}
+		catch (final Exception e) {
+			LOGGER.warning("No se puede acceder a la configuracion del cacheo del PIN de la tarjeta"); //$NON-NLS-1$
+			return false;
+		}
+	}
+
+	private static void setUseCachePreference(final boolean useCache) {
+		try {
+			Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).putBoolean(PREFERENCE_KEY_USE_CACHE, useCache);
+		}
+		catch (final Exception e) {
+			LOGGER.warning("No se pudo guardar la configuracion del cacheo del PIN de la tarjeta"); //$NON-NLS-1$
 		}
 	}
 }

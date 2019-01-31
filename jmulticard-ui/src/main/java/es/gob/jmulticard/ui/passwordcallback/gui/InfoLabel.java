@@ -55,9 +55,9 @@ final class InfoLabel extends JLabel {
     InfoLabel(final String text) {
         super("<HTML>" + text + "</HTML>"); //$NON-NLS-1$ //$NON-NLS-2$
         this.setOpaque(false);
-        Utils.remarcar(this);
-        Utils.setContrastColor(this);
-        Utils.setFontBold(this);
+        AccesibilityUtils.remarcar(this);
+        AccesibilityUtils.setContrastColor(this);
+        AccesibilityUtils.setFontBold(this);
 
     }
 
@@ -70,8 +70,8 @@ final class InfoLabel extends JLabel {
         super("<HTML>" + text + "</HTML>"); //$NON-NLS-1$ //$NON-NLS-2$
         this.setFocusable(true); // Focusable
         this.setOpaque(opaque);
-        Utils.remarcar(this);
-        Utils.setContrastColor(this);
-        Utils.setFontBold(this);
+        AccesibilityUtils.remarcar(this);
+        AccesibilityUtils.setContrastColor(this);
+        AccesibilityUtils.setFontBold(this);
     }
 }

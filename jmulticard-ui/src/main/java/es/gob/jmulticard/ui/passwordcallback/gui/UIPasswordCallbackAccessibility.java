@@ -64,6 +64,12 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
 
     private final String iconPath;
 
+    private final boolean allowUseCache;
+
+    private final boolean defaultUseCache;
+
+    private boolean useCache;
+
     /** Crea una <i>Callback</i> para solicitar al usuario una contrase&ntilde;a
      * mediante un di&aacute;logo gr&aacute;fico. La contrase&ntilde;a no se
      * retiene ni almacena internamente en ning&uacute;n momento.
@@ -72,13 +78,17 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
      * @param message Mensaje.
      * @param mnemonic Mnem&oacute;nico para el propio campo de texto.
      * @param title T&iacute;tulo del di&aacute;logo.
-     * @param iconFileName Ruta hacia el icono del di&aacute;logo. */
+     * @param iconFileName Ruta hacia el icono del di&aacute;logo.
+     * @param allowUseCache Hace mostrarse la casilla para seleccionar el cacheo del PIN.
+     * @param defaultUseCache Valor por defecto de la opci&oacute;n de cacheo de PIN. */
     public UIPasswordCallbackAccessibility(final String prompt,
-    		                               final Component parent,
-    		                               final String message,
-    		                               final int mnemonic,
-    		                               final String title,
-    		                               final String iconFileName) {
+    		final Component parent,
+    		final String message,
+    		final int mnemonic,
+    		final String title,
+    		final String iconFileName,
+    		final boolean allowUseCache,
+    		final boolean defaultUseCache) {
         super(prompt, false);
         this.parent = parent;
         if (prompt != null) {
@@ -90,17 +100,32 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
         this.mnemonic = mnemonic;
         this.title = title;
         this.iconPath = iconFileName;
+        this.allowUseCache = allowUseCache;
+        this.defaultUseCache = defaultUseCache;
+        this.useCache = false;
     }
 
     @Override
     public char[] getPassword() {
-    	return CustomDialogSmartcard.showInputPasswordDialog(
+    	PasswordResult result = InputPasswordSmartcardDialog.showInputPasswordDialog(
 			this.parent,
 			true, // Modal
 			this.message,
 			this.mnemonic,
 			this.title,
-			this.iconPath
+			this.iconPath,
+			this.allowUseCache,
+			this.defaultUseCache
     	);
+    	this.useCache = result.isUseCache();
+    	final char[] password = result.getPassword();
+    	result.clear();
+    	result = null;
+
+    	return password;
+    }
+
+    public boolean isUseCacheChecked() {
+    	return this.useCache;
     }
 }

@@ -58,6 +58,7 @@ import java.awt.event.FocusListener;
 import java.util.Locale;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -72,7 +73,7 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 /** Clase con utilidades varias */
-final class Utils {
+final class AccesibilityUtils {
 
     /** Indica si el sistema operativo tiene activada una combinaci&oacute;n de colores de alto contraste. */
     private static final boolean HIGH_CONTRAST;
@@ -96,7 +97,7 @@ final class Utils {
         }
     }
 
-    private Utils() {
+    private AccesibilityUtils() {
         // No permitimos la instanciacion
     }
 
@@ -287,6 +288,19 @@ final class Utils {
             newText = text.substring(0, pos) + "<u>" + text.charAt(pos) + "</u>" + text.substring(pos + 1); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return newText;
+    }
+
+    /** Metodo que subraya el mnemonico correspondiente en un bot&oacute;n. El car&aacute;cter
+     * deber&iacute;a indicarse en min&uacute;sculas.
+     * @param button Bot&oacute;n en el que subrayar el mnem&oacute;nico.
+     * @param key Caracter a subrayar. */
+    static void remarkMnemonic(final AbstractButton button, final int key) {
+        final String text = button.getText();
+        final int pos = text.toLowerCase(Locale.getDefault()).indexOf(key); // Se obtiene el indice del caracter
+        if (pos != -1) {
+            // Se subraya
+            button.setDisplayedMnemonicIndex(pos);
+        }
     }
 
     /** Muestra u oculta un tooltip relacionado con un bot&oacute;n.

@@ -154,7 +154,7 @@ final class ResizingAdaptor extends ComponentAdapter {
                 final int multiplicando = 4;
                 final IconLabel iconLabel = (IconLabel) actualComponent;
                 if (iconLabel.getOriginalIcon() != null) {
-                    final float resizeFactor = getImageResizeFactor(Constants.RESIZING_IMAGES_FACTOR);
+                    final float resizeFactor = getImageResizeFactor(AccesiblityConstants.RESIZING_IMAGES_FACTOR);
 
                     // Se obtienen las dimensiones del icono original
                     final int w = iconLabel.getOriginalDimension().width;
@@ -168,10 +168,10 @@ final class ResizingAdaptor extends ComponentAdapter {
             if (actualComponent instanceof JButton && ((JButton) actualComponent).getIcon() != null) {
                 float resizeFactor = 0;
                 if (this.theCustomDialog != null) {
-                    resizeFactor = getImageResizeFactor(Constants.RESIZING_IMAGES_FACTOR + 0.0010);
+                    resizeFactor = getImageResizeFactor(AccesiblityConstants.RESIZING_IMAGES_FACTOR + 0.0010);
                 }
                 else {
-                    resizeFactor = getImageResizeFactor(Constants.RESIZING_IMAGES_FACTOR);
+                    resizeFactor = getImageResizeFactor(AccesiblityConstants.RESIZING_IMAGES_FACTOR);
                 }
 
                 resizeImageButton(resizeFactor, actualComponent);
@@ -250,10 +250,10 @@ final class ResizingAdaptor extends ComponentAdapter {
 
         // Se comprueba si se trata del boton de ayuda
         if (button.getName() != null && button.getName().equalsIgnoreCase("maximizar")) { //$NON-NLS-1$
-            imageIcon = Constants.IMAGEICON_MAXIMIZE; // Se carga la imagen original
+            imageIcon = AccesiblityConstants.IMAGEICON_MAXIMIZE; // Se carga la imagen original
         }
         else if (button.getName() != null && button.getName().equalsIgnoreCase("restaurar")) { //$NON-NLS-1$
-            imageIcon = Constants.IMAGEICONRESTORE; // Se carga la imagen original
+            imageIcon = AccesiblityConstants.IMAGEICONRESTORE; // Se carga la imagen original
         }
         else {
             imageIcon = new ImageIcon(iconToImage(button.getIcon())); // Se carga la imagen del componente actual

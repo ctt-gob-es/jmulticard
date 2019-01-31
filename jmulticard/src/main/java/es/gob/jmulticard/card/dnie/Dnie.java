@@ -83,6 +83,7 @@ import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CompressionUtils;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
+import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
@@ -691,6 +692,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * operaci&oacute;n de firma.
      * @return <code>true</code> si la tarjeta requiere autorizaci&oacute;n del usuario para ejecutar una
      *         operaci&oacute;n de firma, <code>false</code> en caso contrario. */
+	@SuppressWarnings("static-method")
 	protected boolean needAuthorizationToSign() {
     	return true;
     }
@@ -809,18 +811,23 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
     }
 
-    protected PasswordCallback getInternalPasswordCallback() throws PinException {
+    protected PasswordCallback getInternalPasswordCallback() throws PinException,
+    																PasswordCallbackNotFoundException {
     	return getInternalPasswordCallback(false);
     }
 
-    protected PasswordCallback getInternalPasswordCallback(final boolean reset) throws PinException {
+    protected PasswordCallback getInternalPasswordCallback(final boolean reset) throws	PinException,
+    																					PasswordCallbackNotFoundException {
+    	// Si hay establecido un PasswordCallback, devolvemos ese
     	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
-    		if(retriesLeft == 0) {
+    		if (retriesLeft == 0) {
     			throw new AuthenticationModeLockedException();
     		}
     		return this.passwordCallback;
     	}
+
+    	// Si hay establecido un CallbackHandler, le solicitamos un PasswordCallback
     	if (this.callbackHandler != null) {
 
     		// Si se ha pedido resetear los valores predefinidos, comprobamos si teniamos un
@@ -830,7 +837,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		}
 
         	final int retriesLeft = getPinRetriesLeft();
-        	if(retriesLeft == 0) {
+        	if (retriesLeft == 0) {
         		throw new AuthenticationModeLockedException();
         	}
 
@@ -847,7 +854,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 				);
 			}
 			catch (final UnsupportedCallbackException e) {
-				throw new PinException(
+				throw new PasswordCallbackNotFoundException(
 					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, e//$NON-NLS-1$
 				);
 			}
@@ -858,7 +865,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			}
 			return pwc;
     	}
-    	throw new PinException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
+    	throw new PasswordCallbackNotFoundException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
     }
 
     /** Devuelve el texto del di&aacute;logo de inserci&oacute;n de PIN.
@@ -940,7 +947,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     @Override
     public void verifyPin(final PasswordCallback psc) throws ApduConnectionException,
     		                                             PinException {
-    	if(psc == null) {
+    	if (psc == null) {
     		throw new IllegalArgumentException(
     			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
@@ -964,9 +971,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             	}
             	// Si hay reintento automatico volvemos a pedir el PIN con la misma CallBack
-            	verifyPin(
-            		getInternalPasswordCallback(true)
-            	);
+           		verifyPin(getInternalPasswordCallback(true));
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&
             		 verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
