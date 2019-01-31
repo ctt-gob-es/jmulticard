@@ -65,7 +65,7 @@ public final class GetChallengeApduCommand extends CommandApdu {
     /** Crea una APDU ISO 7816-4 para la obtenci&oacute;n de un n&uacute;mero aleatorio de n octetos a
      * trav&eacute;s de la tarjeta.
      * @param cla Clase (CLA) de la APDU.
-     * @param numBytes N&uacute;mero de octetos del desaf&iacute;so generado */
+     * @param numBytes N&uacute;mero de octetos del desaf&iacute;o generado */
     public GetChallengeApduCommand(final byte cla, final int numBytes) {
         super(
     		cla,                      // CLA
