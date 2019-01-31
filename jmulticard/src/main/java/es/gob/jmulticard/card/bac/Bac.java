@@ -222,7 +222,7 @@ public final class Bac {
 
 	/** Ajusta la paridad de una clave binaria.
 	 * Cada octeto tendr&aacute; un n&uacute;mero impar de bits a '1' (el &uacute;timo bit de cada octeto no se usa).
-	 * @param kb Clave binaria de entrada. */
+	 * @param key Clave binaria de entrada. */
 	private static void adjustParity(final byte[] key) {
 		for (int i = 0; i < 8; i++) {
 			key[i] ^= PARITY[key[i] & 0xff] == 8 ? 1 : 0;
