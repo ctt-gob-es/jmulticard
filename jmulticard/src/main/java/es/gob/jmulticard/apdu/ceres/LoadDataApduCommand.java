@@ -44,7 +44,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU de carga de datos.
  * Estos deben proporcionarse como <code>DigestInfo</code> con relleno PKCS#1.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class LoadDataApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
