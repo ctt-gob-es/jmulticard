@@ -15,10 +15,11 @@ import es.gob.jmulticard.card.dnie.CacheElement;
 import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
-/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario
- * cuando utiliza un DNIe. Esta clase cachea las respuestas de confirmaci&oacute;n y contrase&mtilde;a
- * del usuario de tal forma que no requerir&aacute;a que las vuelva a introducir. La cach&eacute; se
- * borra autom&aacute;ticamente pasado un tiempo determinado. */
+/** <code>CallbackHandler</code> que gestiona los <code>Callbacks</code> de petici&oacute;n de
+ * informaci&oacute;n al usuario cuando utiliza un DNIe. Esta clase <i>cachea</i> las respuestas
+ * de confirmaci&oacute;n y contrase&mtilde;a del usuario de tal forma que no requerir&aacute;a
+ * que las vuelva a introducir. La cach&eacute; se borra autom&aacute;ticamente pasado un tiempo
+ * determinado. */
 public final class DnieCacheCallbackHandler implements CallbackHandler, CacheElement {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
@@ -47,7 +48,6 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
 						);
 						((CustomTextInputCallback) cb).setText(new String(uip.getPassword()));
-						return;
 					}
 					else if (cb instanceof CustomAuthorizeCallback) {
 						if (!this.confirmed) {
@@ -55,12 +55,11 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 							this.confirmed = ((CustomAuthorizeCallback) cb).isAuthorized();
 						}
 						((CustomAuthorizeCallback) cb).setAuthorized(this.confirmed);
-						return;
 					}
 					else if (cb instanceof PasswordCallback) {
 
 						synchronized (LOGGER) {
-							char[] pin;
+							final char[] pin;
 							if (this.cachedPassword == null) {
 
 								// Comprobamos si anteriormente se activo la opcion de usar cache para
@@ -68,12 +67,12 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 								final boolean useCacheDefaultValue = loadUseCachePreference();
 
 								final CommonPasswordCallback uip = new CommonPasswordCallback(
-										((PasswordCallback)cb).getPrompt(),
-										Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
-										true,
-										true,
-										useCacheDefaultValue
-										);
+									((PasswordCallback)cb).getPrompt(),
+									Messages.getString("CommonPasswordCallback.1"), //$NON-NLS-1$
+									true,
+									true,
+									useCacheDefaultValue
+								);
 
 								pin = uip.getPassword();
 
@@ -100,16 +99,16 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 							this.timer = new Timer();
 							this.timer.schedule(new ResetCacheTimerTask(this), CACHE_TIMEOUT);
 						}
-						return;
 					}
-					LOGGER.severe("Callback no soportada: " + cb.getClass().getName()); //$NON-NLS-1$
+					else {
+						throw new UnsupportedCallbackException(cb);
+					}
 				}
 			}
 		}
 		else {
 			LOGGER.warning("Se ha recibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
-		throw new UnsupportedCallbackException(null);
 	}
 
 	@Override
@@ -134,7 +133,7 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 			return Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).getBoolean(PREFERENCE_KEY_USE_CACHE, false);
 		}
 		catch (final Exception e) {
-			LOGGER.warning("No se puede acceder a la configuracion del cacheo del PIN de la tarjeta"); //$NON-NLS-1$
+			LOGGER.warning("No se puede acceder a la configuracion del cacheo del PIN de la tarjeta: " + e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -144,7 +143,7 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 			Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).putBoolean(PREFERENCE_KEY_USE_CACHE, useCache);
 		}
 		catch (final Exception e) {
-			LOGGER.warning("No se pudo guardar la configuracion del cacheo del PIN de la tarjeta"); //$NON-NLS-1$
+			LOGGER.warning("No se pudo guardar la configuracion del cacheo del PIN de la tarjeta: " + e); //$NON-NLS-1$
 		}
 	}
 }

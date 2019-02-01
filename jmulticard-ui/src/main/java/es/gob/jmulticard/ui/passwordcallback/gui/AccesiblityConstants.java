@@ -2,34 +2,34 @@
  * Controlador Java de la Secretaria de Estado de Administraciones Publicas
  * para el DNI electronico.
  *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE 
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros 
- * para la realizacion de procesos de autenticacion, firma electronica y validacion 
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para 
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion 
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha 
+ * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
+ * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
+ * para la realizacion de procesos de autenticacion, firma electronica y validacion
+ * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
+ * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
+ * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
  * sido disenado para su funcionamiento independiente del sistema operativo final.
- * 
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos 
+ *
+ * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
  * e Impulso de la Administracion Electronica
- * 
+ *
  * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
  * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse 
+ * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
  * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
  * su compatibilidad con otros componentes.
  *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * Lesser GNU General Public License publicada por la Free Software Foundation, 
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * Lesser GNU General Public License publicada por la Free Software Foundation,
  * tanto en la version 2.1 de la Licencia, o en una version posterior.
- * 
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la 
- * European Union Public License publicada por la Comision Europea, 
+ *
+ * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
+ * European Union Public License publicada por la Comision Europea,
  * tanto en la version 1.1 de la Licencia, o en una version posterior.
- * 
+ *
  * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- * 
+ *
  * Deberia recibir una copia de la European Union Public License, si aplica, junto
  * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
  *
@@ -50,126 +50,88 @@ package es.gob.jmulticard.ui.passwordcallback.gui;
 
 import javax.swing.ImageIcon;
 
-/**
- *	Constantes para contrase&ntilde;as
- */
+/** Constantes para contrase&ntilde;as. */
 final class AccesiblityConstants {
 
 	private AccesiblityConstants() {
 		// No permitimos la instanciacion
 	}
 
-    /** Width inicial de los JAccessibilityFrame de la aplicacion. */
+    /** Ancho inicial de los <code>JAccessibilityFrame</code> de la aplicaci&oacute;n. */
     static final int WINDOW_INITIAL_WIDTH = 650;
 
-    /**
-     * Height inicial de los JAccessibilityFrame de la aplicacion.
-     */
+    /** Alto inicial de los <code>JAccessibilityFrame</code> de la aplicaci&oacute;n. */
     static final int WINDOW_INITIAL_HEIGHT = 370;
 
-    /**
-     * Width inicial de los JAccessibilityDialog de la aplicacion.
-     */
+    /** Ancho inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n. */
     static final int OPTION_INITIAL_WIDTH = 525;
 
-    /**
-     * Height inicial de los JAccessibilityDialog de la aplicacion.
-     */
+    /** Alto inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n. */
     static final int OPTION_INITIAL_HEIGHT = 600;
 
-    /**
-     * Width inicial de los JAccessibilityDialog de la aplicacion con variacion de fuente.
-     */
+    /** Ancho inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n con
+     * variaci&oacute;n de fuente. */
     static final int OPTION_FONT_INITIAL_WIDTH = 650;
 
-    /**
-     * Height inicial de los JAccessibilityDialog de la aplicacion con variacion de fuente.
-     */
+    /** Alto inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n con
+     * variaci&oacute;n de fuente. */
     static final int OPTION_FONT_INITIAL_HEIGHT = 655;
 
-    /**
-     * Width inicial de los JAccessibilityDialog de la aplicacion con variacion de fuente en LINUX.
-     */
+    /** Ancho inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n con
+     * variaci&oacute;n de fuente en Linux. */
     static final int OPTION_FONT_INITIAL_WIDTH_LINUX = 635;
 
-    /**
-     * Height inicial de los JAccessibilityDialog de la aplicacion con variacion de fuente en LINUX.
-     */
+    /** Ancho inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n con
+     * variaci&oacute;n de fuente en Linux. */
     static final int OPTION_FONT_INITIAL_HEIGHT_LINUX = 700;
 
-    /**
-     * Width inicial de los JAccessibilityCustomDialog de la aplicacion.
-     */
+    /** Ancho inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_INITIAL_WIDTH = 530;
 
-    /**
-     * Height inicial de los JAccessibilityCustomDialog de la aplicacion.
-     */
+    /** Alto inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_INITIAL_HEIGHT = 210;
 
-    /**
-     * Width inicial de los JAccessibilityCustomDialog de Confirmacion de Firma de la aplicacion.
-     */
+    /** Ancho inicial de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+     * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_WIDTH = 460;
 
-    /**
-     * Height inicial de los JAccessibilityCustomDialog de Confirmacion de Firma de la aplicacion.
-     */
+    /** Alto inicial de los <code<JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+     * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_HEIGHT = 190;
-    
-    /**
-     * Width inicial de los JAccessibilityCustomDialog de la aplicacion.
-     */
+
+    /** Ancho inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_FONT_INITIAL_WIDTH = 555;
 
-    /**
-     * Height inicial de los JAccessibilityCustomDialog de la aplicacion.
-     */
+    /** Alto inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_FONT_INITIAL_HEIGHT = 250;
 
-    /**
-     * Width de maximizado de los JAccessibilityCustomDialog de la aplicacion.
-     */
+    /** Ancho de maximizado de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_MAX_WIDTH = 770;
 
-    /**
-     * Height de maximizado de los JAccessibilityCustomDialog de la aplicacion.
-     */
+    /** Alto de maximizado de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_MAX_HEIGHT = 299;
-    
-    /**
-     * Width de maximizado de los JAccessibilityCustomDialog de confirmacion de firma de la aplicacion.
-     */
+
+    /** Ancho de maximizado de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+     * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_MAX_WIDTH = 700;
 
-    /**
-     * Height de maximizado de los JAccessibilityCustomDialog de confirmacion de firma de la aplicacion.
-     */
+    /** Alto de maximizado de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+     * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_MAX_HEIGHT = 305;
 
-    /**
-     * Factor de redimensionado para las imagenes
-     */
+    /** Factor de redimensionado para las im&aacute;genes. */
     static final double RESIZING_IMAGES_FACTOR = 0.0015;
 
-    /**
-     * Margen a restar para calcular el tamano de una ventana maximizada para linux.
-     */
+    /** Margen a restar para calcular el tama&ntilde;o de una ventana maximizada para Linux. */
     static final int MAXIMIZE_VERTICAL_MARGIN_LINUX = 52;
 
-	 /**
-	 * Variable que almacena el icono original del boton de maximizar.
-	 */
+	 /** Variable que almacena el icono original del bot&oacute;n de maximizar. */
 	static final ImageIcon IMAGEICON_MAXIMIZE = new ImageIcon(AccesiblityConstants.class.getResource("/images/maximize.png")); //$NON-NLS-1$
 
-	 /**
-	 * Variable que almacena el icono original del boton de restaurar.
-	 */
+	 /** Icono original del bot&oacute;n de restaurar. */
 	static final ImageIcon IMAGEICONRESTORE = new ImageIcon(AccesiblityConstants.class.getResource("/images/restore.png")); //$NON-NLS-1$
 
-	/**
-	 * C&oacute;digo HTML para el salto de l&iacute;nea
-	 */
+	/** C&oacute;digo HTML para el salto de l&iacute;nea. */
 	static final String HTML_SALTO_LINEA = "<br>"; //$NON-NLS-1$
 
 }
