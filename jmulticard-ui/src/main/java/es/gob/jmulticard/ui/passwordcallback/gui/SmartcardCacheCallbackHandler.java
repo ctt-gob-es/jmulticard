@@ -12,9 +12,10 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import es.gob.jmulticard.card.dnie.CacheElement;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
-/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario
- * cuando utiliza una tarjeta inteligente. Esta clase cachea las respuestas de confirmaci&oacute;n y
- * contrase&mtilde;a del usuario de tal forma que no requerir&aacute;a que las vuelva a introducir.
+/** <code>CallbackHandler</code> que gestiona los <code>Callbacks</code> de petici&oacute;n de
+ * informaci&oacute;n al usuario cuando utiliza una tarjeta inteligente.
+ * Esta clase cachea las respuestas de confirmaci&oacute;n y contrase&mtilde;a del usuario de
+ * tal forma que no requerir&aacute;a que las vuelva a introducir.
  * La cach&eacute; se borra autom&aacute;ticamente pasado un tiempo determinado. */
 public final class SmartcardCacheCallbackHandler implements CallbackHandler, CacheElement {
 
@@ -45,12 +46,12 @@ public final class SmartcardCacheCallbackHandler implements CallbackHandler, Cac
 								final boolean useCacheDefaultValue = loadUseCachePreference();
 
 								final CommonPasswordCallback uip = new CommonPasswordCallback(
-										((PasswordCallback)cb).getPrompt(),
-										Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
-										false,
-										true,
-										useCacheDefaultValue
-										);
+									((PasswordCallback)cb).getPrompt(),
+									Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
+									false,
+									true,
+									useCacheDefaultValue
+								);
 
 								pin = uip.getPassword();
 
@@ -77,16 +78,16 @@ public final class SmartcardCacheCallbackHandler implements CallbackHandler, Cac
 							this.timer = new Timer();
 							this.timer.schedule(new ResetCacheTimerTask(this), CACHE_TIMEOUT);
 						}
-						return;
 					}
-					LOGGER.severe("Callback no soportada: " + cb.getClass().getName()); //$NON-NLS-1$
+					else {
+						throw new UnsupportedCallbackException(cb);
+					}
 				}
 			}
 		}
 		else {
 			LOGGER.warning("Se ha recibido un array de Callbacks nulo"); //$NON-NLS-1$
 		}
-		throw new UnsupportedCallbackException(null);
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public final class SmartcardCacheCallbackHandler implements CallbackHandler, Cac
 			return Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).getBoolean(PREFERENCE_KEY_USE_CACHE, false);
 		}
 		catch (final Exception e) {
-			LOGGER.warning("No se puede acceder a la configuracion del cacheo del PIN de la tarjeta"); //$NON-NLS-1$
+			LOGGER.warning("No se puede acceder a la configuracion del cacheo del PIN de la tarjeta: " + e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -120,7 +121,7 @@ public final class SmartcardCacheCallbackHandler implements CallbackHandler, Cac
 			Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).putBoolean(PREFERENCE_KEY_USE_CACHE, useCache);
 		}
 		catch (final Exception e) {
-			LOGGER.warning("No se pudo guardar la configuracion del cacheo del PIN de la tarjeta"); //$NON-NLS-1$
+			LOGGER.warning("No se pudo guardar la configuracion del cacheo del PIN de la tarjeta: " + e); //$NON-NLS-1$
 		}
 	}
 }

@@ -67,7 +67,7 @@ import es.gob.jmulticard.CancelledOperationException;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Componente di&aacute;logo que solicita una contrase&ntilde;a al usuario. */
-public class InputPasswordSmartcardDialog extends JAccessibilityCustomDialog implements ActionListener {
+public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDialog implements ActionListener {
 
     /** UID. */
     private static final long serialVersionUID = 1L;

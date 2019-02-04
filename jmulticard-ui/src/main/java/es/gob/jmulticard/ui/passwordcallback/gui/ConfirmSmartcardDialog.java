@@ -65,7 +65,7 @@ import javax.swing.WindowConstants;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Componente di&aacute;logo que solicita confirmaci&oacute;n al usuario. */
-public class ConfirmSmartcardDialog extends JAccessibilityCustomDialog implements ActionListener {
+public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog implements ActionListener {
 
     /** UID. */
     private static final long serialVersionUID = 1L;
@@ -82,31 +82,31 @@ public class ConfirmSmartcardDialog extends JAccessibilityCustomDialog implement
     /** Etiqueta que contiene el icono de la alerta. */
     protected final IconLabel iconLabel = new IconLabel();
 
-    /** Bot&oacute;n de aceptar. */
+    /** Bot&oacute;n de <b>Aceptar</b>. */
     private static JButton okButton = null;
 
     static JButton getOkButton() {
         return okButton;
     }
 
-    /** Bot&oacute;n de NO. */
+    /** Bot&oacute;n de <b>No</b>. */
     private JButton noButton = null;
 
     JButton getNoButton() {
     	return this.noButton;
     }
 
-    /** Bot&oacute;n de cancelar. */
+    /** Bot&oacute;n de <b>Cancelar</b>. */
     private static JButton cancelButton = null;
 
     static JButton getCancelButton() {
         return cancelButton;
     }
 
-    /** Respuesta al mensaje */
+    /** Respuesta al mensaje. */
     private int answer;
 
-    /** Texto para el bot&oacute;n */
+    /** Texto para el bot&oacute;n. */
     private static String cancellText = Messages.getString("PrincipalGUI.cancelar"); //$NON-NLS-1$
 
     /** Constructor.
@@ -397,11 +397,11 @@ public class ConfirmSmartcardDialog extends JAccessibilityCustomDialog implement
         return customDialog.getAnswer();
     }
 
-    /** Metodo que crea un boton.
-     * Si el boton corresponde al de cancelar, se le asigna la tecla esc.
-     * @param text texto del boton
-     * @param mnemonic atajo
-     * @return boton */
+    /** Crea un boton.
+     * Si el bot&oacute;n corresponde al de cancelar, se le asigna la tecla <i>esc</i>.
+     * @param text Texto del bot&oacute;n.
+     * @param mnemonic Atajo.
+     * @return Bot&oacute;n. */
     private JButton getButton(final String text, final int mnemonic) {
         final JButton button = new JButton(text);
         button.setMnemonic(mnemonic);
@@ -429,7 +429,7 @@ public class ConfirmSmartcardDialog extends JAccessibilityCustomDialog implement
         return this.answer;
     }
 
-    /** Devuelve una instancia de CustomDialog.
+    /** Devuelve una instancia de <code>CustomDialog</code>.
      * @param componentParent Componente padre para la modalidad.
      * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
      *              <code>false</code> en caso contrario.
