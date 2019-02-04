@@ -55,7 +55,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieReadDgs() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			new SmartcardIoConnection(),
@@ -164,7 +164,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testPassportReadDgs() throws Exception {
 		final ApduConnection conn = new SmartcardIoConnection();
 		System.out.println(HexUtils.hexify(conn.reset(), true));
@@ -196,7 +196,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testPassportWithPaceReadDgs() throws Exception {
 
 		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77

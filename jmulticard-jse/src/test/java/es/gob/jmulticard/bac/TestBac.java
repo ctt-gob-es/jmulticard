@@ -1,5 +1,6 @@
 package es.gob.jmulticard.bac;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
@@ -31,6 +32,7 @@ public final class TestBac {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testBac() throws Exception {
 		Bac.doBac(TEST_MRZ, new JseCryptoHelper(), new SmartcardIoConnection());
 	}
