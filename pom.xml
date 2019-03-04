@@ -62,13 +62,45 @@
 		</dependency>
 	</dependencies>
 
-	<modules>
-		<module>jmulticard</module>
-		<module>jmulticard-android</module>
-		<module>jmulticard-jsr268</module>
-		<module>jmulticard-ui</module>
-		<module>jmulticard-jse</module>
-	</modules>
+		<!-- Construccion por defecto -->
+		<profile>
+			<id>basic</id>
+			<activation>
+				<property>
+					<name>basicModules</name>
+					<value>!false</value>
+				</property>
+      		</activation>
+
+			<modules>
+				<module>jmulticard</module>
+				<module>jmulticard-jsr268</module>
+				<module>jmulticard-ui</module>
+				<module>jmulticard-jse</module>
+			</modules>
+
+	    </profile>
+
+		<!-- Construccion que incluye el modulo Android -->
+		<profile>
+			<id>android</id>
+			<activation>
+				<property>
+					<name>android</name>
+					<value>true</value>
+				</property>
+      		</activation>
+
+			<modules>
+				<module>jmulticard</module>
+				<module>jmulticard-android</module>
+				<module>jmulticard-jsr268</module>
+				<module>jmulticard-ui</module>
+				<module>jmulticard-jse</module>
+			</modules>
+
+	    </profile>
+
 	
 	<profiles>
 	
