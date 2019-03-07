@@ -2,6 +2,7 @@ package es.gob.jmulticard.jse.provider.ceres;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 final class CeresMessages {
 
@@ -18,6 +19,9 @@ final class CeresMessages {
 			return RESOURCE_BUNDLE.getString(key);
 		}
 		catch (final MissingResourceException e) {
+        	Logger.getLogger("es.gob.jmulticard").severe( //$NON-NLS-1$
+    			"No se ha encontrado el recurso textual con clave '" + key + "': " + e//$NON-NLS-1$ //$NON-NLS-2$
+			);
 			return '!' + key + '!';
 		}
 	}

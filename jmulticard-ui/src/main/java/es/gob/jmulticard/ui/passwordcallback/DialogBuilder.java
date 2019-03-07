@@ -55,6 +55,10 @@ import es.gob.jmulticard.ui.passwordcallback.gui.ConfirmSmartcardDialog;
 public final class DialogBuilder {
 
 	private static boolean headless = false;
+
+    /** Establece el modo sin interfaz.
+     * @param hl <code>true</code> para operar sin interaz, <code>false</code> para operar con interfaz
+     *           (con di&aacute;logos hacia el usuario, etc.). */
     public static void setHeadLess(final boolean hl) {
         headless = hl;
     }
