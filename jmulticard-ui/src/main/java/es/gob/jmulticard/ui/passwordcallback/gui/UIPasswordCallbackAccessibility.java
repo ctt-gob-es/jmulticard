@@ -125,6 +125,9 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
     	return password;
     }
 
+    /** Indica si est&aacute; establecido el uso de cach&eacute; en el PIN.
+     * @return <code>true</code> si est&aacute; establecido el uso de cach&eacute; en el PIN,
+     *         <code>false</code> en caso contrario. */
     public boolean isUseCacheChecked() {
     	return this.useCache;
     }

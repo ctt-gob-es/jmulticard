@@ -102,8 +102,14 @@ public final class CommonPasswordCallback extends PasswordCallback {
      * en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
 	 * @param title T&iacute;tulo de la ventana gr&aacute;fica.
-	 * @param isDnie Si es un Dnie. */
-	public CommonPasswordCallback(final String prompt, final String title, final boolean isDnie, final boolean allowUseCache, final boolean defaultUseCacheValue) {
+	 * @param isDnie Si es un Dnie.
+	 * @param allowUseCache Si se permite el cach&acute; del PIN.
+	 * @param defaultUseCacheValue Si por defecto debe usarse el valor del PIN en cach&eacute;. */
+	public CommonPasswordCallback(final String prompt,
+			                      final String title,
+			                      final boolean isDnie,
+			                      final boolean allowUseCache,
+			                      final boolean defaultUseCacheValue) {
 		super(prompt, true);
 		if (prompt == null) {
 			throw new IllegalArgumentException("El texto de solicitud no puede ser nulo"); //$NON-NLS-1$
