@@ -65,7 +65,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 	/** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
 	 * @param usbManager Gestor de dispositivos USB del sistema
 	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
-	 * @throws UsbDeviceException */
+	 * @throws UsbDeviceException Cuando no se pueda preparar el dispositivo. */
 	public AndroidCCIDConnection(final UsbManager usbManager, final UsbDevice reader) throws UsbDeviceException{
 		if (!isCardReader(reader)) {
 			throw new IllegalArgumentException(
@@ -131,7 +131,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				}
 				//Hay tarjeta, pero no esta activa
 				Log.i("es.gob.jmulticard", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
-				this.reset();
+				reset();
 			}
 
 			if (DEBUG) {

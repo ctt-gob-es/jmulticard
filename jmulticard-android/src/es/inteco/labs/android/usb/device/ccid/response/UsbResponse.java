@@ -140,9 +140,9 @@ public final class UsbResponse {
 
 	/** Devuelve los octetos de los datos de la respuesta.
 	 * @return Octetos de los datos de la respuesta
-	 * @throws UsbResponseException */
-	public byte[] getDataBytes() throws UsbResponseException{
-		this.processStatusErrors(this.command);
+	 * @throws UsbResponseException Cuando se ha detectado un error en la respuesta. */
+	public byte[] getDataBytes() throws UsbResponseException {
+		processStatusErrors(this.command);
 		return HexUtils.subArray(this.responseBytes, USB_HEADER_BASE_SIZE, this.responseBytes.length - USB_HEADER_BASE_SIZE);
 	}
 
@@ -195,7 +195,7 @@ public final class UsbResponse {
 
 	/** Procesa el ICC Status y Command Status a partir del byte de SlotStatus. */
 	private void processStatus(){
-		final byte bStatus = this.getStatus();
+		final byte bStatus = getStatus();
 		this.iccStatus = (byte)(bStatus & 0x03);
 		this.commandStatus = (byte)(bStatus >> 6 & 0x03 );
 	}

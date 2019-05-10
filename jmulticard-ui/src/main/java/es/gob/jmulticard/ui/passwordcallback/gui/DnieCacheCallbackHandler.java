@@ -17,7 +17,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** <code>CallbackHandler</code> que gestiona los <code>Callbacks</code> de petici&oacute;n de
  * informaci&oacute;n al usuario cuando utiliza un DNIe. Esta clase <i>cachea</i> las respuestas
- * de confirmaci&oacute;n y contrase&mtilde;a del usuario de tal forma que no requerir&aacute;a
+ * de confirmaci&oacute;n y contrase&ntilde;a del usuario de tal forma que no requerir&aacute;a
  * que las vuelva a introducir. La cach&eacute; se borra autom&aacute;ticamente pasado un tiempo
  * determinado. */
 public final class DnieCacheCallbackHandler implements CallbackHandler, CacheElement {

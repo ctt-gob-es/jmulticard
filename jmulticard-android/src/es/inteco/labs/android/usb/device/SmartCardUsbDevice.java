@@ -66,7 +66,8 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	/** Constructor.
 	 * @param usbDev Lector de tarjetas USB CCID.
 	 * @param usbManager Gestor de dispositivos USB de Android
-	 * @throws UsbDeviceException */
+	 * @throws UsbDeviceException Cuando no se encuentre ninguna tarjeta en el lector u ocurra un
+	 * 			error al comunicarse con ella. */
 	public SmartCardUsbDevice(final UsbManager usbManager, final UsbDevice usbDev) throws UsbDeviceException {
 		super(usbManager, usbDev);
 	}
@@ -74,15 +75,16 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	/** Indica si la tarjeta est&aacute; presente en el lector de tarjetas.
 	 * @return <code>true</code> si la tarjeta est&aacute; presente en el lector de tarjetas,
 	 *         <code>false</code> en caso contrario
-	 * @throws NotAvailableUSBDeviceException */
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
+	 * 			o cuando no se pueda conectar con &eacute;l. */
 	public boolean isCardPresent() throws NotAvailableUSBDeviceException{
 		try {
 			final UsbResponse response = getSlotStatus();
 			return isCardPresent(response);
 		}
 		catch (final UsbCommandTransmissionException e) {
-			this.close();
-			this.channel = this.open();
+			close();
+			this.channel = open();
 			Log.w("es.gob.afirma", "Error de transmision USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
@@ -100,7 +102,8 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	/** Indica si la tarjeta est&aacute; presente y activa en el lector de tarjetas
 	 * @return <code>true</code> si la tarjeta est&aacute; presente y activa en el lector de tarjetas,
 	 *         <code>false</code> en caso contrario
-	 * @throws NotAvailableUSBDeviceException
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
+	 * 			o cuando no se pueda conectar con &eacute;l.
 	 */
 	public boolean isCardActive() throws NotAvailableUSBDeviceException{
 		try {
@@ -108,8 +111,8 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 			return isCardPresent(response) && isCardActive(response);
 		}
 		catch (final UsbCommandTransmissionException e) {
-			this.close();
-			this.channel = this.open();
+			close();
+			this.channel = open();
 			Log.w("es.gob.afirma", "Error de transmision USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
@@ -154,8 +157,9 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 
 	/** Manda un reset al dispositivo CCID.
 	 * @return ATR devuelto por el dispositivo
-	 * @throws UsbDeviceException
-	 * @throws NotAvailableUSBDeviceException */
+	 * @throws UsbDeviceException Cuando no se encuentre ninguna tarjeta en el lector.
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
+	 * 			o cuando no se pueda conectar con &eacute;l. */
 	public ATR resetCCID() throws UsbDeviceException, NotAvailableUSBDeviceException{
 		if(!isCardPresent()){
 			throw new UsbDeviceException("No se ha detectado una tarjeta en el lector"); //$NON-NLS-1$
@@ -194,8 +198,10 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	/** Env&iacute;a una APDU al dispositivo.
 	 * @param apdu Comando APDU
 	 * @return Respuesta al env&iacute;o (APDU respuesta)
-	 * @throws UsbDeviceException
-	 * @throws NotAvailableUSBDeviceException */
+	 * @throws UsbDeviceException Cuando no se encuentre ninguna tarjeta en el lector u ocurra un
+	 * 			error al comunicarse con ella.
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
+	 * 			o cuando no se pueda conectar con &eacute;l. */
 	public byte[] transmit(final byte[] apdu) throws UsbDeviceException, NotAvailableUSBDeviceException{
 		try{
 			final UsbCommand xfrBlock = UsbInstructionFactory.getInstance().getXfrBlockCommand(apdu);
@@ -236,10 +242,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 
 	/** Abre la conexi&oacute;n con un dispositivo SmartCard.
 	 * @return Conexi&oacute;n con un dispositivo SmartCard
-	 * @throws NotAvailableUSBDeviceException */
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
+	 * 			o cuando no se pueda conectar con &eacute;l. */
 	public SmartCardChannel open() throws NotAvailableUSBDeviceException {
 		try {
-			return this.getChannel();
+			return getChannel();
 		}
 		catch (final UsbDeviceException e) {
 			throw new NotAvailableUSBDeviceException("Error en la apertura del canal: " + e, e); //$NON-NLS-1$
@@ -250,8 +257,8 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @return <code>true</code> si el dispositivo qued&oacute; cerrado tras la llamada, <code>false</code>
 	 *         en caso contrario */
 	public boolean close() {
-		if(this.isOpen()){
-			return this.releaseChannel();
+		if(isOpen()){
+			return releaseChannel();
 		}
 		return true;
 	}
