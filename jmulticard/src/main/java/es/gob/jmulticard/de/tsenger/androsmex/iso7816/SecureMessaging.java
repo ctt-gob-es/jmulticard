@@ -200,9 +200,9 @@ public final class SecureMessaging {
 
 		if (!java.util.Arrays.equals(cc, do8eData)) {
 			throw new SecureMessagingException(
-				"Checksum incorrecto\n CC Calculado: " //$NON-NLS-1$
-					+ HexUtils.hexify(cc, false) + "\nCC en DO8E: " //$NON-NLS-1$
-						+ HexUtils.hexify(do8eData, false)
+				"Checksum incorrecto (CC Calculado = " //$NON-NLS-1$
+					+ HexUtils.hexify(cc, false) + ", CC en DO8E = " //$NON-NLS-1$
+						+ HexUtils.hexify(do8eData, false) + ")" //$NON-NLS-1$
 			);
 		}
 

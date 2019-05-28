@@ -1,5 +1,7 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Timer;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -10,7 +12,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.dnie.CacheElement;
 import es.gob.jmulticard.ui.passwordcallback.DialogBuilder;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
@@ -40,14 +41,30 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
-					if (cb instanceof CustomTextInputCallback) {
-						final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
-							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-							null,
-							Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
-							Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
-						);
-						((CustomTextInputCallback) cb).setText(new String(uip.getPassword()));
+					if (
+						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
+						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
+					) {
+						try {
+							final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
+							final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(
+								Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
+								null,
+								Messages.getString("CanPasswordCallback.0"), //$NON-NLS-1$
+								Messages.getString("CanPasswordCallback.2") //$NON-NLS-1$
+							);
+							m.invoke(cb, new String(uip.getPassword()));
+						}
+						catch (final NoSuchMethodException    |
+							         SecurityException        |
+							         IllegalAccessException   |
+							         IllegalArgumentException |
+							         InvocationTargetException e) {
+							throw new UnsupportedCallbackException(
+								cb,
+								"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
+							);
+						}
 					}
 					else if (cb instanceof CustomAuthorizeCallback) {
 						if (!this.confirmed) {
