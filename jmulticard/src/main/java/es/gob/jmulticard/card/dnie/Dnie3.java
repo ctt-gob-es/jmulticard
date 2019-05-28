@@ -344,20 +344,20 @@ public class Dnie3 extends Dnie {
 
         // Establecemos el canal PIN y lo verificamos
         final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
-        		this,
-        		getConnection(),
-        		getCryptoHelper(),
-        		new Dnie3PinCwa14890Constants(),
-        		new Dnie3PinCwa14890Constants()
-        		);
+    		this,
+    		getConnection(),
+    		getCryptoHelper(),
+    		new Dnie3PinCwa14890Constants(),
+    		new Dnie3PinCwa14890Constants()
+		);
 
         try {
         	selectMasterFile();
         }
         catch (final Exception e) {
         	throw new CryptoCardException(
-        			"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
-        			);
+    			"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
+			);
         }
 
         try {
@@ -365,8 +365,8 @@ public class Dnie3 extends Dnie {
         }
         catch (final ApduConnectionException e) {
         	throw new CryptoCardException(
-        			"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
-        			);
+    			"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
+			);
         }
 
         LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
@@ -377,12 +377,12 @@ public class Dnie3 extends Dnie {
         catch (final PasswordCallbackNotFoundException e) {
         	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento del canal
         	// de PIN, pero continuamos para establecer el canal de usuario
-        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN."); //$NON-NLS-1$
+        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN: " + e); //$NON-NLS-1$
 		}
         catch (final ApduConnectionException e) {
         	throw new CryptoCardException(
-        			"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
-        			);
+    			"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
+			);
         }
 
         // Establecemos ahora el canal de usuario

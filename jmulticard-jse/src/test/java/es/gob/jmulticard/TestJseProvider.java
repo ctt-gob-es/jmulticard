@@ -91,16 +91,23 @@ public final class TestJseProvider {
 
 		Assert.assertNotNull("La tarjeta debe tener al menos un certificado", alias); //$NON-NLS-1$
 
-		final Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
 		signature.initSign((PrivateKey) ks.getKey(alias, null));
 		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
-		signature.sign();
+		byte[] signBytes = signature.sign();
 
-		System.out.println("Firma generada correctamente"); //$NON-NLS-1$
+		System.out.println("Firma generada correctamente: " + HexUtils.hexify(signBytes, false)); //$NON-NLS-1$
 
 		System.out.println(
 			((X509Certificate)ks.getCertificate(alias)).getIssuerX500Principal().toString()
 		);
+
+		signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey(alias, null));
+		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
+		signBytes = signature.sign();
+
+		System.out.println("Firma generada correctamente: " + HexUtils.hexify(signBytes, false)); //$NON-NLS-1$
 	}
 
 	/** prueba de obtenci&oacute;n de la cadena de certificados.
