@@ -34,7 +34,12 @@ public final class TestJseProvider {
 		TestJseProvider.testProviderWithDefaultConnection();
 	}
 
-	private static void testProviderWithCustomConnection() throws Exception {
+	/** Prueba el proveedor indicando manualmente la conexi&oacute;n.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testProviderWithCustomConnection() throws Exception {
 		final Provider p = new DnieProvider(new SmartcardIoConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
