@@ -91,6 +91,7 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 import es.gob.jmulticard.card.pace.PaceConnection;
 
 /** DNI Electr&oacute;nico.
@@ -137,9 +138,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Alias del certificado de firma del DNIe. */
     public static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
 
-    private static final String CERT_ALIAS_SIGNALIAS = "CertFirmaSeudonimo"; //$NON-NLS-1$
-    private static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
-    private static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
+    protected static final String CERT_ALIAS_SIGNALIAS = "CertFirmaSeudonimo"; //$NON-NLS-1$
+    protected static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
+    protected static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
     private static final String AUTH_KEY_LABEL = "KprivAutenticacion"; //$NON-NLS-1$
     private static final String SIGN_KEY_LABEL = "KprivFirmaDigital"; //$NON-NLS-1$
@@ -148,11 +149,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     protected static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
     protected static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
 
-    private X509Certificate authCert;
-    private X509Certificate signCert;
-    private X509Certificate cyphCert;
-    private X509Certificate signAliasCert;
-    private X509Certificate intermediateCaCert;
+    protected X509Certificate authCert;
+    protected X509Certificate signCert;
+    protected X509Certificate cyphCert;
+    protected X509Certificate signAliasCert;
+    protected X509Certificate intermediateCaCert;
 
     private Location authCertPath;
     private Location signCertPath;
@@ -433,8 +434,13 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             		this.intermediateCaCert = null;
             	}
             }
-            else {
+            else if (CERT_ALIAS_SIGNALIAS.equals(currentAlias)){
             	this.signAliasCertPath = new Location(cdf.getCertificatePath(i));
+            }
+            else {
+            	LOGGER.warning(
+        			"Se ha encontrado un certificado desconocido en la tarjeta con alias: " + currentAlias //$NON-NLS-1$
+    			);
             }
         }
     }
@@ -621,21 +627,20 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		           final String signAlgorithm,
     		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
     		                                                                 PinException {
-    	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
-
-        // Reestablecemos el canal inicial, para que en una segunda firma se tenga que volver a pedir
-    	// el PIN y rehacer los canales CWA
-        try {
-        	this.rawConnection.reset();
-    		setConnection(this.rawConnection);
+    	final byte[] signBytes = signInternal(
+			data,
+			signAlgorithm,
+			privateKeyReference
+		);
+    	try {
+			getConnection().close();
 		}
-        catch (final ApduConnectionException e) {
-        	throw new CryptoCardException(
-        		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
-    		);
+    	catch (final ApduConnectionException e) {
+			LOGGER.severe(
+				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones posteriores de firma: " + e //$NON-NLS-1$
+			);
 		}
-
-    	return ret;
+    	return signBytes;
     }
 
     protected byte[] signInternal(final byte[] data,
@@ -738,7 +743,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
-                	"Error durante la operacion de firma con respuesta: " + res.getStatusWord(), //$NON-NLS-1$
+                	"Error durante la operacion de firma con respuesta: " + //$NON-NLS-1$
+            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
                 	res.getStatusWord()
                 );
             }
