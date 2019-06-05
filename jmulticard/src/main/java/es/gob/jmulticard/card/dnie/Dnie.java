@@ -667,7 +667,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		}
         		catch (final UnsupportedCallbackException e) {
         			// Si no se especifica un callback de autorizacion, se omite
-        			LOGGER.warning(
+        			LOGGER.severe(
     					"No se ha proporcionado un CallbackHandler valido para mostrar el dialogo de confirmacion de firma, se omitira: " + e //$NON-NLS-1$
 					);
         		}

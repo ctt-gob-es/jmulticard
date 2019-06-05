@@ -480,4 +480,10 @@ public final class SmartcardIoConnection implements ApduConnection {
     public boolean isExclusiveUse() {
         return this.exclusive;
     }
+
+	@Override
+	public ApduConnection getSubConnection() {
+		// Esta conexion es siempre la de mas bajo nivel
+		return null;
+	}
 }

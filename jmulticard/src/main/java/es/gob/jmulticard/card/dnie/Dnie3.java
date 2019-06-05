@@ -335,16 +335,26 @@ public class Dnie3 extends Dnie {
         	return;
         }
 
-        // Reestablecemos el canal inicial, para estar seguros de que no tenemos un canal CWA
-        // establecido pero cerrado
-        try {
-			setConnection(this.rawConnection);
-		}
-        catch (final ApduConnectionException e) {
-        	throw new CryptoCardException(
-        		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
-    		);
-		}
+        System.out.println("RAW CONN: " + this.rawConnection.getClass().getName());
+        System.out.println("Actual CONN: " + getConnection().getClass().getName());
+        if (getConnection().getSubConnection() != null) {
+        	System.out.println("Sub CONN: " + getConnection().getSubConnection().getClass().getName());
+        }
+        else {
+        	System.out.println("Sub CONN: NINGUNA");
+        }
+
+        // Si la conexion esta cerrada, la reestablecemos
+        if (!getConnection().isOpen()) {
+	        try {
+				setConnection(this.rawConnection);
+			}
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	        		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
+	    		);
+			}
+        }
 
         // Establecemos el canal PIN y lo verificamos
         final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
