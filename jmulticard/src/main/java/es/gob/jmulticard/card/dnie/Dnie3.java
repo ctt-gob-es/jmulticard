@@ -413,7 +413,7 @@ public class Dnie3 extends Dnie {
 		}
 		catch (final Exception e) {
 			throw new CryptoCardException(
-        		"Error seleccionado el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
     		);
 		}
 
@@ -432,9 +432,9 @@ public class Dnie3 extends Dnie {
 	/** {@inheritDoc} */
 	@Override
 	protected byte[] signInternal(final byte[] data,
-            final String signAlgorithm,
-            final PrivateKeyReference privateKeyReference) throws CryptoCardException,
-                                                                  PinException {
+                                  final String signAlgorithm,
+                                  final PrivateKeyReference privateKeyReference) throws CryptoCardException,
+                                                                                        PinException {
 		if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
             throw new IllegalArgumentException(
         		"La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference" //$NON-NLS-1$
