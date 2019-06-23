@@ -335,13 +335,13 @@ public class Dnie3 extends Dnie {
         	return;
         }
 
-        System.out.println("RAW CONN: " + this.rawConnection.getClass().getName());
-        System.out.println("Actual CONN: " + getConnection().getClass().getName());
-        if (getConnection().getSubConnection() != null) {
-        	System.out.println("Sub CONN: " + getConnection().getSubConnection().getClass().getName());
-        }
-        else {
-        	System.out.println("Sub CONN: NINGUNA");
+        if (DEBUG) {
+        	LOGGER.info(
+    			"Conexion actual: " + getConnection() //$NON-NLS-1$
+			);
+        	LOGGER.info(
+    			"Conexion 'raw': " + this.rawConnection //$NON-NLS-1$
+        	);
         }
 
         // Si la conexion esta cerrada, la reestablecemos

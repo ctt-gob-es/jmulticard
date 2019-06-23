@@ -87,6 +87,12 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
 
+    @Override
+	public String toString() {
+    	return "Conexion de bajo nivel JSR-268 abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+    }
+
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
     @Override
     public void addCardConnectionListener(final CardConnectionListener ccl) {
