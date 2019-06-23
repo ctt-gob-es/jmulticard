@@ -449,9 +449,9 @@ public final class SmartcardIoConnection implements ApduConnection {
                 throw new LostChannelException(t.getMessage());
             }
             throw new ApduConnectionException(
-                "Error de comunicacion con la tarjeta tratando de transmitir la APDU " + //$NON-NLS-1$
+                "Error de comunicacion con la tarjeta tratando de transmitir la APDU\n" + //$NON-NLS-1$
                 HexUtils.hexify(command.getBytes(), true) +
-                " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+                "\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
                 " en modo EXCLUSIVE=" + //$NON-NLS-1$
                 Boolean.toString(this.exclusive) +
                 " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
@@ -460,8 +460,8 @@ public final class SmartcardIoConnection implements ApduConnection {
         catch (final Exception e) {
         	e.printStackTrace();
             throw new ApduConnectionException(
-                "Error tratando de transmitir la APDU " + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
-                " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+                "Error tratando de transmitir la APDU\n" + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
+                "\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
                 " en modo EXCLUSIVE=" + //$NON-NLS-1$
                 Boolean.toString(this.exclusive) +
                 " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
