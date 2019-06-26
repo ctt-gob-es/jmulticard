@@ -1,13 +1,8 @@
 package es.gob.jmulticard;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.TextInputCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -16,6 +11,7 @@ import org.junit.Test;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
+import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.Dnie3;
 import es.gob.jmulticard.card.dnie.Dnie3Dg01Mrz;
@@ -30,7 +26,9 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestDnieLow {
 
 	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = ""; //$NON-NLS-1$
+	private static final String CAN = "CANDELDNI"; //$NON-NLS-1$
+
+	private static final String PIN = "PINDELDNI"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -51,6 +49,45 @@ public final class TestDnieLow {
 		System.out.println(new DnieSubjectPrincipalParser(cdf.getCertificateSubjectPrincipal(0)));
 	}
 
+	/** Prueba directa de firma.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void testDnieSign() throws Exception {
+		final Dnie dnie = DnieFactory.getDnie(
+			new SmartcardIoConnection(),
+			null,
+			new JseCryptoHelper(),
+			new TestingDnieCallbackHandler(CAN, PIN),
+			true
+		);
+		System.out.println();
+		System.out.println(dnie);
+		System.out.println();
+		if (!(dnie instanceof Dnie3)) {
+			System.out.println("No es un DNIe v3.0"); //$NON-NLS-1$
+			return;
+		}
+		final String[] aliases = dnie.getAliases();
+		for (final String a : aliases) {
+			System.out.println(a);
+		}
+
+		final PrivateKeyReference pkr = dnie.getPrivateKey(Dnie.CERT_ALIAS_SIGN);
+
+		System.out.println();
+		System.out.println(pkr);
+
+		final byte[] sign = dnie.sign(
+			"Hola mundo".getBytes(), //$NON-NLS-1$
+			"SHA256withRSA", //$NON-NLS-1$
+			pkr
+		);
+
+		System.out.println();
+		System.out.println("Firma generada: " + HexUtils.hexify(sign, true)); //$NON-NLS-1$
+	}
+
 	/** Prueba de lectura de DG en DNIe 3.0.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
@@ -61,32 +98,7 @@ public final class TestDnieLow {
 			new SmartcardIoConnection(),
 			null,
 			new JseCryptoHelper(),
-			new CallbackHandler() {
-				@Override
-				public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-					for (final Callback cb : callbacks) {
-						if (
-							"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
-							"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
-						) {
-							try {
-								final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
-								m.invoke(cb, CAN);
-							}
-							catch (final NoSuchMethodException    |
-								         SecurityException        |
-								         IllegalAccessException   |
-								         IllegalArgumentException |
-								         InvocationTargetException e) {
-								throw new UnsupportedCallbackException(
-									cb,
-									"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
-								);
-							}
-						}
-					}
-				}
-			},
+			new TestingDnieCallbackHandler(CAN, PIN),
 			false
 		);
 		System.out.println();
@@ -120,32 +132,7 @@ public final class TestDnieLow {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testFlexHandler() throws Exception {
-		final CallbackHandler cbh = new CallbackHandler() {
-			@Override
-			public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-				for (final Callback cb : callbacks) {
-					if (
-						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
-						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
-					) {
-						try {
-							final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
-							m.invoke(cb, "texto"); //$NON-NLS-1$
-						}
-						catch (final NoSuchMethodException    |
-							         SecurityException        |
-							         IllegalAccessException   |
-							         IllegalArgumentException |
-							         InvocationTargetException e) {
-							throw new UnsupportedCallbackException(
-								cb,
-								"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
-							);
-						}
-					}
-				}
-			}
-		};
+		final CallbackHandler cbh = new TestingDnieCallbackHandler(CAN, PIN);
 
 		final CustomTextInputCallback custom = new CustomTextInputCallback("customprompt"); //$NON-NLS-1$
 		final TextInputCallback java = new TextInputCallback("javaprompt"); //$NON-NLS-1$
@@ -207,32 +194,7 @@ public final class TestDnieLow {
 		final SpanishPassportWithPace passport = new SpanishPassportWithPace(
 			conn,
 			new JseCryptoHelper(),
-			new CallbackHandler() {
-				@Override
-				public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-					for (final Callback cb : callbacks) {
-						if (
-							"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
-							"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
-						) {
-							try {
-								final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
-								m.invoke(cb, MRZ);
-							}
-							catch (final NoSuchMethodException    |
-								         SecurityException        |
-								         IllegalAccessException   |
-								         IllegalArgumentException |
-								         InvocationTargetException e) {
-								throw new UnsupportedCallbackException(
-									cb,
-									"No se ha podido invocar al metodo 'setText' de la callback: " + e //$NON-NLS-1$
-								);
-							}
-						}
-					}
-				}
-			}
+			new TestingDnieCallbackHandler(CAN, PIN)
 		);
 
 		System.out.println();

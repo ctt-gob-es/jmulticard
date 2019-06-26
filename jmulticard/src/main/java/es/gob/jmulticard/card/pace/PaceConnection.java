@@ -46,8 +46,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 	 * a la apertura del canal. */
 	@Override
 	public void open() {
-		// Mantenemos el canal como cerrado al ser unicamente un canal previo al canal seguro
-		this.openState = false;
+		this.openState = true;
 	}
 
 	/** {@inheritDoc} */

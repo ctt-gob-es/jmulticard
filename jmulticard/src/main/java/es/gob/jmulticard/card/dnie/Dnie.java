@@ -606,6 +606,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** {@inheritDoc} */
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
+    	if (this.authKeyRef == null) {
+    		loadKeyReferences();
+    	}
         if (CERT_ALIAS_AUTH.equals(alias)) {
             return this.authKeyRef;
         }
@@ -727,7 +730,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
-            		"Error en el establecimiento de las clave de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
+            		"Error en el establecimiento de las clave de firma con respuesta: " + //$NON-NLS-1$
+        				Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+    				res.getStatusWord()
         		);
             }
 
@@ -742,6 +747,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             apdu = new PsoSignHashApduCommand((byte) 0x00, digestInfo);
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
+            	LOGGER.severe(
+            		"Recibida APDU inesperada de respuesta al PSOSignHash:\n" + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+        		);
                 throw new DnieCardException(
                 	"Error durante la operacion de firma con respuesta: " + //$NON-NLS-1$
             			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),

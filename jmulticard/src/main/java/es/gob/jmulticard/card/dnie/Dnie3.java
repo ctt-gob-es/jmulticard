@@ -340,7 +340,7 @@ public class Dnie3 extends Dnie {
     			"Conexion actual: " + getConnection() //$NON-NLS-1$
 			);
         	LOGGER.info(
-    			"Conexion 'raw': " + this.rawConnection //$NON-NLS-1$
+    			"Conexion subyacente: " + this.rawConnection //$NON-NLS-1$
         	);
         }
 

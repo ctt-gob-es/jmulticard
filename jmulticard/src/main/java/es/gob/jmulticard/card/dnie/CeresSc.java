@@ -102,7 +102,9 @@ public final class CeresSc extends Dnie {
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
-            		"Error en el establecimiento de las clave de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
+            		"Error en el establecimiento de las clave de firma con respuesta: " + //$NON-NLS-1$
+        				Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+    				res.getStatusWord()
         		);
             }
 

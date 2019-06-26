@@ -18,6 +18,7 @@ import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** Tajeta de <a href="http://www.bit4id.com/">Bit4Id</a> con chip <a href="http://www.st.com/">ST</a>
  *  distribuida por <a href="http://www.camerfirma.com/">CamerFirma</a>.
@@ -97,7 +98,8 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
             	throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
             throw new ApduConnectionException(
-        		"Error en el envio de la verificacion de PIN con respuesta: " + verifyResponse.getStatusWord() //$NON-NLS-1$
+        		"Error en el envio de la verificacion de PIN con respuesta: " + //$NON-NLS-1$
+    				Iso7816fourErrorCodes.getErrorDescription(verifyResponse.getStatusWord())
     		);
         }
 	}

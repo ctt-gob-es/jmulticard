@@ -51,6 +51,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** Tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Vicente Ortiz
@@ -595,7 +596,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		}
 		throw new PinException(
 			"Error comprobando los intentos restantes de PIN con respuesta: " + //$NON-NLS-1$
-				HexUtils.hexify(verifyResponse.getBytes(), true)
+				Iso7816fourErrorCodes.getErrorDescription(verifyResponse.getStatusWord())
 		);
     }
 

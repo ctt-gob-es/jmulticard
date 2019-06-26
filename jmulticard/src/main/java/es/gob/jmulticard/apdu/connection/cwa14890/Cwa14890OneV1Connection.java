@@ -790,13 +790,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return this.openState && this.subConnection.isOpen();
     }
 
-
     /** Calcula y devuelve el valor entregado m&aacute;s 1.
      * @param data Datos a incrementar.
      * @return Valor incrementado. */
     private static byte[] increment(final byte[] data) {
-        BigInteger bi = new BigInteger(1, data);
-        bi = bi.add(BigInteger.ONE);
+
+        final BigInteger bi = new BigInteger(1, data).add(BigInteger.ONE);
 
         final byte[] biArray = bi.toByteArray();
         if (biArray.length > 8) {
