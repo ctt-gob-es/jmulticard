@@ -274,7 +274,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 	        // Cargamos la localizacion de los certificados y el certificado
 	        // de CA intermedia de los certificados de firma, autenticacion y, si existe, cifrado
-	        preloadCertificates();
+	        loadCertificatesPaths();
 
 	        // Cargamos la informacion publica con la referencia a las claves
 	        loadKeyReferences();
@@ -401,7 +401,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Carga el certificado de la CA intermedia y las localizaciones de los
      * certificados de firma y autenticaci&oacute;n.
      * @throws ApduConnectionException Si hay problemas en la precarga. */
-    protected void preloadCertificates() throws ApduConnectionException {
+    protected void loadCertificatesPaths() throws ApduConnectionException {
 
         final Cdf cdf = getCdf();
 
@@ -450,7 +450,21 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     public X509Certificate getCertificate(final String alias) throws CryptoCardException, PinException {
 
         if (this.authCert == null) { // Este certificado esta presente en todas las variantes del DNIe
-            loadCertificates();
+
+        	if (this.authCertPath == null) {
+        		try {
+					loadCertificatesPaths();
+				}
+        		catch (final ApduConnectionException e) {
+					throw new CryptoCardException(
+						"Error cargando las rutas hacia los certificados: " + e, e //$NON-NLS-1$
+					);
+				}
+        	}
+        	// Abrimos el canal si es necesario
+        	openSecureChannelIfNotAlreadyOpened();
+            // Cargamos certificados si es necesario
+        	loadCertificates();
         }
 
         if (CERT_ALIAS_AUTH.equals(alias)) {
@@ -898,7 +912,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         return CompressionUtils.getCertificateFromCompressedOrNotData(certEncoded);
     }
 
-    protected void loadCertificatesInternal() throws CryptoCardException {
+    /** Carga los certificados del DNIe.
+     * Necesita que est&eacute;n previamente cargadas las rutas hacia los certificados.
+     * @throws CryptoCardException En cualquier error durante la carga. */
+    protected void loadCertificates() throws CryptoCardException {
 
         // Cargamos certificados si es necesario
     	if (this.authCert == null ||
@@ -931,19 +948,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		    		);
 				}
     	}
-    }
-
-    /** Carga los certificados del usuario para utilizarlos cuando se desee (si no estaban ya cargados),
-     * abriendo el canal seguro de la tarjeta si fuese necesario, mediante el PIN de usuario.
-     * @throws CryptoCardException Cuando se produce un error en la operaci&oacute;n con la tarjeta.
-     * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico.
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
-    protected void loadCertificates() throws CryptoCardException, PinException {
-    	// Abrimos el canal si es necesario
-    	openSecureChannelIfNotAlreadyOpened();
-        // Cargamos certificados si es necesario
-    	loadCertificatesInternal();
     }
 
 	@Override

@@ -40,8 +40,6 @@
 package es.gob.jmulticard.card.dnie;
 
 import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
@@ -51,8 +49,6 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
-import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
-import es.gob.jmulticard.card.CompressionUtils;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
@@ -189,7 +185,7 @@ public class Dnie3 extends Dnie {
 			return selectFileByLocationAndRead(FILE_SOD_LOCATION);
 		}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG11 del DNIe: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el SOD del DNIe: " + e, e); //$NON-NLS-1$
 		}
 	}
 
@@ -204,7 +200,7 @@ public class Dnie3 extends Dnie {
 			return selectFileByLocationAndRead(FILE_COM_LOCATION);
 		}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG11 del DNIe: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el 'Common Data' (COM) del DNIe: " + e, e); //$NON-NLS-1$
 		}
 	}
 
@@ -273,6 +269,16 @@ public class Dnie3 extends Dnie {
      	  final boolean loadCertsAndKeys) throws ApduConnectionException {
         super(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
         this.rawConnection = conn;
+        if (loadCertsAndKeys) {
+        	try {
+				loadCertificates();
+			}
+        	catch (final CryptoCardException e) {
+				throw new ApduConnectionException(
+					"Error cargando los certificados del DNIe 3.0: " + e, e //$NON-NLS-1$
+				);
+			}
+        }
     }
 
     /** Construye una clase que representa un DNIe.
@@ -442,60 +448,5 @@ public class Dnie3 extends Dnie {
         }
         return signOperation(data, signAlgorithm, privateKeyReference);
 	}
-
-    /** No hace nada. En DNIe 3 los certificados se cargan en el arranque. */
-    @Override
-	protected void loadCertificates() {
-    	// Vacio
-    }
-
-    /** Carga todos los certificados conocidos de la tarjeta.
-     * En DNIe 3 y derivados nunca hace falta el PIN para esto, por lo que podemos
-     * precargarlos en el arranque con seguridad.
-     * @throws ApduConnectionException Si hay problemas en la carga. */
-    @Override
-	protected void preloadCertificates() throws ApduConnectionException {
-        final Cdf cdf = getCdf();
-
-        for (int i = 0; i < cdf.getCertificateCount(); i++) {
-        	final String currentAlias = cdf.getCertificateAlias(i);
-        	final X509Certificate currentCert;
-			try {
-				currentCert = CompressionUtils.getCertificateFromCompressedOrNotData(
-					selectFileByLocationAndRead(
-						new Location(
-							cdf.getCertificatePath(i)
-						)
-					)
-				);
-			}
-			catch (CertificateException | IOException | Iso7816FourCardException e) {
-				LOGGER.severe(
-					"No se ha podido leer el certificado con alias '" + currentAlias + "': " + e //$NON-NLS-1$ //$NON-NLS-2$
-				);
-				continue;
-			}
-            if (CERT_ALIAS_AUTH.equals(currentAlias)) {
-            	this.authCert = currentCert;
-            }
-            else if (CERT_ALIAS_SIGN.equals(currentAlias)) {
-                this.signCert = currentCert;
-            }
-            else if (CERT_ALIAS_CYPHER.equals(currentAlias)) {
-            	this.cyphCert = currentCert;
-            }
-            else if (CERT_ALIAS_INTERMEDIATE_CA.equals(currentAlias)) {
-        		this.intermediateCaCert = currentCert;
-            }
-            else if (CERT_ALIAS_SIGNALIAS.equals(currentAlias)){
-            	this.signAliasCert = currentCert;
-            }
-            else {
-            	LOGGER.warning(
-        			"Se ha encontrado un certificado desconocido en la tarjeta con alias '" + currentAlias + "': " + currentCert.getSubjectX500Principal() //$NON-NLS-1$ //$NON-NLS-2$
-    			);
-            }
-        }
-    }
 
 }

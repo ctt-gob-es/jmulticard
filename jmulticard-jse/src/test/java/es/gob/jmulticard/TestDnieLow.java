@@ -1,8 +1,14 @@
 package es.gob.jmulticard;
 
+import java.io.ByteArrayInputStream;
+
+import javax.imageio.ImageIO;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.TextInputCallback;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -26,9 +32,9 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestDnieLow {
 
 	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "CANDELDNI"; //$NON-NLS-1$
+	private static final String CAN = ""; //$NON-NLS-1$
 
-	private static final String PIN = "PINDELDNI"; //$NON-NLS-1$
+	private static final String PIN = ""; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -53,6 +59,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			new SmartcardIoConnection(),
@@ -113,17 +120,40 @@ public final class TestDnieLow {
 
 		final Dnie3 dnie3 = (Dnie3) dnie;
 
-		final byte[] com = dnie3.getCOM();
-		System.out.println(new String(com));
-		System.out.println();
-
+		// DG01
 		final Dnie3Dg01Mrz dg1 = dnie3.getMrz();
-		System.out.println(dg1);
+		System.out.println("MRZ del DNIe: " + dg1); //$NON-NLS-1$
 		System.out.println();
 
+		// DG11
 		final byte[] dg11 = dnie3.getDg11();
 		System.out.println(new String(dg11));
 		System.out.println();
+
+		// DG02
+		final byte[] photo = dnie3.getSubjectPhotoAsJpeg2k();
+		final JFrame framePhoto = new JFrame();
+		framePhoto.add(new JLabel(new ImageIcon(ImageIO.read(new ByteArrayInputStream(photo))))); // width = 307 height = 378
+		framePhoto.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		framePhoto.pack();
+		framePhoto.setVisible(true);
+
+		// DG07
+		final byte[] rubric = dnie3.getSubjectSignatureImageAsJpeg2k();
+		final JFrame frameRubric = new JFrame();
+		frameRubric.add(new JLabel(new ImageIcon(ImageIO.read(new ByteArrayInputStream(rubric)))));
+		frameRubric.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameRubric.pack();
+		frameRubric.setVisible(true);
+
+		System.out.println("Certificados del DNIe:"); //$NON-NLS-1$
+		for (final String alias : dnie3.getAliases()) {
+			System.out.println("   " + AOUtil.getCN(dnie3.getCertificate(alias))); //$NON-NLS-1$
+		}
+
+		for (;;) {
+			// Vacio, para mantener las imagenes abiertas y visibles
+		}
 
 	}
 

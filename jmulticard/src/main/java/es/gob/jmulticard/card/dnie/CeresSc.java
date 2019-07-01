@@ -157,7 +157,7 @@ public final class CeresSc extends Dnie {
     /** Carga el certificado de la CA intermedia y las localizaciones del resto de los certificados.
      * @throws ApduConnectionException Si hay problemas en la precarga. */
     @Override
-	protected void preloadCertificates() throws ApduConnectionException {
+	protected void loadCertificatesPaths() throws ApduConnectionException {
 		try {
 			preload();
 		}
