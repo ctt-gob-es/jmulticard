@@ -793,8 +793,18 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
-     * 						un PIN para validar.  */
+     * 						un PIN para validar. */
     public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+    	openSecureChannelIfNotAlreadyOpened(true);
+    }
+
+    /** Establece y abre el canal seguro CWA-14890 vsi no lo estaba ya.
+     * @param doChv <code>true</code> si la apertura de canal seguro debe incluir la verificaci&oacute;n de PIN,
+     *              <code>false</code> si debe abrirse canal seguro <b>sin verificar PIN</b>.
+     * @throws CryptoCardException Si hay problemas en el proceso.
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
+     * 						un PIN para validar (en el caso de que se opte por verificar el PIN). */
+    public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException, PinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!isSecurityChannelOpen()) {
         	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
@@ -814,11 +824,13 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                     throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
                 }
             }
-            try {
-                verifyPin(getInternalPasswordCallback());
-            }
-            catch (final ApduConnectionException e) {
-                throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
+            if (doChv) {
+	            try {
+	                verifyPin(getInternalPasswordCallback());
+	            }
+	            catch (final ApduConnectionException e) {
+	                throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
+	            }
             }
         }
     }

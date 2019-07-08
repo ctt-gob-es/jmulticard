@@ -116,7 +116,8 @@ public final class TestDnieLow {
 			return;
 		}
 
-		dnie.openSecureChannelIfNotAlreadyOpened();
+		// Abrimos canal seguro sin vertificar el PIN
+		dnie.openSecureChannelIfNotAlreadyOpened(false);
 
 		final Dnie3 dnie3 = (Dnie3) dnie;
 
