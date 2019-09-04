@@ -26,7 +26,7 @@ public final class Dnie3Dg01Mrz {
     private final Properties countryNames = CountryCodes.getCountryCodes();
 
     /** Sexo del titular del documento de identidad. */
-    private enum Gender {
+    public enum Gender {
 
     	/** Hombre. */
     	MALE("Hombre"), //$NON-NLS-1$
