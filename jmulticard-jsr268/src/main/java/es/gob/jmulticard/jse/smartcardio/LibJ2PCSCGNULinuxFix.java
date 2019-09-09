@@ -80,7 +80,7 @@ final class LibJ2PCSCGNULinuxFix {
 		return extendLibraryPath(retval, "/usr" + LIBDIR + suffix); //$NON-NLS-1$
 	}
 
-	/** Oracle Java 7, java.library.path is severely limited as compared to the
+	/** Oracle Java 7, <code>java&#46;library&#46;path</code> is severely limited as compared to the
 	 * OpenJDK default and doesn't contain Ubuntu 12's MULTILIB directories. Test
 	 * for Ubuntu in various configs and add the required paths. */
 	private static String fixPathForUbuntuMultiLib(final String libraryPath) {
@@ -113,7 +113,7 @@ final class LibJ2PCSCGNULinuxFix {
 		return libraryPath;
 	}
 
-	/* Finds .so.version file on GNU/Linux. avoid guessing all GNU/Linux distros'
+	/** Finds <code>&#46;so&#46;version</code> file on GNU/Linux. avoid guessing all GNU/Linux distros'
 	 * library path configurations on 32 and 64-bit when working around the buggy
 	 * libj2pcsc.so implementation based on JRE implementations adding the native
 	 * library paths to the end of java.library.path. Fixes the path for Oracle JRE
