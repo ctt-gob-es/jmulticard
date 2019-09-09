@@ -69,7 +69,7 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SmartcardIoConnection implements ApduConnection {
 
-	private static final boolean DEBUG = false;
+	  private static final boolean DEBUG = false;
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
      * con la tarjeta. */
@@ -87,8 +87,12 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
 
+    public SmartcardIoConnection() {
+      LibJ2PCSCGNULinuxFix.fixNativeLibrary();
+    }
+
     @Override
-	public String toString() {
+	  public String toString() {
     	return "Conexion de bajo nivel JSR-268 abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
     }
