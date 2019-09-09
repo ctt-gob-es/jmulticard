@@ -87,8 +87,19 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
 
+    /** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
+     * JSR-268 SmartCard I/O. */
     public SmartcardIoConnection() {
-      LibJ2PCSCGNULinuxFix.fixNativeLibrary();
+    	try {
+    		// Aplicamos un parche para el error de PCSCLite de Debian
+    		// https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=529339
+    		LibJ2PCSCGNULinuxFix.fixNativeLibrary();
+    	}
+    	catch(final Exception | Error e) {
+    		LOGGER.warning(
+				"No se han podido aplicar las correcciones al error 529339 de Debian: " + e //$NON-NLS-1$
+			);
+    	}
     }
 
     @Override
