@@ -32,7 +32,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestDnieLow {
 
-	private static final String MRZ = ""; //$NON-NLS-1$
+//	private static final String MRZ = ""; //$NON-NLS-1$
 	private static final String CAN = ""; //$NON-NLS-1$
 
 	private static final String PIN = ""; //$NON-NLS-1$
@@ -159,6 +159,9 @@ public final class TestDnieLow {
 
 	}
 
+	/** Prueba de lectura del DG13.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
 	@Test
 	@Ignore
 	public void testDnie3Dg13Parser() throws Exception {
@@ -177,23 +180,23 @@ public final class TestDnieLow {
 
 		final Dnie3 dnie3 = (Dnie3) dnie;
 
-		Dnie3Dg13Identity dnie3Dg13Identity = dnie3.getIdentity();
+		final Dnie3Dg13Identity dnie3Dg13Identity = dnie3.getIdentity();
 
-		System.out.println("Name: "+dnie3Dg13Identity.getName());
-		System.out.println("Second name: "+dnie3Dg13Identity.getSecondName());
-		System.out.println("First name: "+dnie3Dg13Identity.getFirstName());
-		System.out.println("DNI number: "+dnie3Dg13Identity.getDniNumber());
-		System.out.println("Birth date: "+dnie3Dg13Identity.getBirthDate());
-		System.out.println("Nationality: "+dnie3Dg13Identity.getNationality());
-		System.out.println("Expiration date: "+dnie3Dg13Identity.getExpirationDate());
-		System.out.println("Support number: "+dnie3Dg13Identity.getSupportNumber());
-		System.out.println("Sex: "+dnie3Dg13Identity.getSex());
-		System.out.println("Birth city: "+dnie3Dg13Identity.getBirthCity());
-		System.out.println("Birth country: "+dnie3Dg13Identity.getBirthCountry());
-		System.out.println("Parent's names: "+dnie3Dg13Identity.getParentsNames());
-		System.out.println("Address: "+dnie3Dg13Identity.getAddress());
-		System.out.println("City: "+dnie3Dg13Identity.getCity());
-		System.out.println("Country: "+dnie3Dg13Identity.getCountry());
+		System.out.println("Name: " + dnie3Dg13Identity.getName()); //$NON-NLS-1$
+		System.out.println("Second name: " + dnie3Dg13Identity.getSecondSurname()); //$NON-NLS-1$
+		System.out.println("First name: " + dnie3Dg13Identity.getFirstSurname()); //$NON-NLS-1$
+		System.out.println("DNI number: " + dnie3Dg13Identity.getDniNumber()); //$NON-NLS-1$
+		System.out.println("Birth date: " + dnie3Dg13Identity.getBirthDate()); //$NON-NLS-1$
+		System.out.println("Nationality: " + dnie3Dg13Identity.getNationality()); //$NON-NLS-1$
+		System.out.println("Expiration date: " + dnie3Dg13Identity.getExpirationDate()); //$NON-NLS-1$
+		System.out.println("Support number: " + dnie3Dg13Identity.getSupportNumber()); //$NON-NLS-1$
+		System.out.println("Sex: " + dnie3Dg13Identity.getSex()); //$NON-NLS-1$
+		System.out.println("Birth city: " + dnie3Dg13Identity.getBirthCity()); //$NON-NLS-1$
+		System.out.println("Birth country: " + dnie3Dg13Identity.getBirthCountry()); //$NON-NLS-1$
+		System.out.println("Parent's names: " + dnie3Dg13Identity.getParentsNames()); //$NON-NLS-1$
+		System.out.println("Address: " + dnie3Dg13Identity.getAddress()); //$NON-NLS-1$
+		System.out.println("City: " + dnie3Dg13Identity.getCity()); //$NON-NLS-1$
+		System.out.println("Country: " + dnie3Dg13Identity.getCountry()); //$NON-NLS-1$
 	}
 
 	/** Prueba de <code>CallbackHandler</code> con distintas clases para <code>TextInputCallback</code>.
