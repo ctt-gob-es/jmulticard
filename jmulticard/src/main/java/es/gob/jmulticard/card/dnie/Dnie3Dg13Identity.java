@@ -5,75 +5,111 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+/** Identidad del titular tal y como se encuentra en el fichero DG13 del DNIe 3. */
 public final class Dnie3Dg13Identity {
 
-  /** This regEx matches on every pair (word) of control character (0x00-0x1F and 0x7F-0x9F) */
-  private static final Pattern CONTROL_CHARACTER_WORD = Pattern.compile("\\p{Cc}{2}");
+	/** This regEx matches on every pair (word) of control character (0x00-0x1F and
+	 * 0x7F-0x9F). */
+	private static final Pattern CONTROL_CHARACTER_WORD = Pattern.compile("\\p{Cc}{2}"); //$NON-NLS-1$
 
-  private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
-  private final String[] parsedValues;
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MM yyyy"); //$NON-NLS-1$
 
-  Dnie3Dg13Identity(final byte[] dg13RawData) {
-    parsedValues = new String(dg13RawData).split(CONTROL_CHARACTER_WORD.pattern());
-  }
+	private final String[] parsedValues;
 
-  public String getName() {
-    return parsedValues[1];
-  }
+	Dnie3Dg13Identity(final byte[] dg13RawData) {
+		this.parsedValues = new String(dg13RawData).split(CONTROL_CHARACTER_WORD.pattern());
+	}
 
-  public String getSecondName() {
-    return parsedValues[2];
-  }
+	/** Obtiene el nombre del titular.
+	 * @return Nombre del titular. */
+	public String getName() {
+		return this.parsedValues[1];
+	}
 
-  public String getFirstName() {
-    return parsedValues[3];
-  }
+	/** Obtiene el primer apellido del titular.
+	 * @return Primer apellido del titular. */
+	public String getSecondSurname() {
+		return this.parsedValues[2];
+	}
 
-  public String getDniNumber() {
-    return parsedValues[4];
-  }
+	/** Obtiene el segundo apellido del titular.
+	 * @return Segundo apellido del titular. */
+	public String getFirstSurname() {
+		return this.parsedValues[3];
+	}
 
-  public Date getBirthDate() throws ParseException {
-    return dateFormat.parse(parsedValues[5]);
-  }
+	/** Obtiene el n&uacute;mero de DNI del titular.
+	 * @return N&uacute;mero de DNI del titular. */
+	public String getDniNumber() {
+		return this.parsedValues[4];
+	}
 
-  public String getNationality() {
-    return parsedValues[6];
-  }
+	/** Obtiene la fecha de nacimiento del titular.
+	 * @return Fecha de nacimiento del titular.
+	 * @throws ParseException Si la fecha encontrada en el DNIe no est&aacute; en el formato esperado. */
+	public Date getBirthDate() throws ParseException {
+		return DATE_FORMAT.parse(this.parsedValues[5]);
+	}
 
-  public Date getExpirationDate() throws ParseException {
-    return dateFormat.parse(parsedValues[7]);
-  }
+	/** Obtiene la nacionalidad del titular.
+	 * @return Nacionalidad del titular. */
+	public String getNationality() {
+		return this.parsedValues[6];
+	}
 
-  public String getSupportNumber() {
-    return parsedValues[8];
-  }
+	/** Obtiene la fecha de caducidad del DNIe.
+	 * @return Fecha de caducidad del DNIe
+	 * @throws ParseException Si la fecha encontrada en el DNIe no est&aacute; en el formato esperado. */
+	public Date getExpirationDate() throws ParseException {
+		return DATE_FORMAT.parse(this.parsedValues[7]);
+	}
 
-  public Dnie3Dg01Mrz.Gender getSex() {
-    return Dnie3Dg01Mrz.Gender.getGender(parsedValues[9]);
-  }
+	/** Obtiene el n&uacute;mero de soporte del DNIe.
+	 * @return N&uacute;mero de soporte del DNIe. */
+	public String getSupportNumber() {
+		return this.parsedValues[8];
+	}
 
-  public String getBirthCity() {
-    return parsedValues[10];
-  }
+	/** Obtiene el sexo del titular.
+	 * @return Sexo del titular. */
+	public Dnie3Dg01Mrz.Gender getSex() {
+		return Dnie3Dg01Mrz.Gender.getGender(this.parsedValues[9]);
+	}
 
-  public String getBirthCountry() {
-    return parsedValues[11];
-  }
+	/** Obtiene la ciudad de nacimiento del titular.
+	 * @return Ciudad de nacimiento del titular. */
+	public String getBirthCity() {
+		return this.parsedValues[10];
+	}
 
-  public String getParentsNames() {
-    return parsedValues[12];
-  }
+	/** Obtiene el pa&iacute;s de nacimiento del titular.
+	 * @return Pa&iacute;s de nacimiento del titular. */
+	public String getBirthCountry() {
+		return this.parsedValues[11];
+	}
 
-  public String getAddress() {
-    return parsedValues[13];
-  }
+	/** Obtien los nombres de los padres del titular.
+	 * @return Nombres de los padres del titular. */
+	public String getParentsNames() {
+		return this.parsedValues[12];
+	}
 
-  public String getCity() {
-    return parsedValues[14];
-  }
+	/** Obtiene la direcci&oacute;n de residencia del titular.
+	 * @return Direcci&oacute;n de residencia del titular. */
+	public String getAddress() {
+		return this.parsedValues[13];
+	}
 
-  public String getCountry() {
-    return parsedValues[16];
-  }
+	/** Obtiene la ciudad de residencia del titular.
+	 * @return Ciudad de residencia del titular. */
+	public String getCity() {
+		return this.parsedValues[14];
+	}
+
+	/** Obtiene el pa&iacute;s de residencia del titular.
+	 * @return Pa&iacute;s de residencia del titular. */
+	public String getCountry() {
+		return this.parsedValues[16];
+	}
+
 }
