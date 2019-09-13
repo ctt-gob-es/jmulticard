@@ -222,6 +222,10 @@ public class Dnie3 extends Dnie {
 		return new Dnie3Dg01Mrz(mrz);
 	}
 
+	public Dnie3Dg13Identity getIdentity() throws IOException {
+		return new Dnie3Dg13Identity(getDg13());
+	}
+
 	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
 	 * Necesita que el canal de usuario est&eacute; previamente establecido.
      * @return Imagen de la firma del titular en formato JPEG2000.
