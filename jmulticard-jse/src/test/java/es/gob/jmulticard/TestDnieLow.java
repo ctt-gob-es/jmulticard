@@ -21,6 +21,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.Dnie3;
 import es.gob.jmulticard.card.dnie.Dnie3Dg01Mrz;
+import es.gob.jmulticard.card.dnie.Dnie3Dg13Identity;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.dnie.SpanishPassportWithBac;
@@ -156,6 +157,43 @@ public final class TestDnieLow {
 			// Vacio, para mantener las imagenes abiertas y visibles
 		}
 
+	}
+
+	@Test
+	@Ignore
+	public void testDnie3Dg13Parser() throws Exception {
+		final Dnie dnie = DnieFactory.getDnie(
+				new SmartcardIoConnection(),
+				null,
+				new JseCryptoHelper(),
+				null,
+				false
+		);
+		if (!(dnie instanceof Dnie3)) {
+			System.out.println("No es un DNIe v3.0"); //$NON-NLS-1$
+			return;
+		}
+		dnie.openSecureChannelIfNotAlreadyOpened();
+
+		final Dnie3 dnie3 = (Dnie3) dnie;
+
+		Dnie3Dg13Identity dnie3Dg13Identity = dnie3.getIdentity();
+
+		System.out.println("Name: "+dnie3Dg13Identity.getName());
+		System.out.println("Second name: "+dnie3Dg13Identity.getSecondName());
+		System.out.println("First name: "+dnie3Dg13Identity.getFirstName());
+		System.out.println("DNI number: "+dnie3Dg13Identity.getDniNumber());
+		System.out.println("Birth date: "+dnie3Dg13Identity.getBirthDate());
+		System.out.println("Nationality: "+dnie3Dg13Identity.getNationality());
+		System.out.println("Expiration date: "+dnie3Dg13Identity.getExpirationDate());
+		System.out.println("Support number: "+dnie3Dg13Identity.getSupportNumber());
+		System.out.println("Sex: "+dnie3Dg13Identity.getSex());
+		System.out.println("Birth city: "+dnie3Dg13Identity.getBirthCity());
+		System.out.println("Birth country: "+dnie3Dg13Identity.getBirthCountry());
+		System.out.println("Parent's names: "+dnie3Dg13Identity.getParentsNames());
+		System.out.println("Address: "+dnie3Dg13Identity.getAddress());
+		System.out.println("City: "+dnie3Dg13Identity.getCity());
+		System.out.println("Country: "+dnie3Dg13Identity.getCountry());
 	}
 
 	/** Prueba de <code>CallbackHandler</code> con distintas clases para <code>TextInputCallback</code>.
