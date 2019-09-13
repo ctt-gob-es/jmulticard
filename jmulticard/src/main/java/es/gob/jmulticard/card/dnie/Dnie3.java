@@ -222,6 +222,10 @@ public class Dnie3 extends Dnie {
 		return new Dnie3Dg01Mrz(mrz);
 	}
 
+	/** Obtiene los datos de identidad del titular.
+	 * @return Datos de identidad del titular.
+	 * @throws IOException Si no se pueden leer los datos de identidad (fichero DG13
+	 *                     del DNIe). */
 	public Dnie3Dg13Identity getIdentity() throws IOException {
 		return new Dnie3Dg13Identity(getDg13());
 	}
