@@ -163,7 +163,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnie3Dg13Parser() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 				new SmartcardIoConnection(),
@@ -183,8 +183,8 @@ public final class TestDnieLow {
 		final Dnie3Dg13Identity dnie3Dg13Identity = dnie3.getIdentity();
 
 		System.out.println("Name: " + dnie3Dg13Identity.getName()); //$NON-NLS-1$
-		System.out.println("Second name: " + dnie3Dg13Identity.getSecondSurname()); //$NON-NLS-1$
-		System.out.println("First name: " + dnie3Dg13Identity.getFirstSurname()); //$NON-NLS-1$
+		System.out.println("Second surname: " + dnie3Dg13Identity.getSecondSurname()); //$NON-NLS-1$
+		System.out.println("First surname: " + dnie3Dg13Identity.getFirstSurname()); //$NON-NLS-1$
 		System.out.println("DNI number: " + dnie3Dg13Identity.getDniNumber()); //$NON-NLS-1$
 		System.out.println("Birth date: " + dnie3Dg13Identity.getBirthDate()); //$NON-NLS-1$
 		System.out.println("Nationality: " + dnie3Dg13Identity.getNationality()); //$NON-NLS-1$

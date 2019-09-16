@@ -23,19 +23,19 @@ public final class Dnie3Dg13Identity {
 	/** Obtiene el nombre del titular.
 	 * @return Nombre del titular. */
 	public String getName() {
-		return this.parsedValues[1];
+		return this.parsedValues[3]; // Nombre
 	}
 
 	/** Obtiene el primer apellido del titular.
 	 * @return Primer apellido del titular. */
 	public String getSecondSurname() {
-		return this.parsedValues[2];
+		return this.parsedValues[2]; // Segundo apellido
 	}
 
 	/** Obtiene el segundo apellido del titular.
 	 * @return Segundo apellido del titular. */
 	public String getFirstSurname() {
-		return this.parsedValues[3];
+		return this.parsedValues[1]; // Primer apellido
 	}
 
 	/** Obtiene el n&uacute;mero de DNI del titular.
