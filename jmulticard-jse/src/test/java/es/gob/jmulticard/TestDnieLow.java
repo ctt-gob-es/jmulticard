@@ -182,9 +182,9 @@ public final class TestDnieLow {
 
 		final Dnie3Dg13Identity dnie3Dg13Identity = dnie3.getIdentity();
 
-		System.out.println("Name: " + dnie3Dg13Identity.getName()); //$NON-NLS-1$
-		System.out.println("Second name: " + dnie3Dg13Identity.getSecondSurname()); //$NON-NLS-1$
-		System.out.println("First name: " + dnie3Dg13Identity.getFirstSurname()); //$NON-NLS-1$
+		System.out.println("First surname: " + dnie3Dg13Identity.getFirstSurname()); //$NON-NLS-1$
+		System.out.println("Second surname: " + dnie3Dg13Identity.getSecondSurname()); //$NON-NLS-1$
+		System.out.println("Given name: " + dnie3Dg13Identity.getGivenName()); //$NON-NLS-1$
 		System.out.println("DNI number: " + dnie3Dg13Identity.getDniNumber()); //$NON-NLS-1$
 		System.out.println("Birth date: " + dnie3Dg13Identity.getBirthDate()); //$NON-NLS-1$
 		System.out.println("Nationality: " + dnie3Dg13Identity.getNationality()); //$NON-NLS-1$
@@ -196,6 +196,7 @@ public final class TestDnieLow {
 		System.out.println("Parent's names: " + dnie3Dg13Identity.getParentsNames()); //$NON-NLS-1$
 		System.out.println("Address: " + dnie3Dg13Identity.getAddress()); //$NON-NLS-1$
 		System.out.println("City: " + dnie3Dg13Identity.getCity()); //$NON-NLS-1$
+		System.out.println("Province: " + dnie3Dg13Identity.getProvince()); //$NON-NLS-1$
 		System.out.println("Country: " + dnie3Dg13Identity.getCountry()); //$NON-NLS-1$
 	}
 

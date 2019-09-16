@@ -20,21 +20,21 @@ public final class Dnie3Dg13Identity {
 		this.parsedValues = new String(dg13RawData).split(CONTROL_CHARACTER_WORD.pattern());
 	}
 
-	/** Obtiene el nombre del titular.
-	 * @return Nombre del titular. */
-	public String getName() {
-		return this.parsedValues[1];
-	}
-
 	/** Obtiene el primer apellido del titular.
 	 * @return Primer apellido del titular. */
-	public String getSecondSurname() {
-		return this.parsedValues[2];
+	public String getFirstSurname() {
+		return this.parsedValues[1];
 	}
 
 	/** Obtiene el segundo apellido del titular.
 	 * @return Segundo apellido del titular. */
-	public String getFirstSurname() {
+	public String getSecondSurname() {
+		return this.parsedValues[2];
+	}
+
+	/** Obtiene el nombre del titular.
+	 * @return Nombre del titular. */
+	public String getGivenName() {
 		return this.parsedValues[3];
 	}
 
@@ -105,6 +105,12 @@ public final class Dnie3Dg13Identity {
 	public String getCity() {
 		return this.parsedValues[14];
 	}
+
+  /** Obtiene la provincia de residencia del titular.
+   * @return Provincia de residencia del titular. */
+  public String getProvince() {
+    return this.parsedValues[15];
+  }
 
 	/** Obtiene el pa&iacute;s de residencia del titular.
 	 * @return Pa&iacute;s de residencia del titular. */
