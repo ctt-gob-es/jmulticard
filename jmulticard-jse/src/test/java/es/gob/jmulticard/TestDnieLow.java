@@ -196,6 +196,7 @@ public final class TestDnieLow {
 		System.out.println("Parent's names: " + dnie3Dg13Identity.getParentsNames()); //$NON-NLS-1$
 		System.out.println("Address: " + dnie3Dg13Identity.getAddress()); //$NON-NLS-1$
 		System.out.println("City: " + dnie3Dg13Identity.getCity()); //$NON-NLS-1$
+		System.out.println("Province: " + dnie3Dg13Identity.getProvince()); //$NON-NLS-1$
 		System.out.println("Country: " + dnie3Dg13Identity.getCountry()); //$NON-NLS-1$
 	}
 
