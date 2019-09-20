@@ -112,4 +112,10 @@ public final class Dnie3Dg13Identity {
 		return this.parsedValues[16];
 	}
 
+	/** Obtiene la provincia de residencia del titular.
+	 * @return Provincia de residencia del titular. */
+	public String getProvince() {
+	    return this.parsedValues[15];
+	}
+
 }
