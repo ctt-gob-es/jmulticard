@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /** Identidad del titular tal y como se encuentra en el fichero DG13 del DNIe 3. */
-public final class Dnie3Dg13Identity {
+public class Dnie3Dg13Identity {
 
 	/** This regEx matches on every pair (word) of control character (0x00-0x1F and
 	 * 0x7F-0x9F). */

@@ -4,7 +4,7 @@ import java.util.Locale;
 
 /** Analizador del nombre X&#46;500 del titular de un DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class DnieSubjectPrincipalParser {
+public class DnieSubjectPrincipalParser {
 
 	private final String name;
 	private final String surname1;
