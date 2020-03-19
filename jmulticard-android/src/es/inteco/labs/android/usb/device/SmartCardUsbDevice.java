@@ -144,11 +144,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	}
 
 	/** Env&iacute;a una petici&oacute;n <i>getSlotStatus</i> al lector.
-	 * @return
-	 * @throws UsbDeviceException
-	 * @throws UsbCommandTransmissionException
-	 * @throws UsbSmartCardChannelException
-	 * @throws NotAvailableUSBDeviceException
+	 * @return Respuesta del lector.
+	 * @throws UsbDeviceException Cuando no se encuentre ninguna tarjeta en el lector.
+	 * @throws UsbCommandTransmissionException Cuando ocurre un error en el env&iacute;o de la petici&oacute;n.
+	 * @throws UsbSmartCardChannelException Cuando ocurre un error en el canal de comunicaci&oacute;n con la tarjeta.
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentra un dispositivo USB conectado.
 	 */
 	protected UsbResponse getSlotStatus() throws UsbDeviceException, UsbCommandTransmissionException, UsbSmartCardChannelException, NotAvailableUSBDeviceException{
 		final UsbCommand getStatus = UsbInstructionFactory.getInstance().getSlotStatusCommand();

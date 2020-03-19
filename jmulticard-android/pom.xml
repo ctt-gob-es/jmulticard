@@ -3,8 +3,55 @@
 	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	 
  	<modelVersion>4.0.0</modelVersion>
-    <artifactId>jmulticard-android</artifactId>
-    <packaging>aar</packaging>
+    <groupId>es.gob.afirma.jmulticard</groupId>
+	<artifactId>jmulticard-android</artifactId>
+    <version>1.5</version>
+	<packaging>aar</packaging>
+
+	<name>jmulticard-base</name>
+	<description>Proyecto Android para el uso de tarjetas inteligentes desde Android</description>
+	<url>https://administracionelectronica.gob.es/ctt/clienteafirma</url>
+	
+	<developers>
+		<developer>
+			<name>Secretaría General de Administración Digital</name>
+			<email>soporte.afirma@correo.gob.es</email>
+			<organization>Gobierno de España</organization>
+			<organizationUrl>https://administracionelectronica.gob.es</organizationUrl>
+		</developer>
+	</developers>
+	
+	<licenses>
+		<license>
+			<name>GPL-v2.0</name>
+			<url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
+		</license>
+		<license>
+			<name>EUPL-v1.1</name>
+			<url>http://joinup.ec.europa.eu/system/files/ES/EUPL%20v.1.1%20-%20Licencia.pdf</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/ctt-gob-es/jmulticard.git</connection>
+		<developerConnection>scm:git:ssh://github.com/ctt-gob-es/jmulticard.git</developerConnection>
+		<url>https://github.com/ctt-gob-es/jmulticard</url>
+	</scm>
+	
+	<distributionManagement>
+	  <snapshotRepository>
+		<id>ossrh</id>
+		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+	  </snapshotRepository>
+	  <repository>
+		<id>ossrh</id>
+		<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+	  </repository>
+	</distributionManagement>
+	
+	<properties>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+	</properties>
 
 	<repositories>
 		<repository>
@@ -12,12 +59,6 @@
 		  <url>https://maven.google.com</url>
 		</repository>
 	</repositories>
-	
-	<parent>
-		<groupId>es.gob.afirma.jmulticard</groupId>
-		<artifactId>jmulticard-base</artifactId>
-		<version>1.5</version>
-	</parent>
 	
 	<dependencies>
 	        <dependency>
@@ -41,6 +82,78 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
+		
+	<profiles>
+		<!-- Construccion para despliegue en el repositorio de artefactos -->
+		<profile>
+			<id>env-deploy</id>
+			<activation>
+				<property>
+				  <name>env</name>
+				  <value>deploy</value>
+				</property>
+			</activation>
+		  
+			<build>
+				<plugins>
+				
+					<plugin>
+					  <groupId>org.apache.maven.plugins</groupId>
+					  <artifactId>maven-source-plugin</artifactId>
+					  <version>2.2.1</version>
+					  <executions>
+						<execution>
+						  <id>attach-sources</id>
+						  <goals>
+							<goal>jar-no-fork</goal>
+						  </goals>
+						</execution>
+					  </executions>
+					</plugin>
+					
+					<plugin>
+					  <groupId>org.apache.maven.plugins</groupId>
+					  <artifactId>maven-javadoc-plugin</artifactId>
+					  <version>2.9.1</version>
+					  <executions>
+						<execution>
+						  <id>attach-javadocs</id>
+						  <goals>
+							<goal>jar</goal>
+						  </goals>
+						</execution>
+					  </executions>
+					</plugin>
+					
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.6.2</version>
+						<configuration>
+							<source>1.7</source>
+							<target>1.7</target>
+						</configuration>
+					</plugin>
+					
+					
+					<plugin>
+					  <groupId>org.apache.maven.plugins</groupId>
+					  <artifactId>maven-gpg-plugin</artifactId>
+					  <version>1.5</version>
+					  <executions>
+						<execution>
+						  <id>sign-artifacts</id>
+						  <phase>verify</phase>
+						  <goals>
+							<goal>sign</goal>
+						  </goals>
+						</execution>
+					  </executions>
+					</plugin>
+					
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 		
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -79,9 +192,9 @@
 				<groupId>com.simpligility.maven.plugins</groupId>
 				<artifactId>android-maven-plugin</artifactId>
 				<configuration>
-                    			<sdk>
+                    <sdk>
 						<path>${env.ANDROID_HOME}</path>
-	                        		<platform>15</platform>
+	                	<platform>15</platform>
 					</sdk>
 					<sign><debug>both</debug></sign>
 					<resourceDirectory>${basedir}/res</resourceDirectory>

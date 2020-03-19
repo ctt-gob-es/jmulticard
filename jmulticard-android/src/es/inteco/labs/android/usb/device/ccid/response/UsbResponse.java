@@ -133,7 +133,8 @@ public final class UsbResponse {
 		return this.responseBytes;
 	}
 
-	/** Devuelve los bytes de la cabecera USB de la respuesta. */
+	/** Devuelve los bytes de la cabecera USB de la respuesta.
+	 * @return Bytes de la cabecera. */
 	protected byte[] getHeaderBytes(){
 		return HexUtils.subArray(this.responseBytes, 0, USB_HEADER_BASE_SIZE);
 	}
@@ -146,8 +147,9 @@ public final class UsbResponse {
 		return HexUtils.subArray(this.responseBytes, USB_HEADER_BASE_SIZE, this.responseBytes.length - USB_HEADER_BASE_SIZE);
 	}
 
-	/** Devuelve el byte que indica el tipo de respuesta. */
-	protected byte getMessageType(){
+	/** Devuelve el byte que indica el tipo de respuesta.
+	 * @return Tipo de mensaje declarado en la respuesta. */
+	protected byte getMessageType() {
 		return this.responseBytes[0];
 	}
 
