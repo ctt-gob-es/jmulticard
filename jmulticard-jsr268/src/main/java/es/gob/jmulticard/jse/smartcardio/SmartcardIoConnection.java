@@ -69,7 +69,7 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SmartcardIoConnection implements ApduConnection {
 
-	private static final boolean DEBUG = false;
+	  private static final boolean DEBUG = false;
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
      * con la tarjeta. */
@@ -86,6 +86,25 @@ public final class SmartcardIoConnection implements ApduConnection {
     private boolean exclusive = false;
 
     private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
+
+    static {
+    	try {
+    		// Aplicamos un parche para el error de PCSCLite de Debian
+    		// https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=529339
+    		LibJ2PCSCGNULinuxFix.fixNativeLibrary();
+    	}
+    	catch(final Exception | Error e) {
+    		LOGGER.warning(
+				"No se han podido aplicar las correcciones al error 529339 de Debian: " + e //$NON-NLS-1$
+			);
+    	}
+    }
+
+    @Override
+	  public String toString() {
+    	return "Conexion de bajo nivel JSR-268 abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+    }
 
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
     @Override
@@ -449,9 +468,9 @@ public final class SmartcardIoConnection implements ApduConnection {
                 throw new LostChannelException(t.getMessage());
             }
             throw new ApduConnectionException(
-                "Error de comunicacion con la tarjeta tratando de transmitir la APDU " + //$NON-NLS-1$
+                "Error de comunicacion con la tarjeta tratando de transmitir la APDU\n" + //$NON-NLS-1$
                 HexUtils.hexify(command.getBytes(), true) +
-                " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+                "\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
                 " en modo EXCLUSIVE=" + //$NON-NLS-1$
                 Boolean.toString(this.exclusive) +
                 " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
@@ -460,8 +479,8 @@ public final class SmartcardIoConnection implements ApduConnection {
         catch (final Exception e) {
         	e.printStackTrace();
             throw new ApduConnectionException(
-                "Error tratando de transmitir la APDU " + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
-                " al lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+                "Error tratando de transmitir la APDU\n" + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
+                "\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
                 " en modo EXCLUSIVE=" + //$NON-NLS-1$
                 Boolean.toString(this.exclusive) +
                 " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
@@ -480,4 +499,10 @@ public final class SmartcardIoConnection implements ApduConnection {
     public boolean isExclusiveUse() {
         return this.exclusive;
     }
+
+	@Override
+	public ApduConnection getSubConnection() {
+		// Esta conexion es siempre la de mas bajo nivel
+		return null;
+	}
 }

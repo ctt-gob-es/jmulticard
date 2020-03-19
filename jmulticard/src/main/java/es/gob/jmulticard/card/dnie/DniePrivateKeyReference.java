@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.card.dnie;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -74,6 +75,13 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 		this.label = lbl;
 		this.reference = ref;
 		this.keySize = keyLength;
+	}
+
+	@Override
+	public String toString() {
+		return "Clave privada de DNIe con etiqueta '" + this.label + //$NON-NLS-1$
+			"', identificador '" + HexUtils.hexify(this.identifier, false) + //$NON-NLS-1$
+				"' y ruta '" + this.keyPath + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/** Recupera el manejador de la tarjeta en la que se almacena la clave.

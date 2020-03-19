@@ -74,7 +74,7 @@ public abstract class Iso7816FourCard extends SmartCard {
     private static final StatusWord EOF_REACHED = new StatusWord((byte) 0x62, (byte) 0x82);
     private static final StatusWord OFFSET_OUTSIDE_EF = new StatusWord((byte) 0x6B, (byte) 0x00);
 
-    private static final int MAX_READ_CHUNK = 0xEE;
+    private static final int MAX_READ_CHUNK = 0xDE;
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
@@ -312,7 +312,8 @@ public abstract class Iso7816FourCard extends SmartCard {
 		);
     	if (!res.isOk()) {
     		throw new SecureChannelException(
-				"Error estableciendo la clave publica para verificacion, con respuesta : " + res.getStatusWord() //$NON-NLS-1$
+				"Error estableciendo la clave publica para verificacion, con respuesta : " + //$NON-NLS-1$
+					Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord())
 			);
     	}
     }

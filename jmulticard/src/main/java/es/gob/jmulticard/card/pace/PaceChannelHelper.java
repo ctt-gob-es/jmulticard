@@ -23,6 +23,7 @@ import es.gob.jmulticard.apdu.iso7816four.GeneralAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.card.SmartCard;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
@@ -411,10 +412,12 @@ public final class PaceChannelHelper {
 		final byte[] ssc = new byte[16];
 		Arrays.fill(ssc, (byte)0);
 
-		LOGGER.info("Canal Pace abierto"); //$NON-NLS-1$
-		LOGGER.info("\nKenc: " + HexUtils.hexify(kenc, true) + //$NON-NLS-1$
-					"Kmac: " + HexUtils.hexify(kmac, true) + //$NON-NLS-1$
-					"Ssc: " + HexUtils.hexify(ssc, true)); //$NON-NLS-1$
+		if (SmartCard.DEBUG) {
+			LOGGER.info("Canal Pace abierto"); //$NON-NLS-1$
+			LOGGER.info("\nKenc: " + HexUtils.hexify(kenc, true) + //$NON-NLS-1$
+						"Kmac: " + HexUtils.hexify(kmac, true) + //$NON-NLS-1$
+						"Ssc: " + HexUtils.hexify(ssc, true)); //$NON-NLS-1$
+		}
 
 		final AmCryptoProvider crypto = new AmAESCrypto();
 		return new SecureMessaging(crypto, kenc, kmac, new byte[crypto.getBlockSize()]);

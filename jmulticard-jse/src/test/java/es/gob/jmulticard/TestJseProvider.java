@@ -34,12 +34,19 @@ public final class TestJseProvider {
 		TestJseProvider.testProviderWithDefaultConnection();
 	}
 
-	static void testProviderWithCustomConnection() throws Exception {
+	/** Prueba el proveedor indicando manualmente la conexi&oacute;n.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testProviderWithCustomConnection() throws Exception {
 		final Provider p = new DnieProvider(new SmartcardIoConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
     	final CallbackHandler callbackHandler;
-    	callbackHandler = (CallbackHandler) Class.forName("es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler").getConstructor().newInstance(); //$NON-NLS-1$
+    	callbackHandler = (CallbackHandler) Class.forName(
+			"es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
+		).getConstructor().newInstance();
 		final LoadStoreParameter lsp = new LoadStoreParameter() {
 			@Override
 			public ProtectionParameter getProtectionParameter() {
@@ -60,11 +67,21 @@ public final class TestJseProvider {
 		System.out.println("Firma generada correctamente"); //$NON-NLS-1$
 	}
 
-	static void testProviderWithDefaultConnection() throws Exception {
+	private static void testProviderWithDefaultConnection() throws Exception {
 		final Provider p = new DnieProvider();
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
-		ks.load(null, PASSWORD);
+		final CallbackHandler callbackHandler;
+    	callbackHandler = (CallbackHandler) Class.forName(
+			"es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
+		).getConstructor().newInstance();
+		final LoadStoreParameter lsp = new LoadStoreParameter() {
+			@Override
+			public ProtectionParameter getProtectionParameter() {
+				return new KeyStore.CallbackHandlerProtection(callbackHandler);
+			}
+		};
+		ks.load(lsp);
 		final Enumeration<String> aliases = ks.aliases();
 		String alias = null;
 		while (aliases.hasMoreElements()) {
@@ -74,16 +91,23 @@ public final class TestJseProvider {
 
 		Assert.assertNotNull("La tarjeta debe tener al menos un certificado", alias); //$NON-NLS-1$
 
-		final Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
-		signature.initSign((PrivateKey) ks.getKey(alias, PASSWORD));
+		Signature signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey(alias, null));
 		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
-		signature.sign();
+		byte[] signBytes = signature.sign();
 
-		System.out.println("Firma generada correctamente"); //$NON-NLS-1$
+		System.out.println("Firma generada correctamente: " + HexUtils.hexify(signBytes, false)); //$NON-NLS-1$
 
 		System.out.println(
 			((X509Certificate)ks.getCertificate(alias)).getIssuerX500Principal().toString()
 		);
+
+		signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
+		signature.initSign((PrivateKey) ks.getKey(alias, null));
+		signature.update("Hola Mundo!!".getBytes()); //$NON-NLS-1$
+		signBytes = signature.sign();
+
+		System.out.println("Firma generada correctamente: " + HexUtils.hexify(signBytes, false)); //$NON-NLS-1$
 	}
 
 	/** prueba de obtenci&oacute;n de la cadena de certificados.

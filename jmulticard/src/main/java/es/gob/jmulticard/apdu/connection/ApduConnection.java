@@ -103,4 +103,9 @@ public interface ApduConnection {
      * @return <code>true</code> si la conexi&oacute;n esta abierta, <code>false</code> si est&aacute; cerrada. */
     boolean isOpen();
 
+	/** Recupera la conexi&oacute;n subyacente utilizada por la conexi&oacute;n.
+     * @return Conexi&oacute;n subyacente con la tarjeta o <code>null</code> si esta
+     * conexi&oacute;n es ya la de m&aacute;s bajo nivel. */
+    ApduConnection getSubConnection();
+
 }

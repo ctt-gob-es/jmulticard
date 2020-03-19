@@ -30,10 +30,20 @@ public final class DnieFactory {
 		(byte) 0x00, (byte) 0xFF, (byte) 0x00
 	};
 
+	private static final byte[] ATR_NFC2_MASK = new byte[] {
+		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF,
+		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00
+	};
+
 	private static final Atr ATR_NFC = new Atr(new byte[] {
 		(byte) 0x3B, (byte) 0x88, (byte) 0x80, (byte) 0x01, (byte) 0xE1, (byte) 0xF3, (byte) 0x5E, (byte) 0x11, (byte) 0x77, (byte) 0x81,
 		(byte) 0xA1, (byte) 0x00, (byte) 0x03
 	}, ATR_NFC_MASK);
+
+	private static final Atr ATR_NFC2 = new Atr(new byte[] {
+	    (byte) 0x3B, (byte) 0x8C, (byte) 0x80, (byte) 0x01, (byte) 0x50, (byte) 0x42, (byte) 0x8E, (byte) 0x93, (byte) 0x2A, (byte) 0xE1,
+	    (byte) 0xF3, (byte) 0x5E, (byte) 0x11, (byte) 0x77, (byte) 0x81, (byte) 0x81, (byte) 0x02
+	}, ATR_NFC2_MASK);
 
 	private static final Atr ATR = new Atr(new byte[] {
 		(byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x44, (byte) 0x4E, (byte) 0x49,
@@ -73,7 +83,7 @@ public final class DnieFactory {
 	 * @param pwc <i>PasswordCallback</i> para la obtenci&oacute;n del PIN.
 	 * @param cryptoHelper Clase de apoyo para operaciones criptogr&aacute;ficas.
 	 * @param ch Gestor de <i>callbacks</i> para la obtenci&oacute;n de datos adicionales por parte
-	 *           del titular del DNIe.
+	 *           del titular del DNIe (como el PIN y el CAN).
 	 * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
      *                         las claves privadas y a los certificados, mientras que si se
      *                         indica <code>false</code>, no se cargan, permitiendo la
@@ -115,7 +125,7 @@ public final class DnieFactory {
 			}
 			actualAtr = new Atr(responseAtr, ATR_MASK);
 			final byte[] actualAtrBytes = actualAtr.getBytes();
-			if(ATR_NFC.equals(actualAtr)) {
+			if(ATR_NFC.equals(actualAtr) || ATR_NFC2.equals(actualAtr)) {
 				try {
 					LOGGER.info("Detectado DNIe 3.0 por NFC"); //$NON-NLS-1$
 					return new DnieNFC(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);

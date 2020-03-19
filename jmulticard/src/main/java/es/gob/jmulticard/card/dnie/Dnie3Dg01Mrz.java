@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /** Zona ICAO MRZ del DNIe 3&#46;0.*/
-public final class Dnie3Dg01Mrz {
+public class Dnie3Dg01Mrz {
 
 	private final String mrzString;
 
@@ -26,7 +26,7 @@ public final class Dnie3Dg01Mrz {
     private final Properties countryNames = CountryCodes.getCountryCodes();
 
     /** Sexo del titular del documento de identidad. */
-    private enum Gender {
+    public enum Gender {
 
     	/** Hombre. */
     	MALE("Hombre"), //$NON-NLS-1$

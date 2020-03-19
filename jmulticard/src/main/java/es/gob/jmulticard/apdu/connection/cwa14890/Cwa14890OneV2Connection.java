@@ -56,15 +56,18 @@ public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
     	return new ApduEncrypterDesMac8();
     }
 
+	@Override
+	public String toString() {
+    	return "Conexion de tipo CWA-14890-V2 sobre " + getSubConnection(); //$NON-NLS-1$
+    }
 
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n implicita de la tarjeta indicada.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas. */
-	public Cwa14890OneV2Connection(
-			final ApduConnection connection,
-			final CryptoHelper cryptoHelper) {
+	public Cwa14890OneV2Connection(final ApduConnection connection,
+			                       final CryptoHelper cryptoHelper) {
 		super(connection, cryptoHelper);
 	}
 

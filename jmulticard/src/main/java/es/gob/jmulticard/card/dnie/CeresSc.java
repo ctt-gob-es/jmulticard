@@ -38,6 +38,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** Tarjeta FNMT CERES con canal seguro.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -101,7 +102,9 @@ public final class CeresSc extends Dnie {
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
-            		"Error en el establecimiento de las clave de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
+            		"Error en el establecimiento de las clave de firma con respuesta: " + //$NON-NLS-1$
+        				Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+    				res.getStatusWord()
         		);
             }
 
@@ -117,7 +120,9 @@ public final class CeresSc extends Dnie {
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
-                	"Error durante la operacion de firma con respuesta: " + res.getStatusWord(), res.getStatusWord() //$NON-NLS-1$
+                	"Error durante la operacion de firma (tarjeta CERES) con respuesta: " + //$NON-NLS-1$
+            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+        			res.getStatusWord()
                 );
             }
         }
@@ -152,7 +157,7 @@ public final class CeresSc extends Dnie {
     /** Carga el certificado de la CA intermedia y las localizaciones del resto de los certificados.
      * @throws ApduConnectionException Si hay problemas en la precarga. */
     @Override
-	protected void preloadCertificates() throws ApduConnectionException {
+	protected void loadCertificatesPaths() throws ApduConnectionException {
 		try {
 			preload();
 		}

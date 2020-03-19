@@ -121,6 +121,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     	return new ApduEncrypterDes();
     }
 
+    @Override
+	public String toString() {
+    	return "Conexion de tipo CWA-14890-V1 sobre " + getSubConnection(); //$NON-NLS-1$
+    }
+
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
@@ -785,13 +790,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return this.openState && this.subConnection.isOpen();
     }
 
-
     /** Calcula y devuelve el valor entregado m&aacute;s 1.
      * @param data Datos a incrementar.
      * @return Valor incrementado. */
     private static byte[] increment(final byte[] data) {
-        BigInteger bi = new BigInteger(1, data);
-        bi = bi.add(BigInteger.ONE);
+
+        final BigInteger bi = new BigInteger(1, data).add(BigInteger.ONE);
 
         final byte[] biArray = bi.toByteArray();
         if (biArray.length > 8) {

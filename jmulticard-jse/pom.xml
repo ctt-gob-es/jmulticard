@@ -27,5 +27,14 @@
 			<artifactId>jmulticard-ui</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!--  Solo para las pruebas unitarias -->
+		<dependency>
+			<groupId>com.github.jai-imageio</groupId>
+			<artifactId>jai-imageio-jpeg2000</artifactId>
+			<version>1.3.0</version>
+			<scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 </project>
