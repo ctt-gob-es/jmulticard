@@ -97,7 +97,9 @@ public class TestPrKdfCreation extends TestCase {
     public static void testPrKdf() throws Exception {
         byte[] prkdfdata;
         for (final String element : TEST_FILES) {
-            prkdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
+        	try (final InputStream is = ClassLoader.getSystemResourceAsStream(element)) {
+        		prkdfdata = getDataFromInputStream(is);
+        	}
             //LOGGER.info("\n\nPrKDF completo (" + Integer.toString(prkdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             //LOGGER.info(HexUtils.hexify(prkdfdata, true));
             final PrKdf prkdf = new PrKdf();

@@ -83,7 +83,9 @@ public class TestCdfCreation extends TestCase {
     public static void testCdf() throws Exception {
         byte[] cdfdata;
         for (final String element : CDF_TEST_FILES) {
-            cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
+        	try (final InputStream is = ClassLoader.getSystemResourceAsStream(element)) {
+        		cdfdata = getDataFromInputStream(is);
+        	}
             LOGGER.info("\n\nCDF completo (" + Integer.toString(cdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.info(HexUtils.hexify(cdfdata, true));
             final Cdf cdf = new Cdf();

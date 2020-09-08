@@ -4,12 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Tlv;
+import junit.framework.TestCase;
 
 /** Prueba de creaci&oacute;n de TLV.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -33,7 +32,9 @@ public class TestTlvCreation extends TestCase {
     public static void testTlv() throws Exception {
         byte[] cdfdata;
         for (final String element : TEST_FILES) {
-            cdfdata = getDataFromInputStream(ClassLoader.getSystemResourceAsStream(element));
+        	try (final InputStream is = ClassLoader.getSystemResourceAsStream(element)) {
+        		cdfdata = getDataFromInputStream(is);
+        	}
 
             final Tlv tlv = new Tlv(cdfdata);
             Assert.assertNotNull(tlv);
@@ -42,9 +43,12 @@ public class TestTlvCreation extends TestCase {
             LOGGER.info("\nTLV completo (" + Integer.toString(tlv.getBytes().length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
             LOGGER.info(HexUtils.hexify(tlv.getBytes(), true));
             LOGGER.info("\nTipo TLV:"); //$NON-NLS-1$
-            LOGGER.info(HexUtils.hexify(new byte[] {
-                tlv.getTag()
-            }, true));
+            LOGGER.info(
+        		HexUtils.hexify(
+    				new byte[] { tlv.getTag() },
+    				true
+				)
+    		);
             LOGGER.info("\nLongitud TLV:"); //$NON-NLS-1$
             LOGGER.info(Integer.toString(tlv.getLength()));
             LOGGER.info("\nValor TLV (" + Integer.toString(tlv.getValue().length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -184,9 +184,11 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     		// Si tenemos CA intermedia probamos con la raiz, incluida estaticamente
     		// en el proyecto
-	    	try {
+	    	try (
+    			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+			) {
 				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
-					DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+					is
 				);
 			}
 	    	catch (final Exception e) {

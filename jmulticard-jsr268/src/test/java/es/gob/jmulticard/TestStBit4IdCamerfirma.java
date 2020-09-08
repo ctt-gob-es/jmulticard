@@ -2,6 +2,7 @@ package es.gob.jmulticard;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -37,9 +38,14 @@ public final class TestStBit4IdCamerfirma {
 	@Test
 	@Ignore
 	public void test0000() throws Exception {
-		final byte[] data = AOUtil.getDataFromInputStream(
-			TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/0000_7076199932780544215.DER.txt") //$NON-NLS-1$
-		);
+		final byte[] data;
+		try (
+			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/0000_7076199932780544215.DER.txt") //$NON-NLS-1$
+		) {
+			data = AOUtil.getDataFromInputStream(
+				is
+			);
+		}
 		System.out.println(HexUtils.hexify(data, true));
 	}
 
@@ -49,9 +55,14 @@ public final class TestStBit4IdCamerfirma {
 	@Test
 	@Ignore
 	public void test8028() throws Exception {
-		final byte[] data = AOUtil.getDataFromInputStream(
-			TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8028_6486727951599148607.DER.txt") //$NON-NLS-1$
-		);
+		final byte[] data;
+		try (
+			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8028_6486727951599148607.DER.txt") //$NON-NLS-1$
+		) {
+			data = AOUtil.getDataFromInputStream(
+				is
+			);
+		}
 		System.out.println(HexUtils.hexify(data, true));
 		final byte[] trimmedData = new byte[data.length-9];
 		System.arraycopy(data, 9, trimmedData, 0, trimmedData.length);
@@ -72,9 +83,14 @@ public final class TestStBit4IdCamerfirma {
 	@Test
 	@Ignore
 	public void test8023() throws Exception {
-		final byte[] data = AOUtil.getDataFromInputStream(
-			TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8023_7519421280536555097.DER.txt") //$NON-NLS-1$
-		);
+		final byte[] data;
+		try (
+			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8023_7519421280536555097.DER.txt") //$NON-NLS-1$
+		) {
+			data = AOUtil.getDataFromInputStream(
+				is
+			);
+		}
 		System.out.println(HexUtils.hexify(data, true));
 		final byte[] trimmedData = new byte[data.length-5];
 		System.arraycopy(data, 5, trimmedData, 0, trimmedData.length);
@@ -94,9 +110,14 @@ public final class TestStBit4IdCamerfirma {
 	@Test
 	@Ignore
 	public void test8024() throws Exception {
-		final byte[] data = AOUtil.getDataFromInputStream(
-			TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8024_3159855238388326518.DER.txt") //$NON-NLS-1$
-		);
+		final byte[] data;
+		try (
+			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8024_3159855238388326518.DER.txt") //$NON-NLS-1$
+		) {
+			data = AOUtil.getDataFromInputStream(
+				is
+			);
+		}
 		System.out.println(HexUtils.hexify(data, true));
 		final byte[] trimmedData = new byte[data.length-5];
 		System.arraycopy(data, 5, trimmedData, 0, trimmedData.length);
