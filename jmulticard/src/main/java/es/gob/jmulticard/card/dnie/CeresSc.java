@@ -134,7 +134,7 @@ public final class CeresSc extends Dnie {
                 }
             }
             catch (final Exception ex) {
-                throw new DnieCardException("No se pudo recuperar el canal seguro para firmar: " + ex, ex); //$NON-NLS-1$
+                throw new DnieCardException("No se pudo recuperar el canal seguro para firmar (" + e + "): " + ex, ex); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return signOperation(data, algorithm, privateKeyReference);
         }
