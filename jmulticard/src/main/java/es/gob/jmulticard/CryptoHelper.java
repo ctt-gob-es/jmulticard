@@ -99,8 +99,6 @@ public abstract class CryptoHelper {
 		}
 	}
 
-	private static final int PKCS1_LEN_1024 = 128;
-	private static final int PKCS1_LEN_2048 = 256;
 	private static final byte PKCS1_BLOCK_TYPE = (byte) 0x01;
 	private static final byte PKCS1_FILL = (byte) 0xff;
 	private static final byte PKCS1_DELIMIT = (byte) 0x00;
@@ -116,10 +114,7 @@ public abstract class CryptoHelper {
 		if (in == null) {
 			throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
 		}
-		if (keySize != 1024 && keySize != 2048) {
-			throw new IllegalArgumentException("Solo se soportan claves de 1024 o 2048 bits, y se ha indicado " + keySize); //$NON-NLS-1$
-		}
-		final int len = keySize == 1024 ? PKCS1_LEN_1024 : PKCS1_LEN_2048;
+		final int len = keySize / 8;
 		if (in.length > len - 3) {
 			throw new IllegalArgumentException(
 				"Los datos son demasiado grandes para el valor de clave indicado: " + in.length + " > " + len + "-3" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

@@ -53,7 +53,7 @@ public final class SignDataApduCommand extends CommandApdu {
 
 	/** Construye una APDU de firma de datos.
 	 * @param reference Referencia de la clave de firma.
-	 * @param keySize Tama&ntilde;o en bits de la clave de firma (1024 o 2048). */
+	 * @param keySize Tama&ntilde;o en bits de la clave de firma. */
 	public SignDataApduCommand(final byte reference, final int keySize) {
 		super(
 			CLA,

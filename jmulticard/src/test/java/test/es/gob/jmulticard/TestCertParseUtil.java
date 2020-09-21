@@ -1,5 +1,6 @@
 package test.es.gob.jmulticard;
 
+import java.io.InputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
@@ -19,7 +20,10 @@ public final class TestCertParseUtil {
 	@Test
 	public void testGetFields() throws Exception {
 		final CertificateFactory cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-		final X509Certificate c = (X509Certificate) cf.generateCertificate(TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")); //$NON-NLS-1$
+		final X509Certificate c;
+		try (final InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
+			c = (X509Certificate) cf.generateCertificate(is);
+		}
 		final String dn = c.getSubjectDN().toString();
 		String cn = getCN(dn);
 		if (cn.contains("(")) { //$NON-NLS-1$

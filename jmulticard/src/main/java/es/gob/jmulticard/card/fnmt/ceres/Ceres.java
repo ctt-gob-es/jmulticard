@@ -255,6 +255,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         catch(final Exception e) {
         	// Si ha fallado la inicializacion del CDF tipo CERES probamos con el CDF generico PKCS#15,
         	// presente en las nuevas tarjetas FNMT-CERES
+        	LOGGER.info("El CDF no es de tipo FNMT, se intenta en modo PKCS#15: " + e); //$NON-NLS-1$
         	cdf = new Cdf();
         	cdf.setDerValue(cdfBytes);
         }
@@ -298,6 +299,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         catch(final Exception e) {
         	// Si no carga el estructura PrKDF especifica de CERES probamos con la
         	// generica PKCS#15, presente en las ultimas versiones de la tarjeta
+        	LOGGER.info("El CDF no es de tipo FNMT, se intenta en modo PKCS#15: " + e); //$NON-NLS-1$
         	prkdf = new PrKdf();
         	prkdf.setDerValue(prkdfValue);
         }
