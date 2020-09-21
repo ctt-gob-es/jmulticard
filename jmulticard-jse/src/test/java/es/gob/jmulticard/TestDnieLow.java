@@ -163,7 +163,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnie3Dg13Parser() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 				new SmartcardIoConnection(),
@@ -204,6 +204,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testFlexHandler() throws Exception {
 		final CallbackHandler cbh = new TestingDnieCallbackHandler(CAN, PIN);
 
