@@ -44,7 +44,7 @@ import java.security.interfaces.RSAPrivateKey;
 
 /** Constantes del DNIe (versiones con IDESP posterior a "BMP100001") para el establecimiento de canal seguro CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-final class Dnie3r2PinCwa14890Constants extends Dnie3PinCwa14890Constants {
+final class Dnie3r2PinCwa14890Constants extends Dnie3r2UsrCwa14890Constants {
 
     /** Certificado de Terminal verificable por la tarjeta.
      * (<i>c-CV-IFD-AUT</i>). */

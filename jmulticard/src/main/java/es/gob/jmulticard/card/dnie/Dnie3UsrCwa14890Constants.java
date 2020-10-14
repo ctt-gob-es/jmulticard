@@ -43,14 +43,13 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 
-import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
-import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
+import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
 
 /** Constantes del DNIe para el establecimiento de canal seguro CWA-14890.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez. */
-class Dnie3UsrCwa14890Constants implements Cwa14890PublicConstants, Cwa14890PrivateConstants {
+class Dnie3UsrCwa14890Constants implements Cwa14890Constants {
 
     /** Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
      * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.
