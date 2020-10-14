@@ -90,6 +90,7 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
+import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 import es.gob.jmulticard.card.pace.PaceConnection;
@@ -126,7 +127,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = new byte[] {
-            (byte) 0x60, (byte) 0x1F
+        (byte) 0x60, (byte) 0x1F
     };
 
     /** Nombre del <i>Master File</i> del DNIe. */
@@ -148,6 +149,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     protected static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
     protected static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
+	protected static final Location IDESP_LOCATION = new Location("3F000006"); //$NON-NLS-1$
 
     protected X509Certificate authCert;
     protected X509Certificate signCert;
@@ -1088,5 +1090,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	 * @param pwc <code>PasswordCallback</code> a asignar. */
 	public void setPasswordCallback(final PasswordCallback pwc) {
 		this.passwordCallback = pwc;
+	}
+
+	/** Obtiene el n&uacute;mero de soporte (IDESP) del DNIe.
+	 * @return Obtiene el n&uacute;mero de soporte (IDESP) del DNIe.
+	 * @throws Iso7816FourCardException Si hay problemas enviando la APDU.
+	 * @throws FileNotFoundException Si no se encuentra el fichero que contiene el IDESP.
+	 * @throws IOException Si no se puede conectar con la tarjeta. */
+	public String getIdesp() throws Iso7816FourCardException, IOException {
+		return new String(selectFileByLocationAndRead(IDESP_LOCATION));
 	}
 }

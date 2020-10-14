@@ -55,6 +55,8 @@ public final class DnieFactory {
 		(byte) 0x31, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x90, (byte) 0x00
 	}, ATR_MASK);
 
+	private static final String DNIE3_R2_IDESP = "BMP100001"; //$NON-NLS-1$
+
 	private DnieFactory() {
 		// No instanciable
 	}
@@ -171,6 +173,28 @@ public final class DnieFactory {
 			throw cardNotPresentException;
 		}
 		throw new ApduConnectionException("No se ha podido conectar con ningun lector de tarjetas"); //$NON-NLS-1$
+	}
+
+	static Dnie3UsrCwa14890Constants getDnie3UsrCwa14890Constants(final String idesp) {
+		if (idesp == null || idesp.isEmpty()) {
+			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
+			return new Dnie3UsrCwa14890Constants();
+		}
+		else if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
+			return new Dnie3UsrCwa14890Constants();
+		}
+		return new Dnie3r2UsrCwa14890Constants();
+	}
+
+	static Dnie3PinCwa14890Constants getDnie3PinCwa14890Constants(final String idesp) {
+		if (idesp == null || idesp.isEmpty()) {
+			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
+			return new Dnie3PinCwa14890Constants();
+		}
+		else if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
+			return new Dnie3PinCwa14890Constants();
+		}
+		return new Dnie3r2PinCwa14890Constants();
 	}
 
 }

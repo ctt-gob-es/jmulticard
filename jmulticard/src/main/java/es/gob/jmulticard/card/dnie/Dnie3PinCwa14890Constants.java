@@ -46,7 +46,7 @@ import java.security.interfaces.RSAPrivateKey;
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez. */
-final class Dnie3PinCwa14890Constants extends Dnie3UsrCwa14890Constants {
+class Dnie3PinCwa14890Constants extends Dnie3UsrCwa14890Constants {
 
     /** Certificado de Terminal verificable por la tarjeta.
      * (<i>c-CV-IFD-AUT</i>). */

@@ -39,10 +39,9 @@
  */
 package es.gob.jmulticard.card.dnie;
 
-/** Constantes del DNIe para el establecimiento de canal seguro CWA-14890 (con nueva jerarqu&iacute;a de certificados).
- * @author Carlos Gamuci
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Alberto Mart&iacute;nez. */
+/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a de certificados) para
+ * el establecimiento de canal seguro CWA-14890.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 class Dnie3r2UsrCwa14890Constants extends Dnie3UsrCwa14890Constants {
 
     /** Certificado de la CA intermedia de Terminal verificable por la tarjeta.

@@ -35,7 +35,7 @@ public final class TestDnieLow {
 //	private static final String MRZ = ""; //$NON-NLS-1$
 	private static final String CAN = ""; //$NON-NLS-1$
 
-	private static final String PIN = ""; //$NON-NLS-1$
+	private static final String PIN = "PONERELPINAQUI"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -54,6 +54,7 @@ public final class TestDnieLow {
 		System.out.println(cdf);
 		System.out.println();
 		System.out.println(new DnieSubjectPrincipalParser(cdf.getCertificateSubjectPrincipal(0)));
+		System.out.println("IDESP: " + dnie.getIdesp()); //$NON-NLS-1$
 	}
 
 	/** Prueba directa de firma.

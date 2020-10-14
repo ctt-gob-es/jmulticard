@@ -371,12 +371,20 @@ public class Dnie3 extends Dnie {
         }
 
         // Establecemos el canal PIN y lo verificamos
+        String idesp;
+		try {
+			idesp = getIdesp();
+		}
+		catch (final Exception e1) {
+			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
+			idesp = null;
+		}
         final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		new Dnie3PinCwa14890Constants(),
-    		new Dnie3PinCwa14890Constants()
+    		DnieFactory.getDnie3PinCwa14890Constants(idesp),
+    		DnieFactory.getDnie3PinCwa14890Constants(idesp)
 		);
 
         try {
