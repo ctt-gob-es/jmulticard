@@ -524,9 +524,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         // Seleccionamos en la tarjeta la clave publica de la CA raiz del controlador
     	// (clave publica de la autoridad certificadora raiz de la jerarquia de certificados
-    	// verificable por la tarjeta).
+    	// verificable por la tarjeta), indicandole su referencia dentro de la tarjeta
         try {
-            setPublicKeyToVerification(consts.getRefCCvCaPublicKey());
+            setPublicKeyToVerification(
+        		consts.getRefCCvCaPublicKey()
+    		);
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
@@ -537,7 +539,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         // Verificamos la CA intermedia del controlador. La clave publica queda almacenada en memoria
         try {
-            verifyCertificate(consts.getCCvCa());
+            verifyCertificate(
+        		consts.getCCvCa()
+    		);
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
@@ -548,7 +552,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         // Seleccionamos a traves de su CHR la clave publica del certificado recien cargado en memoria
         // (CA intermedia de Terminal) para su verificacion
         try {
-            setPublicKeyToVerification(consts.getChrCCvCa());
+            setPublicKeyToVerification(
+        		consts.getChrCCvCa()
+    		);
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
@@ -558,7 +564,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         // Enviamos el certificado de Terminal (C_CV_IFD) para su verificacion por la tarjeta
         try {
-            verifyCertificate(consts.getCCvIfd());
+            verifyCertificate(
+        		consts.getCCvIfd()
+    		);
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
