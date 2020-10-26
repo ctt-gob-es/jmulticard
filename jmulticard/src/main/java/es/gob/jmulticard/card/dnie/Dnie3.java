@@ -70,6 +70,8 @@ public class Dnie3 extends Dnie {
     private static final Location FILE_SOD_LOCATION        = new Location("3F01011D"); //$NON-NLS-1$
     private static final Location FILE_COM_LOCATION        = new Location("3F01011E"); //$NON-NLS-1$
 
+    private String idesp = null;
+
     /** Obtiene el DG1. Devuelve el objeto binario sin tratar.
      * El DG1 contiene el campo MRZ. Necesita que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
@@ -287,6 +289,15 @@ public class Dnie3 extends Dnie {
 				);
 			}
         }
+
+    	// Identificamos numero de soporte (IDESP)
+		try {
+			this.idesp = getIdesp();
+		}
+		catch (final Exception e1) {
+			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
+			this.idesp = null;
+		}
     }
 
     /** Construye una clase que representa un DNIe.
@@ -311,8 +322,8 @@ public class Dnie3 extends Dnie {
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		new Dnie3UsrCwa14890Constants(),
-    		new Dnie3UsrCwa14890Constants()
+    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
 		);
 
 		try {
@@ -371,20 +382,12 @@ public class Dnie3 extends Dnie {
         }
 
         // Establecemos el canal PIN y lo verificamos
-        String idesp;
-		try {
-			idesp = getIdesp();
-		}
-		catch (final Exception e1) {
-			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
-			idesp = null;
-		}
         final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		DnieFactory.getDnie3PinCwa14890Constants(idesp),
-    		DnieFactory.getDnie3PinCwa14890Constants(idesp)
+    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
 		);
 
         try {
@@ -426,8 +429,8 @@ public class Dnie3 extends Dnie {
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		new Dnie3UsrCwa14890Constants(),
-    		new Dnie3UsrCwa14890Constants()
+    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
 		);
 
 		try {

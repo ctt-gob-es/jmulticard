@@ -12,7 +12,6 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.InvalidCardException;
-import es.gob.jmulticard.card.cwa14890.Cwa14890Constants;
 import es.gob.jmulticard.card.pace.PaceException;
 
 /** Factor&iacute;a para la obtenci&oacute;n de DNIe.
@@ -176,7 +175,7 @@ public final class DnieFactory {
 		throw new ApduConnectionException("No se ha podido conectar con ningun lector de tarjetas"); //$NON-NLS-1$
 	}
 
-	static Cwa14890Constants getDnie3UsrCwa14890Constants(final String idesp) {
+	static Dnie3Cwa14890Constants getDnie3UsrCwa14890Constants(final String idesp) {
 		if (idesp == null || idesp.isEmpty()) {
 			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
 			return new Dnie3UsrCwa14890Constants();
@@ -187,7 +186,7 @@ public final class DnieFactory {
 		return new Dnie3r2UsrCwa14890Constants();
 	}
 
-	static Cwa14890Constants getDnie3PinCwa14890Constants(final String idesp) {
+	static Dnie3Cwa14890Constants getDnie3PinCwa14890Constants(final String idesp) {
 		if (idesp == null || idesp.isEmpty()) {
 			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
 			return new Dnie3PinCwa14890Constants();
