@@ -322,8 +322,8 @@ public class Dnie3 extends Dnie {
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
 		);
 
 		try {
@@ -429,8 +429,8 @@ public class Dnie3 extends Dnie {
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
 		);
 
 		try {
