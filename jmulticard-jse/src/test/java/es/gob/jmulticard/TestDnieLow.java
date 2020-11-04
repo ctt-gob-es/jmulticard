@@ -9,6 +9,7 @@ import javax.security.auth.callback.TextInputCallback;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -140,7 +141,7 @@ public final class TestDnieLow {
 		final byte[] photo = dnie3.getSubjectPhotoAsJpeg2k();
 		final JFrame framePhoto = new JFrame();
 		framePhoto.add(new JLabel(new ImageIcon(ImageIO.read(new ByteArrayInputStream(photo))))); // width = 307 height = 378
-		framePhoto.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		framePhoto.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		framePhoto.pack();
 		framePhoto.setVisible(true);
 
@@ -148,7 +149,7 @@ public final class TestDnieLow {
 		final byte[] rubric = dnie3.getSubjectSignatureImageAsJpeg2k();
 		final JFrame frameRubric = new JFrame();
 		frameRubric.add(new JLabel(new ImageIcon(ImageIO.read(new ByteArrayInputStream(rubric)))));
-		frameRubric.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frameRubric.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frameRubric.pack();
 		frameRubric.setVisible(true);
 

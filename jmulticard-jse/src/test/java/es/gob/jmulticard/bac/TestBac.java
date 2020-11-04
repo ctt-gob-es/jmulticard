@@ -15,7 +15,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestBac {
 
 	//private static final String TEST_MRZ = "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L898902C<3UTO6908061F9406236<<<<<<<8"; //$NON-NLS-1$
-	  private static final String TEST_MRZ = "P<ESPGARCIA<MERAS<CAPOTE<<TOMAS<<<<<<<<<<<<<AAA0023645ESP7501045M1907173A1183096000<<<04";
+	  private static final String TEST_MRZ = "P<ESPGARCIA<MERAS<CAPOTE<<TOMAS<<<<<<<<<<<<<AAA0023645ESP7501045M1907173A1183096000<<<04"; //$NON-NLS-1$
 
 	/** Prueba de obtenci&oacute;n de inicializador a partir de MRZ,
 	 * @throws Exception En cualquier error. */
