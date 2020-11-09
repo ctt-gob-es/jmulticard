@@ -39,8 +39,6 @@
  */
 package es.gob.jmulticard.card.dnie;
 
-import java.util.logging.Logger;
-
 /** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a de certificados) para
  * el establecimiento de canal seguro de PIN CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -80,13 +78,11 @@ abstract class Dnie3r2Cwa14890Constants extends Dnie3Cwa14890Constants {
 
 	@Override
 	public byte[] getCCvCa() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante C_CV_CA");
 		return C_CV_CA;
 	}
 
 	@Override
 	public byte[] getChrCCvCa() {
-    	Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante CHR_C_CV_CA");
 		return CHR_C_CV_CA;
 	}
 }

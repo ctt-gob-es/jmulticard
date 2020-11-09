@@ -158,7 +158,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     protected X509Certificate intermediateCaCert;
 
     private Location authCertPath;
-    private Location signCertPath;
+
+    /** Localizaci&oacute;n del certificado de firma.
+     * Es opcional, ya que no est&aacute; presente en los DNI de menored de edad no emancipados. */
+    private Location signCertPath = null;
 
     /** Localizaci&oacute;n del certificado de cifrado.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
@@ -169,6 +172,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     private Location signAliasCertPath = null;
 
     private DniePrivateKeyReference authKeyRef;
+
     private DniePrivateKeyReference signKeyRef;
 
     /** Referencia a la clave privada de cifrado.
@@ -370,7 +374,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	if (this.aliases == null) {
 	    	final List<String> aliasesList = new ArrayList<>();
 	    	aliasesList.add(CERT_ALIAS_AUTH);
-	    	aliasesList.add(CERT_ALIAS_SIGN);
+	    	if (this.signCertPath != null) {
+	    		aliasesList.add(CERT_ALIAS_SIGN);
+	    	}
 	    	if (this.cyphCertPath != null) {
 	    		aliasesList.add(CERT_ALIAS_CYPHER);
 	    	}
@@ -945,7 +951,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     		this.cyphCert == null && this.cyphCertPath != null ||
     		this.signAliasCert == null && this.signAliasCertPath != null) {
 		        try {
-	        		this.signCert = loadCertificate(this.signCertPath);
+		        	if (this.signCertPath != null) {
+		        		this.signCert = loadCertificate(this.signCertPath);
+		        	}
+		        	else {
+		        		LOGGER.info(
+	        				"El DNIe no contiene certificado de firma (probablemente sea de un menor no emancipado)" //$NON-NLS-1$
+        				);
+		        	}
 	        		this.authCert = loadCertificate(this.authCertPath);
 		            if (this.cyphCertPath != null) {
 	            		this.cyphCert = loadCertificate(this.cyphCertPath);

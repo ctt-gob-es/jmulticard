@@ -354,6 +354,11 @@ public class Dnie3 extends Dnie {
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+		openSecureChannelIfNotAlreadyOpened(true);
+	}
+
+	@Override
+	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException, PinException {
 
         // Si el canal seguro esta ya abierto salimos sin hacer nada
         if (isSecurityChannelOpen()) {
@@ -381,47 +386,49 @@ public class Dnie3 extends Dnie {
 			}
         }
 
-        // Establecemos el canal PIN y lo verificamos
-        final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
-    		this,
-    		getConnection(),
-    		getCryptoHelper(),
-    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
-		);
-
-        try {
-        	selectMasterFile();
-        }
-        catch (final Exception e) {
-        	LOGGER.warning(
-    			"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
+        if (doChv) {
+	        // Establecemos el canal PIN y lo verificamos
+	        final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
+	    		this,
+	    		getConnection(),
+	    		getCryptoHelper(),
+	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
+	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
 			);
-        }
 
-        try {
-        	setConnection(pinSecureConnection);
-        }
-        catch (final ApduConnectionException e) {
-        	throw new CryptoCardException(
-    			"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
-			);
-        }
+	        try {
+	        	selectMasterFile();
+	        }
+	        catch (final Exception e) {
+	        	LOGGER.warning(
+	    			"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
+				);
+	        }
 
-        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
+	        try {
+	        	setConnection(pinSecureConnection);
+	        }
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	    			"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
+				);
+	        }
 
-        try {
-        	verifyPin(getInternalPasswordCallback());
-        }
-        catch (final PasswordCallbackNotFoundException e) {
-        	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento del canal
-        	// de PIN, pero continuamos para establecer el canal de usuario
-        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN: " + e); //$NON-NLS-1$
-		}
-        catch (final ApduConnectionException e) {
-        	throw new CryptoCardException(
-    			"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
-			);
+	        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
+
+	        try {
+	        	verifyPin(getInternalPasswordCallback());
+	        }
+	        catch (final PasswordCallbackNotFoundException e) {
+	        	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento del canal
+	        	// de PIN, pero continuamos para establecer el canal de usuario
+	        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN: " + e); //$NON-NLS-1$
+			}
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	    			"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
+				);
+	        }
         }
 
         // Establecemos ahora el canal de usuario

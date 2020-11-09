@@ -41,7 +41,6 @@ package es.gob.jmulticard.card.dnie;
 
 import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.logging.Logger;
 
 /** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a de certificados) para
  * el establecimiento de canal seguro de PIN CWA-14890.
@@ -119,7 +118,6 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
         /** {@inheritDoc} */
         @Override
         public BigInteger getModulus() {
-        	Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY modulus de canal de PIN");
             return this.ifdModulus;
         }
 
@@ -132,7 +130,6 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
         /** {@inheritDoc} */
         @Override
         public byte[] getEncoded() {
-        	Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY encoded de canal de PIN");
         	throw new UnsupportedOperationException();
         }
 
@@ -145,26 +142,22 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
         /** {@inheritDoc} */
         @Override
         public BigInteger getPrivateExponent() {
-        	Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY privateExponent de canal de PIN");
             return this.ifdPrivateExponent;
         }
     };
 
 	@Override
 	public byte[] getCCvIfd() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante C_CV_IFD de canal de PIN");
 		return C_CV_IFD;
 	}
 
 	@Override
 	public byte[] getChrCCvIfd() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante CHR_C_CV_IFD de canal de PIN");
 		return CHR_C_CV_IFD;
 	}
 
 	@Override
 	public RSAPrivateKey getIfdPrivateKey() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY de canal de PIN");
 		return IFD_PRIVATE_KEY;
 	}
 

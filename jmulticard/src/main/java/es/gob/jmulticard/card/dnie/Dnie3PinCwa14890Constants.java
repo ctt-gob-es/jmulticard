@@ -41,7 +41,6 @@ package es.gob.jmulticard.card.dnie;
 
 import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.logging.Logger;
 
 /** Constantes del DNIe para el establecimiento de canal seguro CWA-14890.
  * @author Carlos Gamuci
@@ -127,7 +126,6 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
         /** {@inheritDoc} */
         @Override
         public BigInteger getModulus() {
-        	Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY modulus");
             return this.ifdModulus;
         }
 
@@ -152,26 +150,22 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
         /** {@inheritDoc} */
         @Override
         public BigInteger getPrivateExponent() {
-        	Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY private exponent");
             return this.ifdPrivateExponent;
         }
     };
 
 	@Override
 	public byte[] getCCvIfd() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante C_CV_IFD");
 		return C_CV_IFD;
 	}
 
 	@Override
 	public byte[] getChrCCvIfd() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante CHR_C_CV_IFD");
 		return CHR_C_CV_IFD;
 	}
 
 	@Override
 	public RSAPrivateKey getIfdPrivateKey() {
-		Logger.getLogger("es.gob.jmulticard").info("Recuperamos constante IFD_PRIVATE_KEY");
 		return IFD_PRIVATE_KEY;
 	}
 
