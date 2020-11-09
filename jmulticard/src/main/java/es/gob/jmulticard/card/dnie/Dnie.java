@@ -160,7 +160,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     private Location authCertPath;
 
     /** Localizaci&oacute;n del certificado de firma.
-     * Es opcional, ya que no est&aacute; presente en los DNI de menored de edad no emancipados. */
+     * Es opcional, ya que no est&aacute; presente en los DNI de menores de edad no emancipados. */
     private Location signCertPath = null;
 
     /** Localizaci&oacute;n del certificado de cifrado.
