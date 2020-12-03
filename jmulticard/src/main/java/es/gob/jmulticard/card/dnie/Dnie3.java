@@ -331,7 +331,7 @@ public class Dnie3 extends Dnie {
 		}
 		catch (final Exception e) {
 			throw new CryptoCardException(
-        		"Error seleccionado el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		"Error seleccionando el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
     		);
 		}
 
@@ -401,7 +401,7 @@ public class Dnie3 extends Dnie {
 	        }
 	        catch (final Exception e) {
 	        	LOGGER.warning(
-	    			"Error seleccionado el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
+	    			"Error seleccionando el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
 				);
 	        }
 
