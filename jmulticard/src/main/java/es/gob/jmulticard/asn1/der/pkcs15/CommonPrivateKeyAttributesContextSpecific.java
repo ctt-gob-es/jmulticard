@@ -81,7 +81,9 @@ public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpec
 		return getObject().toString();
 	}
 
-	X500Principal getKeyRdn() {
+	/** Obtiene el <code>Principal</code> X&#46;509 de la clave privada.
+	 * @return <code>Principal</code> X&#46;509 de la clave privada. */
+	public X500Principal getKeyPrincipal() {
 		return ((CommonPrivateKeyAttributes)getObject()).getKeyPrincipal();
 	}
 

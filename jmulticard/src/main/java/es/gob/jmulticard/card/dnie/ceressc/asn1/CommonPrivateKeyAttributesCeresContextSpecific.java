@@ -37,46 +37,55 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.card.dnie;
+package es.gob.jmulticard.card.dnie.ceressc.asn1;
 
-import es.gob.jmulticard.apdu.StatusWord;
-import es.gob.jmulticard.card.CryptoCardException;
+import javax.security.auth.x500.X500Principal;
 
-/** Excepci&oacute;n gen&eacute;rica en tarjetas ISO 7816-4.
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.Asn1Exception;
+import es.gob.jmulticard.asn1.der.ContextSpecific;
+import es.gob.jmulticard.asn1.der.pkcs15.CommonPrivateKeyAttributes;
+
+/** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributesEmpty</i>.
+ * <pre>
+ *  CommonPrivateKeyAttributesEmpty ::= SEQUENCE {
+ *    name Name OPTIONAL,
+ *    keyIdentifiers [0] SEQUENCE OF CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
+ *    generalName [1] GeneralNames OPTIONAL,
+ *    ... -- For future extensions
+ *  }
+ * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class DnieCardException extends CryptoCardException {
+public final class CommonPrivateKeyAttributesCeresContextSpecific extends ContextSpecific {
 
-	private static final long serialVersionUID = 5935577997660561619L;
+	private static final byte TAG = (byte) 0xA0;
 
-    private final StatusWord returnCode;
+	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributesEmpty</i>. */
+	public CommonPrivateKeyAttributesCeresContextSpecific() {
+		super(CommonPrivateKeyAttributesEmpty.class);
+	}
 
-    /** Construye la excepci&oacute;n.
-     * @param desc Descripci&oacute;n del problema.
-     * @param retCode C&oacute;digo devuelto por la tarjeta. */
-    public DnieCardException(final String desc, final StatusWord retCode) {
-        super(desc);
-        this.returnCode = retCode;
-    }
+	/** {@inheritDoc} */
+	@Override
+    public void checkTag(final byte tag) throws Asn1Exception {
+		if (TAG != tag) {
+			throw new Asn1Exception(
+				"CommonPrivateKeyAttributesContextSpecific esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
+				" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+			);
+		}
+	}
 
-    /** Construye la excepci&oacute;n.
-     * @param desc Descripci&oacute;n del problema.
-     * @param t Problema que origino la excepci&oacute;n. */
-    public DnieCardException(final String desc, final Throwable t) {
-        super(desc, t);
-        this.returnCode = null;
-    }
+	/** {@inheritDoc} */
+	@Override
+    public String toString() {
+		return getObject().toString();
+	}
 
-    /** Construye la excepci&oacute;n.
-     * @param retCode C&oacute;digo devuelto por la tarjeta. */
-    DnieCardException(final StatusWord retCode) {
-        super();
-        this.returnCode = retCode;
-    }
+	/** Obtiene el <code>Principal</code> X&#46;509 de la clave privada.
+	 * @return <code>Principal</code> X&#46;509 de la clave privada. */
+	public X500Principal getKeyPrincipal() {
+		return ((CommonPrivateKeyAttributes)getObject()).getKeyPrincipal();
+	}
 
-    /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado) que caus&oacute; la
-     * excepci&oacute;n.
-     * @return C&oacute;digo de finalizaci&oacute;n que caus&oacute; la excepci&oacute;n */
-    public StatusWord getStatusWord() {
-        return this.returnCode;
-    }
 }

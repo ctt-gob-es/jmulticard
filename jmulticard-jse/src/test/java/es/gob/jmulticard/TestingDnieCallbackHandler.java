@@ -13,7 +13,7 @@ import es.gob.jmulticard.callback.CustomAuthorizeCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */
-public final class TestingDnieCallbackHandler implements CallbackHandler {
+final class TestingDnieCallbackHandler implements CallbackHandler {
 
 	private final String can;
 	private final char[] pin;
@@ -21,12 +21,21 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 	/** Construye un CallbackHandler de prueba.
 	 * @param c CAN
 	 * @param p PIN. */
-	public TestingDnieCallbackHandler(final String c, final String p) {
+	TestingDnieCallbackHandler(final String c, final String p) {
 		this.can = c;
 		this.pin = p.toCharArray();
 	}
 
+	/** Construye un CallbackHandler de prueba.
+	 * @param c CAN
+	 * @param p PIN. */
+	TestingDnieCallbackHandler(final String c, final char[] p) {
+		this.can = c;
+		this.pin = p;
+	}
+
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {

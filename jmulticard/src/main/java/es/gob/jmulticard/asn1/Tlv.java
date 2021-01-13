@@ -41,6 +41,7 @@ package es.gob.jmulticard.asn1;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import es.gob.jmulticard.HexUtils;
 
@@ -104,8 +105,18 @@ public final class Tlv {
      * @param buffer Representaci&oacute;n binaria del TLV.
      * @throws TlvException En caso de error analizando el TLV. */
     public Tlv(final byte[] buffer) throws TlvException {
-        if (buffer == null || buffer.length == 0) {
-            throw new IllegalArgumentException("El TLV no puede ser nulo ni vacio"); //$NON-NLS-1$
+        if (buffer == null) {
+            throw new IllegalArgumentException("El TLV no puede ser nulo"); //$NON-NLS-1$
+        }
+        if (buffer.length == 0) {
+        	Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+    			"Se ha pedido crear un TLV vacio" //$NON-NLS-1$
+			);
+        	this.length = 0;
+        	this.bytes = new byte[0];
+        	this.tag = (byte) 0xff;
+        	this.valueOffset = 0;
+        	return;
         }
         if (buffer.length < 2) {
             throw new IllegalArgumentException(
@@ -225,5 +236,12 @@ public final class Tlv {
         }
 
         return new Tlv(tag, value);
+    }
+
+    @Override
+	public String toString() {
+    	return "TLV (Tag=" + HexUtils.hexify(new byte[] { getTag() }, false) + //$NON-NLS-1$
+			", Length=" + getLength() + //$NON-NLS-1$
+				", Value=" + (getValue().length == 0 ? "vacio" : HexUtils.hexify(getValue(), false)) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

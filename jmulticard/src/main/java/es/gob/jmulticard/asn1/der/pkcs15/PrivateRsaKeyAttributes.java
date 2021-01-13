@@ -73,11 +73,15 @@ public final class PrivateRsaKeyAttributes extends Sequence {
 		);
 	}
 
-	String getPath() {
+	/** Obtiene la ruta hacia la clave privada.
+	 * @return Ruta hacia la clave privada. */
+	public String getPath() {
 		return ((Path)getElementAt(0)).getPathString();
 	}
 
-	int getKeyLength() {
+	/** Obtiene la longitud de la clave privada.
+	 * @return Longitud de la clave privada. */
+	public int getKeyLength() {
 		return ((DerInteger)getElementAt(1)).getIntegerValue().intValue();
 	}
 

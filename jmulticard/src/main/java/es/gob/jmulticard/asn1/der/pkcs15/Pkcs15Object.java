@@ -53,7 +53,8 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *      typeAttributes [1] TypeAttributes
  *  }
  * </pre>
- * @author Gonzalo Henr&iacute;quez Manzano */
+ * @author Gonzalo Henr&iacute;quez Manzano
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Pkcs15Object extends Sequence {
 
     /** Construye un tipo PKCS#15 ASN&#46;1 <i>PKCS15Object</i> (<i>CIO</i> de ISO 7816-15).
@@ -87,7 +88,7 @@ public abstract class Pkcs15Object extends Sequence {
 
     /** Obtiene los atributos comunes (<i>CommonObjectAttributes</i>).
      * @return Atributos comunes */
-    CommonObjectAttributes getCommonObjectAttributes() {
+    protected CommonObjectAttributes getCommonObjectAttributes() {
         return (CommonObjectAttributes) getElementAt(0);
     }
 

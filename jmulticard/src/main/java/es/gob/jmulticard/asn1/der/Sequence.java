@@ -91,7 +91,9 @@ public abstract class Sequence extends DecoderObject {
             	tlv = new Tlv(remainingBytes);
             	tmpDo = this.elementsTypes[i].getElementType().getConstructor().newInstance();
             	tmpDo.checkTag(tlv.getTag());
-                tmpDo.setDerValue(tlv.getBytes());
+                tmpDo.setDerValue(
+            		tlv.getBytes()
+        		);
             }
             catch(final Exception e) {
             	if (this.elementsTypes[i].isOptional()) {

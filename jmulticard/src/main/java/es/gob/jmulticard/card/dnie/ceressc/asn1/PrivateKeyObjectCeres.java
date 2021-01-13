@@ -37,18 +37,22 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.asn1.der.pkcs15;
+package es.gob.jmulticard.card.dnie.ceressc.asn1;
 
 import javax.security.auth.x500.X500Principal;
 
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
+import es.gob.jmulticard.asn1.der.pkcs15.CommonKeyAttributes;
+import es.gob.jmulticard.asn1.der.pkcs15.CommonPrivateKeyAttributesContextSpecific;
+import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
 
-/** Tipo ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> para tarjetas CERES, donde pueden encontrarse
+ * ligeras diferencias respecto a la normativa general.
  * <pre>
  *  PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
  *    CommonKeyAttributes,
- *    CommonPrivateKeyAttributes,
+ *    CommonPrivateKeyAttributesEmpty,
  *    KeyAttributes
  *  }
  * </pre>
@@ -59,31 +63,31 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *  PrivateKeyObject {PrivateRSAKeyAttributes} ::= SEQUENCE {
  *    CommonObjectAttributes,
  *    CommonKeyAttributes,
- *    CommonPrivateKeyAttributes,
+ *    CommonPrivateKeyAttributesEmpty,
  *    PrivateRsaKeyAttributes
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class PrivateKeyObject extends Pkcs15Object {
+public final class PrivateKeyObjectCeres extends Pkcs15Object {
 
     /** Construye un tipo PrivateKeyObject ASN&#46;1.
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
      * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
-	protected PrivateKeyObject(final Class<? extends DecoderObject> classAttributes,
-			                   final Class<? extends ContextSpecific> subclassAttributes,
-			                   final Class<? extends ContextSpecific> typeAttributes) {
+	public PrivateKeyObjectCeres(final Class<? extends DecoderObject> classAttributes,
+			                     final Class<? extends ContextSpecific> subclassAttributes,
+			                     final Class<? extends ContextSpecific> typeAttributes) {
         super(classAttributes, subclassAttributes, typeAttributes);
 	}
 
 
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> */
-	public PrivateKeyObject() {
+	public PrivateKeyObjectCeres() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
-			CommonKeyAttributes.class,                       // classAttributes
-			CommonPrivateKeyAttributesContextSpecific.class, // subclassAttributes
-			PrivateRsaKeyAttributesContextSpecific.class     // typeAttributes
+			CommonKeyAttributes.class,                            // classAttributes
+			CommonPrivateKeyAttributesCeresContextSpecific.class, // subclassAttributes
+			PrivateRsaKeyAttributesCeresContextSpecific.class     // typeAttributes
 		);
 	}
 
@@ -102,13 +106,13 @@ public class PrivateKeyObject extends Pkcs15Object {
 	/** Obtiene la ruta hacia la clave privada.
 	 * @return Ruta hacia la clave privada. */
 	public String getKeyPath() {
-		return ((PrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getPath();
+		return ((PrivateRsaKeyAttributesCeresContextSpecific)getTypeAttributes()).getPath();
 	}
 
 	/** Obtiene la longitud de la clave privada.
 	 * @return Longitud de la clave privada. */
 	int getKeyLength() {
-		return ((PrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getKeyLength();
+		return ((PrivateRsaKeyAttributesCeresContextSpecific)getTypeAttributes()).getKeyLength();
 	}
 
 	/** Obtiene el <code>Principal</code> X&#46;509 de la clave privada.

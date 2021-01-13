@@ -37,7 +37,7 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.card.dnie;
+package es.gob.jmulticard.card.dnie.ceressc;
 
 import java.math.BigInteger;
 import java.security.PublicKey;

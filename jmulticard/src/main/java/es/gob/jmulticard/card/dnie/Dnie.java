@@ -228,10 +228,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla.*/
-    Dnie(final ApduConnection conn,
-    	 final PasswordCallback pwc,
-    	 final CryptoHelper cryptoHelper,
-    	 final CallbackHandler ch) throws ApduConnectionException {
+    protected Dnie(final ApduConnection conn,
+    	           final PasswordCallback pwc,
+    	           final CryptoHelper cryptoHelper,
+    	           final CallbackHandler ch) throws ApduConnectionException {
     	this(conn, pwc, cryptoHelper, ch, true);
     }
 

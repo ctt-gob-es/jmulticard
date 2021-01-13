@@ -37,38 +37,35 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.asn1.der.pkcs15;
+package es.gob.jmulticard.card.dnie.ceressc.asn1;
 
 import javax.security.auth.x500.X500Principal;
 
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
-import es.gob.jmulticard.asn1.der.Record;
+import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 
-/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
+/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1 para tarjetas CERES, donde pueden encontrarse
+ * ligeras diferencias respecto a la normativa general.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class PrKdf extends Record implements Pkcs15PrKdf {
+public final class PrKdfCeres extends PrKdf {
 
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
-	public PrKdf() {
+	public PrKdfCeres() {
 		super(
 			new OptionalDecoderObjectElement[] {
 				// Maximo 10 certificados
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, false),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true)
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, false),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
+				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true)
 			}
 		);
-	}
-
-	protected PrKdf(final OptionalDecoderObjectElement[] elements) {
-		super(elements);
 	}
 
 	/** Obtiene el n&uacute;mero de claves del PrKDF.
@@ -81,29 +78,33 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
 	/** Obtiene el identificador de la clave indicada.
 	 * @param index &Iacute;ndice de la clave
 	 * @return Identificador de la clave */
+	@Override
 	public byte[] getKeyIdentifier(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyIdentifier();
 	}
 
 	/** Obtiene el nombre de la clave indicada
 	 * @param index &Iacute;ndice de la clave
 	 * @return Nombre de la clave */
+	@Override
 	public String getKeyName(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyName();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyName();
 	}
 
 	/** Obtiene la ruta PKCS#15 hacia la clave indicada.
 	 * @param index &Iacute;ndice de la clave
 	 * @return Ruta PKCS#15 hacia la clave indicada */
+	@Override
 	public String getKeyPath(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyPath();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyPath();
 	}
 
 	/** Obtiene la longitud de la clave indicada.
 	 * @param index &Iacute;ndice de la clave
 	 * @return Longitud de la clave indicada */
+	@Override
 	public int getKeyLength(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyLength();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyLength();
 	}
 
     /** {@inheritDoc} */
@@ -136,7 +137,7 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
 	 * @return Referencia de la clave indicada. */
 	@Override
 	public byte getKeyReference(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyReference();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyReference();
 	}
 
 	/** Obtiene el identificador de la clave indicada.
@@ -144,12 +145,12 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
 	 * @return Identificador de la clave indicada. */
 	@Override
 	public byte[] getKeyId(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyIdentifier();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyIdentifier();
 	}
 
 	@Override
 	public X500Principal getKeyPrincipal(final int index) {
-		return ((PrivateKeyObject) getElementAt(index)).getKeyPrincipal();
+		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyPrincipal();
 	}
 
 }

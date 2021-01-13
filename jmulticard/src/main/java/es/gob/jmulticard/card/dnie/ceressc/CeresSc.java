@@ -1,5 +1,7 @@
-package es.gob.jmulticard.card.dnie;
+package es.gob.jmulticard.card.dnie.ceressc;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -37,6 +39,10 @@ import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
+import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.card.dnie.DnieCardException;
+import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
+import es.gob.jmulticard.card.dnie.ceressc.asn1.PrKdfCeres;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
@@ -218,10 +224,25 @@ public final class CeresSc extends Dnie {
 
 		// Leemos el PrKDF
 		final byte[] prkdfValue = selectFileByLocationAndRead(PRKDF_LOCATION);
+		try (
+			final java.io.OutputStream fos = new FileOutputStream(File.createTempFile("PRKDF_CERES_", ".der")) //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(prkdfValue);
+		}
 
 		// Establecemos el valor del PrKDF
-		final PrKdf prkdf = new PrKdf();
-		prkdf.setDerValue(prkdfValue);
+		PrKdf prkdf;
+		try {
+			prkdf = new PrKdf();
+			prkdf.setDerValue(prkdfValue);
+		}
+		catch(final Exception e) {
+			LOGGER.warning(
+				"Detectado posible PrKDF con CommonPrivateKeyAttributes vacio, se prueba con estructura alternativa" //$NON-NLS-1$
+			);
+			prkdf = new PrKdfCeres();
+			prkdf.setDerValue(prkdfValue);
+		}
 
 		this.keyReferences = new LinkedHashMap<>();
 		for (int i = 0; i < prkdf.getKeyCount(); i++) {

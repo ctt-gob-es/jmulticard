@@ -37,46 +37,56 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.card.dnie;
+package es.gob.jmulticard.card.dnie.ceressc.asn1;
 
-import es.gob.jmulticard.apdu.StatusWord;
-import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.Asn1Exception;
+import es.gob.jmulticard.asn1.der.ContextSpecific;
+import es.gob.jmulticard.asn1.der.pkcs15.PrivateRsaKeyAttributes;
 
-/** Excepci&oacute;n gen&eacute;rica en tarjetas ISO 7816-4.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class DnieCardException extends CryptoCardException {
+/** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>.
+ * <PRE>
+ *   PrivateRSAKeyAttributes ::= SEQUENCE {
+ *     value          ObjectValue {RSAPrivateKeyObject},
+ *     modulusLength  INTEGER, -- modulus length in bits, e.g. 1024
+ *     keyInfo        KeyInfo {NULL, PublicKeyOperations} OPTIONAL,
+ *     ... -- For future extensions
+ *   }
+ * </PRE>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+public final class PrivateRsaKeyAttributesCeresContextSpecific extends ContextSpecific {
 
-	private static final long serialVersionUID = 5935577997660561619L;
+	private static final byte TAG = (byte) 0xA1;
 
-    private final StatusWord returnCode;
+	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>. */
+	public PrivateRsaKeyAttributesCeresContextSpecific() {
+		super(PrivateRsaKeyAttributes.class);
+	}
 
-    /** Construye la excepci&oacute;n.
-     * @param desc Descripci&oacute;n del problema.
-     * @param retCode C&oacute;digo devuelto por la tarjeta. */
-    public DnieCardException(final String desc, final StatusWord retCode) {
-        super(desc);
-        this.returnCode = retCode;
-    }
+	/** {@inheritDoc} */
+	@Override
+    public void checkTag(final byte tag) throws Asn1Exception {
+		if (TAG != tag) {
+			throw new Asn1Exception(
+				"PrivateRsaKeyAttributesCeresContextSpecific esperaba una etiqueta especifica de contexto " + //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { TAG }, false) +
+						" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+			);
+		}
+	}
 
-    /** Construye la excepci&oacute;n.
-     * @param desc Descripci&oacute;n del problema.
-     * @param t Problema que origino la excepci&oacute;n. */
-    public DnieCardException(final String desc, final Throwable t) {
-        super(desc, t);
-        this.returnCode = null;
-    }
+	/** {@inheritDoc} */
+	@Override
+    public String toString() {
+		return getObject().toString();
+	}
 
-    /** Construye la excepci&oacute;n.
-     * @param retCode C&oacute;digo devuelto por la tarjeta. */
-    DnieCardException(final StatusWord retCode) {
-        super();
-        this.returnCode = retCode;
-    }
+	String getPath() {
+		return ((PrivateRsaKeyAttributes)getObject()).getPath();
+	}
 
-    /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado) que caus&oacute; la
-     * excepci&oacute;n.
-     * @return C&oacute;digo de finalizaci&oacute;n que caus&oacute; la excepci&oacute;n */
-    public StatusWord getStatusWord() {
-        return this.returnCode;
-    }
+	int getKeyLength() {
+		return ((PrivateRsaKeyAttributes)getObject()).getKeyLength();
+	}
+
 }

@@ -72,9 +72,9 @@ import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.dnie.CeresSc;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
+import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
 /** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjetas CERES 4.30 o superiores.
