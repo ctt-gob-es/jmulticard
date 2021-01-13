@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard.jse.smartcardio;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,6 +68,7 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
  * JSR-268 SmartCard I/O.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+@SuppressWarnings("restriction")
 public final class SmartcardIoConnection implements ApduConnection {
 
 	  private static final boolean DEBUG = false;
@@ -79,7 +81,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     private int terminalNumber = -1;
 
-    private CardChannel canal = null;
+	private CardChannel canal = null;
 
     private Card card = null;
 
@@ -88,9 +90,10 @@ public final class SmartcardIoConnection implements ApduConnection {
     private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
 
     static {
+
+		// Aplicamos un parche para el error de PCSCLite de Debian:
+		// https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=529339
     	try {
-    		// Aplicamos un parche para el error de PCSCLite de Debian
-    		// https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=529339
     		LibJ2PCSCGNULinuxFix.fixNativeLibrary();
     	}
     	catch(final Exception | Error e) {
@@ -98,12 +101,24 @@ public final class SmartcardIoConnection implements ApduConnection {
 				"No se han podido aplicar las correcciones al error 529339 de Debian: " + e //$NON-NLS-1$
 			);
     	}
+
+    	// Aplicamos un parche para el error JDK-8255877 de Java:
+   	 	// https://bugs.openjdk.java.net/browse/JDK-8255877
+    	final String osName = System.getProperty("os.name"); //$NON-NLS-1$
+		if (osName != null && osName.startsWith("Mac OS X")) { //$NON-NLS-1$
+			final String dir = "/System/Library/Frameworks/PCSC.framework/Versions/Current"; //$NON-NLS-1$
+			if (new File(dir).isDirectory()) {
+				System.setProperty(
+					"sun.security.smartcardio.library", //$NON-NLS-1$
+					"/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC" //$NON-NLS-1$
+				);
+			}
+		}
     }
 
     @Override
 	  public String toString() {
     	return "Conexion de bajo nivel JSR-268 abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
     }
 
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
