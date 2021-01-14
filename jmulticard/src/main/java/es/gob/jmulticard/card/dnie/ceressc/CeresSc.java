@@ -1,7 +1,5 @@
 package es.gob.jmulticard.card.dnie.ceressc;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -224,11 +222,6 @@ public final class CeresSc extends Dnie {
 
 		// Leemos el PrKDF
 		final byte[] prkdfValue = selectFileByLocationAndRead(PRKDF_LOCATION);
-		try (
-			final java.io.OutputStream fos = new FileOutputStream(File.createTempFile("PRKDF_CERES_", ".der")) //$NON-NLS-1$ //$NON-NLS-2$
-		) {
-			fos.write(prkdfValue);
-		}
 
 		// Establecemos el valor del PrKDF
 		PrKdf prkdf;
@@ -238,7 +231,7 @@ public final class CeresSc extends Dnie {
 		}
 		catch(final Exception e) {
 			LOGGER.warning(
-				"Detectado posible PrKDF con CommonPrivateKeyAttributes vacio, se prueba con estructura alternativa" //$NON-NLS-1$
+				"Detectado posible PrKDF con CommonPrivateKeyAttributes vacio, se prueba con estructura alternativa: " + e //$NON-NLS-1$
 			);
 			prkdf = new PrKdfCeres();
 			prkdf.setDerValue(prkdfValue);
