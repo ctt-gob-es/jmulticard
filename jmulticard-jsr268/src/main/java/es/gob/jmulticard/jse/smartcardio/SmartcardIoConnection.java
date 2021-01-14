@@ -75,7 +75,7 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
      * con la tarjeta. */
-    private final static String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
+    private static final String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
