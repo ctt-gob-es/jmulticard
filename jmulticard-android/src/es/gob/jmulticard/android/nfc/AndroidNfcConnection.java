@@ -231,4 +231,9 @@ public final class AndroidNfcConnection implements ApduConnection {
 	public void setProtocol(final ApduConnectionProtocol p) {
 		// No hace nada
 	}
+
+    @Override
+    public ApduConnection getSubConnection() {
+        return null; // Esta es la conexion de mas bajo nivel
+    }
 }
