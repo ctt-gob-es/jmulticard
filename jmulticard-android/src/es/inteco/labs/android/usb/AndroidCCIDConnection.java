@@ -258,4 +258,8 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		// No hace nada
 	}
 
+	@Override
+	public ApduConnection getSubConnection() {
+		return null; // Esta es la conexion de mas bajo nivel
+	}
 }
