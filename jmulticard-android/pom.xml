@@ -5,7 +5,7 @@
  	<modelVersion>4.0.0</modelVersion>
     <groupId>es.gob.afirma.jmulticard</groupId>
 	<artifactId>jmulticard-android</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
 	<packaging>aar</packaging>
 
 	<name>jmulticard-base</name>
