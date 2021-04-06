@@ -56,6 +56,7 @@ public final class TestCeres {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testCeresSecureChannel() throws Exception {
 		final CeresSc ceres430 = new CeresSc(
 			new SmartcardIoConnection(),
