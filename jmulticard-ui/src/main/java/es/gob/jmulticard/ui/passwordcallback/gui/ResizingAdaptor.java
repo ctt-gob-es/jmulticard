@@ -70,7 +70,6 @@ final class ResizingAdaptor extends ComponentAdapter {
     /** Constructor.
      * @param customDialog Di&aacute;logo a redimensionar */
     ResizingAdaptor(final JAccessibilityCustomDialog customDialog) {
-        super();
         this.theCustomDialog = customDialog;
     }
 
@@ -142,13 +141,11 @@ final class ResizingAdaptor extends ComponentAdapter {
                 }
             }
 
-            if (actualComponent instanceof Container) {
-                if (!(actualComponent instanceof JComboBox)) {
-                    // Si nos encontramos con un contenedor, redimensionamos sus hijos
-                    final Container actualContainer = (Container) actualComponent;
-                    adjustFontSize(actualContainer.getComponents());
-                }
-            }
+            if ((actualComponent instanceof Container) && !(actualComponent instanceof JComboBox)) {
+			    // Si nos encontramos con un contenedor, redimensionamos sus hijos
+			    final Container actualContainer = (Container) actualComponent;
+			    adjustFontSize(actualContainer.getComponents());
+			}
             // Redimensionado de una etiqueta con icono
             if (actualComponent instanceof IconLabel) {
                 final int multiplicando = 4;
@@ -241,7 +238,7 @@ final class ResizingAdaptor extends ComponentAdapter {
     /** Redimensiona una imagen contenida en un JButton
      * @param factor factor de redimensi&oacute;n
      * @param c Componente de tipo JButton en el que se encuentra la imagen */
-    private final static void resizeImageButton(final double factor, final Component c) {
+    private static void resizeImageButton(final double factor, final Component c) {
         final JButton button = (JButton) c;
         ImageIcon imageIcon = null;
 

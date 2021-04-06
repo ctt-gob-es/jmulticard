@@ -130,7 +130,6 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	/** Constructor.
 	 * @param isInputDialog Indica si el di&aacute;logo es de entrada de datos. */
 	JAccessibilityCustomDialog(final boolean isInputDialog){
-		super();
 		this.isInputDialog = isInputDialog;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
@@ -454,7 +453,6 @@ abstract class JAccessibilityCustomDialog extends JDialog {
         restoreButton.setEnabled(false);
     }
 
-
     /** Posici&oacute;n X inicial de la ventana dependiendo de la resoluci&oacute;n de pantalla.
      * @param width Ancho de la ventana.
      * @return int Posici&oacute;n X */
@@ -479,7 +477,6 @@ abstract class JAccessibilityCustomDialog extends JDialog {
         private final JButton button;
 
         ButtonAbstractAction(final JButton button) {
-            super();
             this.button = button;
         }
 

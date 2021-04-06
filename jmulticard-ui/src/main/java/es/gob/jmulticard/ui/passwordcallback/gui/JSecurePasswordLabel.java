@@ -54,26 +54,28 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-/**
- * Componente basado en JLabel para capturar Passwords usando &uacute;nicamente arrays de char y restringiendo los caracteres aceptados.
- * @author Jose Luis Escanciano
- *
- */
+/** Componente basado en <code>JLabel</code> para capturar contrase&ntilde;as usando &uacute;nicamente arrays de <code>char</code>
+ * y restringiendo los caracteres aceptados.
+ * @author Jose Luis Escanciano. */
 final class JSecurePasswordLabel extends JLabel {
 
 	private static final long serialVersionUID = -4343328489072897605L;
 
 	private final int delay = 500;
+
 	final char[] pass;
 	char[] getPass() {
 	    return this.pass;
 	}
+
 	private final int maxChars;
 	int passwordLength;
+
 	private final Timer timer;
 	Timer getTimer() {
 	    return this.timer;
 	}
+
 	private boolean showCursor;
 
 	int getMaxChars() {
@@ -83,91 +85,97 @@ final class JSecurePasswordLabel extends JLabel {
 	/** Constructor.
 	 * @param maxLength Longitud m&aacute;xima que puede tener la contrase&ntilde;a. */
 	JSecurePasswordLabel(final int maxLength) {
-		super();
 		this.maxChars = maxLength;
 		this.pass = new char[maxLength];
 		clearPassword();
-		addKeyListener(new KeyAdapter() {
+		addKeyListener(
+			new KeyAdapter() {
 
-			@Override
-			public void keyTyped(final KeyEvent ke) {
-				// Caracteres validos y con longitud valida de password.
-				if (getPasswordLength() < getMaxChars()) {
-					// No se escriben: Back space, Supr, Enter, Tab y CTRL+Letra
-					if(ke.getKeyChar() != KeyEvent.VK_BACK_SPACE &&
-					   ke.getKeyChar() != KeyEvent.VK_DELETE &&
-					   ke.getKeyChar() != KeyEvent.VK_ENTER &&
-					   ke.getKeyChar() != KeyEvent.VK_TAB &&
-					   ke.getModifiers() != InputEvent.CTRL_MASK &&
-					   ke.getModifiers() != InputEvent.ALT_MASK) {
-						JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
-						ke.setKeyChar('\0');
+				@Override
+				public void keyTyped(final KeyEvent ke) {
+					// Caracteres validos y con longitud valida de password.
+					if (getPasswordLength() < getMaxChars()) {
+						// No se escriben: Back space, Supr, Enter, Tab y CTRL+Letra
+						if(ke.getKeyChar() != KeyEvent.VK_BACK_SPACE &&
+						   ke.getKeyChar() != KeyEvent.VK_DELETE &&
+						   ke.getKeyChar() != KeyEvent.VK_ENTER &&
+						   ke.getKeyChar() != KeyEvent.VK_TAB &&
+						   ke.getModifiersEx() != InputEvent.CTRL_DOWN_MASK &&
+						   ke.getModifiersEx() != InputEvent.ALT_DOWN_MASK) {
+							JSecurePasswordLabel.this.getPass()[JSecurePasswordLabel.this.passwordLength++] = ke.getKeyChar();
+							ke.setKeyChar('\0');
+						}
 					}
+					updateText();
 				}
-				updateText();
-			}
 
-			@Override
-			public void keyPressed(final KeyEvent arg0) {
-				//Borrar
-				if (arg0.getKeyCode() == KeyEvent.VK_BACK_SPACE && getPasswordLength() > 0) {
-					clearPassword(getPasswordLength() - 1);
+				@Override
+				public void keyPressed(final KeyEvent arg0) {
+					//Borrar
+					if (arg0.getKeyCode() == KeyEvent.VK_BACK_SPACE && getPasswordLength() > 0) {
+						clearPassword(getPasswordLength() - 1);
+					}
+					//Supr
+					else if(arg0.getKeyCode() == KeyEvent.VK_DELETE) {
+						clearPassword();
+					}
+					updateText();
 				}
-				//Supr
-				else if(arg0.getKeyCode() == KeyEvent.VK_DELETE) {
-					clearPassword();
+			}
+		);
+		addFocusListener(
+			new FocusListener() {
+				@Override
+				public void focusGained(final FocusEvent arg0) {
+					JSecurePasswordLabel.this.setBackground(Color.WHITE);
+					JSecurePasswordLabel.this.getTimer().start();
 				}
-				updateText();
-			}
-		});
-		addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(final FocusEvent arg0) {
-				JSecurePasswordLabel.this.setBackground(Color.WHITE);
-				JSecurePasswordLabel.this.getTimer().start();
-			}
 
-			@Override
-			public void focusLost(final FocusEvent arg0) {
-				JSecurePasswordLabel.this.setShowCursor(false);
-				JSecurePasswordLabel.this.setBackground(getParent().getBackground());
-				JSecurePasswordLabel.this.getTimer().stop();
-				JSecurePasswordLabel.this.updateText();
+				@Override
+				public void focusLost(final FocusEvent arg0) {
+					JSecurePasswordLabel.this.setShowCursor(false);
+					JSecurePasswordLabel.this.setBackground(getParent().getBackground());
+					JSecurePasswordLabel.this.getTimer().stop();
+					JSecurePasswordLabel.this.updateText();
+				}
 			}
-		});
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-				JSecurePasswordLabel.this.requestFocus();
+		);
+		addMouseListener(
+			new MouseAdapter() {
+				@Override
+				public void mouseClicked(final MouseEvent e) {
+					JSecurePasswordLabel.this.requestFocus();
+				}
 			}
-		} );
+		);
 		setFocusable(true);
 		setOpaque(true);
 		setBackground(Color.WHITE);
 		setBorder(BorderFactory.createLoweredBevelBorder());
 		setShowCursor(false);
-		this.timer = new Timer(this.delay, new ActionListener() {
-			@Override
-			public void actionPerformed(final ActionEvent arg0) {
-				if(arg0.getSource().equals(getTimer())){
-					if(hasFocus()){
+		this.timer = new Timer(
+			this.delay,
+			new ActionListener() {
+				@Override
+				public void actionPerformed(final ActionEvent arg0) {
+					if (arg0.getSource().equals(getTimer()) && hasFocus()) {
 						JSecurePasswordLabel.this.setShowCursor(!getShowCursor());
 						JSecurePasswordLabel.this.updateText();
 					}
 				}
 			}
-		});
+		);
 		this.timer.stop();
 	}
 
 	/** Muestra un asterisco por cada caracter de la contrase&ntilde;a. */
 	synchronized void updateText(){
-		String text = " "; //$NON-NLS-1$
+		final StringBuilder text = new StringBuilder(" "); //$NON-NLS-1$
 		for(int i = 0; i < this.passwordLength; i++){
-			text += "*"; //$NON-NLS-1$
+			text.append("*"); //$NON-NLS-1$
 		}
-		text += getShowCursor() ? "|" : " "; //$NON-NLS-1$ //$NON-NLS-2$
-		setText(text);
+		text.append(getShowCursor() ? "|" : " "); //$NON-NLS-1$ //$NON-NLS-2$
+		setText(text.toString());
 	}
 
 	/** Establece a ceros ('\0') toda la contrase&ntilde;a. */
@@ -185,7 +193,7 @@ final class JSecurePasswordLabel extends JLabel {
 		updateText();
 	}
 
-	/** Retorna la contrase&ntilde;a introducida. Tras llamar a este m&eacute;todo, el Password del componente vac&iacute;a.
+	/** Retorna la contrase&ntilde;a introducida. Tras llamar a este m&eacute;todo, el Password del componente se vac&iacute;a.
 	 * @return Contrase&ntilde;a introducida en el componente. */
 	char[] getPassword() {
 		//Nos quedamos con el password valido, el resto lo descartamos
@@ -203,18 +211,14 @@ final class JSecurePasswordLabel extends JLabel {
 		return this.passwordLength;
 	}
 
-	/**
-	 * Setter privado para el campo showCursor que indica si ha de mostrarse el cursor o no
-	 * @param show Si ha de mostrarse el cursor o no
-	 */
+	/** <i>Setter</i> privado para el campo <code>showCursor</code> que indica si ha de mostrarse el cursor o no.
+	 * @param show Si ha de mostrarse el cursor o no. */
 	synchronized void setShowCursor(final boolean show){
 		this.showCursor = show;
 	}
 
-	/**
-	 * Getter privado para el campo showCursor que indica si ha de mostrarse el cursor o now
-	 * @return Si ha de mostrarse el cursor o no
-	 */
+	/** <i>Getter</i> privado para el campo <code>showCursor</code> que indica si ha de mostrarse el cursor o no.
+	 * @return Si ha de mostrarse el cursor o no. */
 	synchronized boolean getShowCursor(){
 		return this.showCursor;
 	}

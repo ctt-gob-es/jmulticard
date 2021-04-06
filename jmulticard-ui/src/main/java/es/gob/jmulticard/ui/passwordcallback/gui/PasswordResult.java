@@ -1,5 +1,7 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
+import java.util.Arrays;
+
 /** Resultado del di&aacute;logo de solicitud de contrase&ntilde;a. */
 final class PasswordResult {
 
@@ -27,9 +29,7 @@ final class PasswordResult {
 
 	void clear() {
 		if (this.password != null) {
-			for (int i = 0; i < this.password.length; i++) {
-				this.password[i] = '\0';
-			}
+			Arrays.fill(this.password, '\0');
 			this.password = null;
 		}
 		this.useCache = false;

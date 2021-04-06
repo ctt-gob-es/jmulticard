@@ -40,6 +40,7 @@
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
 import java.io.Console;
+import java.util.Arrays;
 
 import javax.security.auth.callback.PasswordCallback;
 
@@ -66,7 +67,7 @@ final class ConsolePasswordCallback extends PasswordCallback {
 	 * @return <i>prompt</i> sin caracteres HTML. */
 	private static String removeHTML(final String input) {
 		//Extender en caso de que aparezcan mas caracteres HTML en las properties
-	    return input.replace("<br/>", "").replaceAll("&nbsp;", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	    return input.replace("<br/>", "").replace("&nbsp;", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/** {@inheritDoc} */
@@ -84,9 +85,7 @@ final class ConsolePasswordCallback extends PasswordCallback {
         }
         if (password.length < 8 || password.length > 16) {
             console.printf(Messages.getString("ConsolePasswordCallback.1") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-            for (int i = 0; i < password.length; i++) {
-            	password[i] = '\0';
-            }
+            Arrays.fill(password, '\0');
             return getPassword();
         }
 

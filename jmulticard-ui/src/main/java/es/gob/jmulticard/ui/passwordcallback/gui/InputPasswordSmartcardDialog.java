@@ -205,12 +205,9 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
             // Se maximiza
             this.setBounds(0, 0, maxWidth, maxHeight);
         }
-        else {
-            // Se establece el tamano minimo en base a las opciones activas
-            if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold()) {
-                setMinimumSize(new Dimension(AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_WIDTH, AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_HEIGHT));
-            }
-        }
+        else if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold()) { // Se establece el tamano minimo en base a las opciones activas
+		    setMinimumSize(new Dimension(AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_WIDTH, AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_HEIGHT));
+		}
 
         setTitle(title);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -321,7 +318,7 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
     protected void setIconLabel(final String iconPath) {
     	if (iconPath != null) {
 	        // Segun el tipo de mensaje se selecciona el icono
-	        ImageIcon icon = new ImageIcon(
+	        final ImageIcon icon = new ImageIcon(
 	    		InputPasswordSmartcardDialog.class.getResource(
 					iconPath
 				)
@@ -329,8 +326,11 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
 	        final Dimension dimensionInicial = new Dimension(100, (int)(100f / icon.getIconWidth() * icon.getIconHeight()));
 	        this.iconLabel.setOriginalIcon(icon);
 	        this.iconLabel.setOriginalDimension(dimensionInicial);
-	        icon = new ImageIcon(icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH));
-	        this.iconLabel.setIcon(icon);
+	        this.iconLabel.setIcon(
+        		new ImageIcon(
+    				icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH)
+				)
+    		);
     	}
     }
 
@@ -349,21 +349,23 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
         // OK button
         final JPanel okPanel = new JPanel();
         okButton = getButton(Messages.getString("PrincipalGUI.aceptar"), KeyEvent.VK_A); //$NON-NLS-1$
-        okButton.addKeyListener(new KeyListener() {
+        okButton.addKeyListener(
+    		new KeyListener() {
 
-			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
-			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
 
-			@Override
-			public void keyPressed(final KeyEvent ke) {
-				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-					getOkButton().doClick();
-				}
-				else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					getCancelButton().doClick();
+				@Override
+				public void keyPressed(final KeyEvent ke) {
+					if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+						getOkButton().doClick();
+					}
+					else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+						getCancelButton().doClick();
+					}
 				}
 			}
-		});
+		);
 
         okPanel.add(okButton);
         this.buttonsPanel.add(okPanel, consButtons);
@@ -439,7 +441,7 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
         AccesibilityUtils.setContrastColor(inputPasswordDialog.component);
         AccesibilityUtils.setFontBold(inputPasswordDialog.component);
         inputPasswordDialog.component.getAccessibleContext()
-                              .setAccessibleName(message.replaceAll(AccesiblityConstants.HTML_SALTO_LINEA, "") + "  ALT + " + mnemonic + ". "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                              .setAccessibleName(message.replace(AccesiblityConstants.HTML_SALTO_LINEA, "") + "  ALT + " + mnemonic + ". "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         // Etiqueta principal
         // Se relaciona la etiqueta con el componente
@@ -452,21 +454,23 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
 
         // Configuracion de accesibilidad de la casilla de cacheo
         if (inputPasswordDialog.useCacheCheckBox != null) {
-        	inputPasswordDialog.useCacheCheckBox.addKeyListener(new KeyListener() {
+        	inputPasswordDialog.useCacheCheckBox.addKeyListener(
+    			new KeyListener() {
 
-    			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
-    			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
+	    			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
+	    			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
 
-    			@Override
-    			public void keyPressed(final KeyEvent ke) {
-    				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-    					getOkButton().doClick();
-    				}
-    				else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-    					getCancelButton().doClick();
-    				}
-    			}
-    		});
+	    			@Override
+	    			public void keyPressed(final KeyEvent ke) {
+	    				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+	    					getOkButton().doClick();
+	    				}
+	    				else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+	    					getCancelButton().doClick();
+	    				}
+	    			}
+	    		}
+			);
 
         	AccesibilityUtils.remarcar(inputPasswordDialog.useCacheCheckBox);
         	AccesibilityUtils.setContrastColor(inputPasswordDialog.useCacheCheckBox);
@@ -487,21 +491,23 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
         cancelPanel.add(cancelButton);
         inputPasswordDialog.buttonsPanel.add(cancelPanel, cons);
         cancelButton.addActionListener(inputPasswordDialog);
-        cancelButton.addKeyListener(new KeyListener() {
+        cancelButton.addKeyListener(
+    		new KeyListener() {
 
-			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
-			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
 
-			@Override
-			public void keyPressed(final KeyEvent ke) {
-				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-					getCancelButton().doClick();
-				}
-				else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					getCancelButton().doClick();
+				@Override
+				public void keyPressed(final KeyEvent ke) {
+					if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+						getCancelButton().doClick();
+					}
+					else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+						getCancelButton().doClick();
+					}
 				}
 			}
-		});
+		);
 
         inputPasswordDialog.infoLabel.setHorizontalAlignment(SwingConstants.LEFT); // Se centra el texto
         inputPasswordDialog.component.setVisible(true); // Se hace visible el campo de texto
@@ -536,11 +542,11 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
         throw new CancelledOperationException("La insercion de contrasena ha sido cancelada por el usuario"); //$NON-NLS-1$
     }
 
-    /** Metodo que crea un boton.
-     * Si el boton corresponde al de cancelar, se le asigna la tecla esc.
-     * @param text texto del boton
-     * @param mnemonic atajo
-     * @return boton */
+    /** Metodo que crea un bot&oacute;n.
+     * Si el bot&oacute;n corresponde al de cancelar, se le asigna la tecla escape.
+     * @param text texto del bot&oacute;n.
+     * @param mnemonic atajo.
+     * @return bot&oacute;n. */
     private JButton getButton(final String text, final int mnemonic) {
         final JButton button = new JButton(text);
         button.setMnemonic(mnemonic);

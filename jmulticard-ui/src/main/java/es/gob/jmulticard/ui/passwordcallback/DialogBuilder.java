@@ -64,13 +64,15 @@ public final class DialogBuilder {
     }
 
     static {
-        AccessController.doPrivileged(new PrivilegedAction<Void>() {
-            @Override
-            public Void run() {
-                setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
-                return null;
-            }
-        });
+        AccessController.doPrivileged(
+    		new PrivilegedAction<Void>() {
+		        @Override
+		        public Void run() {
+		            setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
+		            return null;
+		        }
+		    }
+		);
     }
 
     private DialogBuilder() {
@@ -111,10 +113,9 @@ public final class DialogBuilder {
                 || "s\u00ED".equals(confirm)) { //$NON-NLS-1$
                 return 0;
         }
-        else if ("no".equals(confirm) || "n".equals(confirm)) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ("no".equals(confirm) || "n".equals(confirm)) { //$NON-NLS-1$ //$NON-NLS-2$
         	return 1;
-        } else {
-			return getConsoleConfirm(console, callBack);
-		}
+        }
+		return getConsoleConfirm(console, callBack);
     }
 }
