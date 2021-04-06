@@ -642,7 +642,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         if (CERT_ALIAS_AUTH.equals(alias)) {
             return this.authKeyRef;
         }
-        else if (CERT_ALIAS_SIGN.equals(alias)) {
+		if (CERT_ALIAS_SIGN.equals(alias)) {
             return this.signKeyRef;
         }
         else if (CERT_ALIAS_CYPHER.equals(alias)) {

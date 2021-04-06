@@ -132,14 +132,12 @@ public class DnieNFC extends Dnie3 {
 				try {
 					final Method m = tic.getClass().getMethod("getText"); //$NON-NLS-1$
 					final Object o = m.invoke(tic);
-					if (o instanceof String) {
-						paceInitValue = (String)o;
-					}
-					else {
+					if (!(o instanceof String)) {
 						throw new IllegalStateException(
 							"El TextInputCallback ha devuelto un dato de tipo " + (o == null ? "null" : o.getClass().getName()) //$NON-NLS-1$ //$NON-NLS-2$
 						);
 					}
+					paceInitValue = (String)o;
 				}
 				catch (final NoSuchMethodException |
 					         SecurityException |
@@ -193,16 +191,14 @@ public class DnieNFC extends Dnie3 {
 				paceInitValue = null;
 				paceInitType = null;
 
-				if (counter < MAX_PACE_RETRIES) {
-					Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-						"Error en el intento " + Integer.toString(counter + 1) + " de establecimiento de canal PACE (probablemente por CAN/MRZ invalido): " + e //$NON-NLS-1$ //$NON-NLS-2$
-					);
-					//Si el CAN/MRZ es incorrecto volvemos a pedirlo
-					counter++;
-				}
-				else {
+				if (counter >= MAX_PACE_RETRIES) {
 					throw e;
 				}
+				Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+					"Error en el intento " + Integer.toString(counter + 1) + " de establecimiento de canal PACE (probablemente por CAN/MRZ invalido): " + e //$NON-NLS-1$ //$NON-NLS-2$
+				);
+				//Si el CAN/MRZ es incorrecto volvemos a pedirlo
+				counter++;
 			}
 
 		}

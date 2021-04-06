@@ -32,8 +32,7 @@ public final class DnieCertParseUtil {
 			).trim();
 		}
 		this.name = cn.substring(
-			cn.indexOf(',') + 1,
-			cn.length()
+			cn.indexOf(',') + 1
 		).trim();
 		this.sn1 = getRDNvalueFromLdapName("SN", dn); //$NON-NLS-1$
 		if (this.sn1 == null) {
@@ -149,7 +148,7 @@ public final class DnieCertParseUtil {
             if (principal.charAt(offset1) == ',') {
                 return ""; //$NON-NLS-1$
             }
-            else if (principal.charAt(offset1) == '"') {
+			if (principal.charAt(offset1) == '"') {
                 offset1++;
                 if (offset1 >= principal.length()) {
                     return ""; //$NON-NLS-1$

@@ -69,7 +69,6 @@ public final class DnieCardException extends CryptoCardException {
     /** Construye la excepci&oacute;n.
      * @param retCode C&oacute;digo devuelto por la tarjeta. */
     DnieCardException(final StatusWord retCode) {
-        super();
         this.returnCode = retCode;
     }
 

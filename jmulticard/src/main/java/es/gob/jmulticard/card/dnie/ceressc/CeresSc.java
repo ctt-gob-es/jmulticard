@@ -315,15 +315,13 @@ public final class CeresSc extends Dnie {
 
     private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
     	final Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
-    	if (ATR_TC.equals(tmpAtr)) {
-    		if (atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30) {
-    			LOGGER.info(
-					"Encontrada TC CERES en version " + //$NON-NLS-1$
-						HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) //$NON-NLS-1$
-				);
-    			return;
-    		}
-    	}
+    	if (ATR_TC.equals(tmpAtr) && (atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30)) {
+			LOGGER.info(
+				"Encontrada TC CERES en version " + //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) //$NON-NLS-1$
+			);
+			return;
+		}
     	throw new InvalidCardException("CERES", ATR_TC, atrBytes); //$NON-NLS-1$
     }
 }
