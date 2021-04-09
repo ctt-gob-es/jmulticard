@@ -117,20 +117,16 @@ public class DnieSubjectPrincipalParser {
                 if (offset2 == offset1) {
                     return ""; //$NON-NLS-1$
                 }
-                else if (offset2 != -1) {
+				if (offset2 != -1) {
                     return principal.substring(offset1, offset2);
                 }
-                else {
-                    return principal.substring(offset1);
-                }
+				return principal.substring(offset1);
             }
-            else {
-                offset2 = principal.indexOf(',', offset1);
-                if (offset2 != -1) {
-                    return principal.substring(offset1, offset2).trim();
-                }
-                return principal.substring(offset1).trim();
-            }
+			offset2 = principal.indexOf(',', offset1);
+			if (offset2 != -1) {
+			    return principal.substring(offset1, offset2).trim();
+			}
+			return principal.substring(offset1).trim();
         }
 
         return null;

@@ -101,7 +101,7 @@ public final class DnieCertParseUtil {
             return getRDNvalueFromLdapName(principal.substring(0, i), principal);
         }
 
-        LOGGER.warning("Principal no valido, se devolvera la entrada"); //$NON-NLS-1$
+        LOGGER.warning("Principal no valido, se devolvera el valor de entrada"); //$NON-NLS-1$
         return principal;
     }
 
@@ -158,20 +158,16 @@ public final class DnieCertParseUtil {
                 if (offset2 == offset1) {
                     return ""; //$NON-NLS-1$
                 }
-                else if (offset2 != -1) {
+				if (offset2 != -1) {
                     return principal.substring(offset1, offset2);
                 }
-                else {
-                    return principal.substring(offset1);
-                }
+				return principal.substring(offset1);
             }
-            else {
-                offset2 = principal.indexOf(',', offset1);
-                if (offset2 != -1) {
-                    return principal.substring(offset1, offset2).trim();
-                }
-                return principal.substring(offset1).trim();
-            }
+			offset2 = principal.indexOf(',', offset1);
+			if (offset2 != -1) {
+			    return principal.substring(offset1, offset2).trim();
+			}
+			return principal.substring(offset1).trim();
         }
 
         return null;
