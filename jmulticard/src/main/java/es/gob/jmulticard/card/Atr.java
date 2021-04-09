@@ -48,7 +48,11 @@ import es.gob.jmulticard.HexUtils;
 public final class Atr implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /** Octetos del ATR. */
     private final byte[] atrBytes;
+
+    /** M&aacute;scara de posiciones con valor constante dentro de los octetos del ATR. */
     private final byte[] mask;
 
     /** Construye una respuesta al reset.

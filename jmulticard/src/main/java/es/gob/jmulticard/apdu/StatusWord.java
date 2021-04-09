@@ -50,7 +50,11 @@ import es.gob.jmulticard.HexUtils;
 public final class StatusWord implements Serializable {
 
     private static final long serialVersionUID = -735824987343408119L;
+
+    /** Octeto m&aacute;s significativo dentro de la palabra de estado. */
     private byte msb = 0x00;
+
+    /** Octeto menos significativo dentro de la palabra de estado. */
     private byte lsb = 0x00;
 
     /** Contruye una palabra de estado de una APDU.
