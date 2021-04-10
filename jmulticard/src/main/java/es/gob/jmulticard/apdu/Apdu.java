@@ -57,6 +57,8 @@ public class Apdu {
         return response;
     }
 
+    /** Establece los octetos que conforman la APDU.
+     * @param apdu Array de octetos que conforman la APDU. */
     protected void setBytes(final byte[] apdu) {
         this.apduBytes = new byte[apdu.length];
         System.arraycopy(apdu, 0, this.apduBytes, 0, apdu.length);
@@ -67,6 +69,7 @@ public class Apdu {
     	return HexUtils.hexify(getBytes(), true);
     }
 
+    /** Constructor. */
     protected Apdu() {
         /* Ocultamos el constructor para evitar que se puedan crear objetos */
     }
