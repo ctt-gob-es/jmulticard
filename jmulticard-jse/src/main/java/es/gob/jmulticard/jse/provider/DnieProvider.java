@@ -69,7 +69,7 @@ public final class DnieProvider extends Provider {
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para el DNIe"; //$NON-NLS-1$
-    private static final String VERSION = "0.2"; //$NON-NLS-1$
+    private static final double VERSION = 0.2;
     private static final String NAME = "DNIeJCAProvider"; //$NON-NLS-1$
 
     private static ApduConnection defaultConnection = null;
