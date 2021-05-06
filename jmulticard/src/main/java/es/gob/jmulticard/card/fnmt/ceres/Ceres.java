@@ -530,7 +530,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
             	}
 				throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
-            else if (new StatusWord((byte)0x69, (byte)0x83).equals(verifyResponse.getStatusWord())) {
+			if (new StatusWord((byte)0x69, (byte)0x83).equals(verifyResponse.getStatusWord())) {
             	throw new AuthenticationModeLockedException();
             }
             throw new ApduConnectionException(
@@ -542,6 +542,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         }
 	}
 
+	/** Obtiene la <code>PasswordCallback</code> predefinida.
+	 * @return <code>PasswordCallback</code> predefinida.
+	 * @throws PinException Si no se puede obtener el PIN del <code>CallbackHandler</code>. */
     protected PasswordCallback getInternalPasswordCallback() throws PinException {
     	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();

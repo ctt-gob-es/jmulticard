@@ -48,6 +48,8 @@ public abstract class DecoderObject {
 
     private byte[] rawDerValue = null;
 
+    /** Obtiene el valor directo ASN&#46;1 DER.
+     * @return Valor directo ASN&#46;1 DER. */
     protected byte[] getRawDerValue() {
         final byte[] out = new byte[this.rawDerValue.length];
         System.arraycopy(this.rawDerValue, 0, out, 0, this.rawDerValue.length);

@@ -51,6 +51,8 @@ public abstract class ContextSpecific extends DecoderObject {
 
     private DecoderObject object = null;
 
+    /** Obtiene el objeto ASN&#46;1.
+     * @return Objeto ASN&#46;1. */
     protected DecoderObject getObject() {
         if (this.object == null) {
             throw new IllegalStateException();
@@ -79,7 +81,6 @@ public abstract class ContextSpecific extends DecoderObject {
     /** Construye un tipo ASN&#46;1 espec&iacute;fico del contexto.
      * @param type Tipo de elemento contenido dentro de este objeto. */
     public ContextSpecific(final Class<? extends DecoderObject> type) {
-        super();
         if (type == null) {
             throw new IllegalArgumentException(
         		"El tipo contenido dentro de ContextSpecific no puede ser nulo" //$NON-NLS-1$

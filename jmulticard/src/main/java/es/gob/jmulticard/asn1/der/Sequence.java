@@ -59,6 +59,8 @@ public abstract class Sequence extends DecoderObject {
 
     private final OptionalDecoderObjectElement[] elementsTypes;
 
+    /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
+     * @return N&uacute;mero de elementos que contiene la secuencia. */
     protected int getElementCount() {
     	return this.elements.size();
     }
@@ -67,7 +69,6 @@ public abstract class Sequence extends DecoderObject {
      * Un <i>Sequence</i> contiene una secuencia de tipos ASN&#46;1 (que pueden ser distintos).
      * @param types Tipos (etiquetas) de objetos ASN&#46;1 (cero a n elementos) que va a contener la secuencia. El orden es relevante. */
 	protected Sequence(final OptionalDecoderObjectElement[] types) {
-        super();
         if (types == null) {
             throw new IllegalArgumentException();
         }

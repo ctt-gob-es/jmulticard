@@ -101,16 +101,21 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
 	private static final int DEFAULT_KEY_SIZE = 2048;
 
+	/** Obtiene las constantes p&uacute;blicas CWA-14890 para el cifrado de canal.
+	 * @return Constantes p&uacute;blicas CWA-14890 para el cifrado de canal. */
 	@SuppressWarnings("static-method")
 	protected Cwa14890PublicConstants getCwa14890PublicConstants() {
 		return new DnieCwa14890Constants();
 	}
 
+	/** Obtiene las constantes privadas CWA-14890 para el cifrado de canal.
+	 * @return Constantes privadas CWA-14890 para el cifrado de canal. */
 	@SuppressWarnings("static-method")
 	protected Cwa14890PrivateConstants getCwa14890PrivateConstants() {
 		return new DnieCwa14890Constants();
 	}
 
+	/** Registro. */
 	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
@@ -139,22 +144,41 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Alias del certificado de firma del DNIe. */
     public static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
 
+    /** Alias del certificado de firma (siempre el mismo en el DNIe). */
     protected static final String CERT_ALIAS_SIGNALIAS = "CertFirmaSeudonimo"; //$NON-NLS-1$
+
+    /** Alias del certificado de cifrado (siempre el mismo en las tarjetas derivadas del DNIe que soportan cifrado). */
     protected static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
+
+    /** Alias del certificado de CA intermedia (siempre el mismo en el DNIe). */
     protected static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
     private static final String AUTH_KEY_LABEL = "KprivAutenticacion"; //$NON-NLS-1$
     private static final String SIGN_KEY_LABEL = "KprivFirmaDigital"; //$NON-NLS-1$
     private static final String CYPH_KEY_LABEL = "KprivCifrado"; //$NON-NLS-1$
 
+    /** Localizaci&oacute;n del CDF PKCS#15. */
     protected static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
+
+    /** Localizaci&oacute;n del PrKDF PKCS#15. */
     protected static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
+
+    /** Localizaci&oacute;n del EF IDESP. */
 	protected static final Location IDESP_LOCATION = new Location("3F000006"); //$NON-NLS-1$
 
+	/** Certificado de autenticaci&oacute;n. */
     protected X509Certificate authCert;
+
+    /** Certificado de firma. */
     protected X509Certificate signCert;
+
+    /** Certificado de cifrado. */
     protected X509Certificate cyphCert;
+
+    /** Certificado de firma con seud&oacute;nimo. */
     protected X509Certificate signAliasCert;
+
+    /** Certificado de CA intermedia. */
     protected X509Certificate intermediateCaCert;
 
     private Location authCertPath;
@@ -189,12 +213,16 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Manejador de funciones criptogr&aacute;ficas. */
     protected final CryptoHelper cryptoHelper;
 
+    /** Obtiene la clase con funcionalidades de base de criptograf&iacute;a.
+     * @return Clase con funcionalidades de base de criptograf&iacute;a. */
     protected CryptoHelper getCryptoHelper() {
     	return this.cryptoHelper;
     }
 
     private PasswordCallback passwordCallback;
 
+    /** Obtiene la <code>PasswordCallback</code>.
+	 * @return <code>PasswordCallback</code>. */
     protected PasswordCallback getPasswordCallback() {
     	return this.passwordCallback;
     }
@@ -645,10 +673,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		if (CERT_ALIAS_SIGN.equals(alias)) {
             return this.signKeyRef;
         }
-        else if (CERT_ALIAS_CYPHER.equals(alias)) {
+		if (CERT_ALIAS_CYPHER.equals(alias)) {
         	return this.cyphKeyRef;
         }
-        else if (CERT_ALIAS_SIGNALIAS.equals(alias)){
+		if (CERT_ALIAS_SIGNALIAS.equals(alias)){
         	return this.signAliasKeyRef;
         }
         return null;
@@ -676,6 +704,13 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return signBytes;
     }
 
+    /** Ejecuta la operaci&oacute;n interna de firma del DNIe.
+     * @param data Datos a firmar.
+     * @param signAlgorithm Algoritmo de firma.
+     * @param privateKeyReference Referencia a la clave privada de firma.
+     * @return Datos firmados.
+     * @throws CryptoCardException Si hay problemas durante el proceso.
+     * @throws PinException Si no se ha podido realizar la firma por un problema con el PIN (no estar hecha la autenticaci&oacute;n de PIN). */
     protected byte[] signInternal(final byte[] data,
     		                      final String signAlgorithm,
     		                      final PrivateKeyReference privateKeyReference) throws CryptoCardException,
@@ -867,11 +902,20 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
     }
 
+    /** Obtiene la <code>PasswordCallback</code> predefinida.
+	 * @return <code>PasswordCallback</code> predefinida.
+	 * @throws PinException Si no se puede obtener el PIN del <code>CallbackHandler</code>.
+     * @throws PasswordCallbackNotFoundException Si no hay una <code>PasswordCallback</code> definida. */
     protected PasswordCallback getInternalPasswordCallback() throws PinException,
     																PasswordCallbackNotFoundException {
     	return getInternalPasswordCallback(false);
     }
 
+    /** Obtiene la <code>PasswordCallback</code> predefinida.
+     * @param reset Si hay que eliinar cualquier PIN previemante introducido en la <code>PasswordCallback</code>.
+	 * @return <code>PasswordCallback</code> predefinida.
+	 * @throws PinException Si no se puede obtener el PIN del <code>CallbackHandler</code>.
+     * @throws PasswordCallbackNotFoundException Si no hay una <code>PasswordCallback</code> definida. */
     protected PasswordCallback getInternalPasswordCallback(final boolean reset) throws	PinException,
     																					PasswordCallbackNotFoundException {
     	// Si hay establecido un PasswordCallback, devolvemos ese
@@ -990,6 +1034,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	selectFileByName(MASTER_FILE_NAME);
     }
 
+    /** Indica si el canal CWA-14890 est&aacute; o no abierto.
+     * @return <code>true</code> si el canal CWA-14890 est&aacute; abierto,
+     *         <code>false</code> en caso contrario. */
     protected boolean isSecurityChannelOpen() {
 	    //Devuelve true si el canal actual es de PIN o de usuario
         return getConnection() instanceof Cwa14890Connection &&

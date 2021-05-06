@@ -54,10 +54,16 @@ public abstract class SmartCard implements Card {
     private final byte cla;
     private ApduConnection connection;
 
+    /** Obtiene la conexi&oacute;n de la tarjeta.
+     * @return Conexi&oacute;n de la tarjeta. */
     protected ApduConnection getConnection() {
         return this.connection;
     }
 
+    /** Env&iacute;a una APDU a la tarjeta.
+     * @param apdu APDU a enviar.
+     * @return APDU de respuesta.
+     * @throws ApduConnectionException En cualquier error. */
     protected ResponseApdu sendArbitraryApdu(final CommandApdu apdu) throws ApduConnectionException {
     	return this.connection.transmit(apdu);
     }
@@ -73,6 +79,8 @@ public abstract class SmartCard implements Card {
         this.connection = conn;
     }
 
+    /** Obtiene la clase de APDU por defecto de la tarjeta.
+     * @return Clase de APDU por defecto de la tarjeta. */
     protected byte getCla() {
         return this.cla;
     }

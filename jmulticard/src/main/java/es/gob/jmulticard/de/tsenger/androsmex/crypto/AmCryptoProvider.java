@@ -35,7 +35,10 @@ import org.spongycastle.jce.provider.BouncyCastleProvider;
  * @author Tobias Senger (tobias@t-senger.de). */
 public abstract class AmCryptoProvider {
 
+	/** Cifrador. */
 	protected PaddedBufferedBlockCipher encryptCipher = null;
+
+	/** Descifrador. */
 	protected PaddedBufferedBlockCipher decryptCipher = null;
 
 	// Buffers para mover octetos de un flujo a otro
