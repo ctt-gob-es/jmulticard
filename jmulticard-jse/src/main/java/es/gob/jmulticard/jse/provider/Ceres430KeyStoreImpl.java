@@ -324,7 +324,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	final ApduConnection conn;
     	try {
 	    	 conn = Ceres430Provider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				(ApduConnection) Class.forName(ProviderUtil.DEFAULT_PROVIDER_CLASSNAME).getConstructor().newInstance() :
 					Ceres430Provider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {

@@ -24,7 +24,7 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProvider {
 
-	private static final char[] PASSWORD = "rock2048".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "12341234".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args No se usa.
