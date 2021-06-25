@@ -1,5 +1,6 @@
 package es.gob.jmulticard.jse.provider;
 
+import java.lang.reflect.InvocationTargetException;
 import java.security.Provider;
 import java.util.logging.Logger;
 
@@ -8,7 +9,6 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
 import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Factori&iacute;a de proveedores para todas las tarjetas soportadas.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -150,14 +150,42 @@ public final class JMultiCardProviderFactory {
 		// No instanciable
 	}
 
-	/** Obtiene el proveedor (con la conexi&oacute;n por defecto) correspondiente
+	/** Obtiene el proveedor (con la conexi&oacute;n indicada) correspondiente
 	 * a la primera tarjeta encontrada en el sistema.
 	 * @return Proveedor (con la conexi&oacute;n por defecto) correspondiente
 	 *         a la primera tarjeta encontrada insertada o <code>null</code> si
 	 *         no hay ninguna insertada, no ha lector de tarjetas o no se
 	 *         encuentra ninguna tarjeta soportada. */
 	public static Provider getProvider() {
-		final ApduConnection conn = new SmartcardIoConnection();
+		return getProvider((String)null);
+	}
+
+	/** Obtiene el proveedor (con la conexi&oacute;n indicada) correspondiente
+	 * a la primera tarjeta encontrada en el sistema.
+	 * @param connectionClassName Nombre de la clase de conexi&oacute;n a usar.
+	 * @return Proveedor (con la conexi&oacute;n por defecto) correspondiente
+	 *         a la primera tarjeta encontrada insertada o <code>null</code> si
+	 *         no hay ninguna insertada, no ha lector de tarjetas o no se
+	 *         encuentra ninguna tarjeta soportada. */
+	public static Provider getProvider(final String connectionClassName) {
+		final ApduConnection conn;
+		try {
+			conn = (ApduConnection) Class.forName(
+				connectionClassName != null && !connectionClassName.isEmpty() ?
+					connectionClassName :
+						"es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection" //$NON-NLS-1$
+			).getConstructor().newInstance();
+		}
+		catch (InstantiationException    |
+			   IllegalAccessException    |
+			   IllegalArgumentException  |
+			   InvocationTargetException |
+			   NoSuchMethodException     |
+			   SecurityException         |
+			   ClassNotFoundException e2) {
+			throw new IllegalStateException(
+				"No se ha podido instanciar la conexion 'SmartcardIoConnection': " + e2, e2); //$NON-NLS-1$
+		}
 		final long[] terminals;
 		try {
 			terminals = conn.getTerminals(false);
@@ -218,10 +246,8 @@ public final class JMultiCardProviderFactory {
 	}
 
 	private static boolean isCeres430(final byte[] atr) {
-		if (FNMT_TC_430_ATR.equals(atr)) {
-			if (atr[15] >= (byte) 0x04 && atr[16] >= (byte) 0x30) {
-				return true;
-			}
+		if (FNMT_TC_430_ATR.equals(atr) && atr[15] >= (byte) 0x04 && atr[16] >= (byte) 0x30) {
+			return true;
 		}
 		return false;
 	}

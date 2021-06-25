@@ -68,6 +68,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -223,7 +224,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException {
     	// Ponemos la conexion por defecto
-    	final ApduConnection conn = new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection();
+    	final ApduConnection conn = ProviderUtil.getDefaultConnection();
 
         // Aqui se realiza el acceso e inicializacion de la tarjeta
     	this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
@@ -236,7 +237,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     /** {@inheritDoc} */
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
-		final ApduConnection conn = new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection();
+		final ApduConnection conn = ProviderUtil.getDefaultConnection();
 		this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
     	if (param != null) {
     		final ProtectionParameter pp = param.getProtectionParameter();

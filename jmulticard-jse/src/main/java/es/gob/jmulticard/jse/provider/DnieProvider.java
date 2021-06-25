@@ -94,7 +94,7 @@ public final class DnieProvider extends Provider {
 
         try {
 			defaultConnection = conn == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				ProviderUtil.getDefaultConnection() :
 					conn;
 		}
         catch (final Exception e) {

@@ -8,7 +8,7 @@ import org.junit.Test;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de cambio de PIN.
  * @author Sergio Mart&iacute;nez Rico. */
@@ -40,7 +40,7 @@ public final class TestDnieChangePIN {
 	@Ignore
 	public void testChangePIN() throws Exception {
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
-		final ApduConnection ac = new SmartcardIoConnection();
+		final ApduConnection ac = ProviderUtil.getDefaultConnection();
 		final Dnie dni = DnieFactory.getDnie(ac , cpc, new JseCryptoHelper(), null);
 		dni.changePIN("password", "pinNuevo"); //$NON-NLS-1$ //$NON-NLS-2$
 	}

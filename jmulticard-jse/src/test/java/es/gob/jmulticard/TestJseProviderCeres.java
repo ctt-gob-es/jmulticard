@@ -8,8 +8,8 @@ import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Pruebas del proveedor JSE para tarjeta CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -55,7 +55,7 @@ public final class TestJseProviderCeres {
 	}
 
 	static void testProviderWithCustomConnection() throws Exception {
-		final Provider p = new CeresProvider(new SmartcardIoConnection());
+		final Provider p = new CeresProvider(ProviderUtil.getDefaultConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("CERES"); //$NON-NLS-1$
 		ks.load(null, PASSWORD);

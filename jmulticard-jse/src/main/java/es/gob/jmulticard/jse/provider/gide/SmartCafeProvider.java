@@ -44,6 +44,7 @@ import java.security.ProviderException;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Proveedor criptogr&aacute;fico JCA para tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * Crea dos servicios:
@@ -94,7 +95,7 @@ public final class SmartCafeProvider extends Provider {
 
         try {
 			defaultConnection = conn == null ?
-				new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection() :
+				ProviderUtil.getDefaultConnection() :
 					conn;
 		}
         catch (final Exception e) {

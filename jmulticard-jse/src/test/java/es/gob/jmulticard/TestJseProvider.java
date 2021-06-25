@@ -18,13 +18,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas del proveedor JSE para DNIe 100% Java.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestJseProvider {
 
-	private static final char[] PASSWORD = "12341234".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "rock2048".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args No se usa.
@@ -40,7 +40,7 @@ public final class TestJseProvider {
 	@Test
 	@Ignore
 	public void testProviderWithCustomConnection() throws Exception {
-		final Provider p = new DnieProvider(new SmartcardIoConnection());
+		final Provider p = new DnieProvider(ProviderUtil.getDefaultConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
     	final CallbackHandler callbackHandler;

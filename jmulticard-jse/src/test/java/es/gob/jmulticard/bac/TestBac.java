@@ -8,7 +8,7 @@ import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.card.bac.Bac;
 import es.gob.jmulticard.card.pace.PaceInitializer;
 import es.gob.jmulticard.card.pace.PaceInitializerMrz;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de BAC.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -34,7 +34,7 @@ public final class TestBac {
 	@Test
 	@Ignore
 	public void testBac() throws Exception {
-		Bac.doBac(TEST_MRZ, new JseCryptoHelper(), new SmartcardIoConnection());
+		Bac.doBac(TEST_MRZ, new JseCryptoHelper(), ProviderUtil.getDefaultConnection());
 	}
 
 }
