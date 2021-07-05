@@ -110,7 +110,7 @@ public final class TestJseProvider {
 		System.out.println("Firma generada correctamente: " + HexUtils.hexify(signBytes, false)); //$NON-NLS-1$
 	}
 
-	/** prueba de obtenci&oacute;n de la cadena de certificados.
+	/** Prueba de obtenci&oacute;n de la cadena de certificados.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
