@@ -102,6 +102,19 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	return ((Dnie3)this.cryptoCard).getMrz();
     }
 
+    /** Obtiene el objeto DG02 (fotograf&iacute;a del titular en formato JPEG2000) del DNIe 3&#46;0.
+     * @return Objeto DG02 (fotograf&iacute;a del titular en formato JPEG2000) del DNIe 3&#46;0.
+     * @throws IOException Si no se puede leer el objeto DG02.
+     * @throws UnsupportedOperationException Si el objeto actual no es un DNIe 3&#46;0. */
+    public byte[] getDnie3Dg02() throws IOException {
+    	if (!(this.cryptoCard instanceof Dnie3)) {
+    		throw new UnsupportedOperationException(
+				"El objeto DG02 solo esta presente en DNIe 3.0" //$NON-NLS-1$
+			);
+    	}
+    	return ((Dnie3)this.cryptoCard).getDg2();
+    }
+
     /** {@inheritDoc} */
     @Override
     public Enumeration<String> engineAliases() {
