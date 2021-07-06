@@ -54,6 +54,7 @@ import java.security.ProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -223,7 +224,10 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
-		return new DniePrivateKey((DniePrivateKeyReference) pkRef);
+		return new DniePrivateKey(
+			(DniePrivateKeyReference) pkRef,
+			((RSAPublicKey)engineGetCertificate(alias).getPublicKey()).getModulus()
+		);
     }
 
     /** {@inheritDoc} */
