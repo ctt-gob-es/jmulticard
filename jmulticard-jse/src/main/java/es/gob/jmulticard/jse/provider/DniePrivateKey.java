@@ -118,7 +118,7 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	/** M&eacute;todo no soportado. */
 	@Override
 	public BigInteger getModulus() {
-		throw new UnsupportedOperationException();
+		return new FakeDniePrivateKeyModulus(this.keySize);
 	}
 
 	/** Recupera la ruta hacia la clave.
