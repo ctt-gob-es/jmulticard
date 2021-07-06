@@ -195,10 +195,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     		certs.add(intermediateCaCert);
 
-    		// Si tenemos CA intermedia probamos con la raiz, incluida estaticamente
-    		// en el proyecto
+    		// Si tenemos CA intermedia probamos con la raiz v2, incluida estaticamente en el proyecto
 	    	try (
-    			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+    			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2-2.crt") //$NON-NLS-1$
 			) {
 				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
 					is
@@ -207,7 +206,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	    	catch (final Exception e) {
 	    		sha2DnieRoot = null;
 	    		LOGGER.warning(
-					"No se ha podido cargar el certificado de la CA raiz: " + e //$NON-NLS-1$
+					"No se ha podido cargar el certificado de la CA raiz 2: " + e //$NON-NLS-1$
 				);
 			}
 
@@ -217,11 +216,35 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 					intermediateCaCert.verify(sha2DnieRoot.getPublicKey());
 				}
 		    	catch (final Exception e) {
-		    		sha2DnieRoot = null;
-		    		LOGGER.info(
-						"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + e //$NON-NLS-1$
-					);
-				}
+		    		// Si no es la raiz, puede que sea un DNI antiguo con la raiz anterior
+		    		LOGGER.warning(
+    					"La CA raiz no es la V2, se intentara con la version anterior: " + e //$NON-NLS-1$
+    				);
+		    		try (
+	        			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+	    			) {
+	    				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
+	    					is
+	    				);
+	    			}
+	    	    	catch (final Exception ex) {
+	    	    		sha2DnieRoot = null;
+	    	    		LOGGER.warning(
+	    					"No se ha podido cargar el certificado de la CA raiz: " + ex //$NON-NLS-1$
+	    				);
+	    			}
+		    		if (sha2DnieRoot != null) {
+				    	try {
+							intermediateCaCert.verify(sha2DnieRoot.getPublicKey());
+						}
+				    	catch (final Exception ex2) {
+				    		sha2DnieRoot = null;
+				    		LOGGER.info(
+								"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + ex2 //$NON-NLS-1$
+							);
+						}
+		    		}
+		    	}
 	    	}
     	}
 

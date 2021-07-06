@@ -43,8 +43,7 @@ public final class TestJseProvider {
 		final Provider p = new DnieProvider(ProviderUtil.getDefaultConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
-    	final CallbackHandler callbackHandler;
-    	callbackHandler = (CallbackHandler) Class.forName(
+    	final CallbackHandler callbackHandler = (CallbackHandler) Class.forName(
 			"es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
 		).getConstructor().newInstance();
 		final LoadStoreParameter lsp = new LoadStoreParameter() {
