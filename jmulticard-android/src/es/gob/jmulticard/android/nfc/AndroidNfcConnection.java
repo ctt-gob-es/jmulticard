@@ -2,6 +2,7 @@ package es.gob.jmulticard.android.nfc;
 
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -19,6 +20,9 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre NFC para Android.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class AndroidNfcConnection implements ApduConnection {
+
+    private static final boolean DEBUG = false;
+    private static final String TAG = AndroidNfcConnection.class.getSimpleName();
 
     private static final int ISODEP_TIMEOUT = 3000;
 
@@ -65,6 +69,10 @@ public final class AndroidNfcConnection implements ApduConnection {
 			}
         }
 
+        if (DEBUG) {
+            Log.d(TAG, "Enviada APDU:\n" + HexUtils.hexify(command.getBytes(), false)); //$NON-NLS-1$
+        }
+
         final byte[] commandBytes;
         if (command instanceof VerifyApduCommand) {
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -91,6 +99,8 @@ public final class AndroidNfcConnection implements ApduConnection {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             NFCWatchdogRefresher.stopHoldingConnection();
         }
+
+        //TODO: Fraccionar las APDU grandes con una envoltura?
 
         final byte[] bResp;
         try {
@@ -149,8 +159,10 @@ public final class AndroidNfcConnection implements ApduConnection {
             return this.transmit(command);
         }
 
+        if (DEBUG) {
+            Log.d(TAG, "Respuesta:\n" + HexUtils.hexify(response.getBytes(), false)); //$NON-NLS-1$
+        }
         return response;
-
     }
 
     @Override
@@ -169,16 +181,16 @@ public final class AndroidNfcConnection implements ApduConnection {
 
     @Override
     public void close() throws ApduConnectionException {
-        // Liberamos la conexion para transmitir
+        // Liberamos la conexion
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
             NFCWatchdogRefresher.stopHoldingConnection();
         }
         try{
         	this.mIsoDep.close();
         }
-	catch(final IOException ioe){
+	    catch(final IOException ioe) {
         	throw new ApduConnectionException(
-                    "Error indefinido cerrando la conexion con la tarjeta: " + ioe, ioe //$NON-NLS-1$
+                "Error indefinido cerrando la conexion con la tarjeta: " + ioe, ioe //$NON-NLS-1$
             );
         }
     }
@@ -190,7 +202,7 @@ public final class AndroidNfcConnection implements ApduConnection {
         	if (this.mIsoDep.getHistoricalBytes() != null) {
         		return this.mIsoDep.getHistoricalBytes();
         	}
-		return this.mIsoDep.getHiLayerResponse();
+		    return this.mIsoDep.getHiLayerResponse();
         }
         throw new ApduConnectionException(
             "Error indefinido reiniciando la conexion con la tarjeta" //$NON-NLS-1$
@@ -208,12 +220,12 @@ public final class AndroidNfcConnection implements ApduConnection {
 	}
 
 	@Override
-	public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
+	public long[] getTerminals(final boolean onlyWithCardPresent) {
 		return new long[] { 0 };
 	}
 
 	@Override
-	public String getTerminalInfo(final int terminal) throws ApduConnectionException {
+	public String getTerminalInfo(final int terminal) {
 		return "Interfaz ISO-DEP NFC de Android"; //$NON-NLS-1$
 	}
 
