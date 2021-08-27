@@ -118,7 +118,10 @@ public final class SmartcardIoConnection implements ApduConnection {
 
     @Override
 	  public String toString() {
-    	return "Conexion de bajo nivel JSR-268 abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    	return "Conexion de bajo nivel JSR-268 " + //$NON-NLS-1$
+    			(isOpen()
+    					? "abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    					: "cerrada"); //$NON-NLS-1$
     }
 
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */

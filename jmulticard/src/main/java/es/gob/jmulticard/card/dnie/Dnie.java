@@ -861,7 +861,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		}
 		catch (final ApduConnectionException e) {
 			throw new PinException(
-				"Error obteniendo el PIN del CallbackHandler: " + e  //$NON-NLS-1$
+				"Error obteniendo el PIN del CallbackHandler: " + e, e  //$NON-NLS-1$
 			);
 		}
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
