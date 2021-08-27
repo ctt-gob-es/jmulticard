@@ -42,6 +42,7 @@ package es.gob.jmulticard.apdu.connection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -125,6 +126,13 @@ import es.gob.jmulticard.asn1.Tlv;
         return new CipheredApdu(cla, ins, p1, p2, completeDataBytes, mac);
     }
 
+    /** Encripta los datos para una APDU cifrada.
+     * @param data Datos de la APDU.
+     * @param key Clave de cifrado.
+     * @param ssc Contador de secuencia.
+     * @param cryptoHelper Clase con las funcionalidades de criptograf&iacute;a.
+     * @return Datos enconcriptados.
+     * @throws IOException En cualquier error. */
     protected abstract byte[] encryptData(final byte[] data,
     		                              final byte[] key,
     		                              final byte[] ssc,
@@ -158,7 +166,7 @@ import es.gob.jmulticard.asn1.Tlv;
                 }
                 return HexUtils.subArray(paddedData, 0, i);
             }
-            else if (paddedData[i] != (byte) 0x00) {
+			if (paddedData[i] != (byte) 0x00) {
                 // Consideramos que no tenia padding
                 return paddedData;
             }
@@ -182,12 +190,11 @@ import es.gob.jmulticard.asn1.Tlv;
     /** Desencripta la Apdu de respuesta recibida a partir de las variables del canal de cifrado (kenc, kmac, ssc).
      * @param responseApdu Respuesta a desencriptar.
      * @param keyCipher Clave de cifrado.
-     * @param ssc Contador de cifrado.
+     * @param ssc Contador de secuencia.
      * @param kMac Clave de cifrado.
      * @param cryptoHelper Instancia que lleva a cabo las operaciones de cifrado.
      * @return Apdu descifrada.
-     * @throws IOException Error en el proceso de descifrado.
-     */
+     * @throws IOException En cualquier error durante el proceso de descifrado. */
     public abstract ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
 			final byte[] keyCipher,
 			final byte[] ssc,
@@ -196,9 +203,7 @@ import es.gob.jmulticard.asn1.Tlv;
 
     private static void wipeByteArray(final byte[] in) {
     	if (in != null) {
-    		for (int i=0; i<in.length; i++) {
-    			in[i] = '\0';
-    		}
+    		Arrays.fill(in, (byte)'\0');
     	}
     }
 

@@ -8,7 +8,7 @@ import java.security.Signature;
 import java.util.Enumeration;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de firma consecutiva en DNIe 100% Java.
  * @author Sergio Mart&iacute;nez Rico. */
@@ -25,7 +25,7 @@ public final class TestDoubleSign {
 
 	static void testDoubleSign() throws Exception {
 
-		final Provider p = new DnieProvider(new SmartcardIoConnection());
+		final Provider p = new DnieProvider(ProviderUtil.getDefaultConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
 		ks.load(null, PASSWORD);

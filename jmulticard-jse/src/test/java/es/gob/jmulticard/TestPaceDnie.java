@@ -23,7 +23,7 @@ import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** pruebas de PACE con DNIe 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -45,7 +45,7 @@ public final class TestPaceDnie {
 	 * @param args No se usa.
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
-		final ApduConnection conn = new SmartcardIoConnection();
+		final ApduConnection conn = ProviderUtil.getDefaultConnection();
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
 		final Dnie dni = DnieFactory.getDnie(
 			conn,

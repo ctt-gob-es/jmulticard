@@ -74,15 +74,18 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	/** Tama&ntilde;o en bits de la clave privada. */
 	private final int keySize;
 
+	private final BigInteger modulus;
+
 	/** Crea una clave privada de DNIe.
 	 * @param keyReference Referencia a la clave privada del DNIe. */
-	DniePrivateKey(final DniePrivateKeyReference keyReference) {
-		this.dnie = keyReference.getDnieCard();
-		this.id = keyReference.getIdentifier();
-		this.path = keyReference.getKeyPath();
-		this.name = keyReference.getLabel();
+	DniePrivateKey(final DniePrivateKeyReference keyReference, final BigInteger mod) {
+		this.dnie      = keyReference.getDnieCard();
+		this.id        = keyReference.getIdentifier();
+		this.path      = keyReference.getKeyPath();
+		this.name      = keyReference.getLabel();
 		this.reference = keyReference.getKeyReference();
-		this.keySize = keyReference.getKeyBitSize();
+		this.keySize   = keyReference.getKeyBitSize();
+		this.modulus   = mod;
 	}
 
 	/** {@inheritDoc} */
@@ -115,10 +118,9 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		return this.id;
 	}
 
-	/** M&eacute;todo no soportado. */
 	@Override
 	public BigInteger getModulus() {
-		throw new UnsupportedOperationException();
+		return this.modulus;
 	}
 
 	/** Recupera la ruta hacia la clave.

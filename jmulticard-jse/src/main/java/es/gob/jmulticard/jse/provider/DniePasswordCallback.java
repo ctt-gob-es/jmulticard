@@ -13,7 +13,13 @@ final class DniePasswordCallback extends PasswordCallback {
 	/** Constructor.
 	 * @param pp PasswordProtection para solicitar la contrase&ntilde;a. */
 	DniePasswordCallback(final PasswordProtection pp) {
-		super("Por favor, introduzca el PIN del DNIe", false); //$NON-NLS-1$
+		this(pp, "Por favor, introduzca el PIN del DNIe");
+	}
+
+	/** Constructor.
+	 * @param pp PasswordProtection para solicitar la contrase&ntilde;a. */
+	DniePasswordCallback(final PasswordProtection pp, final String prompt) {
+		super(prompt, false);
 		if (pp == null) {
 			throw new IllegalArgumentException(
 				"El PasswordProtection no puede ser nulo" //$NON-NLS-1$

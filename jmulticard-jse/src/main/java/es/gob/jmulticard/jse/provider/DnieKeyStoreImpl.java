@@ -54,6 +54,7 @@ import java.security.ProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,6 +101,19 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 			);
     	}
     	return ((Dnie3)this.cryptoCard).getMrz();
+    }
+
+    /** Obtiene el objeto DG02 (fotograf&iacute;a del titular en formato JPEG2000) del DNIe 3&#46;0.
+     * @return Objeto DG02 (fotograf&iacute;a del titular en formato JPEG2000) del DNIe 3&#46;0.
+     * @throws IOException Si no se puede leer el objeto DG02.
+     * @throws UnsupportedOperationException Si el objeto actual no es un DNIe 3&#46;0. */
+    public byte[] getDnie3Dg02() throws IOException {
+    	if (!(this.cryptoCard instanceof Dnie3)) {
+    		throw new UnsupportedOperationException(
+				"El objeto DG02 solo esta presente en DNIe 3.0" //$NON-NLS-1$
+			);
+    	}
+    	return ((Dnie3)this.cryptoCard).getDg2();
     }
 
     /** {@inheritDoc} */
@@ -182,10 +196,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     		certs.add(intermediateCaCert);
 
-    		// Si tenemos CA intermedia probamos con la raiz, incluida estaticamente
-    		// en el proyecto
+    		// Si tenemos CA intermedia probamos con la raiz v2, incluida estaticamente en el proyecto
 	    	try (
-    			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+    			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2-2.crt") //$NON-NLS-1$
 			) {
 				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
 					is
@@ -194,7 +207,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	    	catch (final Exception e) {
 	    		sha2DnieRoot = null;
 	    		LOGGER.warning(
-					"No se ha podido cargar el certificado de la CA raiz: " + e //$NON-NLS-1$
+					"No se ha podido cargar el certificado de la CA raiz 2: " + e //$NON-NLS-1$
 				);
 			}
 
@@ -204,11 +217,35 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 					intermediateCaCert.verify(sha2DnieRoot.getPublicKey());
 				}
 		    	catch (final Exception e) {
-		    		sha2DnieRoot = null;
-		    		LOGGER.info(
-						"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + e //$NON-NLS-1$
-					);
-				}
+		    		// Si no es la raiz, puede que sea un DNI antiguo con la raiz anterior
+		    		LOGGER.warning(
+    					"La CA raiz no es la V2, se intentara con la version anterior: " + e //$NON-NLS-1$
+    				);
+		    		try (
+	        			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
+	    			) {
+	    				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
+	    					is
+	    				);
+	    			}
+	    	    	catch (final Exception ex) {
+	    	    		sha2DnieRoot = null;
+	    	    		LOGGER.warning(
+	    					"No se ha podido cargar el certificado de la CA raiz: " + ex //$NON-NLS-1$
+	    				);
+	    			}
+		    		if (sha2DnieRoot != null) {
+				    	try {
+							intermediateCaCert.verify(sha2DnieRoot.getPublicKey());
+						}
+				    	catch (final Exception ex2) {
+				    		sha2DnieRoot = null;
+				    		LOGGER.info(
+								"La CA raiz de DNIe precargada no es la emisora de este DNIe: " + ex2 //$NON-NLS-1$
+							);
+						}
+		    		}
+		    	}
 	    	}
     	}
 
@@ -236,7 +273,10 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
-		return new DniePrivateKey((DniePrivateKeyReference) pkRef);
+		return new DniePrivateKey(
+			(DniePrivateKeyReference) pkRef,
+			((RSAPublicKey)engineGetCertificate(alias).getPublicKey()).getModulus()
+		);
     }
 
     /** {@inheritDoc} */
@@ -336,7 +376,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	final ApduConnection conn;
     	try {
 	    	 conn = DnieProvider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				(ApduConnection) Class.forName(ProviderUtil.DEFAULT_PROVIDER_CLASSNAME).getConstructor().newInstance() :
 					DnieProvider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {

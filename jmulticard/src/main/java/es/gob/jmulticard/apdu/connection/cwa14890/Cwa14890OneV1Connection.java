@@ -111,11 +111,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     /** Indica el estado de la conexi&oacute;n. */
     protected boolean openState = false;
 
+    /** Clase de utilidad para encriptar las APDU. */
     protected final ApduEncrypter apduEncrypter;
 
     private Cwa14890PublicConstants pubConsts;
     private Cwa14890PrivateConstants privConsts;
 
+    /** Obtiene la clase de utilidad para encriptar las APDU.
+     * @return Clase de utilidad para encriptar las APDU. */
     @SuppressWarnings("static-method")
 	protected ApduEncrypter instantiateApduEncrypter() {
     	return new ApduEncrypterDes();
@@ -729,7 +732,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
             	command.setLe(decipherApdu.getStatusWord().getLsb());
             	return transmit(command);
             }
-            else if (decipherApdu.getStatusWord().getMsb() == MSB_INCORRECT_LE_PACE) {
+			if (decipherApdu.getStatusWord().getMsb() == MSB_INCORRECT_LE_PACE) {
             	command.setLe(command.getLe().intValue()-1);
             	return transmit(command);
             }
@@ -812,7 +815,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 			);
         	return incrementedValue;
         }
-        else if (biArray.length < 8) {
+		if (biArray.length < 8) {
         	final byte[] incrementedValue = new byte[8];
         	System.arraycopy(
     			biArray,

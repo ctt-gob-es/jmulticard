@@ -54,6 +54,7 @@ import java.security.ProviderException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +76,6 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
-import es.gob.jmulticard.ui.passwordcallback.gui.CommonPasswordCallback;
 
 /** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjetas CERES 4.30 o superiores.
  * Esta implementaci&oacute;n es una copia del de DNIe, ya que estas tarjetas son
@@ -224,7 +224,10 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
-		return new DniePrivateKey((DniePrivateKeyReference) pkRef);
+		return new DniePrivateKey(
+			(DniePrivateKeyReference) pkRef,
+			((RSAPublicKey)engineGetCertificate(alias).getPublicKey()).getModulus()
+		);
     }
 
     /** {@inheritDoc} */
@@ -289,7 +292,10 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
-    			final PasswordCallback pwc = new CommonPasswordCallback((PasswordProtection) pp);
+    			final PasswordCallback pwc = new DniePasswordCallback(
+					(PasswordProtection) pp,
+					"Por favor, introduzca el PIN de su tarjeta FNMT-CERES"
+				);
     			this.cryptoCard = new CeresSc(
 					Ceres430Provider.getDefaultApduConnection(),
 					pwc,
@@ -322,7 +328,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	final ApduConnection conn;
     	try {
 	    	 conn = Ceres430Provider.getDefaultApduConnection() == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				(ApduConnection) Class.forName(ProviderUtil.DEFAULT_PROVIDER_CLASSNAME).getConstructor().newInstance() :
 					Ceres430Provider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {

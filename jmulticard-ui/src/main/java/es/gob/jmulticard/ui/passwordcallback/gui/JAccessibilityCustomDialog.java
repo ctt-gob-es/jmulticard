@@ -250,7 +250,8 @@ abstract class JAccessibilityCustomDialog extends JDialog {
     }
 
 
-    /** Se crea el panel de botones de accesibilidad. */
+    /** Se crea el panel de botones de accesibilidad.
+     * @return Panel de botones de accesibilidad. */
     protected JPanel createAccessibilityButtonsPanel() {
     	final JPanel accessibilityButtonsPanel = new JPanel(new GridBagLayout());
 

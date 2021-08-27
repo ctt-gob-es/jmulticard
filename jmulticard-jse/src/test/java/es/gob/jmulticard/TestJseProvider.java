@@ -18,7 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas del proveedor JSE para DNIe 100% Java.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -40,11 +40,10 @@ public final class TestJseProvider {
 	@Test
 	@Ignore
 	public void testProviderWithCustomConnection() throws Exception {
-		final Provider p = new DnieProvider(new SmartcardIoConnection());
+		final Provider p = new DnieProvider(ProviderUtil.getDefaultConnection());
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
-    	final CallbackHandler callbackHandler;
-    	callbackHandler = (CallbackHandler) Class.forName(
+    	final CallbackHandler callbackHandler = (CallbackHandler) Class.forName(
 			"es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
 		).getConstructor().newInstance();
 		final LoadStoreParameter lsp = new LoadStoreParameter() {
@@ -110,7 +109,7 @@ public final class TestJseProvider {
 		System.out.println("Firma generada correctamente: " + HexUtils.hexify(signBytes, false)); //$NON-NLS-1$
 	}
 
-	/** prueba de obtenci&oacute;n de la cadena de certificados.
+	/** Prueba de obtenci&oacute;n de la cadena de certificados.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
