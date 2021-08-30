@@ -274,33 +274,62 @@ public final class CeresSc extends Dnie {
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
      * 						un PIN para validar.  */
     @Override
-	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
-        // Abrimos el canal seguro si no lo esta ya
-        if (!isSecurityChannelOpen()) {
-        	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
-            if (!(getConnection() instanceof Cwa14890Connection)) {
-            	final ApduConnection secureConnection;
-        		secureConnection = new Cwa14890OneV2Connection(
-            		this,
-            		getConnection(),
-            		this.cryptoHelper,
-            		getCwa14890PublicConstants(),
-            		getCwa14890PrivateConstants()
-        		);
-                try {
-                    setConnection(secureConnection);
-                }
-                catch (final ApduConnectionException e) {
-                    throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
-                }
-            }
-            try {
-                verifyPin(getInternalPasswordCallback());
-            }
-            catch (final ApduConnectionException e) {
-                throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
-            }
+    public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+
+    	if (isSecurityChannelOpen()) {
+    		return;
+    	}
+
+    	if (DEBUG) {
+    		LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
+    		LOGGER.info("Conexion subyacente: " + this.rawConnection); //$NON-NLS-1$
+    	}
+
+        // Si la conexion esta cerrada, la reestablecemos
+        if (!getConnection().isOpen()) {
+	        try {
+				setConnection(this.rawConnection);
+			}
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	        		"Error en el establecimiento del canal inicial: " + e, e //$NON-NLS-1$
+	    		);
+			}
         }
+
+    	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
+    	if (!(getConnection() instanceof Cwa14890Connection)) {
+    		final ApduConnection secureConnection = new Cwa14890OneV2Connection(
+    				this,
+    				getConnection(),
+    				this.cryptoHelper,
+    				getCwa14890PublicConstants(),
+    				getCwa14890PrivateConstants()
+    				);
+
+	        try {
+	        	selectMasterFile();
+	        }
+	        catch (final Exception e) {
+	        	LOGGER.warning(
+	    			"Error seleccionando el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
+				);
+	        }
+
+        	try {
+        		setConnection(secureConnection);
+        	}
+        	catch (final ApduConnectionException e) {
+        		throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
+        	}
+    	}
+
+    	try {
+    		verifyPin(getInternalPasswordCallback());
+    	}
+    	catch (final ApduConnectionException e) {
+    		throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
+    	}
     }
 
     @Override
@@ -315,7 +344,7 @@ public final class CeresSc extends Dnie {
 
     private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
     	final Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
-    	if (ATR_TC.equals(tmpAtr) && (atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30)) {
+    	if (ATR_TC.equals(tmpAtr) && atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30) {
 			LOGGER.info(
 				"Encontrada TC CERES en version " + //$NON-NLS-1$
 					HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) //$NON-NLS-1$
