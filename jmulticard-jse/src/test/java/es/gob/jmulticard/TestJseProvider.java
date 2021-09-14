@@ -5,11 +5,15 @@ import java.security.KeyStore.LoadStoreParameter;
 import java.security.KeyStore.ProtectionParameter;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.Provider.Service;
 import java.security.Security;
 import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
 
 import javax.security.auth.callback.CallbackHandler;
 
@@ -126,6 +130,31 @@ public final class TestJseProvider {
 				System.out.println(
 					"XXX: " + ((X509Certificate)cert).getSubjectX500Principal() //$NON-NLS-1$
 				);
+			}
+		}
+	}
+
+	private static final List<String> FORBIDDEN_PROVIDERS = Arrays.asList("Ceres430JCAProvider", "SunMSCAPI"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	/** Prueba la b&uacute;squeda de proveedor de firma alternativo. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void listP() {
+		final String serviceName = "Signature"; //$NON-NLS-1$
+		final String serviceAlgorithm = "SHA512withRSA"; //$NON-NLS-1$
+
+		final Provider[] providerList = Security.getProviders();
+		for (final Provider provider : providerList) {
+			final Set<Service> serviceList = provider.getServices();
+			for (final Service service : serviceList) {
+				if (serviceName.equals(service.getType()) && serviceAlgorithm.equals(service.getAlgorithm())) {
+					final String providerName = provider.getName();
+					if (!FORBIDDEN_PROVIDERS.contains(providerName) && !providerName.contains("PKCS11")) { //$NON-NLS-1$
+						System.out.println(
+							providerName
+						);
+					}
+				}
 			}
 		}
 	}

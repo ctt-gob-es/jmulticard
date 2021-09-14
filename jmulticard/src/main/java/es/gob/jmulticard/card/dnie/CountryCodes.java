@@ -2,6 +2,8 @@ package es.gob.jmulticard.card.dnie;
 
 import java.util.Properties;
 
+/** Diccionario con los c&oacute;digos de pa&iacute;ses ICAO.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 final class CountryCodes {
 
     private static final Properties CC = new Properties();

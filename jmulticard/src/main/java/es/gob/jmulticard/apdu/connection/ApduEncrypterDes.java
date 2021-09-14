@@ -217,7 +217,7 @@ public class ApduEncrypterDes extends ApduEncrypter {
     		calculatedMac = generateMac(addPadding7816(verificableData, this.paddingLength), ssc, kMac, cryptoHelper);
     	}
     	catch (final IOException e) {
-    		throw new SecurityException("No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion: " + e); //$NON-NLS-1$
+    		throw new SecurityException("No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion: " + e, e); //$NON-NLS-1$
 		}
 
     	// Comparamos que el MAC recibido sea igual que el MAC que debimos recibir

@@ -1,10 +1,9 @@
 package test.es.gob.jmulticard;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 
 import es.gob.jmulticard.HexUtils;
+import junit.framework.TestCase;
 
 /** Pruebas de los m&eacute;todos definidos en la clase de utilidades {@linkplain es.gob.jmulticard.HexUtils}
  * @author Alberto Mart&iacute;nez */
@@ -65,13 +64,13 @@ public class TestHexUtils extends TestCase {
     /** Prueba el m&eacute;todo {@linkplain es.gob.jmulticard.HexUtils#xor(byte[], byte[])} */
     public static void testXor() {
         final byte[] result = HexUtils.xor(HEXSTRING, HEXSTRING);
-        final byte[] array = new byte[] {
+        final byte[] array = {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
         HexUtils.xor(HEXSTRING, array);
 
-        final byte[] expectedResult = new byte[] {
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        final byte[] expectedResult = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
 
         for (int i = 0; i < result.length; i++) {

@@ -20,17 +20,17 @@ public final class DnieFactory {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	private static final byte[] ATR_MASK = new byte[] {
+	private static final byte[] ATR_MASK = {
 		(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 		(byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
 	};
 
-	private static final byte[] ATR_NFC_MASK = new byte[] {
+	private static final byte[] ATR_NFC_MASK = {
 		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 		(byte) 0x00, (byte) 0xFF, (byte) 0x00
 	};
 
-	private static final byte[] ATR_NFC2_MASK = new byte[] {
+	private static final byte[] ATR_NFC2_MASK = {
 		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xFF,
 		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00
 	};
@@ -134,7 +134,7 @@ public final class DnieFactory {
 				}
 				catch (final PaceException e) {
 					throw new ApduConnectionException(
-						"No se ha podido abrir el canal PACE: " + e //$NON-NLS-1$
+						"No se ha podido abrir el canal PACE: " + e, e //$NON-NLS-1$
 					);
 				}
 			}
@@ -146,25 +146,25 @@ public final class DnieFactory {
 				LOGGER.info("Detectado DNIe 2.0"); //$NON-NLS-1$
 				return new Dnie(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 			}
-			else if (ATR_TIF.equals(actualAtr)) {
+			if (ATR_TIF.equals(actualAtr)) {
 				LOGGER.info("Detectada tarjeta TIF"); //$NON-NLS-1$
 				// Las tarjetas TIF siempre se instancian con precarga de claves y certificados
 				// (no se aplica el parametro 'loadCertsAndKeys')
 				return new Tif(conn, pwc, cryptoHelper, ch);
 			}
-			else {
-				// La tarjeta encontrada no es un DNIe
-				// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
-				// en 90-00
-				if (
-					actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
-					actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65
-				) {
-					throw new BurnedDnieCardException(actualAtr);
-				}
-				invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$
-				continue;
+
+			// La tarjeta encontrada no es un DNIe
+			// Vemos si es un DNIe quemado, en el que el ATR termina en 65-81 en vez de
+			// en 90-00
+			if (
+				actualAtrBytes[actualAtrBytes.length -1] == (byte) 0x81 &&
+				actualAtrBytes[actualAtrBytes.length -2] == (byte) 0x65
+			) {
+				throw new BurnedDnieCardException(actualAtr);
 			}
+
+			invalidCardException = new InvalidCardException("DNIe", ATR, responseAtr); //$NON-NLS-1$
+			continue;
 		}
 		if (invalidCardException != null) {
 			throw invalidCardException;

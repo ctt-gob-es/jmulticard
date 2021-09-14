@@ -58,6 +58,7 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.ceres.SignDataApduCommand;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
@@ -66,6 +67,7 @@ import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.dnie.ChangePINApduCommand;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
+import es.gob.jmulticard.apdu.dnie.LoadDataApduCommand;
 import es.gob.jmulticard.apdu.dnie.RetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
@@ -131,7 +133,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
     /** Identificador del fichero del certificado de componente del DNIe. */
-    private static final byte[] CERT_ICC_FILE_ID = new byte[] {
+    private static final byte[] CERT_ICC_FILE_ID = {
         (byte) 0x60, (byte) 0x1F
     };
 
@@ -770,6 +772,64 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     	return true;
     }
 
+	/** Realiza un cifrado RSA directo con una clave privada.
+	 * @param data Datos a cifrar.
+	 * @param privateKeyReference Referencia a la clave privada RSA a usar.
+	 * @return Datos cifrados.
+	 * @throws CryptoCardException Si hay errores en el proceso en la tarjeta o en la
+	 *                             comunicaci&oacute;n con ella.
+	 * @throws PinException Si el PIN introducido no es correcto.
+	 * @throws LostChannelException Si se pierde el canal de cifrado. */
+	public byte[] cipherData(final byte[] data,
+                             final PrivateKeyReference privateKeyReference) throws CryptoCardException,
+                                                                                   PinException,
+                                                                                   LostChannelException {
+        openSecureChannelIfNotAlreadyOpened();
+
+        ResponseApdu res;
+        try {
+
+        	CommandApdu apdu = new LoadDataApduCommand(data);
+
+			res = getConnection().transmit(apdu);
+			if(!res.isOk()) {
+				LOGGER.severe(
+            		"Recibida APDU inesperada de respuesta a la carga de datos:\n" + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+        		);
+                throw new DnieCardException(
+                	"Error durante la operacion de carga de datos previa a un cifrado RSA: " + //$NON-NLS-1$
+            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+            			res.getStatusWord()
+                );
+			}
+
+			apdu = new SignDataApduCommand(
+        		((DniePrivateKeyReference) privateKeyReference).getKeyReference(), // Referencia
+        		((DniePrivateKeyReference) privateKeyReference).getKeyBitSize()    // Tamano en bits de la clave
+    		);
+
+            res = getConnection().transmit(apdu);
+            if (!res.isOk()) {
+            	LOGGER.severe(
+            		"Recibida APDU inesperada de respuesta al SignData:\n" + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
+        		);
+                throw new DnieCardException(
+                	"Error durante la operacion de cifrado RSA con respuesta: " + //$NON-NLS-1$
+            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+                	res.getStatusWord()
+                );
+            }
+        }
+        catch(final LostChannelException e) {
+        	throw e;
+        }
+        catch (final ApduConnectionException e) {
+            throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
+        }
+
+        return res.getData();
+	}
+
     /** Realiza la operaci&oacute;n de firma.
      * @param data Datos que se desean firmar.
      * @param signAlgorithm Algoritmo de firma (por ejemplo, <code>SHA512withRSA</code>, <code>SHA1withRSA</code>, etc.).
@@ -1063,7 +1123,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         // a pedir si es necesario
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
-            	// Si no hay reintento automatico se lanza la excepcion
+            	// Si no hay reintento automatico se lanza la excepcion.
             	// Incluimos una proteccion en el caso de usar algun "CachePasswordCallback" del
             	// Cliente @firma o un callback personalizado que indicaba que debia almacenarse el PIN,
             	// ya que en caso de reutilizarlos se bloquearia el DNI
@@ -1112,7 +1172,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			//Seleccion de directorio maestro
 			selectMasterFile();
 			//Seleccion de fichero de PIN por Id
-			final byte[] pinFile = new byte[] {(byte)0x00, (byte) 0x00};
+			final byte[] pinFile = {(byte)0x00, (byte) 0x00};
 			selectFileById(pinFile);
 			//Envio de APDU de cambio de PIN
 			final CommandApdu apdu = new ChangePINApduCommand(oldPin.getBytes(), newPin.getBytes());

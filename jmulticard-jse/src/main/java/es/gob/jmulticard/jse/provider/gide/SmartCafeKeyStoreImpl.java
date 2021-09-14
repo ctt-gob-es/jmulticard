@@ -68,6 +68,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
+import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjeta G&amp;D SmartCafe con Applet PKCS#15.
@@ -204,20 +205,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
             return false;
         }
         return entryClass.equals(PrivateKeyEntry.class);
-    }
-
-    /** <code>PasswordCallback</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
-     * construy&oacute; o la que se le establece posteriormente. */
-    private static final class CachePasswordCallback extends PasswordCallback {
-
-        private static final long serialVersionUID = 816457144215238935L;
-
-        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
-         * @param password Contrase&ntilde;a por defecto. */
-        public CachePasswordCallback(final char[] password) {
-            super(">", false); //$NON-NLS-1$
-            setPassword(password);
-        }
     }
 
     /** {@inheritDoc} */

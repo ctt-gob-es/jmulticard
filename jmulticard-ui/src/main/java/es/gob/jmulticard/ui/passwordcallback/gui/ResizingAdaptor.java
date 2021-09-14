@@ -76,7 +76,7 @@ final class ResizingAdaptor extends ComponentAdapter {
     @Override
     public void componentResized(final ComponentEvent e) {
         if (this.theCustomDialog != null) {
-            this.adjustFontSize(this.theCustomDialog.getComponents());
+            adjustFontSize(this.theCustomDialog.getComponents());
         }
     }
 
@@ -88,15 +88,10 @@ final class ResizingAdaptor extends ComponentAdapter {
         double relHeight;
         float relation = 1;
         if (this.theCustomDialog != null) {
-            // Se comprueba si esta activado el modo negrita, fuente grande o si es necesario que la ventana sea grande por defecto
-            if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold() || this.theCustomDialog.isBigSizeDefault()) {
-                relWidth = this.theCustomDialog.getSize().getWidth() / this.theCustomDialog.getInitialWidth();
-                relHeight = this.theCustomDialog.getSize().getHeight() / this.theCustomDialog.getInitialHeight();
-            }
-            else {
-                relWidth = this.theCustomDialog.getSize().getWidth() / this.theCustomDialog.getInitialWidth();
-                relHeight = this.theCustomDialog.getSize().getHeight() / this.theCustomDialog.getInitialHeight();
-            }
+            //TODO: Se deberia comprobar si esta activado el modo negrita, fuente grande o si es necesario que la ventana sea grande por defecto
+            // if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold() || this.theCustomDialog.isBigSizeDefault()) { /* Hacer cosas */ }
+			relWidth = this.theCustomDialog.getSize().getWidth() / this.theCustomDialog.getInitialWidth();
+			relHeight = this.theCustomDialog.getSize().getHeight() / this.theCustomDialog.getInitialHeight();
             relation = Math.round(relWidth * relHeight * this.theCustomDialog.getMinimumRelation());
         }
 
@@ -128,7 +123,7 @@ final class ResizingAdaptor extends ComponentAdapter {
                     // Se comprueba si el panel tiene un nombre asignado
                     final String name = actualComponent.getName();
                     // Se hara el resize del titulo en el caso de que el componente no sea el panel de botones de accesibilidad de los alerts
-                    if (name == null || !name.equalsIgnoreCase("AccessibilityButtonsPanel")) { //$NON-NLS-1$
+                    if (name == null || !"AccessibilityButtonsPanel".equalsIgnoreCase(name)) { //$NON-NLS-1$
                         final TitledBorder b = (TitledBorder) componentBorder;
                         final float resizeFactor = Math.round(relation / getResizingFactorFrame());
                         if (b.getTitleFont() != null) {
@@ -141,7 +136,7 @@ final class ResizingAdaptor extends ComponentAdapter {
                 }
             }
 
-            if ((actualComponent instanceof Container) && !(actualComponent instanceof JComboBox)) {
+            if (actualComponent instanceof Container && !(actualComponent instanceof JComboBox)) {
 			    // Si nos encontramos con un contenedor, redimensionamos sus hijos
 			    final Container actualContainer = (Container) actualComponent;
 			    adjustFontSize(actualContainer.getComponents());
@@ -246,10 +241,10 @@ final class ResizingAdaptor extends ComponentAdapter {
         final double factorAux = factor;
 
         // Se comprueba si se trata del boton de ayuda
-        if (button.getName() != null && button.getName().equalsIgnoreCase("maximizar")) { //$NON-NLS-1$
+        if (button.getName() != null && "maximizar".equalsIgnoreCase(button.getName())) { //$NON-NLS-1$
             imageIcon = AccesiblityConstants.IMAGEICON_MAXIMIZE; // Se carga la imagen original
         }
-        else if (button.getName() != null && button.getName().equalsIgnoreCase("restaurar")) { //$NON-NLS-1$
+        else if (button.getName() != null && "restaurar".equalsIgnoreCase(button.getName())) { //$NON-NLS-1$
             imageIcon = AccesiblityConstants.IMAGEICONRESTORE; // Se carga la imagen original
         }
         else {

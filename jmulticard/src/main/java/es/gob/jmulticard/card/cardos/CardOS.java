@@ -36,7 +36,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
-    private static final byte[] ATR_MASK = new byte[] {
+    private static final byte[] ATR_MASK = {
         (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
         (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF
     };
@@ -46,7 +46,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
         (byte) 0xFE, (byte) 0x58, (byte) 0xC9, (byte) 0x01, (byte) 0x14
     }, ATR_MASK);
 
-    private static final byte[] PKCS15_NAME = new byte[] {
+    private static final byte[] PKCS15_NAME = {
 		(byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x63, (byte) 0x50,
 		(byte) 0x4B, (byte) 0x43, (byte) 0x53, (byte) 0x2D, (byte) 0x31, (byte) 0x35
 	};
@@ -194,7 +194,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 					continue;
 				}
 
-				final byte[] MASTER_FILE = new byte[] { (byte) 0x50, (byte) 0x15 };
+				final byte[] MASTER_FILE = { (byte) 0x50, (byte) 0x15 };
 
 				sendArbitraryApdu(
 					new CommandApdu(

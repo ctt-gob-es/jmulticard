@@ -46,7 +46,7 @@ abstract class Dnie3r2Cwa14890Constants extends Dnie3Cwa14890Constants {
 
     /** Certificado de la CA intermedia de Terminal verificable por la tarjeta.
      * (<i>c-CV-CA-CS-AUT</i>). */
-	private static final byte[] C_CV_CA = new byte[] {
+	private static final byte[] C_CV_CA = {
 		(byte) 0x7f, (byte) 0x21, (byte) 0x81, (byte) 0xce, (byte) 0x5f, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x7a, (byte) 0xa0, (byte) 0x6c, (byte) 0x96,
         (byte) 0x5e, (byte) 0x8f, (byte) 0xb2, (byte) 0x19, (byte) 0x61, (byte) 0xcf, (byte) 0xd4, (byte) 0x49, (byte) 0xd0, (byte) 0x9b, (byte) 0x9d, (byte) 0xaf,
         (byte) 0x03, (byte) 0x04, (byte) 0x73, (byte) 0x01, (byte) 0x15, (byte) 0x69, (byte) 0x70, (byte) 0xb7, (byte) 0x73, (byte) 0xf1, (byte) 0x9c, (byte) 0x40,
@@ -72,7 +72,7 @@ abstract class Dnie3r2Cwa14890Constants extends Dnie3Cwa14890Constants {
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
      * (<i>ifd-keyRef</i>).*/
-	private static final byte[] CHR_C_CV_CA = new byte[] {
+	private static final byte[] CHR_C_CV_CA = {
 		(byte) 0x65, (byte) 0x73, (byte) 0x53, (byte) 0x44, (byte) 0x49, (byte) 0x62, (byte) 0x00, (byte) 0x18
     };
 

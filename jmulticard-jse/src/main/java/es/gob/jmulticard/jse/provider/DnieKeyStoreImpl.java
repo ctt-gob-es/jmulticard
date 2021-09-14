@@ -293,7 +293,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
     	else if (protParam instanceof KeyStore.PasswordProtection) {
     		// Establecemos el PasswordCallback
-    		final PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
+    		final PasswordCallback pwc = new CachePasswordCallback(
+				((KeyStore.PasswordProtection)protParam).getPassword()
+			);
     		this.cryptoCard.setPasswordCallback(pwc);
     	}
     	else {
@@ -342,7 +344,10 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
-    			final PasswordCallback pwc = new DniePasswordCallback((PasswordProtection) pp);
+    			final PasswordCallback pwc = new CardPasswordCallback(
+					(PasswordProtection) pp,
+					JMultiCardProviderMessages.getString("DnieKeyStoreImpl.0") //$NON-NLS-1$
+				);
     			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					pwc,
@@ -380,7 +385,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 					DnieProvider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {
-    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
+    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e, e); //$NON-NLS-1$
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
@@ -409,20 +414,6 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
             return false;
         }
         return entryClass.equals(PrivateKeyEntry.class);
-    }
-
-    /** <code>PasswordCallback</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
-     * construy&oacute; o la que se le establece posteriormente. */
-    private static final class CachePasswordCallback extends PasswordCallback {
-
-        private static final long serialVersionUID = 816457144215238935L;
-
-        /** Contruye una Callback con una contrase&ntilde;a preestablecida.
-         * @param password Contrase&ntilde;a por defecto. */
-        public CachePasswordCallback(final char[] password) {
-            super(">", false); //$NON-NLS-1$
-            setPassword(password);
-        }
     }
 
     //***************************************************************************************

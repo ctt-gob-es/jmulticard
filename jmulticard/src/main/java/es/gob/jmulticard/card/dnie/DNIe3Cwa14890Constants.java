@@ -50,13 +50,13 @@ abstract class Dnie3Cwa14890Constants implements Cwa14890PublicConstants, Cwa148
     /** Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
      * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.
      * (<i>pk-RCA-AUT-keyRef</i>).*/
-	private static final byte[] REF_C_CV_CA_PUBLIC_KEY = new byte[] {
+	private static final byte[] REF_C_CV_CA_PUBLIC_KEY = {
         (byte) 0x02, (byte) 0x0f
     };
 
     /** Referencia al fichero en donde reside la clave privada de componente.
      * (<i>sk-ICC-AUT-keyRef</i>). */
-	private static final byte[] REF_ICC_PRIVATE_KEY = new byte[] {
+	private static final byte[] REF_ICC_PRIVATE_KEY = {
         (byte) 0x02, (byte) 0x1f
     };
 
@@ -66,7 +66,7 @@ abstract class Dnie3Cwa14890Constants implements Cwa14890PublicConstants, Cwa148
 
         private static final long serialVersionUID = -143874096089393139L;
 
-        private final byte[] encoded = new byte[] {
+        private final byte[] encoded = {
             (byte) 0x30, (byte) 0x81, (byte) 0x9F, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x2A, (byte) 0x86, (byte) 0x48,
             (byte) 0x86, (byte) 0xF7, (byte) 0x0D, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x05, (byte) 0x00, (byte) 0x03, (byte) 0x81,
             (byte) 0x8D, (byte) 0x00, (byte) 0x30, (byte) 0x81, (byte) 0x89, (byte) 0x02, (byte) 0x81, (byte) 0x81, (byte) 0x00, (byte) 0xEA,

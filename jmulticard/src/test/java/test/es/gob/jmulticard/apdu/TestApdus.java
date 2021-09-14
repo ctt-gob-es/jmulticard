@@ -18,7 +18,7 @@ public final class TestApdus {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testSelectDfByName() throws Exception {
-		final byte[] dfName = new byte[] {
+		final byte[] dfName = {
 			(byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x63, (byte) 0x50, (byte) 0x4B, (byte) 0x43,
 			(byte) 0x53, (byte) 0x2D, (byte) 0x31, (byte) 0x35
 		};

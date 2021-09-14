@@ -57,8 +57,10 @@ public final class CommonPasswordCallback extends PasswordCallback {
 
     private static boolean headless = false;
 
+    /** T&iacute;tulo de la ventana gr&aacute;fica donde se vava pedir la contrase&ntilde;a. */
 	private final String title;
 
+	/** Indica si se esta o no pidiendo el PIN de un DNIe. */
 	private final boolean isDnie;
 
 	/** Indica si se debe dar al usuario la opcion de recordar el PIN. */

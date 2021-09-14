@@ -115,43 +115,56 @@ public final class DnieProvider extends Provider {
         put("KeyStore.DNI", "es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Motores de firma
-        put("Signature.SHA1withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA1withRSA",   "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha1");   //$NON-NLS-1$ //$NON-NLS-2$
         put("Signature.SHA256withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
         put("Signature.SHA384withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
         put("Signature.SHA512withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        // Claves soportadas
-        put("Signature.SHA1withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
-        put("Signature.SHA256withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
-        put("Signature.SHA384withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
-        put("Signature.SHA512withRSA SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        // Claves soportadas para firma
+        put("Signature.SHA1withRSA SupportedKeyClasses",     DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA256withRSA SupportedKeyClasses",   DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA384withRSA SupportedKeyClasses",   DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        put("Signature.SHA512withRSA SupportedKeyClasses",   DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
 
         // Alias de los nombres de algoritmos de firma
-        put("Alg.Alias.Signature.1.2.840.113549.1.1.5", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.OID.1.2.840.113549.1.1.5", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.1.3.14.3.2.29", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHAwithRSA", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-1withRSA", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA1withRSAEncryption", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-1withRSAEncryption", DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.1.2.840.113549.1.1.5",      DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.OID.1.2.840.113549.1.1.5",  DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.1.3.14.3.2.29",             DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHAwithRSA",                DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-1withRSA",              DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA1withRSAEncryption",     DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-1withRSAEncryption",    DnieProvider.SHA1WITH_RSA); //$NON-NLS-1$
 
-        put("Alg.Alias.Signature.1.2.840.113549.1.1.11", DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.1.2.840.113549.1.1.11",     DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
         put("Alg.Alias.Signature.OID.1.2.840.113549.1.1.11", DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-256withRSA", DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-256withRSAEncryption", DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA256withRSAEncryption", DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-256withRSA",            DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-256withRSAEncryption",  DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA256withRSAEncryption",   DnieProvider.SHA256WITH_RSA); //$NON-NLS-1$
 
-        put("Alg.Alias.Signature.1.2.840.113549.1.1.12", DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.1.2.840.113549.1.1.12",     DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
         put("Alg.Alias.Signature.OID.1.2.840.113549.1.1.12", DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-384withRSA", DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-384withRSAEncryption", DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA384withRSAEncryption", DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-384withRSA",            DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-384withRSAEncryption",  DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA384withRSAEncryption",   DnieProvider.SHA384WITH_RSA); //$NON-NLS-1$
 
-        put("Alg.Alias.Signature.1.2.840.113549.1.1.13", DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.1.2.840.113549.1.1.13",     DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
         put("Alg.Alias.Signature.OID.1.2.840.113549.1.1.13", DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-512withRSA", DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA-512withRSAEncryption", DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
-        put("Alg.Alias.Signature.SHA512withRSAEncryption", DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-512withRSA",            DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA-512withRSAEncryption",  DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
+        put("Alg.Alias.Signature.SHA512withRSAEncryption",   DnieProvider.SHA512WITH_RSA); //$NON-NLS-1$
+
+        // Las funciones de cifrado RSA con clave privada solo funcionan en la VM de Oracle si el codigo esta firmado
+        // con un certificado emitido por Oracle
+        final String vmVendor = System.getProperty("java.vendor"); //$NON-NLS-1$
+        if (vmVendor == null || !vmVendor.contains("Oracle") || !vmVendor.contains("Sun Microsystems")) { //$NON-NLS-1$ //$NON-NLS-2$
+
+	        // Cifrado
+	        put("Cipher.RSA/ECB/PKCS1Padding", "es.gob.jmulticard.jse.provider.rsacipher.DnieCipherImpl"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	        // Claves soportadas para cifrado
+	        put("Cipher.RSA/ECB/PKCS1Padding SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
+        }
+
     }
 
 }

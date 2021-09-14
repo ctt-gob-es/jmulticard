@@ -5,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.security.auth.callback.PasswordCallback;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -129,18 +127,6 @@ public final class TestStBit4IdCamerfirma {
 		) {
 			fos.write(trimmedData);
 		}
-	}
-
-	private final static class CachePasswordCallback extends PasswordCallback {
-
-	    private static final long serialVersionUID = 816457144215238935L;
-
-	    /** Contruye una Callback con una contrase&ntilde; preestablecida.
-	     * @param password Contrase&ntilde;a por defecto. */
-	    public CachePasswordCallback(final char[] password) {
-	        super(">", false); //$NON-NLS-1$
-	        setPassword(password);
-	    }
 	}
 
 }

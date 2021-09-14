@@ -59,6 +59,7 @@ public final class SmartCafePrivateKey implements RSAPrivateKey {
 	/** Identificador de la clave. */
 	private final int id;
 
+	/** Instancia de la tarjeta donde reside la clave. */
 	private final CryptoCard card;
 
 	/** Crea una clave privada de una tarjeta G&amp;D SmartCafe con Applet PKCS#15.
@@ -112,7 +113,10 @@ public final class SmartCafePrivateKey implements RSAPrivateKey {
 		return "Clave privada para G&D SmartCafe (con Applet PKCS#15) con ordinal " + this.id; //$NON-NLS-1$
 	}
 
-	@SuppressWarnings({ "static-method", "unused" })
+	/** Serializaci&oacute;n no soportada, lanza un <code>NotSerializableException</code>.
+	 * @param out No se usa.
+	 * @throws IOException No se lanza, siempre lanza un <code>NotSerializableException</code>. */
+	@SuppressWarnings({ "static-method" })
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		throw new NotSerializableException();
 	}

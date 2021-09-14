@@ -76,7 +76,7 @@ public class CommandApdu extends Apdu {
 		if (bytes.length>5 && bytes.length>i+5) {
 			return Integer.valueOf(bytes[i+5]);
 		}
-		else if (bytes.length==5) {
+		if (bytes.length==5) {
 			return Integer.valueOf(i);
 		}
 		return null;
@@ -108,8 +108,6 @@ public class CommandApdu extends Apdu {
 			           final byte param2,
 			           final byte[] data,
 			           final Integer ne) {
-		super();
-
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		this.cla = cla;
@@ -131,16 +129,15 @@ public class CommandApdu extends Apdu {
 			this.body = new byte[data.length];
 			System.arraycopy(data, 0, this.body, 0, data.length);
 
-			if (data.length <= 0xFF) {
+			// Caso 4s: |CLA|INS|P1 |P2 |LC |...BODY...|LE |              len = 7..261
+			if (data.length <= 255) {
 				baos.write(Integer.valueOf(String.valueOf(this.body.length)).byteValue());
 			}
+			// Caso 3e: |CLA|INS|P1 |P2 |00 |LC1|LC2|...BODY...|          len = 8..65542
 			else {
 				baos.write((byte) 0x00);
-				final int dataLength = this.body.length;
-				final byte lc1 = (byte) (dataLength >> 8 & 0xFF);
-				final byte lc2 = (byte) (dataLength & 0xFF);
-				baos.write(lc1);
-				baos.write(lc2);
+				baos.write((byte) (data.length >> 8));   // LC1
+				baos.write((byte) (data.length & 0xff)); // LC2
 			}
 
 			if (this.body.length > 0) {
@@ -157,7 +154,13 @@ public class CommandApdu extends Apdu {
 
 		this.le = ne;
 		if (ne != null) {
-			baos.write(ne.byteValue());
+			if (ne.intValue() <= 0xff) {
+				baos.write(ne.byteValue());
+			}
+			else {
+				baos.write((byte) (ne.intValue() >> 8));
+				baos.write((byte) (ne.intValue() & 0xff));
+			}
 		}
 
 		setBytes(baos.toByteArray());

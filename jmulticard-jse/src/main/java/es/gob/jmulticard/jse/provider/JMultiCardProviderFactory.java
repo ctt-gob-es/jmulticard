@@ -19,7 +19,7 @@ public final class JMultiCardProviderFactory {
 	// **************************************************************************
 	// ********* ATR DNIe Y COMPATIBLES *****************************************
 
-	private static final byte[] DNI_NFC_ATR_MASK = new byte[] {
+	private static final byte[] DNI_NFC_ATR_MASK = {
 		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 		(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0x00
 	};
@@ -28,7 +28,7 @@ public final class JMultiCardProviderFactory {
 		(byte) 0x77, (byte) 0x81, (byte) 0xA1, (byte) 0x00, (byte) 0x03
 	}, DNI_NFC_ATR_MASK);
 
-	private static final byte[] DNI_ATR_MASK = new byte[] {
+	private static final byte[] DNI_ATR_MASK = {
 		(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
 		(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 		(byte) 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF
@@ -55,7 +55,7 @@ public final class JMultiCardProviderFactory {
 	// **************************************************************************
 	// ********************* ATR FNMT-CERES *************************************
 
-	private static final byte[] CERES_TC_ATR_MASK = new byte[] {
+	private static final byte[] CERES_TC_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 		(byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
@@ -67,7 +67,7 @@ public final class JMultiCardProviderFactory {
     }, CERES_TC_ATR_MASK);
 
 
-	private static final byte[] CERES_ST_ATR_MASK = new byte[] {
+	private static final byte[] CERES_ST_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0x00,
 		(byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
@@ -79,7 +79,7 @@ public final class JMultiCardProviderFactory {
     }, CERES_ST_ATR_MASK);
 
 
-	private static final byte[] CERES_SLE_FN20_ATR_MASK = new byte[] {
+	private static final byte[] CERES_SLE_FN20_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
@@ -91,7 +91,7 @@ public final class JMultiCardProviderFactory {
     }, CERES_SLE_FN20_ATR_MASK);
 
 
-	private static final byte[] CERES_SLE_FN19_ATR_MASK = new byte[] {
+	private static final byte[] CERES_SLE_FN19_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
@@ -108,7 +108,7 @@ public final class JMultiCardProviderFactory {
 	// **************************************************************************
 	// ********************* ATR G&D SMARTCAFE **********************************
 
-	private static final byte[] GIDE_SCAF_ATR_MASK = new byte[] {
+	private static final byte[] GIDE_SCAF_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xf
@@ -121,7 +121,7 @@ public final class JMultiCardProviderFactory {
 		(byte) 0xc4
 	}, GIDE_SCAF_ATR_MASK);
 
-	private static final byte[] GIDE_SCAF_MSC_ATR_MASK = new byte[] {
+	private static final byte[] GIDE_SCAF_MSC_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
 
@@ -131,7 +131,7 @@ public final class JMultiCardProviderFactory {
 	}, GIDE_SCAF_MSC_ATR_MASK);
 
 	/** ATR de tarjeta G&amp;D SmartCafe 3&#46;2 con T=CL (v&iacute;a inal&aacute;mbrica). */
-	private static final byte[] GIDE_SCAF_TCL_ATR_MASK = new byte[] {
+	private static final byte[] GIDE_SCAF_TCL_ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xf

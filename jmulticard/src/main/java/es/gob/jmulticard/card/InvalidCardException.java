@@ -47,8 +47,13 @@ public final class InvalidCardException extends CardException {
 
     private static final long serialVersionUID = 4888120866657775782L;
 
+    /** ATR de la tarjeta que se esperaba encontrar. */
     private final Atr atr;
+
+    /** Descripci&oacute;n de la excepci&oacute;n. */
     private final String name;
+
+    /** ATR de la tarjeta encontrada. */
     private final byte[] badAtr;
 
     /** Construye una excepci&oacute;n de tarjeta inv&aacute;lida.

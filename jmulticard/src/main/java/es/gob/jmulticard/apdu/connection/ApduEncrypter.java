@@ -210,7 +210,7 @@ import es.gob.jmulticard.asn1.Tlv;
     private static byte[] getCompleteDataBytes(final Integer le, final byte[] tlvDataBytes) {
 
         // Si hay campo Le calculamos el TLV con ellos
-        byte[] tlvLeBytes = new byte[0];
+        byte[] tlvLeBytes = {};
         if (le != null) {
             tlvLeBytes = new Tlv(
         		TAG_LE_TLV,

@@ -48,7 +48,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresSc extends Dnie {
 
-	private static final byte[] ATR_MASK_TC = new byte[] {
+	private static final byte[] ATR_MASK_TC = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};

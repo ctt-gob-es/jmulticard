@@ -55,11 +55,12 @@ public final class HexUtils {
     /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector. Para
      * ser usado en <code>hexify()</code>. */
     private static final char[] HEX_CHARS = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
+    /** Constructor privado. */
     private HexUtils() {
-        /* Constructor privado. No se permite instanciacion en una clase de utilidades. */
+        // No se permite instanciacion en una clase de utilidades
     }
 
     /** Comprueba si dos <i>arrays</i> de octetos son iguales.
@@ -162,8 +163,8 @@ public final class HexUtils {
      * @return Resultado del XOR de los <i>arrays</i> de entrada. */
     public static byte[] xor(final byte[] v, final byte[] w) {
 
-        byte[] xored = null;
-        byte[] trimmedXor = null;
+        byte[] xored;
+        byte[] trimmedXor;
         xored = new BigInteger(1, v).xor(new BigInteger(1, w)).toByteArray();
         trimmedXor = new byte[v.length];
         if (xored.length >= trimmedXor.length) {

@@ -71,7 +71,12 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 @SuppressWarnings("restriction")
 public final class SmartcardIoConnection implements ApduConnection {
 
-	  private static final boolean DEBUG = false;
+	private static final boolean DEBUG = false;
+
+	/** Tama&ntilde;o m&aacute;ximo de las APDU.
+	 * Por encima de este tama&ntilde;o, se hace autom&aacute;ticamente una envoltura en
+	 * varias APDU. */
+	private static final int MAX_APDU_SIZE = 0xFF;
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
      * con la tarjeta. */
@@ -240,14 +245,12 @@ public final class SmartcardIoConnection implements ApduConnection {
             }
             if (this.terminalNumber == -1) {
             	final long[] cadsWithCard = getTerminals(true);
-            	if (cadsWithCard.length > 0) {
-            		this.terminalNumber = (int) cadsWithCard[0];
-            	}
-            	else {
+            	if (cadsWithCard.length <= 0) {
             		throw new ApduConnectionException(
         				"En el sistema no hay ningun terminal con tarjeta insertada" //$NON-NLS-1$
     				);
             	}
+				this.terminalNumber = (int) cadsWithCard[0];
             }
             if (terminales.size() <= this.terminalNumber) {
                 throw new ApduConnectionException(
@@ -372,6 +375,7 @@ public final class SmartcardIoConnection implements ApduConnection {
     /** {@inheritDoc} */
     @Override
     public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
+
         if (this.canal == null) {
             throw new ApduConnectionException(
                 "No se puede transmitir sobre una conexion cerrada" //$NON-NLS-1$
@@ -391,55 +395,54 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
 
         try {
-        	byte[] sendApdu;
-        	if (command.getData() != null) {
-        		// Si la APDU es mayor que 0xFF la troceamos y la envolvemos
-        		if (command.getData().length > 0xFF) {
-        			int sentLength = 0;
-        			final int totalLength = command.getBytes().length;
-        			final int CONTENT_SIZE_ENVELOPE = 250;
-        			while (totalLength - sentLength > CONTENT_SIZE_ENVELOPE) {
-        				final byte[] apduChunk = Arrays.copyOfRange(
-    						command.getBytes(),
-    						sentLength,
-    						sentLength + CONTENT_SIZE_ENVELOPE
-						);
-        				final CommandAPDU apdu = new CommandAPDU(
-    						(byte) 0x90,
-    						(byte) 0xC2,
-    						(byte) 0x00,
-    						(byte) 0x00,
-    						apduChunk
-						);
-        				final ResponseApdu response = new ResponseApdu(
-    						this.canal.transmit(apdu).getBytes()
-						);
-        				if(!response.isOk()) {
-        					return response;
-        				}
-        				sentLength += CONTENT_SIZE_ENVELOPE;
-        			}
-        			final byte[] apduChunk = Arrays.copyOfRange(
-    					command.getBytes(),
-    					sentLength,
-    					totalLength
+        	final byte[] sendApdu;
+    		// Si la APDU es mayor que MAX_APDU_SIZE la troceamos y la envolvemos
+    		if (command.getBytes().length > MAX_APDU_SIZE) {
+
+    			int sentLength = 0;
+    			final int totalLength = command.getBytes().length;
+    			final int contentSizeEnvelope = MAX_APDU_SIZE-5; // La cabecera de la APDU son 5 octetos
+
+    			while (totalLength - sentLength > contentSizeEnvelope) {
+    				final byte[] apduChunk = Arrays.copyOfRange(
+						command.getBytes(),
+						sentLength,
+						sentLength + contentSizeEnvelope
 					);
-        			sendApdu = new CommandAPDU(
-    					(byte) 0x90,
-    					(byte) 0xC2,
-    					(byte) 0x00,
-    					(byte) 0x00,
-    					apduChunk
-					).getBytes();
-        		}
-        		// Si es pequena, se envia directamente
-        		else {
-        			sendApdu = command.getBytes();
-        		}
-        	}
-        	else {
-        		sendApdu = command.getBytes();
-        	}
+    				final CommandAPDU apdu = new CommandAPDU(
+						(byte) 0x90,
+						(byte) 0xC2,
+						(byte) 0x00,
+						(byte) 0x00,
+						apduChunk
+					);
+    				final ResponseApdu response = new ResponseApdu(
+						this.canal.transmit(apdu).getBytes()
+					);
+    				if(!response.isOk()) {
+    					return response;
+    				}
+    				sentLength += contentSizeEnvelope;
+    			}
+
+    			// La ultima APDU se envia fuera del bucle
+    			final byte[] apduChunk = Arrays.copyOfRange(
+					command.getBytes(),
+					sentLength,
+					totalLength
+				);
+    			sendApdu = new CommandAPDU(
+					(byte) 0x90,
+					(byte) 0xC2,
+					(byte) 0x00,
+					(byte) 0x00,
+					apduChunk
+				).getBytes();
+    		}
+    		// Si es pequena, se envia directamente
+    		else {
+    			sendApdu = command.getBytes();
+    		}
         	final ResponseApdu response = new ResponseApdu(
     			this.canal.transmit(new CommandAPDU(sendApdu)).getBytes()
 			);
@@ -466,7 +469,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             // En caso de longitud esperada incorrecta reenviamos la APDU con la longitud esperada.
             // Incluimos la condicion del CLA igual 0x00 para que no afecte a las APDUs cifradas
             // (de eso se encargara la clase de conexion con canal seguro)
-            else if (response.getStatusWord().getMsb() == TAG_RESPONSE_INVALID_LENGTH && command.getCla() == (byte) 0x00) {
+			if (response.getStatusWord().getMsb() == TAG_RESPONSE_INVALID_LENGTH && command.getCla() == (byte) 0x00) {
                 command.setLe(response.getStatusWord().getLsb());
                 return transmit(command);
             }
@@ -474,7 +477,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             if (DEBUG) {
             	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
         			"Respuesta:\n" + //$NON-NLS-1$
-					HexUtils.hexify(response.getBytes(), true)
+						HexUtils.hexify(response.getBytes(), true)
 				);
             }
 
@@ -483,25 +486,25 @@ public final class SmartcardIoConnection implements ApduConnection {
         catch (final CardException e) {
             final Throwable t = e.getCause();
             if (t != null && SCARD_W_RESET_CARD.equals(t.getMessage())) {
-                throw new LostChannelException(t.getMessage());
+                throw new LostChannelException(t.getMessage(), t);
             }
             throw new ApduConnectionException(
                 "Error de comunicacion con la tarjeta tratando de transmitir la APDU\n" + //$NON-NLS-1$
-                HexUtils.hexify(command.getBytes(), true) +
-                "\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
-                " en modo EXCLUSIVE=" + //$NON-NLS-1$
-                Boolean.toString(this.exclusive) +
-                " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
+            		HexUtils.hexify(command.getBytes(), true) +
+            			"\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+            				" en modo EXCLUSIVE=" + //$NON-NLS-1$
+            					Boolean.toString(this.exclusive) +
+            						" con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
             );
         }
         catch (final Exception e) {
         	e.printStackTrace();
             throw new ApduConnectionException(
                 "Error tratando de transmitir la APDU\n" + HexUtils.hexify(command.getBytes(), true) + //$NON-NLS-1$
-                "\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
-                " en modo EXCLUSIVE=" + //$NON-NLS-1$
-                Boolean.toString(this.exclusive) +
-                " con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
+            		"\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
+            			" en modo EXCLUSIVE=" + //$NON-NLS-1$
+            				Boolean.toString(this.exclusive) +
+            					" con el protocolo " + this.protocol.toString(), e //$NON-NLS-1$
             );
         }
     }

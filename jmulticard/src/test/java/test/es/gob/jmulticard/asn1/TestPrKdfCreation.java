@@ -18,13 +18,13 @@ public class TestPrKdfCreation extends TestCase {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final String[] TEST_FILES = new String[] {
+    private static final String[] TEST_FILES = {
         "PRKDF_TGM.BER", //$NON-NLS-1$
         "PrKDF_2281552478270226931.der", //$NON-NLS-1$
         "PrKDF_TUI_01.der" //$NON-NLS-1$
     };
 
-    private static final byte[] SAMPLE_PRKDF = new byte[] {
+    private static final byte[] SAMPLE_PRKDF = {
 		(byte) 0x30, (byte) 0x43, (byte) 0x30, (byte) 0x0E, (byte) 0x0C, (byte) 0x05, (byte) 0x46, (byte) 0x49,
 		(byte) 0x52, (byte) 0x4D, (byte) 0x41, (byte) 0x03, (byte) 0x02, (byte) 0x06, (byte) 0xC0, (byte) 0x04,
 		(byte) 0x01, (byte) 0x02, (byte) 0x30, (byte) 0x22, (byte) 0x04, (byte) 0x14, (byte) 0x9B, (byte) 0x99,

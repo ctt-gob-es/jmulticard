@@ -10,6 +10,7 @@ import org.junit.Test;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
+import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 
@@ -18,18 +19,6 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
 public final class TestCeres {
 
 	private static final char[] PIN = "eJh3Rhbf".toCharArray(); //$NON-NLS-1$
-
-	final static class CachePasswordCallback extends PasswordCallback {
-
-	    private static final long serialVersionUID = 816457144215238935L;
-
-	    /** Contruye una Callback con una contrase&ntilde; preestablecida.
-	     * @param password Contrase&ntilde;a por defecto. */
-	    public CachePasswordCallback(final char[] password) {
-	        super(">", false); //$NON-NLS-1$
-	        setPassword(password);
-	    }
-	}
 
 	/** Main.
 	 * @param args No se usa.

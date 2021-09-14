@@ -38,7 +38,7 @@ public final class AOUtil {
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private static final String[] SUPPORTED_URI_SCHEMES = new String[] {
+    private static final String[] SUPPORTED_URI_SCHEMES = {
             "http", "https", "file", "urn" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     };
 
@@ -89,15 +89,10 @@ public final class AOUtil {
 
         // Si el esquema es nulo, aun puede ser un nombre de fichero valido
         // El caracter '#' debe protegerse en rutas locales
-        if (scheme == null) {
-            filename = filename.replace("#", "%23"); //$NON-NLS-1$ //$NON-NLS-2$
-            return createURI("file://" + filename); //$NON-NLS-1$
-        }
-
         // Miramos si el esquema es una letra, en cuyo caso seguro que es una
         // unidad de Windows ("C:", "D:", etc.), y le anado el file://
         // El caracter '#' debe protegerse en rutas locales
-        if (scheme.length() == 1 && Character.isLetter((char) scheme.getBytes()[0])) {
+        if ((scheme == null) || (scheme.length() == 1 && Character.isLetter((char) scheme.getBytes()[0]))) {
             filename = filename.replace("#", "%23"); //$NON-NLS-1$ //$NON-NLS-2$
             return createURI("file://" + filename); //$NON-NLS-1$
         }
@@ -116,7 +111,7 @@ public final class AOUtil {
             throw new IllegalArgumentException("Se ha pedido el contenido de una URI nula"); //$NON-NLS-1$
         }
 
-        if (uri.getScheme().equals("file")) { //$NON-NLS-1$
+        if ("file".equals(uri.getScheme())) { //$NON-NLS-1$
             // Es un fichero en disco. Las URL de Java no soportan file://, con
             // lo que hay que diferenciarlo a mano
 
@@ -250,7 +245,7 @@ public final class AOUtil {
             if (principal.charAt(offset1) == ',') {
                 return ""; //$NON-NLS-1$
             }
-            else if (principal.charAt(offset1) == '"') {
+			if (principal.charAt(offset1) == '"') {
                 offset1++;
                 if (offset1 >= principal.length()) {
                     return ""; //$NON-NLS-1$

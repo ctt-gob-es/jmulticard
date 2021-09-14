@@ -98,7 +98,7 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		}
 		catch (final Exception e) {
 			throw new IOException(
-				"Error creando la CMAC de la APDU cifrada: " + e //$NON-NLS-1$
+				"Error creando la CMAC de la APDU cifrada: " + e, e //$NON-NLS-1$
 			);
 		}
 		final byte[] ret = new byte[8];

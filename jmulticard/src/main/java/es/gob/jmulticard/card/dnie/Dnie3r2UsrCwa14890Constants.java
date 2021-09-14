@@ -49,7 +49,7 @@ final class Dnie3r2UsrCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
     /** Certificado de Terminal verificable por la tarjeta.
      * (<i>c-CV-IFD-AUT</i>). */
-	private static final byte[] C_CV_IFD = new byte[] {
+	private static final byte[] C_CV_IFD = {
 		(byte) 0x7f, (byte) 0x21, (byte) 0x81, (byte) 0xcd, (byte) 0x5f, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x5d, (byte) 0xa9, (byte) 0x4b, (byte) 0x6b,
         (byte) 0x4e, (byte) 0xb8, (byte) 0x61, (byte) 0xec, (byte) 0xa6, (byte) 0x36, (byte) 0xd2, (byte) 0x67, (byte) 0x39, (byte) 0x74, (byte) 0x71, (byte) 0x1f,
         (byte) 0x55, (byte) 0x63, (byte) 0x0f, (byte) 0x5b, (byte) 0x89, (byte) 0x03, (byte) 0x8c, (byte) 0x57, (byte) 0xd0, (byte) 0xbb, (byte) 0xbb, (byte) 0xc1,
@@ -75,7 +75,7 @@ final class Dnie3r2UsrCwa14890Constants extends Dnie3r2Cwa14890Constants {
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
      * (<i>sn-IFD</i>). */
-	private static final byte[] CHR_C_CV_IFD = new byte[] {
+	private static final byte[] CHR_C_CV_IFD = {
 		(byte) 0xd0, (byte) 0x02, (byte) 0xe0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
 	};
 

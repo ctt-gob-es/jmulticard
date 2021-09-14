@@ -36,8 +36,7 @@ public final class TestCertParseUtil {
 		System.out.println(cn);
 
 		final String name = cn.substring(
-			cn.indexOf(',') + 1,
-			cn.length()
+			cn.indexOf(',') + 1
 		).trim();
 		System.out.println("Nombre: " + //$NON-NLS-1$
 			name
@@ -131,7 +130,7 @@ public final class TestCertParseUtil {
             if (principal.charAt(offset1) == ',') {
                 return ""; //$NON-NLS-1$
             }
-            else if (principal.charAt(offset1) == '"') {
+			if (principal.charAt(offset1) == '"') {
                 offset1++;
                 if (offset1 >= principal.length()) {
                     return ""; //$NON-NLS-1$

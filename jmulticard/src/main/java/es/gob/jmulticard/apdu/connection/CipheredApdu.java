@@ -45,7 +45,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU cifrada para su env&iacute;o a trav&eacute;s de un canal seguro.
  * @author Carlos Gamuci
- * @author Alberto Mart&iacute;nez */
+ * @author Alberto Mart&iacute;nez
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CipheredApdu extends CommandApdu {
 
 	private static final byte TAG_CRYPTOGRAPHIC_CHECKSUM = (byte) 0x8E;
@@ -53,6 +54,8 @@ public final class CipheredApdu extends CommandApdu {
 	private final byte[] mac;
 	private final byte[] data;
 
+	/** Obtiene el MAC de la APDU.
+	 * @return MAC de la APDU. */
     byte[] getMac() {
         final byte[] out = new byte[this.mac.length];
         System.arraycopy(this.mac, 0, out, 0, this.mac.length);
@@ -96,7 +99,7 @@ public final class CipheredApdu extends CommandApdu {
        if (data == null || mac == null) {
         	throw new IllegalArgumentException("Ni los datos (TLV) ni el MAC pueden ser nulos"); //$NON-NLS-1$
        }
-       if (!(mac.length != 4 || mac.length != 8)) {
+       if (mac.length != 4 && mac.length != 8) {
         	throw new IllegalArgumentException(
     			"El MAC debe medir cuatro u ocho octetos, y el recibido mide " + mac.length + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
 			);
@@ -110,7 +113,7 @@ public final class CipheredApdu extends CommandApdu {
        }
        catch(final Exception e) {
     	   throw new IllegalStateException(
-			   "Error creando la APDU cifrada: " + e //$NON-NLS-1$
+			   "Error creando la APDU cifrada: " + e, e //$NON-NLS-1$
 		   );
        }
        return baos.toByteArray();

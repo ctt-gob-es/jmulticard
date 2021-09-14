@@ -19,7 +19,7 @@ public class TestCdfCreation extends TestCase {
 
     private static final int BUFFER_SIZE = 4096;
 
-    private static final String[] CDF_TEST_FILES = new String[] {
+    private static final String[] CDF_TEST_FILES = {
         "CDF_GSD.BER", //$NON-NLS-1$
         "CDF_EEE.BER", //$NON-NLS-1$
         "CDF_GVA.BER", //$NON-NLS-1$
@@ -29,7 +29,7 @@ public class TestCdfCreation extends TestCase {
         "CDF_TUI_SAMPLE1.asn1" //$NON-NLS-1$
     };
 
-    private static final byte[] SAMPLE_CDF = new byte[] {
+    private static final byte[] SAMPLE_CDF = {
 		(byte) 0x30, (byte) 0x81, (byte) 0x84, (byte) 0x30, (byte) 0x0E, (byte) 0x0C, (byte) 0x05, (byte) 0x46,
 		(byte) 0x49, (byte) 0x52, (byte) 0x4D, (byte) 0x41, (byte) 0x03, (byte) 0x02, (byte) 0x06, (byte) 0x40,
 		(byte) 0x04, (byte) 0x01, (byte) 0x02, (byte) 0x30, (byte) 0x16, (byte) 0x04, (byte) 0x14, (byte) 0x9B,

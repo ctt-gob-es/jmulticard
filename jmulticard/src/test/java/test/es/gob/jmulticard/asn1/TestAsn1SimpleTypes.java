@@ -13,7 +13,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.AccessFlags;
 /** Prueba del tipos simples ASN&#46;1. */
 public final class TestAsn1SimpleTypes {
 
-	private static final byte[] SAMPLE_DIGEST_INFO = new byte[] {
+	private static final byte[] SAMPLE_DIGEST_INFO = {
 		(byte)0x30, (byte)0x21, (byte)0x30, (byte)0x09, (byte)0x06, (byte)0x05, (byte)0x2B, (byte)0x0E,
 		(byte)0x03, (byte)0x02, (byte)0x1A, (byte)0x05, (byte)0x00, (byte)0x04, (byte)0x14, (byte)0x90,
 		(byte)0xA8, (byte)0x3D, (byte)0x18, (byte)0xEB, (byte)0xD9, (byte)0xCD, (byte)0x0B, (byte)0xF2,

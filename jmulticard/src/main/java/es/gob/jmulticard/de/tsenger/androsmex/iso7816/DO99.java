@@ -24,7 +24,7 @@ import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
-/**
+/** Objeto de Datos 99.
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO99 {
 

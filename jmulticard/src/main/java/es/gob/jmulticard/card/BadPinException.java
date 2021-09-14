@@ -6,6 +6,8 @@ public class BadPinException extends PinException {
 
 	private static final long serialVersionUID = 9827614003517666L;
 
+	/** N&uacute;mero de intentos de introducci&oacute;n de PIN que quedan tras
+	 * producirse este error. */
 	private final int retries;
 
 	/** Construye una excepci&oacute;n de introducci&oacute;n incorrecta del PIN del DNIe.

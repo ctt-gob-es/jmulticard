@@ -9,8 +9,6 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Logger;
 
-import javax.security.auth.callback.PasswordCallback;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,23 +21,12 @@ import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
+import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** pruebas de PACE con DNIe 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestPaceDnie {
-
-	final static class CachePasswordCallback extends PasswordCallback {
-
-	    private static final long serialVersionUID = 816457144215238935L;
-
-	    /** Contruye una <code>Callback</code> con una contrase&ntilde; preestablecida.
-	     * @param password Contrase&ntilde;a por defecto. */
-	    public CachePasswordCallback(final char[] password) {
-	        super(">", false); //$NON-NLS-1$
-	        setPassword(password);
-	    }
-	}
 
 	/** Main.
 	 * @param args No se usa.
@@ -63,11 +50,11 @@ public final class TestPaceDnie {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testAesDec() throws Exception {
-		final byte[] nonce = new byte[] {
+		final byte[] nonce = {
 			(byte)0x39, (byte)0xe9, (byte)0x79, (byte)0xea, (byte)0x2c, (byte)0x87, (byte)0x25, (byte)0x4d,
 			(byte)0x98, (byte)0x86, (byte)0x1b, (byte)0x09, (byte)0x34, (byte)0x52, (byte)0x23, (byte)0xb4
 		};
-		final byte[] sk = new byte[] {
+		final byte[] sk = {
 			(byte)0x59, (byte)0x14, (byte)0x68, (byte)0xcd, (byte)0xa8, (byte)0x3d, (byte)0x65, (byte)0x21,
 			(byte)0x9c, (byte)0xcc, (byte)0xb8, (byte)0x56, (byte)0x02, (byte)0x33, (byte)0x60, (byte)0x0f
 		};
@@ -86,7 +73,7 @@ public final class TestPaceDnie {
 	@Test
 	@Ignore
 	public void testDhEc() throws Exception {
-		final byte[] prkIfcDh1 = new byte[] {
+		final byte[] prkIfcDh1 = {
 			(byte)0x04,
 			(byte)0x93, (byte)0x6a, (byte)0x1f, (byte)0x95, (byte)0xb4, (byte)0x0e, (byte)0x4a, (byte)0xf3,
 			(byte)0xa2, (byte)0xb2, (byte)0xef, (byte)0x44, (byte)0xf2, (byte)0x31, (byte)0x09, (byte)0x50,
@@ -97,7 +84,7 @@ public final class TestPaceDnie {
 			(byte)0xc9, (byte)0xdf, (byte)0x0f, (byte)0x71, (byte)0xbc, (byte)0xe1, (byte)0x8d, (byte)0x46,
 			(byte)0xb7, (byte)0x00, (byte)0xd0, (byte)0x5e, (byte)0x64, (byte)0x89, (byte)0x10, (byte)0xec
 		};
-		final byte[] pukIccDh1 = new byte[] {
+		final byte[] pukIccDh1 = {
 			(byte)0x04,
 			(byte)0x64, (byte)0x44, (byte)0x87, (byte)0x06, (byte)0x4b, (byte)0x4b, (byte)0x21, (byte)0x21,
 			(byte)0xd8, (byte)0xc7, (byte)0xe2, (byte)0x2b, (byte)0x27, (byte)0x8b, (byte)0x19, (byte)0x14,

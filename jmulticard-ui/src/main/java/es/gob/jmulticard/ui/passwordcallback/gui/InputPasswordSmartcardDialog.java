@@ -104,6 +104,7 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
     /** Campo de texto o campo de contrase&ntilde;a. */
     private JSecurePasswordLabel component = null;
 
+    /** Indica si se muestra o no la casilla de "No volver a preguntar" (<i>cacheo</i> del PIN). */
     private JCheckBox useCacheCheckBox = null;
 
     /** Etiqueta que contiene el icono de la alerta. */
@@ -119,8 +120,8 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
      * @param message Mensaje del di&aacute;logo.
      * @param title T&iacute;tulo del di&aacute;logo.
      * @param iconPath Ruta hacia el recurso de fichero de icono.
-     * @param allowUseCache Hace mostrarse la casilla para seleccionar el cacheo del PIN.
-     * @param defaultUseCache Valor por defecto de la opci&oacute;n de cacheo de PIN. */
+     * @param allowUseCache Hace mostrarse la casilla para seleccionar el <i>cacheo</i> del PIN.
+     * @param defaultUseCache Valor por defecto de la opci&oacute;n de <i>cacheo</i> de PIN. */
     private InputPasswordSmartcardDialog(final JDialog componentParent,
                          final boolean modal,
                          final String message,
@@ -499,10 +500,7 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
 
 				@Override
 				public void keyPressed(final KeyEvent ke) {
-					if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-						getCancelButton().doClick();
-					}
-					else if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					if (ke.getKeyCode() == KeyEvent.VK_ENTER || ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						getCancelButton().doClick();
 					}
 				}
@@ -589,27 +587,22 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
      * @param defaultUseCache Valor por defecto de la opci&oacute;n de cacheo de PIN.
      * @return Instancia del di&aacute;logo. */
     static InputPasswordSmartcardDialog getInstanceInputPasswordDialog(final Component componentParent,
-                                                final boolean modal,
-                                                final String message,
-                                                final String title,
-                                                final String iconPath,
-                                                final boolean allowUseCache,
-                                                final boolean defaultUseCache) {
+                                                                       final boolean modal,
+                                                                       final String message,
+                                                                       final String title,
+                                                                       final String iconPath,
+                                                                       final boolean allowUseCache,
+                                                                       final boolean defaultUseCache) {
     	// Se chequea el tipo del componente padre
-    	final InputPasswordSmartcardDialog customDialog;
-        if (componentParent instanceof JDialog) {
-            customDialog = new InputPasswordSmartcardDialog(componentParent, modal, message, title, iconPath,
-                    allowUseCache, defaultUseCache);
-        }
-        else if (componentParent instanceof JFrame) {
-            customDialog = new InputPasswordSmartcardDialog(componentParent, modal, message, title, iconPath,
-                    allowUseCache, defaultUseCache);
-        }
-        else {
-            customDialog = new InputPasswordSmartcardDialog(componentParent, modal, message, title, iconPath,
-                    allowUseCache, defaultUseCache);
-        }
-        return customDialog;
+        return new InputPasswordSmartcardDialog(
+    		componentParent,
+    		modal,
+    		message,
+    		title,
+    		iconPath,
+	        allowUseCache,
+	        defaultUseCache
+        );
     }
 
     /** Acci&oacute;n correspondiente a los botones de las alertas. */

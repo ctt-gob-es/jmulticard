@@ -45,8 +45,8 @@ import javax.swing.event.AncestorListener;
 
 /** Clase para dar el foco a un componente determinado. */
 final class RequestFocusListener implements AncestorListener {
-	private final boolean removeListener;
 
+	private final boolean removeListener;
 
 	/** Constructor por defecto. */
 	RequestFocusListener() {
@@ -54,14 +54,12 @@ final class RequestFocusListener implements AncestorListener {
 	}
 
 	/** Constructor.
-	 * @param removeListener Clase a la que se motifica la p&eacute;rdida de foco. */
+	 * @param removeListener Clase a la que se notifica la p&eacute;rdida de foco. */
 	RequestFocusListener(final boolean removeListener) {
 		this.removeListener = removeListener;
 	}
 
-	/**
-	 * Asigna el foco al componente que ha lanzado el evento.
-	 */
+	/** Asigna el foco al componente que ha lanzado el evento. */
 	@Override
 	public void ancestorAdded(final AncestorEvent e) {
 		final JComponent component = e.getComponent();

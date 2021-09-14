@@ -63,7 +63,7 @@ public abstract class CryptoHelper {
 		BRAINPOOL_P256_R1("brainpoolp256r1"); //$NON-NLS-1$
 
 		private final String name;
-		private EcCurve(final String n) {
+		EcCurve(final String n) {
 			this.name = n;
 		}
 
@@ -89,7 +89,7 @@ public abstract class CryptoHelper {
 		SHA512("SHA-512"); //$NON-NLS-1$
 
 		private final String name;
-		private DigestAlgorithm(final String n) {
+		DigestAlgorithm(final String n) {
 			this.name = n;
 		}
 

@@ -76,7 +76,6 @@ abstract class DnieSignatureImpl extends SignatureSpi {
     private final String signatureAlgo;
 
     DnieSignatureImpl(final String signatureAlgorithm) {
-        super();
         this.signatureAlgo = signatureAlgorithm;
     }
 
@@ -107,18 +106,21 @@ abstract class DnieSignatureImpl extends SignatureSpi {
         	this.signatureVerifier = Signature.getInstance(this.signatureAlgo);
             try {
             	if (this.signatureVerifier.getProvider() instanceof DnieProvider) {
-            		this.signatureVerifier = Signature.getInstance(this.signatureAlgo, "SunRsaSign"); //$NON-NLS-1$
+            		this.signatureVerifier = Signature.getInstance(
+        				this.signatureAlgo,
+        				ProviderUtil.getDefaultOtherProvider("Signature", this.signatureAlgo) //$NON-NLS-1$
+    				);
             	}
             }
             catch (final NoSuchProviderException e) {
                 throw new IllegalStateException(
-            		"No esta instalado el proveedor SunRsaSign", e //$NON-NLS-1$
+            		"No esta instalado el proveedor por defecto de firma: " + e, e //$NON-NLS-1$
                 );
             }
         }
         catch (final NoSuchAlgorithmException e) {
             throw new IllegalStateException(
-                "No existe un proveedor para validar firmas con el algoritmo " + this.signatureAlgo, e //$NON-NLS-1$
+                "No existe un proveedor para validar firmas con el algoritmo '" + this.signatureAlgo + "': " + e, e //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
         this.signatureVerifier.initVerify(publicKey);
