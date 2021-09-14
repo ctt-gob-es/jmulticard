@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+mvn versions:display-plugin-updates
+mvn versions:display-dependency-updates 
+ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -18,6 +22,12 @@
 			<email>soporte.afirma@correo.gob.es</email>
 			<organization>Gobierno de España</organization>
 			<organizationUrl>https://administracionelectronica.gob.es</organizationUrl>
+		</developer>
+		<developer>
+			<name>Tomás García-Merás</name>
+			<email>tomas.capote@accenture.com</email>
+			<organization>Accenture</organization>
+			<organizationUrl>https://www.accenture.com</organizationUrl>
 		</developer>
 	</developers>
 	
@@ -102,8 +112,6 @@
 			</modules>
 
 	    </profile>
-
-	
 	
 	
 		<!-- Construccion por defecto -->
@@ -118,6 +126,27 @@
       		<build>
        			<plugins>
 	
+					<plugin>
+					  <groupId>org.apache.maven.plugins</groupId>
+					  <artifactId>maven-enforcer-plugin</artifactId>
+					  <version>3.0.0</version>
+					  <executions>
+					    <execution>
+					      <id>enforce-maven</id>
+					      <goals>
+					        <goal>enforce</goal>
+					      </goals>
+					      <configuration>
+					        <rules>
+					          <requireMavenVersion>
+					            <version>3.6.3</version>
+					          </requireMavenVersion>
+					        </rules>
+					      </configuration>
+					    </execution>
+					  </executions>
+					</plugin>
+		
 					<plugin>
 						<artifactId>maven-compiler-plugin</artifactId>
 						<version>3.8.1</version>
@@ -194,7 +223,7 @@
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-javadoc-plugin</artifactId>
-					  <version>3.2.0</version>
+					  <version>3.3.1</version>
 					  <executions>
 						<execution>
 						  <id>attach-javadocs</id>
@@ -218,7 +247,7 @@
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-gpg-plugin</artifactId>
-					  <version>1.6</version>
+					  <version>3.0.1</version>
 					  <executions>
 						<execution>
 						  <id>sign-artifacts</id>
