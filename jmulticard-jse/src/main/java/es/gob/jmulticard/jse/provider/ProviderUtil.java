@@ -44,7 +44,9 @@ public final class ProviderUtil {
     }
 
     /** Proveedores ligados a dispositivos hardware o bibliotecas externas. */
-    private static final List<String> FORBIDDEN_PROVIDERS = Arrays.asList("Ceres430JCAProvider", "SunMSCAPI"); //$NON-NLS-1$ //$NON-NLS-2$
+    private static final List<String> FORBIDDEN_PROVIDERS = Arrays.asList(
+		"Ceres430JCAProvider", "SunMSCAPI", "DNIeJCAProvider" //$NON-NLS-1$ //$NON-NLS-2$
+	);
 
 	/** Obtiene el proveedor por defecto para un servicio y un algorotmo dados y
 	 * no ligado a un dispositivo hardware o a una biblioteca externa a Java.
