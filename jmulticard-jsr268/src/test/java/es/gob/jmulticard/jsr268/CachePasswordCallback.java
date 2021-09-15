@@ -8,7 +8,7 @@
  * You may contact the copyright holder at: soporte.afirma5@mpt.es
  */
 
-package es.gob.jmulticard;
+package es.gob.jmulticard.jsr268;
 
 import javax.security.auth.callback.PasswordCallback;
 
