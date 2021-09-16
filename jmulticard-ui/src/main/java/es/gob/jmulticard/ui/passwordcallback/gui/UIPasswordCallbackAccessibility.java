@@ -43,9 +43,9 @@ import java.awt.Component;
 
 import javax.security.auth.callback.PasswordCallback;
 
-/** <i>PasswordCallbak</i> que muestra un di&aacute;logo para solicitar una
- * contrase&ntilde;a para DNIe. */
-public class UIPasswordCallbackAccessibility extends PasswordCallback {
+/** <i>PasswordCallbak</i> que muestra un di&aacute;logo accesible para
+ * solicitar una contrase&ntilde;a. */
+public final class UIPasswordCallbackAccessibility extends PasswordCallback {
 
     private static final long serialVersionUID = 1719174318602363633L;
 
@@ -62,12 +62,17 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
     /** T&iacute;tulo del di&aacute;logo. */
     private final String title;
 
+    /** Ruta hacia el fichero de icono del di&aacute;logo. */
     private final String iconPath;
 
+    /** Si se permite o no <i>cachear</i> el PIN. */
     private final boolean allowUseCache;
 
+    /** Si por defecto se debe mostrar o no la casilla "No volver a preguntar" para
+     * <i>cachear</i> el PIN. */
     private final boolean defaultUseCache;
 
+    /** Si se muestra o no la casilla "No volver a preguntar" para <i>cachear</i> el PIN. */
     private boolean useCache;
 
     /** Crea una <i>Callback</i> para solicitar al usuario una contrase&ntilde;a
@@ -79,16 +84,16 @@ public class UIPasswordCallbackAccessibility extends PasswordCallback {
      * @param mnemonic Mnem&oacute;nico para el propio campo de texto.
      * @param title T&iacute;tulo del di&aacute;logo.
      * @param iconFileName Ruta hacia el icono del di&aacute;logo.
-     * @param allowUseCache Hace mostrarse la casilla para seleccionar el cacheo del PIN.
-     * @param defaultUseCache Valor por defecto de la opci&oacute;n de cacheo de PIN. */
+     * @param allowUseCache Hace mostrarse la casilla para seleccionar el <i>cacheo</i> del PIN.
+     * @param defaultUseCache Valor por defecto de la opci&oacute;n de <i>cacheo</i> de PIN. */
     public UIPasswordCallbackAccessibility(final String prompt,
-    		final Component parent,
-    		final String message,
-    		final int mnemonic,
-    		final String title,
-    		final String iconFileName,
-    		final boolean allowUseCache,
-    		final boolean defaultUseCache) {
+    		                               final Component parent,
+    		                               final String message,
+    		                               final int mnemonic,
+    		                               final String title,
+    		                               final String iconFileName,
+    		                               final boolean allowUseCache,
+    		                               final boolean defaultUseCache) {
         super(prompt, false);
         this.parent = parent;
         if (prompt != null) {

@@ -44,9 +44,7 @@ import javax.swing.JLabel;
 /** Etiquetas de presentaci&oacute;n de texto.
  * @author lmerayo */
 final class InfoLabel extends JLabel {
-    /**
-     *
-     */
+
     private static final long serialVersionUID = 1L;
 
     /** Constructor sencillo.
@@ -54,22 +52,20 @@ final class InfoLabel extends JLabel {
      * @param text texto de la etiqueta */
     InfoLabel(final String text) {
         super("<HTML>" + text + "</HTML>"); //$NON-NLS-1$ //$NON-NLS-2$
-        this.setOpaque(false);
+        setOpaque(false);
         AccesibilityUtils.remarcar(this);
         AccesibilityUtils.setContrastColor(this);
         AccesibilityUtils.setFontBold(this);
 
     }
 
-    /** Constructor de la clase
-     * @param text
-     *        Texto a mostrar
-     * @param opaque
-     *        Indica si el componente ser&aacute; opaco */
+    /** Constructor de la clase.
+     * @param text Texto a mostrar
+     * @param opaque Indica si el componente ser&aacute; opaco */
     InfoLabel(final String text, final boolean opaque) {
         super("<HTML>" + text + "</HTML>"); //$NON-NLS-1$ //$NON-NLS-2$
-        this.setFocusable(true); // Focusable
-        this.setOpaque(opaque);
+        setFocusable(true); // Focusable
+        setOpaque(opaque);
         AccesibilityUtils.remarcar(this);
         AccesibilityUtils.setContrastColor(this);
         AccesibilityUtils.setFontBold(this);

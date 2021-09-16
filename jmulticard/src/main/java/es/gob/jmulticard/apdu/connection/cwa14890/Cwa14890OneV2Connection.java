@@ -59,9 +59,9 @@ public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 	@Override
 	public String toString() {
     	return "Conexion de tipo CWA-14890-V2 " + //$NON-NLS-1$
-    			(isOpen()
-    					? "abierta sobre " + getSubConnection() //$NON-NLS-1$
-    					: "cerrada"); //$NON-NLS-1$
+			(isOpen()
+				? "abierta sobre " + getSubConnection() //$NON-NLS-1$
+					: "cerrada"); //$NON-NLS-1$
     }
 
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el

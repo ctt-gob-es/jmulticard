@@ -31,6 +31,9 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
+import es.gob.jmulticard.jse.provider.CachePasswordCallback;
+import es.gob.jmulticard.jse.provider.CardPasswordCallback;
+import es.gob.jmulticard.jse.provider.JMultiCardProviderMessages;
 
 /** Implementaci&oacute;n del SPI <code>KeyStore</code> para tarjeta FNMT-RCM-CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -43,9 +46,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     private void loadAliases() {
     	final String[] aliases = this.cryptoCard.getAliases();
     	userCertAliases = new ArrayList<>(aliases.length);
-    	for (final String alias : aliases) {
-    		userCertAliases.add(alias);
-    	}
+    	Collections.addAll(userCertAliases, aliases);
     }
 
     /** {@inheritDoc} */
@@ -172,7 +173,10 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     			this.cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
-    			final PasswordCallback pwc = new CeresPasswordCallback((PasswordProtection) pp);
+    			final PasswordCallback pwc = new CardPasswordCallback(
+					(PasswordProtection) pp,
+					JMultiCardProviderMessages.getString("Ceres430KeyStoreImpl.0") //$NON-NLS-1$
+				);
     			this.cryptoCard = new Ceres(
 					CeresProvider.getDefaultApduConnection(),
 					new JseCryptoHelper()
@@ -221,20 +225,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
             return false;
         }
         return entryClass.equals(PrivateKeyEntry.class);
-    }
-
-    /** <code>PasswordCallbak</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
-     * construy&oacute; o la que se le establece posteriormente. */
-    private static final class CachePasswordCallback extends PasswordCallback {
-
-        private static final long serialVersionUID = 816457144215238935L;
-
-        /** Contruye una <code>Callback</code> con una contrase&ntilde;a pre-establecida.
-         * @param password Contrase&ntilde;a por defecto. */
-        CachePasswordCallback(final char[] password) {
-            super(">", false); //$NON-NLS-1$
-            setPassword(password);
-        }
     }
 
     // ******************************************

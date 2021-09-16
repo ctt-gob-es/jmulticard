@@ -12,17 +12,17 @@ package test.es.gob.jmulticard.apdu.connection.cwa14890;
 
 import javax.security.auth.callback.PasswordCallback;
 
-/** PasswordCallbak que almacena internamente y devuelve la contrase&ntilde;a con la que se
+/** <code>PasswordCallbak</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
  * construy&oacute; o la que se le establece posteriormente. */
-public final class CachePasswordCallback extends PasswordCallback {
+final class CachePasswordCallback extends PasswordCallback {
 
     private static final long serialVersionUID = 816457144215238935L;
 
     /** Contruye una Callback con una contrase&ntilde; preestablecida.
      * @param password Contrase&ntilde;a por defecto. */
-    public CachePasswordCallback(final char[] password) {
+    CachePasswordCallback(final char[] password) {
         super(">", false); //$NON-NLS-1$
-        this.setPassword(password);
+        setPassword(password);
     }
 
     @Override

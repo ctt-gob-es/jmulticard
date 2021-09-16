@@ -24,7 +24,7 @@ import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
-/** Par&aacute;metros de comando
+/** Par&aacute;metros de comando.
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO87 {
 

@@ -66,7 +66,7 @@ public abstract class Iso7816EightCard extends Iso7816FourCard {
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
     public void verifyCertificate(final byte[] cert) throws ApduConnectionException {
         final CommandApdu apdu = new PsoVerifyCertificateApduCommand((byte) 0x00, cert);
-        final ResponseApdu res = this.getConnection().transmit(apdu);
+        final ResponseApdu res = getConnection().transmit(apdu);
         if (!res.isOk()) {
             throw new SecureChannelException(
         		"Error en la verificacion del certificado. Se obtuvo el error: " + //$NON-NLS-1$

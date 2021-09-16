@@ -9,6 +9,7 @@ import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
 import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
+import es.gob.jmulticard.jsr268.AOUtil;
 
 /** Pruebas del proveedor JSE para tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */

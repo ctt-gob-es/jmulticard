@@ -43,6 +43,8 @@ import java.util.Properties;
 
 import es.gob.jmulticard.HexUtils;
 
+/** Peque&ntilde;o diccionario de OIDs comunes.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 final class OidDictionary {
 
 	private OidDictionary() {

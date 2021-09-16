@@ -53,13 +53,13 @@ final class CeresScCwa14890Constants implements Cwa14890PublicConstants, Cwa1489
     /** Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
      * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.
      * (<i>pk-RCA-AUT-keyRef</i>).*/
-    private static final byte[] REF_C_CV_CA_PUBLIC_KEY = new byte[] {
+    private static final byte[] REF_C_CV_CA_PUBLIC_KEY = {
             (byte) 0x02, (byte) 0x0f
     };
 
     /** Certificado de la CA intermedia de Terminal verificable por la tarjeta.
      * (<i>c-CV-CA-CS-AUT</i>). */
-    private static final byte[] C_CV_CA = new byte[] {
+    private static final byte[] C_CV_CA = {
 		(byte) 0x7F, (byte) 0x21, (byte) 0x81, (byte) 0xCE, (byte) 0x5F, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x80, (byte) 0x9A,
 		(byte) 0x74, (byte) 0xF4, (byte) 0xCA, (byte) 0xAB, (byte) 0x7E, (byte) 0xFB, (byte) 0xC5, (byte) 0x85, (byte) 0xA0, (byte) 0xA0,
 		(byte) 0xE7, (byte) 0xA4, (byte) 0x1B, (byte) 0x15, (byte) 0xE6, (byte) 0x29, (byte) 0x17, (byte) 0x24, (byte) 0x12, (byte) 0x4F,
@@ -88,19 +88,19 @@ final class CeresScCwa14890Constants implements Cwa14890PublicConstants, Cwa1489
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
      * (<i>ifd-keyRef</i>).*/
-    private static final byte[] CHR_C_CV_CA = new byte[] {
+    private static final byte[] CHR_C_CV_CA = {
 		(byte) 0x65, (byte) 0x73, (byte) 0x54, (byte) 0x43, (byte) 0x53, (byte) 0x60, (byte) 0x00, (byte) 0x11
     };
 
     /** Referencia al fichero en donde reside la clave privada de componente.
      * (<i>sk-ICC-AUT-keyRef</i>). */
-    private static final byte[] REF_ICC_PRIVATE_KEY = new byte[] {
+    private static final byte[] REF_ICC_PRIVATE_KEY = {
             (byte) 0x02, (byte) 0x1f
     };
 
     /** Certificado de Terminal verificable por la tarjeta.
      * (<i>c-CV-IFD-AUT</i>). */
-    private static final byte[] C_CV_IFD = new byte[] {
+    private static final byte[] C_CV_IFD = {
 		(byte) 0x7F, (byte) 0x21, (byte) 0x81, (byte) 0xCD, (byte) 0x5F, (byte) 0x37, (byte) 0x81, (byte) 0x80, (byte) 0x46, (byte) 0x7A,
 		(byte) 0x4A, (byte) 0x15, (byte) 0xDC, (byte) 0x78, (byte) 0xEA, (byte) 0xD5, (byte) 0x3F, (byte) 0xD7, (byte) 0xD8, (byte) 0x89,
 		(byte) 0xE9, (byte) 0xCE, (byte) 0xBC, (byte) 0xBD, (byte) 0x17, (byte) 0x3A, (byte) 0xF3, (byte) 0x88, (byte) 0x1B, (byte) 0xB1,
@@ -129,7 +129,7 @@ final class CeresScCwa14890Constants implements Cwa14890PublicConstants, Cwa1489
      * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
      * (<i>sn-IFD</i>). */
-    private static final byte[] CHR_C_CV_IFD = new byte[] {
+    private static final byte[] CHR_C_CV_IFD = {
     	(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
     };
 
@@ -173,7 +173,7 @@ final class CeresScCwa14890Constants implements Cwa14890PublicConstants, Cwa1489
     		(byte) 0xe2, (byte) 0x57, (byte) 0x7d, (byte) 0xec, (byte) 0x19, (byte) 0xe3, (byte) 0xd8, (byte) 0x31
         });
 
-        private final byte[] encoded = new byte[] {
+        private final byte[] encoded = {
     		(byte) 0x30, (byte) 0x82, (byte) 0x01, (byte) 0x36, (byte) 0x02, (byte) 0x01, (byte) 0x00, (byte) 0x30,
     		(byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x2A, (byte) 0x86, (byte) 0x48, (byte) 0x86, (byte) 0xF7,
     		(byte) 0x0D, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x05, (byte) 0x00, (byte) 0x04, (byte) 0x82,
@@ -255,7 +255,7 @@ final class CeresScCwa14890Constants implements Cwa14890PublicConstants, Cwa1489
 
         private static final long serialVersionUID = -143874096089393139L;
 
-        private final byte[] encoded = new byte[] {
+        private final byte[] encoded = {
                 (byte) 0x30, (byte) 0x81, (byte) 0x9E, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x2A, (byte) 0x86, (byte) 0x48,
                 (byte) 0x86, (byte) 0xF7, (byte) 0x0D, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x05, (byte) 0x00, (byte) 0x03, (byte) 0x81,
                 (byte) 0x8C, (byte) 0x00, (byte) 0x30, (byte) 0x81, (byte) 0x88, (byte) 0x02, (byte) 0x81, (byte) 0x80, (byte) 0xEA, (byte) 0xDE,

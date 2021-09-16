@@ -41,7 +41,6 @@ public class DnieSubjectPrincipalParser {
 		return this.surname1;
 	}
 
-
 	/** Obtiene el segundo apellido del titular del DNIe.
 	 * @return Segundo apellido del titular del DNIe. */
 	public String getSurname2() {

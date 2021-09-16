@@ -16,11 +16,6 @@ import es.gob.jmulticard.asn1.TlvException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CommonPrivateKeyAttributesEmpty extends DecoderObject {
 
-	/** Construye un tipo ASN&#46;1 PKCS#15 <i>CommonPrivateKeyAttributesEmpty</i>. */
-	public CommonPrivateKeyAttributesEmpty() {
-		super();
-	}
-
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
 		// vacio

@@ -9,7 +9,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Odf;
 public final class TestOdfCreation {
 
 	/** ODF obtenido de una tarjeta GyD SmartCafe de ACCV. */
-	private static final byte[] SAMPLE_ODF = new byte[] {
+	private static final byte[] SAMPLE_ODF = {
 		(byte) 0xA0, (byte) 0x06, (byte) 0x30, (byte) 0x04, (byte) 0x04, (byte) 0x02, (byte) 0x44, (byte) 0x00,
 		(byte) 0xA1, (byte) 0x06, (byte) 0x30, (byte) 0x04, (byte) 0x04, (byte) 0x02, (byte) 0x44, (byte) 0x01,
 		(byte) 0xA4, (byte) 0x06, (byte) 0x30, (byte) 0x04, (byte) 0x04, (byte) 0x02, (byte) 0x44, (byte) 0x04,

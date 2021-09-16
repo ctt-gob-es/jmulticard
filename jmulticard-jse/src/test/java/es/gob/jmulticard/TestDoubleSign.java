@@ -16,7 +16,7 @@ public final class TestDoubleSign {
 
 	private static final char[] PASSWORD = "password".toCharArray(); //$NON-NLS-1$
 
-	/** Main parta pruebas.
+	/** Main para pruebas.
 	 * @param args No se usa.
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {

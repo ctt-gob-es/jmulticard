@@ -36,8 +36,7 @@ public final class TestCertParseUtil {
 		System.out.println(cn);
 
 		final String name = cn.substring(
-			cn.indexOf(',') + 1,
-			cn.length()
+			cn.indexOf(',') + 1
 		).trim();
 		System.out.println("Nombre: " + //$NON-NLS-1$
 			name
@@ -131,30 +130,28 @@ public final class TestCertParseUtil {
             if (principal.charAt(offset1) == ',') {
                 return ""; //$NON-NLS-1$
             }
-            else if (principal.charAt(offset1) == '"') {
-                offset1++;
-                if (offset1 >= principal.length()) {
-                    return ""; //$NON-NLS-1$
-                }
-
-                offset2 = principal.indexOf('"', offset1);
-                if (offset2 == offset1) {
-                    return ""; //$NON-NLS-1$
-                }
-                else if (offset2 != -1) {
-                    return principal.substring(offset1, offset2);
-                }
-                else {
-                    return principal.substring(offset1);
-                }
-            }
-            else {
+			if (principal.charAt(offset1) != '"') {
                 offset2 = principal.indexOf(',', offset1);
                 if (offset2 != -1) {
                     return principal.substring(offset1, offset2).trim();
                 }
                 return principal.substring(offset1).trim();
             }
+			offset1++;
+			if (offset1 >= principal.length()) {
+			    return ""; //$NON-NLS-1$
+			}
+
+			offset2 = principal.indexOf('"', offset1);
+			if (offset2 == offset1) {
+			    return ""; //$NON-NLS-1$
+			}
+			else if (offset2 != -1) {
+			    return principal.substring(offset1, offset2);
+			}
+			else {
+			    return principal.substring(offset1);
+			}
         }
 
         return null;

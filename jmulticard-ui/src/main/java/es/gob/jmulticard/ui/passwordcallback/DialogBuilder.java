@@ -76,7 +76,7 @@ public final class DialogBuilder {
     }
 
     private DialogBuilder() {
-        /* Constructor privado */
+        // Constructor privado
     }
 
     /** Muestra un di&aacute;logo para la confirmaci&oacute;n de una operaci&oacute;n con clave privada.

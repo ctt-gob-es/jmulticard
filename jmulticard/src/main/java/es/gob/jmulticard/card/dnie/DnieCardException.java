@@ -48,6 +48,7 @@ public final class DnieCardException extends CryptoCardException {
 
 	private static final long serialVersionUID = 5935577997660561619L;
 
+	/** C&oacute;digo de retorno que se obtuvo tras producirse el error. */
     private final StatusWord returnCode;
 
     /** Construye la excepci&oacute;n.

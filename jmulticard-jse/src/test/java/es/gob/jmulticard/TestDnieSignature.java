@@ -11,6 +11,7 @@ import org.spongycastle.util.encoders.Base64;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
 
+/** Pruebas de firma en DNIe. */
 public class TestDnieSignature {
 
 	private static final String PROVIDER_NAME = "DNI"; //$NON-NLS-1$
@@ -18,6 +19,9 @@ public class TestDnieSignature {
 	private static final byte[] DATA = "Datos a firmar".getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
 	private static final char[] PASSWORD = "micontrasena".toCharArray(); //$NON-NLS-1$
 
+	/** Prueba de firmas consecutivas.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
 	@Test
 	public void testSignRepeatedly() throws Exception {
 
@@ -35,11 +39,9 @@ public class TestDnieSignature {
     	System.out.println( "Firma 1: " + Base64.toBase64String(signature1.sign())); //$NON-NLS-1$
 
     	final Signature signature2 = Signature.getInstance(ALGORITHM);
-    	signature1.initSign(sKey);
-    	signature1.update(DATA);
+    	signature2.initSign(sKey);
+    	signature2.update(DATA);
 
-    	System.out.println( "Firma 2: " + Base64.toBase64String(signature1.sign())); //$NON-NLS-1$
-
-
+    	System.out.println( "Firma 2: " + Base64.toBase64String(signature2.sign())); //$NON-NLS-1$
 	}
 }

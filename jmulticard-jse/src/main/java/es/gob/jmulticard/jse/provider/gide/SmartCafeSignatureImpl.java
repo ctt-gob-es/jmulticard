@@ -55,6 +55,7 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 import es.gob.jmulticard.jse.provider.SignatureAuthException;
 
 /** Implementaci&oacute;n del SPI Signature para tarjeta G&amp;D SmartCafe con Applet PKCS#15.
@@ -77,7 +78,6 @@ abstract class SmartCafeSignatureImpl extends SignatureSpi {
     private final String signatureAlgo;
 
     SmartCafeSignatureImpl(final String signatureAlgorithm) {
-        super();
         this.signatureAlgo = signatureAlgorithm;
     }
 
@@ -108,12 +108,15 @@ abstract class SmartCafeSignatureImpl extends SignatureSpi {
         	this.signatureVerifier = Signature.getInstance(this.signatureAlgo);
             try {
             	if (this.signatureVerifier.getProvider() instanceof SmartCafeProvider) {
-            		this.signatureVerifier = Signature.getInstance(this.signatureAlgo, "SunRsaSign"); //$NON-NLS-1$
+            		this.signatureVerifier = Signature.getInstance(
+        				this.signatureAlgo,
+        				ProviderUtil.getDefaultOtherProvider("Signature", this.signatureAlgo) //$NON-NLS-1$
+    				);
             	}
             }
             catch (final NoSuchProviderException e) {
                 throw new IllegalStateException(
-            		"No esta instalado el proveedor SunRsaSign", e //$NON-NLS-1$
+            		"No esta instalado el proveedor por defecto de firma: " + e, e //$NON-NLS-1$
                 );
             }
         }

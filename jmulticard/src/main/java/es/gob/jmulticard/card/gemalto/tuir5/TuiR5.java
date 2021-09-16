@@ -36,7 +36,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
-    private static final byte[] ATR_MASK = new byte[] {
+    private static final byte[] ATR_MASK = {
         (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
         (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF
     };
@@ -46,7 +46,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
         (byte) 0x77, (byte) 0x07, (byte) 0x53, (byte) 0x02, (byte) 0x31, (byte) 0x10, (byte) 0x82, (byte) 0x90, (byte) 0x00
     }, ATR_MASK);
 
-    private static final byte[][] APPLETS_AIDS = new byte[][] {
+    private static final byte[][] APPLETS_AIDS = {
     	{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x18, (byte) 0x0E, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x63, (byte) 0x42, (byte) 0x00 },
     	{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x18, (byte) 0x0F, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x63, (byte) 0x42, (byte) 0x00 },
     	{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x18, (byte) 0x0C, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x63, (byte) 0x42, (byte) 0x00 }

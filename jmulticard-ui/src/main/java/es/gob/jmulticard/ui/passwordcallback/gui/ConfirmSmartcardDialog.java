@@ -185,7 +185,7 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
         if (GeneralConfig.isMaximized()) {
             // Se maximiza
             this.setBounds(0, 0, maxWidth, maxHeight);
-        } 
+        }
         else if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold()) { // Se establece el tamano minimo en base a las opciones activas
 		    setMinimumSize(new Dimension(AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_WIDTH, AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_HEIGHT));
 		}
@@ -359,32 +359,30 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
         cons.insets = new Insets(0, 0, 0, 10); // right padding
 
         // Se comprueba el tipo de dialogo
-        if (typeOption == JOptionPane.YES_NO_OPTION) {
-            // Boton Si
-            okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
-            okButton.setMnemonic(KeyEvent.VK_S);
-            // Boton no
-            customDialog.noButton = customDialog.getButton(Messages.getString("CustomDialog.confirmDialog.no"), KeyEvent.VK_N); //$NON-NLS-1$
-            customDialog.noButton.addKeyListener(new KeyListener() {
-
-    			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
-    			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
-
-    			@Override
-    			public void keyPressed(final KeyEvent ke) {
-    				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-    					customDialog.getNoButton().doClick();
-    				}
-    			}
-    		});
-            final JPanel noPanel = new JPanel();
-            noPanel.add(customDialog.noButton);
-            customDialog.buttonsPanel.add(noPanel, cons);
-            customDialog.noButton.addActionListener(customDialog);
-        }
-        else {
+        if (typeOption != JOptionPane.YES_NO_OPTION) {
             throw new UnsupportedOperationException("Solo se soportan dialogos de tipo Si/No"); //$NON-NLS-1$
         }
+		// Boton Si
+		okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
+		okButton.setMnemonic(KeyEvent.VK_S);
+		// Boton no
+		customDialog.noButton = customDialog.getButton(Messages.getString("CustomDialog.confirmDialog.no"), KeyEvent.VK_N); //$NON-NLS-1$
+		customDialog.noButton.addKeyListener(new KeyListener() {
+
+			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
+			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
+
+			@Override
+			public void keyPressed(final KeyEvent ke) {
+				if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+					customDialog.getNoButton().doClick();
+				}
+			}
+		});
+		final JPanel noPanel = new JPanel();
+		noPanel.add(customDialog.noButton);
+		customDialog.buttonsPanel.add(noPanel, cons);
+		customDialog.noButton.addActionListener(customDialog);
 
         customDialog.infoLabel.setHorizontalAlignment(SwingConstants.CENTER); // Se centra el texto
         customDialog.pack();

@@ -61,7 +61,7 @@ final class JSecurePasswordLabel extends JLabel {
 
 	private static final long serialVersionUID = -4343328489072897605L;
 
-	private final int delay = 500;
+	private final int delay = 500; 
 
 	final char[] pass;
 	char[] getPass() {

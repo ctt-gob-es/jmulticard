@@ -18,7 +18,7 @@ public class TestTlvCreation extends TestCase {
 
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(TestTlvCreation.class.getName());
 
-    private static final String[] TEST_FILES = new String[] {
+    private static final String[] TEST_FILES = {
             "CDF_EEE.BER", //$NON-NLS-1$
             "CDF_GSD.BER", //$NON-NLS-1$
             "CDF_GVA.BER", //$NON-NLS-1$

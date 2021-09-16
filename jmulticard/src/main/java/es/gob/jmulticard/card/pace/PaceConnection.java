@@ -76,7 +76,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			protectedApdu = this.sm.wrap(finalCommand);
 		}
 		catch (final SecureMessagingException e) {
-			throw new ApduConnectionException("No ha sido posible cifrar un mensaje seguro con el canal PACE: " + e); //$NON-NLS-1$
+			throw new ApduConnectionException("No ha sido posible cifrar un mensaje seguro con el canal PACE: " + e, e); //$NON-NLS-1$
 		}
 
 		final ResponseApdu responseApdu = this.subConnection.transmit(protectedApdu);
@@ -86,7 +86,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			decipherApdu = this.sm.unwrap(responseApdu);
 		}
 		catch (final SecureMessagingException e1) {
-			throw new ApduConnectionException("No ha sido posible descifrar un mensaje seguro con el canal PACE: " + e1); //$NON-NLS-1$
+			throw new ApduConnectionException("No ha sido posible descifrar un mensaje seguro con el canal PACE: " + e1, e1); //$NON-NLS-1$
 		}
 
 		if (SmartCard.DEBUG) {

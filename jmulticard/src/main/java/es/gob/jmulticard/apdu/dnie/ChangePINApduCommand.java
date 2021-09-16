@@ -6,6 +6,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Sergio Mart&iacute;nez Rico. */
 public class ChangePINApduCommand extends CommandApdu {
 
+	private static final byte CLA = (byte) 0x90;
 	private static final byte INS_CHANGE_PIN = (byte) 0x24;
 	private static final byte INSTRUCTION_PARAMETER_P1 = 0x00;
 	private static final byte INSTRUCTION_PARAMETER_P2 = 0x00;
@@ -17,7 +18,7 @@ public class ChangePINApduCommand extends CommandApdu {
 	 * @param newPIN Pin nuevo de la tarjeta inteligente */
 	public ChangePINApduCommand(final byte[] oldPIN, final byte[] newPIN) {
 		super(
-			(byte) 0x90,			  // CLA
+			CLA,					  // CLA
 			INS_CHANGE_PIN, 		  // INS
 			INSTRUCTION_PARAMETER_P1, // P1
 			INSTRUCTION_PARAMETER_P2, // P2

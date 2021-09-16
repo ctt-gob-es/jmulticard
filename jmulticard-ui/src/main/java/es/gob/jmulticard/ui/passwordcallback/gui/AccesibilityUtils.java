@@ -122,7 +122,7 @@ final class AccesibilityUtils {
                             if (button.getParent() instanceof JPanel) {
                                 ((JPanel) button.getParent()).setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
                             }
-                        } 
+                        }
                         else if (button.getParent() instanceof JPanel) {
 						    ((JPanel) button.getParent()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 						}
@@ -221,18 +221,15 @@ final class AccesibilityUtils {
             }
             else if (component instanceof JCheckBox) {
                 component.setForeground(Color.WHITE);
-            }
-            else if (component instanceof JPanel) {
-                if (component.getBorder() instanceof TitledBorder) {
-                    ((TitledBorder) component.getBorder()).setTitleColor(Color.WHITE);
-                }
-                component.setForeground(Color.WHITE);
-                component.setBackground(Color.BLACK);
-            }
-            else {
-                component.setForeground(Color.WHITE);
-                component.setBackground(Color.BLACK);
-            }
+            } else {
+				if (component instanceof JPanel) {
+				    if (component.getBorder() instanceof TitledBorder) {
+				        ((TitledBorder) component.getBorder()).setTitleColor(Color.WHITE);
+				    }
+				}
+				component.setForeground(Color.WHITE);
+				component.setBackground(Color.BLACK);
+			}
         }
     }
 

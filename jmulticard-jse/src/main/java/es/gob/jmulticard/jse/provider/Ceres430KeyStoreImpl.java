@@ -292,9 +292,9 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
-    			final PasswordCallback pwc = new DniePasswordCallback(
+    			final PasswordCallback pwc = new CardPasswordCallback(
 					(PasswordProtection) pp,
-					"Por favor, introduzca el PIN de su tarjeta FNMT-CERES"
+					JMultiCardProviderMessages.getString("Ceres430KeyStoreImpl.0") //$NON-NLS-1$
 				);
     			this.cryptoCard = new CeresSc(
 					Ceres430Provider.getDefaultApduConnection(),
@@ -332,7 +332,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 					Ceres430Provider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {
-    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e); //$NON-NLS-1$
+    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e, e); //$NON-NLS-1$
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
@@ -361,20 +361,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
             return false;
         }
         return entryClass.equals(PrivateKeyEntry.class);
-    }
-
-    /** <code>PasswordCallback</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
-     * construy&oacute; o la que se le establece posteriormente. */
-    private static final class CachePasswordCallback extends PasswordCallback {
-
-        private static final long serialVersionUID = 816457144215238935L;
-
-        /** Contruye una <code>Callback</code> con una contrase&ntilde;a preestablecida.
-         * @param password Contrase&ntilde;a por defecto. */
-        public CachePasswordCallback(final char[] password) {
-            super(">", false); //$NON-NLS-1$
-            setPassword(password);
-        }
     }
 
     // ******************************************

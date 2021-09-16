@@ -47,6 +47,7 @@ import es.gob.jmulticard.apdu.StatusWord;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Iso7816FourCardException extends Exception {
 
+	/** C&oacute;digo de retorno que se obtuvo tras producirse el error. */
     private final StatusWord returnCode;
 
     /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.

@@ -97,7 +97,7 @@ public final class CipheredApdu extends CommandApdu {
        if (data == null || mac == null) {
         	throw new IllegalArgumentException("Ni los datos (TLV) ni el MAC pueden ser nulos"); //$NON-NLS-1$
        }
-       if (!(mac.length != 4 || mac.length != 8)) {
+       if (mac.length != 4 && mac.length != 8) {
         	throw new IllegalArgumentException(
     			"El MAC debe medir cuatro u ocho octetos, y el recibido mide " + mac.length + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
 			);

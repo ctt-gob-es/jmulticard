@@ -26,11 +26,11 @@ public final class Bac {
 
 	private static final byte CLA = (byte) 0x00;
 
-	private static final byte[] KENC_PADDING = new byte[] {
+	private static final byte[] KENC_PADDING = {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
 	};
 
-	private static final byte[] KMAC_PADDING = new byte[] {
+	private static final byte[] KMAC_PADDING = {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
 	};
 

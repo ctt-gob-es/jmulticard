@@ -138,6 +138,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
     private static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
     private static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
 
+    private static final int MAX_APDU_SIZE = 255;
+
     /** Nombre del Fichero Maestro. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
@@ -292,15 +294,15 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         final byte[] prkdfValue =  selectFileByLocationAndRead(PRKDF_LOCATION);
 
         // Establecemos el valor del PrKDF
-        Pkcs15PrKdf prkdf = new CeresPrKdf();
+        Pkcs15PrKdf prkdf = new PrKdf();
         try {
         	prkdf.setDerValue(prkdfValue);
         }
         catch(final Exception e) {
-        	// Si no carga el estructura PrKDF especifica de CERES probamos con la
-        	// generica PKCS#15, presente en las ultimas versiones de la tarjeta
-        	LOGGER.info("El PrKDF no es de tipo FNMT, se intenta en modo PKCS#15: " + e); //$NON-NLS-1$
-        	prkdf = new PrKdf();
+        	// Si no carga el estructura PrKDF probamos con la generica PKCS#15
+        	// especifica de CERES, presente en las versiones antiguas de la tarjeta
+        	LOGGER.info("El PrKDF no es de tipo PKCS#15, se intenta en modo FNMT: " + e); //$NON-NLS-1$
+        	prkdf = new CeresPrKdf();
         	prkdf.setDerValue(prkdfValue);
         }
 
@@ -450,17 +452,19 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				);
 			}
 		}
-		// Pero si es de 2048 hacen falta dos APDU, envolviendo la APDU de carga de datos
+		// Pero si es de 2048 hacen falta mas de una APDU, haciendo envoltura de la APDU de carga de datos
 		else if (keyBitSize == 2048) {
+
+			//TODO: Poner esto en un bucle. Separar de forma fija en dos APDU solo vale para claves de 2048, pero no de 4196 o superiores
 
 			final byte[] envelopedLoadDataApdu = new byte[] {
 				(byte) 0x90, (byte) 0x58, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00
 			};
 
-			// La primera APDU carga 0xFF octetos (254)
-			byte[] data = new byte[255];
+			// La primera APDU carga MAX_APDU_SIZE octetos
+			byte[] data = new byte[MAX_APDU_SIZE];
 			System.arraycopy(envelopedLoadDataApdu, 0, data, 0, envelopedLoadDataApdu.length);
-			System.arraycopy(paddedData, 0, data, envelopedLoadDataApdu.length, 255 - envelopedLoadDataApdu.length);
+			System.arraycopy(paddedData, 0, data, envelopedLoadDataApdu.length, MAX_APDU_SIZE - envelopedLoadDataApdu.length);
 
 			try {
 				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
@@ -476,9 +480,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				);
 			}
 
-			// La segunda APDU es de 0x08 octetos (8)
+			// La segunda APDU es de 0x08 octetos (8) //TODO: Es de 8 octetos solo si MAX_APDU_SIZE es 0xFF y la clave es de 2048!!!!
 			data = new byte[8];
-			System.arraycopy(paddedData, 255 - envelopedLoadDataApdu.length, data, 0, 8);
+			System.arraycopy(paddedData, MAX_APDU_SIZE - envelopedLoadDataApdu.length, data, 0, 8);
 
 			try {
 				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
@@ -497,7 +501,8 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 
 		else {
-			throw new IllegalArgumentException("Solo se soportan claves de 2048 o menos bits"); //$NON-NLS-1$
+			//TODO: Soportar claves de cualquier tamano
+			throw new IllegalArgumentException("Solo se soportan claves de 2048 o 1024 bits"); //$NON-NLS-1$
 		}
 
 	}
@@ -521,7 +526,9 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1 ||
         		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW2
     		) {
-            	if(AUTO_RETRY) {
+            	// Evitamos explicitamente el reintento automatico con nuestro "CachePasswordCallback" para
+            	// no bloquear accidentalmente la tarjeta
+            	if(AUTO_RETRY && !pinPc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
             		this.passwordCallback = null;
             		verifyPin(
                 		getInternalPasswordCallback()

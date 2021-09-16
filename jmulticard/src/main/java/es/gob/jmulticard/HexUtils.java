@@ -55,11 +55,12 @@ public final class HexUtils {
     /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector. Para
      * ser usado en <code>hexify()</code>. */
     private static final char[] HEX_CHARS = {
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
+    /** Constructor privado. */
     private HexUtils() {
-        /* Constructor privado. No se permite instanciacion en una clase de utilidades. */
+        // No se permite instanciacion en una clase de utilidades
     }
 
     /** Comprueba si dos <i>arrays</i> de octetos son iguales.
@@ -83,7 +84,6 @@ public final class HexUtils {
         if (vLen != wLen || v.length < vOffset + vLen || w.length < wOffset + wLen) {
             return false;
         }
-
         for (int i = 0; i < vLen; i++) {
             if (v[i + vOffset] != w[i + wOffset]) {
                 return false;
@@ -119,7 +119,7 @@ public final class HexUtils {
         if (abyte == null) {
             return "null"; //$NON-NLS-1$
         }
-        final StringBuffer stringbuffer = new StringBuffer(256);
+        final StringBuilder stringbuffer = new StringBuilder(256);
         int i = 0;
         for (final byte element : abyte) {
             if (separator && i > 0) {
@@ -143,10 +143,7 @@ public final class HexUtils {
      * @param length N&uacute;mero de octetos de la porci&oacute;n a obtener.
      * @return Una porci&oacute;n del <i>array</i> especificado. */
     public static byte[] subArray(final byte[] src, final int srcPos, final int length) {
-        if (length == 0) {
-            return null;
-        }
-        if (src.length < srcPos + length) {
+        if (length == 0 || src.length < srcPos + length) {
             return null;
         }
         final byte[] temp = new byte[length];
@@ -154,7 +151,7 @@ public final class HexUtils {
         return temp;
     }
 
-    /** Realiza la operacion XOR entre dos <i>array</i> de octetos. El resultado se recortar&aacute; para
+    /** Realiza la operaci&oacute;n XOR entre dos <i>array</i> de octetos. El resultado se recortar&aacute; para
      * ser del tama&ntilde;o del primer <i>array</i> recibido tomando los octetos menos significativos
      * del resultado.
      * @param v Primer <i>array</i> de bytes.
@@ -162,10 +159,8 @@ public final class HexUtils {
      * @return Resultado del XOR de los <i>arrays</i> de entrada. */
     public static byte[] xor(final byte[] v, final byte[] w) {
 
-        byte[] xored = null;
-        byte[] trimmedXor = null;
-        xored = new BigInteger(1, v).xor(new BigInteger(1, w)).toByteArray();
-        trimmedXor = new byte[v.length];
+        final byte[] xored = new BigInteger(1, v).xor(new BigInteger(1, w)).toByteArray();
+        final byte[] trimmedXor = new byte[v.length];
         if (xored.length >= trimmedXor.length) {
             System.arraycopy(xored, xored.length - trimmedXor.length, trimmedXor, 0, trimmedXor.length);
         }

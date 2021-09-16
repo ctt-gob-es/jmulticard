@@ -81,12 +81,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 	private static final byte MSB_INCORRECT_LE_PACE = (byte) 0x62;
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave <code>Kenc</code> del canal seguro. */
-    private static final byte[] SECURE_CHANNEL_KENC_AUX = new byte[] {
+    private static final byte[] SECURE_CHANNEL_KENC_AUX = {
         (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
     };
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave <code>Kmac</code> del canal seguro. */
-    private static final byte[] SECURE_CHANNEL_KMAC_AUX = new byte[] {
+    private static final byte[] SECURE_CHANNEL_KMAC_AUX = {
         (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
     };
 
@@ -127,9 +127,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     @Override
 	public String toString() {
     	return "Conexion de tipo CWA-14890-V1 " + //$NON-NLS-1$
-    			(isOpen()
-    					? "abierta sobre " + getSubConnection() //$NON-NLS-1$
-    					: "cerrada"); //$NON-NLS-1$
+			(isOpen()
+				? "abierta sobre " + getSubConnection() //$NON-NLS-1$
+					: "cerrada"); //$NON-NLS-1$
     }
 
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el

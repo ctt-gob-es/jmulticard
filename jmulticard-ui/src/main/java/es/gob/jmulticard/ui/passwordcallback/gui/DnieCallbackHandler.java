@@ -18,6 +18,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
 public final class DnieCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {

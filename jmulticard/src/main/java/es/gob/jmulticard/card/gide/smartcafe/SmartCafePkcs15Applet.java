@@ -58,7 +58,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SmartCafePkcs15Applet extends Iso7816FourCard implements CryptoCard {
 
-	private static final byte[] ATR_MASK = new byte[] {
+	private static final byte[] ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xf
@@ -71,7 +71,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		(byte) 0x65, (byte) 0x2d, (byte) 0x6e, (byte) 0x66, (byte) 0xc4
 	}, ATR_MASK);
 
-	private static final byte[] ATR_MASK_MSC = new byte[] {
+	private static final byte[] ATR_MASK_MSC = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
 
@@ -81,7 +81,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 	}, ATR_MASK_MSC);
 
 	/** ATR de tarjeta G&amp;D SmartCafe 3&#46;2 con T=CL (v&iacute;a inal&aacute;mbrica). */
-	private static final byte[] ATR_MASK_TCL = new byte[] {
+	private static final byte[] ATR_MASK_TCL = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xf
@@ -93,13 +93,13 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		(byte) 0x65, (byte) 0x2d, (byte) 0x6e, (byte) 0x66, (byte) 0xc4
 	}, ATR_MASK_TCL);
 
-    private static final byte[] PKCS15_NAME = new byte[] {
+    private static final byte[] PKCS15_NAME = {
         (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x63, (byte) 0x50,
         (byte) 0x4B, (byte) 0x43, (byte) 0x53, (byte) 0x2D, (byte) 0x31, (byte) 0x35
     };
 
-    private static final byte[] ODF_PATH = new byte[] { (byte) 0x50, (byte) 0x31 };
-    private static final byte[] MF_PATH  = new byte[] { (byte) 0x3F, (byte) 0x00 };
+    private static final byte[] ODF_PATH = { (byte) 0x50, (byte) 0x31 };
+    private static final byte[] MF_PATH  = { (byte) 0x3F, (byte) 0x00 };
 
     private static byte CLA = (byte) 0x00;
 
@@ -361,16 +361,14 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
                 }
 
                 final byte[] certBytes;
-                if (fileLength > 0) {
-                	certBytes = readBinaryComplete(fileLength);
-                }
-                else {
+                if (fileLength <= 0) {
                 	// A veces hay punteros que apuntan a localizaciones vacias
                 	LOGGER.warning(
             			"El certificado " + i + " del dispositivo esta vacio" //$NON-NLS-1$ //$NON-NLS-2$
         			);
                 	continue;
                 }
+				certBytes = readBinaryComplete(fileLength);
 
                 CERTS_BY_ALIAS.put(
                     cdf.getCertificateAlias(i),
@@ -471,20 +469,18 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     		if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
     			throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
     		}
-            else if (
+			if (
         		verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&
         		verifyResponse.getStatusWord().getLsb() == (byte)0x83
     		) {
             	throw new AuthenticationModeLockedException();
             }
-            else {
-            	throw new ApduConnectionException(
-        			new Iso7816FourCardException(
-    	        		"Error en la verificacion de PIN (" + verifyResponse.getStatusWord() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-    	        		verifyResponse.getStatusWord()
-    				)
-    			);
-            }
+			throw new ApduConnectionException(
+				new Iso7816FourCardException(
+					"Error en la verificacion de PIN (" + verifyResponse.getStatusWord() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+					verifyResponse.getStatusWord()
+				)
+			);
     	}
     }
 

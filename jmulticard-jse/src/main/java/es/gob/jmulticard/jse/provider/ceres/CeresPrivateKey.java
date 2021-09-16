@@ -17,8 +17,14 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 
 	private static final long serialVersionUID = 4403051294889801855L;
 
+	/** Instancia de la tarjeta donde reside la clave. */
 	private final Ceres ceres;
+
+	/** Referencia a la clave dentro de la tarjeta. */
 	private final CeresPrivateKeyReference keyRef;
+
+	/** M&oacute;dulo de la clave privada.
+	 * Al ser la clave privada interna a la tarjeta, este dato se obtiene de la p&uacute;blica (es igual). */
 	private final BigInteger modulus;
 
 	/** Crea una clave privada de tarjeta FNMT-RCM-CERES.
@@ -79,7 +85,10 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 		return this.keyRef.toString();
 	}
 
-	@SuppressWarnings({ "static-method", "unused" })
+	/** Serializaci&oacute;n no soportada, lanza un <code>NotSerializableException</code>.
+	 * @param out No se usa.
+	 * @throws IOException No se lanza, siempre lanza un <code>NotSerializableException</code>. */
+	@SuppressWarnings({ "static-method" })
 	private void writeObject(final ObjectOutputStream out) throws IOException {
 		throw new NotSerializableException();
 	}
