@@ -471,10 +471,12 @@ abstract class JAccessibilityCustomDialog extends JDialog {
         return screenSize.height / 2 - height / 2;
     }
 
+    /** Acci&oacute;n por defecto de los botones accesibles. */
     protected static final class ButtonAbstractAction extends AbstractAction {
         /** UID. */
         private static final long serialVersionUID = 1L;
 
+        /** Bot&oacute;n asociado a la acci&oacute;n. */
         private final JButton button;
 
         ButtonAbstractAction(final JButton button) {

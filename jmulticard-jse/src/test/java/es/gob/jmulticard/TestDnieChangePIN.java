@@ -14,6 +14,7 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class TestDnieChangePIN {
 
+	/** <code>passwordCallback</code> que cachea el PIN. */
 	private final static class CachePasswordCallback extends PasswordCallback {
 
 	    private static final long serialVersionUID = 816457144215238935L;

@@ -10,10 +10,11 @@ public final class CardPasswordCallback extends PasswordCallback {
 
 	private static final long serialVersionUID = -2511696590746468782L;
 
+	/** <code>PasswordProtection</code> para solicitar la contrase&ntilde;a. */
 	private final PasswordProtection passp;
 
 	/** Constructor.
-	 * @param pp PasswordProtection para solicitar la contrase&ntilde;a.
+	 * @param pp <code>PasswordProtection</code> para solicitar la contrase&ntilde;a.
 	 * @param prompt Texto con el que solicitar la contrase&ntilde;a al usuario. */
 	public CardPasswordCallback(final PasswordProtection pp, final String prompt) {
 		super(prompt, false);

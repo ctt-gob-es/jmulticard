@@ -65,7 +65,7 @@ public final class UIPasswordCallbackAccessibility extends PasswordCallback {
     /** Ruta hacia el fichero de icono del di&aacute;logo. */
     private final String iconPath;
 
-    /** Si se permite o no <<i>cachear</i> el PIN. */
+    /** Si se permite o no <i>cachear</i> el PIN. */
     private final boolean allowUseCache;
 
     /** Si por defecto se debe mostrar o no la casilla "No volver a preguntar" para
