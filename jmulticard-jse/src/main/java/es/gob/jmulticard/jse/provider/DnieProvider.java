@@ -156,7 +156,7 @@ public final class DnieProvider extends Provider {
         // Las funciones de cifrado RSA con clave privada solo funcionan en la VM de Oracle si el codigo esta firmado
         // con un certificado emitido por Oracle
         final String vmVendor = System.getProperty("java.vendor"); //$NON-NLS-1$
-        if (vmVendor == null || !vmVendor.contains("Oracle") || !vmVendor.contains("Sun Microsystems")) { //$NON-NLS-1$ //$NON-NLS-2$
+        if (vmVendor == null || !vmVendor.contains("Oracle") && !vmVendor.contains("Sun Microsystems")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 	        // Cifrado
 	        put("Cipher.RSA/ECB/PKCS1Padding", "es.gob.jmulticard.jse.provider.rsacipher.DnieCipherImpl"); //$NON-NLS-1$ //$NON-NLS-2$
