@@ -366,12 +366,8 @@ public class Dnie3 extends Dnie {
         }
 
         if (DEBUG) {
-        	LOGGER.info(
-    			"Conexion actual: " + getConnection() //$NON-NLS-1$
-			);
-        	LOGGER.info(
-    			"Conexion subyacente: " + this.rawConnection //$NON-NLS-1$
-        	);
+        	LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
+        	LOGGER.info("Conexion subyacente: " + this.rawConnection); //$NON-NLS-1$
         }
 
         // Si la conexion esta cerrada, la reestablecemos

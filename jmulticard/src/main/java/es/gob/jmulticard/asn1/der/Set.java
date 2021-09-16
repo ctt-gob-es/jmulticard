@@ -45,6 +45,8 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class Set extends Sequence {
 
+    /** Construye el <i>Set</i> ASN&#46;1.
+     * @param types Tipos de datos ASN&#46;1 de cada elemento de <i>Set</i>. */
     protected Set(final OptionalDecoderObjectElement[] types) {
 		super(types);
 	}

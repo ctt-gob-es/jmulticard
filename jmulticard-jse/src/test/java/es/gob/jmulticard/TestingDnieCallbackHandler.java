@@ -13,7 +13,7 @@ import es.gob.jmulticard.callback.CustomAuthorizeCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */
-final class TestingDnieCallbackHandler implements CallbackHandler {
+public final class TestingDnieCallbackHandler implements CallbackHandler {
 
 	private final String can;
 	private final char[] pin;
@@ -21,7 +21,7 @@ final class TestingDnieCallbackHandler implements CallbackHandler {
 	/** Construye un CallbackHandler de prueba.
 	 * @param c CAN
 	 * @param p PIN. */
-	TestingDnieCallbackHandler(final String c, final String p) {
+	public TestingDnieCallbackHandler(final String c, final String p) {
 		this.can = c;
 		this.pin = p.toCharArray();
 	}
@@ -29,7 +29,7 @@ final class TestingDnieCallbackHandler implements CallbackHandler {
 	/** Construye un CallbackHandler de prueba.
 	 * @param c CAN
 	 * @param p PIN. */
-	TestingDnieCallbackHandler(final String c, final char[] p) {
+	public TestingDnieCallbackHandler(final String c, final char[] p) {
 		this.can = c;
 		this.pin = p;
 	}

@@ -138,7 +138,7 @@ public final class DnieFactory {
 					);
 				}
 			}
-			else if (ATR.equals(actualAtr)) {
+			if (ATR.equals(actualAtr)) {
 				if (actualAtrBytes[15] == 0x04) {
 					LOGGER.info("Detectado DNIe 3.0"); //$NON-NLS-1$
 					return new Dnie3(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
@@ -180,7 +180,7 @@ public final class DnieFactory {
 			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
 			return new Dnie3UsrCwa14890Constants();
 		}
-		else if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
+		if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
 			return new Dnie3UsrCwa14890Constants();
 		}
 		return new Dnie3r2UsrCwa14890Constants();
@@ -191,7 +191,7 @@ public final class DnieFactory {
 			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
 			return new Dnie3PinCwa14890Constants();
 		}
-		else if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
+		if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
 			return new Dnie3PinCwa14890Constants();
 		}
 		return new Dnie3r2PinCwa14890Constants();

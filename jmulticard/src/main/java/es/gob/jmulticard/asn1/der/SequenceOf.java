@@ -89,8 +89,7 @@ public abstract class SequenceOf extends DecoderObject {
      * Un <i>SequenceOf</i> contiene una secuencia de tipos ASN&#46;1 (que deben ser iguales).
      * @param type Tipos (etiquetas) de objetos ASN&#46;1 (1 a n elementos) que va a contener la secuencia. El orden es irrelevante. */
 	protected SequenceOf(final Class<? extends DecoderObject> type) {
-	    super();
-		if (type == null) {
+	    if (type == null) {
 			throw new IllegalArgumentException();
 		}
 		this.elementsType = type;
@@ -110,6 +109,8 @@ public abstract class SequenceOf extends DecoderObject {
         return this.sequenceObjects.elementAt(index);
     }
 
+    /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
+     * @return N&uacute;mero de elementos que contiene la secuencia. */
     protected int getElementCount() {
     	return this.sequenceObjects.size();
     }

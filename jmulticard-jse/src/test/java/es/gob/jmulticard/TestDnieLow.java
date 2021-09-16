@@ -27,17 +27,16 @@ import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.dnie.SpanishPassportWithBac;
 import es.gob.jmulticard.card.dnie.SpanishPassportWithPace;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
-import es.gob.jmulticard.ui.passwordcallback.gui.SmartcardCallbackHandler;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de operaciones en DNIe sin PIN.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-//	private static final String CAN = "111111"; //$NON-NLS-1$
-//
-//	private static final String PIN = "PIN_DNIE"; //$NON-NLS-1$
+	private static final String CAN = "111111"; //$NON-NLS-1$
+
+	private static final String PIN = "PIN_DNIE"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -46,7 +45,7 @@ public final class TestDnieLow {
 	@Ignore
 	public void testDnieReadSubject() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			null,
 			new JseCryptoHelper(),
 			null,
@@ -66,11 +65,11 @@ public final class TestDnieLow {
 	@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			null,
 			new JseCryptoHelper(),
-			//new TestingDnieCallbackHandler(CAN, PIN),
-			new SmartcardCallbackHandler(),
+			new TestingDnieCallbackHandler(CAN, PIN),
+			//new SmartcardCallbackHandler(),
 			true
 		);
 		System.out.println();
@@ -107,11 +106,11 @@ public final class TestDnieLow {
 	@Ignore
 	public void testDnieReadDgs() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			null,
 			new JseCryptoHelper(),
-			//new TestingDnieCallbackHandler(CAN, PIN),
-			new SmartcardCallbackHandler(),
+			new TestingDnieCallbackHandler(CAN, PIN),
+			//new SmartcardCallbackHandler(),
 			false
 		);
 		System.out.println();
@@ -171,7 +170,7 @@ public final class TestDnieLow {
 	@Ignore
 	public void testDnie3Dg13Parser() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
-				new SmartcardIoConnection(),
+				ProviderUtil.getDefaultConnection(),
 				null,
 				new JseCryptoHelper(),
 				null,
@@ -211,8 +210,8 @@ public final class TestDnieLow {
 	@Test
 	@Ignore
 	public void testFlexHandler() throws Exception {
-		//final CallbackHandler cbh = new TestingDnieCallbackHandler(CAN, PIN);
-		final CallbackHandler cbh = new SmartcardCallbackHandler();
+		final CallbackHandler cbh = new TestingDnieCallbackHandler(CAN, PIN);
+		//final CallbackHandler cbh = new SmartcardCallbackHandler();
 
 		final CustomTextInputCallback custom = new CustomTextInputCallback("customprompt"); //$NON-NLS-1$
 		final TextInputCallback java = new TextInputCallback("javaprompt"); //$NON-NLS-1$
@@ -233,7 +232,7 @@ public final class TestDnieLow {
 	@Test
 	@Ignore
 	public void testPassportReadDgs() throws Exception {
-		final ApduConnection conn = new SmartcardIoConnection();
+		final ApduConnection conn = ProviderUtil.getDefaultConnection();
 		System.out.println(HexUtils.hexify(conn.reset(), true));
 		System.out.println();
 		final SpanishPassportWithBac passport = new SpanishPassportWithBac(
@@ -268,14 +267,14 @@ public final class TestDnieLow {
 
 		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77
 
-		final ApduConnection conn = new SmartcardIoConnection();
+		final ApduConnection conn = ProviderUtil.getDefaultConnection();
 		System.out.println(HexUtils.hexify(conn.reset(), true));
 		System.out.println();
 		final SpanishPassportWithPace passport = new SpanishPassportWithPace(
 			conn,
 			new JseCryptoHelper(),
-			//new TestingDnieCallbackHandler(CAN, PIN)
-			new SmartcardCallbackHandler()
+			new TestingDnieCallbackHandler(CAN, PIN)
+			//new SmartcardCallbackHandler()
 		);
 
 		System.out.println();

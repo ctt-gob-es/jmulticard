@@ -5,6 +5,7 @@ import java.security.ProviderException;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Proveedor criptogr&aacute;fico JCA para tarjeta FNMT-RCM-CERES.
  * Crea dos servicios:
@@ -30,7 +31,7 @@ public final class CeresProvider extends Provider {
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para tarjeta FNMT-RCM-CERES"; //$NON-NLS-1$
-    private static final double VERSION = 0.1d;
+    private static final double VERSION = 0.1;
     private static final String NAME = "CeresJCAProvider"; //$NON-NLS-1$
 
     private static ApduConnection defaultConnection = null;
@@ -55,7 +56,7 @@ public final class CeresProvider extends Provider {
 
         try {
 			defaultConnection = conn == null ?
-				new es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection() :
+				ProviderUtil.getDefaultConnection() :
 					conn;
 		}
         catch (final Exception e) {

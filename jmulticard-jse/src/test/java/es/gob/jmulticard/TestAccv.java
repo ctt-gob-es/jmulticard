@@ -9,7 +9,7 @@ import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
-import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de las tarjetas G&amp;D de ACCV.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -26,7 +26,7 @@ public final class TestAccv {
 	@Ignore
 	public void testReadCertificates() throws Exception {
 		final CryptoCard card = new SmartCafePkcs15Applet(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			new JseCryptoHelper()
 		);
 		final String[] aliases = card.getAliases();
@@ -51,7 +51,7 @@ public final class TestAccv {
 	@Ignore
 	public void testVerifyPin() throws Exception {
 		final Iso7816FourCard card = new SmartCafePkcs15Applet(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			new JseCryptoHelper()
 		);
 		card.verifyPin(new CachePasswordCallback(PIN));
@@ -64,7 +64,7 @@ public final class TestAccv {
 	@Ignore
 	public void testSign() throws Exception {
 		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			new JseCryptoHelper()
 		);
 		card.setPasswordCallback(new CachePasswordCallback(PIN));

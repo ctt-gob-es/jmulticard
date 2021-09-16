@@ -70,7 +70,7 @@ public final class Ceres430Provider extends Provider {
     private static final long serialVersionUID = 4544152908167923163L;
 
     private static final String INFO = "Proveedor para el FNMT CERES 4.30 o superior"; //$NON-NLS-1$
-    private static final double VERSION = 0.2d;
+    private static final double VERSION = 0.2;
     private static final String NAME = "Ceres430JCAProvider"; //$NON-NLS-1$
 
     private static ApduConnection defaultConnection = null;
@@ -95,7 +95,7 @@ public final class Ceres430Provider extends Provider {
 
         try {
 			defaultConnection = conn == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				(ApduConnection) Class.forName(ProviderUtil.DEFAULT_PROVIDER_CLASSNAME).getConstructor().newInstance() :
 					conn;
 		}
         catch (final Exception e) {

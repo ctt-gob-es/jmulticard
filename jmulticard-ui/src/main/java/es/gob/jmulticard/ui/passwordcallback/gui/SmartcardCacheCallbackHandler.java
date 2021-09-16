@@ -35,52 +35,49 @@ public final class SmartcardCacheCallbackHandler implements CallbackHandler, Cac
 		if (callbacks != null) {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
-					if (cb instanceof PasswordCallback) {
-
-						synchronized (LOGGER) {
-							char[] pin;
-							if (this.cachedPassword == null) {
-
-								// Comprobamos si anteriormente se activo la opcion de usar cache para
-								// poner este valor por defecto
-								final boolean useCacheDefaultValue = loadUseCachePreference();
-
-								final CommonPasswordCallback uip = new CommonPasswordCallback(
-									((PasswordCallback)cb).getPrompt(),
-									Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
-									false,
-									true,
-									useCacheDefaultValue
-								);
-
-								pin = uip.getPassword();
-
-								// Si se encuentra marcada la opcion de usar cache, guardamos el PIN
-								final boolean newUseCacheDefaultValue = uip.isUseCacheChecked();
-								if (newUseCacheDefaultValue) {
-									LOGGER.info("Guardamos en cache la contrasena de la tarjeta"); //$NON-NLS-1$
-									this.cachedPassword = pin;
-								}
-								// Si se ha cambiado el valor de la opcion de usar cache, guardamos este valor
-								if (useCacheDefaultValue != newUseCacheDefaultValue) {
-									setUseCachePreference(newUseCacheDefaultValue);
-								}
-							}
-							else {
-								pin = this.cachedPassword;
-							}
-							((PasswordCallback)cb).setPassword(pin);
-						}
-
-						 // Si no se ha hecho ya, programamos una tarea para el borrado de la contrasena cacheada para
-						// que se ejecute en un tiempo determinado
-						if (this.timer == null) {
-							this.timer = new Timer();
-							this.timer.schedule(new ResetCacheTimerTask(this), CACHE_TIMEOUT);
-						}
-					}
-					else {
+					if (!(cb instanceof PasswordCallback)) {
 						throw new UnsupportedCallbackException(cb);
+					}
+					synchronized (LOGGER) {
+						char[] pin;
+						if (this.cachedPassword == null) {
+
+							// Comprobamos si anteriormente se activo la opcion de usar cache para
+							// poner este valor por defecto
+							final boolean useCacheDefaultValue = loadUseCachePreference();
+
+							final CommonPasswordCallback uip = new CommonPasswordCallback(
+								((PasswordCallback)cb).getPrompt(),
+								Messages.getString("CommonPasswordCallback.2"), //$NON-NLS-1$
+								false,
+								true,
+								useCacheDefaultValue
+							);
+
+							pin = uip.getPassword();
+
+							// Si se encuentra marcada la opcion de usar cache, guardamos el PIN
+							final boolean newUseCacheDefaultValue = uip.isUseCacheChecked();
+							if (newUseCacheDefaultValue) {
+								LOGGER.info("Guardamos en cache la contrasena de la tarjeta"); //$NON-NLS-1$
+								this.cachedPassword = pin;
+							}
+							// Si se ha cambiado el valor de la opcion de usar cache, guardamos este valor
+							if (useCacheDefaultValue != newUseCacheDefaultValue) {
+								setUseCachePreference(newUseCacheDefaultValue);
+							}
+						}
+						else {
+							pin = this.cachedPassword;
+						}
+						((PasswordCallback)cb).setPassword(pin);
+					}
+
+					 // Si no se ha hecho ya, programamos una tarea para el borrado de la contrasena cacheada para
+					// que se ejecute en un tiempo determinado
+					if (this.timer == null) {
+						this.timer = new Timer();
+						this.timer.schedule(new ResetCacheTimerTask(this), CACHE_TIMEOUT);
 					}
 				}
 			}

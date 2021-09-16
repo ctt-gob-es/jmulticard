@@ -69,7 +69,7 @@ public final class DnieProvider extends Provider {
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para el DNIe"; //$NON-NLS-1$
-    private static final double VERSION = 0.2d;
+    private static final double VERSION = 0.2;
     private static final String NAME = "DNIeJCAProvider"; //$NON-NLS-1$
 
     private static ApduConnection defaultConnection = null;
@@ -94,7 +94,7 @@ public final class DnieProvider extends Provider {
 
         try {
 			defaultConnection = conn == null ?
-				(ApduConnection) Class.forName("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection").getConstructor().newInstance() : //$NON-NLS-1$
+				ProviderUtil.getDefaultConnection() :
 					conn;
 		}
         catch (final Exception e) {

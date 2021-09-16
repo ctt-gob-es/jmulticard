@@ -122,12 +122,10 @@ final class AccesibilityUtils {
                             if (button.getParent() instanceof JPanel) {
                                 ((JPanel) button.getParent()).setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
                             }
-                        }
-                        else {
-                            if (button.getParent() instanceof JPanel) {
-                                ((JPanel) button.getParent()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-                            }
-                        }
+                        } 
+                        else if (button.getParent() instanceof JPanel) {
+						    ((JPanel) button.getParent()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+						}
                     }
                 });
             }
@@ -258,18 +256,15 @@ final class AccesibilityUtils {
                     }
                 }
             } // Comprobacion del tipo de borde
-        }
-        else {
-            // Se comprueba si la configuracion pide que la fuente este en negrita
-            if (GeneralConfig.isFontBold()) {
-                    // Se indica que la fuente es negrita
-                    component.setFont(new Font(component.getFont().getName(), Font.BOLD, component.getFont().getSize()));
-            }
-            else {
-                    // Se indica que la fuente es texto plano
-                    component.setFont(new Font(component.getFont().getName(), Font.PLAIN, component.getFont().getSize()));
-            }
-        }
+        } else // Se comprueba si la configuracion pide que la fuente este en negrita
+		if (GeneralConfig.isFontBold()) {
+		        // Se indica que la fuente es negrita
+		        component.setFont(new Font(component.getFont().getName(), Font.BOLD, component.getFont().getSize()));
+		}
+		else {
+		        // Se indica que la fuente es texto plano
+		        component.setFont(new Font(component.getFont().getName(), Font.PLAIN, component.getFont().getSize()));
+		}
     }
 
     /** Subraya el mnem&oacute;nico correspondiente para texto HTML.

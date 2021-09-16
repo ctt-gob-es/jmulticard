@@ -21,7 +21,7 @@ public class DnieSubjectPrincipalParser {
 			getRDNvalueFromLdapName("CN", subjectPrincipal) //$NON-NLS-1$
 				.replace("(AUTENTICACI\u00D3N)", "") //$NON-NLS-1$ //$NON-NLS-2$
 				.replace("(FIRMA)", "") //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll(",", "") //$NON-NLS-1$ //$NON-NLS-2$
+				.replace(",", "") //$NON-NLS-1$ //$NON-NLS-2$
 				.replace(this.name, "") //$NON-NLS-1$
 				.replace(this.surname1, "") //$NON-NLS-1$
 				.trim():
@@ -107,7 +107,7 @@ public class DnieSubjectPrincipalParser {
             if (principal.charAt(offset1) == ',') {
                 return ""; //$NON-NLS-1$
             }
-            else if (principal.charAt(offset1) == '"') {
+			if (principal.charAt(offset1) == '"') {
                 offset1++;
                 if (offset1 >= principal.length()) {
                     return ""; //$NON-NLS-1$
@@ -117,20 +117,16 @@ public class DnieSubjectPrincipalParser {
                 if (offset2 == offset1) {
                     return ""; //$NON-NLS-1$
                 }
-                else if (offset2 != -1) {
+				if (offset2 != -1) {
                     return principal.substring(offset1, offset2);
                 }
-                else {
-                    return principal.substring(offset1);
-                }
+				return principal.substring(offset1);
             }
-            else {
-                offset2 = principal.indexOf(',', offset1);
-                if (offset2 != -1) {
-                    return principal.substring(offset1, offset2).trim();
-                }
-                return principal.substring(offset1).trim();
-            }
+			offset2 = principal.indexOf(',', offset1);
+			if (offset2 != -1) {
+			    return principal.substring(offset1, offset2).trim();
+			}
+			return principal.substring(offset1).trim();
         }
 
         return null;

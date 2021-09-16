@@ -15,8 +15,10 @@ import java.util.zip.Inflater;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CompressionUtils {
 
+	/** Registro. */
 	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
+	/** Factor&iacute;a de certificados. */
 	protected static final CertificateFactory CERT_FACTORY;
 	static {
 		try {

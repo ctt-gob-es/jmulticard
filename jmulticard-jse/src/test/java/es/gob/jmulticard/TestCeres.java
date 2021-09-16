@@ -12,6 +12,7 @@ import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
+import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 
 /** Pruebas de FNMT-CERES.
@@ -37,7 +38,7 @@ public final class TestCeres {
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
 		final Ceres ceres = new Ceres(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			new JseCryptoHelper()
 		);
 		ceres.setPasswordCallback(new CachePasswordCallback(PIN));
@@ -57,10 +58,11 @@ public final class TestCeres {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testCeresSecureChannel() throws Exception {
 		try {
 			final CeresSc ceres430 = new CeresSc(
-				new SmartcardIoConnection(),
+				ProviderUtil.getDefaultConnection(),
 				new CachePasswordCallback(PIN),
 				new JseCryptoHelper(),
 				new TestingDnieCallbackHandler("can", PIN) //$NON-NLS-1$
@@ -90,7 +92,7 @@ public final class TestCeres {
 	@Ignore
 	public void testCeresUIPasswordCallbackSpecialCharsOnPin() throws Exception {
 		final Ceres ceres = new Ceres(
-			new SmartcardIoConnection(),
+			ProviderUtil.getDefaultConnection(),
 			new JseCryptoHelper()
 		);
 		ceres.setPasswordCallback(

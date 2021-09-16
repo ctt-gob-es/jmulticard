@@ -67,6 +67,8 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
 		);
 	}
 
+	/** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
+	 * @param elements Tipos de datos ASN&#46;1 de cada elemento del <i>Record</i>. */
 	protected PrKdf(final OptionalDecoderObjectElement[] elements) {
 		super(elements);
 	}

@@ -185,13 +185,10 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
         if (GeneralConfig.isMaximized()) {
             // Se maximiza
             this.setBounds(0, 0, maxWidth, maxHeight);
-        }
-        else {
-            // Se establece el tamano minimo en base a las opciones activas
-            if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold()) {
-                setMinimumSize(new Dimension(AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_WIDTH, AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_HEIGHT));
-            }
-        }
+        } 
+        else if (GeneralConfig.isBigFontSize() || GeneralConfig.isFontBold()) { // Se establece el tamano minimo en base a las opciones activas
+		    setMinimumSize(new Dimension(AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_WIDTH, AccesiblityConstants.CUSTOMDIALOG_FONT_INITIAL_HEIGHT));
+		}
 
         setTitle(title);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

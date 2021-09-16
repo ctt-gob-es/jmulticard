@@ -47,20 +47,27 @@ public abstract class CardException extends IOException {
 
     private static final long serialVersionUID = -3054749595177932903L;
 
+    /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.
+     * @param description Descripci&oacute;n de la excepci&oacute;n. */
     protected CardException(final String description) {
         super(description);
     }
 
+    /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta. */
     protected CardException() {
-        super();
     }
 
+    /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.
+     * @param description Descripci&oacute;n de la excepci&oacute;n.
+     * @param cause Causa original de la excepci&oacute;n. */
     protected CardException(final String description, final Throwable cause) {
         super(description + ": " + cause.getMessage(), cause); //$NON-NLS-1$
     }
 
-	protected CardException(final Throwable e) {
-		super(e);
+    /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.
+     * @param cause Causa original de la excepci&oacute;n. */
+	protected CardException(final Throwable cause) {
+		super(cause);
 	}
 
 }
