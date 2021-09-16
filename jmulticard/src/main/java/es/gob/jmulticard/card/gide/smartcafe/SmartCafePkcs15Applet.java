@@ -475,14 +475,12 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     		) {
             	throw new AuthenticationModeLockedException();
             }
-            else {
-            	throw new ApduConnectionException(
-        			new Iso7816FourCardException(
-    	        		"Error en la verificacion de PIN (" + verifyResponse.getStatusWord() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-    	        		verifyResponse.getStatusWord()
-    				)
-    			);
-            }
+			throw new ApduConnectionException(
+				new Iso7816FourCardException(
+					"Error en la verificacion de PIN (" + verifyResponse.getStatusWord() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+					verifyResponse.getStatusWord()
+				)
+			);
     	}
     }
 
