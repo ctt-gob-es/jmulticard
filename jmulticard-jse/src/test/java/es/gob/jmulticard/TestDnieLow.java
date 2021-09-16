@@ -28,7 +28,6 @@ import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.dnie.SpanishPassportWithBac;
 import es.gob.jmulticard.card.dnie.SpanishPassportWithPace;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
-import es.gob.jmulticard.jsr268.AOUtil;
 
 /** Pruebas de operaciones en DNIe sin PIN.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

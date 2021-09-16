@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import es.gob.jmulticard.AOUtil;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.bit4id.stcm.StCard;

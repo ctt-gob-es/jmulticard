@@ -10,6 +10,9 @@
 
 package es.gob.jmulticard.jsr268;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -17,6 +20,8 @@ import java.util.logging.Logger;
 /** M&eacute;todos generales de utilidad para toda la aplicaci&oacute;n.
  * @version 0.3 */
 public final class AOUtil {
+
+    private static final int BUFFER_SIZE = 4096;
 
     private AOUtil() {
         // No permitimos la instanciacion
@@ -139,5 +144,23 @@ public final class AOUtil {
         return null;
     }
 
+    /** Lee un flujo de datos de entrada y los recupera en forma de array de
+     * bytes. Este m&eacute;todo consume, pero no cierra el flujo de datos de
+     * entrada.
+     * @param input Flujo de donde se toman los datos.
+     * @return Los datos obtenidos del flujo.
+     * @throws IOException Cuando ocurre un problema durante la lectura. */
+    public static byte[] getDataFromInputStream(final InputStream input) throws IOException {
+        if (input == null) {
+            return new byte[0];
+        }
+        int nBytes;
+        final byte[] buffer = new byte[BUFFER_SIZE];
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        while ((nBytes = input.read(buffer)) != -1) {
+            baos.write(buffer, 0, nBytes);
+        }
+        return baos.toByteArray();
+    }
 }
 

@@ -380,7 +380,9 @@ final class RSACore {
         if (bps == null) {
             bps = new BlindingParameters(e, d, n);
             synchronized (blindingCache) {
-                blindingCache.putIfAbsent(n, bps);
+            	if (blindingCache.get(n) == null) {
+            		blindingCache.put(n, bps);
+            	}
             }
         }
 
@@ -389,7 +391,9 @@ final class RSACore {
             // need to reset the blinding parameters
             bps = new BlindingParameters(e, d, n);
             synchronized (blindingCache) {
-                blindingCache.replace(n, bps);
+            	if (blindingCache.containsKey(n)) {
+					blindingCache.put(n, bps);
+				}
             }
             return bps.getBlindingRandomPair(e, d, n);
         }

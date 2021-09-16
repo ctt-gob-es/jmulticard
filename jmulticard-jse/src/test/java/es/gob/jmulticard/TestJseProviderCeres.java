@@ -10,7 +10,6 @@ import java.util.Enumeration;
 
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
-import es.gob.jmulticard.jsr268.AOUtil;
 
 /** Pruebas del proveedor JSE para tarjeta CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
