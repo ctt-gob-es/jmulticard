@@ -19,7 +19,7 @@ public final class TestDnieChangePIN {
 
 	    private static final long serialVersionUID = 816457144215238935L;
 
-	    /** Contruye una <i>Callback</i> con una contrase&ntilde; preestablecida.
+	    /** Construye una <i>Callback</i> con una contrase&ntilde; preestablecida.
 	     * @param password Contrase&ntilde;a por defecto. */
 	    public CachePasswordCallback(final char[] password) {
 	        super(">", false); //$NON-NLS-1$
