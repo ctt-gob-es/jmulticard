@@ -57,7 +57,7 @@ public final class StatusWord implements Serializable {
     /** Octeto menos significativo dentro de la palabra de estado. */
     private byte lsb = 0x00;
 
-    /** Contruye una palabra de estado de una APDU.
+    /** Construye una palabra de estado de una APDU.
      * @param msb Octeto m&aacute;s significativo de la palabra de estado.
      * @param lsb Octeto menos significativo de la palabra de estado. */
     public StatusWord(final byte msb, final byte lsb) {
