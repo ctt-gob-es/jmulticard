@@ -61,7 +61,6 @@ import es.gob.jmulticard.apdu.iso7816four.SelectDfByNameApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
-import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.SmartCard;
@@ -337,8 +336,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
-     * @throws AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
-     *                                           el n&uacute;mero m&aacute;ximo de intentos). */
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n
+     *         de PIN (por ejemplo, por superar el n&uacute;mero m&aacute;ximo de intentos). */
     public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, PinException;
 
 }
