@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="test.es.gob.jmulticard.android"
+    package="es.gob.jmulticard.android"
     android:versionCode="1"
     android:versionName="1.0" >
 

@@ -89,7 +89,7 @@ import org.spongycastle.math.ec.ECFieldElement;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class JseCryptoHelper extends CryptoHelper {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final String ECDH = "ECDH"; //$NON-NLS-1$
 
@@ -326,13 +326,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 			kpg = KeyPairGenerator.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
 		catch (final Exception e) {
-			Logger.getLogger("test.es.gob.jmulticard").warning( //$NON-NLS-1$
+			LOGGER.warning(
 				"No se ha podido obtener un generador de pares de claves de curva eliptica con SpongyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
 			);
 			kpg = KeyPairGenerator.getInstance(ECDH);
 		}
 
-		Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
+		LOGGER.info(
 			"Seleccionado el siguiente generador de claves de curva eliptica: " + kpg.getClass().getName() //$NON-NLS-1$
 		);
 

@@ -2,6 +2,7 @@ package test.es.gob.jmulticard;
 
 import java.security.Provider;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.jse.provider.JMultiCardProviderFactory;
@@ -13,6 +14,7 @@ public final class TestMultiCardFactory {
 	/** Prueba de la factor&iacute;a de proveedores para tarjetas soportadas. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testMultiCardProviderFactory() {
 		final Provider p = JMultiCardProviderFactory.getProvider();
 		if (p == null) {

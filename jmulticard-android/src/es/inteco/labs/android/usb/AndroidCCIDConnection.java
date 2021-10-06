@@ -61,7 +61,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 	private final SmartCardUsbDevice ccidReader;
 
 	private static final boolean DEBUG = false;
-
+	
 	/** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
 	 * @param usbManager Gestor de dispositivos USB del sistema
 	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
@@ -130,12 +130,12 @@ public final class AndroidCCIDConnection implements ApduConnection {
 					throw new CardNotPresentException();
 				}
 				//Hay tarjeta, pero no esta activa
-				Log.i("test.es.gob.jmulticard", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.i("es.gob.jmulticard", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
 				reset();
 			}
 
 			if (DEBUG) {
-				Log.d("test.es.gob.jmulticard", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.d("es.gob.jmulticard", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			final ResponseApdu response;
@@ -143,7 +143,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				response = new ResponseApdu(this.ccidReader.transmit(command.getBytes()));
 
 				if (DEBUG) {
-					Log.d("test.es.gob.jmulticard", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.d("es.gob.jmulticard", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 		        // Solicitamos el resultado de la operacion si es necesario
@@ -223,7 +223,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				}
 			}
 			catch (final NotAvailableUSBDeviceException e) {
-				Log.e("test.es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.e("es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolvera una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				return new long[0];
 			}
 		}

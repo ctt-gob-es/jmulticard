@@ -19,7 +19,7 @@ import es.gob.jmulticard.card.pace.PaceException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieFactory {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final byte[] ATR_MASK = {
 		(byte) 0xFF, (byte) 0xFF, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,

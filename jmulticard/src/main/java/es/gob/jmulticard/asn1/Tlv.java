@@ -109,7 +109,7 @@ public final class Tlv {
             throw new IllegalArgumentException("El TLV no puede ser nulo"); //$NON-NLS-1$
         }
         if (buffer.length == 0) {
-        	Logger.getLogger("test.es.gob.jmulticard").warning( //$NON-NLS-1$
+        	Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
     			"Se ha pedido crear un TLV vacio" //$NON-NLS-1$
 			);
         	this.length = 0;

@@ -16,7 +16,7 @@ import java.util.zip.Inflater;
 public final class CompressionUtils {
 
 	/** Registro. */
-	protected static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	/** Factor&iacute;a de certificados. */
 	protected static final CertificateFactory CERT_FACTORY;

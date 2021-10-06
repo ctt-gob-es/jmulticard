@@ -17,7 +17,7 @@ import test.es.gob.jmulticard.callback.CustomTextInputCallback;
  * @author Sergio Mart&iacute;nez Rico. */
 public class DnieNFCCallbackHandler implements CallbackHandler {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	private final Activity activity;
 	private final DialogDoneChecker dialogDone;
 	private CachePasswordCallback passwordCallback;

@@ -53,7 +53,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
     private static byte CLA = (byte) 0x00;
 
-    private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<>();
 

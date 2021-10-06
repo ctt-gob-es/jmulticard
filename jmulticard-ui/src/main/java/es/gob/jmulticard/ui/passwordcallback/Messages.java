@@ -64,7 +64,7 @@ public final class Messages {
             return bundle.getString(codeString);
         }
         catch (final MissingResourceException e) {
-        	Logger.getLogger("test.es.gob.jmulticard").severe( //$NON-NLS-1$
+        	Logger.getLogger("es.gob.jmulticard").severe( //$NON-NLS-1$
     			"No se ha encontrado el recurso textual con clave '" + codeString + "': " + e//$NON-NLS-1$ //$NON-NLS-2$
 			);
             return "##ERROR## Cadena no disponible: " + codeString; //$NON-NLS-1$

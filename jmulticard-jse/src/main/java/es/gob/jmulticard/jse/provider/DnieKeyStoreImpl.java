@@ -83,7 +83,7 @@ import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
 

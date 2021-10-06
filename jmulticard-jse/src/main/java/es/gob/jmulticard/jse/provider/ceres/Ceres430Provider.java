@@ -66,7 +66,7 @@ public final class Ceres430Provider extends Provider {
 
     private static final String SHA1WITH_RSA = "SHA1withRSA"; //$NON-NLS-1$
 
-    private static final String CERES_PRIVATE_KEY = "test.es.gob.jmulticard.jse.provider.ceres.CeresPrivateKey"; //$NON-NLS-1$
+    private static final String CERES_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$
 
     private static final long serialVersionUID = 4544152908167923163L;
 
@@ -114,13 +114,13 @@ public final class Ceres430Provider extends Provider {
         }
 
         // KeyStore
-        put("KeyStore.CERES430", "test.es.gob.jmulticard.jse.provider.ceres.Ceres430KeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("KeyStore.CERES430", "es.gob.jmulticard.jse.provider.ceres.Ceres430KeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Motores de firma
-        put("Signature.SHA1withRSA",   "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA256withRSA", "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA384withRSA", "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA512withRSA", "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA1withRSA",   "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA256withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA384withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA512withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Claves soportadas
         put("Signature.SHA1withRSA SupportedKeyClasses",   Ceres430Provider.CERES_PRIVATE_KEY); //$NON-NLS-1$

@@ -68,14 +68,14 @@ public final class MrzInfo {
      * @return 'MRZ Information' (binario). */
     public byte[] getBytes() {
 		final byte[] numberBytes = getDocumentNumber().getBytes();
-		final byte[] numberCheck = new byte [] { (byte) checkDigit(getDocumentNumber()) };
+		final byte[] numberCheck = { (byte) checkDigit(getDocumentNumber()) };
 		final byte[] birthBytes  = getDateOfBirth().getBytes();
-		final byte[] birthCheck = new byte [] { (byte) MrzInfo.checkDigit(getDateOfBirth()) };
+		final byte[] birthCheck = { (byte) MrzInfo.checkDigit(getDateOfBirth()) };
 		final byte[] expiryBytes = getDateOfExpiry().getBytes();
-		final byte[] expiryCheck = new byte[] { (byte) MrzInfo.checkDigit(getDateOfExpiry()) };
+		final byte[] expiryCheck = { (byte) MrzInfo.checkDigit(getDateOfExpiry()) };
 
 		if (SmartCard.DEBUG) {
-			Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 				"Info de la MRZ: numero=" + new String(numberBytes) + //$NON-NLS-1$
 					"; nacimiento=" + new String(birthBytes) + //$NON-NLS-1$
 						"; caducidad=" + new String(expiryBytes) //$NON-NLS-1$
@@ -111,7 +111,7 @@ public final class MrzInfo {
         if (mrzStr == null || mrzStr.isEmpty()) {
             throw new IllegalArgumentException("El texto del MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
         }
-        final String strMrz = mrzStr.trim().replace("\n", "").replace("\r", "").replaceAll("\t", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+        final String strMrz = mrzStr.trim().replace("\n", "").replace("\r", "").replace("\t", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
         try {
             readObject(
         		new ByteArrayInputStream(strMrz.getBytes(StandardCharsets.UTF_8)),
@@ -161,18 +161,6 @@ public final class MrzInfo {
             }
             this.documentNumber = trimFillerChars(this.documentNumber);
 
-            // Linea 2, posiciones del 1 al 6: Fecha de nacimiento
-            this.dateOfBirth = readDateOfBirth(dataIn);
-
-			// Digito de control de la fecha de nacimiento
-			dataIn.readUnsignedByte();
-
-            // Linea 2, posicion 8: Sexo
-            readGender(dataIn);
-
-            // Linea 2, posiciones del 9 al 14: fecha de caducidad
-            this.dateOfExpiry = readDateOfExpiry(dataIn);
-
         }
         else {
         	// Asumimos aqui que es un documento de tipo ID3 (MRZ de dos lineas).
@@ -186,11 +174,18 @@ public final class MrzInfo {
             this.documentNumber = trimFillerChars(readString(dataIn, 9));
             this.documentNumberCheckDigit = (char)dataIn.readUnsignedByte();
             readCountry(dataIn);
-            this.dateOfBirth = readDateOfBirth(dataIn);
-			dataIn.readUnsignedByte();
-            readGender(dataIn);
-            this.dateOfExpiry = readDateOfExpiry(dataIn);
         }
+		// Linea 2, posiciones del 1 al 6: Fecha de nacimiento
+		this.dateOfBirth = readDateOfBirth(dataIn);
+
+		// Digito de control de la fecha de nacimiento
+		dataIn.readUnsignedByte();
+
+		// Linea 2, posicion 8: Sexo
+		readGender(dataIn);
+
+		// Linea 2, posiciones del 9 al 14: fecha de caducidad
+		this.dateOfExpiry = readDateOfExpiry(dataIn);
     }
 
     /** Obtiene la fecha de nacimiento del titular.
@@ -252,8 +247,7 @@ public final class MrzInfo {
      * @return Sexto del titular del documento.
      * @throws IOException En cualquier error. */
     private static String readGender(final DataInputStream inputStream) throws IOException {
-        final String genderStr = readString(inputStream, 1);
-        return genderStr;
+        return readString(inputStream, 1);
     }
 
     /** Lee la fecha de nacimiento del titular (seis d&iacute;gitos) del flujo de entrada.
@@ -307,7 +301,7 @@ public final class MrzInfo {
             	/* MRTD segun ICAO Doc 9303 parte 3 vol 1 */
             	return DOC_TYPE_ID1;
         }
-        else if (documentCode.startsWith("V")) { //$NON-NLS-1$
+		if (documentCode.startsWith("V")) { //$NON-NLS-1$
         		/* MRV segun ICAO Doc 9303 parte 2 */
         		return DOC_TYPE_ID1;
         }

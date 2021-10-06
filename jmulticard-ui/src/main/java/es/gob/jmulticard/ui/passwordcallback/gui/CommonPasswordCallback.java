@@ -183,7 +183,7 @@ public final class CommonPasswordCallback extends PasswordCallback {
     			return pss;
     		}
     		catch(final java.awt.HeadlessException e) {
-    		    Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
+    		    Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 		    		"No hay entorno grafico, se revierte a consola: " + e //$NON-NLS-1$
 	    		);
     		}

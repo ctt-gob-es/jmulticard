@@ -104,7 +104,7 @@ public class DnieNFC extends Dnie3 {
 				"No se ha encontrado la clase 'javax.security.auth.callback.TextInputCallback', se usara 'test.es.gob.jmulticard.callback.CustomTextInputCallback': " + e //$NON-NLS-1$
 			);
 			try {
-				tic = (Callback) Class.forName("test.es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
+				tic = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
 			}
 			catch (InstantiationException |
 				   IllegalAccessException |
@@ -203,7 +203,7 @@ public class DnieNFC extends Dnie3 {
 				if (counter >= MAX_PACE_RETRIES) {
 					throw e;
 				}
-				Logger.getLogger("test.es.gob.jmulticard").warning( //$NON-NLS-1$
+				Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
 					"Error en el intento " + Integer.toString(counter + 1) + " de establecimiento de canal PACE (probablemente por CAN/MRZ invalido): " + e //$NON-NLS-1$ //$NON-NLS-2$
 				);
 				//Si el CAN/MRZ es incorrecto volvemos a pedirlo

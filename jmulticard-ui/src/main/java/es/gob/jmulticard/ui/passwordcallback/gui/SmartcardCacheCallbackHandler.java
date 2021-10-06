@@ -19,7 +19,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
  * La cach&eacute; se borra autom&aacute;ticamente pasado un tiempo determinado. */
 public final class SmartcardCacheCallbackHandler implements CallbackHandler, CacheElement {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final long CACHE_TIMEOUT = 3600 * 1000;	// 1 hora
 

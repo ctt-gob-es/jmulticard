@@ -49,7 +49,7 @@ public final class TestJseProvider {
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
     	final CallbackHandler callbackHandler = (CallbackHandler) Class.forName(
-			"test.es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
+			"es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
 		).getConstructor().newInstance();
 		final LoadStoreParameter lsp = new LoadStoreParameter() {
 			@Override
@@ -77,7 +77,7 @@ public final class TestJseProvider {
 		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
 		final CallbackHandler callbackHandler;
     	callbackHandler = (CallbackHandler) Class.forName(
-			"test.es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
+			"es.gob.jmulticard.ui.passwordcallback.gui.DnieCacheCallbackHandler" //$NON-NLS-1$
 		).getConstructor().newInstance();
 		final LoadStoreParameter lsp = new LoadStoreParameter() {
 			@Override

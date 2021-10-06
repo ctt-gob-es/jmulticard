@@ -17,7 +17,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class DnieCallbackHandler implements CallbackHandler {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
@@ -25,7 +25,7 @@ public final class DnieCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
 					if (
-						"test.es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
+						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
 						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
 					) {
 						final UIPasswordCallbackCan uip = new UIPasswordCallbackCan(

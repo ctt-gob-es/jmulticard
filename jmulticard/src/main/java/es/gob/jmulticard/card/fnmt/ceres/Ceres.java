@@ -93,7 +93,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
-	private static final byte[] ATR_MASK_TC = new byte[] {
+	private static final byte[] ATR_MASK_TC = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
@@ -102,7 +102,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         (byte) 0x54, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_TC);
 
-	private static final byte[] ATR_MASK_ST = new byte[] {
+	private static final byte[] ATR_MASK_ST = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
@@ -111,7 +111,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         (byte) 0x45, (byte) 0x53, (byte) 0x02, (byte) 0x2c, (byte) 0x34, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_ST);
 
-	private static final byte[] ATR_MASK_SLE_FN20 = new byte[] {
+	private static final byte[] ATR_MASK_SLE_FN20 = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
@@ -120,7 +120,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
         (byte) 0x52, (byte) 0x45, (byte) 0x53, (byte) 0x57, (byte) 0x05, (byte) 0x60, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_SLE_FN20);
 
-	private static final byte[] ATR_MASK_SLE_FN19 = new byte[] {
+	private static final byte[] ATR_MASK_SLE_FN19 = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
@@ -131,7 +131,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	private static final byte CLA = (byte) 0x00;
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private final CryptoHelper cryptoHelper;
 
@@ -457,7 +457,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 			//TODO: Poner esto en un bucle. Separar de forma fija en dos APDU solo vale para claves de 2048, pero no de 4196 o superiores
 
-			final byte[] envelopedLoadDataApdu = new byte[] {
+			final byte[] envelopedLoadDataApdu = {
 				(byte) 0x90, (byte) 0x58, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x00
 			};
 

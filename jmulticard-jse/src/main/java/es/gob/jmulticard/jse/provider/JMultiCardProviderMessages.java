@@ -24,7 +24,7 @@ public final class JMultiCardProviderMessages {
 			return RESOURCE_BUNDLE.getString(key);
 		}
 		catch (final MissingResourceException e) {
-			Logger.getLogger("test.es.gob.jmulticard").severe( //$NON-NLS-1$
+			Logger.getLogger("es.gob.jmulticard").severe( //$NON-NLS-1$
 				"No se ha encontrado el texto para la clave " + key + " en " + BUNDLE_NAME + ": " + e//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
 			return '!' + key + '!';

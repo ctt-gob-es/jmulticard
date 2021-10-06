@@ -76,7 +76,7 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     private static final int MAX_READ_CHUNK = 0xDE;
 
-    private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU.

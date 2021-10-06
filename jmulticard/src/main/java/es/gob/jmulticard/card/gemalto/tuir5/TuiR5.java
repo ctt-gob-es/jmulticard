@@ -56,7 +56,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     private static byte CLA = (byte) 0x00;
 
-    private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     private final PasswordCallback passwordCallback;
 

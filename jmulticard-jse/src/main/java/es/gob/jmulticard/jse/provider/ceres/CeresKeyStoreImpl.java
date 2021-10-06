@@ -186,7 +186,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     			this.cryptoCard.setPasswordCallback(pwc);
     		}
     		else {
-	       		Logger.getLogger("test.es.gob.jmulticard").warning( //$NON-NLS-1$
+	       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
 	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
 				);
     		}
@@ -266,7 +266,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     /** Operaci&oacute;n no soportada. */
     @Override
     public Date engineGetCreationDate(final String alias) {
-    	Logger.getLogger("test.es.gob.jmulticard").warning( //$NON-NLS-1$
+    	Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
 			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
 		);
         return new Date();

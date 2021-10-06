@@ -65,7 +65,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 		);
 
 		if (SmartCard.DEBUG) {
-			Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 				"APDU de comando en claro: " + HexUtils.hexify(finalCommand.getBytes(), true) //$NON-NLS-1$
 			);
 		}
@@ -90,7 +90,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 		}
 
 		if (SmartCard.DEBUG) {
-			Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
+			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 				"APDU de respuesta en claro: " + HexUtils.hexify(decipherApdu.getBytes(), true) //$NON-NLS-1$
 			);
 		}

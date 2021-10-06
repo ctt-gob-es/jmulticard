@@ -33,25 +33,25 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PaceChannelHelper {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	private static final byte[] CAN_MRZ_PADDING = new byte[] {
+	private static final byte[] CAN_MRZ_PADDING = {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
 	};
 
-	private static final byte[] KENC_PADDING = new byte[] {
+	private static final byte[] KENC_PADDING = {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
 	};
 
-	private static final byte[] KMAC_PADDING = new byte[] {
+	private static final byte[] KMAC_PADDING = {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
 	};
 
-	private static final byte[] MAC_PADDING = new byte[] {
+	private static final byte[] MAC_PADDING = {
 		(byte) 0x7F, (byte) 0x49, (byte) 0x4F, (byte) 0x06
 	};
 
-	private static final byte[] MAC2_PADDING = new byte[] {
+	private static final byte[] MAC2_PADDING = {
 		(byte) 0x86, (byte) 0x41, (byte) 0x04
 	};
 
@@ -449,8 +449,7 @@ public final class PaceChannelHelper {
 		final ECFieldElement.Fp xE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, x));
 		final ECFieldElement.Fp yE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, y));
 
-		final ECPoint point = curve.createPoint(xE.toBigInteger(), yE.toBigInteger());
-		return point;
+		return curve.createPoint(xE.toBigInteger(), yE.toBigInteger());
 	}
 
 }

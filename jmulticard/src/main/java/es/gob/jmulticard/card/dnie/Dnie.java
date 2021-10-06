@@ -118,7 +118,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	}
 
 	/** Registro. */
-	protected static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;

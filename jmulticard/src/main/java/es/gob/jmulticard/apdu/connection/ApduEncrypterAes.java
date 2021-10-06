@@ -51,7 +51,7 @@ import es.gob.jmulticard.apdu.ResponseApdu;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class ApduEncrypterAes extends ApduEncrypter {
 
-	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	/** Constructor de la clase para operaciones de cifrado cifrado AES. */
 	public ApduEncrypterAes() {
