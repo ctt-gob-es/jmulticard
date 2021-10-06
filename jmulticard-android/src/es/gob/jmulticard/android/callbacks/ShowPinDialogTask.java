@@ -1,4 +1,4 @@
-package es.gob.jmulticard.android.callbacks;
+package test.es.gob.jmulticard.android.callbacks;
 
 import java.util.logging.Logger;
 
@@ -54,7 +54,7 @@ class ShowPinDialogTask extends AsyncTask<String, String, String> {
 	    }
 	    catch (final InterruptedException e)
 	    {
-	    	Logger.getLogger("es.gob.jmulticard").info("Error en la espera a la introduccion de PIN: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+	    	Logger.getLogger("test.es.gob.jmulticard").info("Error en la espera a la introduccion de PIN: " + e); //$NON-NLS-1$ //$NON-NLS-2$
 	    }
 
 		this.m_Input = this.dialog.getPassword();

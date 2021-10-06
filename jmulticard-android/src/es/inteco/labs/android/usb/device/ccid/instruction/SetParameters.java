@@ -38,7 +38,7 @@ package es.inteco.labs.android.usb.device.ccid.instruction;
 
 import java.nio.ByteBuffer;
 
-import es.gob.jmulticard.HexUtils;
+import test.es.gob.jmulticard.HexUtils;
 
 /** Comando USB <i>SetParameters</i>.
  * @author Jose Luis Escanciano Garcia */

@@ -6,7 +6,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.StatusWord;
 import junit.framework.TestCase;
 
-/** Prueba de m&eacute;todos de la clase {@linkplain es.gob.jmulticard.apdu.StatusWord}
+/** Prueba de m&eacute;todos de la clase {@linkplain test.es.gob.jmulticard.apdu.StatusWord}
  * @author Alberto Mart&iacute;nez */
 public final class TestStatusWord extends TestCase {
 

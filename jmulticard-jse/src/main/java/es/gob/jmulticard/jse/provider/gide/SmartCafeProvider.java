@@ -65,7 +65,7 @@ public final class SmartCafeProvider extends Provider {
 
     private static final String SHA1WITH_RSA = "SHA1withRSA"; //$NON-NLS-1$
 
-    private static final String SMARTCAFE_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.gide.SmartCafePrivateKey"; //$NON-NLS-1$
+    private static final String SMARTCAFE_PRIVATE_KEY = "test.es.gob.jmulticard.jse.provider.gide.SmartCafePrivateKey"; //$NON-NLS-1$
 
     private static final long serialVersionUID = -1046745919235177156L;
 
@@ -113,13 +113,13 @@ public final class SmartCafeProvider extends Provider {
         }
 
         // KeyStore
-        put("KeyStore.GDSCPKCS15", "es.gob.jmulticard.jse.provider.gide.SmartCafeKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("KeyStore.GDSCPKCS15", "test.es.gob.jmulticard.jse.provider.gide.SmartCafeKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Motores de firma
-        put("Signature.SHA1withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA256withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA384withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA512withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA1withRSA", "test.es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA256withRSA", "test.es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA384withRSA", "test.es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA512withRSA", "test.es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Claves soportadas
         put("Signature.SHA1withRSA SupportedKeyClasses", SmartCafeProvider.SMARTCAFE_PRIVATE_KEY); //$NON-NLS-1$

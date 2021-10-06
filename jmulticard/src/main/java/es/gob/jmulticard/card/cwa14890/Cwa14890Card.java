@@ -77,7 +77,7 @@ public interface Cwa14890Card {
      * @param consts Clase de claves.
      * @throws ApduConnectionException Cuando ocurre alg&iacute;n error en la
      *         comunicaci&oacute;n con la tarjeta
-     * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre alg&uacute;n error en la
+     * @throws test.es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre alg&uacute;n error en la
      *         verificaci&oacute;n de los certificados */
     void verifyIfdCertificateChain(final Cwa14890PublicConstants consts) throws ApduConnectionException;
 
@@ -99,7 +99,7 @@ public interface Cwa14890Card {
      * interna y externa de la tarjeta.
      * @param refPublicKey Referencia a la clave p&uacute;blica.
      * @param refPrivateKey Referencia a la clave privada.
-     * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error durante el proceso de autenticaci&oacute;n
+     * @throws test.es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error durante el proceso de autenticaci&oacute;n
      * @throws ApduConnectionException Cuando ocurre un error de comunicaci&oacute;n con la tarjeta. */
     void setKeysToAuthentication(final byte[] refPublicKey, final byte[] refPrivateKey) throws ApduConnectionException;
 

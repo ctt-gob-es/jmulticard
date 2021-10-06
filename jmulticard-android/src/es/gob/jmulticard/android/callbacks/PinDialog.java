@@ -8,7 +8,7 @@
  * You may contact the copyright holder at: soporte.afirma5@mpt.es
  */
 
-package es.gob.jmulticard.android.callbacks;
+package test.es.gob.jmulticard.android.callbacks;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.PasswordCallback;
@@ -26,8 +26,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import es.gob.jmulticard.android.R;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
+import test.es.gob.jmulticard.android.R;
+import test.es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** Di&acute;logo para introducir el PIN.
  * Se usa en almacenes distintos al del propio sistema operativo Android.
@@ -134,7 +134,7 @@ public class PinDialog extends DialogFragment {
 				}
 				else {
 					//TODO: Gestionar este caso
-					Log.e("es.gob.jmulticard", "El pin no puede ser vacio o nulo"); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.e("test.es.gob.jmulticard", "El pin no puede ser vacio o nulo"); //$NON-NLS-1$ //$NON-NLS-2$
 					synchronized(PinDialog.this.dialogDone) {
 						PinDialog.this.dialogDone.notify();
 					}

@@ -95,7 +95,7 @@ public final class DialogBuilder {
             	callBack.setAuthorized(i == JOptionPane.YES_OPTION);
             }
             catch (final java.awt.HeadlessException e) {
-                Logger.getLogger("es.gob.jmulticard").info("No hay entorno grafico, se revierte a consola: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+                Logger.getLogger("test.es.gob.jmulticard").info("No hay entorno grafico, se revierte a consola: " + e); //$NON-NLS-1$ //$NON-NLS-2$
                 final Console console = System.console();
                 if (console == null) {
                     throw new NoConsoleException("No hay consola para solicitar el PIN"); //$NON-NLS-1$

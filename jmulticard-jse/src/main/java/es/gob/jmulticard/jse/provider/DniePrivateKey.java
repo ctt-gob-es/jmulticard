@@ -66,7 +66,7 @@ public final class DniePrivateKey implements RSAPrivateKey {
 
 	/** Crea una clave privada de DNIe.
 	 * @param keyReference Referencia a la clave privada del DNIe. */
-	DniePrivateKey(final DniePrivateKeyReference keyReference, final BigInteger mod) {
+	public DniePrivateKey(final DniePrivateKeyReference keyReference, final BigInteger mod) {
 		this.dniPrivateKeyReference = keyReference;
 		this.modulus   = mod;
 	}

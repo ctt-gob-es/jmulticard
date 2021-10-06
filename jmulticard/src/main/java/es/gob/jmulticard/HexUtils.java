@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * @author Carlos Gamuci. */
 public final class HexUtils {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector. Para
      * ser usado en <code>hexify()</code>. */

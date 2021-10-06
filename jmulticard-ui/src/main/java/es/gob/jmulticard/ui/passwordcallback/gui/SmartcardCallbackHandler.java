@@ -14,7 +14,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
  * @author Sergio Mart&iacute;nez Rico. */
 public class SmartcardCallbackHandler implements CallbackHandler {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
 		if (callbacks != null) {

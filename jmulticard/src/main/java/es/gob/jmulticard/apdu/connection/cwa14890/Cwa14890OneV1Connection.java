@@ -571,8 +571,8 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
      * @return Semilla de 32 [KIFD_LENGTH] bytes, generada por el Terminal, para la derivaci&oacute;n de claves del
      *         canal seguro.
-     * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error en el establecimiento de claves.
-     * @throws es.gob.jmulticard.apdu.connection.ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
+     * @throws test.es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error en el establecimiento de claves.
+     * @throws test.es.gob.jmulticard.apdu.connection.ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
      *         la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
     private byte[] externalAuthentication(final byte[] serial,

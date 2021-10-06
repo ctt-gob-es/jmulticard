@@ -20,10 +20,10 @@ public final class ProviderUtil {
 	}
 
 	/** Nombre de la clase por defecto para conexi&oacute;n con las tarjetas. */
-	static final String DEFAULT_PROVIDER_CLASSNAME = "es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection"; //$NON-NLS-1$
+	public static final String DEFAULT_PROVIDER_CLASSNAME = "test.es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection"; //$NON-NLS-1$
 
     /** Obtiene la conexi&oacute;n por defecto.
-     * @return Conexi&oacute;n por defecto ("es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection"). */
+     * @return Conexi&oacute;n por defecto ("test.es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection"). */
     public static ApduConnection getDefaultConnection() {
     	try {
 			return (ApduConnection) Class.forName(

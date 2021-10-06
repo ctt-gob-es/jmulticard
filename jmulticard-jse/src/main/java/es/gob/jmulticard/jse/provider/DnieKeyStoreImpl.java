@@ -83,7 +83,7 @@ import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
@@ -100,7 +100,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				"El objeto DG01 solo esta presente en DNIe 3.0" //$NON-NLS-1$
 			);
     	}
-    	return ((Dnie3)this.cryptoCard).getMrz();
+    	return (Dnie3Dg01Mrz) ((Dnie3)this.cryptoCard).getMrz();
     }
 
     /** Obtiene el objeto DG02 (fotograf&iacute;a del titular en formato JPEG2000) del DNIe 3&#46;0.

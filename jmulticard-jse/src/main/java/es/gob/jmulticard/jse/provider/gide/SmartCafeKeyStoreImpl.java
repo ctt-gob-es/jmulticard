@@ -75,7 +75,7 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
     private SmartCafePkcs15Applet cryptoCard = null;
     private List<String> aliases = null;

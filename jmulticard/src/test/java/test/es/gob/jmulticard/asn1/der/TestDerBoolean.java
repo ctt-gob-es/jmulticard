@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 /** @author Alberto Mart&iacute;nez */
 public class TestDerBoolean extends TestCase {
 
-    /** Test method for {@link es.gob.jmulticard.asn1.DecoderObject#setDerValue(byte[])}. */
+    /** Test method for {@link test.es.gob.jmulticard.asn1.DecoderObject#setDerValue(byte[])}. */
     public final static void testSetDerValueWithNullArgumentMustGenerateIllegalArgumentException() {
         final DerBoolean db = new DerBoolean();
         try {
@@ -25,7 +25,7 @@ public class TestDerBoolean extends TestCase {
         }
     }
 
-    /** Test method for {@link es.gob.jmulticard.asn1.DecoderObject#getBytes()}.
+    /** Test method for {@link test.es.gob.jmulticard.asn1.DecoderObject#getBytes()}.
      * @throws TlvException Si no se puede crear el TLV.
      * @throws Asn1Exception Si falla la creaci&oacute;n del tipo ASN1. */
     public final static void testGetBytes() throws Asn1Exception, TlvException {
@@ -36,7 +36,7 @@ public class TestDerBoolean extends TestCase {
         Assert.assertEquals("010100", HexUtils.hexify(db.getBytes(), false)); //$NON-NLS-1$
     }
 
-    /** Test method for {@link es.gob.jmulticard.asn1.DecoderObject#checkTag(byte)}. */
+    /** Test method for {@link test.es.gob.jmulticard.asn1.DecoderObject#checkTag(byte)}. */
     public final static void testCheckTagWithWrongTagMustThrowException() {
         try {
             final DerBoolean db = new DerBoolean();

@@ -75,7 +75,7 @@ public final class MrzInfo {
 		final byte[] expiryCheck = new byte[] { (byte) MrzInfo.checkDigit(getDateOfExpiry()) };
 
 		if (SmartCard.DEBUG) {
-			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+			Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
 				"Info de la MRZ: numero=" + new String(numberBytes) + //$NON-NLS-1$
 					"; nacimiento=" + new String(birthBytes) + //$NON-NLS-1$
 						"; caducidad=" + new String(expiryBytes) //$NON-NLS-1$

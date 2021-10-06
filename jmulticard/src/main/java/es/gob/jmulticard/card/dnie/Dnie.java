@@ -118,7 +118,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	}
 
 	/** Registro. */
-	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	protected static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
@@ -129,7 +129,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     private static final boolean PIN_AUTO_RETRY;
     static {
-    	PIN_AUTO_RETRY = true;
+    	final String javaVendor = System.getProperty("java.vendor"); //$NON-NLS-1$
+    	PIN_AUTO_RETRY = javaVendor == null || !javaVendor.contains("Android");  //$NON-NLS-1$
     }
 
     /** Identificador del fichero del certificado de componente del DNIe. */
@@ -538,7 +539,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** {@inheritDoc} */
     @Override
     public byte[] getIccCertEncoded() throws IOException {
-        byte[] iccCertEncoded;
+        final byte[] iccCertEncoded;
         try {
         	selectMasterFile();
             iccCertEncoded = selectFileByIdAndRead(CERT_ICC_FILE_ID);
@@ -838,7 +839,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico.
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
+     * @throws test.es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
     protected byte[] signOperation(final byte[] data,
     		                       final String signAlgorithm,
     		                       final PrivateKeyReference privateKeyReference) throws CryptoCardException,

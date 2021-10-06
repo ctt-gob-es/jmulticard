@@ -23,7 +23,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
  * determinado. */
 public final class DnieCacheCallbackHandler implements CallbackHandler, CacheElement {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final long CACHE_TIMEOUT = 3600 * 1000;	// 1 hora
 
@@ -42,7 +42,7 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
 					if (
-						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
+						"test.es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
 						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
 					) {
 						try {

@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.Atr;
+import es.gob.jmulticard.jse.provider.ceres.Ceres430Provider;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
 import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
 
@@ -14,7 +15,7 @@ import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class JMultiCardProviderFactory {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
 	// **************************************************************************
 	// ********* ATR DNIe Y COMPATIBLES *****************************************

@@ -64,7 +64,7 @@ public final class DnieProvider extends Provider {
 
     private static final String SHA1WITH_RSA = "SHA1withRSA"; //$NON-NLS-1$
 
-    private static final String DNIE_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$
+    private static final String DNIE_PRIVATE_KEY = "test.es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$
 
     private static final long serialVersionUID = -1046745919235177156L;
 
@@ -112,13 +112,13 @@ public final class DnieProvider extends Provider {
         }
 
         // KeyStore
-        put("KeyStore.DNI", "es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("KeyStore.DNI", "test.es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Motores de firma
-        put("Signature.SHA1withRSA",   "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha1");   //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA256withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA384withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
-        put("Signature.SHA512withRSA", "es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA1withRSA",   "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha1");   //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA256withRSA", "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA384withRSA", "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA512withRSA", "test.es.gob.jmulticard.jse.provider.DnieSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Claves soportadas para firma
         put("Signature.SHA1withRSA SupportedKeyClasses",     DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
@@ -159,7 +159,7 @@ public final class DnieProvider extends Provider {
         if (vmVendor == null || !vmVendor.contains("Oracle") && !vmVendor.contains("Sun Microsystems")) { //$NON-NLS-1$ //$NON-NLS-2$
 
 	        // Cifrado
-	        put("Cipher.RSA/ECB/PKCS1Padding", "es.gob.jmulticard.jse.provider.rsacipher.DnieCipherImpl"); //$NON-NLS-1$ //$NON-NLS-2$
+	        put("Cipher.RSA/ECB/PKCS1Padding", "test.es.gob.jmulticard.jse.provider.rsacipher.DnieCipherImpl"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	        // Claves soportadas para cifrado
 	        put("Cipher.RSA/ECB/PKCS1Padding SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$

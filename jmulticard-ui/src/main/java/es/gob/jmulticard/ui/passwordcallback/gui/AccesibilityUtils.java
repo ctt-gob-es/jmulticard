@@ -313,7 +313,7 @@ final class AccesibilityUtils {
             p = boton.getLocationOnScreen();
         }
         catch (final IllegalComponentStateException e) {
-            Logger.getLogger("es.gob.jmulticard").warning("Error mostrando el tooltip: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+            Logger.getLogger("test.es.gob.jmulticard").warning("Error mostrando el tooltip: " + e); //$NON-NLS-1$ //$NON-NLS-2$
         }
         int factor = 0;
         if (boton.getSize().getHeight() > 34) {

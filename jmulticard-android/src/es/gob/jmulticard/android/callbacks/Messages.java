@@ -37,7 +37,7 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.android.callbacks;
+package test.es.gob.jmulticard.android.callbacks;
 
 import java.util.Locale;
 import java.util.MissingResourceException;

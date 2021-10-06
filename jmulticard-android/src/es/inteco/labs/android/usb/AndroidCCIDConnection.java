@@ -39,22 +39,22 @@ package es.inteco.labs.android.usb;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.CardConnectionListener;
-import es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import es.gob.jmulticard.apdu.connection.UnavailableReaderException;
-import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
+import test.es.gob.jmulticard.HexUtils;
+import test.es.gob.jmulticard.apdu.CommandApdu;
+import test.es.gob.jmulticard.apdu.ResponseApdu;
+import test.es.gob.jmulticard.apdu.connection.ApduConnection;
+import test.es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import test.es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
+import test.es.gob.jmulticard.apdu.connection.CardConnectionListener;
+import test.es.gob.jmulticard.apdu.connection.CardNotPresentException;
+import test.es.gob.jmulticard.apdu.connection.UnavailableReaderException;
+import test.es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 import es.inteco.labs.android.usb.device.SmartCardUsbDevice;
 import es.inteco.labs.android.usb.device.exception.NotAvailableUSBDeviceException;
 import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
- * Basado en <code>es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
+ * Basado en <code>test.es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
  * @author Jose Luis Escanciano Garcia */
 public final class AndroidCCIDConnection implements ApduConnection {
 
@@ -130,12 +130,12 @@ public final class AndroidCCIDConnection implements ApduConnection {
 					throw new CardNotPresentException();
 				}
 				//Hay tarjeta, pero no esta activa
-				Log.i("es.gob.jmulticard", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.i("test.es.gob.jmulticard", "La tarjeta del lector no esta activa, se reiniciara"); //$NON-NLS-1$ //$NON-NLS-2$
 				reset();
 			}
 
 			if (DEBUG) {
-				Log.d("es.gob.jmulticard", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.d("test.es.gob.jmulticard", "APDU Enviada:\n" + HexUtils.hexify(command.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			final ResponseApdu response;
@@ -143,7 +143,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				response = new ResponseApdu(this.ccidReader.transmit(command.getBytes()));
 
 				if (DEBUG) {
-					Log.d("es.gob.jmulticard", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
+					Log.d("test.es.gob.jmulticard", "APDU Recibida:\n" + HexUtils.hexify(response.getBytes(), true)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 		        // Solicitamos el resultado de la operacion si es necesario
@@ -223,7 +223,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				}
 			}
 			catch (final NotAvailableUSBDeviceException e) {
-				Log.e("es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.e("test.es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				return new long[0];
 			}
 		}

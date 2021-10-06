@@ -76,7 +76,7 @@ public abstract class Iso7816FourCard extends SmartCard {
 
     private static final int MAX_READ_CHUNK = 0xDE;
 
-    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU.
@@ -336,7 +336,7 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
+     * @throws test.es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
      *                                  el n&uacute;mero m&aacute;ximo de intentos). */
     public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, PinException;
 

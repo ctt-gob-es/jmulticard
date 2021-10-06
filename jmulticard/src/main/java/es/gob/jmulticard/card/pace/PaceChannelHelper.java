@@ -33,7 +33,7 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PaceChannelHelper {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final byte[] CAN_MRZ_PADDING = new byte[] {
 		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03

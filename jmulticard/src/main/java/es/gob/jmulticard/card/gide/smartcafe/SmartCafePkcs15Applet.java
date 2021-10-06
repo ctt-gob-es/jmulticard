@@ -103,7 +103,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 
     private static byte CLA = (byte) 0x00;
 
-    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
     private static final Map<String, X509Certificate> CERTS_BY_ALIAS = new LinkedHashMap<>();
     private static final Map<String, Integer> KEYNO_BY_ALIAS = new LinkedHashMap<>();

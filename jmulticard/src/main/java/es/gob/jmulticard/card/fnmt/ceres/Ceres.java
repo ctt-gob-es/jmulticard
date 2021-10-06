@@ -131,7 +131,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	private static final byte CLA = (byte) 0x00;
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
 	private final CryptoHelper cryptoHelper;
 

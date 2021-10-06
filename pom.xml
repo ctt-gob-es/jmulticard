@@ -74,7 +74,7 @@ mvn versions:display-dependency-updates
 
 	<profiles>
 
-		<!-- Construccion por defecto -->
+		<!-- Construcción por defecto -->
 		<profile>
 			<id>basic</id>
 			<activation>
@@ -93,7 +93,7 @@ mvn versions:display-dependency-updates
 
 	    </profile>
 
-		<!-- Construccion que incluye el modulo Android -->
+		<!-- Construcción que incluye el módulo Android -->
 		<profile>
 			<id>android</id>
 			<activation>
@@ -114,7 +114,7 @@ mvn versions:display-dependency-updates
 	    </profile>
 	
 	
-		<!-- Construccion por defecto -->
+		<!-- Construcción por defecto -->
 		<profile>
 			<id>env-dev</id>
 			<activation>
@@ -161,7 +161,7 @@ mvn versions:display-dependency-updates
 	    </profile>
 		
 		
-		<!-- Construccion para despliegue en el repositorio de la SGAE -->
+		<!-- Construcción para despliegue en el repositorio de la SGAD -->
 		<profile>
 			<id>minhap</id>
 			<distributionManagement>
@@ -193,7 +193,7 @@ mvn versions:display-dependency-updates
 	    </profile>
 		
 		
-		<!-- Construccion para despliegue en el repositorio de artefactos -->
+		<!-- Construcción para despliegue en el repositorio de artefactos -->
 		<profile>
 			<id>env-deploy</id>
 			<activation>

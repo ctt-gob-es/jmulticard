@@ -82,7 +82,7 @@ public final class SmartcardIoConnection implements ApduConnection {
      * con la tarjeta. */
     private static final String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
 
-    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 
     private int terminalNumber = -1;
 
@@ -388,7 +388,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
 
         if (DEBUG) {
-        	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+        	Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
     			"Enviada APDU:\n" + //$NON-NLS-1$
 				HexUtils.hexify(command.getBytes(), true)
 			);
@@ -475,7 +475,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             }
 
             if (DEBUG) {
-            	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+            	Logger.getLogger("test.es.gob.jmulticard").info( //$NON-NLS-1$
         			"Respuesta:\n" + //$NON-NLS-1$
 						HexUtils.hexify(response.getBytes(), true)
 				);

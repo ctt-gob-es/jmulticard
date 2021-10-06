@@ -1,4 +1,4 @@
-package es.gob.jmulticard.android.callbacks;
+package test.es.gob.jmulticard.android.callbacks;
 
 import java.util.logging.Logger;
 
@@ -10,14 +10,14 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import es.gob.jmulticard.callback.CustomTextInputCallback;
+import test.es.gob.jmulticard.callback.CustomAuthorizeCallback;
+import test.es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */
 public class DnieNFCCallbackHandler implements CallbackHandler {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("test.es.gob.jmulticard"); //$NON-NLS-1$
 	private final Activity activity;
 	private final DialogDoneChecker dialogDone;
 	private CachePasswordCallback passwordCallback;
