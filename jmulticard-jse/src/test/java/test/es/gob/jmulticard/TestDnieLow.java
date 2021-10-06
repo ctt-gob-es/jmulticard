@@ -123,10 +123,27 @@ public final class TestDnieLow {
 			return;
 		}
 
+		final Dnie3 dnie3 = (Dnie3) dnie;
+
+		final byte[] atrInfo = dnie3.getAtrInfo();
+		System.out.println("AT/INFO:"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(atrInfo, true));
+		System.out.println();
+
+		final byte[] cardAccess = dnie3.getCardAccess();
+		System.out.println("CardAccess:"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(cardAccess, true));
+		System.out.println();
+
 		// Abrimos canal seguro sin vertificar el PIN
 		dnie.openSecureChannelIfNotAlreadyOpened(false);
 
-		final Dnie3 dnie3 = (Dnie3) dnie;
+		// DG5
+		final byte[] dg5 = dnie3.getDg5();
+		System.out.println("DG5"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(dg5, true));
+		System.out.println(new String(dg5));
+		System.out.println();
 
 		// DG01
 		final Mrz dg1 = dnie3.getMrz();
@@ -135,6 +152,8 @@ public final class TestDnieLow {
 
 		// DG11
 		final byte[] dg11 = dnie3.getDg11();
+		System.out.println("DG11"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(dg11, true));
 		System.out.println(new String(dg11));
 		System.out.println();
 
