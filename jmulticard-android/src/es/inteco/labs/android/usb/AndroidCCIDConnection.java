@@ -61,7 +61,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 	private final SmartCardUsbDevice ccidReader;
 
 	private static final boolean DEBUG = false;
-	
+
 	/** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
 	 * @param usbManager Gestor de dispositivos USB del sistema
 	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
