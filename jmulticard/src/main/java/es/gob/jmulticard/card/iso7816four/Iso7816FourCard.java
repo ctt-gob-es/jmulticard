@@ -200,27 +200,25 @@ public abstract class Iso7816FourCard extends SmartCard {
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero
-	 * @return Tama&ntilde;o del fichero seleccionado.
 	 * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
-    public int selectFileByName(final String name) throws ApduConnectionException,
+    public void selectFileByName(final String name) throws ApduConnectionException,
                                                            Iso7816FourCardException {
-    	return selectFileByName(name.getBytes());
+    	selectFileByName(name.getBytes());
     }
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero en hexadecimal
-	 * @return Tama&ntilde;o del fichero seleccionado.
 	 * @throws FileNotFoundException Si el fichero no existe
      * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
-    public int selectFileByName(final byte[] name) throws ApduConnectionException,
+    public void selectFileByName(final byte[] name) throws ApduConnectionException,
                                                            FileNotFoundException,
                                                            Iso7816FourCardException {
     	final CommandApdu selectCommand = new SelectDfByNameApduCommand(getCla(), name);
     	final ResponseApdu response = sendArbitraryApdu(selectCommand);
     	if (response.isOk()) {
-    		return new SelectFileApduResponse(response).getFileLength();
+    		return;
     	}
         final StatusWord sw = response.getStatusWord();
         if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {

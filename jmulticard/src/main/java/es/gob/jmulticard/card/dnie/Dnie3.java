@@ -50,44 +50,35 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.icao.Dg13Identity;
-import es.gob.jmulticard.card.icao.MrtdLds1;
+import es.gob.jmulticard.card.icao.Mrtd;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class Dnie3 extends Dnie implements MrtdLds1 {
+public class Dnie3 extends Dnie implements Mrtd {
+
+    private static final Location FILE_DG01_LOCATION_MRZ   = new Location("3F010101"); //$NON-NLS-1$
+    private static final Location FILE_DG02_LOCATION_PHOTO = new Location("3F010102"); //$NON-NLS-1$
+    private static final Location FILE_DG07_LOCATION_SIGN  = new Location("3F010107"); //$NON-NLS-1$
+    private static final Location FILE_DG11_LOCATION       = new Location("3F01010B"); //$NON-NLS-1$
+    private static final Location FILE_DG12_LOCATION       = new Location("3F01010C"); //$NON-NLS-1$
+    private static final Location FILE_DG13_LOCATION       = new Location("3F01010D"); //$NON-NLS-1$
+    private static final Location FILE_DG14_LOCATION       = new Location("3F01010E"); //$NON-NLS-1$
+    private static final Location FILE_SOD_LOCATION        = new Location("3F01011D"); //$NON-NLS-1$
+    private static final Location FILE_COM_LOCATION        = new Location("3F01011E"); //$NON-NLS-1$
 
     private String idesp = null;
 
     @Override
-	public byte[] getCardAccess() throws IOException {
-    	try {
-			return selectFileByLocationAndRead(FILE_CARD_ACCESS_LOCATION);
-		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el CardAccess del DNIe: " + e, e); //$NON-NLS-1$
-		}
-    }
-
-    @Override
-	public byte[] getAtrInfo() throws IOException {
-    	try {
-			return selectFileByLocationAndRead(FILE_ATR_INFO_LOCATION);
-		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el ATR/INFO del DNIe: " + e, e); //$NON-NLS-1$
-		}
-    }
-
-    @Override
 	public byte[] getDg1() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG01_LOCATION);
+			return selectFileByLocationAndRead(FILE_DG01_LOCATION_MRZ);
 		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG1 del DNIe: " + e, e); //$NON-NLS-1$
@@ -97,7 +88,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     @Override
 	public byte[] getDg2() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG02_LOCATION);
+			return selectFileByLocationAndRead(FILE_DG02_LOCATION_PHOTO);
 		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG2 del DNIe: " + e, e); //$NON-NLS-1$
@@ -107,7 +98,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     @Override
 	public byte[] getDg7() throws IOException {
 		try {
-			return selectFileByLocationAndRead(MrtdLds1.FILE_DG07_LOCATION);
+			return selectFileByLocationAndRead(FILE_DG07_LOCATION_SIGN);
 		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG7 del DNIe: " + e, e); //$NON-NLS-1$
@@ -220,16 +211,14 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
-     *                     variar entre m&aacute;quinas virtuales.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
      * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
      *                         las claves privadas y a los certificados, mientras que si se
      *                         indica <code>false</code>, no se cargan, permitiendo la
      *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
      *                         autenticaci&oacute;n con certificados.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
     protected Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
     	  final CryptoHelper cryptoHelper,
@@ -261,11 +250,9 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
-     *                     variar entre m&aacute;quinas virtuales.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
     Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
     	  final CryptoHelper cryptoHelper,
@@ -430,78 +417,5 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
         }
         return signOperation(data, signAlgorithm, privateKeyReference);
 	}
-
-	//*************************************************************************
-	//********** METODOS DE ICAO MRTD NO SOPORTADOS ***************************
-
-    @Override
-	public byte[] getCardSecurity() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene CardSecurity" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg3() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Hace falta canal de administrador para leer el DG3" //$NON-NLS-1$
-		);
-	}
-
-    @Override
-	public byte[] getDg4() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Hace falta canal de administrador para leer el DG4" //$NON-NLS-1$
-		);
-	}
-
-    @Override
-	public byte[] getDg5() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG5" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg6() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG6" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg8() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG8" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg9() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG9" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg10() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG10" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg15() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG15" //$NON-NLS-1$
-		);
-    }
-
-    @Override
-	public byte[] getDg16() throws IOException {
-    	throw new UnsupportedOperationException(
-			"El DNIe 3.0 no tiene DG16" //$NON-NLS-1$
-		);
-    }
 
 }
