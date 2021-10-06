@@ -324,18 +324,18 @@ final class RSACore {
             }
 
             if (e != null) {
-                this.u = this.u.modPow(e, n);   // e: the exponent
+                this.u = this.u.modPow(e, n);   // e: El exponente publico
                                       // u: random ^ e
                                       // v: random ^ (-1)
             }
             else {
-                this.v = this.v.modPow(d, n);   // d: the private exponent
+                this.v = this.v.modPow(d, n);   // d: El exponente privado
                                       // u: random
                                       // v: random ^ (-d)
             }
         }
 
-        // return null if need to reset the parameters
+        // Devuelve null si se necesitan reiniciar los parametros
         BlindingRandomPair getBlindingRandomPair(final BigInteger exponent,
         		                                 final BigInteger privateRsaExponentHash,
         		                                 final BigInteger n) {

@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.Atr;
+import es.gob.jmulticard.jse.provider.ceres.Ceres430Provider;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
 import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
 

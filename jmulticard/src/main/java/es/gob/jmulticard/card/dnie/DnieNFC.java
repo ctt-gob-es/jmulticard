@@ -27,7 +27,7 @@ import es.gob.jmulticard.card.pace.PaceInitializerCan;
 import es.gob.jmulticard.card.pace.PaceInitializerMrz;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
-/** Lectura de DNIe 3 a partir de un dispositivo con NFC.
+/** DNIe 3 accedido mediante PACE por NFC.
  * @author Sergio Mart&iacute;nez Rico
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
@@ -54,7 +54,16 @@ public class DnieNFC extends Dnie3 {
 		);
 	}
 
-	DnieNFC(final ApduConnection conn,
+	/** Construte un DNIe 3 accedido mediante PACE por NFC.
+	 * @param conn Conexi&oacute;n NFC.
+	 * @param pwc <code>PasswordCallback</code> para obtener el PIN.
+	 * @param cryptoHelper Clase de utiildades criptogr&aacute;ficas.
+	 * @param ch <code>CallbackHandler</code> para obtener el PIN y el CAN o la MRZ.
+	 * @param loadCertsAndKeys <code>true</code> si se ha de hacer una carga de claves
+	 *                         y certificados en el momento de la construcci&oacute;n.
+	 * @throws PaceException Si no se puede establecer en canal PACE.
+	 * @throws ApduConnectionException Si hay problemas en el env&iacute;o de las APDU. */
+	protected DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch,
@@ -139,9 +148,9 @@ public class DnieNFC extends Dnie3 {
 					}
 					paceInitValue = (String)o;
 				}
-				catch (final NoSuchMethodException |
-					         SecurityException |
-					         IllegalAccessException |
+				catch (final NoSuchMethodException    |
+					         SecurityException        |
+					         IllegalAccessException   |
 					         IllegalArgumentException |
 					         InvocationTargetException e) {
 					throw new IllegalStateException(
@@ -216,7 +225,9 @@ public class DnieNFC extends Dnie3 {
 				paceInitializer = new PaceInitializerCan(paceInitValue);
 				break;
 			default:
-				throw new UnsupportedOperationException("No se soporta el codigo de inicializacion de PACE: " + paceInitType); //$NON-NLS-1$
+				throw new UnsupportedOperationException(
+					"No se soporta el codigo de inicializacion de PACE: " + paceInitType //$NON-NLS-1$
+				);
 		}
 
 		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
@@ -284,11 +295,12 @@ public class DnieNFC extends Dnie3 {
 			selectMasterFile();
 		}
 		catch (final Exception e1) {
-			// Error al pasar de un canal cifrado a uno no cifrado. Se usa para reiniciar la tarjeta inteligente por NFC
+			// Error al pasar de un canal cifrado a uno no cifrado.
+			// Se usa para reiniciar la tarjeta inteligente por NFC
 		}
 	}
 
-	private static PacePasswordType getPasswordType(final String paceInitializationValue){
+	private static PacePasswordType getPasswordType(final String paceInitializationValue) {
 		if(isNumeric(paceInitializationValue) && paceInitializationValue.length() <= 6) {
 			return PacePasswordType.CAN;
 		}

@@ -56,8 +56,8 @@ import java.security.spec.InvalidKeySpecException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class CryptoHelper {
 
-	/** Nombre de curva el&iacute;ptica. */
-	protected enum EcCurve {
+	/** Nombres de curva el&iacute;ptica. */
+	public enum EcCurve {
 
 		/** BrainpoolP256r1. */
 		BRAINPOOL_P256_R1("brainpoolp256r1"); //$NON-NLS-1$

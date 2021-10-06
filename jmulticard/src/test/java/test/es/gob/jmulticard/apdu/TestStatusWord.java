@@ -21,7 +21,7 @@ public final class TestStatusWord extends TestCase {
     /** Prueba el funcionamiento de getBytes */
     public static void testGetBytes() {
         final StatusWord sw = new StatusWord((byte) 0x90, (byte) 0x00);
-        final byte[] respuestaEsperada = new byte[] {
+        final byte[] respuestaEsperada = {
                 (byte) 0x90, (byte) 0x00
         };
 

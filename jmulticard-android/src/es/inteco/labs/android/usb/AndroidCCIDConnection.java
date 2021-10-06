@@ -223,7 +223,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 				}
 			}
 			catch (final NotAvailableUSBDeviceException e) {
-				Log.e("es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolverra una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				Log.e("es.gob.jmulticard", "No se ha podido determinar si hay tarjeta en el lector, se devolvera una lista vacia: " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				return new long[0];
 			}
 		}

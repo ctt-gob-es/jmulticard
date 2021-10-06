@@ -65,7 +65,7 @@ public class TestHexUtils extends TestCase {
     public static void testXor() {
         final byte[] result = HexUtils.xor(HEXSTRING, HEXSTRING);
         final byte[] array = {
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
         HexUtils.xor(HEXSTRING, array);
 

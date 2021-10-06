@@ -388,7 +388,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
 
         if (DEBUG) {
-        	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+        	LOGGER.info(
     			"Enviada APDU:\n" + //$NON-NLS-1$
 				HexUtils.hexify(command.getBytes(), true)
 			);
@@ -475,7 +475,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             }
 
             if (DEBUG) {
-            	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+            	LOGGER.info(
         			"Respuesta:\n" + //$NON-NLS-1$
 						HexUtils.hexify(response.getBytes(), true)
 				);

@@ -12,6 +12,7 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.InvalidCardException;
+import es.gob.jmulticard.card.dnie.tif.Tif;
 import es.gob.jmulticard.card.pace.PaceException;
 
 /** Factor&iacute;a para la obtenci&oacute;n de DNIe.
