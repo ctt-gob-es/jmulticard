@@ -36,7 +36,7 @@
 
 package es.inteco.labs.android.usb.device.exception;
 
-import test.es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.HexUtils;
 
 /** Error en la respuesta de un comando USB.
  * @author Jose Luis Escanciano */

@@ -1,4 +1,4 @@
-package test.es.gob.jmulticard.android.nfc;
+package es.gob.jmulticard.android.nfc;
 
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -7,15 +7,15 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import test.es.gob.jmulticard.HexUtils;
-import test.es.gob.jmulticard.apdu.CommandApdu;
-import test.es.gob.jmulticard.apdu.ResponseApdu;
-import test.es.gob.jmulticard.apdu.connection.ApduConnection;
-import test.es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import test.es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import test.es.gob.jmulticard.apdu.connection.CardConnectionListener;
-import test.es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
-import test.es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.apdu.connection.CardConnectionListener;
+import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
+import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre NFC para Android.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */

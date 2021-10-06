@@ -101,7 +101,7 @@ public class DnieNFC extends Dnie3 {
 				    NoSuchMethodException     |
 				    SecurityException e) {
 			LOGGER.info(
-				"No se ha encontrado la clase 'javax.security.auth.callback.TextInputCallback', se usara 'test.es.gob.jmulticard.callback.CustomTextInputCallback': " + e //$NON-NLS-1$
+				"No se ha encontrado la clase 'javax.security.auth.callback.TextInputCallback', se usara 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e //$NON-NLS-1$
 			);
 			try {
 				tic = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class DnieNFC extends Dnie3 {
 				   SecurityException |
 				   ClassNotFoundException e1) {
 				throw new IllegalStateException(
-					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'test.es.gob.jmulticard.callback.CustomTextInputCallback': " + e1, e1 //$NON-NLS-1$
+					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e1, e1 //$NON-NLS-1$
 				);
 			}
 		}

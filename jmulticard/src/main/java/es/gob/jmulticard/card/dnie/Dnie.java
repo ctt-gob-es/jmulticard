@@ -839,7 +839,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      * @throws CryptoCardException Cuando se produce un error durante la operaci&oacute;n de firma.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
      *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico.
-     * @throws test.es.gob.jmulticard.card.AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
+     * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
     protected byte[] signOperation(final byte[] data,
     		                       final String signAlgorithm,
     		                       final PrivateKeyReference privateKeyReference) throws CryptoCardException,

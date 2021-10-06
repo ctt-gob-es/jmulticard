@@ -39,22 +39,22 @@ package es.inteco.labs.android.usb;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import test.es.gob.jmulticard.HexUtils;
-import test.es.gob.jmulticard.apdu.CommandApdu;
-import test.es.gob.jmulticard.apdu.ResponseApdu;
-import test.es.gob.jmulticard.apdu.connection.ApduConnection;
-import test.es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import test.es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import test.es.gob.jmulticard.apdu.connection.CardConnectionListener;
-import test.es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import test.es.gob.jmulticard.apdu.connection.UnavailableReaderException;
-import test.es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.apdu.connection.CardConnectionListener;
+import es.gob.jmulticard.apdu.connection.CardNotPresentException;
+import es.gob.jmulticard.apdu.connection.UnavailableReaderException;
+import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 import es.inteco.labs.android.usb.device.SmartCardUsbDevice;
 import es.inteco.labs.android.usb.device.exception.NotAvailableUSBDeviceException;
 import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
- * Basado en <code>test.es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
+ * Basado en <code>es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
  * @author Jose Luis Escanciano Garcia */
 public final class AndroidCCIDConnection implements ApduConnection {
 

@@ -38,7 +38,7 @@ package es.inteco.labs.android.usb.device.ccid.instruction;
 
 import java.nio.ByteBuffer;
 
-import test.es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.HexUtils;
 
 /** Comando USB <i>Escape</i>.
  * @author Angel Gonzalez Villan */

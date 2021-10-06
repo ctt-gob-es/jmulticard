@@ -1,4 +1,4 @@
-package test.es.gob.jmulticard.android.callbacks;
+package es.gob.jmulticard.android.callbacks;
 
 import java.util.logging.Logger;
 
@@ -10,8 +10,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import android.app.Activity;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import test.es.gob.jmulticard.callback.CustomAuthorizeCallback;
-import test.es.gob.jmulticard.callback.CustomTextInputCallback;
+import es.gob.jmulticard.callback.CustomAuthorizeCallback;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
  * @author Sergio Mart&iacute;nez Rico. */

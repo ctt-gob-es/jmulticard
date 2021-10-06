@@ -1,7 +1,7 @@
 // Code from https://gist.github.com/Thorbear/f7c48e90d3e71bde13cb
 // Credit: Thorbear
 
-package test.es.gob.jmulticard.android.nfc;
+package es.gob.jmulticard.android.nfc;
 
 import android.annotation.TargetApi;
 import android.nfc.Tag;

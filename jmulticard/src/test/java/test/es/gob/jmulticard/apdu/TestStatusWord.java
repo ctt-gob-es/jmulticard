@@ -6,7 +6,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.StatusWord;
 import junit.framework.TestCase;
 
-/** Prueba de m&eacute;todos de la clase {@linkplain test.es.gob.jmulticard.apdu.StatusWord}
+/** Prueba de m&eacute;todos de la clase {@linkplain es.gob.jmulticard.apdu.StatusWord}
  * @author Alberto Mart&iacute;nez */
 public final class TestStatusWord extends TestCase {
 
@@ -21,7 +21,7 @@ public final class TestStatusWord extends TestCase {
     /** Prueba el funcionamiento de getBytes */
     public static void testGetBytes() {
         final StatusWord sw = new StatusWord((byte) 0x90, (byte) 0x00);
-        final byte[] respuestaEsperada = new byte[] {
+        final byte[] respuestaEsperada = {
                 (byte) 0x90, (byte) 0x00
         };
 

@@ -1,4 +1,4 @@
-package test.es.gob.jmulticard.android.callbacks;
+package es.gob.jmulticard.android.callbacks;
 
 import java.util.logging.Logger;
 

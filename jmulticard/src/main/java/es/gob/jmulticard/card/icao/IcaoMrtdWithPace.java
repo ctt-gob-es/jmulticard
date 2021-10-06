@@ -18,7 +18,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 	 * @param conn Conexi&oacute;n con el lector NFC.
 	 * @param cryptoHelper Clase de utilidad de funciones criptogr&aacute;ficas.
 	 * @param ch <code>CallbackHandler</code> que debe proporcionar, mediante un
-	 *           <code>test.es.gob.jmulticard.callback.CustomTextInputCallback</code> o
+	 *           <code>es.gob.jmulticard.callback.CustomTextInputCallback</code> o
 	 *           un <code>javax.security.auth.callback.TextInputCallback</code> el
 	 *           CAN o la MRZ del pasaporte.
 	 * @throws PaceException Si no se puede establecer el canal PACE.

@@ -8,7 +8,7 @@
  * You may contact the copyright holder at: soporte.afirma5@mpt.es
  */
 
-package test.es.gob.jmulticard.android.callbacks;
+package es.gob.jmulticard.android.callbacks;
 
 import javax.security.auth.callback.PasswordCallback;
 

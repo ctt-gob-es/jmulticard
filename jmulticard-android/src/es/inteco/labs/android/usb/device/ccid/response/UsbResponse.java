@@ -38,7 +38,7 @@ package es.inteco.labs.android.usb.device.ccid.response;
 
 import java.math.BigInteger;
 
-import test.es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.HexUtils;
 import es.inteco.labs.android.usb.device.USBResponseErrorStructure;
 import es.inteco.labs.android.usb.device.USBResponseErrorsMap;
 import es.inteco.labs.android.usb.device.ccid.instruction.UsbCommand;

@@ -40,7 +40,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.SystemClock;
 import android.util.Log;
-import test.es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.HexUtils;
 import es.inteco.labs.android.usb.device.ccid.instruction.UsbCommand;
 import es.inteco.labs.android.usb.device.ccid.instruction.UsbInstructionFactory;
 import es.inteco.labs.android.usb.device.ccid.response.UsbResponse;
