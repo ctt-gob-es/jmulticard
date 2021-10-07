@@ -27,7 +27,6 @@ import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.icao.Dg13Identity;
 import es.gob.jmulticard.card.icao.IcaoMrtdWithBac;
-import es.gob.jmulticard.card.icao.IcaoMrtdWithPace;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
@@ -126,7 +125,7 @@ public final class TestDnieLow {
 		final Dnie3 dnie3 = (Dnie3) dnie;
 
 		final byte[] atrInfo = dnie3.getAtrInfo();
-		System.out.println("AT/INFO:"); //$NON-NLS-1$
+		System.out.println("ATR/INFO:"); //$NON-NLS-1$
 		System.out.println(HexUtils.hexify(atrInfo, true));
 		System.out.println();
 
@@ -279,40 +278,4 @@ public final class TestDnieLow {
 
 	}
 
-	/** Prueba de lectura de DG en Pasaporte con PACE.
-	 * @throws Exception En cualquier error. */
-	@SuppressWarnings("static-method")
-	@Test
-	@Ignore
-	public void testPassportWithPaceReadDgs() throws Exception {
-
-		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77
-
-		final ApduConnection conn = ProviderUtil.getDefaultConnection();
-		System.out.println(HexUtils.hexify(conn.reset(), true));
-		System.out.println();
-		final IcaoMrtdWithPace passport = new IcaoMrtdWithPace(
-			conn,
-			new JseCryptoHelper(),
-			new TestingDnieCallbackHandler(CAN, PIN)
-			//new SmartcardCallbackHandler()
-		);
-
-		System.out.println();
-		System.out.println(passport);
-		System.out.println();
-
-		final byte[] com = passport.getCOM();
-		System.out.println(new String(com));
-		System.out.println();
-
-		final Mrz dg1 = passport.getMrz();
-		System.out.println(dg1);
-		System.out.println();
-
-		final byte[] dg11 = passport.getDg11();
-		System.out.println(new String(dg11));
-		System.out.println();
-
-	}
 }

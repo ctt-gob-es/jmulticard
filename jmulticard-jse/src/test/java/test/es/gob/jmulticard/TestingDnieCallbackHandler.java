@@ -23,7 +23,7 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 	 * @param p PIN. */
 	public TestingDnieCallbackHandler(final String c, final String p) {
 		this.can = c;
-		this.pin = p.toCharArray();
+		this.pin = p != null ? p.toCharArray() : null;
 	}
 
 	/** Construye un CallbackHandler de prueba.

@@ -1,12 +1,17 @@
 package es.gob.jmulticard.card.icao;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import javax.security.auth.callback.CallbackHandler;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.DnieNFC;
+import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.pace.PaceException;
 
 /** Pasaporte accedido de forma inal&aacute;mbrica mediante PACE.
@@ -32,7 +37,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			null,          // No hay PIN
 			cryptoHelper,
 			ch,            // CallbackHandler, debe proporcionar la MRZ o el CAN
-			false          // No se cargan claves y certificados
+			false          // No se cargan claves ni certificados
 		);
 	}
 
@@ -63,5 +68,138 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 	public String toString() {
 		return getCardName();
 	}
+
+	//*************************************************************************
+	//* METODOS ICAO NO PRESENTES EN DNIE PERO QUE SI PUEDEN ESTAR EN UN MRTD *
+
+    @Override
+	public byte[] getCardSecurity() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_CARD_SECURITY_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("CardSecurity no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el CardSecurity: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg3() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG03_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG3 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG3: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    @Override
+	public byte[] getDg4() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG04_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG4 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG4: " + e, e); //$NON-NLS-1$
+		}
+	}
+
+    @Override
+	public byte[] getDg5() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG05_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG5 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG5: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg6() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG06_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG6 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG6: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg8() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG08_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG8 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG8: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg9() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG09_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG9 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG9: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg10() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG10_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG10 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG10: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg15() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG15_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG15 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG15: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getDg16() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG16_LOCATION);
+		}
+		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG16 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG16: " + e, e); //$NON-NLS-1$
+		}
+    }
 
 }
