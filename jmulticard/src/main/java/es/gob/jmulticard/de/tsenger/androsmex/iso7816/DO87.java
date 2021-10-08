@@ -57,7 +57,7 @@ final class DO87 {
 
 	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
     	try (
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
+			final ASN1InputStream asn1in = new ASN1InputStream(encodedData)
 		) {
 			this.to = (DERTaggedObject)asn1in.readObject();
 		}
@@ -72,7 +72,8 @@ final class DO87 {
 	byte[] getEncoded() throws SecureMessagingException {
     	try {
 			return this.to.getEncoded();
-		} catch (final IOException e) {
+		}
+    	catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
     }

@@ -65,7 +65,7 @@ public final class Crypto {
 		final SecretKeySpec skeya = new SecretKeySpec(ka, "DES"); //$NON-NLS-1$
 		final SecretKeySpec skeyb = new SecretKeySpec(kb, "DES"); //$NON-NLS-1$
 		final byte[] current = new byte[8];
-		byte[] mac = new byte[] {
+		byte[] mac = {
 			(byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0
 		};
 
@@ -83,8 +83,7 @@ public final class Crypto {
 		mac = des.update(mac);
 
 		des.init(Cipher.ENCRYPT_MODE, skeya);
-		mac = des.doFinal(mac);
-		return mac;
+		return des.doFinal(mac);
 	}
 
 }
