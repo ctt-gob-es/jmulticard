@@ -1,6 +1,7 @@
 package test.es.gob.jmulticard;
 
 import java.io.ByteArrayInputStream;
+import java.security.cert.X509Certificate;
 
 import javax.imageio.ImageIO;
 import javax.security.auth.callback.Callback;
@@ -19,6 +20,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
+import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
@@ -57,6 +59,28 @@ public final class TestDnieLow {
 		System.out.println();
 		System.out.println(new DnieSubjectPrincipalParser(cdf.getCertificateSubjectPrincipal(0)));
 		System.out.println("IDESP: " + dnie.getIdesp()); //$NON-NLS-1$
+	}
+
+	/** Prueba la obtenci&oacute;n y verificaci&oacute;n del SOD.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testDnieSod() throws Exception {
+		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
+			ProviderUtil.getDefaultConnection(),
+			null,
+			new JseCryptoHelper(),
+			new TestingDnieCallbackHandler(CAN, PIN),
+			true
+		);
+		System.out.println(dnie);
+		dnie.openSecureChannelIfNotAlreadyOpened(false);
+		final Sod sod = dnie.getSod();
+		System.out.println(sod);
+		System.out.println();
+		final X509Certificate[] certChain = dnie.checkSecurityObjects();
+		System.out.println(certChain[0].getSubjectX500Principal());
 	}
 
 	/** Prueba directa de firma.
@@ -110,8 +134,7 @@ public final class TestDnieLow {
 			ProviderUtil.getDefaultConnection(),
 			null,
 			new JseCryptoHelper(),
-			new TestingDnieCallbackHandler(CAN, PIN),
-			//new SmartcardCallbackHandler(),
+			new TestingDnieCallbackHandler(CAN, (String)null), // No usamos el PIN
 			false
 		);
 		System.out.println();
@@ -137,11 +160,15 @@ public final class TestDnieLow {
 		// Abrimos canal seguro sin vertificar el PIN
 		dnie.openSecureChannelIfNotAlreadyOpened(false);
 
-		// DG5
-		final byte[] dg5 = dnie3.getDg5();
-		System.out.println("DG5"); //$NON-NLS-1$
-		System.out.println(HexUtils.hexify(dg5, true));
-		System.out.println(new String(dg5));
+		final Sod sod = dnie3.getSod();
+		System.out.println("SOD:"); //$NON-NLS-1$
+		System.out.println(sod);
+		System.out.println();
+
+		// COM
+		final byte[] com = dnie3.getCom();
+		System.out.println("COM:"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(com, true));
 		System.out.println();
 
 		// DG01
@@ -264,7 +291,7 @@ public final class TestDnieLow {
 		System.out.println(passport);
 		System.out.println();
 
-		final byte[] com = passport.getCOM();
+		final byte[] com = passport.getCom();
 		System.out.println(new String(com));
 		System.out.println();
 

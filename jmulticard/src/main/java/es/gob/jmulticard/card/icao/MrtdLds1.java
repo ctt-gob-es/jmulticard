@@ -1,7 +1,9 @@
 package es.gob.jmulticard.card.icao;
 
 import java.io.IOException;
+import java.security.cert.X509Certificate;
 
+import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.card.Location;
 
 /** MRTD ICAO LDS1.
@@ -190,13 +192,20 @@ public interface MrtdLds1 {
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg16() throws IOException;
 
-    /** Obtiene el SOD. Devuelve el objeto binario sin tratar.
+    /** Obtiene el SOD en su forma de objeto binario sin tratar.
      * El SOD contiene las huellas digitales de los DG.
      * Necesita que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return SOD.
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getSOD() throws IOException;
+    byte[] getSodBytes() throws IOException;
+
+    /** Obtiene el SOD.
+     * El SOD contiene las huellas digitales de los DG.
+     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * @return SOD.
+     * @throws IOException Si hay problemas obteniendo el objeto. */
+    Sod getSod() throws IOException;
 
     /** Obtiene el COM. Devuelve el objeto binario sin tratar.
      * El COM contiene los "datos comunes" (<i>Common Data</i>).
@@ -204,7 +213,7 @@ public interface MrtdLds1 {
      * @author Ignacio Mar&iacute;n.
      * @return COM.
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getCOM() throws IOException;
+    byte[] getCom() throws IOException;
 
     /** Obtiene la foto del titular en formato JPEG2000.
      * Necesita que el canal de usuario est&eacute; previamente establecido.
@@ -244,4 +253,12 @@ public interface MrtdLds1 {
      * @return ATR/INFO.
      * @throws IOException Si no se puede leer el fichero. */
     byte[] getAtrInfo() throws IOException;
+
+    /** Comprueba la validez de los objetos de seguridad a partir del SOD.
+     * @return Cadena de certificados del firmante del SOD (para comprobaci&oacute;n
+     *         externa).
+     * @throws IOException Si no se puede  finalizar la comprobaci&oacute;n.
+     * @throws InvalidSecurityObjectException Si un objeto de seguridad no supera
+     *                                        las comprobaciones de seguridad. */
+    X509Certificate[] checkSecurityObjects() throws IOException, InvalidSecurityObjectException;
 }

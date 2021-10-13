@@ -165,7 +165,9 @@ public final class JseCryptoHelper extends CryptoHelper {
             System.arraycopy(key, 0, newKey, 16, 8);
             return newKey;
         }
-        throw new IllegalArgumentException("Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + Integer.toString(key.length)); //$NON-NLS-1$
+        throw new IllegalArgumentException(
+    		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + Integer.toString(key.length) //$NON-NLS-1$
+		);
     }
 
     private static byte[] doDes(final byte[] data, final byte[] key, final int direction) throws IOException {
@@ -413,11 +415,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 	 * @param bytes Octet String de ASN&#46;1.
 	 * @return Entero (siempre positivo). */
 	private static BigInteger os2i(final byte[] bytes) {
-		if (bytes == null) { throw new IllegalArgumentException(); }
+		if (bytes == null) {
+			throw new IllegalArgumentException();
+		}
 		return os2i(bytes, 0, bytes.length);
 	}
 
-	/** Convierte un Octet String de ASN&#46;1 en un entero
+	/** Convierte un <code>Octet String</code> de ASN&#46;1 en un entero
 	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3&#46;1&#46;2).
 	 * @param bytes <code>Octet String</code> de ASN&#46;1.
 	 * @param offset Desplazamiento (posici&oacute;n de inicio).

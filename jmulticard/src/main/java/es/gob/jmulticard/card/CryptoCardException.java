@@ -47,7 +47,7 @@ public class CryptoCardException extends CardException {
 
 	/** Construye la excepci&oacute;n. */
 	public CryptoCardException() {
-		super();
+		// Vacio
 	}
 
 	/** Construye la excepci&oacute;n.

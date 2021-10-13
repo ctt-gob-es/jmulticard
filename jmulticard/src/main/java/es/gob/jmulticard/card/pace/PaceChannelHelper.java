@@ -369,7 +369,7 @@ public final class PaceChannelHelper {
 			)
 		);
 
-		byte[] mac8bytes;
+		final byte[] mac8bytes;
 		try {
 			mac8bytes = cryptoHelper.doAesCmac(
 				data,
@@ -414,9 +414,11 @@ public final class PaceChannelHelper {
 
 		if (SmartCard.DEBUG) {
 			LOGGER.info("Canal Pace abierto"); //$NON-NLS-1$
-			LOGGER.info("\nKenc: " + HexUtils.hexify(kenc, true) + //$NON-NLS-1$
-						"Kmac: " + HexUtils.hexify(kmac, true) + //$NON-NLS-1$
-						"Ssc: " + HexUtils.hexify(ssc, true)); //$NON-NLS-1$
+			LOGGER.info(
+				"\nKenc: " + HexUtils.hexify(kenc, true) + //$NON-NLS-1$
+				"\nKmac: " + HexUtils.hexify(kmac, true) + //$NON-NLS-1$
+				"\nSsc: " + HexUtils.hexify(ssc, true) //$NON-NLS-1$
+			);
 		}
 
 		final AmCryptoProvider crypto = new AmAESCrypto();
@@ -425,9 +427,8 @@ public final class PaceChannelHelper {
 
 	private static byte[] bigIntToByteArray(final BigInteger bi) {
 		final byte[] temp = bi.toByteArray();
-		byte[] returnbytes = null;
 		if (temp[0] == 0) {
-			returnbytes = new byte[temp.length - 1];
+			final byte[] returnbytes = new byte[temp.length - 1];
 			System.arraycopy(temp, 1, returnbytes, 0, returnbytes.length);
 			return returnbytes;
 		}

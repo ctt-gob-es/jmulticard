@@ -61,7 +61,8 @@ public final class MrzInfo {
     private String dateOfExpiry;
     private char documentNumberCheckDigit;
 
-    /** Contiene el n&uacute;mero del titular en ciertos pa&iacute;ses (como Holanda), pero normalmente contiene parte del n&uacute;mero de documento. */
+    /** Contiene el n&uacute;mero del titular en ciertos pa&iacute;ses (como Holanda),
+     * pero normalmente contiene parte del n&uacute;mero de documento. */
     private String optionalData1;
 
     /** Devuelve el 'MRZ Information' como array de octetos.
@@ -244,7 +245,7 @@ public final class MrzInfo {
 
     /** Lee el sexo del titular (una letra) del flujo de entrada.
      * @param inputStream Flujo de entrada (como texto).
-     * @return Sexto del titular del documento.
+     * @return Sexo del titular del documento.
      * @throws IOException En cualquier error. */
     private static String readGender(final DataInputStream inputStream) throws IOException {
         return readString(inputStream, 1);
@@ -297,22 +298,18 @@ public final class MrzInfo {
         }
         if (documentCode.startsWith("A") || //$NON-NLS-1$
             documentCode.startsWith("C") || //$NON-NLS-1$
-            documentCode.startsWith("I")) { //$NON-NLS-1$
-            	/* MRTD segun ICAO Doc 9303 parte 3 vol 1 */
-            	return DOC_TYPE_ID1;
-        }
-		if (documentCode.startsWith("V")) { //$NON-NLS-1$
-        		/* MRV segun ICAO Doc 9303 parte 2 */
+            documentCode.startsWith("I") || documentCode.startsWith("V")) { //$NON-NLS-1$ //$NON-NLS-2$
+        		// MRV segun ICAO Doc 9303 parte 2
         		return DOC_TYPE_ID1;
         }
-        else if (documentCode.startsWith("P")) { //$NON-NLS-1$
-        		/* MRP segun ICAO Doc 9303 parte 1 vol 1 */
+		if (documentCode.startsWith("P")) { //$NON-NLS-1$
+        		// MRP segun ICAO Doc 9303 parte 1 vol 1
             	return DOC_TYPE_ID3;
         }
         return DOC_TYPE_UNSPECIFIED;
     }
 
-    /** reemplaza el caracter '&lt;' por ' ' y elimina los espacios en blanco al principio y al final.
+    /** Reemplaza el caracter '&lt;' por ' ' y elimina los espacios en blanco al principio y al final.
      * @param str Texto de entrada.
      * @return Texto con las sustituciones hechas. */
     private static String trimFillerChars(final String str) {
@@ -361,7 +358,7 @@ public final class MrzInfo {
 
     /** Obtiene el valor num&eacute;rico de un carcater MRZ (para el c&aacute;lculo de
      * los d&iacute;gitos de control)
-     * @param ch caracter de la MRZ.
+     * @param ch Caracter de la MRZ.
      * @return Valor num&eacute;rico del caracter.
      * @throws NumberFormatException Si el caracter no es v&aacute;lido para una MRZ. */
     private static int decodeMRZDigit(final byte ch) throws NumberFormatException {

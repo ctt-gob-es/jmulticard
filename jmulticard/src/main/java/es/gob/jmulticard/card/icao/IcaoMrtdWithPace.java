@@ -50,8 +50,16 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 	/** {@inheritDoc} */
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() {
-		throw new UnsupportedOperationException(
-			"No se permite apertura de canal CWA-14890" //$NON-NLS-1$
+		LOGGER.warning(
+			"No se permite apertura de canal CWA-14890, se ignora la peticion" //$NON-NLS-1$
+		);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) {
+		LOGGER.warning(
+			"No se permite apertura de canal CWA-14890, se ignora la peticion" //$NON-NLS-1$
 		);
 	}
 

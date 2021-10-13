@@ -9,7 +9,7 @@ public final class PasswordCallbackNotFoundException extends PinException {
 
 	/** Construye una excepci&oacute;n de mecanismo de inserci&oacute;n de PIN no encontrado. */
 	public PasswordCallbackNotFoundException() {
-		super();
+		// Vacio
 	}
 
 	/** Construye una excepci&oacute;n de mecanismo de inserci&oacute;n de PIN no encontrado.

@@ -1,10 +1,12 @@
 package test.es.gob.jmulticard;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.card.icao.IcaoMrtdWithPace;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
@@ -26,6 +28,7 @@ public final class TestIcao {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testPassportWithPaceReadDgs() throws Exception {
 
 		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77
@@ -43,7 +46,12 @@ public final class TestIcao {
 		System.out.println(passport);
 		System.out.println();
 
-		final byte[] com = passport.getCOM();
+		final Sod sod = passport.getSod();
+		System.out.println("SOD:"); //$NON-NLS-1$
+		System.out.println(sod);
+		System.out.println();
+
+		final byte[] com = passport.getCom();
 		System.out.println("COM:"); //$NON-NLS-1$
 		System.out.println(new String(com));
 		System.out.println();
