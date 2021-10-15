@@ -356,7 +356,7 @@ public final class MrzInfo {
         }
     }
 
-    /** Obtiene el valor num&eacute;rico de un carcater MRZ (para el c&aacute;lculo de
+    /** Obtiene el valor num&eacute;rico de un caracter MRZ (para el c&aacute;lculo de
      * los d&iacute;gitos de control)
      * @param ch Caracter de la MRZ.
      * @return Valor num&eacute;rico del caracter.

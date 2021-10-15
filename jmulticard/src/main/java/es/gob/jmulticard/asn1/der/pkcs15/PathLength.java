@@ -65,7 +65,7 @@ public final class PathLength extends ContextSpecific {
 
 	@Override
     protected void decodeValue() throws TlvException {
-		this.value = Integer.valueOf(String.valueOf(HexUtils.getUnsignedInt(new Tlv(this.getRawDerValue()).getValue(), 0)));
+		this.value = Integer.valueOf(String.valueOf(HexUtils.getUnsignedInt(new Tlv(getRawDerValue()).getValue(), 0)));
 	}
 
 	/** {@inheritDoc} */
@@ -74,7 +74,7 @@ public final class PathLength extends ContextSpecific {
 		if (TAG != tag) {
 			throw new Asn1Exception(
 				"PathLength esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
-				" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+					" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
 			);
 		}
 	}

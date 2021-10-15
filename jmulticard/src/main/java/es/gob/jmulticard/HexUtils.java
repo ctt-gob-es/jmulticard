@@ -113,7 +113,7 @@ public final class HexUtils {
      * <code>opencard.core.util.HexString</code></a>.
      * @param abyte <i>Array</i> de octetos que deseamos representar textualmente.
      * @param separator Indica si han de separarse o no los octetos con un gui&oacute;n y en
-     *        l&iacute;neas de 16.
+     *                  l&iacute;neas de 16.
      * @return Representaci&oacute;n textual del vector de octetos de entrada. */
     public static String hexify(final byte abyte[], final boolean separator) {
         if (abyte == null) {

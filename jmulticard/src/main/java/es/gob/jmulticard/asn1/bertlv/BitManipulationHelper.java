@@ -74,8 +74,7 @@
  */
 package es.gob.jmulticard.asn1.bertlv;
 
-
-/** Clase de utilidad para la manipulaci&oacute;n de bits y octetos.
+/** Utilidades para la manipulaci&oacute;n de bits y octetos.
  * @author Isaac Levin */
 final class BitManipulationHelper {
 
@@ -91,13 +90,15 @@ final class BitManipulationHelper {
 	static boolean getBitValue(final int value, final int position) {
 
 		if (position > 32) {
-			throw new BerParsingException("No se puede obtener el valor del bit de la posicion  " //$NON-NLS-1$
-					+ position + ", un entero en Java tiene solo 32 bits"); //$NON-NLS-1$
+			throw new BerParsingException(
+				"No se puede obtener el valor del bit de la posicion " + //$NON-NLS-1$
+					position + ", un entero en Java tiene solo 32 bits" //$NON-NLS-1$
+			);
 		}
 		int bitPosition = position;
 		bitPosition--; // Lo pasamos a contador desde 0
 		final int mask = 1 << bitPosition;
-		return (value & mask) == 0 ? false : true;
+		return (value & mask) != 0;
 	}
 
 	/** Establece el valor del bit de la posici&oacute;n indicada.

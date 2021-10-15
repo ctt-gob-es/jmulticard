@@ -95,22 +95,14 @@ public final class BerTlv {
     }
 
     private void decode(final ByteArrayInputStream stream) throws IndexOutOfBoundsException {
-        // Decode Tag
+        // Decodificamos el Tag
         this.tag = new BerTlvIdentifier();
         this.tag.decode(stream);
 
-        // Decode length
+        // Decodificamos la longitud
         int tmpLength = stream.read();
-        if (tmpLength <= 127) { // 0111 1111
-            // Es un short
-            this.length = tmpLength;
-        }
-        else if (tmpLength == 128) { // 1000 0000
-            // Es un tipo indefinido, lo establecemos despues
-            this.length = tmpLength;
-        }
-        else {
-            // Es un long
+        if (tmpLength > 127 && tmpLength != 128) {
+        	// Es un long
             final int numberOfLengthOctets = tmpLength & 127; // turn off 8th bit
             tmpLength = 0;
             for (int i = 0; i < numberOfLengthOctets; i++) {
@@ -118,8 +110,8 @@ public final class BerTlv {
                 tmpLength <<= 8;
                 tmpLength |= nextLengthOctet;
             }
-            this.length = tmpLength;
         }
+		this.length = tmpLength;
 
         // Decodificamos el valor
         if (this.length == 128) { // 1000 0000
@@ -140,7 +132,9 @@ public final class BerTlv {
             this.value = new byte[len];
             stream.reset();
             if (len != stream.read(this.value, 0, len)) {
-                throw new IndexOutOfBoundsException("La longitud de los datos leidos no coincide con el parametro indicado"); //$NON-NLS-1$
+                throw new IndexOutOfBoundsException(
+            		"La longitud de los datos leidos no coincide con el parametro indicado" //$NON-NLS-1$
+        		);
             }
             this.length = len;
         }

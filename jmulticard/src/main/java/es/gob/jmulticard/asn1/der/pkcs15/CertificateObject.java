@@ -105,8 +105,8 @@ public class CertificateObject extends Pkcs15Object {
      * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
 	protected CertificateObject(final Class<? extends DecoderObject> classAttributes,
-			               final Class<? extends ContextSpecific> subclassAttributes,
-			               final Class<? extends ContextSpecific> typeAttributes) {
+			                    final Class<? extends ContextSpecific> subclassAttributes,
+			                    final Class<? extends ContextSpecific> typeAttributes) {
         super(classAttributes, subclassAttributes, typeAttributes);
     }
 
@@ -157,7 +157,7 @@ public class CertificateObject extends Pkcs15Object {
     public String toString() {
     	return getTypeAttributes().toString() +
 			"\nAlias del certificado: " + getCommonObjectAttributes().getLabel() + //$NON-NLS-1$
-			"\nIdentificador del certificado: " + getClassAttributes().toString(); //$NON-NLS-1$
+				"\nIdentificador del certificado: " + getClassAttributes().toString(); //$NON-NLS-1$
     }
 
 }
