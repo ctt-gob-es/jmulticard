@@ -22,15 +22,17 @@ final class C40Decoder {
 
 	 /** Juego b&aacute;sico de caracteres C40 (con el espacio cambiado a '<'). */
 	  private static final char[] C40_BASIC_SET_CHARS = {
-	      '*', '*', '*', '<', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-	      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-	      'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+	      '*', '*', '*', '<', '0', '1', '2', '3', '4', '5',
+	      '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+	      'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 	  };
 
 	  /** Juego extendido de caracteres C40. */
 	  private static final char[] C40_SHIFT2_SET_CHARS = {
-		  '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.',
-		  '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_'
+		  '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*',
+		  '+', ',', '-', '.', '/', ':', ';', '<', '=', '>',
+		  '?', '@', '[', '\\', ']', '^', '_'
 	  };
 
 	/** Decodifica un texto en formato C40 seg&uacute;n la ISO 16022:2006
@@ -47,8 +49,6 @@ final class C40Decoder {
 		final StringBuilder result = new StringBuilder();
 		final ByteArrayInputStream bits = new ByteArrayInputStream(c40encoded);
 
-		// TODO(bbrown): The Upper Shift with C40 doesn't work in the 4 value scenario
-		// all the time
 		boolean upperShift = false;
 
 		do {

@@ -52,7 +52,6 @@ import java.security.KeyStoreSpi;
 import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -66,6 +65,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
@@ -200,9 +200,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	    	try (
     			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2-2.crt") //$NON-NLS-1$
 			) {
-				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
-					is
-				);
+				sha2DnieRoot = CertificateUtils.generateCertificate(is);
 			}
 	    	catch (final Exception e) {
 	    		sha2DnieRoot = null;
@@ -224,9 +222,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 		    		try (
 	        			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
 	    			) {
-	    				sha2DnieRoot = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate( //$NON-NLS-1$
-	    					is
-	    				);
+	    				sha2DnieRoot = CertificateUtils.generateCertificate(is);
 	    			}
 	    	    	catch (final Exception ex) {
 	    	    		sha2DnieRoot = null;

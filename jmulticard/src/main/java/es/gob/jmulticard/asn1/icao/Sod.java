@@ -1,10 +1,8 @@
 package es.gob.jmulticard.asn1.icao;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.spongycastle.util.Selector;
 import org.spongycastle.util.Store;
 
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
@@ -59,15 +58,6 @@ public final class Sod extends DecoderObject {
 			throw new SodException("El SOD no estaba firmado: " + e2, e2); //$NON-NLS-1$
 		}
 		final Store<X509CertificateHolder> store = cmsSignedData.getCertificates();
-		final CertificateFactory cf;
-		try {
-			cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-		}
-		catch(final Exception e3) {
-			throw new IllegalStateException(
-				"No se puede instanciar la factoria de certificados X.509: " + e3, e3 //$NON-NLS-1$
-			);
-		}
 		final List<X509Certificate> certChain = new ArrayList<>();
 		for (final SignerInformation si : cmsSignedData.getSignerInfos().getSigners()) {
 			final Iterator<X509CertificateHolder> certIt = store.getMatches(
@@ -75,11 +65,7 @@ public final class Sod extends DecoderObject {
 			).iterator();
 			final X509Certificate cert;
             try {
-				cert = (X509Certificate) cf.generateCertificate(
-					new ByteArrayInputStream(
-						certIt.next().getEncoded()
-					)
-				);
+				cert = CertificateUtils.generateCertificate(certIt.next().getEncoded());
 			}
             catch (final CertificateException | IOException e1) {
             	throw new SodIncorrectCertificateException(

@@ -1,9 +1,7 @@
 package es.gob.jmulticard.card.cardos;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,6 +10,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -167,16 +166,6 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 			// Leemos el CDF mediante registros
 			final List<byte[]> cdfRecords = readAllRecords();
 
-			final CertificateFactory cf;
-			try {
-				cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-			}
-			catch (final CertificateException e1) {
-				throw new IllegalStateException(
-					"No se ha podido obtener la factoria de certificados X.509: " + e1, e1 //$NON-NLS-1$
-				);
-			}
-
 			CertificateObject co;
 			for (final byte[] b : cdfRecords) {
 				try {
@@ -213,7 +202,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
 				final X509Certificate cert;
 				try {
-					cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(certBytes));
+					cert = CertificateUtils.generateCertificate(certBytes);
 				}
 				catch (final CertificateException e) {
 					LOGGER.severe(

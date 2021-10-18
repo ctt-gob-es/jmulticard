@@ -39,7 +39,6 @@
  */
 package es.gob.jmulticard;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -53,9 +52,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
@@ -222,12 +218,6 @@ public final class JseCryptoHelper extends CryptoHelper {
     @Override
     public byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException {
         return doRsa(data, key, Cipher.ENCRYPT_MODE);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Certificate generateCertificate(final byte[] encode) throws CertificateException {
-        return CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(encode)); //$NON-NLS-1$
     }
 
     /** {@inheritDoc} */

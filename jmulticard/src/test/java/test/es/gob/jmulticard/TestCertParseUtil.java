@@ -1,12 +1,13 @@
 package test.es.gob.jmulticard;
 
 import java.io.InputStream;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.junit.Test;
+
+import es.gob.jmulticard.CertificateUtils;
 
 /** Pruebas de an&aacute;lisis del certificado del DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -19,10 +20,9 @@ public final class TestCertParseUtil {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testGetFields() throws Exception {
-		final CertificateFactory cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 		final X509Certificate c;
 		try (final InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
-			c = (X509Certificate) cf.generateCertificate(is);
+			c = CertificateUtils.generateCertificate(is);
 		}
 		final String dn = c.getSubjectDN().toString();
 		String cn = getCN(dn);
@@ -146,12 +146,10 @@ public final class TestCertParseUtil {
 			if (offset2 == offset1) {
 			    return ""; //$NON-NLS-1$
 			}
-			else if (offset2 != -1) {
+			if (offset2 != -1) {
 			    return principal.substring(offset1, offset2);
 			}
-			else {
-			    return principal.substring(offset1);
-			}
+			return principal.substring(offset1);
         }
 
         return null;
