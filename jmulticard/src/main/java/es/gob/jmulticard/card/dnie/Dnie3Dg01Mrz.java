@@ -4,18 +4,19 @@ package es.gob.jmulticard.card.dnie;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
 import es.gob.jmulticard.card.icao.CountryCodes;
 import es.gob.jmulticard.card.icao.Gender;
 import es.gob.jmulticard.card.icao.Mrz;
 
 /** ICAO MRZ del DNIe 3&#46;0.*/
-public class Dnie3Dg01Mrz implements Mrz {
+public final class Dnie3Dg01Mrz implements Mrz {
+
+    private static final SimpleDateFormat SDFORMAT = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
 
 	private final String mrzString;
-
     private final byte[] rawData;
+
     private String name;
     private String surname;
     private String dateOfBirth;
@@ -26,8 +27,6 @@ public class Dnie3Dg01Mrz implements Mrz {
     private String docType;
     private String issuer;
     private String optData;
-    private static final SimpleDateFormat SDFORMAT = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
-    private final Properties countryNames = CountryCodes.getCountryCodes();
 
     /** Construye la ICAO MRZ del DNIe 3&#46;0 a partir del fichero DG1.
      * @param rawBytes Contenido del fichero DG1 del DNIe 3&#46;0. */
@@ -109,7 +108,7 @@ public class Dnie3Dg01Mrz implements Mrz {
 
     @Override
 	public String getNationality() {
-        final String c = this.countryNames.getProperty(this.nationality);
+        final String c = CountryCodes.getCountryName(this.nationality);
         return c != null ? c : "Desconocido"; //$NON-NLS-1$
     }
 
@@ -130,7 +129,8 @@ public class Dnie3Dg01Mrz implements Mrz {
 
     @Override
 	public String getIssuer() {
-        return this.countryNames.getProperty(this.issuer);
+    	final String c = CountryCodes.getCountryName(this.issuer);
+        return c != null ? c : "Desconocido"; //$NON-NLS-1$
     }
 
     @Override
