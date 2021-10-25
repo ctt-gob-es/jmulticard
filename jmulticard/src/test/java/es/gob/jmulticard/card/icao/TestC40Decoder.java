@@ -59,6 +59,10 @@ public final class TestC40Decoder {
 		(byte) 0x31, (byte) 0x9f, (byte) 0x27
 	};
 
+//	private static final byte[] TEST_C40_4 = {
+//		(byte) 0x6d, (byte) 0x15, (byte) 0x22, (byte) 0x4c, (byte) 0x5a, (byte) 0x8c
+//	};
+
 	/** Prueba de decodificaci&oacute;n de texo en formato C40 (ISO 16022).
 	 * @throws IOException En cualquier error. */
 	@Test
@@ -69,20 +73,33 @@ public final class TestC40Decoder {
 		System.out.println("Caracteres: " + test.length()); //$NON-NLS-1$
 		System.out.println(test);
 
+		System.out.println();
+
 		test = C40Decoder.decode(TEST_C40_2);
 		System.out.println("Binario: " + TEST_C40_2.length + " bytes (" + TEST_C40_2.length/2*3 + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		System.out.println("Caracteres: " + test.length()); //$NON-NLS-1$
 		System.out.println(test);
+
+		System.out.println();
 
 		test = C40Decoder.decode(TEST_C40_3);
 		System.out.println("Binario: " + TEST_C40_3.length + " bytes (" + TEST_C40_3.length/2*3 + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		System.out.println("Caracteres: " + test.length()); //$NON-NLS-1$
 		System.out.println(test);
 
+		System.out.println();
+
 		test = C40Decoder.decode(JAPAN);
 		System.out.println("Binario: " + JAPAN.length + " bytes (" + JAPAN.length/2*3 + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		System.out.println("Caracteres: " + test.length()); //$NON-NLS-1$
 		System.out.println(test);
+
+		System.out.println();
+
+//		test = C40Decoder.decode(TEST_C40_4);
+//		System.out.println("Binario: " + TEST_C40_4.length + " bytes (" + TEST_C40_4.length/2*3 + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//		System.out.println("Caracteres: " + test.length()); //$NON-NLS-1$
+//		System.out.println(test);
 	}
 
 }
