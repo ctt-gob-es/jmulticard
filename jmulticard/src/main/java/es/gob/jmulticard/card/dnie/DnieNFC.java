@@ -297,6 +297,7 @@ public class DnieNFC extends Dnie3 {
 		catch (final Exception e1) {
 			// Error al pasar de un canal cifrado a uno no cifrado.
 			// Se usa para reiniciar la tarjeta inteligente por NFC
+			LOGGER.info("Paso de canal seguro a no seguro al reiniciar: " + e1); //$NON-NLS-1$
 		}
 	}
 

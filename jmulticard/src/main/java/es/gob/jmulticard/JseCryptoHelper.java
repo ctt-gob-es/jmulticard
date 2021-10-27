@@ -94,10 +94,14 @@ public final class JseCryptoHelper extends CryptoHelper {
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 
         if (algorithm == null) {
-            throw new IllegalArgumentException("El algoritmo de huella digital no puede ser nulo"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+        		"El algoritmo de huella digital no puede ser nulo" //$NON-NLS-1$
+    		);
         }
         if (data == null) {
-        	throw new IllegalArgumentException("Los datos para realizar la huella digital no pueden ser nulos"); //$NON-NLS-1$
+        	throw new IllegalArgumentException(
+    			"Los datos para realizar la huella digital no pueden ser nulos" //$NON-NLS-1$
+			);
         }
 
         try {
@@ -105,7 +109,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
         catch (final NoSuchAlgorithmException e) {
         	throw new IOException(
-    			"El sistema no soporta el algoritmo de huella digital indicado ('" + algorithm + "'): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+    			"No se soporta el algoritmo de huella digital indicado ('" + algorithm + "'): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
     }
@@ -162,7 +166,7 @@ public final class JseCryptoHelper extends CryptoHelper {
             return newKey;
         }
         throw new IllegalArgumentException(
-    		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + Integer.toString(key.length) //$NON-NLS-1$
+    		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + key.length //$NON-NLS-1$
 		);
     }
 
@@ -197,14 +201,18 @@ public final class JseCryptoHelper extends CryptoHelper {
         return doDes(data, key, Cipher.DECRYPT_MODE);
     }
 
-    private static byte[] doRsa(final byte[] cipheredData, final Key key, final int direction) throws IOException {
+    private static byte[] doRsa(final byte[] cipheredData,
+    		                    final Key key,
+    		                    final int direction) throws IOException {
         try {
             final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING"); //$NON-NLS-1$
             dec.init(direction, key);
             return dec.doFinal(cipheredData);
         }
         catch (final Exception e) {
-            throw new IOException("Error cifrando/descifrando los datos mediante la clave RSA: " + e, e); //$NON-NLS-1$
+            throw new IOException(
+        		"Error cifrando/descifrando los datos mediante la clave RSA: " + e, e //$NON-NLS-1$
+    		);
         }
     }
 
@@ -235,7 +243,10 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-    private static byte[] aesCrypt(final byte[] data, final byte[] iv, final byte[] key, final int mode) throws IOException {
+    private static byte[] aesCrypt(final byte[] data,
+    		                       final byte[] iv,
+    		                       final byte[] key,
+    		                       final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -499,7 +510,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 	private static ECPoint fromSpongyCastleECPoint(final org.spongycastle.math.ec.ECPoint point) {
 		final org.spongycastle.math.ec.ECPoint newPoint = point.normalize();
 		if (!newPoint.isValid()) {
-			LOGGER.warning("Se ha proporcionaod un punto invalido"); //$NON-NLS-1$
+			LOGGER.warning("Se ha proporcionado un punto invalido"); //$NON-NLS-1$
 		}
 		return new ECPoint(
 			newPoint.getAffineXCoord().toBigInteger(),

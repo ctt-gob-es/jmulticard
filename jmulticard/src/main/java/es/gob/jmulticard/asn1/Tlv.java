@@ -133,9 +133,9 @@ public final class Tlv {
         this.tag = tempBytes[offset++];
 
         // Comprobamos que el Tipo sea valido (tipos multi-octeto)
-        if ((this.tag & 0x1f) == 0x1f) {
-            throw new TlvException("El tipo del TLV es invalido"); //$NON-NLS-1$
-        }
+//        if ((this.tag & 0x1f) == 0x1f) {
+//            throw new TlvException("El tipo del TLV es invalido"); //$NON-NLS-1$
+//        }
 
         // Copiamos la longitud
         int size = tempBytes[offset++] & 0xff;

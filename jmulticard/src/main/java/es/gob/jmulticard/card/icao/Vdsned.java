@@ -2,16 +2,25 @@ package es.gob.jmulticard.card.icao;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
+import org.spongycastle.asn1.ASN1Encodable;
+import org.spongycastle.asn1.ASN1Integer;
+import org.spongycastle.asn1.DERSequence;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** <i>Visible Digital Seals for Non-Electronic Documents</i> de ICAO.
+/** <i>Visible Digital Seal for Non-Electronic Documents</i> de ICAO.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Vdsned {
 
@@ -33,8 +42,12 @@ public final class Vdsned {
 	private int nEntries = 0;
 	private int durationOfStay = 0;
 	private String passportNumber = null;
+	private byte[] signature = null;
+	private final byte[] message = null;
 
-	/** Construye un <i>Visible Digital Seals for Non-Electronic Documents</i> de ICAO.
+	private static final String DEFAULT_SIGNATURE_ALGORITHM = "SHA256withECDSA"; //$NON-NLS-1$
+
+	/** Construye un <i>Visible Digital Seal for Non-Electronic Documents</i> de ICAO.
 	 * @param enc Codificaci&oacute;n binaria del <i>Visible Digital Seals for Non-Electronic Documents</i>.
 	 * @throws IOException Si hay problemas durante el an&aacute;lisis de la codificaci&oacute;n
 	 *                     proporcionada.
@@ -153,16 +166,51 @@ public final class Vdsned {
 				case 0x05:
 					this.passportNumber = C40Decoder.decode(tlv.getValue());
 					break;
+				case (byte) 0xff:
+					final byte[] sig = tlv.getValue();
+					final byte[] r = new byte[tlv.getLength()/2];
+					System.arraycopy(sig, 0, r, 0, tlv.getLength()/2);
+					final byte[] s = new byte[tlv.getLength()/2];
+					System.arraycopy(sig, tlv.getLength()/2, s, 0, tlv.getLength()/2);
+					this.signature = encodeEcdsaSignature(r, s);
+					break;
 				default:
 					LOGGER.warning("Encontrado campo de datos desconocido: " + tlv); //$NON-NLS-1$
 			}
 
 			offset = offset + tlv.getBytes().length;
-
-			System.out.println(offset + " : " + this.encoded.length); //$NON-NLS-1$
-
 		}
 
+	}
+
+	private static byte[] encodeEcdsaSignature(final byte[] r, final byte[] s) throws IOException {
+		return new DERSequence(
+			new ASN1Encodable[] {
+				new ASN1Integer(r),
+				new ASN1Integer(s)
+			}
+		).getEncoded();
+	}
+
+	/** Comprueba la firma electr&oacute;nica de este <i>Visible Digital Seal for Non-Electronic Documents</i>.
+	 * @param publicKey Clave p&uacute;lica de firma.
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeyException
+	 * @throws SignatureException
+	 */
+	public void verifyEcDsaSignature(final PublicKey publicKey) throws NoSuchAlgorithmException,
+	                                                                   InvalidKeyException,
+	                                                                   SignatureException {
+		final Signature sig = Signature.getInstance(
+			DEFAULT_SIGNATURE_ALGORITHM
+		);
+		sig.initVerify(publicKey);
+		sig.update(this.message);
+		if (!sig.verify(this.signature)) {
+			throw new SignatureException(
+				"La firma no es valida" //$NON-NLS-1$
+			);
+		}
 	}
 
 	@Override
