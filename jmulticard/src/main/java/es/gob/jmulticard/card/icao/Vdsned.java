@@ -32,7 +32,7 @@ public final class Vdsned {
 
 	private final int version;
 	private final String issuingCountry;
-	private final byte[] caCr;
+	private final String caCr;
 	private final Date documentIssueDate;
 	private final Date signatureCreationDate;
 	private final int documentFeatureDefinitionReference;
@@ -80,12 +80,13 @@ public final class Vdsned {
 		// Pais emisor
 		this.issuingCountry = C40Decoder.decode(new byte[] { this.encoded[offset++], this.encoded[offset++] });
 
-		// CA-CR
-		//TODO: Sacar el formato de CA-CR
-		this.caCr = new byte[] {
-			this.encoded[offset++], this.encoded[offset++], this.encoded[offset++],
-			this.encoded[offset++], this.encoded[offset++], this.encoded[offset++]
-		};
+		// CA-CR (texto en C40)
+		this.caCr = C40Decoder.decode(
+			new byte[] {
+				this.encoded[offset++], this.encoded[offset++], this.encoded[offset++],
+				this.encoded[offset++], this.encoded[offset++], this.encoded[offset++]
+			}
+		);
 
 		// Fecha de emision del documento
 		byte[] tmpDateBytes = {
@@ -125,8 +126,8 @@ public final class Vdsned {
 		// Categoria
 		this.documentTypeCategory = this.encoded[offset++];
 		if ( (this.documentTypeCategory & 1) == 0 ) {
-			throw new IllegalArgumentException(
-				"La categoria debe ser un numero impar, pero se ha encontrado " +  this.documentTypeCategory //$NON-NLS-1$
+			LOGGER.warning(
+				"La categoria deberia ser un numero impar, pero se ha encontrado " +  this.documentTypeCategory //$NON-NLS-1$
 			);
 		}
 
@@ -219,6 +220,7 @@ public final class Vdsned {
 		return "Visible Digital Seal for Non-Electronic Documents\n" + //$NON-NLS-1$
 			" Version: " + this.version + '\n' + //$NON-NLS-1$
 			" Pais emisor: " + CountryCodes.getCountryName(this.issuingCountry) + '\n' + //$NON-NLS-1$
+			" Autoridad de certificacion y referencia: " + this.caCr + '\n' + //$NON-NLS-1$
 			" Fecha de emision del documento: " + sdf.format(this.documentIssueDate) + '\n' + //$NON-NLS-1$
 			" Fecha de creacion de la firma: " + sdf.format(this.signatureCreationDate) + '\n' + //$NON-NLS-1$
 			" Referencia: " + this.documentFeatureDefinitionReference + '\n' + //$NON-NLS-1$
@@ -228,7 +230,48 @@ public final class Vdsned {
 			" Duracion de la estancia: " + this.durationOfStay + '\n' + //$NON-NLS-1$
 			" Numero de pasaporte: " + this.passportNumber + '\n' //$NON-NLS-1$
 		;
+	}
 
+	/** Obtiene c&oacute;digo del pa&iacute;s emisor.
+	 * @return C&oacute;digo del pa&iacute;s emisor. */
+	public String getIssuingCountry() {
+		return this.issuingCountry;
+	}
+
+	/** Obtiene la autoridad de certificacion y referencia para este documento.
+	 * @return C&oacute;digo de autoridad de certificacion y referencia para este documento. */
+	public String getCaCr() {
+		return this.caCr;
+	}
+
+	/** Obtiene la fecha de emisi&oacute;n del documento.
+	 * @return Fecha de emisi&oacute;n del documento. */
+	public Date getDocumentIssueDate() {
+		return this.documentIssueDate;
+	}
+
+	/** Obtiene la fecha de firma del documento.
+	 * @return Fecha de firma del documento. */
+	public Date getSignatureCreationDate() {
+		return this.signatureCreationDate;
+	}
+
+	/** Obtiene la referencia de definici&oacute;n de caracter&iacute;sticas del documento.
+	 * @return Referencia de definici&oacute;n de caracter&iacute;sticas del documento. */
+	public int getDocumentFeatureDefinitionReference() {
+		return this.documentFeatureDefinitionReference;
+	}
+
+	/** Obtiene la categor&iacute;a del tipo del documento.
+	 * @return Categor&iacute;a del tipo del documento. */
+	public int getDocumentTypeCategory() {
+		return this.documentTypeCategory;
+	}
+
+	/** Obtiene la versi&oacute;n del <i>Visible Digital Seal for Non-Electronic Documents</i>.
+	 * @return Versi&oacute;n del <i>Visible Digital Seal for Non-Electronic Documents</i>. */
+	public int getVersion() {
+		return this.version;
 	}
 
 }
