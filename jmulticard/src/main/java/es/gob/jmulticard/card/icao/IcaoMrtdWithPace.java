@@ -9,9 +9,11 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.DnieNFC;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
 import es.gob.jmulticard.card.pace.PaceException;
 
 /** Pasaporte accedido de forma inal&aacute;mbrica mediante PACE.
@@ -77,8 +79,8 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 		return getCardName();
 	}
 
-	//*************************************************************************
-	//* METODOS ICAO NO PRESENTES EN DNIE PERO QUE SI PUEDEN ESTAR EN UN MRTD *
+	//***************************************************************************
+	//* METODOS ICAO NO PRESENTES EN DNIE PERO QUE SI PUEDEN ESTAR EN OTRO MRTD *
 
     @Override
 	public byte[] getCardSecurity() throws IOException {
@@ -114,6 +116,11 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw new FileNotFoundException("DG4 no encontrado: " + e); //$NON-NLS-1$
     	}
+		catch(final RequiredSecurityStateNotSatisfiedException e) {
+			throw new CryptoCardSecurityException(
+				"Se necesita canal de adminstrador para leer el DG4: " + e, e //$NON-NLS-1$
+			);
+		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG4: " + e, e); //$NON-NLS-1$
 		}

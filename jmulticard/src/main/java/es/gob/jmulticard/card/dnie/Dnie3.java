@@ -62,6 +62,7 @@ import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.card.CardSecurityException;
 import es.gob.jmulticard.card.CryptoCardException;
+import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -629,7 +630,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
     @Override
 	public byte[] getDg4() throws IOException {
-    	throw new UnsupportedOperationException(
+    	throw new CryptoCardSecurityException(
 			"Hace falta canal de administrador para leer el DG4" //$NON-NLS-1$
 		);
 	}
