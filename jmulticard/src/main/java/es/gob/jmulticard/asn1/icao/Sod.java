@@ -159,6 +159,7 @@ public final class Sod extends DecoderObject {
 		return sb.toString();
 	}
 
+	/** Selector interno para la lectura de los certificados del firmante del SOD. */
 	private static final class CertHolderBySignerIdSelector implements Selector<X509CertificateHolder> {
 
 		private final SignerId signerId;

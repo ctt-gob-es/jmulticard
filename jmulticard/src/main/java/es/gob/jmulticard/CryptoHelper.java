@@ -86,7 +86,10 @@ public abstract class CryptoHelper {
 		/** SHA-512. */
 		SHA512("SHA-512"); //$NON-NLS-1$
 
+		/** Nombre del algoritmo de huella digital. */
 		private final String name;
+
+		/** Construye el algoritmo de huella digital. */
 		DigestAlgorithm(final String n) {
 			this.name = n;
 		}

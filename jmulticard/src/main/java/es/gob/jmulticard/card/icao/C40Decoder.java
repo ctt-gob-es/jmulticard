@@ -18,9 +18,10 @@ package es.gob.jmulticard.card.icao;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+/** Decodificador de texto en formato C40. */
 final class C40Decoder {
 
-	 /** Juego b&aacute;sico de caracteres C40 (con el espacio cambiado a '<'). */
+	 /** Juego b&aacute;sico de caracteres C40 (con el espacio cambiado a '&lt;'). */
 	  private static final char[] C40_BASIC_SET_CHARS = {
 	      '*', '*', '*', '<', '0', '1', '2', '3', '4', '5',
 	      '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
