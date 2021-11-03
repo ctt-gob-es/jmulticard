@@ -59,7 +59,7 @@ public class UIPasswordCallback extends PasswordCallback {
 
     private static final long serialVersionUID = 1719174318602363633L;
 
-    private static final String DNI_LOGO = "/dnie_logo.png"; //$NON-NLS-1$
+    private static final String DNI_LOGO = "/dnie_logo_test.png"; //$NON-NLS-1$
 
     /** Mensaje que se va a mostrar. */
     private String message = null;

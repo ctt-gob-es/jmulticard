@@ -62,7 +62,7 @@ public abstract class ContextSpecific extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-        final Tlv tlv = new Tlv(this.getRawDerValue());
+        final Tlv tlv = new Tlv(getRawDerValue());
         final DecoderObject tmpDo;
         try {
             tmpDo = this.elementType.getConstructor().newInstance();
@@ -99,7 +99,7 @@ public abstract class ContextSpecific extends DecoderObject {
     public void checkTag(final byte tag) throws Asn1Exception {
         if ((tag & 0x0c0) != 0x080) {
             throw new Asn1Exception(
-        		"La etiqueta " + HexUtils.hexify(new byte[] { tag}, false) + //$NON-NLS-1$
+        		"La etiqueta " + HexUtils.hexify(new byte[] { tag }, false) + //$NON-NLS-1$
                     " no es valida para un objeto especifico del contexto" //$NON-NLS-1$
             );
         }

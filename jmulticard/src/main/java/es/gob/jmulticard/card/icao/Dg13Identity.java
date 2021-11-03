@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 /** Identidad del titular tal y como se encuentra en el fichero DG13 de un MRTD. */
-public class Dg13Identity {
+public final class Dg13Identity {
 
 	/** Identifica los pares de control 0x00-0x1F y 0x7F-0x9F). */
 	private static final Pattern CONTROL_CHARACTER_WORD = Pattern.compile("\\p{Cc}{2}"); //$NON-NLS-1$
@@ -90,7 +90,7 @@ public class Dg13Identity {
 		return this.parsedValues[11];
 	}
 
-	/** Obtien los nombres de los padres del titular.
+	/** Obtiene los nombres de los padres del titular.
 	 * @return Nombres de los padres del titular. */
 	public String getParentsNames() {
 		return this.parsedValues[12];

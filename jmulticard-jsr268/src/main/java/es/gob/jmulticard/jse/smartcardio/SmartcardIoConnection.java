@@ -68,7 +68,6 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
  * JSR-268 SmartCard I/O.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-@SuppressWarnings("restriction")
 public final class SmartcardIoConnection implements ApduConnection {
 
 	private static final boolean DEBUG = false;

@@ -6,14 +6,13 @@ import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.Pa
 /** Valor CAN para inicializaci&oacute;n de un canal PACE.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
-public final class PaceInitializerCan extends PaceInitializer {
+public final class PaceInitializerCan implements PaceInitializer {
 
 	private final String can;
 
 	/** Construye un CAN para inicializaci&oacute;n de un canal PACE.
 	 * @param can CAN. */
 	public PaceInitializerCan(final String can) {
-		super();
 		if (can == null || can.isEmpty()) {
 			throw new IllegalArgumentException(
 				"El valor no puede ser nulo ni vacio" //$NON-NLS-1$

@@ -256,9 +256,13 @@ public final class CountryCodes {
         CC.put("ZWE", "Zimbabwe"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    /** Obtiene el diccionario con los c&oacute;digos de pa&iacute;ses ICAO.
-     * @return Diccionario con los c&oacute;digos de pa&iacute;ses ICAO. */
-    public static Properties getCountryCodes() {
-        return CC;
+    /** Obtiene el nombre de pa&iacute;s a partir de su c&oacute;digo ICAO.
+     * @param code C&oacute;digo ICAO de pa&iacute;s.
+     * @return Nombre del pa&iacute;s (en ingl&eacute;s). */
+    public static String getCountryName(final String code) {
+    	if (code == null) {
+    		return null;
+    	}
+    	return CC.getProperty(code);
     }
 }

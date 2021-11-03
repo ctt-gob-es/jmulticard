@@ -8,14 +8,13 @@ import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.Pa
 /** Valor MRZ para inicializaci&oacute;n de un canal PACE.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
-public final class PaceInitializerMrz extends PaceInitializer {
+public final class PaceInitializerMrz implements PaceInitializer {
 
 	private final byte[] k;
 
 	/** Construye una MRZ para inicializaci&oacute;n de un canal PACE.
 	 * @param mrz MRZ. */
 	private PaceInitializerMrz(final byte[] mrz) {
-		super();
 		if (mrz == null) {
 			throw new IllegalArgumentException("La MRZ no puede ser nula"); //$NON-NLS-1$
 		}

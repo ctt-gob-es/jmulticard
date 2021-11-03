@@ -55,6 +55,7 @@ public abstract class CardException extends IOException {
 
     /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta. */
     protected CardException() {
+    	// Vacio en la clase abstracta
     }
 
     /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.

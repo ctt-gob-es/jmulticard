@@ -61,9 +61,9 @@ public abstract class Record extends DecoderObject {
      * @param types Tipos de los objetos ASN&#46;1 que va a contener el registro (que obligatoriamente deben ser
      *              subclases de <code>DecoderObject</code>. */
 	protected Record(final OptionalDecoderObjectElement[] types) {
-        super();
         if (types == null || types.length == 0) {
-            throw new IllegalArgumentException("Los tipos de los elementos del registro no pueden ser nulos ni vacios" //$NON-NLS-1$
+            throw new IllegalArgumentException(
+        		"Los tipos de los elementos del registro no pueden ser nulos ni vacios" //$NON-NLS-1$
             );
         }
         this.elementsTypes = new OptionalDecoderObjectElement[types.length];

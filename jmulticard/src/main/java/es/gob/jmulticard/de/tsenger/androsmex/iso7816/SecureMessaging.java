@@ -143,7 +143,7 @@ public final class SecureMessaging {
 
 			final byte[] encodedBytes;
 			try (
-				final ASN1InputStream asn1sp = new ASN1InputStream(subArray);
+				final ASN1InputStream asn1sp = new ASN1InputStream(subArray)
 			) {
 				encodedBytes = asn1sp.readObject().getEncoded();
 			}
@@ -152,7 +152,7 @@ public final class SecureMessaging {
 			}
 
 			try (
-				final ASN1InputStream asn1in = new ASN1InputStream(encodedBytes);
+				final ASN1InputStream asn1in = new ASN1InputStream(encodedBytes)
 			) {
 				switch (encodedBytes[0]) {
 				case (byte) 0x87:

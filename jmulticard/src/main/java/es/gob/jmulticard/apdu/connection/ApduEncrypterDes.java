@@ -149,15 +149,15 @@ public class ApduEncrypterDes extends ApduEncrypter {
         BerTlv macTlv = null;
         try {
             BerTlv tlv = BerTlv.getInstance(recordOfTlvs);
-            if (tlv.getTag().getTagValue() == TAG_DATA_TLV) {
+            if (tlv.getTag() == TAG_DATA_TLV) {
                 dataTlv = tlv;
                 tlv = BerTlv.getInstance(recordOfTlvs);
             }
-            if (tlv.getTag().getTagValue() == TAG_SW_TLV) {
+            if (tlv.getTag() == TAG_SW_TLV) {
             	swTlv = tlv;
                 tlv = BerTlv.getInstance(recordOfTlvs);
             }
-            if (tlv.getTag().getTagValue() == TAG_MAC_TLV) {
+            if (tlv.getTag() == TAG_MAC_TLV) {
                 macTlv = tlv;
             }
         }

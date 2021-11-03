@@ -1,14 +1,14 @@
 package es.gob.jmulticard.card;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
+
+import es.gob.jmulticard.CertificateUtils;
 
 /** Utilidades de compresi&oacute;n de certificados seg&uacute;n uso com&uacute;n en
  * tarjetas FNMT.
@@ -17,19 +17,6 @@ public final class CompressionUtils {
 
 	/** Registro. */
 	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
-	/** Factor&iacute;a de certificados. */
-	protected static final CertificateFactory CERT_FACTORY;
-	static {
-		try {
-			CERT_FACTORY = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-		}
-		catch (final Exception e) {
-			throw new IllegalStateException(
-				"No se ha podido obtener la factoria de certificados X.509: " + e, e //$NON-NLS-1$
-			);
-		}
-	}
 
 	private CompressionUtils() {
 		// No instanciable
@@ -60,9 +47,7 @@ public final class CompressionUtils {
 			);
         	rawData = data;
         }
-		return (X509Certificate) CERT_FACTORY.generateCertificate(
-			new ByteArrayInputStream(rawData)
-		);
+		return CertificateUtils.generateCertificate(rawData);
 	}
 
     /** Descomprime un certificado.

@@ -62,7 +62,7 @@ public final class X509CertificateAttributesContextSpecific extends ContextSpeci
 		if (TAG != tag) {
 			throw new Asn1Exception(
 				"X509CertificateAttributesContextSpecific esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
-				" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+					" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
 			);
 		}
 	}

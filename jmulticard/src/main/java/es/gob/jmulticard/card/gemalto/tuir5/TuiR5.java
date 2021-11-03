@@ -1,9 +1,7 @@
 package es.gob.jmulticard.card.gemalto.tuir5;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -148,21 +147,12 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
         	throw new IOException("Error en la lectura del CDF: " + e, e); //$NON-NLS-1$
 		}
 
-        final CertificateFactory cf;
-		try {
-			cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-		}
-		catch (final CertificateException e) {
-			throw new IOException("Error obteniendo la factoria de certificados X.509: " + e, e); //$NON-NLS-1$
-		}
         for (int i=0; i<cdf.getCertificateCount(); i++) {
         	try {
 				certificatesByAlias.put(
 					cdf.getCertificateAlias(i),
-					(X509Certificate) cf.generateCertificate(
-						new ByteArrayInputStream(
-							selectFileByLocationAndRead(new Location(cdf.getCertificatePath(i)))
-						)
+					CertificateUtils.generateCertificate(
+						selectFileByLocationAndRead(new Location(cdf.getCertificatePath(i)))
 					)
 				);
 			}

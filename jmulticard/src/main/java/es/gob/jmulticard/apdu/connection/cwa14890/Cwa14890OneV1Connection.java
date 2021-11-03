@@ -46,6 +46,7 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -239,7 +240,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // y externa
         final RSAPublicKey iccPublicKey;
         try {
-            iccPublicKey = (RSAPublicKey) this.cryptoHelper.generateCertificate(
+            iccPublicKey = (RSAPublicKey) CertificateUtils.generateCertificate(
         		this.card.getIccCertEncoded()
     		).getPublicKey();
         }

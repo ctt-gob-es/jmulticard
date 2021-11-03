@@ -64,6 +64,15 @@ mvn versions:display-dependency-updates
 	</properties>
 	
 	<dependencies>
+	
+		<!-- El plugin OWASP encuentra vulnerabilidades en si mismo:
+		https://github.com/jeremylong/DependencyCheck/issues/2332 -->
+<!-- 		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>dependency-check-maven</artifactId>
+			<version>6.1.1</version>
+		</dependency> -->
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

@@ -1,6 +1,7 @@
 package test.es.gob.jmulticard;
 
 import java.io.ByteArrayInputStream;
+import java.security.cert.X509Certificate;
 
 import javax.imageio.ImageIO;
 import javax.security.auth.callback.Callback;
@@ -19,6 +20,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
+import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
@@ -27,7 +29,6 @@ import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.icao.Dg13Identity;
 import es.gob.jmulticard.card.icao.IcaoMrtdWithBac;
-import es.gob.jmulticard.card.icao.IcaoMrtdWithPace;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
@@ -58,6 +59,28 @@ public final class TestDnieLow {
 		System.out.println();
 		System.out.println(new DnieSubjectPrincipalParser(cdf.getCertificateSubjectPrincipal(0)));
 		System.out.println("IDESP: " + dnie.getIdesp()); //$NON-NLS-1$
+	}
+
+	/** Prueba la obtenci&oacute;n y verificaci&oacute;n del SOD.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testDnieSod() throws Exception {
+		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
+			ProviderUtil.getDefaultConnection(),
+			null,
+			new JseCryptoHelper(),
+			new TestingDnieCallbackHandler(CAN, PIN),
+			true
+		);
+		System.out.println(dnie);
+		dnie.openSecureChannelIfNotAlreadyOpened(false);
+		final Sod sod = dnie.getSod();
+		System.out.println(sod);
+		System.out.println();
+		final X509Certificate[] certChain = dnie.checkSecurityObjects();
+		System.out.println(certChain[0].getSubjectX500Principal());
 	}
 
 	/** Prueba directa de firma.
@@ -111,8 +134,7 @@ public final class TestDnieLow {
 			ProviderUtil.getDefaultConnection(),
 			null,
 			new JseCryptoHelper(),
-			new TestingDnieCallbackHandler(CAN, PIN),
-			//new SmartcardCallbackHandler(),
+			new TestingDnieCallbackHandler(CAN, (String)null), // No usamos el PIN
 			false
 		);
 		System.out.println();
@@ -126,7 +148,7 @@ public final class TestDnieLow {
 		final Dnie3 dnie3 = (Dnie3) dnie;
 
 		final byte[] atrInfo = dnie3.getAtrInfo();
-		System.out.println("AT/INFO:"); //$NON-NLS-1$
+		System.out.println("ATR/INFO:"); //$NON-NLS-1$
 		System.out.println(HexUtils.hexify(atrInfo, true));
 		System.out.println();
 
@@ -138,11 +160,15 @@ public final class TestDnieLow {
 		// Abrimos canal seguro sin vertificar el PIN
 		dnie.openSecureChannelIfNotAlreadyOpened(false);
 
-		// DG5
-		final byte[] dg5 = dnie3.getDg5();
-		System.out.println("DG5"); //$NON-NLS-1$
-		System.out.println(HexUtils.hexify(dg5, true));
-		System.out.println(new String(dg5));
+		final Sod sod = dnie3.getSod();
+		System.out.println("SOD:"); //$NON-NLS-1$
+		System.out.println(sod);
+		System.out.println();
+
+		// COM
+		final byte[] com = dnie3.getCom();
+		System.out.println("COM:"); //$NON-NLS-1$
+		System.out.println(HexUtils.hexify(com, true));
 		System.out.println();
 
 		// DG01
@@ -265,7 +291,7 @@ public final class TestDnieLow {
 		System.out.println(passport);
 		System.out.println();
 
-		final byte[] com = passport.getCOM();
+		final byte[] com = passport.getCom();
 		System.out.println(new String(com));
 		System.out.println();
 
@@ -279,40 +305,4 @@ public final class TestDnieLow {
 
 	}
 
-	/** Prueba de lectura de DG en Pasaporte con PACE.
-	 * @throws Exception En cualquier error. */
-	@SuppressWarnings("static-method")
-	@Test
-	@Ignore
-	public void testPassportWithPaceReadDgs() throws Exception {
-
-		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77
-
-		final ApduConnection conn = ProviderUtil.getDefaultConnection();
-		System.out.println(HexUtils.hexify(conn.reset(), true));
-		System.out.println();
-		final IcaoMrtdWithPace passport = new IcaoMrtdWithPace(
-			conn,
-			new JseCryptoHelper(),
-			new TestingDnieCallbackHandler(CAN, PIN)
-			//new SmartcardCallbackHandler()
-		);
-
-		System.out.println();
-		System.out.println(passport);
-		System.out.println();
-
-		final byte[] com = passport.getCOM();
-		System.out.println(new String(com));
-		System.out.println();
-
-		final Mrz dg1 = passport.getMrz();
-		System.out.println(dg1);
-		System.out.println();
-
-		final byte[] dg11 = passport.getDg11();
-		System.out.println(new String(dg11));
-		System.out.println();
-
-	}
 }
