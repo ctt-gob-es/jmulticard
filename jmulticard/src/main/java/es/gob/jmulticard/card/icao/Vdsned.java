@@ -43,7 +43,7 @@ public final class Vdsned {
 	private int durationOfStay = 0;
 	private String passportNumber = null;
 	private byte[] signature = null;
-	private final byte[] message = null;
+	private byte[] dataTbs = null;
 
 	private static final String DEFAULT_SIGNATURE_ALGORITHM = "SHA256withECDSA"; //$NON-NLS-1$
 
@@ -104,7 +104,7 @@ public final class Vdsned {
 			);
 		}
 
-		// Fecha de creación de la firma
+		// Fecha de creacion de la firma
 		tmpDateBytes = new byte[] {
 			0x00, this.encoded[offset++], this.encoded[offset++], this.encoded[offset++]
 		};
@@ -168,6 +168,12 @@ public final class Vdsned {
 					this.passportNumber = C40Decoder.decode(tlv.getValue());
 					break;
 				case (byte) 0xff:
+
+					// Hemos llegado a la firma, con lo que todo el conjunto anterior de
+					// datos es lo que se firma
+					this.dataTbs = new byte[offset];
+					System.arraycopy(this.encoded, 0, this.dataTbs, 0, offset);
+
 					final byte[] sig = tlv.getValue();
 					final byte[] r = new byte[tlv.getLength()/2];
 					System.arraycopy(sig, 0, r, 0, tlv.getLength()/2);
@@ -195,10 +201,9 @@ public final class Vdsned {
 
 	/** Comprueba la firma electr&oacute;nica de este <i>Visible Digital Seal for Non-Electronic Documents</i>.
 	 * @param publicKey Clave p&uacute;lica de firma.
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidKeyException
-	 * @throws SignatureException
-	 */
+	 * @throws NoSuchAlgorithmException Si no se soporta el algoritmo de firma por defecto.
+	 * @throws InvalidKeyException Si la clave proporcionada no es v&aacute;lida para esta firma.
+	 * @throws SignatureException Si la firma es inv&aacute;lida o no se puede verificar. */
 	public void verifyEcDsaSignature(final PublicKey publicKey) throws NoSuchAlgorithmException,
 	                                                                   InvalidKeyException,
 	                                                                   SignatureException {
@@ -206,7 +211,7 @@ public final class Vdsned {
 			DEFAULT_SIGNATURE_ALGORITHM
 		);
 		sig.initVerify(publicKey);
-		sig.update(this.message);
+		sig.update(this.dataTbs);
 		if (!sig.verify(this.signature)) {
 			throw new SignatureException(
 				"La firma no es valida" //$NON-NLS-1$
