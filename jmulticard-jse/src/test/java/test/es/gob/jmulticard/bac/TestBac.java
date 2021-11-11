@@ -5,9 +5,9 @@ import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
-import es.gob.jmulticard.card.bac.Bac;
-import es.gob.jmulticard.card.pace.PaceInitializer;
-import es.gob.jmulticard.card.pace.PaceInitializerMrz;
+import es.gob.jmulticard.card.icao.WirelessInitializer;
+import es.gob.jmulticard.card.icao.WirelessInitializerMrz;
+import es.gob.jmulticard.card.icao.bac.Bac;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de BAC.
@@ -22,7 +22,7 @@ public final class TestBac {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMrz() throws Exception {
-		final PaceInitializer pi = PaceInitializerMrz.deriveMrz(TEST_MRZ);
+		final WirelessInitializer pi = WirelessInitializerMrz.deriveMrz(TEST_MRZ);
 		System.out.println(
 			HexUtils.hexify(pi.getBytes(), true)
 		);

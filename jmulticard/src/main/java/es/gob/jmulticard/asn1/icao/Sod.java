@@ -77,7 +77,7 @@ public final class Sod extends DecoderObject {
 			}
             catch (final CertificateExpiredException | CertificateNotYetValidException e1) {
             	throw new SodInvalidCertificateException(
-					"El SignedData contiene un certificado no valido: " + e1, e1 //$NON-NLS-1$
+					"El SignedData contiene un certificado fuera de su periodo temporal de validez: " + e1, e1 //$NON-NLS-1$
 				);
 			}
 			try {
@@ -163,6 +163,7 @@ public final class Sod extends DecoderObject {
 	private static final class CertHolderBySignerIdSelector implements Selector<X509CertificateHolder> {
 
 		private final SignerId signerId;
+
 		CertHolderBySignerIdSelector(final SignerId sid) {
 			if (sid == null) {
 				throw new IllegalArgumentException("El ID del firmante no puede ser nulo"); //$NON-NLS-1$

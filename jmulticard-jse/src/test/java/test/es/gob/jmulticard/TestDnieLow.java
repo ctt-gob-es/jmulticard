@@ -28,8 +28,8 @@ import es.gob.jmulticard.card.dnie.Dnie3;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.icao.Dg13Identity;
-import es.gob.jmulticard.card.icao.IcaoMrtdWithBac;
 import es.gob.jmulticard.card.icao.Mrz;
+import es.gob.jmulticard.card.icao.bac.IcaoMrtdWithBac;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de operaciones en DNIe sin PIN.

@@ -1,4 +1,6 @@
-package es.gob.jmulticard.card.pace;
+package es.gob.jmulticard.card.icao;
+
+import es.gob.jmulticard.card.icao.pace.PaceException;
 
 /** MRZ err&oacute;neo.
  * @author Ignacio Mar&iacute;n. */

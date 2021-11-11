@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.icao;
+package es.gob.jmulticard.card.icao.pace;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.DnieNFC;
+import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
-import es.gob.jmulticard.card.pace.PaceException;
 
 /** Pasaporte accedido de forma inal&aacute;mbrica mediante PACE.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -26,13 +26,13 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 	 * @param cryptoHelper Clase de utilidad de funciones criptogr&aacute;ficas.
 	 * @param ch <code>CallbackHandler</code> que debe proporcionar, mediante un
 	 *           <code>es.gob.jmulticard.callback.CustomTextInputCallback</code> o
-	 *           un <code>javax.security.auth.callback.TextInputCallback</code> el
-	 *           CAN o la MRZ del pasaporte.
-	 * @throws PaceException Si no se puede establecer el canal PACE.
+	 *           un <code>javax.security.auth.callback.TextInputCallback</code>, el
+	 *           CAN o la MRZ del MRTD.
+	 * @throws IcaoException Si no se puede establecer el canal PACE.
 	 * @throws ApduConnectionException Si no se puede establecer la conexi&oacute;n NFC. */
 	public IcaoMrtdWithPace(final ApduConnection conn,
 			                       final CryptoHelper cryptoHelper,
-			                       final CallbackHandler ch) throws PaceException,
+			                       final CallbackHandler ch) throws IcaoException,
 	                                                                ApduConnectionException {
 		super(
 			conn,

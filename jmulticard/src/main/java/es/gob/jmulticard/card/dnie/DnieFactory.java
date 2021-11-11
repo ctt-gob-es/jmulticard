@@ -13,7 +13,7 @@ import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.dnie.tif.Tif;
-import es.gob.jmulticard.card.pace.PaceException;
+import es.gob.jmulticard.card.icao.IcaoException;
 
 /** Factor&iacute;a para la obtenci&oacute;n de DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -133,7 +133,7 @@ public final class DnieFactory {
 					LOGGER.info("Detectado DNIe 3.0 por NFC"); //$NON-NLS-1$
 					return new DnieNFC(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
-				catch (final PaceException e) {
+				catch (final IcaoException e) {
 					throw new ApduConnectionException(
 						"No se ha podido abrir el canal PACE: " + e, e //$NON-NLS-1$
 					);

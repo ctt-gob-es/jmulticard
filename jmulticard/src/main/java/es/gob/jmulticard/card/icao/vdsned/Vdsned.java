@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.icao;
+package es.gob.jmulticard.card.icao.vdsned;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -19,6 +19,7 @@ import org.spongycastle.asn1.DERSequence;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.card.icao.CountryCodes;
 
 /** <i>Visible Digital Seal for Non-Electronic Documents</i> de ICAO.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

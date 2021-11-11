@@ -46,7 +46,6 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -75,10 +74,10 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
-	/** Byte de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
+	/** Octeto de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
 
-	/** Byte de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
+	/** Octeto de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE_PACE = (byte) 0x62;
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave <code>Kenc</code> del canal seguro. */
@@ -220,19 +219,19 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final SecurityException e) {
             conn.close();
             throw new IllegalStateException(
-        		"Condicion de seguridad no satisfecha en la validacion de los certificados CWA-14890: " + e //$NON-NLS-1$
+        		"Condicion de seguridad no satisfecha en la validacion de los certificados CWA-14890: " + e, e //$NON-NLS-1$
             );
         }
         catch (final CertificateException e) {
             conn.close();
             throw new IllegalStateException(
-        		"No se han podido tratar los certificados CWA-14890: " + e//$NON-NLS-1$
+        		"No se han podido tratar los certificados CWA-14890: " + e, e //$NON-NLS-1$
             );
         }
         catch (final IOException e) {
             conn.close();
             throw new IllegalStateException(
-        		"No se han podido validar los certificados CWA-14890: " + e//$NON-NLS-1$
+        		"No se han podido validar los certificados CWA-14890: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -240,15 +239,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // y externa
         final RSAPublicKey iccPublicKey;
         try {
-            iccPublicKey = (RSAPublicKey) CertificateUtils.generateCertificate(
-        		this.card.getIccCertEncoded()
-    		).getPublicKey();
-        }
-        catch (final CertificateException e) {
-            conn.close();
-            throw new ApduConnectionException(
-        		"No se pudo obtener la clave publica del certificado de componente: " + e, e //$NON-NLS-1$
-            );
+            iccPublicKey = (RSAPublicKey) this.card.getIccCert().getPublicKey();
         }
         catch (final IOException e) {
         	conn.close();
@@ -271,7 +262,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
 
         // --- STAGE 3 ---
-        // Autenticacion interna (El driver comprueba la tarjeta)
+        // Autenticacion interna (el driver comprueba la tarjeta)
         // ---------------
         final byte[] randomIfd;
         try {
@@ -296,7 +287,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
 
         // --- STAGE 4 ---
-        // Autenticacion externa (La tarjeta comprueba el driver)
+        // Autenticacion externa (la tarjeta comprueba el driver)
         // ---------------
         final byte[] randomIcc = this.card.getChallenge();
         final byte[] kifd;
@@ -327,7 +318,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final IOException e) {
             conn.close();
             throw new ApduConnectionException(
-        		"Error al generar la clave Kenc para el tratamiento del canal seguro", e //$NON-NLS-1$
+        		"Error al generar la clave Kenc para el tratamiento del canal seguro: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -337,7 +328,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final IOException e) {
             conn.close();
             throw new ApduConnectionException(
-        		"Error al generar la clave Kmac para el tratamiento del canal seguro", e //$NON-NLS-1$
+        		"Error al generar la clave Kmac para el tratamiento del canal seguro: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -371,7 +362,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return keyEnc;
     }
 
-    /** Genera la clave <code>KMAC</code> para calcular y verificar checksums.
+    /** Genera la clave <code>KMAC</code> para calcular y verificar <i>checksums</i>.
      * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
      * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
@@ -413,7 +404,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Lleva a cabo el proceso de autenticaci&oacute;n interna de la tarjeta mediante el
      * cual el controlador comprueba la tarjeta.
-     * @param randomIfd Array de 8 bytes aleatorios.
+     * @param randomIfd Array de 8 bytes aleatorios (generados por el controlador, de forma externa a la tarjeta).
      * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
      * @return Semilla de 32 [KICC_LENGTH] bits, generada por la tarjeta, para la derivaci&oacute;n de
      *         claves del canal seguro.
@@ -436,7 +427,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final Exception e) {
             throw new SecureChannelException(
         		"Error durante el establecimiento de la clave " + //$NON-NLS-1$
-                "publica de Terminal y la privada de componente para su atenticacion", e //$NON-NLS-1$
+    				"publica de Terminal y la privada de componente para su atenticacion: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -536,7 +527,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     		hash.length
 		);
 
-        // -- Calculamos el hash para la comprobacion de la autenticacion, si coincide con el hash
+        // -- Calculamos el hash para la comprobacion de la autenticacion. Si coincide con el hash
         // extraido en el paso anterior, se confirma que se ha realizado correctamente
 
         // El hash se calcula a partir de la concatenacion de:

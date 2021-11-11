@@ -54,6 +54,7 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.CancelledOperationException;
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -91,11 +92,11 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
+import es.gob.jmulticard.card.icao.pace.PaceConnection;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
-import es.gob.jmulticard.card.pace.PaceConnection;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -538,7 +539,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
     /** {@inheritDoc} */
     @Override
-    public byte[] getIccCertEncoded() throws IOException {
+    public X509Certificate getIccCert() throws IOException {
         final byte[] iccCertEncoded;
         try {
         	selectMasterFile();
@@ -552,7 +553,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         catch (final Iso7816FourCardException e) {
             throw new IOException("Error en la seleccion del certificado de componente de la tarjeta: " + e, e); //$NON-NLS-1$
         }
-        return iccCertEncoded;
+        try {
+			return CertificateUtils.generateCertificate(iccCertEncoded);
+		}
+        catch (final CertificateException e) {
+        	throw new IOException(
+        		"No se pudo obtener el certificado de componente: " + e, e //$NON-NLS-1$
+            );
+		}
     }
 
     /** {@inheritDoc} */
