@@ -114,6 +114,6 @@ public final class StatusWord implements Serializable {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-    	return HexUtils.hexify(new byte [] { this.msb, this.lsb }, true);
+    	return StandardErrorCodes.getErrorDescription(this);
     }
 }

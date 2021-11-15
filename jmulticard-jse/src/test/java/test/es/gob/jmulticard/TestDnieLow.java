@@ -2,6 +2,7 @@ package test.es.gob.jmulticard;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 
 import javax.imageio.ImageIO;
 import javax.security.auth.callback.Callback;
@@ -16,20 +17,23 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.Dnie3;
+import es.gob.jmulticard.card.dnie.Dnie3Cwa14890Constants;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.icao.Dg13Identity;
-import es.gob.jmulticard.card.icao.IcaoMrtdWithBac;
 import es.gob.jmulticard.card.icao.Mrz;
+import es.gob.jmulticard.card.icao.bac.IcaoMrtdWithBac;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de operaciones en DNIe sin PIN.
@@ -122,6 +126,72 @@ public final class TestDnieLow {
 
 		System.out.println();
 		System.out.println("Firma generada: " + HexUtils.hexify(sign, true)); //$NON-NLS-1$
+	}
+
+	/** Prueba una autenticaci&oacute; de DNIe sin PIN.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testAuthNoPin() throws Exception {
+
+		final CryptoHelper cryptoHelper = new JseCryptoHelper();
+
+		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
+			ProviderUtil.getDefaultConnection(),
+			null,
+			cryptoHelper,
+			new TestingDnieCallbackHandler(CAN, (String)null), // No usamos el PIN
+			false // No cargamos certificados ni nada
+		);
+		final X509Certificate iccCert = dnie.getIccCert();
+//		try (
+//			final OutputStream fos = new FileOutputStream(File.createTempFile("CERT_COMPO_DNI_", ".cer")) //$NON-NLS-1$ //$NON-NLS-2$
+//		) {
+//			fos.write(iccCert.getEncoded());
+//		}
+//		System.out.println(
+//			"Certificado de componente: " + iccCert.getSubjectX500Principal() //$NON-NLS-1$
+//		);
+
+        final byte[] randomIfd = cryptoHelper.generateRandomBytes(8);
+
+        final Dnie3Cwa14890Constants constants = DnieFactory.getDnie3UsrCwa14890Constants(dnie.getIdesp());
+
+        // Nos validamos contra la tarjeta como controlador
+        dnie.verifyIfdCertificateChain(constants);
+
+		// Ahora hacemos una autenticación interna con un aleatorio generado externamente
+		final byte[] sigMinCiphered = Cwa14890OneV1Connection.internalAuthGetInternalAuthenticateMessage(
+			dnie,
+			constants,
+			randomIfd
+		);
+
+		System.out.println("SigMin cifrado: " + HexUtils.hexify(sigMinCiphered, false)); //$NON-NLS-1$
+
+		// Validamos esa autenticación externa
+		Cwa14890OneV1Connection.internalAuthValidateInternalAuthenticateMessage(
+			constants.getChrCCvIfd(),              // CHR de la clave publica del certificado de terminal
+			sigMinCiphered,                        // Mensaje de autenticacion generado por la tarjeta.
+			randomIfd,                             // Aleatorio del desafio del terminal.
+			constants.getIfdPrivateKey(),          // Clave privada del certificado de terminal.
+			constants.getIfdKeyLength(),           // Longitud en octetos, de las claves RSA del certificado de componente del terminal.
+			constants,                             // Constantes privadas para la apertura de canal CWA-14890.
+			constants,                             // Constantes publicas para la apertura de canal CWA-14890.
+			(RSAPublicKey) iccCert.getPublicKey(), // Clave publica del certificado de componente.
+			cryptoHelper                           // Utilidad para la ejecucion de funciones criptograficas.
+		);
+
+		System.out.println("Autenticacion interna correcta"); //$NON-NLS-1$
+
+		// Abrimos canal de usuario (sin PIN), lo que reinicia la autenticacion interna
+		dnie.openSecureChannelIfNotAlreadyOpened(false);
+
+		// Obtenemos el SOD
+		final Sod sod = dnie.getSod();
+
+		System.out.println(sod);
 	}
 
 	/** Prueba de lectura de DG en DNIe 3.0.

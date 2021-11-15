@@ -2,7 +2,7 @@ package test.es.gob.jmulticard.icao;
 
 import org.junit.Test;
 
-import es.gob.jmulticard.card.icao.Vdsned;
+import es.gob.jmulticard.card.icao.vdsned.Vdsned;
 
 /** Pruebas de <i>Visible Digital Seals for Non-Electronic Documents</i> de ICAO.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

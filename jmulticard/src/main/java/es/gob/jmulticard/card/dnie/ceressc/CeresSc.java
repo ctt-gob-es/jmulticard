@@ -42,7 +42,6 @@ import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieCardException;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** Tarjeta FNMT CERES con canal seguro.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -107,7 +106,7 @@ public final class CeresSc extends Dnie {
             if (!res.isOk()) {
                 throw new DnieCardException(
             		"Error en el establecimiento de las clave de firma con respuesta: " + //$NON-NLS-1$
-        				Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+        				res.getStatusWord(),
     				res.getStatusWord()
         		);
             }
@@ -125,7 +124,7 @@ public final class CeresSc extends Dnie {
             if (!res.isOk()) {
                 throw new DnieCardException(
                 	"Error durante la operacion de firma (tarjeta CERES) con respuesta: " + //$NON-NLS-1$
-            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+            			res.getStatusWord(),
         			res.getStatusWord()
                 );
             }

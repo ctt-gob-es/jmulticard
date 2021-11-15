@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.pace;
+package es.gob.jmulticard.card.icao;
 
 /*
  * JMRTD - A Java API for accessing machine readable travel documents.

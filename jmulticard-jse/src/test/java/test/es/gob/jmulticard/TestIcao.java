@@ -7,8 +7,8 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.icao.Sod;
-import es.gob.jmulticard.card.icao.IcaoMrtdWithPace;
 import es.gob.jmulticard.card.icao.Mrz;
+import es.gob.jmulticard.card.icao.pace.IcaoMrtdWithPace;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de operaciones en MRTD ICAO.

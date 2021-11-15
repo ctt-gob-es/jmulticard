@@ -47,7 +47,6 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 
-
 /** Clase para el establecimiento y control del canal seguro con tarjeta inteligente y MAC de 8 octetos. */
 public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 

@@ -3,7 +3,9 @@ package es.gob.jmulticard.card.icao;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
+import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Sod;
+import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.Location;
 
 /** MRTD ICAO LDS1.
@@ -75,7 +77,7 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG1 (MRZ).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG1 (MRZ).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -83,7 +85,7 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG2 (fotograf&iacute;a del rostro del titular).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG2 (fotograf&iacute;a del rostro del titular).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -91,35 +93,35 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG3 (Elementos de identificaci&oacute;n adicionales - Dedos).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de administraci&oacute;n est&eacute; previamente establecido.
+     * Puede necesitar que el canal de administraci&oacute;n est&eacute; previamente establecido.
      * @return DG3 (Elementos de identificaci&oacute;n adicionales - Dedos).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg3() throws IOException;
 
     /** Obtiene el DG4 (Elementos de identificaci&oacute;n adicionales - Iris).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de administraci&oacute;n est&eacute; previamente establecido.
+     * Puede necesitar que el canal de administraci&oacute;n est&eacute; previamente establecido.
      * @return DG4 (Elementos de identificaci&oacute;n adicionales - Iris).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg4() throws IOException;
 
     /** Obtiene el DG5 (Retrato exhibido).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG5 (Retrato exhibido).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg5() throws IOException;
 
     /** Obtiene el DG6 (Reservado para uso futuro).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG6 (Reservado para uso futuro).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg6() throws IOException;
 
-    /** Obtiene el DG7 (imagen de la firma o marca habitual exhibida).
+    /** Obtiene el DG7 (Imagen de la firma o marca habitual exhibida).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG7 (imagen de la firma o marca habitual exhibida).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -127,28 +129,28 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG8 (Elemento datos).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG7 (Elemento datos).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg8() throws IOException;
 
     /** Obtiene el DG9 (Elemento estructura).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG9 (Elemento estructura).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg9() throws IOException;
 
     /** Obtiene el DG10 (Elemento sustancia).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG10 (Elemento sustancia).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg10() throws IOException;
 
 	/** Obtiene el DG11 (Detalles personales adicionales).
 	 * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG11 (Detalles personales adicionales).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -156,7 +158,7 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG12 (Detalles del documento adicionales).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG12 (Detalles del documento adicionales).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -164,7 +166,7 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG13 (Detalles opcionales).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG13 (Detalles opcionales).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -172,7 +174,7 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG14 (Opciones de seguridad).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG14 (Opciones de seguridad).
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -180,21 +182,21 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG15 (Información de clave pública de autenticación activa).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG15 (Información de clave pública de autenticación activa).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg15() throws IOException;
 
     /** Obtiene el DG16 (Personas que han de notificarse).
      * Devuelve el objeto binario sin tratar.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return DG16 (Personas que han de notificarse).
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg16() throws IOException;
 
     /** Obtiene el SOD en su forma de objeto binario sin tratar.
      * El SOD contiene las huellas digitales de los DG.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return SOD.
      * @throws IOException Si hay problemas leyendo el fichero. */
@@ -202,27 +204,27 @@ public interface MrtdLds1 {
 
     /** Obtiene el SOD.
      * El SOD contiene las huellas digitales de los DG.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return SOD.
      * @throws IOException Si hay problemas obteniendo el objeto. */
     Sod getSod() throws IOException;
 
     /** Obtiene el COM. Devuelve el objeto binario sin tratar.
      * El COM contiene los "datos comunes" (<i>Common Data</i>).
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return COM.
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getCom() throws IOException;
 
     /** Obtiene la foto del titular en formato JPEG2000.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return Foto del titular en formato JPEG2000.
      * @throws IOException Si no se puede leer la foto del titular. */
 	byte[] getSubjectPhotoAsJpeg2k() throws IOException;
 
 	/** Obtiene la MRZ del MRTD.
-	 * Necesita que el canal de usuario est&eacute; previamente establecido.
+	 * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
 	 * @return MRZ del MRTD.
 	 * @throws IOException Si no se puede leer el fichero con el MRZ del MRTD. */
 	Mrz getMrz() throws IOException;
@@ -234,7 +236,7 @@ public interface MrtdLds1 {
 	Dg13Identity getIdentity() throws IOException;
 
 	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
-	 * Necesita que el canal de usuario est&eacute; previamente establecido.
+	 * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return Imagen de la firma del titular en formato JPEG2000.
 	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
 	byte[] getSubjectSignatureImageAsJpeg2k() throws IOException;
@@ -259,6 +261,8 @@ public interface MrtdLds1 {
      *         externa).
      * @throws IOException Si no se puede  finalizar la comprobaci&oacute;n.
      * @throws InvalidSecurityObjectException Si un objeto de seguridad no supera
-     *                                        las comprobaciones de seguridad. */
-    X509Certificate[] checkSecurityObjects() throws IOException, InvalidSecurityObjectException;
+     *                                        las comprobaciones de seguridad.
+     * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
+     * @throws SodException Si el SOD es estructuralmente incorrecto. */
+    X509Certificate[] checkSecurityObjects() throws IOException, InvalidSecurityObjectException, SodException, TlvException;
 }

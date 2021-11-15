@@ -45,7 +45,7 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 
 /** Constantes del DNIe para el establecimiento de canal seguro CWA-14890. */
-abstract class Dnie3Cwa14890Constants implements Cwa14890PublicConstants, Cwa14890PrivateConstants {
+public abstract class Dnie3Cwa14890Constants implements Cwa14890PublicConstants, Cwa14890PrivateConstants {
 
     /** Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
      * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.

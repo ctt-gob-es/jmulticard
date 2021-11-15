@@ -63,7 +63,7 @@ public class Iso7816FourCardException extends Exception {
      * @param origin APDU que gener&oacute; la palabra de estado. */
     public Iso7816FourCardException(final StatusWord retCode, final Apdu origin) {
         super(
-    		"Codigo de retorno: " + Iso7816fourErrorCodes.getErrorDescription(retCode) + //$NON-NLS-1$
+    		"Codigo de retorno: " + retCode + //$NON-NLS-1$
     			", APDU de origen: " + HexUtils.hexify(origin.getBytes(), true) //$NON-NLS-1$
 		);
         this.returnCode = retCode;
@@ -91,7 +91,7 @@ public class Iso7816FourCardException extends Exception {
     public Iso7816FourCardException(final StatusWord retCode, final Apdu origin, final String desc) {
         super(
     		(desc != null ? desc + " - " : "") + //$NON-NLS-1$ //$NON-NLS-2$
-    			"Codigo de retorno " + Iso7816fourErrorCodes.getErrorDescription(retCode) + //$NON-NLS-1$
+    			"Codigo de retorno " + retCode + //$NON-NLS-1$
     				", APDU de origen: " + HexUtils.hexify(origin.getBytes(), true) //$NON-NLS-1$
 		);
         this.returnCode = retCode;

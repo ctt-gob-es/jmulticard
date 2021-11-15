@@ -60,6 +60,7 @@ import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Sod;
+import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.CardSecurityException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.CryptoCardSecurityException;
@@ -81,10 +82,12 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
 	@Override
 	public X509Certificate[] checkSecurityObjects() throws IOException,
-	                                                       InvalidSecurityObjectException {
+	                                                       InvalidSecurityObjectException,
+	                                                       SodException,
+	                                                       TlvException {
 		openSecureChannelIfNotAlreadyOpened(false);
-		// La propia obtencion del SOD verifica la firma electronica
 		final Sod sod = getSod();
+		sod.validateSignature();
 		final LDSSecurityObject ldsSecurityObject = sod.getLdsSecurityObject();
 		final MessageDigest md;
 		try {
