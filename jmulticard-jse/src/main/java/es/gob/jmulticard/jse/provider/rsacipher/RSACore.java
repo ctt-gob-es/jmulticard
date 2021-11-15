@@ -70,15 +70,15 @@ final class RSACore {
         return n + 7 >> 3;
     }
 
-    /**
-     * Return the number of bytes required to store the modulus of this
-     * RSA key.
-     */
+    /** Devuelve el n&uacute;mero de octetos necesarios para almacenar el
+     * m&oacute;dulo de una clave RSA.
+     * @param key Clave RSA.
+     * @return N&uacute;mero de octetos necesarios para almacenar el m&oacute;dulo
+     *         de la clave proporcionada. */
     static int getByteLength(final RSAKey key) {
         return getByteLength(key.getModulus());
     }
 
-    // temporary, used by RSACipher and RSAPadding. Move this somewhere else
     static byte[] convert(final byte[] b, final int ofs, final int len) {
         if (ofs == 0 && len == b.length) {
             return b;
@@ -128,13 +128,11 @@ final class RSACore {
     		                       final BigInteger n,
     		                       final BigInteger exp) throws BadPaddingException {
 
-        BigInteger c = parseMsg(msg, n);
-        BigInteger m;
+        final BigInteger c = parseMsg(msg, n);
+        final BigInteger m;
         if (ENABLE_BLINDING) {
         	final BlindingRandomPair brp = getBlindingRandomPair(null, exp, n);
-            c = c.multiply(brp.u).mod(n);
-            m = c.modPow(exp, n);
-            m = m.multiply(brp.v).mod(n);
+            m = c.multiply(brp.u).mod(n).modPow(exp, n).multiply(brp.v).mod(n);
         }
         else {
             m = c.modPow(exp, n);

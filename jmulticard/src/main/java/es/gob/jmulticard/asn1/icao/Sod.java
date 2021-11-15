@@ -40,15 +40,22 @@ public final class Sod extends DecoderObject {
 
 	private static final byte TAG = 0x77;
 
-	private byte[] LdsSecurityObjectBytes = null;
+	private byte[] ldsSecurityObjectBytes = null;
 	private LDSSecurityObject ldsSecurityObject = null;
 	private X509Certificate[] certificateChain = null;
 
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
-
 		final Tlv tlv = new Tlv(getRawDerValue());
 		checkTag(tlv.getTag());
+	}
+
+	/** Valida la firma electr&oacute;nica del SOD.
+	 * @throws SodException Si el SOD es estructuralmente incorrecto o su firma
+	 *                      electr&oacute;nica es inv&aacute;lida.
+	 * @throws TlvException Si el SOD no es un TLV correctamente formado. */
+	public void validateSignature() throws SodException, TlvException {
+		final Tlv tlv = new Tlv(getRawDerValue());
 
 		final CMSSignedData cmsSignedData;
 		try {
@@ -105,9 +112,9 @@ public final class Sod extends DecoderObject {
 		}
 		this.certificateChain = certChain.toArray(new X509Certificate[certChain.size()]);
 
-		this.LdsSecurityObjectBytes = (byte[]) cmsSignedData.getSignedContent().getContent();
+		this.ldsSecurityObjectBytes = (byte[]) cmsSignedData.getSignedContent().getContent();
 		try (
-			final ASN1InputStream is = new ASN1InputStream(this.LdsSecurityObjectBytes)
+			final ASN1InputStream is = new ASN1InputStream(this.ldsSecurityObjectBytes)
 		) {
 			this.ldsSecurityObject = LDSSecurityObject.getInstance(is.readObject());
 		}
@@ -116,7 +123,6 @@ public final class Sod extends DecoderObject {
 				"El SignedData del SOD no contenia un LDSSecurityObject: " + e1 //$NON-NLS-1$
 			);
 		}
-
 	}
 
 	@Override
@@ -125,27 +131,55 @@ public final class Sod extends DecoderObject {
 	}
 
 	/** Obtiene la codificaci&oacute;n binaria del LDSSecurityObject.
-	 * @return Codificaci&oacute;n binaria del LDSSecurityObject. */
-	public byte[] getLdsSecurityObjectBytes() {
-		return this.LdsSecurityObjectBytes;
+	 * La obtenci&oacute;n desencadena una validaci&oacute;n de la firma
+	 * electr&oacute;nica del SOD.
+	 * @return Codificaci&oacute;n binaria del LDSSecurityObject.
+	 * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
+     * @throws SodException Si el SOD es estructuralmente incorrecto. */
+	public byte[] getLdsSecurityObjectBytes() throws SodException, TlvException {
+		if (this.ldsSecurityObjectBytes == null) {
+			validateSignature();
+		}
+		return this.ldsSecurityObjectBytes;
 	}
 
 	/** Obtiene el LDSSecurityObject.
-	 * @return LDSSecurityObject. */
-	public LDSSecurityObject getLdsSecurityObject() {
+	 * La obtenci&oacute;n desencadena una validaci&oacute;n de la firma
+	 * electr&oacute;nica del SOD.
+	 * @return LDSSecurityObject.
+	 * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
+     * @throws SodException Si el SOD es estructuralmente incorrecto. */
+	public LDSSecurityObject getLdsSecurityObject() throws SodException, TlvException {
+		if (this.ldsSecurityObject == null) {
+			validateSignature();
+		}
 		return this.ldsSecurityObject;
 	}
 
 	/** Obtiene la cadena de certificados del firmante del LDSSecurityObject.
-	 * @return Cadena de certificados del firmante del LDSSecurityObject. */
-	public X509Certificate[] getCertificateChain() {
+	 * La obtenci&oacute;n desencadena una validaci&oacute;n de la firma
+	 * electr&oacute;nica del SOD.
+	 * @return Cadena de certificados del firmante del LDSSecurityObject.
+	 * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
+     * @throws SodException Si el SOD es estructuralmente incorrecto. */
+	public X509Certificate[] getCertificateChain() throws SodException, TlvException {
+		if (this.certificateChain == null) {
+			validateSignature();
+		}
 		return this.certificateChain.clone();
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("SOD ICAO\n  Firmado por: "); //$NON-NLS-1$
-		sb.append(this.certificateChain[0].getSubjectX500Principal());
+		final StringBuilder sb = new StringBuilder("SOD ICAO\n"); //$NON-NLS-1$
+		try {
+			sb.append(
+				"Firmado por: " + getCertificateChain()[0].getSubjectX500Principal() //$NON-NLS-1$
+			);
+		}
+		catch (final Exception e) {
+			return sb.toString();
+		}
 		sb.append("\n  Con huellas para los siguientes grupos de datos\n"); //$NON-NLS-1$
 
 		for (final DataGroupHash dgh : this.ldsSecurityObject.getDatagroupHash()) {

@@ -96,7 +96,6 @@ import es.gob.jmulticard.card.icao.pace.PaceConnection;
 import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -642,12 +641,16 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     @Override
     public void setKeysToAuthentication(final byte[] refPublicKey,
     		                            final byte[] refPrivateKey) throws ApduConnectionException {
-        final CommandApdu apdu = new MseSetAuthenticationKeyApduCommand((byte) 0x00, refPublicKey, refPrivateKey);
+        final CommandApdu apdu = new MseSetAuthenticationKeyApduCommand(
+    		(byte) 0x00,
+    		refPublicKey,
+    		refPrivateKey
+		);
         final ResponseApdu res = getConnection().transmit(apdu);
         if (!res.isOk()) {
             throw new SecureChannelException(
         		"Error durante el establecimiento de las claves publica y privada " + //$NON-NLS-1$
-                     "para atenticacion (error: " + HexUtils.hexify(res.getBytes(), true) + ")" //$NON-NLS-1$ //$NON-NLS-2$
+                     "para autenticacion (error: " + res.getStatusWord() + ")" //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
     }
@@ -807,8 +810,8 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		);
                 throw new DnieCardException(
                 	"Error durante la operacion de carga de datos previa a un cifrado RSA: " + //$NON-NLS-1$
-            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
-            			res.getStatusWord()
+            			res.getStatusWord(),
+        			res.getStatusWord()
                 );
 			}
 
@@ -824,7 +827,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		);
                 throw new DnieCardException(
                 	"Error durante la operacion de cifrado RSA con respuesta: " + //$NON-NLS-1$
-            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+            			res.getStatusWord(),
                 	res.getStatusWord()
                 );
             }
@@ -865,7 +868,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
             if (!res.isOk()) {
                 throw new DnieCardException(
             		"Error en el establecimiento de las clave de firma con respuesta: " + //$NON-NLS-1$
-        				Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+        				res.getStatusWord(),
     				res.getStatusWord()
         		);
             }
@@ -886,7 +889,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         		);
                 throw new DnieCardException(
                 	"Error durante la operacion de firma con respuesta: " + //$NON-NLS-1$
-            			Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord()),
+            			res.getStatusWord(),
                 	res.getStatusWord()
                 );
             }

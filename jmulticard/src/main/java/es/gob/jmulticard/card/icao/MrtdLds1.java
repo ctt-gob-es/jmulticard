@@ -3,7 +3,9 @@ package es.gob.jmulticard.card.icao;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
+import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Sod;
+import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.Location;
 
 /** MRTD ICAO LDS1.
@@ -259,6 +261,8 @@ public interface MrtdLds1 {
      *         externa).
      * @throws IOException Si no se puede  finalizar la comprobaci&oacute;n.
      * @throws InvalidSecurityObjectException Si un objeto de seguridad no supera
-     *                                        las comprobaciones de seguridad. */
-    X509Certificate[] checkSecurityObjects() throws IOException, InvalidSecurityObjectException;
+     *                                        las comprobaciones de seguridad.
+     * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
+     * @throws SodException Si el SOD es estructuralmente incorrecto. */
+    X509Certificate[] checkSecurityObjects() throws IOException, InvalidSecurityObjectException, SodException, TlvException;
 }

@@ -82,7 +82,7 @@ public interface Cwa14890PublicConstants {
     PublicKey getCaComponentPublicKey();
 
     /** Obtiene la longitud, <u>en octetos</u>, de las claves RSA del certificado de
-     * comnponente del terminal.
+     * componente del terminal.
      * @return Longitud, <u>en octetos</u>, de las claves RSA del certificado de
      *         comnponente del terminal. */
     int getIfdKeyLength();

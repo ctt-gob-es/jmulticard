@@ -68,8 +68,8 @@ public interface Cwa14890Card {
      * @throws SecurityException Si falla la validaci&oacute;n del certificado. */
     void verifyIcc() throws CertificateException, IOException;
 
-    /** Recupera el certificado de componente codificado.
-     * @return Certificado.
+    /** Recupera el certificado de componente.
+     * @return Certificado de componente.
      * @throws IOException Cuando ocurre alg&uacute;n problema en la selecci&oacute;n
      *                     y lectura del certificado */
     X509Certificate getIccCert() throws IOException;

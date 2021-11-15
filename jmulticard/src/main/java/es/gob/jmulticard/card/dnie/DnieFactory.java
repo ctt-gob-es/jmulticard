@@ -176,9 +176,14 @@ public final class DnieFactory {
 		throw new ApduConnectionException("No se ha podido conectar con ningun lector de tarjetas"); //$NON-NLS-1$
 	}
 
-	static Dnie3Cwa14890Constants getDnie3UsrCwa14890Constants(final String idesp) {
+	/** Obtiene las constantes de canal de usuario CWA-14890 de un DNIe 3.0.
+	 * @param idesp IDESP del DNIe para el cual se desea obtener las constantes de canal.
+	 * @return Constantes de canal de usuario CWA-14890 de un DNIe 3.0. */
+	public static Dnie3Cwa14890Constants getDnie3UsrCwa14890Constants(final String idesp) {
 		if (idesp == null || idesp.isEmpty()) {
-			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
+			LOGGER.warning(
+				"El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos" //$NON-NLS-1$
+			);
 			return new Dnie3UsrCwa14890Constants();
 		}
 		if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
@@ -189,7 +194,9 @@ public final class DnieFactory {
 
 	static Dnie3Cwa14890Constants getDnie3PinCwa14890Constants(final String idesp) {
 		if (idesp == null || idesp.isEmpty()) {
-			LOGGER.warning("El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos"); //$NON-NLS-1$
+			LOGGER.warning(
+				"El IDESP proporcionado era nulo o vacio, se usaran las constantes CWA14890 de usuario para los DNIe 3 antiguos" //$NON-NLS-1$
+			);
 			return new Dnie3PinCwa14890Constants();
 		}
 		if (DNIE3_R2_IDESP.compareTo(idesp) > 0) {
