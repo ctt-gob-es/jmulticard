@@ -8,6 +8,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.icao.DataGroupHash;
@@ -171,13 +172,16 @@ public final class Sod extends DecoderObject {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("SOD ICAO\n"); //$NON-NLS-1$
+		final StringBuilder sb = new StringBuilder("SOD ICAO"); //$NON-NLS-1$
 		try {
 			sb.append(
-				"Firmado por: " + getCertificateChain()[0].getSubjectX500Principal() //$NON-NLS-1$
+				"\nFirmado por: " + getCertificateChain()[0].getSubjectX500Principal() //$NON-NLS-1$
 			);
 		}
 		catch (final Exception e) {
+			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				"No se ha podido obtener la cadena de certificados de firma del SOD: " + e //$NON-NLS-1$
+			);
 			return sb.toString();
 		}
 		sb.append("\n  Con huellas para los siguientes grupos de datos\n"); //$NON-NLS-1$
