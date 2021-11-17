@@ -1,5 +1,6 @@
 package es.gob.jmulticard.asn1.icao;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -8,8 +9,8 @@ import java.util.List;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
-import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.bertlv.BerTlv;
 
 /** EF&#46;COM de aplicación de LDS1 para el eMRTD de ICAO 9393 parte 10.
  * Contiene informaci&oacute;n sobre la versi&oacute;n LDS, informaci&oacute;n sobre
@@ -46,22 +47,22 @@ public final class Com extends DecoderObject {
 
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
-		Tlv tlv = new Tlv(getRawDerValue());
+
+		BerTlv tlv = BerTlv.getInstance(getRawDerValue());
 		checkTag(tlv.getTag());
 
-		final byte[] comData = tlv.getValue();
+		final ByteArrayInputStream tlvs = new ByteArrayInputStream(tlv.getValue());
 
-
-		tlv = new Tlv(comData, 1);
+		tlv = BerTlv.getInstance(tlvs);
 		if (tlv.getLength() != 4) {
 			throw new Asn1Exception(
 				"El valor del TLV de version LDS debe tener exactamente cuarto octetos, pero se han encontrado " + tlv.getLength() //$NON-NLS-1$
 			);
 		}
-		if (comData[0] != 0x5f || comData[1] != 0x01) {
+		if (tlv.getTag() != 0x01) {
 			throw new Asn1Exception(
-				"El valor del TLV de version LDS debe tener etiqueta '5F01', pero se ha encontrado '" + //$NON-NLS-1$
-					HexUtils.hexify(new byte[] { comData[0], comData[1] }, false) + "'" //$NON-NLS-1$
+				"El valor del TLV de version LDS debe tener etiqueta '01', pero se ha encontrado '" + //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
 		this.ldsVersion =
@@ -69,19 +70,16 @@ public final class Com extends DecoderObject {
 				DOT +
 					new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] });
 
-		final byte[] remainingData = new byte[comData.length - tlv.getBytes().length];
-		System.arraycopy(comData, tlv.getBytes().length, remainingData, 0, remainingData.length);
-
-		tlv = new Tlv(remainingData, 1);
+		tlv = BerTlv.getInstance(tlvs);
 		if (tlv.getLength() != 6) {
 			throw new Asn1Exception(
 				"El valor del TLV de version Unicode debe tener exactamente seis octetos, pero se han encontrado " + tlv.getLength() //$NON-NLS-1$
 			);
 		}
-		if (remainingData[0] != 0x5f || remainingData[1] != 0x36) {
+		if (tlv.getTag() != 0x36) {
 			throw new Asn1Exception(
-				"El valor del TLV de version Unicode debe tener etiqueta '5F36', pero se ha encontrado '" + //$NON-NLS-1$
-					HexUtils.hexify(new byte[] { remainingData[0], remainingData[1] }, false) + "'" //$NON-NLS-1$
+				"El valor del TLV de version Unicode debe tener etiqueta '01', pero se ha encontrado '" + //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
 		this.unicodeVersion =
@@ -91,16 +89,13 @@ public final class Com extends DecoderObject {
 						DOT +
 							new String(new byte[] { tlv.getValue()[4], tlv.getValue()[5] });
 
-		final byte[] rots = new byte[remainingData.length - tlv.getBytes().length];
-		System.arraycopy(remainingData, tlv.getBytes().length, rots, 0, rots.length);
-
-		if (rots[0] != 0x5c) {
+		tlv = BerTlv.getInstance(tlvs);
+		if (tlv.getTag() != 0x5c) {
 			throw new Asn1Exception(
 				"El valor del TLV de lista de rotulos debe tener etiqueta '5C', pero se han encontrado '" + //$NON-NLS-1$
-					HexUtils.hexify(new byte[] { rots[0] }, false) + "'" //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
-		tlv = new Tlv(rots);
 		final byte[] dgList = tlv.getValue();
 		for (final byte dgTag : dgList) {
 			this.presentDgs.add(DGTAGS.get(Byte.valueOf(dgTag)));

@@ -19,7 +19,7 @@ import java.io.ByteArrayInputStream;
 
 import es.gob.jmulticard.HexUtils;
 
-/** TLV seg&uacute;n ASN&#46;1 BER.
+/** TLV seg&uacute;n ASN&#46;1 BER. Soporta etiquetas de doble octeto.
  * @author Isaac Levin. */
 public final class BerTlv {
     private BerTlvIdentifier tag;
@@ -43,8 +43,24 @@ public final class BerTlv {
         return out;
     }
 
+    /** Obtiene la longitud de los datos del valor del TLV.
+     * @return Longitud de los datos del valor del TLV. */
+    public int getLength() {
+    	return this.length;
+    }
+
     /** Obtiene una instancia del TLV.
      * @param stream Representaci&oacute;n binaria del TLV.
+     * @return Instancia del TLV. */
+    public static BerTlv getInstance(final byte[] stream) {
+        final BerTlv tlv = new BerTlv();
+        tlv.decode(new ByteArrayInputStream(stream));
+        return tlv;
+    }
+
+    /** Obtiene una instancia del TLV.
+     * @param stream Flujo hacia la representaci&oacute;n binaria del TLV.
+     *               El flujo se devuelve con avanzado hasta el final del TLV.
      * @return Instancia del TLV. */
     public static BerTlv getInstance(final ByteArrayInputStream stream) {
         final BerTlv tlv = new BerTlv();
@@ -100,7 +116,9 @@ public final class BerTlv {
             // Formato definido
             this.value = new byte[this.length];
             if (this.length != stream.read(this.value, 0, this.length)) {
-                throw new IndexOutOfBoundsException("La longitud de los datos leidos no coincide con el parametro indicado"); //$NON-NLS-1$
+                throw new IndexOutOfBoundsException(
+            		"La longitud de los datos leidos no coincide con el parametro indicado" //$NON-NLS-1$
+        		);
             }
         }
     }
@@ -108,6 +126,7 @@ public final class BerTlv {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "[TLV: T=" + this.tag + "; L=" + this.length + "d; V=" + (this.value == null ? "null" : HexUtils.hexify(this.value, false)) + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        return "[TLV: T=" + this.tag + "; L=" + this.length + "d; V=" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    		(this.value == null ? "null" : HexUtils.hexify(this.value, false)) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }
