@@ -7,6 +7,10 @@ import java.util.Date;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Mrz {
 
+	/** Obtiene la codificaci&oacute;n binaria de la MRZ.
+	 * @return Codificaci&oacute;n binaria de la MRZ. */
+	byte[] getBytes();
+
 	/** Obtiene el nombre del titular.
      * @return Nombre del titular. */
     String getName();

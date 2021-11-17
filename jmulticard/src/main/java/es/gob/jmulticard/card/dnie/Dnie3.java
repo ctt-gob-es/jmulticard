@@ -59,6 +59,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.CardSecurityException;
@@ -109,7 +110,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			final byte[] dgBytes;
 			switch(dgh.getDataGroupNumber()) {
 				case 1:
-					dgBytes = getDg1();
+					dgBytes = getDg1().getBytes();
 					break;
 				case 2:
 					dgBytes = getDg2();
@@ -213,9 +214,11 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     }
 
     @Override
-	public byte[] getDg1() throws IOException {
+	public Mrz getDg1() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG01_LOCATION);
+			return new Dnie3Dg01Mrz(
+				selectFileByLocationAndRead(FILE_DG01_LOCATION)
+			);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw new FileNotFoundException("DG1 no encontrado: " + e); //$NON-NLS-1$
@@ -323,25 +326,14 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getSodBytes() throws IOException {
-		try {
-			return selectFileByLocationAndRead(FILE_SOD_LOCATION);
-		}
-    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("SOD no encontrado: " + e); //$NON-NLS-1$
-    	}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el SOD: " + e, e); //$NON-NLS-1$
-		}
-	}
-
-    @Override
 	public Sod getSod() throws IOException {
     	final Sod sod = new Sod();
     	try {
-			sod.setDerValue(getSodBytes());
+			sod.setDerValue(
+				selectFileByLocationAndRead(FILE_SOD_LOCATION)
+			);
 		}
-    	catch (final Asn1Exception | TlvException e) {
+    	catch (final Asn1Exception | TlvException | Iso7816FourCardException e) {
 			throw new IOException(
 				"No se puede crear un SOD a partir del contenido del fichero: " + e, e //$NON-NLS-1$
 			);
@@ -350,14 +342,18 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     }
 
     @Override
-	public byte[] getCom() throws IOException {
+	public Com getCom() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_COM_LOCATION);
+			final Com com = new Com();
+			com.setDerValue(
+				selectFileByLocationAndRead(FILE_COM_LOCATION)
+			);
+			return com;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw new FileNotFoundException("COM no encontrado: " + e); //$NON-NLS-1$
     	}
-		catch (final Iso7816FourCardException e) {
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el 'Common Data' (COM): " + e, e); //$NON-NLS-1$
 		}
 	}
@@ -366,12 +362,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
 		final byte[] photo = getDg2();
 		return extractImage(photo);
-	}
-
-	@Override
-	public Mrz getMrz() throws IOException {
-		final byte[] mrz = getDg1();
-		return new Dnie3Dg01Mrz(mrz);
 	}
 
 	@Override

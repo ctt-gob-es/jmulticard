@@ -105,6 +105,15 @@ public final class Tlv {
      * @param buffer Representaci&oacute;n binaria del TLV.
      * @throws TlvException En caso de error analizando el TLV. */
     public Tlv(final byte[] buffer) throws TlvException {
+    	this(buffer, 0);
+    }
+
+    /** Construye un TLV simple a partir de su representaci&oacute;n binaria directa.
+     * @param buffer Representaci&oacute;n binaria del TLV.
+     * @param initialOffset Desplazamiento a partir del cual se considera empieza
+     *                      la etiqueta del TLV.
+     * @throws TlvException En caso de error analizando el TLV. */
+    public Tlv(final byte[] buffer, final int initialOffset) throws TlvException {
         if (buffer == null) {
             throw new IllegalArgumentException("El TLV no puede ser nulo"); //$NON-NLS-1$
         }
@@ -124,7 +133,7 @@ public final class Tlv {
     		);
         }
 
-        int offset = 0;
+        int offset = initialOffset;
 
         // Copiamos el TLV completo
         final byte[] tempBytes = new byte[buffer.length];

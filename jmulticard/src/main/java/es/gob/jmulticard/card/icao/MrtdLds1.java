@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.Location;
@@ -76,12 +77,11 @@ public interface MrtdLds1 {
     Location FILE_CARD_SECURITY_LOCATION = new Location("011D"); //$NON-NLS-1$
 
     /** Obtiene el DG1 (MRZ).
-     * Devuelve el objeto binario sin tratar.
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG1 (MRZ).
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getDg1() throws IOException;
+    Mrz getDg1() throws IOException;
 
     /** Obtiene el DG2 (fotograf&iacute;a del rostro del titular).
      * Devuelve el objeto binario sin tratar.
@@ -194,14 +194,6 @@ public interface MrtdLds1 {
      * @throws IOException Si hay problemas leyendo el fichero. */
     byte[] getDg16() throws IOException;
 
-    /** Obtiene el SOD en su forma de objeto binario sin tratar.
-     * El SOD contiene las huellas digitales de los DG.
-     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return SOD.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getSodBytes() throws IOException;
-
     /** Obtiene el SOD.
      * El SOD contiene las huellas digitales de los DG.
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
@@ -209,25 +201,19 @@ public interface MrtdLds1 {
      * @throws IOException Si hay problemas obteniendo el objeto. */
     Sod getSod() throws IOException;
 
-    /** Obtiene el COM. Devuelve el objeto binario sin tratar.
+    /** Obtiene el COM.
      * El COM contiene los "datos comunes" (<i>Common Data</i>).
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return COM.
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getCom() throws IOException;
+    Com getCom() throws IOException;
 
     /** Obtiene la foto del titular en formato JPEG2000.
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @return Foto del titular en formato JPEG2000.
      * @throws IOException Si no se puede leer la foto del titular. */
 	byte[] getSubjectPhotoAsJpeg2k() throws IOException;
-
-	/** Obtiene la MRZ del MRTD.
-	 * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
-	 * @return MRZ del MRTD.
-	 * @throws IOException Si no se puede leer el fichero con el MRZ del MRTD. */
-	Mrz getMrz() throws IOException;
 
 	/** Obtiene los datos de identidad del titular.
 	 * @return Datos de identidad del titular.
