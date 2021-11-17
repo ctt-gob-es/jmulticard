@@ -87,7 +87,8 @@ public final class Dnie3Dg01Mrz implements Mrz {
 
     /** Obtiene el contenido binario del fichero DG1 del DNIe 3&#46;0.
      * @return Contenido binario del fichero DG1 del DNIe 3&#46;0. */
-    public byte[] getBytes() {
+    @Override
+	public byte[] getBytes() {
         return this.rawData.clone();
     }
 

@@ -1,6 +1,9 @@
 package test.es.gob.jmulticard;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 
@@ -23,6 +26,7 @@ import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
+import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -132,7 +136,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testAuthNoPin() throws Exception {
 
 		final CryptoHelper cryptoHelper = new JseCryptoHelper();
@@ -176,7 +180,7 @@ public final class TestDnieLow {
 			sigMinCiphered,                        // Mensaje de autenticacion generado por la tarjeta.
 			randomIfd,                             // Aleatorio del desafio del terminal.
 			constants.getIfdPrivateKey(),          // Clave privada del certificado de terminal.
-			constants.getIfdKeyLength(),           // Longitud en octetos, de las claves RSA del certificado de componente del terminal.
+			constants.getIfdKeyLength(),           // Longitud en octetos de las claves RSA del certificado de componente del terminal.
 			constants,                             // Constantes privadas para la apertura de canal CWA-14890.
 			constants,                             // Constantes publicas para la apertura de canal CWA-14890.
 			(RSAPublicKey) iccCert.getPublicKey(), // Clave publica del certificado de componente.
@@ -190,8 +194,35 @@ public final class TestDnieLow {
 
 		// Obtenemos el SOD
 		final Sod sod = dnie.getSod();
+//		System.out.println(sod);
 
-		System.out.println(sod);
+		// Obtenemos los datos del DNI
+
+		final Com com = dnie.getCom();
+		System.out.println(com);
+		System.out.println();
+
+		final Mrz dg1 = dnie.getDg1();
+		System.out.println(dg1);
+		System.out.println();
+
+		final byte[] dg2 = dnie.getDg2(); saveTemp(dg2, "DG2");  // Foto del rostro //$NON-NLS-1$
+		// 3 no hay permisos
+		// 4, 5, 6 no presentes en el DNI
+		final byte[] dg7 = dnie.getDg7(); saveTemp(dg7, "DG7");  // Imagen de la firma manuscrita //$NON-NLS-1$
+		// 8, 9 y 10 no presente en el DNI
+		final byte[] dg11 = dnie.getDg11(); saveTemp(dg11, "DG11");  // Detalles personales adicionales //$NON-NLS-1$
+		// 12 no presente en el DNI
+		final byte[] dg13 = dnie.getDg13(); saveTemp(dg13, "DG13");  // Detalles opcionales //$NON-NLS-1$
+		final byte[] dg14 = dnie.getDg14(); saveTemp(dg14, "DG14");  // Opciones de seguridad //$NON-NLS-1$
+	}
+
+	private static void saveTemp(final byte[] content, final String name) throws Exception {
+		try (
+			final OutputStream fos = new FileOutputStream(File.createTempFile(name + "_", ".bin")) //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(content);
+		}
 	}
 
 	/** Prueba de lectura de DG en DNIe 3.0.
@@ -236,13 +267,13 @@ public final class TestDnieLow {
 		System.out.println();
 
 		// COM
-		final byte[] com = dnie3.getCom();
+		final Com com = dnie3.getCom();
 		System.out.println("COM:"); //$NON-NLS-1$
-		System.out.println(HexUtils.hexify(com, true));
+		System.out.println(com);
 		System.out.println();
 
 		// DG01
-		final Mrz dg1 = dnie3.getMrz();
+		final Mrz dg1 = dnie3.getDg1();
 		System.out.println("MRZ del DNIe: " + dg1); //$NON-NLS-1$
 		System.out.println();
 
@@ -361,11 +392,11 @@ public final class TestDnieLow {
 		System.out.println(passport);
 		System.out.println();
 
-		final byte[] com = passport.getCom();
-		System.out.println(new String(com));
+		final Com com = passport.getCom();
+		System.out.println(com);
 		System.out.println();
 
-		final Mrz dg1 = passport.getMrz();
+		final Mrz dg1 = passport.getDg1();
 		System.out.println(dg1);
 		System.out.println();
 

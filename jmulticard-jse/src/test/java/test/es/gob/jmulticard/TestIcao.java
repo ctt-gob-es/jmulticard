@@ -6,6 +6,7 @@ import org.junit.Test;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.card.icao.pace.IcaoMrtdWithPace;
@@ -51,24 +52,15 @@ public final class TestIcao {
 		System.out.println(sod);
 		System.out.println();
 
-		final byte[] com = passport.getCom();
+		final Com com = passport.getCom();
 		System.out.println("COM:"); //$NON-NLS-1$
-		System.out.println(new String(com));
+		System.out.println(com);
 		System.out.println();
 
-		final Mrz dg1 = passport.getMrz();
+		final Mrz dg1 = passport.getDg1();
 		System.out.println("MRZ:"); //$NON-NLS-1$
 		System.out.println(dg1);
 		System.out.println();
-
-		try {
-			final byte[] dg = passport.getDg1();
-			System.out.println(new String(dg));
-			System.out.println();
-		}
-		catch(final Exception e) {
-			System.out.println("Este MRTD no tiene DG1: " + e); //$NON-NLS-1$
-		}
 
 		try {
 			final byte[] dg = passport.getDg2();
