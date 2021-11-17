@@ -136,5 +136,4 @@ public final class Com extends DecoderObject {
 		return (String[]) this.presentDgs.toArray();
 	}
 
-
 }
