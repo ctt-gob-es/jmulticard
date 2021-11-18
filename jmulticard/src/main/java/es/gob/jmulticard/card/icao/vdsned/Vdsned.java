@@ -32,7 +32,10 @@ public final class Vdsned {
 	private final byte[] encoded;
 
 	private final int version;
+
+	/** Pa&iacute;s que emite el sello. */
 	private final String issuingCountry;
+
 	private final String caCr;
 	private final Date documentIssueDate;
 	private final Date signatureCreationDate;
@@ -52,7 +55,7 @@ public final class Vdsned {
 	 * @param enc Codificaci&oacute;n binaria del <i>Visible Digital Seals for Non-Electronic Documents</i>.
 	 * @throws IOException Si hay problemas durante el an&aacute;lisis de la codificaci&oacute;n
 	 *                     proporcionada.
-	 * @throws TlvException */
+	 * @throws TlvException Si hay errores el los TLV que conforman el sello. */
 	public Vdsned(final byte[] enc) throws IOException, TlvException {
 
 		if (enc == null || enc.length < 1) {

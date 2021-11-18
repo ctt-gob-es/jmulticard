@@ -60,6 +60,7 @@ import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Com;
+import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.CardSecurityException;
@@ -68,7 +69,6 @@ import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.icao.Dg13Identity;
 import es.gob.jmulticard.card.icao.InvalidSecurityObjectException;
 import es.gob.jmulticard.card.icao.MrtdLds1;
 import es.gob.jmulticard.card.icao.Mrz;
@@ -156,7 +156,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 					dgBytes = getDg12();
 					break;
 				case 13:
-					dgBytes = getDg13();
+					dgBytes = getDg13().getBytes();
 					break;
 				case 14:
 					dgBytes = getDg14();
@@ -300,14 +300,18 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getDg13() throws IOException {
+	public OptionalDetails getDg13() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG13_LOCATION);
+			final OptionalDetails ret = new OptionalDetailsDnie3();
+			ret.setDerValue(
+				selectFileByLocationAndRead(FILE_DG13_LOCATION)
+			);
+			return ret;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw new FileNotFoundException("DG13 no encontrado: " + e); //$NON-NLS-1$
     	}
-		catch (final Iso7816FourCardException e) {
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG13: " + e, e); //$NON-NLS-1$
 		}
 	}
@@ -362,11 +366,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
 		final byte[] photo = getDg2();
 		return extractImage(photo);
-	}
-
-	@Override
-	public Dg13Identity getIdentity() throws IOException {
-		return new Dg13Identity(getDg13());
 	}
 
 	@Override

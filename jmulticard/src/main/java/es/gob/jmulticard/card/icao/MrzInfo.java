@@ -56,6 +56,8 @@ public final class MrzInfo {
 
     private String documentCode;
     private String documentNumber;
+
+    /** Fecha de nacimiento del titular. */
     private String dateOfBirth;
 
     private String dateOfExpiry;

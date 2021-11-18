@@ -8,6 +8,7 @@ import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.Pa
  * @author Ignacio Mar&iacute;n. */
 public final class WirelessInitializerCan implements WirelessInitializer {
 
+	/** CAN del eMRTD. */
 	private final String can;
 
 	/** Construye un CAN para inicializaci&oacute;n de un canal PACE.

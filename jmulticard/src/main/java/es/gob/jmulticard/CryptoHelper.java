@@ -89,7 +89,8 @@ public abstract class CryptoHelper {
 		/** Nombre del algoritmo de huella digital. */
 		private final String name;
 
-		/** Construye el algoritmo de huella digital. */
+		/** Construye el algoritmo de huella digital.
+		 * @param n Nombre del algoritmo. */
 		DigestAlgorithm(final String n) {
 			this.name = n;
 		}

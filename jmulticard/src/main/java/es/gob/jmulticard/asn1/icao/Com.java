@@ -78,7 +78,7 @@ public final class Com extends DecoderObject {
 		}
 		if (tlv.getTag() != 0x36) {
 			throw new Asn1Exception(
-				"El valor del TLV de version Unicode debe tener etiqueta '01', pero se ha encontrado '" + //$NON-NLS-1$
+				"El valor del TLV de version Unicode debe tener etiqueta '36', pero se ha encontrado '" + //$NON-NLS-1$
 					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
@@ -116,7 +116,7 @@ public final class Com extends DecoderObject {
 	}
 
 	/** Obtiene el n&uacute;mero de versi&oacute;n LDS.
-	 * @return N&uacute;mero de versi&oacute;n LDS con formato <i>aa.bb<i>, donde <i>aa</i>
+	 * @return N&uacute;mero de versi&oacute;n LDS con formato <i>aa.bb</i>, donde <i>aa</i>
 	 *         define la versi&oacute;n de la LDS y <i>bb</i> define el nivel de actualizaci&oacute;n. */
 	public String getLdsVersion() {
 		return this.ldsVersion;

@@ -27,6 +27,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.icao.Com;
+import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -35,7 +36,7 @@ import es.gob.jmulticard.card.dnie.Dnie3;
 import es.gob.jmulticard.card.dnie.Dnie3Cwa14890Constants;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
-import es.gob.jmulticard.card.icao.Dg13Identity;
+import es.gob.jmulticard.card.dnie.OptionalDetailsDnie3;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.card.icao.bac.IcaoMrtdWithBac;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
@@ -213,7 +214,11 @@ public final class TestDnieLow {
 		// 8, 9 y 10 no presente en el DNI
 		final byte[] dg11 = dnie.getDg11(); saveTemp(dg11, "DG11");  // Detalles personales adicionales //$NON-NLS-1$
 		// 12 no presente en el DNI
-		final byte[] dg13 = dnie.getDg13(); saveTemp(dg13, "DG13");  // Detalles opcionales //$NON-NLS-1$
+
+		final OptionalDetails dg13 = dnie.getDg13(); // Detalles opcionales
+		System.out.println(dg13);
+		System.out.println();
+
 		final byte[] dg14 = dnie.getDg14(); saveTemp(dg14, "DG14");  // Opciones de seguridad //$NON-NLS-1$
 	}
 
@@ -332,7 +337,7 @@ public final class TestDnieLow {
 
 		final Dnie3 dnie3 = (Dnie3) dnie;
 
-		final Dg13Identity dnie3Dg13Identity = dnie3.getIdentity();
+		final OptionalDetailsDnie3 dnie3Dg13Identity = (OptionalDetailsDnie3) dnie3.getDg13();
 
 		System.out.println("Name: "            + dnie3Dg13Identity.getName());           //$NON-NLS-1$
 		System.out.println("Second surname: "  + dnie3Dg13Identity.getSecondSurname());  //$NON-NLS-1$

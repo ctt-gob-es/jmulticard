@@ -6,6 +6,7 @@ import java.util.Properties;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CountryCodes {
 
+	/** Tabla interna de correspondecia entre c&oacute;digos y nombres de pa&iacute;s. */
     private static final Properties CC = new Properties();
     static {
         CC.put("ABW", "Aruba"); //$NON-NLS-1$ //$NON-NLS-2$

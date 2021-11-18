@@ -5,6 +5,7 @@ import java.security.cert.X509Certificate;
 
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Com;
+import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.card.Location;
@@ -165,12 +166,11 @@ public interface MrtdLds1 {
     byte[] getDg12() throws IOException;
 
     /** Obtiene el DG13 (Detalles opcionales).
-     * Devuelve el objeto binario sin tratar.
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG13 (Detalles opcionales).
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getDg13() throws IOException;
+    OptionalDetails getDg13() throws IOException;
 
     /** Obtiene el DG14 (Opciones de seguridad).
      * Devuelve el objeto binario sin tratar.
@@ -214,12 +214,6 @@ public interface MrtdLds1 {
      * @return Foto del titular en formato JPEG2000.
      * @throws IOException Si no se puede leer la foto del titular. */
 	byte[] getSubjectPhotoAsJpeg2k() throws IOException;
-
-	/** Obtiene los datos de identidad del titular.
-	 * @return Datos de identidad del titular.
-	 * @throws IOException Si no se pueden leer los datos de identidad (fichero DG13
-	 *                     del MRTD). */
-	Dg13Identity getIdentity() throws IOException;
 
 	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
 	 * Puede necesitar que el canal de usuario est&eacute; previamente establecido.

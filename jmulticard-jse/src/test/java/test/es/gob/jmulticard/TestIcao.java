@@ -162,7 +162,7 @@ public final class TestIcao {
 		}
 
 		try {
-			final byte[] dg = passport.getDg13();
+			final byte[] dg = passport.getDg13().getBytes();
 			System.out.println(new String(dg));
 			System.out.println();
 		}

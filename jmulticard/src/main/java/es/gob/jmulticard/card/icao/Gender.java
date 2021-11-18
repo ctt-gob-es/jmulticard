@@ -10,6 +10,7 @@ public enum Gender {
 	/** Mujer. */
 	FEMALE("Mujer"); //$NON-NLS-1$
 
+	/** Texto descriptivo del sexo. */
 	private final String desc;
 
 	Gender(final String d) {

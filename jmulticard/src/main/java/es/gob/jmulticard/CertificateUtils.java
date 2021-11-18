@@ -10,6 +10,7 @@ import java.security.cert.X509Certificate;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CertificateUtils {
 
+	/** Factor&iacute;a para la creaci&oacute;n de certificados. */
 	private static final CertificateFactory CF;
 	static {
 		try {
