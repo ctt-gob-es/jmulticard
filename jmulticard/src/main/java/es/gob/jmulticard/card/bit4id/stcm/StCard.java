@@ -1,5 +1,6 @@
 package es.gob.jmulticard.card.bit4id.stcm;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
@@ -39,7 +40,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 		connect(conn);
 		final byte[] b1 = selectFileByLocationAndRead(new Location("2FFF0000")); //$NON-NLS-1$
 		try (
-			final java.io.FileOutputStream fos = new java.io.FileOutputStream(java.io.File.createTempFile("0000_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+			final FileOutputStream fos = new FileOutputStream(java.io.File.createTempFile("0000_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(b1);
 			fos.flush();

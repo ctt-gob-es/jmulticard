@@ -63,7 +63,7 @@ public final class TestIcao {
 		System.out.println();
 
 		try {
-			final byte[] dg = passport.getDg2();
+			final byte[] dg = passport.getDg2().getBytes();
 			System.out.println(new String(dg));
 			System.out.println();
 		}
@@ -108,7 +108,7 @@ public final class TestIcao {
 		}
 
 		try {
-			final byte[] dg = passport.getDg7();
+			final byte[] dg = passport.getDg7().getBytes();
 			System.out.println(new String(dg));
 			System.out.println();
 		}

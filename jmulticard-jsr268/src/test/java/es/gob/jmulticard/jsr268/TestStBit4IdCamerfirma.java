@@ -72,7 +72,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println(HexUtils.hexify(trimmedData, true));
 
 		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+			final OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -99,7 +99,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+			final OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -126,7 +126,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+			final OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}

@@ -215,7 +215,6 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
 			}
 
-
     }
 
 	@Override

@@ -164,7 +164,7 @@ public final class OptionalDetailsDnie3 extends OptionalDetails {
 			"  Provincia de residencia del titular: " + getProvince() + '\n' + //$NON-NLS-1$
 			"  Pais de residencia del titular: " + getCountry() + '\n' + //$NON-NLS-1$
 			"  Fecha de caducidad del DNI: " + expirationDate + '\n' + //$NON-NLS-1$
-			"  Numero de soporte del DNI: " + getSupportNumber() + '\n'; //$NON-NLS-1$
+			"  Numero de soporte del DNI: " + getSupportNumber(); //$NON-NLS-1$
 	}
 
 }

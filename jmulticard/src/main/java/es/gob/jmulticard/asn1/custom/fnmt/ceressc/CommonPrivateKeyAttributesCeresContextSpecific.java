@@ -71,7 +71,7 @@ public final class CommonPrivateKeyAttributesCeresContextSpecific extends Contex
 		if (TAG != tag) {
 			throw new Asn1Exception(
 				"CommonPrivateKeyAttributesContextSpecific esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
-				" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+					" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
 			);
 		}
 	}

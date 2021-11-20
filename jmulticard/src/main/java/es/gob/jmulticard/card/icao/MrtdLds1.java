@@ -8,6 +8,8 @@ import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
+import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
+import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
 import es.gob.jmulticard.card.Location;
 
 /** MRTD ICAO LDS1.
@@ -90,7 +92,7 @@ public interface MrtdLds1 {
      * @author Ignacio Mar&iacute;n.
      * @return DG2 (fotograf&iacute;a del rostro del titular).
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getDg2() throws IOException;
+    SubjectFacePhoto getDg2() throws IOException;
 
     /** Obtiene el DG3 (Elementos de identificaci&oacute;n adicionales - Dedos).
      * Devuelve el objeto binario sin tratar.
@@ -126,7 +128,7 @@ public interface MrtdLds1 {
      * @author Ignacio Mar&iacute;n.
      * @return DG7 (imagen de la firma o marca habitual exhibida).
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getDg7() throws IOException;
+    SubjectSignaturePhoto getDg7() throws IOException;
 
     /** Obtiene el DG8 (Elemento datos).
      * Devuelve el objeto binario sin tratar.
@@ -208,18 +210,6 @@ public interface MrtdLds1 {
      * @return COM.
      * @throws IOException Si hay problemas leyendo el fichero. */
     Com getCom() throws IOException;
-
-    /** Obtiene la foto del titular en formato JPEG2000.
-     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
-     * @return Foto del titular en formato JPEG2000.
-     * @throws IOException Si no se puede leer la foto del titular. */
-	byte[] getSubjectPhotoAsJpeg2k() throws IOException;
-
-	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
-	 * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
-     * @return Imagen de la firma del titular en formato JPEG2000.
-	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
-	byte[] getSubjectSignatureImageAsJpeg2k() throws IOException;
 
     /** Obtiene el CardAccess.
      * @return CardAccess.

@@ -102,7 +102,12 @@ public final class UIPasswordCallbackCan extends PasswordCallback {
 
     	final JPasswordField pwd = new JPasswordField(10);
         final JLabel lbText = new JLabel(this.message);
-        lbText.setMinimumSize(new Dimension(lbText.getFontMetrics(lbText.getFont()).stringWidth(this.message), lbText.getSize().height));
+        lbText.setMinimumSize(
+    		new Dimension(
+				lbText.getFontMetrics(lbText.getFont()).stringWidth(this.message),
+				lbText.getSize().height
+			)
+		);
         lbText.setLabelFor(pwd);
         final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -134,9 +139,10 @@ public final class UIPasswordCallbackCan extends PasswordCallback {
 		final Color borderColor = Color.LIGHT_GRAY;
 
 		final BufferedImage bi = new BufferedImage(
-				icon.getIconWidth() + 2 * borderWidth + 2 * spaceAroundIcon,
-				icon.getIconHeight() + 2 * borderWidth + 2 * spaceAroundIcon,
-				BufferedImage.TYPE_INT_ARGB);
+			icon.getIconWidth() + 2 * borderWidth + 2 * spaceAroundIcon,
+			icon.getIconHeight() + 2 * borderWidth + 2 * spaceAroundIcon,
+			BufferedImage.TYPE_INT_ARGB
+		);
 
 		final Graphics2D g = bi.createGraphics();
 		g.setColor(borderColor);

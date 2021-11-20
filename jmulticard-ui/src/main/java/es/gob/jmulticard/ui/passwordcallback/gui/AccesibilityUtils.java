@@ -72,7 +72,7 @@ import javax.swing.JWindow;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-/** Clase con utilidades varias. */
+/** Clase con utilidades varias para la accesibilidad. */
 final class AccesibilityUtils {
 
     /** Indica si el sistema operativo tiene activada una combinaci&oacute;n de colores de alto contraste. */

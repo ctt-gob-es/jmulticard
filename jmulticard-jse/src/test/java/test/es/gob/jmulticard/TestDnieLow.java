@@ -1,9 +1,6 @@
 package test.es.gob.jmulticard;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 
@@ -137,7 +134,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testAuthNoPin() throws Exception {
 
 		final CryptoHelper cryptoHelper = new JseCryptoHelper();
@@ -175,7 +172,7 @@ public final class TestDnieLow {
 
 		System.out.println("SigMin cifrado: " + HexUtils.hexify(sigMinCiphered, false)); //$NON-NLS-1$
 
-		// Validamos esa autenticación externa
+		// Validamos esa autenticación interna
 		Cwa14890OneV1Connection.internalAuthValidateInternalAuthenticateMessage(
 			constants.getChrCCvIfd(),              // CHR de la clave publica del certificado de terminal
 			sigMinCiphered,                        // Mensaje de autenticacion generado por la tarjeta.
@@ -204,30 +201,25 @@ public final class TestDnieLow {
 		System.out.println();
 
 		final Mrz dg1 = dnie.getDg1();
-		System.out.println(dg1);
+		System.out.println("DG1: " + dg1); //$NON-NLS-1$
 		System.out.println();
 
-		final byte[] dg2 = dnie.getDg2(); saveTemp(dg2, "DG2");  // Foto del rostro //$NON-NLS-1$
+		final byte[] dg2 = dnie.getDg2().getBytes(); // Foto del rostro
 		// 3 no hay permisos
 		// 4, 5, 6 no presentes en el DNI
-		final byte[] dg7 = dnie.getDg7(); saveTemp(dg7, "DG7");  // Imagen de la firma manuscrita //$NON-NLS-1$
+		final byte[] dg7 = dnie.getDg7().getBytes(); // Imagen de la firma manuscrita
 		// 8, 9 y 10 no presente en el DNI
-		final byte[] dg11 = dnie.getDg11(); saveTemp(dg11, "DG11");  // Detalles personales adicionales //$NON-NLS-1$
+		final byte[] dg11 = dnie.getDg11(); // Detalles personales adicionales
+		System.out.println("DG11: " + HexUtils.hexify(dg11, false)); //$NON-NLS-1$
+		System.out.println();
 		// 12 no presente en el DNI
 
 		final OptionalDetails dg13 = dnie.getDg13(); // Detalles opcionales
 		System.out.println(dg13);
 		System.out.println();
 
-		final byte[] dg14 = dnie.getDg14(); saveTemp(dg14, "DG14");  // Opciones de seguridad //$NON-NLS-1$
-	}
-
-	private static void saveTemp(final byte[] content, final String name) throws Exception {
-		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile(name + "_", ".bin")) //$NON-NLS-1$ //$NON-NLS-2$
-		) {
-			fos.write(content);
-		}
+		final byte[] dg14 = dnie.getDg14(); // Opciones de seguridad
+		System.out.println("DG14: " + HexUtils.hexify(dg14, false)); //$NON-NLS-1$
 	}
 
 	/** Prueba de lectura de DG en DNIe 3.0.
@@ -263,7 +255,7 @@ public final class TestDnieLow {
 		System.out.println(HexUtils.hexify(cardAccess, true));
 		System.out.println();
 
-		// Abrimos canal seguro sin vertificar el PIN
+		// Abrimos canal seguro sin verificar el PIN
 		dnie.openSecureChannelIfNotAlreadyOpened(false);
 
 		final Sod sod = dnie3.getSod();
@@ -290,7 +282,7 @@ public final class TestDnieLow {
 		System.out.println();
 
 		// DG02
-		final byte[] photo = dnie3.getSubjectPhotoAsJpeg2k();
+		final byte[] photo = dnie3.getDg2().getSubjectPhotoAsJpeg2k();
 		final JFrame framePhoto = new JFrame();
 		framePhoto.add(new JLabel(new ImageIcon(ImageIO.read(new ByteArrayInputStream(photo))))); // width = 307 height = 378
 		framePhoto.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -298,7 +290,7 @@ public final class TestDnieLow {
 		framePhoto.setVisible(true);
 
 		// DG07
-		final byte[] rubric = dnie3.getSubjectSignatureImageAsJpeg2k();
+		final byte[] rubric = dnie3.getDg7().getSubjectSignaturePhotoAsJpeg2k();
 		final JFrame frameRubric = new JFrame();
 		frameRubric.add(new JLabel(new ImageIcon(ImageIO.read(new ByteArrayInputStream(rubric)))));
 		frameRubric.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

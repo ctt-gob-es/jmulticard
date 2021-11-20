@@ -63,6 +63,8 @@ import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
+import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
+import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
 import es.gob.jmulticard.card.CardSecurityException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.CryptoCardSecurityException;
@@ -113,7 +115,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 					dgBytes = getDg1().getBytes();
 					break;
 				case 2:
-					dgBytes = getDg2();
+					dgBytes = getDg2().getBytes();
 					break;
 				case 3:
 					// El DG3 necesita canal administrativo, le damos un tratamiento especial
@@ -138,7 +140,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 					dgBytes = getDg6();
 					break;
 				case 7:
-					dgBytes = getDg7();
+					dgBytes = getDg7().getBytes();
 					break;
 				case 8:
 					dgBytes = getDg8();
@@ -229,16 +231,18 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getDg2() throws IOException {
+	public SubjectFacePhoto getDg2() throws IOException {
+    	final SubjectFacePhoto ret = new SubjectFacePhoto();
 		try {
-			return selectFileByLocationAndRead(FILE_DG02_LOCATION);
+			ret.setDerValue(selectFileByLocationAndRead(FILE_DG02_LOCATION));
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw new FileNotFoundException("DG2 no encontrado: " + e); //$NON-NLS-1$
     	}
-		catch (final Iso7816FourCardException e) {
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG2: " + e, e); //$NON-NLS-1$
 		}
+		return ret;
 	}
 
     @Override
@@ -261,16 +265,18 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getDg7() throws IOException {
+	public SubjectSignaturePhoto getDg7() throws IOException {
+    	final SubjectSignaturePhoto ret = new SubjectSignaturePhoto();
 		try {
-			return selectFileByLocationAndRead(FILE_DG07_LOCATION);
+			ret.setDerValue(selectFileByLocationAndRead(FILE_DG07_LOCATION));
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw new FileNotFoundException("DG7 no encontrado: " + e); //$NON-NLS-1$
     	}
-		catch (final Iso7816FourCardException e) {
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG7: " + e, e); //$NON-NLS-1$
 		}
+		return ret;
 	}
 
     @Override
@@ -361,32 +367,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			throw new CryptoCardException("Error leyendo el 'Common Data' (COM): " + e, e); //$NON-NLS-1$
 		}
 	}
-
-	@Override
-	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
-		final byte[] photo = getDg2();
-		return extractImage(photo);
-	}
-
-	@Override
-	public byte[] getSubjectSignatureImageAsJpeg2k() throws IOException {
-		final byte[] photo = getDg7();
-		return extractImage(photo);
-	}
-
-    private static final String JPEG2K_HEADER = "0000000C6A502020"; //$NON-NLS-1$
-
-    private static final byte[] extractImage(final byte[] photo) {
-    	if (photo == null) {
-    		throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
-    	}
-    	final int headerSize = HexUtils.hexify(photo, false).indexOf(JPEG2K_HEADER) / 2;
-    	final byte[] pj2kPhoto = new byte[photo.length - headerSize];
-        System.arraycopy(photo, headerSize, pj2kPhoto, 0, pj2kPhoto.length);
-
-        // En este punto pj2kPhoto contiene la imagen en JPEG2000
-        return pj2kPhoto;
-    }
 
     /** {@inheritDoc} */
 	@Override

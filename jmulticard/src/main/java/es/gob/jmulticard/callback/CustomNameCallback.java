@@ -1,9 +1,9 @@
+/* Copyright (c) 1999, 2003, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms. */
+
 package es.gob.jmulticard.callback;
 
 import javax.security.auth.callback.Callback;
-
-/* Copyright (c) 1999, 2003, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms. */
 
 /** <p> Underlying security services instantiate and pass a
  * <code>NameCallback</code> to the <code>handle</code>

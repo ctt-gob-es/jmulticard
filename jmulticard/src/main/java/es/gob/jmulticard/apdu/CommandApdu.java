@@ -55,7 +55,9 @@ public class CommandApdu extends Apdu {
 
 	private static byte[] getBody(final byte[] bytes) {
 		if (bytes == null || bytes.length < 5) {
-			throw new IllegalArgumentException("La longitud del array de octetos debe ser igual o mayor que 5."); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+				"La longitud del array de octetos debe ser igual o mayor que 5" //$NON-NLS-1$
+			);
 		}
 		final byte[] data;
 		final int i = bytes[4] & 0xff;
@@ -70,7 +72,9 @@ public class CommandApdu extends Apdu {
 	private static Integer getLength(final byte[] bytes) {
 
 		if (bytes == null || bytes.length < 5) {
-			throw new IllegalArgumentException("La longitud del array de octetos debe ser igual o mayor que 5."); //$NON-NLS-1$
+			throw new IllegalArgumentException(
+				"La longitud del array de octetos debe ser igual o mayor que 5." //$NON-NLS-1$
+			);
 		}
 		final int i = bytes[4] & 0xff;
 		if (bytes.length>5 && bytes.length>i+5) {
@@ -146,7 +150,7 @@ public class CommandApdu extends Apdu {
 				}
 				catch (final Exception e) {
 					throw new IllegalArgumentException(
-						"No se pueden tratar los datos de la APDU: " + e //$NON-NLS-1$
+						"No se pueden tratar los datos de la APDU: " + e, e //$NON-NLS-1$
 					);
 				}
 			}
@@ -225,7 +229,7 @@ public class CommandApdu extends Apdu {
 			}
 			catch (final Exception e) {
 				throw new IllegalArgumentException(
-					"No se pueden tratar los datos de la APDU: " + e //$NON-NLS-1$
+					"No se pueden tratar los datos de la APDU: " + e, e //$NON-NLS-1$
 				);
 			}
 		}

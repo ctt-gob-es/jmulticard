@@ -42,7 +42,6 @@ package es.gob.jmulticard.asn1.der.pkcs15;
 import es.gob.jmulticard.asn1.der.BitString;
 
 /** Objeto <i>CommonObjectFlags</i> ASN&#46;1 de PKCS#15.
- *
  * <pre>
  *  CommonObjectFlags ::= BIT STRING {
  *    private (0),

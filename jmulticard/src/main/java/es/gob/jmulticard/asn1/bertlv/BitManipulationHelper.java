@@ -49,8 +49,10 @@ final class BitManipulationHelper {
 	 * @return Valor entero, considerado como binario, con el bit indicado cambiado. */
 	static int setBitValue(final int value, final int position, final boolean bitValue) {
 		if (position > 32) {
-			throw new BerParsingException("No se puede establecer el valor del bit de la posicion  " //$NON-NLS-1$
-					+ position + ", un entero en Java tiene solo 32 bits"); //$NON-NLS-1$
+			throw new BerParsingException(
+				"No se puede establecer el valor del bit de la posicion  " //$NON-NLS-1$
+					+ position + ", un entero en Java tiene solo 32 bits" //$NON-NLS-1$
+			);
 		}
 		int bitPosition = position;
 		bitPosition--; // Lo pasamos a contador desde 0

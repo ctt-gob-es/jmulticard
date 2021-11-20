@@ -76,7 +76,10 @@ public class ApduEncrypterDes extends ApduEncrypter {
     }
 
     @Override
-	protected byte[] encryptData(final byte[] data, final byte[] key, final byte[] ssc, final CryptoHelper cryptoHelper) throws IOException {
+	protected byte[] encryptData(final byte[] data,
+			                     final byte[] key,
+			                     final byte[] ssc,
+			                     final CryptoHelper cryptoHelper) throws IOException {
     	return cryptoHelper.desedeEncrypt(data, key);
     }
 
@@ -100,7 +103,10 @@ public class ApduEncrypterDes extends ApduEncrypter {
 
         int i = 0;
         while (i < dataPadded.length - 8) {
-            tmpData = cryptoHelper.desEncrypt(HexUtils.xor(tmpData, HexUtils.subArray(dataPadded, i, 8)), keyDesBytes);
+            tmpData = cryptoHelper.desEncrypt(
+        		HexUtils.xor(tmpData, HexUtils.subArray(dataPadded, i, 8)),
+        		keyDesBytes
+    		);
             i += 8;
         }
 
@@ -162,14 +168,20 @@ public class ApduEncrypterDes extends ApduEncrypter {
             }
         }
         catch (final NegativeArraySizeException e) {
-            throw new ApduConnectionException("Error en el formato de la respuesta remitida por el canal seguro", e); //$NON-NLS-1$
+            throw new ApduConnectionException(
+        		"Error en el formato de la respuesta remitida por el canal seguro", e //$NON-NLS-1$
+    		);
         }
 
         if (macTlv == null) {
-        	throw new SecureChannelException("No se ha encontrado el TLV del MAC en la APDU"); //$NON-NLS-1$
+        	throw new SecureChannelException(
+    			"No se ha encontrado el TLV del MAC en la APDU" //$NON-NLS-1$
+			);
         }
         if (swTlv == null) {
-        	throw new SecureChannelException("No se ha encontrado el TLV del StatusWord en la APDU cifrada"); //$NON-NLS-1$
+        	throw new SecureChannelException(
+    			"No se ha encontrado el TLV del StatusWord en la APDU cifrada" //$NON-NLS-1$
+			);
         }
 
         // Pasamos el TLV completo de datos y el del StatusWord concatenados
@@ -193,8 +205,12 @@ public class ApduEncrypterDes extends ApduEncrypter {
 
         // Desencriptamos y eliminamos el padding de los datos, teniendo en cuenta que el primer byte
         // de los datos es fijo (0x01) y no cuenta dentro de los datos
-        final byte[] decryptedData =
-        		removePadding7816(cryptoHelper.desedeDecrypt(HexUtils.subArray(dataTlv.getValue(), 1, dataTlv.getValue().length - 1), keyCipher));
+        final byte[] decryptedData = removePadding7816(
+    		cryptoHelper.desedeDecrypt(
+				HexUtils.subArray(dataTlv.getValue(), 1, dataTlv.getValue().length - 1),
+				keyCipher
+			)
+		);
 
         final byte[] responseApduBytes = new byte[decryptedData.length + swTlv.getValue().length];
         System.arraycopy(decryptedData, 0, responseApduBytes, 0, decryptedData.length);
@@ -203,7 +219,7 @@ public class ApduEncrypterDes extends ApduEncrypter {
         return new ResponseApdu(responseApduBytes);
     }
 
-    /** Comprueba que un codigo de verificacion sea correcto con respecto a unos datos y el
+    /** Comprueba que un c&oacute;digo de verificaci&oacute;n sea correcto con respecto a unos datos y el
      * c&oacute;digo de respuesta de una petici&oacute;n.
      * @param verificableData Datos.
      * @param macTlvBytes C&oacute;digo de verificaci&oacute;n.
@@ -217,7 +233,9 @@ public class ApduEncrypterDes extends ApduEncrypter {
     		calculatedMac = generateMac(addPadding7816(verificableData, this.paddingLength), ssc, kMac, cryptoHelper);
     	}
     	catch (final IOException e) {
-    		throw new SecurityException("No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion: " + e, e); //$NON-NLS-1$
+    		throw new SecurityException(
+				"No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion: " + e, e //$NON-NLS-1$
+			);
 		}
 
     	// Comparamos que el MAC recibido sea igual que el MAC que debimos recibir

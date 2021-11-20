@@ -113,7 +113,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 				"El objeto DG02 solo esta presente en DNIe 3.0" //$NON-NLS-1$
 			);
     	}
-    	return ((Dnie3)this.cryptoCard).getDg2();
+    	return ((Dnie3)this.cryptoCard).getDg2().getBytes();
     }
 
     /** {@inheritDoc} */
