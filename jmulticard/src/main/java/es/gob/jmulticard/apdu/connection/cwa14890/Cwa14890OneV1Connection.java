@@ -338,14 +338,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     }
 
     /** Genera la clave <code>KENC</code> para encriptar y desencriptar criptogramas.
+     * La clave de cifrado Kenc se obtiene como los 16 primeros octetos de la huella SHA-1 de la
+     * concatenaci&oacute;n de <i>kifdicc</i> con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
      * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
      * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
-        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-1 de la
-        // concatenacion de kifdicc con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
-    	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
 
+    	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
@@ -363,12 +363,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     }
 
     /** Genera la clave <code>KMAC</code> para calcular y verificar <i>checksums</i>.
+     * La clave para el c&aacute;lculo del MAC Kmac se obtiene como los 16 primeros octetos
+     * de la huella SHA-1 de la concatenaci&oacute;n de <i>kifdicc</> con el valor
+     * "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
      * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
      * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
-        // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
-        // del hash SHA-1 de la concatenacion de kifdicc con el valor "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
+
         final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KMAC_AUX);
 
         final byte[] keyMac = new byte[16];
@@ -388,13 +390,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Genera el contador de secuencia SSC a partir de los semillas aleatorias calculadas
      * en los procesos de autenticaci&oacute;n interna y externa.
+     * El contador de secuencia SSC se obtiene concatenando los 4 octetos menos
+     * significativos del desaf&iacute;o de la tarjeta (RND.ICC) con los 4 menos
+     * significativos del desaf&iacute;o del terminal (RND.IFD)
      * @param randomIfd Aleatorio del desaf&iacute;o del terminal.
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
     private static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
-        // El contador de secuencia SSC se obtiene concatenando los 4 bytes menos
-        // significativos del desafio de la tarjeta (RND.ICC) con los 4 menos
-        // significativos del desafio del Terminal (RND.IFD)
+
         final byte[] ssc = new byte[8];
         System.arraycopy(randomIcc, 4, ssc, 0, 4);
         System.arraycopy(randomIfd, 4, ssc, 4, 4);
@@ -875,6 +878,21 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 		if (this.subConnection != null) {
 			this.subConnection.setProtocol(p);
 		}
+	}
+
+	@Override
+	public byte[] getKenc() {
+		return this.kenc;
+	}
+
+	@Override
+	public byte[] getKmac() {
+		return this.kmac;
+	}
+
+	@Override
+	public byte[] getSsc() {
+		return this.ssc;
 	}
 
 }
