@@ -59,10 +59,11 @@ public class ApduEncrypterDes extends ApduEncrypter {
         this.paddingLength = 8;
     }
 
-    /** Tag del TLV de estado de respuesta de una APDU de respuesta. */
+    /** <i>Tag</i> del TLV de estado de respuesta de una APDU de respuesta. */
     private static final byte TAG_SW_TLV = (byte) 0x99;
 
-    /** Tag del TLV de codigo de autenticacion de mensaje (MAC) de una APDU de respuesta. */
+    /** <i>Tag</i> del TLV de c&oacute;digo de autenticaci&oacute;n de mensaje (MAC)
+     * de una APDU de respuesta. */
     private static final byte TAG_MAC_TLV = (byte) 0x8E;
 
     /** Longitud de la MAC de las APDU cifradas. */
@@ -145,7 +146,10 @@ public class ApduEncrypterDes extends ApduEncrypter {
 
         // Si el resultado es incorrecto, lo devolvemos para su evaluacion
         if (!responseApdu.isOk()) {
-            return new ResponseApdu(responseApdu.getStatusWord().getBytes());
+            return new ResponseApdu(
+        		responseApdu.getStatusWord().getBytes(),
+        		responseApdu.getBytes()
+    		);
         }
 
         // Desciframos y validamos el resultado
@@ -169,7 +173,7 @@ public class ApduEncrypterDes extends ApduEncrypter {
         }
         catch (final NegativeArraySizeException e) {
             throw new ApduConnectionException(
-        		"Error en el formato de la respuesta remitida por el canal seguro", e //$NON-NLS-1$
+        		"Error en el formato de la respuesta remitida por el canal seguro: " + e, e //$NON-NLS-1$
     		);
         }
 
@@ -216,17 +220,24 @@ public class ApduEncrypterDes extends ApduEncrypter {
         System.arraycopy(decryptedData, 0, responseApduBytes, 0, decryptedData.length);
         System.arraycopy(swTlv.getValue(), 0, responseApduBytes, decryptedData.length, swTlv.getValue().length);
 
-        return new ResponseApdu(responseApduBytes);
+        return new ResponseApdu(
+    		responseApduBytes,
+    		responseApdu.getBytes()
+		);
     }
 
-    /** Comprueba que un c&oacute;digo de verificaci&oacute;n sea correcto con respecto a unos datos y el
-     * c&oacute;digo de respuesta de una petici&oacute;n.
+    /** Comprueba que un c&oacute;digo de verificaci&oacute;n sea correcto con respecto a
+     * unos datos y el c&oacute;digo de respuesta de una petici&oacute;n.
      * @param verificableData Datos.
      * @param macTlvBytes C&oacute;digo de verificaci&oacute;n.
      * @param ssc C&oacute;digo de secuencia.
      * @param kMac Clave para la generaci&oacute;n del MAC.
      * @param cryptoHelper Manejador de operaciones criptogr&aacute;ficas. */
-    private void verifyMac(final byte[] verificableData, final byte[] macTlvBytes, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) {
+    private void verifyMac(final byte[] verificableData,
+    		               final byte[] macTlvBytes,
+    		               final byte[] ssc,
+    		               final byte[] kMac,
+    		               final CryptoHelper cryptoHelper) {
 
     	final byte[] calculatedMac;
     	try {

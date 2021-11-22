@@ -39,15 +39,27 @@
  */
 package es.gob.jmulticard.apdu;
 
-/** APDU respuesta para comunicaci&oacute;n con tarjeta inteligente.
+/** APDU de respuesta para comunicaci&oacute;n con tarjeta inteligente.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class ResponseApdu extends Apdu {
+
+	private final byte[] encryptedByes;
 
     /** Construye una APDU de respuesta a partir de su representaci&oacute;n
      * binaria directa.
      * @param fullBytes Representaci&oacute;n binaria directa de la APDU. */
     public ResponseApdu(final byte[] fullBytes) {
         setBytes(fullBytes);
+        this.encryptedByes = null;
+    }
+
+    /** Construye una APDU de respuesta a partir de su representaci&oacute;n
+     * binaria directa.
+     * @param fullBytes Representaci&oacute;n binaria directa de la APDU.
+     * @param encrypted Codificaci&oacute;n encriptada de la APDU. */
+    public ResponseApdu(final byte[] fullBytes, final byte[] encrypted) {
+        setBytes(fullBytes);
+        this.encryptedByes = encrypted != null ? encrypted.clone() : null;
     }
 
     /** Obtiene el campo de datos de la APDU.
@@ -73,5 +85,12 @@ public class ResponseApdu extends Apdu {
         }
         return getBytes()[getBytes().length - 1] == (byte) 0x00 && getBytes()[getBytes().length - 2] == (byte) 0x90;
     }
+
+	/** Obtiene la codificaci&oacute;n encriptada de la APDU.
+	 * @return Codificaci&oacute;n encriptada de la APDU si existe, la
+	 *         codificaci&oacute;n en claro si es la &uacute;nica disponible. */
+	public byte[] getEncryptedByes() {
+		return this.encryptedByes != null ? this.encryptedByes : getBytes();
+	}
 
 }
