@@ -80,7 +80,13 @@ public final class HexUtils {
      * @param wLen Longitud de los datos en el segundo <i>array</i>.
      * @return <code>true</code> si los <i>arrays</i> son iguales en longitudes y valores comparados desde
      *         los respectivos desplazamientos, <code>false</code> en caso contrario. */
-    public static boolean arrayEquals(final byte[] v, final int vOffset, final int vLen, final byte[] w, final int wOffset, final int wLen) {
+    public static boolean arrayEquals(final byte[] v,
+    		                          final int vOffset,
+    		                          final int vLen,
+    		                          final byte[] w,
+    		                          final int wOffset,
+    		                          final int wLen) {
+
         if (vLen != wLen || v.length < vOffset + vLen || w.length < wOffset + wLen) {
             return false;
         }
@@ -101,10 +107,15 @@ public final class HexUtils {
     }
 
     /** Obtiene un entero sin signo (doble octeto) a partir de un <i>array</i> de octetos.
-     * @param data <i>Array</i> de octetos.
+     * @param data <i>Array</i> de octetos. Solo se tienen en cuenta dos posiciones, y si el
+     *             <i>Array</i> (a partir del desplazamiento) solo tiene una posici&oacute;n,
+     *             se considera que ese &uacute;nico octeto es el valor sin signo del entero.
      * @param offset Desplazamiento (<i>offset</i>) hasta el inicio de los datos a tratar.
      * @return Valor entero sin signo (<i>2-byte unsigned int</i>). */
     public static int getUnsignedInt(final byte[] data, final int offset) {
+    	if (data.length - offset < 2) {
+    		return data[offset] & 0xff;
+    	}
         return (data[offset] & 0xff) << 8 | data[offset + 1] & 0xff;
     }
 
@@ -113,7 +124,7 @@ public final class HexUtils {
      * <code>opencard.core.util.HexString</code></a>.
      * @param abyte <i>Array</i> de octetos que deseamos representar textualmente.
      * @param separator Indica si han de separarse o no los octetos con un gui&oacute;n y en
-     *        l&iacute;neas de 16.
+     *                  l&iacute;neas de 16.
      * @return Representaci&oacute;n textual del vector de octetos de entrada. */
     public static String hexify(final byte abyte[], final boolean separator) {
         if (abyte == null) {

@@ -45,5 +45,16 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 /** Conexi&oacute;n CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Cwa14890Connection extends ApduConnection {
-	// Vacio
+
+	/** Obtiene la clave para encriptar y desencriptar criptogramas.
+	 * @return Clave para encriptar y desencriptar criptogramas. */
+	byte[] getKenc();
+
+	/** Obtiene la clave para calcular y verificar <i>checksums</i>.
+	 * @return Clave para calcular y verificar <i>checksums</i>. */
+	byte[] getKmac();
+
+	/** Obtiene el contador de secuencia.
+	 * @return Contador de secuencia. */
+	byte[] getSsc();
 }

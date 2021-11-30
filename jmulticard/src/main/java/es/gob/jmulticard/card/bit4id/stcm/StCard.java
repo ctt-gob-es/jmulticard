@@ -1,5 +1,6 @@
 package es.gob.jmulticard.card.bit4id.stcm;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
@@ -18,7 +19,6 @@ import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** Tajeta de <a href="http://www.bit4id.com/">Bit4Id</a> con chip <a href="http://www.st.com/">ST</a>
  *  distribuida por <a href="http://www.camerfirma.com/">CamerFirma</a>.
@@ -40,7 +40,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 		connect(conn);
 		final byte[] b1 = selectFileByLocationAndRead(new Location("2FFF0000")); //$NON-NLS-1$
 		try (
-			final java.io.FileOutputStream fos = new java.io.FileOutputStream(java.io.File.createTempFile("0000_", ".DER")); //$NON-NLS-1$ //$NON-NLS-2$
+			final FileOutputStream fos = new FileOutputStream(java.io.File.createTempFile("0000_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(b1);
 			fos.flush();
@@ -99,7 +99,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
             }
             throw new ApduConnectionException(
         		"Error en el envio de la verificacion de PIN con respuesta: " + //$NON-NLS-1$
-    				Iso7816fourErrorCodes.getErrorDescription(verifyResponse.getStatusWord())
+    				verifyResponse.getStatusWord()
     		);
         }
 	}

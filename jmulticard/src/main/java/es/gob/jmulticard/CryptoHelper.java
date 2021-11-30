@@ -46,8 +46,6 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 
@@ -56,8 +54,8 @@ import java.security.spec.InvalidKeySpecException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class CryptoHelper {
 
-	/** Nombre de curva el&iacute;ptica. */
-	protected enum EcCurve {
+	/** Nombres de curva el&iacute;ptica. */
+	public enum EcCurve {
 
 		/** BrainpoolP256r1. */
 		BRAINPOOL_P256_R1("brainpoolp256r1"); //$NON-NLS-1$
@@ -88,7 +86,11 @@ public abstract class CryptoHelper {
 		/** SHA-512. */
 		SHA512("SHA-512"); //$NON-NLS-1$
 
+		/** Nombre del algoritmo de huella digital. */
 		private final String name;
+
+		/** Construye el algoritmo de huella digital.
+		 * @param n Nombre del algoritmo. */
 		DigestAlgorithm(final String n) {
 			this.name = n;
 		}
@@ -214,13 +216,6 @@ public abstract class CryptoHelper {
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     encriptado. */
     public abstract byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException;
-
-    /** Genera un certificado X&#46;509 a partir de su codificaci&oacute;n.
-     * @param encode Codificaci&oacute;n del certificado.
-     * @return Certificado generado.
-     * @throws CertificateException Si ocurre alg&uacute;n problema durante la
-     *                              generaci&oacute;n. */
-    public abstract Certificate generateCertificate(byte[] encode) throws CertificateException;
 
     /** Genera contenido aleatorio en un array de bytes.
      * @param numBytes N&uacute;mero de bytes aleatorios que generar.

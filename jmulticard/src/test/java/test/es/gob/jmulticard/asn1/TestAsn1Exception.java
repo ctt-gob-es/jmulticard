@@ -3,11 +3,10 @@
  */
 package test.es.gob.jmulticard.asn1;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 
 import es.gob.jmulticard.asn1.Asn1Exception;
+import junit.framework.TestCase;
 
 /** Pruebas unitarias para la clase {@linkplain es.gob.jmulticard.asn1.Asn1Exception}
  * @author Alberto Mart&iacute;nez */

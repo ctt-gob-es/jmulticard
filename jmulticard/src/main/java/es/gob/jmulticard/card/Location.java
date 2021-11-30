@@ -46,14 +46,17 @@ import java.util.Vector;
 import es.gob.jmulticard.HexUtils;
 
 /** Ruta hacia un fichero (EF o DF) ISO 7816-4.
- * Un fichero (EF) o directorio (DF) se identifica por un par de bytes o palabra
+ * Un fichero (EF) o directorio (DF) se identifica por un par de octetos o palabra
  * que representan su identificador &uacute;nico. Todos los ficheros tienen como
  * antepasado al fichero MF, que corresponde con el identificador 0x3F00.
- * @author Alberto Mart&iacute;nez */
+ * @author Alberto Mart&iacute;nez
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Location {
 
+	/** Identificaci&oacute;n por defecto del <i>Master File</i>. */
     private static final int MASTER_FILE_ID = 0x3F00;
 
+    /** Elementos de la ruta hacia el fichero. */
     private Vector<Integer> path = new Vector<>();
 
     private static final Map<String, Integer> HEXBYTES = new HashMap<>();
@@ -139,7 +142,7 @@ public final class Location {
         final String aux = absolutePath.toLowerCase();
         for (int i = 0; i < absolutePath.length(); i++) {
         	final char currentChar = aux.charAt(i);
-            if (!(currentChar >= '0' && currentChar <= '9' || currentChar >= 'a' && currentChar <= 'f')) {
+            if ((currentChar < '0' || currentChar > '9') && (currentChar < 'a' || currentChar > 'f')) {
             	throw new IllegalArgumentException(
         			"Encontrado el caracter invalido '" + currentChar + "'en la ruta '" + absolutePath + "'" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     			);
@@ -149,7 +152,7 @@ public final class Location {
 
     /** Genera un vector de enteros con los diversos identificadores de DF y EF
      * indicados en la ruta absoluta que se proporciona como par&aacute;metro.
-     * @param absolutePath Ruta absoluta */
+     * @param absolutePath Ruta absoluta. */
     private void init(final String absolutePath) {
 
         checkValidPath(absolutePath);

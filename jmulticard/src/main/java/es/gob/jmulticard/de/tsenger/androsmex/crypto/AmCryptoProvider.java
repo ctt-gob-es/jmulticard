@@ -81,7 +81,7 @@ public abstract class AmCryptoProvider {
 
 		try (
 			final InputStream bin = new ByteArrayInputStream(in);
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
 		) {
 			try {
 				while ((noBytesRead = bin.read(this.buf)) >= 0) {
@@ -125,7 +125,7 @@ public abstract class AmCryptoProvider {
 
 		try (
 			final InputStream bin = new ByteArrayInputStream(in);
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
 		) {
 			try {
 				while ((noBytesRead = bin.read(this.buf)) >= 0) {

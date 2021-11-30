@@ -1,5 +1,3 @@
-package es.gob.jmulticard.callback;
-
 /*
  * Copyright (c) 1999, 2003, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -24,6 +22,8 @@ package es.gob.jmulticard.callback;
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
+
+package es.gob.jmulticard.callback;
 
 import javax.security.auth.callback.Callback;
 

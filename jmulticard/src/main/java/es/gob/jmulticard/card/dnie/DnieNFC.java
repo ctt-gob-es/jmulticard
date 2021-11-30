@@ -18,16 +18,17 @@ import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.pace.InvalidCanOrMrzException;
-import es.gob.jmulticard.card.pace.PaceChannelHelper;
-import es.gob.jmulticard.card.pace.PaceConnection;
-import es.gob.jmulticard.card.pace.PaceException;
-import es.gob.jmulticard.card.pace.PaceInitializer;
-import es.gob.jmulticard.card.pace.PaceInitializerCan;
-import es.gob.jmulticard.card.pace.PaceInitializerMrz;
+import es.gob.jmulticard.card.icao.IcaoException;
+import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
+import es.gob.jmulticard.card.icao.WirelessInitializer;
+import es.gob.jmulticard.card.icao.WirelessInitializerCan;
+import es.gob.jmulticard.card.icao.WirelessInitializerMrz;
+import es.gob.jmulticard.card.icao.pace.PaceChannelHelper;
+import es.gob.jmulticard.card.icao.pace.PaceConnection;
+import es.gob.jmulticard.card.icao.pace.PaceException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
-/** Lectura de DNIe 3 a partir de un dispositivo con NFC.
+/** DNIe 3 accedido mediante PACE por NFC.
  * @author Sergio Mart&iacute;nez Rico
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Ignacio Mar&iacute;n. */
@@ -43,7 +44,7 @@ public class DnieNFC extends Dnie3 {
 	DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
-			final CallbackHandler ch) throws PaceException,
+			final CallbackHandler ch) throws IcaoException,
 	                                         ApduConnectionException {
 		this(
 			getPaceConnection(conn, ch),
@@ -54,11 +55,20 @@ public class DnieNFC extends Dnie3 {
 		);
 	}
 
-	DnieNFC(final ApduConnection conn,
+	/** Construte un DNIe 3 accedido mediante PACE por NFC.
+	 * @param conn Conexi&oacute;n NFC.
+	 * @param pwc <code>PasswordCallback</code> para obtener el PIN.
+	 * @param cryptoHelper Clase de utiildades criptogr&aacute;ficas.
+	 * @param ch <code>CallbackHandler</code> para obtener el PIN y el CAN o la MRZ.
+	 * @param loadCertsAndKeys <code>true</code> si se ha de hacer una carga de claves
+	 *                         y certificados en el momento de la construcci&oacute;n.
+	 * @throws IcaoException Si no se puede establecer en canal PACE.
+	 * @throws ApduConnectionException Si hay problemas en el env&iacute;o de las APDU. */
+	protected DnieNFC(final ApduConnection conn,
 			final PasswordCallback pwc,
 			final CryptoHelper cryptoHelper,
 			final CallbackHandler ch,
-			final boolean loadCertsAndKeys) throws PaceException,
+			final boolean loadCertsAndKeys) throws IcaoException,
 	                                               ApduConnectionException {
 		super(
 			getPaceConnection(conn, ch),
@@ -77,7 +87,7 @@ public class DnieNFC extends Dnie3 {
 
 	private static ApduConnection getPaceConnection(final ApduConnection con,
 			                                        final CallbackHandler ch) throws ApduConnectionException,
-	                                                                                 PaceException {
+	                                                                                 IcaoException {
 		// Primero obtenemos el CAN/MRZ
 		final String prompt = CardMessages.getString("DnieNFC.0"); //$NON-NLS-1$
 		Callback tic;
@@ -139,9 +149,9 @@ public class DnieNFC extends Dnie3 {
 					}
 					paceInitValue = (String)o;
 				}
-				catch (final NoSuchMethodException |
-					         SecurityException |
-					         IllegalAccessException |
+				catch (final NoSuchMethodException    |
+					         SecurityException        |
+					         IllegalAccessException   |
 					         IllegalArgumentException |
 					         InvocationTargetException e) {
 					throw new IllegalStateException(
@@ -157,13 +167,13 @@ public class DnieNFC extends Dnie3 {
 				}
 			}
 			try {
-				final PaceInitializer paceInitializer;
+				final WirelessInitializer paceInitializer;
 				switch (paceInitType) {
 					case MRZ:
-						paceInitializer = PaceInitializerMrz.deriveMrz(paceInitValue);
+						paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue);
 						break;
 					case CAN:
-						paceInitializer = new PaceInitializerCan(paceInitValue);
+						paceInitializer = new WirelessInitializerCan(paceInitValue);
 						break;
 					default:
 						throw new UnsupportedOperationException(
@@ -206,17 +216,19 @@ public class DnieNFC extends Dnie3 {
 	}
 
 	private static ApduConnection getPaceConnection(final ApduConnection con) throws ApduConnectionException,
-	                                                                                 PaceException {
-		final PaceInitializer paceInitializer;
+	                                                                                 IcaoException {
+		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
-				paceInitializer = PaceInitializerMrz.deriveMrz(paceInitValue);
+				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue);
 				break;
 			case CAN:
-				paceInitializer = new PaceInitializerCan(paceInitValue);
+				paceInitializer = new WirelessInitializerCan(paceInitValue);
 				break;
 			default:
-				throw new UnsupportedOperationException("No se soporta el codigo de inicializacion de PACE: " + paceInitType); //$NON-NLS-1$
+				throw new UnsupportedOperationException(
+					"No se soporta el codigo de inicializacion de PACE: " + paceInitType //$NON-NLS-1$
+				);
 		}
 
 		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
@@ -248,7 +260,7 @@ public class DnieNFC extends Dnie3 {
 					"Error en la transmision de la APDU: " + e, e //$NON-NLS-1$
 				);
 			}
-			catch (final PaceException e) {
+			catch (final IcaoException e) {
 				throw new CryptoCardException(
 					"Error en el establecimiento del canal PACE: " + e, e //$NON-NLS-1$
 				);
@@ -284,11 +296,13 @@ public class DnieNFC extends Dnie3 {
 			selectMasterFile();
 		}
 		catch (final Exception e1) {
-			// Error al pasar de un canal cifrado a uno no cifrado. Se usa para reiniciar la tarjeta inteligente por NFC
+			// Error al pasar de un canal cifrado a uno no cifrado.
+			// Se usa para reiniciar la tarjeta inteligente por NFC
+			LOGGER.info("Paso de canal seguro a no seguro al reiniciar: " + e1); //$NON-NLS-1$
 		}
 	}
 
-	private static PacePasswordType getPasswordType(final String paceInitializationValue){
+	private static PacePasswordType getPasswordType(final String paceInitializationValue) {
 		if(isNumeric(paceInitializationValue) && paceInitializationValue.length() <= 6) {
 			return PacePasswordType.CAN;
 		}

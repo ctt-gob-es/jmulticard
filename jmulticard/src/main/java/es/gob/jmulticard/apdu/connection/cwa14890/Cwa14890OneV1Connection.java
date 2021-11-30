@@ -74,10 +74,10 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
 	private static final StatusWord INVALID_CRYPTO_CHECKSUM = new StatusWord((byte)0x66, (byte)0x88);
 
-	/** Byte de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
+	/** Octeto de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
 
-	/** Byte de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
+	/** Octeto de valor m&aacute;s significativo que indica un <code>Le</code> incorrecto en la petici&oacute;n. */
 	private static final byte MSB_INCORRECT_LE_PACE = (byte) 0x62;
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave <code>Kenc</code> del canal seguro. */
@@ -102,7 +102,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     /** Clave Triple DES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
     private byte[] kenc = null;
 
-    /** Clave Triple DES (TDES o DESEDE) para calcular y verificar checksums. */
+    /** Clave Triple DES (TDES o DESEDE) para calcular y verificar <i>checksums</i>. */
     private byte[] kmac = null;
 
     /** Contador de secuencia. */
@@ -219,19 +219,19 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final SecurityException e) {
             conn.close();
             throw new IllegalStateException(
-        		"Condicion de seguridad no satisfecha en la validacion de los certificados CWA-14890: " + e //$NON-NLS-1$
+        		"Condicion de seguridad no satisfecha en la validacion de los certificados CWA-14890: " + e, e //$NON-NLS-1$
             );
         }
         catch (final CertificateException e) {
             conn.close();
             throw new IllegalStateException(
-        		"No se han podido tratar los certificados CWA-14890: " + e//$NON-NLS-1$
+        		"No se han podido tratar los certificados CWA-14890: " + e, e //$NON-NLS-1$
             );
         }
         catch (final IOException e) {
             conn.close();
             throw new IllegalStateException(
-        		"No se han podido validar los certificados CWA-14890: " + e//$NON-NLS-1$
+        		"No se han podido validar los certificados CWA-14890: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -239,15 +239,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // y externa
         final RSAPublicKey iccPublicKey;
         try {
-            iccPublicKey = (RSAPublicKey) this.cryptoHelper.generateCertificate(
-        		this.card.getIccCertEncoded()
-    		).getPublicKey();
-        }
-        catch (final CertificateException e) {
-            conn.close();
-            throw new ApduConnectionException(
-        		"No se pudo obtener la clave publica del certificado de componente: " + e, e //$NON-NLS-1$
-            );
+            iccPublicKey = (RSAPublicKey) this.card.getIccCert().getPublicKey();
         }
         catch (final IOException e) {
         	conn.close();
@@ -270,7 +262,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
 
         // --- STAGE 3 ---
-        // Autenticacion interna (El driver comprueba la tarjeta)
+        // Autenticacion interna (el driver comprueba la tarjeta)
         // ---------------
         final byte[] randomIfd;
         try {
@@ -295,7 +287,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
 
         // --- STAGE 4 ---
-        // Autenticacion externa (La tarjeta comprueba el driver)
+        // Autenticacion externa (la tarjeta comprueba el driver)
         // ---------------
         final byte[] randomIcc = this.card.getChallenge();
         final byte[] kifd;
@@ -326,7 +318,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final IOException e) {
             conn.close();
             throw new ApduConnectionException(
-        		"Error al generar la clave Kenc para el tratamiento del canal seguro", e //$NON-NLS-1$
+        		"Error al generar la clave Kenc para el tratamiento del canal seguro: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -336,7 +328,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         catch (final IOException e) {
             conn.close();
             throw new ApduConnectionException(
-        		"Error al generar la clave Kmac para el tratamiento del canal seguro", e //$NON-NLS-1$
+        		"Error al generar la clave Kmac para el tratamiento del canal seguro: " + e, e //$NON-NLS-1$
             );
         }
 
@@ -346,14 +338,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     }
 
     /** Genera la clave <code>KENC</code> para encriptar y desencriptar criptogramas.
+     * La clave de cifrado Kenc se obtiene como los 16 primeros octetos de la huella SHA-1 de la
+     * concatenaci&oacute;n de <i>kifdicc</i> con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
      * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
      * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKenc(final byte[] kidficc) throws IOException {
-        // La clave de cifrado Kenc se obtiene como los 16 primeros bytes del hash SHA-1 de la
-        // concatenacion de kifdicc con el valor "00 00 00 01" (SECURE_CHANNEL_KENC_AUX).
-    	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
 
+    	final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KENC_AUX);
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
@@ -370,13 +362,15 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return keyEnc;
     }
 
-    /** Genera la clave <code>KMAC</code> para calcular y verificar checksums.
+    /** Genera la clave <code>KMAC</code> para calcular y verificar <i>checksums</i>.
+     * La clave para el c&aacute;lculo del MAC Kmac se obtiene como los 16 primeros octetos
+     * de la huella SHA-1 de la concatenaci&oacute;n de <i>kifdicc</> con el valor
+     * "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
      * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
      * @return Clave Triple-DES.
      * @throws IOException Cuando no puede generarse la clave. */
     private byte[] generateKmac(final byte[] kidficc) throws IOException {
-        // La clave para el calculo del MAC Kmac se obtiene como los 16 primeros bytes
-        // del hash SHA-1 de la concatenacion de kifdicc con el valor "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
+
         final byte[] kidficcConcat = HexUtils.concatenateByteArrays(kidficc, SECURE_CHANNEL_KMAC_AUX);
 
         final byte[] keyMac = new byte[16];
@@ -396,13 +390,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Genera el contador de secuencia SSC a partir de los semillas aleatorias calculadas
      * en los procesos de autenticaci&oacute;n interna y externa.
+     * El contador de secuencia SSC se obtiene concatenando los 4 octetos menos
+     * significativos del desaf&iacute;o de la tarjeta (RND.ICC) con los 4 menos
+     * significativos del desaf&iacute;o del terminal (RND.IFD)
      * @param randomIfd Aleatorio del desaf&iacute;o del terminal.
      * @param randomIcc Aleatorio del desaf&iacute;o de la tarjeta.
      * @return Contador de secuencia. */
     private static byte[] generateSsc(final byte[] randomIfd, final byte[] randomIcc) {
-        // El contador de secuencia SSC se obtiene concatenando los 4 bytes menos
-        // significativos del desafio de la tarjeta (RND.ICC) con los 4 menos
-        // significativos del desafio del Terminal (RND.IFD)
+
         final byte[] ssc = new byte[8];
         System.arraycopy(randomIcc, 4, ssc, 0, 4);
         System.arraycopy(randomIfd, 4, ssc, 4, 4);
@@ -410,54 +405,66 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return ssc;
     }
 
-    /** Lleva a cabo el proceso de autenticaci&oacute;n interna de la tarjeta mediante el
-     * cual el controlador comprueba la tarjeta.
-     * @param randomIfd Array de 8 bytes aleatorios.
-     * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
-     * @return Semilla de 32 [KICC_LENGTH] bits, generada por la tarjeta, para la derivaci&oacute;n de
-     *         claves del canal seguro.
-     * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
-    private byte[] internalAuthentication(final byte[] randomIfd,
-    		                              final RSAPublicKey iccPublicKey) throws SecureChannelException,
-                                                                                  ApduConnectionException,
-                                                                                  IOException {
+    /** Solicita a la tarjeta un mensaje firmado de autenticaci&oacute;n interna.
+     * @param card Tarjeta que se desea autenticar.
+     * @param pubConsts Constantes p&uacute;blicas para la apertura de canal CWA-14890.
+     * @param randomIfd Aleatorio del desaf&iacute;o del terminal.
+     * @return Mensaje de autenticaci&oacute;n interna firmado por la tarjeta con su clave
+     *         privada de componente.
+     * @throws ApduConnectionException Si hay cualquier error durante el proceso. */
+    public static byte[] internalAuthGetInternalAuthenticateMessage(final Cwa14890Card card,
+    		                                                        final Cwa14890PublicConstants pubConsts,
+    		                                                        final byte[] randomIfd) throws ApduConnectionException {
         // Seleccionamos la clave publica del certificado de Terminal a la vez
         // que aprovechamos para seleccionar la clave privada de componente para autenticar
         // este certificado de Terminal
         try {
-            this.card.setKeysToAuthentication(
-        		this.card.getChrCCvIfd(this.pubConsts),
-        		this.card.getRefIccPrivateKey(this.pubConsts)
+            card.setKeysToAuthentication(
+        		card.getChrCCvIfd(pubConsts),
+        		card.getRefIccPrivateKey(pubConsts)
     		);
         }
         catch (final Exception e) {
             throw new SecureChannelException(
         		"Error durante el establecimiento de la clave " + //$NON-NLS-1$
-                "publica de Terminal y la privada de componente para su atenticacion", e //$NON-NLS-1$
+    				"publica de Terminal y la privada de Componente para su autenticacion: " + e, e //$NON-NLS-1$
             );
         }
 
         // Iniciamos la autenticacion interna de la clave privada del certificado de componente
-        final byte[] sigMinCiphered = this.card.getInternalAuthenticateMessage(
+        return card.getInternalAuthenticateMessage(
     		randomIfd,
-    		this.card.getChrCCvIfd(this.pubConsts)
+    		card.getChrCCvIfd(pubConsts)
 		);
 
-        // Esta respuesta de la tarjeta es un mensaje:
-        // - Cifrado con la clave privada de componente de la tarjeta
-        // - Al que se le ha aplicado la funcion SIGMIN
-        // - Y que se ha cifrado con la clave publica del Terminal
-        // Para obtener el mensaje original deberemos deshacer cada una de estas operaciones en
-        // sentido inverso.
-        // El resultado sera correcto si empieza por el byte 0x6a [ISO_9796_2_PADDING_START] (ISO 9796-2, DS scheme 1) y
-        // termina con el byte 0xbc [ISO_9796_2_PADDING_END] (ISO-9796-2, Option 1).
+    }
 
+    /** Valida un mensaje de autenticaci&oacute;n interna generado por una tarjeta.
+     * @param chrCCvIfd CHR de la clave p&uacute;blica del certificado de terminal.
+     * @param sigMinCiphered Mensaje de autenticaci&oacute;n generado por la tarjeta.
+     * @param randomIfd Aleatorio del desaf&iacute;o del terminal.
+     * @param ifdPrivateKey Clave privada del certificado de terminal.
+     * @param ifdKeyLength Longitud, <u>en octetos</u>, de las claves RSA del certificado de
+     *                     componente del terminal.
+     * @param privConsts Constantes privadas para la apertura de canal CWA-14890.
+     * @param pubConsts Constantes p&uacute;blicas para la apertura de canal CWA-14890.
+     * @param iccPublicKey Clave p&uacute;blica del certificado de componente.
+     * @param cryptoHelper Utilidad para la ejecuci&oacute;n de funciones criptogr&aacute;ficas.
+     * @return Kicc para el cifrado de APDUs con esta tarjeta.
+     * @throws IOException Si el mensaje no es v&aacute;lido o no se ha podido validar. */
+    public static byte[] internalAuthValidateInternalAuthenticateMessage(final byte[] chrCCvIfd,
+    		                                                             final byte[] sigMinCiphered,
+    				                                                     final byte[] randomIfd,
+    				                                                     final RSAPrivateKey ifdPrivateKey,
+    				                                                     final int ifdKeyLength,
+    			                                                         final Cwa14890PrivateConstants privConsts,
+    	    		                                                     final Cwa14890PublicConstants pubConsts,
+    			                                                         final RSAPublicKey iccPublicKey,
+    			                                                         final CryptoHelper cryptoHelper) throws IOException {
         // -- Descifrado con la clave privada del Terminal
-        final byte[] sigMin = this.cryptoHelper.rsaDecrypt(
+        final byte[] sigMin = cryptoHelper.rsaDecrypt(
     		sigMinCiphered,
-    		this.card.getIfdPrivateKey(this.privConsts)
+    		ifdPrivateKey
 		);
 
         // Este resultado es el resultado de la funcion SIGMIN que es minimo de SIG (los
@@ -467,7 +474,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // certificado de componente de la tarjeta.
 
         final byte[] sig = sigMin;
-        byte[] desMsg = this.cryptoHelper.rsaEncrypt(sig, iccPublicKey);
+        byte[] desMsg = cryptoHelper.rsaEncrypt(sig, iccPublicKey);
 
         // Si el resultado no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina por
         // 0xbc [ISO_9796_2_PADDING_END] (Valores definidos en la ISO 9796-2), se considera que
@@ -480,9 +487,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
             // Calculamos N.ICC-SIG
             final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(sigMin)).toByteArray();
-            final byte[] niccMinusSig = new byte[this.card.getIfdKeyLength(this.pubConsts)];
+            final byte[] niccMinusSig = new byte[ifdKeyLength];
             // Ignoramos los ceros de la izquierda
-            if (sub.length > this.card.getIfdKeyLength(this.pubConsts) && sub[0] == (byte) 0x00) {
+            if (sub.length > ifdKeyLength && sub[0] == (byte) 0x00) {
                 System.arraycopy(sub, 1, niccMinusSig, 0, sub.length - 1);
             }
             else {
@@ -490,7 +497,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
             }
 
             // Desciframos el mensaje con N.ICC-SIG
-            desMsg = this.cryptoHelper.rsaDecrypt(niccMinusSig, iccPublicKey);
+            desMsg = cryptoHelper.rsaDecrypt(niccMinusSig, iccPublicKey);
 
             // Si en esta ocasion no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina con 0xbc [ISO_9796_2_PADDING_END],
             // la autenticacion interna habra fallado
@@ -508,7 +515,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // Bytes [Kicc] Semilla de 32 [KICC_LENGTH] bytes generada por la tarjeta para la derivacion de claves
         // Bytes [h: PRND1||Kicc||RND.IFD||SN.IFD] Hash SHA1
         // Ultimo Byte: Relleno segun ISO-9796-2 (option 1)
-        final byte[] prnd1 = new byte[this.card.getIfdKeyLength(this.pubConsts) - KICC_LENGTH - SHA1_LENGTH - 2];
+        final byte[] prnd1 = new byte[ifdKeyLength - KICC_LENGTH - SHA1_LENGTH - 2];
         System.arraycopy(
     		desMsg,
     		1,
@@ -535,7 +542,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     		hash.length
 		);
 
-        // -- Calculamos el hash para la comprobacion de la autenticacion, si coincide con el hash
+        // -- Calculamos el hash para la comprobacion de la autenticacion. Si coincide con el hash
         // extraido en el paso anterior, se confirma que se ha realizado correctamente
 
         // El hash se calcula a partir de la concatenacion de:
@@ -547,9 +554,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         baos.write(prnd1);
         baos.write(kicc);
         baos.write(randomIfd);
-        baos.write(this.card.getChrCCvIfd(this.pubConsts));
+        baos.write(chrCCvIfd);
 
-        final byte[] calculatedHash = this.cryptoHelper.digest(
+        final byte[] calculatedHash = cryptoHelper.digest(
     		CryptoHelper.DigestAlgorithm.SHA1,
     		baos.toByteArray()
 		);
@@ -561,7 +568,39 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
             );
         }
 
-        return kicc;
+    	return kicc;
+    }
+
+    /** Lleva a cabo el proceso de autenticaci&oacute;n interna de la tarjeta mediante el
+     * cual el controlador comprueba la tarjeta.
+     * @param randomIfd Array de 8 bytes aleatorios (generados por el controlador, de forma externa a la tarjeta).
+     * @param iccPublicKey Clave p&uacute;blica del certificado de componente.
+     * @return Semilla de 32 [KICC_LENGTH] bits, generada por la tarjeta, para la derivaci&oacute;n de
+     *         claves del canal seguro.
+     * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
+     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
+     * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
+    private byte[] internalAuthentication(final byte[] randomIfd,
+    		                              final RSAPublicKey iccPublicKey) throws SecureChannelException,
+                                                                                  ApduConnectionException,
+                                                                                  IOException {
+
+        // Iniciamos la autenticacion interna de la clave privada del certificado de componente
+        final byte[] sigMinCiphered = internalAuthGetInternalAuthenticateMessage(this.card, this.pubConsts, randomIfd);
+
+        // Validamos el mensaje obtenido por la tarjeta y obtenemos la semilla de KICC generada por la tarjeta
+        // para la derivacion de claves del canal seguro.
+        return internalAuthValidateInternalAuthenticateMessage(
+    		this.card.getChrCCvIfd(this.pubConsts),
+    		sigMinCiphered,
+    		randomIfd,
+    		this.card.getIfdPrivateKey(this.privConsts),
+    		this.card.getIfdKeyLength(this.pubConsts),
+    		this.privConsts,
+    		this.pubConsts,
+    		iccPublicKey,
+    		this.cryptoHelper
+		);
     }
 
     /** Lleva a cabo el proceso de autenticaci&oacute;n externa mediante el cual la tarjeta
@@ -571,9 +610,9 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * @param iccPublicKey Clava p&uacute;blica del certificado de componente.
      * @return Semilla de 32 [KIFD_LENGTH] bytes, generada por el Terminal, para la derivaci&oacute;n de claves del
      *         canal seguro.
-     * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error en el establecimiento de claves.
-     * @throws es.gob.jmulticard.apdu.connection.ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
-     *         la tarjeta.
+     * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
+     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
+     *                                 la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
     private byte[] externalAuthentication(final byte[] serial,
     		                              final byte[] randomIcc,
@@ -839,6 +878,21 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 		if (this.subConnection != null) {
 			this.subConnection.setProtocol(p);
 		}
+	}
+
+	@Override
+	public byte[] getKenc() {
+		return this.kenc;
+	}
+
+	@Override
+	public byte[] getKmac() {
+		return this.kmac;
+	}
+
+	@Override
+	public byte[] getSsc() {
+		return this.ssc;
 	}
 
 }

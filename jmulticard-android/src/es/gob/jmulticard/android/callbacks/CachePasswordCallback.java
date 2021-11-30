@@ -18,7 +18,7 @@ public final class CachePasswordCallback extends PasswordCallback {
 
     private static final long serialVersionUID = 816457144215238935L;
 
-    /** Contruye una Callback con una contrase&ntilde; preestablecida.
+    /** Construye una Callback con una contrase&ntilde; preestablecida.
      * @param password Contrase&ntilde;a por defecto. */
     public CachePasswordCallback(final char[] password) {
         super(">", false); //$NON-NLS-1$

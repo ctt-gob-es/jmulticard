@@ -47,7 +47,6 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
@@ -70,9 +69,10 @@ import es.gob.jmulticard.card.SmartCard;
  * @author Alberto Mart&iacute;nez. */
 public abstract class Iso7816FourCard extends SmartCard {
 
-    private static final StatusWord UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
-    private static final StatusWord EOF_REACHED = new StatusWord((byte) 0x62, (byte) 0x82);
-    private static final StatusWord OFFSET_OUTSIDE_EF = new StatusWord((byte) 0x6B, (byte) 0x00);
+    private static final StatusWord SW_UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
+    private static final StatusWord SW_FILE_NOT_FOUND = new StatusWord((byte) 0x6A, (byte) 0x82);
+    private static final StatusWord SW_EOF_REACHED = new StatusWord((byte) 0x62, (byte) 0x82);
+    private static final StatusWord SW_OFFSET_OUTSIDE_EF = new StatusWord((byte) 0x6B, (byte) 0x00);
 
     private static final int MAX_READ_CHUNK = 0xDE;
 
@@ -113,13 +113,13 @@ public abstract class Iso7816FourCard extends SmartCard {
         if (res.isOk()) {
         	return res;
         }
-        if (OFFSET_OUTSIDE_EF.equals(res.getStatusWord())) {
-        	throw new OffsetOutsideEfException(OFFSET_OUTSIDE_EF, apdu);
+        if (SW_OFFSET_OUTSIDE_EF.equals(res.getStatusWord())) {
+        	throw new OffsetOutsideEfException(SW_OFFSET_OUTSIDE_EF, apdu);
         }
-        if (UNSATISFIED_SECURITY_STATE.equals(res.getStatusWord())) {
+        if (SW_UNSATISFIED_SECURITY_STATE.equals(res.getStatusWord())) {
         	throw new RequiredSecurityStateNotSatisfiedException(res.getStatusWord());
         }
-        if (EOF_REACHED.equals(res.getStatusWord())) {
+        if (SW_EOF_REACHED.equals(res.getStatusWord())) {
         	LOGGER.warning("Se ha alcanzado el final de fichero antes de poder leer los octetos indicados"); //$NON-NLS-1$
         	return res;
         }
@@ -179,10 +179,12 @@ public abstract class Iso7816FourCard extends SmartCard {
             	return out.toByteArray();
             }
 
-            final boolean eofReached = EOF_REACHED.equals(readedResponse.getStatusWord());
+            final boolean eofReached = SW_EOF_REACHED.equals(readedResponse.getStatusWord());
 
             if (!readedResponse.isOk() && !eofReached) {
-                throw new IOException("Error leyendo el binario (" + readedResponse.getStatusWord() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+                throw new IOException(
+            		"Error leyendo el binario (" + readedResponse.getStatusWord() + ")" //$NON-NLS-1$ //$NON-NLS-2$
+        		);
             }
 
             out.write(readedResponse.getData());
@@ -200,28 +202,30 @@ public abstract class Iso7816FourCard extends SmartCard {
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero
+	 * @return Tama&ntilde;o del fichero seleccionado.
 	 * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
-    public void selectFileByName(final String name) throws ApduConnectionException,
+    public int selectFileByName(final String name) throws ApduConnectionException,
                                                            Iso7816FourCardException {
-    	selectFileByName(name.getBytes());
+    	return selectFileByName(name.getBytes());
     }
 
 	/** Selecciona un fichero por nombre.
 	 * @param name Nombre del fichero en hexadecimal
+	 * @return Tama&ntilde;o del fichero seleccionado.
 	 * @throws FileNotFoundException Si el fichero no existe
      * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
-    public void selectFileByName(final byte[] name) throws ApduConnectionException,
+    public int selectFileByName(final byte[] name) throws ApduConnectionException,
                                                            FileNotFoundException,
                                                            Iso7816FourCardException {
     	final CommandApdu selectCommand = new SelectDfByNameApduCommand(getCla(), name);
     	final ResponseApdu response = sendArbitraryApdu(selectCommand);
     	if (response.isOk()) {
-    		return;
+    		return new SelectFileApduResponse(response).getFileLength();
     	}
         final StatusWord sw = response.getStatusWord();
-        if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
+        if (SW_FILE_NOT_FOUND.equals(sw)) {
             throw new FileNotFoundException(name);
         }
         throw new Iso7816FourCardException(sw, selectCommand);
@@ -232,10 +236,11 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @return Tama&ntilde;o del fichero seleccionado.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero. */
-    public int selectFileById(final byte[] id) throws ApduConnectionException, Iso7816FourCardException {
+    public int selectFileById(final byte[] id) throws ApduConnectionException,
+                                                      Iso7816FourCardException {
     	final CommandApdu selectCommand = new SelectFileByIdApduCommand(getCla(), id);
 		final ResponseApdu res = getConnection().transmit(selectCommand);
-    	if (HexUtils.arrayEquals(res.getBytes(), new byte[] { (byte) 0x6a, (byte) 0x82 })) {
+		if (SW_FILE_NOT_FOUND.equals(res.getStatusWord())) {
     		throw new FileNotFoundException(id);
     	}
         final SelectFileApduResponse response = new SelectFileApduResponse(res);
@@ -243,8 +248,11 @@ public abstract class Iso7816FourCard extends SmartCard {
             return response.getFileLength();
         }
         final StatusWord sw = response.getStatusWord();
-        if (sw.equals(new StatusWord((byte) 0x6A, (byte) 0x82))) {
+        if (SW_FILE_NOT_FOUND.equals(sw)) {
             throw new FileNotFoundException(id);
+        }
+        if (SW_UNSATISFIED_SECURITY_STATE.equals(sw)) {
+        	throw new RequiredSecurityStateNotSatisfiedException(response.getStatusWord());
         }
         throw new Iso7816FourCardException(sw, selectCommand);
     }
@@ -255,7 +263,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero.
      * @throws IOException Si hay problemas en el <i>buffer</i> de lectura. */
-    public byte[] selectFileByIdAndRead(final byte[] id) throws Iso7816FourCardException, IOException {
+    public byte[] selectFileByIdAndRead(final byte[] id) throws Iso7816FourCardException,
+                                                                IOException {
         final int fileLength = selectFileById(id);
         return readBinaryComplete(fileLength);
     }
@@ -265,7 +274,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @return Tama&ntilde;o del fichero seleccionado
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero */
-    public int selectFileByLocation(final Location location) throws ApduConnectionException, Iso7816FourCardException {
+    public int selectFileByLocation(final Location location) throws ApduConnectionException,
+                                                                    Iso7816FourCardException {
         int fileLength = 0;
         Location loc = location;
         selectMasterFile();
@@ -283,7 +293,8 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero.
      * @throws IOException Si hay problemas en el <i>buffer</i> de lectura. */
-    public byte[] selectFileByLocationAndRead(final Location location) throws IOException, Iso7816FourCardException {
+    public byte[] selectFileByLocationAndRead(final Location location) throws IOException,
+                                                                              Iso7816FourCardException {
         final int fileLenght = selectFileByLocation(location);
         return readBinaryComplete(fileLenght);
     }
@@ -292,14 +303,17 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws FileNotFoundException Si no se encuentra el MF.
      * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa. */
-    protected abstract void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException;
+    protected abstract void selectMasterFile() throws ApduConnectionException,
+                                                      FileNotFoundException,
+                                                      Iso7816FourCardException;
 
     /** Establece una clave p&uacute;blica para la la verificaci&oacute;n posterior de
      * un certificado emitido por otro al que pertenece esta clave.
      * @param refPublicKey Referencia a la clave p&uacute;blica para su carga.
      * @throws SecureChannelException Cuando ocurre un error durante la selecci&oacute;n de la clave.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
-    public void setPublicKeyToVerification(final byte[] refPublicKey) throws SecureChannelException, ApduConnectionException {
+    public void setPublicKeyToVerification(final byte[] refPublicKey) throws SecureChannelException,
+                                                                             ApduConnectionException {
     	final ResponseApdu res = sendArbitraryApdu(
 			new CommandApdu(
 				(byte)0x00, // CLA
@@ -313,12 +327,12 @@ public abstract class Iso7816FourCard extends SmartCard {
     	if (!res.isOk()) {
     		throw new SecureChannelException(
 				"Error estableciendo la clave publica para verificacion, con respuesta : " + //$NON-NLS-1$
-					Iso7816fourErrorCodes.getErrorDescription(res.getStatusWord())
+					res.getStatusWord()
 			);
     	}
     }
 
-    /** Lanza un desafio a la tarjeta para obtener un array de 8 bytes aleatorios.
+    /** Lanza un desaf&iacute;o a la tarjeta para obtener un array de 8 bytes aleatorios.
      * @return Array de 8 bytes aleatorios.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
     public byte[] getChallenge() throws ApduConnectionException {
@@ -335,9 +349,10 @@ public abstract class Iso7816FourCard extends SmartCard {
      * @param pinPc PIN de la tarjeta.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                                                es incorrecto y no estaba habilitado el reintento autom&aacute;tico
-     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
-     *                                  el n&uacute;mero m&aacute;ximo de intentos). */
-    public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, PinException;
+     *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico
+     * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n
+     *         de PIN (por ejemplo, por superar el n&uacute;mero m&aacute;ximo de intentos). */
+    public abstract void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException,
+                                                                        PinException;
 
 }

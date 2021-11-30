@@ -8,7 +8,7 @@ public class PinException extends CardException {
 
 	/** Construye una excepci&oacute;n de introducci&oacute;n incorrecta de la tarjeta. */
 	public PinException() {
-		super();
+		// Vacio
 	}
 
 	/** Construye una excepci&oacute;n de introducci&oacute;n incorrecta de la tarjeta.

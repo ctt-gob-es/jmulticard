@@ -51,7 +51,10 @@ public abstract class SmartCard implements Card {
 	/** Establece el modo de depuraci&oacute;n para todo el proyecto. */
 	public static boolean DEBUG = false;
 
+	/** Clase por defecto de APDU de la tarjeta. */
     private final byte cla;
+
+    /** Conexi&oacute;n con el lector de tarjetas. */
     private ApduConnection connection;
 
     /** Obtiene la conexi&oacute;n de la tarjeta.

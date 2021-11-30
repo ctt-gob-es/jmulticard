@@ -68,7 +68,6 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
  * JSR-268 SmartCard I/O.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-@SuppressWarnings("restriction")
 public final class SmartcardIoConnection implements ApduConnection {
 
 	private static final boolean DEBUG = false;
@@ -388,7 +387,7 @@ public final class SmartcardIoConnection implements ApduConnection {
         }
 
         if (DEBUG) {
-        	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+        	LOGGER.info(
     			"Enviada APDU:\n" + //$NON-NLS-1$
 				HexUtils.hexify(command.getBytes(), true)
 			);
@@ -475,7 +474,7 @@ public final class SmartcardIoConnection implements ApduConnection {
             }
 
             if (DEBUG) {
-            	Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+            	LOGGER.info(
         			"Respuesta:\n" + //$NON-NLS-1$
 						HexUtils.hexify(response.getBytes(), true)
 				);

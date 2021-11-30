@@ -39,7 +39,6 @@
  */
 package es.gob.jmulticard;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -53,9 +52,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
@@ -98,10 +94,14 @@ public final class JseCryptoHelper extends CryptoHelper {
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 
         if (algorithm == null) {
-            throw new IllegalArgumentException("El algoritmo de huella digital no puede ser nulo"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+        		"El algoritmo de huella digital no puede ser nulo" //$NON-NLS-1$
+    		);
         }
         if (data == null) {
-        	throw new IllegalArgumentException("Los datos para realizar la huella digital no pueden ser nulos"); //$NON-NLS-1$
+        	throw new IllegalArgumentException(
+    			"Los datos para realizar la huella digital no pueden ser nulos" //$NON-NLS-1$
+			);
         }
 
         try {
@@ -109,7 +109,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
         catch (final NoSuchAlgorithmException e) {
         	throw new IOException(
-    			"El sistema no soporta el algoritmo de huella digital indicado ('" + algorithm + "'): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+    			"No se soporta el algoritmo de huella digital indicado ('" + algorithm + "'): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
     }
@@ -165,7 +165,9 @@ public final class JseCryptoHelper extends CryptoHelper {
             System.arraycopy(key, 0, newKey, 16, 8);
             return newKey;
         }
-        throw new IllegalArgumentException("Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + Integer.toString(key.length)); //$NON-NLS-1$
+        throw new IllegalArgumentException(
+    		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + key.length //$NON-NLS-1$
+		);
     }
 
     private static byte[] doDes(final byte[] data, final byte[] key, final int direction) throws IOException {
@@ -199,14 +201,18 @@ public final class JseCryptoHelper extends CryptoHelper {
         return doDes(data, key, Cipher.DECRYPT_MODE);
     }
 
-    private static byte[] doRsa(final byte[] cipheredData, final Key key, final int direction) throws IOException {
+    private static byte[] doRsa(final byte[] cipheredData,
+    		                    final Key key,
+    		                    final int direction) throws IOException {
         try {
             final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING"); //$NON-NLS-1$
             dec.init(direction, key);
             return dec.doFinal(cipheredData);
         }
         catch (final Exception e) {
-            throw new IOException("Error cifrando/descifrando los datos mediante la clave RSA: " + e, e); //$NON-NLS-1$
+            throw new IOException(
+        		"Error cifrando/descifrando los datos mediante la clave RSA: " + e, e //$NON-NLS-1$
+    		);
         }
     }
 
@@ -224,12 +230,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     /** {@inheritDoc} */
     @Override
-    public Certificate generateCertificate(final byte[] encode) throws CertificateException {
-        return CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(encode)); //$NON-NLS-1$
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public byte[] generateRandomBytes(final int numBytes) throws IOException {
         final SecureRandom sr;
         try {
@@ -243,7 +243,10 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-    private static byte[] aesCrypt(final byte[] data, final byte[] iv, final byte[] key, final int mode) throws IOException {
+    private static byte[] aesCrypt(final byte[] data,
+    		                       final byte[] iv,
+    		                       final byte[] key,
+    		                       final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -326,13 +329,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 			kpg = KeyPairGenerator.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
 		catch (final Exception e) {
-			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+			LOGGER.warning(
 				"No se ha podido obtener un generador de pares de claves de curva eliptica con SpongyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
 			);
 			kpg = KeyPairGenerator.getInstance(ECDH);
 		}
 
-		Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
+		LOGGER.info(
 			"Seleccionado el siguiente generador de claves de curva eliptica: " + kpg.getClass().getName() //$NON-NLS-1$
 		);
 
@@ -413,11 +416,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 	 * @param bytes Octet String de ASN&#46;1.
 	 * @return Entero (siempre positivo). */
 	private static BigInteger os2i(final byte[] bytes) {
-		if (bytes == null) { throw new IllegalArgumentException(); }
+		if (bytes == null) {
+			throw new IllegalArgumentException();
+		}
 		return os2i(bytes, 0, bytes.length);
 	}
 
-	/** Convierte un Octet String de ASN&#46;1 en un entero
+	/** Convierte un <code>Octet String</code> de ASN&#46;1 en un entero
 	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3&#46;1&#46;2).
 	 * @param bytes <code>Octet String</code> de ASN&#46;1.
 	 * @param offset Desplazamiento (posici&oacute;n de inicio).
@@ -505,7 +510,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 	private static ECPoint fromSpongyCastleECPoint(final org.spongycastle.math.ec.ECPoint point) {
 		final org.spongycastle.math.ec.ECPoint newPoint = point.normalize();
 		if (!newPoint.isValid()) {
-			LOGGER.warning("Se ha proporcionaod un punto invalido"); //$NON-NLS-1$
+			LOGGER.warning("Se ha proporcionado un punto invalido"); //$NON-NLS-1$
 		}
 		return new ECPoint(
 			newPoint.getAffineXCoord().toBigInteger(),

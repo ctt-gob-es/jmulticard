@@ -42,7 +42,7 @@ final class DO99 {
 
 	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
 		try (
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedData);
+			final ASN1InputStream asn1in = new ASN1InputStream(encodedData)
 		) {
 			this.to = (DERTaggedObject) asn1in.readObject();
 			asn1in.close();

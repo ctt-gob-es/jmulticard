@@ -39,221 +39,334 @@
  */
 package es.gob.jmulticard.card.dnie;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
+
+import org.spongycastle.asn1.icao.DataGroupHash;
+import org.spongycastle.asn1.icao.LDSSecurityObject;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
+import es.gob.jmulticard.asn1.Asn1Exception;
+import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.icao.Com;
+import es.gob.jmulticard.asn1.icao.OptionalDetails;
+import es.gob.jmulticard.asn1.icao.Sod;
+import es.gob.jmulticard.asn1.icao.SodException;
+import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
+import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
+import es.gob.jmulticard.card.CardSecurityException;
 import es.gob.jmulticard.card.CryptoCardException;
-import es.gob.jmulticard.card.Location;
+import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
+import es.gob.jmulticard.card.icao.InvalidSecurityObjectException;
+import es.gob.jmulticard.card.icao.MrtdLds1;
+import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class Dnie3 extends Dnie {
-
-    private static final Location FILE_DG01_LOCATION_MRZ   = new Location("3F010101"); //$NON-NLS-1$
-    private static final Location FILE_DG02_LOCATION_PHOTO = new Location("3F010102"); //$NON-NLS-1$
-    private static final Location FILE_DG07_LOCATION_SIGN  = new Location("3F010107"); //$NON-NLS-1$
-    private static final Location FILE_DG11_LOCATION       = new Location("3F01010B"); //$NON-NLS-1$
-    private static final Location FILE_DG12_LOCATION       = new Location("3F01010C"); //$NON-NLS-1$
-    private static final Location FILE_DG13_LOCATION       = new Location("3F01010D"); //$NON-NLS-1$
-    private static final Location FILE_DG14_LOCATION       = new Location("3F01010E"); //$NON-NLS-1$
-    private static final Location FILE_SOD_LOCATION        = new Location("3F01011D"); //$NON-NLS-1$
-    private static final Location FILE_COM_LOCATION        = new Location("3F01011E"); //$NON-NLS-1$
+public class Dnie3 extends Dnie implements MrtdLds1 {
 
     private String idesp = null;
 
-    /** Obtiene el DG1. Devuelve el objeto binario sin tratar.
-     * El DG1 contiene el campo MRZ. Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG1 (con el MRZ).
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg1() throws IOException {
+	@Override
+	public X509Certificate[] checkSecurityObjects() throws IOException,
+	                                                       InvalidSecurityObjectException,
+	                                                       SodException,
+	                                                       TlvException {
+		openSecureChannelIfNotAlreadyOpened(false);
+		final Sod sod = getSod();
+		sod.validateSignature();
+		final LDSSecurityObject ldsSecurityObject = sod.getLdsSecurityObject();
+		final MessageDigest md;
 		try {
-			return selectFileByLocationAndRead(FILE_DG01_LOCATION_MRZ);
+			md = MessageDigest.getInstance(
+				ldsSecurityObject.getDigestAlgorithmIdentifier().getAlgorithm().toString()
+			);
 		}
+		catch (final NoSuchAlgorithmException e) {
+			throw new IOException(
+				"No se soporta el algoritmo de huella indicado en el SOD (" + //$NON-NLS-1$
+					ldsSecurityObject.getDigestAlgorithmIdentifier().getAlgorithm().toString() +
+						"): " + e, e //$NON-NLS-1$
+			);
+		}
+
+		openSecureChannelIfNotAlreadyOpened(false);
+
+		for (final DataGroupHash dgh : ldsSecurityObject.getDatagroupHash()) {
+			final byte[] dgBytes;
+			switch(dgh.getDataGroupNumber()) {
+				case 1:
+					dgBytes = getDg1().getBytes();
+					break;
+				case 2:
+					dgBytes = getDg2().getBytes();
+					break;
+				case 3:
+					// El DG3 necesita canal administrativo, le damos un tratamiento especial
+					// para permitir verificar solo con canal de usuario
+					try {
+						dgBytes = getDg3();
+					}
+					catch(final CardSecurityException e) {
+						LOGGER.warning(
+							"Se omite la comprobacion del DG3 con el SOD por no poder leerse: " + e //$NON-NLS-1$
+						);
+						continue;
+					}
+					break;
+				case 4:
+					dgBytes = getDg4();
+					break;
+				case 5:
+					dgBytes = getDg5();
+					break;
+				case 6:
+					dgBytes = getDg6();
+					break;
+				case 7:
+					dgBytes = getDg7().getBytes();
+					break;
+				case 8:
+					dgBytes = getDg8();
+					break;
+				case 9:
+					dgBytes = getDg9();
+					break;
+				case 10:
+					dgBytes = getDg10();
+					break;
+				case 11:
+					dgBytes = getDg11();
+					break;
+				case 12:
+					dgBytes = getDg12();
+					break;
+				case 13:
+					dgBytes = getDg13().getBytes();
+					break;
+				case 14:
+					dgBytes = getDg14();
+					break;
+				case 15:
+					dgBytes = getDg15();
+					break;
+				case 16:
+					dgBytes = getDg16();
+					break;
+				default:
+					throw new InvalidSecurityObjectException(
+						"El SOD define huella para un DG inexistente: " + dgh.getDataGroupNumber() //$NON-NLS-1$
+					);
+			}
+			final byte[] actualHash = md.digest(dgBytes);
+			md.reset();
+			if (!Arrays.equals(actualHash, dgh.getDataGroupHashValue().getOctets())) {
+				throw new InvalidSecurityObjectException(
+					"El DG" + dgh.getDataGroupNumber() + " no concuerda con la huella del SOD, " + //$NON-NLS-1$ //$NON-NLS-2$
+						"se esperaba " + HexUtils.hexify(actualHash, false) + //$NON-NLS-1$
+							" y se ha encontrado " + HexUtils.hexify(dgh.getDataGroupHashValue().getOctets(), false) //$NON-NLS-1$
+				);
+			}
+		}
+
+		// Llegados aqui, todas las huellas coinciden
+		return sod.getCertificateChain();
+	}
+
+    @Override
+	public byte[] getCardAccess() throws IOException {
+    	try {
+			return selectFileByLocationAndRead(FILE_CARD_ACCESS_LOCATION);
+		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("CardAcess no encontrado: " + e); //$NON-NLS-1$
+    	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG1 del DNIe: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el CardAccess: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public byte[] getAtrInfo() throws IOException {
+    	try {
+			return selectFileByLocationAndRead(FILE_ATR_INFO_LOCATION);
+		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("ATR/INFO no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el ATR/INFO: " + e, e); //$NON-NLS-1$
+		}
+    }
+
+    @Override
+	public Mrz getDg1() throws IOException {
+		try {
+			return new Dnie3Dg01Mrz(
+				selectFileByLocationAndRead(FILE_DG01_LOCATION)
+			);
+		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG1 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG1: " + e, e); //$NON-NLS-1$
 		}
 	}
 
-    /** Obtiene el DG2. Devuelve el objeto binario sin tratar.
-     * El DG2 contiene la fotograf&iacute;a  del documento.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG2.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg2() throws IOException {
+    @Override
+	public SubjectFacePhoto getDg2() throws IOException {
+    	final SubjectFacePhoto ret = new SubjectFacePhoto();
 		try {
-			return selectFileByLocationAndRead(FILE_DG02_LOCATION_PHOTO);
+			ret.setDerValue(selectFileByLocationAndRead(FILE_DG02_LOCATION));
+		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG2 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
+			throw new CryptoCardException("Error leyendo el DG2: " + e, e); //$NON-NLS-1$
+		}
+		return ret;
+	}
+
+    @Override
+	public byte[] getDg3() throws IOException {
+		try {
+			return selectFileByLocationAndRead(FILE_DG03_LOCATION);
+		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG3 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		// El DG3 necesita canal administrativo, le damos un tratamiento especial
+		catch(final RequiredSecurityStateNotSatisfiedException e) {
+			throw new CardSecurityException(
+				"No se tienen permisos para leer el DG3: " + e, e //$NON-NLS-1$
+			);
 		}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG2 del DNIe: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG3: " + e, e); //$NON-NLS-1$
 		}
 	}
 
-    /** Obtiene el DG7. Devuelve el objeto binario sin tratar.
-     * El DG7 contiene la imagen de la firma del poseedor del documento.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG7.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg7() throws IOException {
+    @Override
+	public SubjectSignaturePhoto getDg7() throws IOException {
+    	final SubjectSignaturePhoto ret = new SubjectSignaturePhoto();
 		try {
-			return selectFileByLocationAndRead(FILE_DG07_LOCATION_SIGN);
+			ret.setDerValue(selectFileByLocationAndRead(FILE_DG07_LOCATION));
 		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG7 del DNIe: " + e, e); //$NON-NLS-1$
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG7 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
+			throw new CryptoCardException("Error leyendo el DG7: " + e, e); //$NON-NLS-1$
 		}
+		return ret;
 	}
 
-	/** Obtiene el DG11. Devuelve el objeto binario sin tratar.
-     * El DG11 contiene detalles adicionales sobre el poseedor del documento.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG11.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg11() throws IOException {
+    @Override
+	public byte[] getDg11() throws IOException {
 		try {
 			return selectFileByLocationAndRead(FILE_DG11_LOCATION);
 		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG11 no encontrado: " + e); //$NON-NLS-1$
+    	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG11 del DNIe: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG11: " + e, e); //$NON-NLS-1$
 		}
 	}
 
-    /** Obtiene el DG12. Devuelve el objeto binario sin tratar.
-     * El DG12 contiene datos adicionales del documento.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG12.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg12() throws IOException {
+    @Override
+	public byte[] getDg12() throws IOException {
 		try {
 			return selectFileByLocationAndRead(FILE_DG12_LOCATION);
 		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG12 no encontrado: " + e); //$NON-NLS-1$
+    	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG12 del DNIe: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG12: " + e, e); //$NON-NLS-1$
 		}
 	}
 
-    /** Obtiene el DG13. Devuelve el objeto binario sin tratar.
-     * El DG12 contiene detalles opcionales.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG13.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg13() throws IOException {
+    @Override
+	public OptionalDetails getDg13() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG13_LOCATION);
+			final OptionalDetails ret = new OptionalDetailsDnie3();
+			ret.setDerValue(
+				selectFileByLocationAndRead(FILE_DG13_LOCATION)
+			);
+			return ret;
 		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG13 del DNIe: " + e, e); //$NON-NLS-1$
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG13 no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
+			throw new CryptoCardException("Error leyendo el DG13: " + e, e); //$NON-NLS-1$
 		}
 	}
 
-    /** Obtiene el DG14. Devuelve el objeto binario sin tratar.
-     * El DG12 contiene opciones de seguridad.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return DG14.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getDg14() throws IOException {
+    @Override
+	public byte[] getDg14() throws IOException {
 		try {
 			return selectFileByLocationAndRead(FILE_DG14_LOCATION);
 		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG14 del DNIe: " + e, e); //$NON-NLS-1$
-		}
-	}
-
-    /** Obtiene el SOD. Devuelve el objeto binario sin tratar.
-     * El SOD contiene las huellas digitales de los DG.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return SOD.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getSOD() throws IOException {
-		try {
-			return selectFileByLocationAndRead(FILE_SOD_LOCATION);
-		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el SOD del DNIe: " + e, e); //$NON-NLS-1$
-		}
-	}
-
-    /** Obtiene el COM. Devuelve el objeto binario sin tratar.
-     * El COM contiene los "datos comunes" (<i>Common Data</i>).
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
-     * @return COM.
-     * @throws IOException Si hay problemas leyendo el fichero. */
-    public byte[] getCOM() throws IOException {
-		try {
-			return selectFileByLocationAndRead(FILE_COM_LOCATION);
-		}
-		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el 'Common Data' (COM) del DNIe: " + e, e); //$NON-NLS-1$
-		}
-	}
-
-    /** Obtiene la foto del titular en formato JPEG2000.
-     * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @return Foto del titular en formato JPEG2000.
-     * @throws IOException Si no se puede leer la foto del titular. */
-	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
-		final byte[] photo = getDg2();
-		return extractImage(photo);
-	}
-
-	/** Obtiene la MRZ del DNIe 3&#46;0.
-	 * Necesita que el canal de usuario est&eacute; previamente establecido.
-	 * @return MRZ del DNIe 3&#46;0.
-	 * @throws IOException Si no se puede leer el fichero con el MRZ del DNIe. */
-	public Dnie3Dg01Mrz getMrz() throws IOException {
-		final byte[] mrz = getDg1();
-		return new Dnie3Dg01Mrz(mrz);
-	}
-
-	/** Obtiene los datos de identidad del titular.
-	 * @return Datos de identidad del titular.
-	 * @throws IOException Si no se pueden leer los datos de identidad (fichero DG13
-	 *                     del DNIe). */
-	public Dnie3Dg13Identity getIdentity() throws IOException {
-		return new Dnie3Dg13Identity(getDg13());
-	}
-
-	/** Obtiene la imagen de la firma del titular en formato JPEG2000.
-	 * Necesita que el canal de usuario est&eacute; previamente establecido.
-     * @return Imagen de la firma del titular en formato JPEG2000.
-	 * @throws IOException Si no se puede leer la imagen con la firma del titular. */
-	public byte[] getSubjectSignatureImageAsJpeg2k() throws IOException {
-		final byte[] photo = getDg7();
-		return extractImage(photo);
-	}
-
-    private static final String JPEG2K_HEADER = "0000000C6A502020"; //$NON-NLS-1$
-
-    private static final byte[] extractImage(final byte[] photo) {
-    	if (photo == null) {
-    		throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("DG14 no encontrado: " + e); //$NON-NLS-1$
     	}
-    	final int headerSize = HexUtils.hexify(photo, false).indexOf(JPEG2K_HEADER) / 2;
-    	final byte[] pj2kPhoto = new byte[photo.length - headerSize];
-        System.arraycopy(photo, headerSize, pj2kPhoto, 0, pj2kPhoto.length);
+		catch (final Iso7816FourCardException e) {
+			throw new CryptoCardException("Error leyendo el DG14: " + e, e); //$NON-NLS-1$
+		}
+	}
 
-        // En este punto pj2kPhoto contiene la imagen en JPEG2000
-        return pj2kPhoto;
+    @Override
+	public Sod getSod() throws IOException {
+    	final Sod sod = new Sod();
+    	try {
+			sod.setDerValue(
+				selectFileByLocationAndRead(FILE_SOD_LOCATION)
+			);
+		}
+    	catch (final Asn1Exception | TlvException | Iso7816FourCardException e) {
+			throw new IOException(
+				"No se puede crear un SOD a partir del contenido del fichero: " + e, e //$NON-NLS-1$
+			);
+		}
+    	return sod;
     }
+
+    @Override
+	public Com getCom() throws IOException {
+		try {
+			final Com com = new Com();
+			com.setDerValue(
+				selectFileByLocationAndRead(FILE_COM_LOCATION)
+			);
+			return com;
+		}
+    	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
+    		throw new FileNotFoundException("COM no encontrado: " + e); //$NON-NLS-1$
+    	}
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
+			throw new CryptoCardException("Error leyendo el 'Common Data' (COM): " + e, e); //$NON-NLS-1$
+		}
+	}
 
     /** {@inheritDoc} */
 	@Override
@@ -264,19 +377,22 @@ public class Dnie3 extends Dnie {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     *                     variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
      * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
-     *                         las claves privadas y a los certificados, mientras que si se
+     *                         las claves privadas y a los certificados mientras que, si se
      *                         indica <code>false</code>, no se cargan, permitiendo la
      *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
      *                         autenticaci&oacute;n con certificados.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
-    Dnie3(final ApduConnection conn,
-    	  final PasswordCallback pwc,
-    	  final CryptoHelper cryptoHelper,
-    	  final CallbackHandler ch,
-     	  final boolean loadCertsAndKeys) throws ApduConnectionException {
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
+     *                                 cerrada y no es posible abrirla.*/
+    protected Dnie3(final ApduConnection conn,
+    	            final PasswordCallback pwc,
+    	            final CryptoHelper cryptoHelper,
+    	            final CallbackHandler ch,
+    	            final boolean loadCertsAndKeys) throws ApduConnectionException {
+
         super(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
         this.rawConnection = conn;
         if (loadCertsAndKeys) {
@@ -303,9 +419,11 @@ public class Dnie3 extends Dnie {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre m&aacute;quinas virtuales.
+     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     *                     variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona cerrada y no es posible abrirla.*/
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
+     *                                 cerrada y no es posible abrirla.*/
     Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
     	  final CryptoHelper cryptoHelper,
@@ -358,7 +476,8 @@ public class Dnie3 extends Dnie {
 	}
 
 	@Override
-	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException, PinException {
+	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException,
+	                                                                            PinException {
 
         // Si el canal seguro esta ya abierto salimos sin hacer nada
         if (isSecurityChannelOpen()) {
@@ -470,5 +589,71 @@ public class Dnie3 extends Dnie {
         }
         return signOperation(data, signAlgorithm, privateKeyReference);
 	}
+
+	//*************************************************************************
+	//********** METODOS DE ICAO MRTD LDS1 NO SOPORTADOS **********************
+
+    @Override
+	public byte[] getCardSecurity() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene CardSecurity" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg4() throws IOException {
+    	throw new CryptoCardSecurityException(
+			"Hace falta canal de administrador para leer el DG4" //$NON-NLS-1$
+		);
+	}
+
+    @Override
+	public byte[] getDg5() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG5" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg6() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG6" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg8() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG8" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg9() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG9" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg10() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG10" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg15() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG15" //$NON-NLS-1$
+		);
+    }
+
+    @Override
+	public byte[] getDg16() throws IOException {
+    	throw new UnsupportedOperationException(
+			"Este MRTD no tiene DG16" //$NON-NLS-1$
+		);
+    }
 
 }

@@ -12,7 +12,7 @@ import es.gob.jmulticard.ui.passwordcallback.Messages;
 /** CallbackHandler que gestiona los <i>Callbacks</i> de petici&oacute;n de informaci&oacute;n
  * al usuario en tarjetas inteligentes.
  * @author Sergio Mart&iacute;nez Rico. */
-public class SmartcardCallbackHandler implements CallbackHandler {
+public final class SmartcardCallbackHandler implements CallbackHandler {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 	@Override

@@ -113,7 +113,9 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	}
         final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof CeresPrivateKeyReference)) {
-			throw new ProviderException("La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName()); //$NON-NLS-1$
+			throw new ProviderException(
+				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + pkRef.getClass().getName() //$NON-NLS-1$
+			);
 		}
 		return new CeresPrivateKey(
 			(CeresPrivateKeyReference) pkRef,

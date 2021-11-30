@@ -28,7 +28,7 @@ public final class AndroidNfcConnection implements ApduConnection {
 
     private final IsoDep mIsoDep;
 
-    /** Contructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
+    /** Constructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
      * @param tag <code>Tag</code> para obtener el objeto <code>IsoDep</code> y establecer la
      *            conexi&oacute;n.
      * @throws IOException Si falla el establecimiento de la conexi&oacute;n. */

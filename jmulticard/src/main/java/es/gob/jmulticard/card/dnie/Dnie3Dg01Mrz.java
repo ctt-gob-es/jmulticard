@@ -4,14 +4,19 @@ package es.gob.jmulticard.card.dnie;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Properties;
 
-/** Zona ICAO MRZ del DNIe 3&#46;0.*/
-public class Dnie3Dg01Mrz {
+import es.gob.jmulticard.card.icao.CountryCodes;
+import es.gob.jmulticard.card.icao.Gender;
+import es.gob.jmulticard.card.icao.Mrz;
+
+/** ICAO MRZ del DNIe 3&#46;0.*/
+public final class Dnie3Dg01Mrz implements Mrz {
+
+    private static final SimpleDateFormat SDFORMAT = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
 
 	private final String mrzString;
-
     private final byte[] rawData;
+
     private String name;
     private String surname;
     private String dateOfBirth;
@@ -22,44 +27,8 @@ public class Dnie3Dg01Mrz {
     private String docType;
     private String issuer;
     private String optData;
-    private static final SimpleDateFormat SDFORMAT = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
-    private final Properties countryNames = CountryCodes.getCountryCodes();
 
-    /** Sexo del titular del documento de identidad. */
-    public enum Gender {
-
-    	/** Hombre. */
-    	MALE("Hombre"), //$NON-NLS-1$
-
-    	/** Mujer. */
-    	FEMALE("Mujer"); //$NON-NLS-1$
-
-    	private final String desc;
-
-    	Gender(final String d) {
-    		this.desc = d;
-    	}
-
-    	@Override
-		public String toString() {
-    		return this.desc;
-    	}
-
-    	static Gender getGender(final String text) {
-    		if (text == null) {
-    			throw new IllegalArgumentException("El texto de descripcion del sexo no puede ser nulo"); //$NON-NLS-1$
-    		}
-    		if ("F".equalsIgnoreCase(text.trim())) { //$NON-NLS-1$
-    			return FEMALE;
-    		}
-    		if ("M".equalsIgnoreCase(text.trim())) { //$NON-NLS-1$
-    			return MALE;
-    		}
-    		throw new IllegalArgumentException("Sexo indeterminado: " + text); //$NON-NLS-1$
-    	}
-    }
-
-    /** Construye la zona ICAO MRZ del DNIe 3&#46;0 a partir del fichero DG1.
+    /** Construye la ICAO MRZ del DNIe 3&#46;0 a partir del fichero DG1.
      * @param rawBytes Contenido del fichero DG1 del DNIe 3&#46;0. */
     Dnie3Dg01Mrz(final byte[] rawBytes) {
 
@@ -118,72 +87,60 @@ public class Dnie3Dg01Mrz {
 
     /** Obtiene el contenido binario del fichero DG1 del DNIe 3&#46;0.
      * @return Contenido binario del fichero DG1 del DNIe 3&#46;0. */
-    public byte[] getBytes() {
+    @Override
+	public byte[] getBytes() {
         return this.rawData.clone();
     }
 
-    /** Obtiene el nombre del titular.
-     * @return Nombre del titular. */
-    public String getName() {
+    @Override
+	public String getName() {
         return this.name;
     }
 
-    /** Obtiene los apellidos del titular.
-     * @return Apellidos del titular. */
-    public String getSurname() {
+    @Override
+	public String getSurname() {
         return this.surname;
     }
 
-    /** Obtiene la fecha de nacimiento del titular.
-     * @return Fecha de nacimiento del titular.
-     * @throws ParseException Si la fecha encontrada en el fichero DG1 del DNIe 3&#46;0
-     *                        no est&aacute; en el formato esperado. */
-    public Date getDateOfBirth() throws ParseException {
+    @Override
+	public Date getDateOfBirth() throws ParseException {
         return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfBirth);
     }
 
-    /** Obtiene la nacionalidad del titular.
-     * @return Nacionalidad del titular. */
-    public String getNationality() {
-        final String c = this.countryNames.getProperty(this.nationality);
+    @Override
+	public String getNationality() {
+        final String c = CountryCodes.getCountryName(this.nationality);
         return c != null ? c : "Desconocido"; //$NON-NLS-1$
     }
 
-    /** Obtiene el sexo del titular.
-     * @return Sexo del titular. */
-    public Gender getSex() {
+    @Override
+	public Gender getSex() {
     	return Gender.getGender(this.sex);
     }
 
-    /** Obtiene la fecha de caducidad del DNIe 3&#46;0.
-     * @return Fecha de caducidad del DNIe 3&#46;0.
-     * @throws ParseException Si la fecha encontrada en el fichero DG1 del
-     *                        DNIe 3&#46;0 no est&aacute; en el formato esperado. */
-    public Date getDateOfExpiry() throws ParseException {
+    @Override
+	public Date getDateOfExpiry() throws ParseException {
         return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfExpiry);
     }
 
-    /** Obtiene el n&uacute;mero de soporte del DNI.
-     * @return N&uacute;mero de soporte del DNI. */
-    public String getDocNumber() {
+    @Override
+	public String getDocNumber() {
         return this.docNumber;
     }
 
-    /** Obtiene el pa&iacute;s emisor del DNI.
-     * @return Pa&iacute;s emisor del DNI. */
-    public String getIssuer() {
-        return this.countryNames.getProperty(this.issuer);
+    @Override
+	public String getIssuer() {
+    	final String c = CountryCodes.getCountryName(this.issuer);
+        return c != null ? c : "Desconocido"; //$NON-NLS-1$
     }
 
-    /** Obtiene el n&uacute;mero del DNI.
-     * @return N&uacute;mero del DNI. */
-    public String getSubjectNumber() {
+    @Override
+	public String getSubjectNumber() {
         return this.optData;
     }
 
-    /** Obtiene el tipo de documento de identidad.
-     * @return Tipo de documento de identidad. */
-    public String getDocType() {
+    @Override
+	public String getDocType() {
         return this.docType;
     }
 

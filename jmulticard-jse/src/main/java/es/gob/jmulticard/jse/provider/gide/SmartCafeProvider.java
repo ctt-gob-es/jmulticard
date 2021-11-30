@@ -116,7 +116,7 @@ public final class SmartCafeProvider extends Provider {
         put("KeyStore.GDSCPKCS15", "es.gob.jmulticard.jse.provider.gide.SmartCafeKeyStoreImpl"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Motores de firma
-        put("Signature.SHA1withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
+        put("Signature.SHA1withRSA",   "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha1"); //$NON-NLS-1$ //$NON-NLS-2$
         put("Signature.SHA256withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha256"); //$NON-NLS-1$ //$NON-NLS-2$
         put("Signature.SHA384withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha384"); //$NON-NLS-1$ //$NON-NLS-2$
         put("Signature.SHA512withRSA", "es.gob.jmulticard.jse.provider.gide.SmartCafeSignatureImpl$Sha512"); //$NON-NLS-1$ //$NON-NLS-2$

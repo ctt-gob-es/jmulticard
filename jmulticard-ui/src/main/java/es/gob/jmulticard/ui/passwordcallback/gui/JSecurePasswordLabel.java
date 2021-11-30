@@ -54,14 +54,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-/** Componente basado en <code>JLabel</code> para capturar contrase&ntilde;as usando &uacute;nicamente arrays de <code>char</code>
- * y restringiendo los caracteres aceptados.
+/** Componente basado en <code>JLabel</code> para capturar contrase&ntilde;as usando
+ * &uacute;nicamente arrays de <code>char</code> y restringiendo los caracteres aceptados.
  * @author Jose Luis Escanciano. */
 final class JSecurePasswordLabel extends JLabel {
 
 	private static final long serialVersionUID = -4343328489072897605L;
 
-	private final int delay = 500; 
+	private final int delay = 500;
 
 	final char[] pass;
 	char[] getPass() {
@@ -169,9 +169,9 @@ final class JSecurePasswordLabel extends JLabel {
 	}
 
 	/** Muestra un asterisco por cada caracter de la contrase&ntilde;a. */
-	synchronized void updateText(){
+	synchronized void updateText() {
 		final StringBuilder text = new StringBuilder(" "); //$NON-NLS-1$
-		for(int i = 0; i < this.passwordLength; i++){
+		for(int i = 0; i < this.passwordLength; i++) {
 			text.append("*"); //$NON-NLS-1$
 		}
 		text.append(getShowCursor() ? "|" : " "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -179,14 +179,14 @@ final class JSecurePasswordLabel extends JLabel {
 	}
 
 	/** Establece a ceros ('\0') toda la contrase&ntilde;a. */
-	void clearPassword(){
+	void clearPassword() {
 		clearPassword(0);
 	}
 
 	/** Establece a ceros ('\0') toda la contrase&ntilde;a a partir de una posici&oacute;n inicial
 	 * @param position Posici&oacute;n inicial */
-	void clearPassword(final int position){
-		for(int i = position; i < this.pass.length; i++){
+	void clearPassword(final int position) {
+		for(int i = position; i < this.pass.length; i++) {
 			this.pass[i] = '\0';
 		}
 		this.passwordLength = position;

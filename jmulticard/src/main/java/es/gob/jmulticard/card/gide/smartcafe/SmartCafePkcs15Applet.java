@@ -1,12 +1,9 @@
 package es.gob.jmulticard.card.gide.smartcafe;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PublicKey;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.LinkedHashMap;
@@ -19,6 +16,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -51,7 +49,6 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
-import es.gob.jmulticard.card.iso7816four.Iso7816fourErrorCodes;
 
 /** Tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Vicente Ortiz
@@ -333,13 +330,6 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
             );
         }
 
-        final CertificateFactory cf;
-        try {
-            cf = CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
-        }
-        catch (final CertificateException e) {
-            throw new IOException("Error obteniendo la factoria de certificados X.509: " + e, e); //$NON-NLS-1$
-        }
         if (cdf.getCertificateCount() < 1) {
         	LOGGER.warning("La tarjeta no contiene ningun certificado"); //$NON-NLS-1$
         }
@@ -372,11 +362,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 
                 CERTS_BY_ALIAS.put(
                     cdf.getCertificateAlias(i),
-                    (X509Certificate) cf.generateCertificate(
-                        new ByteArrayInputStream(
-                    		certBytes
-                        )
-                    )
+                    CertificateUtils.generateCertificate(certBytes)
                 );
             }
             catch (final Exception e) {
@@ -592,7 +578,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		}
 		throw new PinException(
 			"Error comprobando los intentos restantes de PIN con respuesta: " + //$NON-NLS-1$
-				Iso7816fourErrorCodes.getErrorDescription(verifyResponse.getStatusWord())
+				verifyResponse.getStatusWord()
 		);
     }
 

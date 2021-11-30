@@ -94,9 +94,9 @@ public final class Odf extends Record {
 	public String toString() {
 		return
 			"ODF: \n" + //$NON-NLS-1$
-			" Ruta hacia el CDF: " + getCdfPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			" Ruta hacia el PrKDF: " + getPrKdfPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			" Ruta hacia el PuKDF: " + getPuKdfPath() //$NON-NLS-1$
+				" Ruta hacia el CDF: " + getCdfPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+				" Ruta hacia el PrKDF: " + getPrKdfPath() + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+				" Ruta hacia el PuKDF: " + getPuKdfPath() //$NON-NLS-1$
 		;
 	}
 

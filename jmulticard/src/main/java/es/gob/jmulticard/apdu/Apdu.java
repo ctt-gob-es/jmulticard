@@ -71,6 +71,6 @@ public class Apdu {
 
     /** Constructor. */
     protected Apdu() {
-        /* Ocultamos el constructor para evitar que se puedan crear objetos */
+        // Ocultamos el constructor para evitar que se puedan crear objetos
     }
 }

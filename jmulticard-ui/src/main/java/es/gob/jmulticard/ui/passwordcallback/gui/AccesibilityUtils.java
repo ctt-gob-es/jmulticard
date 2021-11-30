@@ -72,7 +72,7 @@ import javax.swing.JWindow;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-/** Clase con utilidades varias. */
+/** Clase con utilidades varias para la accesibilidad. */
 final class AccesibilityUtils {
 
     /** Indica si el sistema operativo tiene activada una combinaci&oacute;n de colores de alto contraste. */
@@ -152,22 +152,24 @@ final class AccesibilityUtils {
             }
             if (component instanceof JComboBox) {
                 final JComboBox<?> comboBox = (JComboBox<?>) component;
-                comboBox.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusLost(final FocusEvent e) {
-                        comboBox.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-                    }
+                comboBox.addFocusListener(
+            		new FocusListener() {
+	                    @Override
+	                    public void focusLost(final FocusEvent e) {
+	                        comboBox.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+	                    }
 
-                    @Override
-                    public void focusGained(final FocusEvent e) {
-                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
-                            comboBox.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-                        }
-                        else {
-                            comboBox.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-                        }
-                    }
-                });
+	                    @Override
+	                    public void focusGained(final FocusEvent e) {
+	                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
+	                            comboBox.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+	                        }
+	                        else {
+	                            comboBox.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+	                        }
+	                    }
+	                }
+        		);
             }
             if (component instanceof JLabel) {
                 final JLabel label = (JLabel) component;
@@ -222,10 +224,8 @@ final class AccesibilityUtils {
             else if (component instanceof JCheckBox) {
                 component.setForeground(Color.WHITE);
             } else {
-				if (component instanceof JPanel) {
-				    if (component.getBorder() instanceof TitledBorder) {
-				        ((TitledBorder) component.getBorder()).setTitleColor(Color.WHITE);
-				    }
+				if (component instanceof JPanel && component.getBorder() instanceof TitledBorder) {
+				    ((TitledBorder) component.getBorder()).setTitleColor(Color.WHITE);
 				}
 				component.setForeground(Color.WHITE);
 				component.setBackground(Color.BLACK);

@@ -102,10 +102,10 @@ final class LibJ2PCSCGNULinuxFix {
 				if (jvmBinaryArch == null) {
 					return libraryPath;
 				}
-				if (jvmBinaryArch.equals(JRE_BITNESS_32_VALUE)) {
+				if (JRE_BITNESS_32_VALUE.equals(jvmBinaryArch)) {
 					return addMultiarchPath(libraryPath, UBUNTU_MULTILIB_32_SUFFIX);
 				}
-				if (jvmBinaryArch.equals(JRE_BITNESS_64_VALUE)) {
+				if (JRE_BITNESS_64_VALUE.equals(jvmBinaryArch)) {
 					return addMultiarchPath(libraryPath, UBUNTU_MULTILIB_64_SUFFIX);
 				}
 				break;

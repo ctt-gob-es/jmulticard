@@ -95,7 +95,7 @@ final class AccesiblityConstants {
      * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_WIDTH = 460;
 
-    /** Alto inicial de los <code<JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+    /** Alto inicial de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
      * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_HEIGHT = 190;
 
