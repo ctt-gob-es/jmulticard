@@ -6,6 +6,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.spongycastle.util.encoders.Base64;
 
@@ -23,6 +24,7 @@ public class TestCeres430Signature {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testSignRepeatedly() throws Exception {
 
     	Security.addProvider(new Ceres430Provider());

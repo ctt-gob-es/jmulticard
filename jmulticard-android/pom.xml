@@ -8,7 +8,7 @@
     <version>1.7</version>
 	<packaging>aar</packaging>
 
-	<name>jmulticard-base</name>
+	<name>jmulticard-android</name>
 	<description>Proyecto Android para el uso de tarjetas inteligentes desde Android</description>
 	<url>https://administracionelectronica.gob.es/ctt/clienteafirma</url>
 	

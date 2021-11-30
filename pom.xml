@@ -203,6 +203,14 @@ mvn versions:display-dependency-updates
 				</property>
 			</activation>
 		  
+		  	<modules>
+				<module>jmulticard</module>
+				<module>jmulticard-android</module>
+				<module>jmulticard-jsr268</module>
+				<module>jmulticard-ui</module>
+				<module>jmulticard-jse</module>
+			</modules>
+		  
 			<build>
 				<plugins>
 				

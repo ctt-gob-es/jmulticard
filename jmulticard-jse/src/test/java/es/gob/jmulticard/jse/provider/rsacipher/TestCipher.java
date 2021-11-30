@@ -12,6 +12,7 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.smartcardio.CommandAPDU;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
@@ -94,6 +95,7 @@ public final class TestCipher {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testP12KeyCipher() throws Exception {
 		final KeyStore ks;
 		final PrivateKeyEntry pke;
