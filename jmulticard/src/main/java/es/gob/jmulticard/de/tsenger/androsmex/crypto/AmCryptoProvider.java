@@ -24,19 +24,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.spongycastle.crypto.DataLengthException;
+import org.spongycastle.crypto.BufferedBlockCipher;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
-import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 
 /** Operaciones criptogr&aacute;ficas de utilidad para el canal inal&aacute;mbrico.
  * @author Tobias Senger (tobias@t-senger.de). */
 public abstract class AmCryptoProvider {
 
 	/** Cifrador. */
-	protected PaddedBufferedBlockCipher encryptCipher = null;
+	protected BufferedBlockCipher encryptCipher = null;
 
 	/** Descifrador. */
-	protected PaddedBufferedBlockCipher decryptCipher = null;
+	protected BufferedBlockCipher decryptCipher = null;
 
 	// Buffers para mover octetos de un flujo a otro
 	private final byte[] buf = new byte[16]; // Buffer de entrada
@@ -83,7 +82,7 @@ public abstract class AmCryptoProvider {
 					bout.write(this.obuf, 0, noBytesProcessed);
 				}
 			}
-			catch (final DataLengthException | IllegalStateException | IOException e) {
+			catch (final Exception e) {
 				throw new AmCryptoException(e);
 			}
 
@@ -146,7 +145,7 @@ public abstract class AmCryptoProvider {
 		}
 	}
 
-	/** A&ntilde;ade un rellano ISO9797-1 (m&eacute;todo 2) / ISO7816d4-Padding a los datos proporcionados.
+	/** A&ntilde;ade un relleno ISO9797-1 (m&eacute;todo 2) / ISO7816d4-Padding a los datos proporcionados.
 	 * @param data Datos a rellenar.
 	 * @return Datos con el relleno aplicado. */
 	public final byte[] addPadding(final byte[] data) {

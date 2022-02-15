@@ -2,6 +2,7 @@ package es.gob.jmulticard.card.icao.pace;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -203,7 +204,7 @@ public final class PaceChannelHelper {
 
 		// La privada del terminal se genera aleatoriamente (PrkIFDDH1)
 		// La publica de la tarjeta sera devuelta por ella misma al enviar nuesra publica (pukIFDDH1)
-		final Random rnd = new Random();
+		final Random rnd = new SecureRandom();
 		rnd.setSeed(rnd.nextLong());
 		final byte[] x1 = new byte[curve.getFieldSize()/8];
 		rnd.nextBytes(x1);

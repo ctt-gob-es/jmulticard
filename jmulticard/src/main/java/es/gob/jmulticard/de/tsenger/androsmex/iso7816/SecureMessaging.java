@@ -178,7 +178,9 @@ public final class SecureMessaging {
 		}
 
 		if (do99 == null || do8E == null) {
-			throw new SecureMessagingException("Error en SecureMessaging: DO99 o DO8E no encontrados"); // DO99 es obligatorio //$NON-NLS-1$
+			throw new SecureMessagingException(
+				"Error desempaquetando el mensaje seguro: DO99 o DO8E no encontrados" // DO99 es obligatorio //$NON-NLS-1$
+			);
 		}
 
 		// Calcula K (SSC||DO87||DO99)
