@@ -19,6 +19,8 @@
 
 package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 
+import java.security.Security;
+
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.Mac;
 import org.spongycastle.crypto.engines.AESEngine;
@@ -28,6 +30,7 @@ import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 /** Implementaci&oacute;n de las operaciones criptogr&aacute;ficas usando AES.
  * @author Tobias Senger (tobias@t-senger.de). */
@@ -40,6 +43,15 @@ public final class AmAESCrypto extends AmCryptoProvider {
 
 	/** Tama&ntilde;o de bloque de cifrado. */
 	private static final int BLOCK_SIZE = 16;
+
+	/** Crea el objeto de operaciones criptogr&aacute;ficas.
+	 * &Uacute;nicamente a&ntilde;ade BouncyCastle si no estaba ya a&ntilde;adido como
+	 * proveedor. */
+	public AmAESCrypto() {
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
+	}
 
 	private void initCiphers(final byte[] key, final byte[] iv) {
 

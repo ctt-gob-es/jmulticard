@@ -2,6 +2,7 @@ package es.gob.jmulticard.card.icao;
 
 import java.io.IOException;
 
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
 
@@ -38,9 +39,10 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 
 	/** Genera el inicializador necesario para la clave partiendo de la MRZ.
 	 * @param mrz MRZ.
+	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas.
 	 * @return Inicializador necesario para la clave.
 	 * @throws MalformedMrzException Si la MRZ est&aacute; mal formada. */
-	public static WirelessInitializerMrz deriveMrz(final String mrz) throws MalformedMrzException {
+	public static WirelessInitializerMrz deriveMrz(final String mrz, final CryptoHelper cryptoHelper) throws MalformedMrzException {
 		if (mrz == null || mrz.isEmpty()) {
 			throw new IllegalArgumentException(
 				"El valor no puede ser nulo ni vacio" //$NON-NLS-1$
@@ -48,7 +50,7 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 		}
 		try {
 			return new WirelessInitializerMrz(
-				new MrzInfo(mrz).getMrzPswd()
+				new MrzInfo(mrz).getMrzPswd(cryptoHelper)
 			);
 		}
 		catch (final IOException ex) {

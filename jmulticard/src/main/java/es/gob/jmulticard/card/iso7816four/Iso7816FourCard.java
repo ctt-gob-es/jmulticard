@@ -156,7 +156,7 @@ public abstract class Iso7816FourCard extends SmartCard {
     public byte[] readBinaryComplete(final int len) throws IOException {
 
         int off = 0;
-        ResponseApdu readedResponse = null;
+        ResponseApdu readedResponse;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         // Leemos en iteraciones de MAX_READ_CHUNK bytes
@@ -299,7 +299,7 @@ public abstract class Iso7816FourCard extends SmartCard {
         return readBinaryComplete(fileLenght);
     }
 
-    /** Selecciona el fichero maestro.
+    /** Selecciona el fichero maestro (directorio ra&iacute;z de la tarjeta).
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
      * @throws FileNotFoundException Si no se encuentra el MF.
      * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa. */

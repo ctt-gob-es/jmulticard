@@ -22,7 +22,7 @@ public final class TestBac {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMrz() throws Exception {
-		final WirelessInitializer pi = WirelessInitializerMrz.deriveMrz(TEST_MRZ);
+		final WirelessInitializer pi = WirelessInitializerMrz.deriveMrz(TEST_MRZ, new JseCryptoHelper());
 		System.out.println(
 			HexUtils.hexify(pi.getBytes(), true)
 		);

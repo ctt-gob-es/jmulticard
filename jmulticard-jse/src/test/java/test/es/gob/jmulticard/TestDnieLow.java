@@ -205,6 +205,9 @@ public final class TestDnieLow {
 		System.out.println();
 
 		final byte[] dg2 = dnie.getDg2().getBytes(); // Foto del rostro
+
+		//final ResponseApdu res = dnie.sendArbitraryApdu(null);
+
 		// 3 no hay permisos
 		// 4, 5, 6 no presentes en el DNI
 		final byte[] dg7 = dnie.getDg7().getBytes(); // Imagen de la firma manuscrita
@@ -315,11 +318,11 @@ public final class TestDnieLow {
 	@Ignore
 	public void testDnie3Dg13Parser() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
-				ProviderUtil.getDefaultConnection(),
-				null,
-				new JseCryptoHelper(),
-				null,
-				false
+			ProviderUtil.getDefaultConnection(),
+			null,
+			new JseCryptoHelper(),
+			null,
+			false
 		);
 		if (!(dnie instanceof Dnie3)) {
 			System.out.println("No es un DNIe v3.0"); //$NON-NLS-1$

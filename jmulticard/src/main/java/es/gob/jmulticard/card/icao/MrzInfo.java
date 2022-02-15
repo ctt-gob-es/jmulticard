@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.card.SmartCard;
 
 /** Estructura de datos para almacenar la informaci&oacute;n de la MRZ,
@@ -101,10 +100,11 @@ public final class MrzInfo {
 	 * <code>K= f(&pi;) = SHA-1(Serial Number || Date of Birth || Date of Expiry)</code><br>
 	 * En este m&eacute;todo se genera el valor de K que deber&aacute; posteriormente ser
 	 * pasado como par&aacute;metro de la funci&oacute;n KDF(K,3) para generar la contrase&ntilde;a.
+	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas.
 	 * @return K Valor de inicializaci&oacute;n.
 	 * @throws IOException Si no se puede obtener el valor. */
-	public byte[] getMrzPswd() throws IOException {
-		return new JseCryptoHelper().digest(CryptoHelper.DigestAlgorithm.SHA1, getBytes());
+	public byte[] getMrzPswd(final CryptoHelper cryptoHelper) throws IOException {
+		return cryptoHelper.digest(CryptoHelper.DigestAlgorithm.SHA1, getBytes());
 	}
 
     /** Crea la MRZ.

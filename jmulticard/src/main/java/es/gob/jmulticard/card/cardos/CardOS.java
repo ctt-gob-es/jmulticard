@@ -233,7 +233,9 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	}
 
 	@Override
-	protected void selectMasterFile() throws ApduConnectionException, FileNotFoundException, Iso7816FourCardException {
+	protected void selectMasterFile() throws ApduConnectionException,
+	                                         FileNotFoundException,
+	                                         Iso7816FourCardException {
 		selectFileById(new byte[0]);
 	}
 

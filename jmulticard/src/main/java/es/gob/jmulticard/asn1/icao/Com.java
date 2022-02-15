@@ -12,7 +12,7 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.bertlv.BerTlv;
 
-/** EF&#46;COM de aplicación de LDS1 para el eMRTD de ICAO 9393 parte 10.
+/** EF&#46;COM de aplicación de LDS1 para el eMRTD de ICAO 9303 parte 10.
  * Contiene informaci&oacute;n sobre la versi&oacute;n LDS, informaci&oacute;n sobre
  * la versi&oacute;n de Unicode y una lista de los grupos de datos que están presentes en la aplicaci&oacute;n.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

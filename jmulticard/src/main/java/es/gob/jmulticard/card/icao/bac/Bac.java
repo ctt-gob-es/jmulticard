@@ -66,7 +66,7 @@ public final class Bac {
 
 		// Obtenemos el Kseed
 		final MrzInfo mi = new MrzInfo(mrz);
-		final byte[] kSeed = truncateMrzPwd(mi.getMrzPswd());
+		final byte[] kSeed = truncateMrzPwd(mi.getMrzPswd(ch));
 
 //final byte[] kSeed = new byte[] {
 //	(byte)0x23, (byte)0x9A, (byte)0xB9, (byte)0xCB, (byte)0x28, (byte)0x2D, (byte)0xAF, (byte)0x66,

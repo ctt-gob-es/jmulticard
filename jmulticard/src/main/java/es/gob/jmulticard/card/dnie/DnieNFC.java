@@ -9,7 +9,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
-import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
@@ -47,7 +46,7 @@ public class DnieNFC extends Dnie3 {
 			final CallbackHandler ch) throws IcaoException,
 	                                         ApduConnectionException {
 		this(
-			getPaceConnection(conn, ch),
+			getPaceConnection(conn, ch, cryptoHelper),
 			pwc,
 			cryptoHelper,
 			ch,
@@ -71,7 +70,7 @@ public class DnieNFC extends Dnie3 {
 			final boolean loadCertsAndKeys) throws IcaoException,
 	                                               ApduConnectionException {
 		super(
-			getPaceConnection(conn, ch),
+			getPaceConnection(conn, ch, cryptoHelper),
 			pwc,
 			cryptoHelper,
 			ch,
@@ -86,8 +85,9 @@ public class DnieNFC extends Dnie3 {
     }
 
 	private static ApduConnection getPaceConnection(final ApduConnection con,
-			                                        final CallbackHandler ch) throws ApduConnectionException,
-	                                                                                 IcaoException {
+			                                        final CallbackHandler ch,
+			                                        final CryptoHelper cryptoHelper) throws ApduConnectionException,
+	                                                                                        IcaoException {
 		// Primero obtenemos el CAN/MRZ
 		final String prompt = CardMessages.getString("DnieNFC.0"); //$NON-NLS-1$
 		Callback tic;
@@ -170,7 +170,7 @@ public class DnieNFC extends Dnie3 {
 				final WirelessInitializer paceInitializer;
 				switch (paceInitType) {
 					case MRZ:
-						paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue);
+						paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, cryptoHelper);
 						break;
 					case CAN:
 						paceInitializer = new WirelessInitializerCan(paceInitValue);
@@ -185,12 +185,12 @@ public class DnieNFC extends Dnie3 {
 					(byte)0x00,
 					paceInitializer,
 					con,
-					new JseCryptoHelper()
+					cryptoHelper
 				);
 
 				return new PaceConnection(
 		    		con,
-		    		new JseCryptoHelper(),
+		    		cryptoHelper,
 		    		sm
 				);
 
@@ -215,12 +215,13 @@ public class DnieNFC extends Dnie3 {
 
 	}
 
-	private static ApduConnection getPaceConnection(final ApduConnection con) throws ApduConnectionException,
-	                                                                                 IcaoException {
+	private static ApduConnection getPaceConnection(final ApduConnection con,
+                                                    final CryptoHelper cryptoHelper) throws ApduConnectionException,
+	                                                                                        IcaoException {
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
-				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue);
+				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, cryptoHelper);
 				break;
 			case CAN:
 				paceInitializer = new WirelessInitializerCan(paceInitValue);
@@ -235,13 +236,13 @@ public class DnieNFC extends Dnie3 {
 			(byte) 0x00,
 			paceInitializer, // CAN/MRZ
 			con,
-			new JseCryptoHelper()
+			cryptoHelper
 		);
 
         // Establecemos el canal PACE
     	return new PaceConnection(
     		con,
-    		new JseCryptoHelper(),
+    		cryptoHelper,
     		sm
 		);
 
@@ -253,7 +254,7 @@ public class DnieNFC extends Dnie3 {
 															 PinException {
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
-				this.rawConnection = getPaceConnection(getConnection());
+				this.rawConnection = getPaceConnection(getConnection(), this.cryptoHelper);
 			}
 			catch (final ApduConnectionException e) {
 				throw new CryptoCardException(

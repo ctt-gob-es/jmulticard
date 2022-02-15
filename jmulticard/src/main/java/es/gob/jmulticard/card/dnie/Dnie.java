@@ -1102,7 +1102,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
 	@Override
-    protected void selectMasterFile() throws ApduConnectionException, Iso7816FourCardException {
+	protected void selectMasterFile() throws ApduConnectionException, Iso7816FourCardException {
     	selectFileByName(MASTER_FILE_NAME);
     }
 

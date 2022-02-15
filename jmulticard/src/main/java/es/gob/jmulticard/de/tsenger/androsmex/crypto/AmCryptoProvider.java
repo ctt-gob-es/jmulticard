@@ -23,13 +23,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Security;
 
 import org.spongycastle.crypto.DataLengthException;
-import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 /** Operaciones criptogr&aacute;ficas de utilidad para el canal inal&aacute;mbrico.
  * @author Tobias Senger (tobias@t-senger.de). */
@@ -45,15 +42,6 @@ public abstract class AmCryptoProvider {
 	private final byte[] buf = new byte[16]; // Buffer de entrada
 	private final byte[] obuf = new byte[512]; // Buffer de salida
 
-	/** Crea el objeto de operaciones criptogr&aacute;ficas.
-	 * &Uacute;nicamente a&ntilde;ade BouncyCastle si no estaba ya a&ntilde;adido como
-	 * proveedor. */
-	public AmCryptoProvider() {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-	}
-
 	/** Inicializa el motor criptogr&aacute;fico con la clave y el contador de secuencia de env&iacute;os
 	 * (<i>Send Sequence Counter</i>: SSC).
 	 * @param keyBytes Clave.
@@ -64,7 +52,7 @@ public abstract class AmCryptoProvider {
 	 * @return Obtiene el tama&ntilde;o de bloque de cifrado */
 	public abstract int getBlockSize();
 
-	/** Obtiene el Codigo de Autenticaci&oacute;n de Mensaje (MAC) de los datos proporcionados.
+	/** Obtiene el C&oacute;digo de Autenticaci&oacute;n de Mensaje (MAC) de los datos proporcionados.
 	 * El algoritmo depende de la implementaci&oacute;n concreta de la clase.
 	 * @param data Datos sobre los que calcular el MAC.
 	 * @return MAC de los datos. */
@@ -105,7 +93,7 @@ public abstract class AmCryptoProvider {
 				bout.flush();
 				return bout.toByteArray();
 			}
-			catch (final DataLengthException | IllegalStateException | InvalidCipherTextException | IOException e) {
+			catch (final Exception e) {
 				throw new AmCryptoException(e);
 			}
 		}
@@ -139,7 +127,7 @@ public abstract class AmCryptoProvider {
 					bout.write(this.obuf, 0, noBytesProcessed);
 				}
 			}
-			catch (final DataLengthException | IllegalStateException | IOException e) {
+			catch (final Exception e) {
 				throw new AmCryptoException(e);
 			}
 
@@ -149,7 +137,7 @@ public abstract class AmCryptoProvider {
 				bout.flush();
 				return bout.toByteArray();
 			}
-			catch (final DataLengthException | IllegalStateException | InvalidCipherTextException | IOException e) {
+			catch (final Exception e) {
 				throw new AmCryptoException(e);
 			}
 		}

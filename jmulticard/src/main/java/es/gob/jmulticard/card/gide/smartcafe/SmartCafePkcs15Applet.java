@@ -399,7 +399,9 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(getCardName())
-            .append("\n Tarjeta con ").append(CERTS_BY_ALIAS.size()).append(" certificado(s):\n"); //$NON-NLS-1$ //$NON-NLS-2$
+            .append("\n Tarjeta con ") //$NON-NLS-1$
+            	.append(CERTS_BY_ALIAS.size())
+            		.append(" certificado(s):\n"); //$NON-NLS-1$
         final String[] aliases = getAliases();
         for (int i = 0; i < aliases.length; i++) {
             sb.append("  "); //$NON-NLS-1$
