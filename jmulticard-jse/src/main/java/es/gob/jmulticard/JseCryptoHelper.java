@@ -411,7 +411,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		return mapNonceGMWithECDH(os2i(nonceS), sharedSecretPointH, (ECParameterSpec) ecParams);
 	}
 
-	/** Convierte un Octet String de ASN&#46;1 en un entero
+	/** Convierte un <code>Octet String</code> de ASN&#46;1 en un entero
 	 * (seg&uacute;n <i>BSI TR 03111</i> Secci&oacute;n 3&#46;1&#46;2).
 	 * @param bytes Octet String de ASN&#46;1.
 	 * @return Entero (siempre positivo). */

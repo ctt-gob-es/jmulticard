@@ -46,7 +46,8 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
  * @author Carlos Gamuci Mill&aacute;n */
 public final class SecureChannelException extends ApduConnectionException {
 
-    private static final long serialVersionUID = 3618976402641614649L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = 3618976402641614649L;
 
     /** Crea una excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro.
      * @param msg Mensaje de la excepci&oacute;n.

@@ -43,7 +43,8 @@ package es.gob.jmulticard.apdu.connection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class NoReadersFoundException extends ApduConnectionException {
 
-    private static final long serialVersionUID = -7828305035163301527L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = -7828305035163301527L;
 
     /** Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes. */
     public NoReadersFoundException() {

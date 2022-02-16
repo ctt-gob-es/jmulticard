@@ -60,16 +60,16 @@ public final class ObjectIdentifier extends DecoderObject {
     	if (TAG_OBJECTID != tag && RELATIVE_OID != tag) {
 			throw new Asn1Exception(
 				"Se esperaba un tipo " + HexUtils.hexify(new byte[] { TAG_OBJECTID }, false) +  //$NON-NLS-1$
-				" o " + HexUtils.hexify(new byte[] { RELATIVE_OID }, false) +  //$NON-NLS-1$
-				" (" + this.getClass().getName() + ") " + //$NON-NLS-1$ //$NON-NLS-2$
-				"pero se encontro un tipo " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+					" o " + HexUtils.hexify(new byte[] { RELATIVE_OID }, false) +  //$NON-NLS-1$
+						" (" + this.getClass().getName() + ") " + //$NON-NLS-1$ //$NON-NLS-2$
+							"pero se encontro un tipo " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
 			);
 		}
     }
 
 	@Override
     protected void decodeValue() throws TlvException {
-		this.rawValue = new Tlv(this.getRawDerValue()).getValue();
+		this.rawValue = new Tlv(getRawDerValue()).getValue();
 	}
 
 	@Override

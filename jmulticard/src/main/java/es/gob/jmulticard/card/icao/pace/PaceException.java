@@ -8,6 +8,7 @@ import es.gob.jmulticard.card.icao.IcaoException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class PaceException extends IcaoException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 6633945897491338530L;
 
 	PaceException(final StatusWord retCode, final Apdu origin, final String description) {

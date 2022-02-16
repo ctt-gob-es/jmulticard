@@ -44,7 +44,8 @@ package es.gob.jmulticard;
  * por el usuario. */
 public final class CancelledOperationException extends RuntimeException {
 
-    private static final long serialVersionUID = 4447842480432712246L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = 4447842480432712246L;
 
     /** Crea la excepci&oacute;n con un mensaje determinado.
      * @param msg Mensaje descriptivo de la excepci&oacute;n. */

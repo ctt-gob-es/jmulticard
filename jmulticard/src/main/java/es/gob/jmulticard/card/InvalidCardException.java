@@ -45,6 +45,7 @@ import es.gob.jmulticard.HexUtils;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class InvalidCardException extends CardException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
     private static final long serialVersionUID = 4888120866657775782L;
 
     /** ATR de la tarjeta que se esperaba encontrar. */

@@ -59,7 +59,9 @@ public final class MrzInfo {
     /** Fecha de nacimiento del titular. */
     private String dateOfBirth;
 
+    /** Fecha de caducidad del documento. */
     private String dateOfExpiry;
+
     private char documentNumberCheckDigit;
 
     /** Contiene el n&uacute;mero del titular en ciertos pa&iacute;ses (como Holanda),

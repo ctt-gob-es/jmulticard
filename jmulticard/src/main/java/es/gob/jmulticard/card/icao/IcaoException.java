@@ -8,6 +8,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class IcaoException extends Iso7816FourCardException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = -4567446645471517825L;
 
 	/** Crea una excepci&oacute;n relativa a las funcionalidades ICAO MRTD.

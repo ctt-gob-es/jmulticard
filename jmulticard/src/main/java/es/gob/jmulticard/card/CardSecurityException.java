@@ -11,6 +11,7 @@ public final class CardSecurityException extends CardException {
 		super(desc, cause);
 	}
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 4053991684840787547L;
 
 }

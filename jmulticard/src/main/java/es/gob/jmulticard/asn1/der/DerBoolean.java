@@ -54,7 +54,7 @@ public class DerBoolean extends DecoderObject {
 
 	@Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-		final Tlv tmpTlv = new Tlv(this.getRawDerValue());
+		final Tlv tmpTlv = new Tlv(getRawDerValue());
 		checkTag(tmpTlv.getTag());
 		this.booleanValue = Boolean.valueOf(tmpTlv.getValue()[0] == (byte) 0x00);
 	}

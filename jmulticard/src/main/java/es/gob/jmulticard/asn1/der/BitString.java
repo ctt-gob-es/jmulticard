@@ -55,7 +55,7 @@ public abstract class BitString extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-        this.tlv = new Tlv(this.getRawDerValue());
+        this.tlv = new Tlv(getRawDerValue());
         if (TAG_BITSTRING != this.tlv.getTag()) {
             throw new Asn1Exception(
         		"Se esperaba un TLV de tipo BitString pero se ha encontrado uno de tipo " + //$NON-NLS-1$

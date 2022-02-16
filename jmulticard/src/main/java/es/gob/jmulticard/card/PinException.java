@@ -4,6 +4,7 @@ package es.gob.jmulticard.card;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class PinException extends CardException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 9827614003517666L;
 
 	/** Construye una excepci&oacute;n de introducci&oacute;n incorrecta de la tarjeta. */

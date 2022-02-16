@@ -4,6 +4,7 @@ package es.gob.jmulticard.card;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CryptoCardSecurityException extends CardException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = -3133117372570125570L;
 
 	/** Construye la excepci&oacute;n.

@@ -43,7 +43,8 @@ package es.gob.jmulticard.apdu.connection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class LostChannelException extends ApduConnectionException {
 
-    private static final long serialVersionUID = -4881940145750512085L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = -4881940145750512085L;
 
     /** Construye una excepci&oacute;n de p&eacute;rdida del canal de comunicaci&oacute;n con la tarjeta.
      * @param message Mensaje de causa de la p&eacute;rdida del canal.

@@ -8,6 +8,7 @@ import es.gob.jmulticard.apdu.StatusWord;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class InvalidCanOrMrzException extends IcaoException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 8254462304692038281L;
 
 	/** Crea la excepci&oacute;n de MRZ o CAN err&oacute;neo.

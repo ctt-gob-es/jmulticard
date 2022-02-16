@@ -49,7 +49,8 @@ import es.gob.jmulticard.HexUtils;
  * @version 1.0 */
 public final class StatusWord implements Serializable {
 
-    private static final long serialVersionUID = -735824987343408119L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = -735824987343408119L;
 
     /** Octeto m&aacute;s significativo dentro de la palabra de estado. */
     private byte msb = 0x00;

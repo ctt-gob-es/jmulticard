@@ -195,7 +195,7 @@ public final class DigestInfo extends Sequence {
         ) {
             return SHA384WITHRSA_NORMALIZED_ALGO_NAME;
         }
-        else if (
+		if (
     		"SHA512".equalsIgnoreCase(algorithm)                   || //$NON-NLS-1$
     		"SHA-512".equalsIgnoreCase(algorithm)                  || //$NON-NLS-1$
     		"SHA512withRSA".equalsIgnoreCase(algorithm)            || //$NON-NLS-1$
@@ -243,7 +243,7 @@ public final class DigestInfo extends Sequence {
 		if (SHA384WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
             return DigestAlgorithm.SHA384;
         }
-        else if (SHA512WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
+		if (SHA512WITHRSA_NORMALIZED_ALGO_NAME.equals(signatureAlgorithm)) {
             return DigestAlgorithm.SHA512;
         }
         throw new IllegalStateException(

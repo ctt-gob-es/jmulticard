@@ -46,7 +46,8 @@ import java.io.IOException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class ApduConnectionException extends IOException {
 
-    private static final long serialVersionUID = 8002087406820820877L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = 8002087406820820877L;
 
     /** Construye una excepci&oacute;n relativa a un error de conexi&oacute;n con un lector de
      * tarjetas o con una tarjeta inteligente.

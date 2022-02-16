@@ -97,6 +97,7 @@ public class Iso7816FourCardException extends Exception {
         this.returnCode = retCode;
     }
 
+    /** Identificador de versi&oacute;n para la serializaci&oacute;n. */
     private static final long serialVersionUID = 5935577997660561619L;
 
     /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado) que caus&oacute; la

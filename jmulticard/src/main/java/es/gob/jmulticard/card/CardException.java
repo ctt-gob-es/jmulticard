@@ -45,6 +45,7 @@ import java.io.IOException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public abstract class CardException extends IOException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
     private static final long serialVersionUID = -3054749595177932903L;
 
     /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.

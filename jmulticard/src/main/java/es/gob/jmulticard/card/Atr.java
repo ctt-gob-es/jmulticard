@@ -47,6 +47,7 @@ import es.gob.jmulticard.HexUtils;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class Atr implements Serializable {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
     private static final long serialVersionUID = 1L;
 
     /** Octetos del ATR. */

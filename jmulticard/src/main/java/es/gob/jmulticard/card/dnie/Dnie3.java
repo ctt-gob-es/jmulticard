@@ -49,7 +49,6 @@ import java.util.Arrays;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import org.spongycastle.asn1.icao.DataGroupHash;
 import org.spongycastle.asn1.icao.LDSSecurityObject;
 
 import es.gob.jmulticard.CryptoHelper;
@@ -60,6 +59,7 @@ import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Com;
+import es.gob.jmulticard.asn1.icao.DataGroupHash;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SodException;
@@ -108,7 +108,17 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
 		openSecureChannelIfNotAlreadyOpened(false);
 
-		for (final DataGroupHash dgh : ldsSecurityObject.getDatagroupHash()) {
+		for (final org.spongycastle.asn1.icao.DataGroupHash dghBc : ldsSecurityObject.getDatagroupHash()) {
+
+			// Uso de DataGroupHash propio, evitando el de BouncyCastle
+			final DataGroupHash dgh = new DataGroupHash();
+			try {
+				dgh.setDerValue(dghBc.getEncoded());
+			}
+			catch (Asn1Exception | TlvException | IOException e1) {
+				throw new IOException(e1);
+			}
+
 			final byte[] dgBytes;
 			switch(dgh.getDataGroupNumber()) {
 				case 1:
@@ -176,11 +186,11 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			}
 			final byte[] actualHash = md.digest(dgBytes);
 			md.reset();
-			if (!Arrays.equals(actualHash, dgh.getDataGroupHashValue().getOctets())) {
+			if (!Arrays.equals(actualHash, dgh.getDataGroupHashValue())) {
 				throw new InvalidSecurityObjectException(
 					"El DG" + dgh.getDataGroupNumber() + " no concuerda con la huella del SOD, " + //$NON-NLS-1$ //$NON-NLS-2$
 						"se esperaba " + HexUtils.hexify(actualHash, false) + //$NON-NLS-1$
-							" y se ha encontrado " + HexUtils.hexify(dgh.getDataGroupHashValue().getOctets(), false) //$NON-NLS-1$
+							" y se ha encontrado " + HexUtils.hexify(dgh.getDataGroupHashValue(), false) //$NON-NLS-1$
 				);
 			}
 		}

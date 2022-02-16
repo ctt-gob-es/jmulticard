@@ -45,7 +45,8 @@ package es.gob.jmulticard.apdu.connection;
  * @version 1.0 */
 public final class CardConnectionEvent extends java.util.EventObject {
 
-    private static final long serialVersionUID = 5904349664169930807L;
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
+	private static final long serialVersionUID = 5904349664169930807L;
 
     /** Construye un objecto de evento de conexi&oacute;n a partir de una conexi&oacute;n dada.
      * @param conn Conexi&oacute;n con tarjeta que ha generado el evento actual. */

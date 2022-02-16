@@ -55,9 +55,10 @@ public class OctectString extends DecoderObject {
 
     @Override
     protected void decodeValue() throws TlvException {
-    	final Tlv tlv = new Tlv(this.getRawDerValue());
+    	final Tlv tlv = new Tlv(getRawDerValue());
     	if (TAG_OCTECTSTRING != tlv.getTag()) {
-    		throw new TlvException("Se esperaba un TLV de tipo OctectString pero se ha encontrado uno de tipo " + //$NON-NLS-1$
+    		throw new TlvException(
+				"Se esperaba un TLV de tipo OctectString pero se ha encontrado uno de tipo " + //$NON-NLS-1$
                 HexUtils.hexify(new byte[] {
                     tlv.getTag()
                 }, false)

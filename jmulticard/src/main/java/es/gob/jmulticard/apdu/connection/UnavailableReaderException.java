@@ -4,6 +4,7 @@ package es.gob.jmulticard.apdu.connection;
  * @author Jose Luis Escanciano. */
 public final class UnavailableReaderException extends ApduConnectionException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 4033742751748929273L;
 
 	/** Crea una excepci&oacute;n que indica que se intenta acceder a un lector que ya no est&aacute; disponible.

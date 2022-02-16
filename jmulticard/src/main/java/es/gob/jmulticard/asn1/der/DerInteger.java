@@ -55,7 +55,7 @@ public class DerInteger extends DecoderObject {
 
 	@Override
     protected void decodeValue() throws TlvException {
-		this.value = new BigInteger(new Tlv(this.getRawDerValue()).getValue());
+		this.value = new BigInteger(new Tlv(getRawDerValue()).getValue());
 	}
 
 	/** Obtiene el valor entero (<code>BigInteger</code>) del objeto.

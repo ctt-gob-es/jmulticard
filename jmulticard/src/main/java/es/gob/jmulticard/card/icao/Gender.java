@@ -13,6 +13,8 @@ public enum Gender {
 	/** Texto descriptivo del sexo. */
 	private final String desc;
 
+	/** Constructor.
+	 * @param d Texto descriptivo del sexo del titular. */
 	Gender(final String d) {
 		this.desc = d;
 	}
@@ -24,6 +26,7 @@ public enum Gender {
 
 	/** Obtiene el sexo del titular a partir del texto correspondiente en la MRZ del MRTD.
 	 * @param text Texto correspondiente al sexo en la MRZ del MRTD.
+	 *             Debe ser "F" (<i>female</i>) o "M" (<i>male</i>).
 	 * @return Sexo del titular del MRTD. */
 	public static Gender getGender(final String text) {
 		if (text == null) {

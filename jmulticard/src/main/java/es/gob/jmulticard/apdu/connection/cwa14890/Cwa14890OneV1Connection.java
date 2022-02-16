@@ -364,7 +364,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
     /** Genera la clave <code>KMAC</code> para calcular y verificar <i>checksums</i>.
      * La clave para el c&aacute;lculo del MAC Kmac se obtiene como los 16 primeros octetos
-     * de la huella SHA-1 de la concatenaci&oacute;n de <i>kifdicc</> con el valor
+     * de la huella SHA-1 de la concatenaci&oacute;n de <i>kifdicc</i> con el valor
      * "00 00 00 02" (SECURE_CHANNEL_KMAC_AUX).
      * @param kidficc XOR de los valores <code>Kifd</code> y <code>Kicc</code>.
      * @return Clave Triple-DES.

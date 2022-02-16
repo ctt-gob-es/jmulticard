@@ -44,6 +44,7 @@ package es.gob.jmulticard.apdu.connection;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CardNotPresentException extends ApduConnectionException {
 
+	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 4766021408409413374L;
 
 	/** Construye una excepci&oacute;n relativa a un intento de conexi&oacute;n en un lector de
