@@ -2,8 +2,6 @@ package es.gob.jmulticard.asn1.icao;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
-import es.gob.jmulticard.asn1.Tlv;
-import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.DerInteger;
 import es.gob.jmulticard.asn1.der.OctectString;
 import es.gob.jmulticard.asn1.der.Sequence;
@@ -55,20 +53,11 @@ public final class DataGroupHash extends Sequence {
 
 	@Override
 	public String toString() {
-		String dataGroupHashValue;
-		try {
-			dataGroupHashValue = HexUtils.hexify(
-				new Tlv(
-					((OctectString)getElementAt(1)).getBytes()
-				).getValue(),
+		return "DataGroupHash para el DG" + getElementAt(0) + " con valor de huella: " + //$NON-NLS-1$ //$NON-NLS-2$
+			HexUtils.hexify(
+				((OctectString)getElementAt(1)).getOctectStringByteValue(),
 				false
 			);
-		}
-		catch (final TlvException e) {
-			dataGroupHashValue = "INVALIDO (" + e + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return "DataGroupHash para el DG" + getElementAt(0) + //$NON-NLS-1$
-			" con valor de huella: " + dataGroupHashValue; //$NON-NLS-1$
 	}
 
 	/** Obtiene el ordinal del grupo de datos.
@@ -78,12 +67,9 @@ public final class DataGroupHash extends Sequence {
 	}
 
 	/** Obtiene el valor de la huella del grupo de datos.
-	 * @return Valor de la huella del grupo de datos.
-	 * @throws TlvException Si no se puede obtener el valor de la huella a partir del TLV. */
-	public byte[] getDataGroupHashValue() throws TlvException {
-		return new Tlv(
-			((OctectString)getElementAt(1)).getBytes()
-		).getValue();
+	 * @return Valor de la huella del grupo de datos. */
+	public byte[] getDataGroupHashValue() {
+		return ((OctectString)getElementAt(1)).getOctectStringByteValue();
 	}
 
 }
