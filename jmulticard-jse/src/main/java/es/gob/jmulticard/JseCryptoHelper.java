@@ -84,6 +84,7 @@ import org.spongycastle.cms.SignerId;
 import org.spongycastle.cms.SignerInformation;
 import org.spongycastle.cms.SignerInformationVerifier;
 import org.spongycastle.crypto.BlockCipher;
+import org.spongycastle.crypto.Mac;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.params.KeyParameter;
@@ -109,7 +110,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 	private static final String ECDH = "ECDH"; //$NON-NLS-1$
 
-    /** {@inheritDoc} */
     @Override
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 
@@ -160,13 +160,11 @@ public final class JseCryptoHelper extends CryptoHelper {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] desedeEncrypt(final byte[] data, final byte[] key) throws IOException {
         return doDesede(data, key, Cipher.ENCRYPT_MODE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] desedeDecrypt(final byte[] data, final byte[] key) throws IOException {
         return doDesede(data, key, Cipher.DECRYPT_MODE);
@@ -209,13 +207,11 @@ public final class JseCryptoHelper extends CryptoHelper {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] desEncrypt(final byte[] data, final byte[] key) throws IOException {
         return doDes(data, key, Cipher.ENCRYPT_MODE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] desDecrypt(final byte[] data, final byte[] key) throws IOException {
         return doDes(data, key, Cipher.DECRYPT_MODE);
@@ -236,19 +232,16 @@ public final class JseCryptoHelper extends CryptoHelper {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException {
         return doRsa(cipheredData, key, Cipher.DECRYPT_MODE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException {
         return doRsa(data, key, Cipher.ENCRYPT_MODE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] generateRandomBytes(final int numBytes) throws IOException {
         final SecureRandom sr;
@@ -367,11 +360,11 @@ public final class JseCryptoHelper extends CryptoHelper {
 	@Override
 	public byte[] doAesCmac(final byte[] data, final byte[] key) {
 		final BlockCipher cipher = new AESEngine();
-		final org.spongycastle.crypto.Mac mac = new CMac(cipher, 64);
+		final Mac mac = new CMac(cipher, 64);
 		final KeyParameter keyP = new KeyParameter(key);
 		mac.init(keyP);
 		mac.update(data, 0, data.length);
-		final byte[] out = new byte[8];
+		final byte[] out = new byte[mac.getMacSize()];
 		mac.doFinal(out, 0);
 		return out;
 	}
@@ -632,7 +625,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 		public Object clone() {
 			throw new UnsupportedOperationException();
 		}
-
 	}
 
 	@Override

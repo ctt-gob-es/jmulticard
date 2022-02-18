@@ -47,13 +47,14 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
-/** Clase para operaciones de cifrado cifrado AES.
+/** Operaciones de cifrado AES.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Sergio Mart&iacute;nez Rico. */
 public final class ApduEncrypterAes extends ApduEncrypter {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	/** Constructor de la clase para operaciones de cifrado cifrado AES. */
+	/** Constructor de la clase para operaciones de cifrado AES. */
 	public ApduEncrypterAes() {
 		LOGGER.info(
 			"Se usara AES y CMAC para el cifrado de mensajes en el canal seguro" //$NON-NLS-1$
@@ -61,7 +62,6 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		this.paddingLength = 16;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	protected byte[] encryptData(final byte[] data,
 			                     final byte[] key,
@@ -86,7 +86,6 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	protected byte[] generateMac(final byte[] dataPadded,
 			                     final byte[] ssc,
@@ -106,13 +105,12 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		return ret;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
-			                         final byte[] keyCipher,
-			                         final byte[] ssc,
-			                         final byte[] kMac,
-			                         final CryptoHelper cryptoHelper) {
+			                                final byte[] keyCipher,
+			                                final byte[] ssc,
+			                                final byte[] kMac,
+			                                final CryptoHelper cryptoHelper) {
 		return null;
 	}
 

@@ -23,9 +23,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import org.spongycastle.crypto.BufferedBlockCipher;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
+
+import es.gob.jmulticard.CryptoHelper;
 
 /** Operaciones criptogr&aacute;ficas de utilidad para el canal inal&aacute;mbrico.
  * @author Tobias Senger (tobias@t-senger.de). */
@@ -37,27 +41,32 @@ public abstract class AmCryptoProvider {
 	/** Descifrador. */
 	protected BufferedBlockCipher decryptCipher = null;
 
+	/** Tama&ntilde;o de bloque de cifrado. */
+	public static final int BLOCK_SIZE = 16;
+
 	// Buffers para mover octetos de un flujo a otro
 	private final byte[] buf = new byte[16]; // Buffer de entrada
 	private final byte[] obuf = new byte[512]; // Buffer de salida
 
-	/** Inicializa el motor criptogr&aacute;fico con la clave y el contador de secuencia de env&iacute;os
-	 * (<i>Send Sequence Counter</i>: SSC).
+	/** Inicializa el motor criptogr&aacute;fico con la clave y el contador
+	 * de secuencia de env&iacute;os (<i>Send Sequence Counter</i>: SSC).
 	 * @param keyBytes Clave.
-	 * @param ssc Contador de secuencia de env&iacute;os (Send Sequence Counter). */
-	public abstract void init(byte[] keyBytes, byte[] ssc);
+	 * @param ssc Contador de secuencia de env&iacute;os (Send Sequence Counter).
+	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
+	public abstract void init(byte[] keyBytes, byte[] ssc, final CryptoHelper ch);
 
-	/** Obtiene el tama&ntilde;o de bloque de cifrado.
-	 * @return Obtiene el tama&ntilde;o de bloque de cifrado */
-	public abstract int getBlockSize();
-
-	/** Obtiene el C&oacute;digo de Autenticaci&oacute;n de Mensaje (MAC) de los datos proporcionados.
+	/** Obtiene el C&oacute;digo de Autenticaci&oacute;n de Mensaje (MAC) de
+	 * los datos proporcionados.
 	 * El algoritmo depende de la implementaci&oacute;n concreta de la clase.
 	 * @param data Datos sobre los que calcular el MAC.
-	 * @return MAC de los datos. */
-	public abstract byte[] getMAC(byte[] data);
+	 * @return MAC de los datos.
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeyException */
+	public abstract byte[] getMAC(byte[] data) throws InvalidKeyException,
+	                                                  NoSuchAlgorithmException;
 
-	/** Encripta datos (el algoritmo depende de la implementaci&oacute;n concreta de la clase).
+	/** Encripta datos (el algoritmo depende de la implementaci&oacute;n
+	 * concreta de la clase).
 	 * @param in Datos en claro (a cifrar).
 	 * @return Datos cifrados.
 	 * @throws AmCryptoException En cualquier error. */
@@ -101,7 +110,8 @@ public abstract class AmCryptoProvider {
 		}
 	}
 
-	/** Desencripta datos (el algoritmo depende de la implementaci&oacute;n concreta de la clase).
+	/** Desencripta datos (el algoritmo depende de la implementaci&oacute;n
+	 * concreta de la clase).
 	 * @param in Datos cifrados.
 	 * @return Datos descifrados (en claro).
 	 * @throws AmCryptoException En cualquier error. */
@@ -145,12 +155,13 @@ public abstract class AmCryptoProvider {
 		}
 	}
 
-	/** A&ntilde;ade un relleno ISO9797-1 (m&eacute;todo 2) / ISO7816d4-Padding a los datos proporcionados.
+	/** A&ntilde;ade un relleno ISO9797-1 (m&eacute;todo 2) / ISO7816d4-Padding
+	 * a los datos proporcionados.
 	 * @param data Datos a rellenar.
 	 * @return Datos con el relleno aplicado. */
-	public final byte[] addPadding(final byte[] data) {
+	public final static byte[] addPadding(final byte[] data) {
 		final int len = data.length;
-		final int nLen = (len / getBlockSize() + 1) * getBlockSize();
+		final int nLen = (len / BLOCK_SIZE + 1) * BLOCK_SIZE;
 		final byte[] n = new byte[nLen];
 		System.arraycopy(data, 0, n, 0, data.length);
 		new ISO7816d4Padding().addPadding(n, len);

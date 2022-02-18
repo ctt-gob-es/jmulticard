@@ -21,10 +21,13 @@ package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import org.spongycastle.asn1.ASN1InputStream;
 
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -40,19 +43,22 @@ public final class SecureMessaging {
 	private final byte[] kmac;
 	private final byte[] ssc;
 	private final AmCryptoProvider crypto;
+	private final CryptoHelper cryptoHelper;
 
 	/** Constructor.
 	 * @param acp Proveedor de operaciones criptogr&aacute;ficas (t&iacute;picamente,
 	 * una instancia de <code>AmAESCrypto</code>).
 	 * @param ksenc Clave de sesi&oacute;n para encriptar.
 	 * @param ksmac Clave de sesi&oacute;n para el <i>checksum</i>.
-	 * @param initialSSC Contador de sequencia de env&iacute;o. */
+	 * @param initialSSC Contador de sequencia de env&iacute;o.
+	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
 	public SecureMessaging(final AmCryptoProvider acp,
-							final byte[] ksenc,
-							final byte[] ksmac,
-							final byte[] initialSSC) {
-
+						   final byte[] ksenc,
+						   final byte[] ksmac,
+						   final byte[] initialSSC,
+						   final CryptoHelper ch) {
 		this.crypto = acp;
+		this.cryptoHelper = ch;
 		this.kenc = ksenc.clone();
 		this.kmac = ksmac.clone();
 		this.ssc = initialSSC.clone();
@@ -120,7 +126,7 @@ public final class SecureMessaging {
 	 * @param responseApduEncrypted APDU protegida.
 	 * @return APDU en claro.
 	 * @throws SecureMessagingException En cualquier error. */
-	public ResponseApdu unwrap(final ResponseApdu responseApduEncrypted) throws SecureMessagingException{
+	public ResponseApdu unwrap(final ResponseApdu responseApduEncrypted) throws SecureMessagingException {
 
 		DO87 do87 = null;
 		DO99 do99 = null;
@@ -195,8 +201,16 @@ public final class SecureMessaging {
 			throw new SecureMessagingException(e);
 		}
 
-		this.crypto.init(this.kmac, this.ssc);
-		final byte[] cc = this.crypto.getMAC(bout.toByteArray());
+		this.crypto.init(this.kmac, this.ssc, this.cryptoHelper);
+		byte[] cc;
+		try {
+			cc = this.crypto.getMAC(bout.toByteArray());
+		}
+		catch (final InvalidKeyException | NoSuchAlgorithmException e1) {
+			throw new SecureMessagingException(
+				"Error calculando el CMAC: " + e1, e1 //$NON-NLS-1$
+			);
+		}
 
 		final byte[] do8eData = do8E.getData();
 
@@ -211,7 +225,7 @@ public final class SecureMessaging {
 		// Desencriptar DO87
 		final byte[] unwrappedAPDUBytes;
 		if (do87 != null) {
-			this.crypto.init(this.kenc, this.ssc);
+			this.crypto.init(this.kenc, this.ssc, this.cryptoHelper);
 			final byte[] do87Data = do87.getData();
 			final byte[] data;
 			try {
@@ -244,7 +258,7 @@ public final class SecureMessaging {
 	 * @return DO87 Par&aacute;metros del comando.
 	 * @throws SecureMessagingException En caso de error en el cifrado. */
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
-		this.crypto.init(this.kenc, this.ssc);
+		this.crypto.init(this.kenc, this.ssc, this.cryptoHelper);
 		byte[] enc_data;
 		try {
 			enc_data = this.crypto.encrypt(data);
@@ -264,7 +278,7 @@ public final class SecureMessaging {
 		 * De lo contrario solo se hace padding en el calculo del MAC */
 		try {
 			if (do87 != null || do97 != null) {
-				m.write(this.crypto.addPadding(header));
+				m.write(AmCryptoProvider.addPadding(header));
 			}
 			else {
 				m.write(header);
@@ -281,9 +295,16 @@ public final class SecureMessaging {
 			throw new SecureMessagingException(e);
 		}
 
-		this.crypto.init(this.kmac, this.ssc);
+		this.crypto.init(this.kmac, this.ssc, this.cryptoHelper);
 
-		return new DO8E(this.crypto.getMAC(m.toByteArray()));
+		try {
+			return new DO8E(this.crypto.getMAC(m.toByteArray()));
+		}
+		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
+			throw new SecureMessagingException(
+				"Error calculando el CMAC: " + e, e //$NON-NLS-1$
+			);
+		}
 	}
 
 	private static DO97 buildDO97(final int le) {

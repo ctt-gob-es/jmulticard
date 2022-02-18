@@ -19,12 +19,12 @@
 
 package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 import org.spongycastle.crypto.BlockCipher;
-import org.spongycastle.crypto.Mac;
 import org.spongycastle.crypto.engines.AESEngine;
-import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -32,17 +32,16 @@ import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import es.gob.jmulticard.CryptoHelper;
+
 /** Implementaci&oacute;n de las operaciones criptogr&aacute;ficas usando AES.
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class AmAESCrypto extends AmCryptoProvider {
 
 	private byte[] keyBytes = null;
-	private KeyParameter keyP = null;
 	private byte[] IV = null;
 	private byte[] sscBytes = null;
-
-	/** Tama&ntilde;o de bloque de cifrado. */
-	private static final int BLOCK_SIZE = 16;
+	private CryptoHelper cryptoHelper = null;
 
 	/** Crea el objeto de operaciones criptogr&aacute;ficas.
 	 * &Uacute;nicamente a&ntilde;ade BouncyCastle si no estaba ya a&ntilde;adido como
@@ -58,8 +57,6 @@ public final class AmAESCrypto extends AmCryptoProvider {
 		// Obtenemos los octetos de la clave
 		this.keyBytes = new byte[key.length];
 		System.arraycopy(key, 0, this.keyBytes, 0, key.length);
-
-		this.keyP = new KeyParameter(this.keyBytes);
 
 		// Obtenemos el vector de inicializacion (IV)
 		this.IV = new byte[BLOCK_SIZE];
@@ -81,38 +78,37 @@ public final class AmAESCrypto extends AmCryptoProvider {
 			new ISO7816d4Padding()
 		);
 
-		// Creamos el parametro con el vector de inicializacion (IV)
-		final ParametersWithIV parameterIV = new ParametersWithIV(this.keyP, this.IV);
+		// Creamos los parametros de cifrado con el vector de inicializacion (IV)
+		final ParametersWithIV parameterIV = new ParametersWithIV(
+			new KeyParameter(this.keyBytes),
+			this.IV
+		);
 
 		this.encryptCipher.init(true, parameterIV);
 		this.decryptCipher.init(false, parameterIV);
 	}
 
 	@Override
-	public void init(final byte[] keyBytes1, final byte[] ssc) {
+	public void init(final byte[] keyBytes1,
+			         final byte[] ssc,
+			         final CryptoHelper ch) {
+
 		this.sscBytes = ssc.clone();
+		this.cryptoHelper = ch;
 		final byte[] iv = encryptBlock(keyBytes1, this.sscBytes);
 		initCiphers(keyBytes1, iv);
 	}
 
 	@Override
-	public byte[] getMAC(final byte[] data) {
+	public byte[] getMAC(final byte[] data) throws InvalidKeyException,
+	                                               NoSuchAlgorithmException {
 
 		byte[] n = new byte[this.sscBytes.length + data.length];
 		System.arraycopy(this.sscBytes, 0, n, 0, this.sscBytes.length);
 		System.arraycopy(data, 0, n, this.sscBytes.length, data.length);
 		n = addPadding(n);
 
-		final BlockCipher cipher = new AESEngine();
-		final Mac mac = new CMac(cipher, 64);
-
-		mac.init(this.keyP);
-		mac.update(n, 0, n.length);
-		final byte[] out = new byte[mac.getMacSize()];
-
-		mac.doFinal(out, 0);
-
-		return out;
+		return this.cryptoHelper.doAesCmac(n, this.keyBytes);
 	}
 
 	/** Encripta un bloque usando AES.
@@ -127,10 +123,4 @@ public final class AmAESCrypto extends AmCryptoProvider {
 		cipher.processBlock(z, 0, s, 0);
 		return s;
 	}
-
-	@Override
-	public int getBlockSize() {
-		return BLOCK_SIZE;
-	}
-
 }

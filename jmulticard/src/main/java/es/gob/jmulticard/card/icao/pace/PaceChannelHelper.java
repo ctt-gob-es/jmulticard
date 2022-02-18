@@ -425,8 +425,13 @@ public final class PaceChannelHelper {
 			);
 		}
 
-		final AmCryptoProvider crypto = new AmAESCrypto();
-		return new SecureMessaging(crypto, kenc, kmac, new byte[crypto.getBlockSize()]);
+		return new SecureMessaging(
+			new AmAESCrypto(),
+			kenc,
+			kmac,
+			new byte[AmCryptoProvider.BLOCK_SIZE],
+			cryptoHelper
+		);
 	}
 
 	private static byte[] bigIntToByteArray(final BigInteger bi) {
