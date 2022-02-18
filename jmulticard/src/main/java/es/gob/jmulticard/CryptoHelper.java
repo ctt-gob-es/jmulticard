@@ -46,6 +46,9 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 
@@ -268,4 +271,19 @@ public abstract class CryptoHelper {
 			                                          final byte[] sharedSecretH,
 			                                          final EcCurve curveName);
 
+	/** Obtiene el contenido firmado de una firma CMS/OPKCS#7.
+	 * @param signedDataBytes Firma CMS/OPKCS#7.
+	 * @return Contenido firmado de una firma CMS/OPKCS#7.
+	 * @throws IOException Si los datos proporcionados no son una firma CMS/OPKCS#7 bien formada. */
+	public abstract byte[] getCmsSignatureSignedContent(final byte[] signedDataBytes) throws IOException;
+
+	/** Valida una firma CMS/OPKCS#7. No comprueba la validez de los certificados de firma.
+	 * @param signedDataBytes Firma CMS/OPKCS#7.
+	 * @return Cadena de certificados del firmante (para validaci&oacute;n externa).
+	 * @throws SignatureException Si la firma es inv&aacute;lida o est&aacute; mal formada.
+	 * @throws IOException Si los datos proporcionados no son una firma CMS/OPKCS#7 bien formada.
+	 * @throws CertificateException Si hay problemas relacionados con los certificados de firma. */
+	public abstract X509Certificate[] validateCmsSignature(final byte[] signedDataBytes) throws SignatureException,
+	                                                                                            IOException,
+	                                                                                            CertificateException;
 }

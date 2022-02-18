@@ -45,7 +45,7 @@ public final class TestDnieLow {
 //	private static final String MRZ = ""; //$NON-NLS-1$
 	private static final String CAN = "111111"; //$NON-NLS-1$
 
-	private static final String PIN = "PIN_DNIE"; //$NON-NLS-1$
+	private static final String PIN = "PIN_DNI"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */

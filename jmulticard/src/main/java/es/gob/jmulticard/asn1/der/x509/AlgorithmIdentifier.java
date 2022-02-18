@@ -30,4 +30,9 @@ public final class AlgorithmIdentifier extends Sequence {
 		);
 	}
 
+	@Override
+	public String toString() {
+		return getElementAt(0).toString();
+	}
+
 }

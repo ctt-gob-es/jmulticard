@@ -12,10 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import org.spongycastle.asn1.ASN1Encodable;
-import org.spongycastle.asn1.ASN1Integer;
-import org.spongycastle.asn1.DERSequence;
-
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
@@ -194,13 +190,22 @@ public final class Vdsned {
 
 	}
 
-	private static byte[] encodeEcdsaSignature(final byte[] r, final byte[] s) throws IOException {
-		return new DERSequence(
-			new ASN1Encodable[] {
-				new ASN1Integer(r),
-				new ASN1Integer(s)
-			}
-		).getEncoded();
+	private static byte[] encodeEcdsaSignature(final byte[] r, final byte[] s) {
+
+		final byte integerTag = (byte) 0x02;
+		final byte sequenceTag = (byte) 0x30;
+
+		final Tlv rTlv = new Tlv(integerTag, r);
+		final Tlv sTlv = new Tlv(integerTag, s);
+		final Tlv sequenceTlv = new Tlv(
+			sequenceTag,
+			HexUtils.concatenateByteArrays(
+				rTlv.getBytes(),
+				sTlv.getBytes()
+			)
+		);
+
+		return sequenceTlv.getBytes();
 	}
 
 	/** Comprueba la firma electr&oacute;nica de este <i>Visible Digital Seal for Non-Electronic Documents</i>.

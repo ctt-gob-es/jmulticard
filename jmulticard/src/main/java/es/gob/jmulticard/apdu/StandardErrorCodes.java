@@ -8,6 +8,7 @@ import es.gob.jmulticard.HexUtils;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 final class StandardErrorCodes {
 
+	/** Constructor privado y vac&iacute;o. */
 	private StandardErrorCodes() {
 		// No instanciable
 	}

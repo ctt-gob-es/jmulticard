@@ -6,6 +6,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
+import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.asn1.icao.Sod;
 
 /** Pruebas de estructuras ICAO.
@@ -17,11 +18,9 @@ public final class TestIcaoAsn1 {
     /** Lee un flujo de datos de entrada y los recupera en forma de array de
      * bytes. Este m&eacute;todo consume pero no cierra el flujo de datos de
      * entrada.
-     * @param input
-     *        Flujo de donde se toman los datos.
+     * @param input Flujo de donde se toman los datos.
      * @return Los datos obtenidos del flujo.
-     * @throws IOException
-     *         Cuando ocurre un problema durante la lectura */
+     * @throws IOException Cuando ocurre un problema durante la lectura */
     private static byte[] getDataFromInputStream(final InputStream input) throws IOException {
         if (input == null) {
             return new byte[0];
@@ -51,10 +50,9 @@ public final class TestIcaoAsn1 {
     	try (final InputStream is = TestIcaoAsn1.class.getResourceAsStream("/SOD_1223499971262354764.asn1")) { //$NON-NLS-1$
     		sod1 = getDataFromInputStream(is);
     	}
-    	final Sod sod = new Sod();
+    	final Sod sod = new Sod(new JseCryptoHelper());
 		sod.setDerValue(sod1);
 		System.out.println(sod);
 	}
-
 
 }

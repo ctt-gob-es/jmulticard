@@ -13,6 +13,7 @@ public final class CardMessages {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
+	/** Constructor privado y vac&iacute;o. */
 	private CardMessages() {
 		// No instanciable
 	}

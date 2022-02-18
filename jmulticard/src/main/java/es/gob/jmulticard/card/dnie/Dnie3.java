@@ -43,13 +43,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
-
-import org.spongycastle.asn1.icao.LDSSecurityObject;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
@@ -60,9 +60,9 @@ import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.DataGroupHash;
+import es.gob.jmulticard.asn1.icao.LdsSecurityObject;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
-import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
 import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
 import es.gob.jmulticard.card.CardSecurityException;
@@ -86,38 +86,32 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	@Override
 	public X509Certificate[] checkSecurityObjects() throws IOException,
 	                                                       InvalidSecurityObjectException,
-	                                                       SodException,
-	                                                       TlvException {
+	                                                       TlvException,
+	                                                       Asn1Exception,
+	                                                       SignatureException,
+	                                                       CertificateException {
 		openSecureChannelIfNotAlreadyOpened(false);
 		final Sod sod = getSod();
 		sod.validateSignature();
-		final LDSSecurityObject ldsSecurityObject = sod.getLdsSecurityObject();
+		final LdsSecurityObject ldsSecurityObject = sod.getLdsSecurityObject();
+
 		final MessageDigest md;
 		try {
 			md = MessageDigest.getInstance(
-				ldsSecurityObject.getDigestAlgorithmIdentifier().getAlgorithm().toString()
+				ldsSecurityObject.getDigestAlgorithm()
 			);
 		}
 		catch (final NoSuchAlgorithmException e) {
 			throw new IOException(
 				"No se soporta el algoritmo de huella indicado en el SOD (" + //$NON-NLS-1$
-					ldsSecurityObject.getDigestAlgorithmIdentifier().getAlgorithm().toString() +
+					ldsSecurityObject.getDigestAlgorithm() +
 						"): " + e, e //$NON-NLS-1$
 			);
 		}
 
 		openSecureChannelIfNotAlreadyOpened(false);
 
-		for (final org.spongycastle.asn1.icao.DataGroupHash dghBc : ldsSecurityObject.getDatagroupHash()) {
-
-			// Uso de DataGroupHash propio, evitando el de BouncyCastle
-			final DataGroupHash dgh = new DataGroupHash();
-			try {
-				dgh.setDerValue(dghBc.getEncoded());
-			}
-			catch (Asn1Exception | TlvException | IOException e1) {
-				throw new IOException(e1);
-			}
+		for (final DataGroupHash dgh : ldsSecurityObject.getDataGroupHashes()) {
 
 			final byte[] dgBytes;
 			switch(dgh.getDataGroupNumber()) {
@@ -347,7 +341,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
     @Override
 	public Sod getSod() throws IOException {
-    	final Sod sod = new Sod();
+    	final Sod sod = new Sod(this.cryptoHelper);
     	try {
 			sod.setDerValue(
 				selectFileByLocationAndRead(FILE_SOD_LOCATION)

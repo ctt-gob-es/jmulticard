@@ -52,6 +52,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
+import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
@@ -60,6 +65,9 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
@@ -68,6 +76,13 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.spongycastle.cert.X509CertificateHolder;
+import org.spongycastle.cms.CMSException;
+import org.spongycastle.cms.CMSSignedData;
+import org.spongycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
+import org.spongycastle.cms.SignerId;
+import org.spongycastle.cms.SignerInformation;
+import org.spongycastle.cms.SignerInformationVerifier;
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.macs.CMac;
@@ -79,6 +94,11 @@ import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
+import org.spongycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.spongycastle.operator.bc.BcDigestCalculatorProvider;
+import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.spongycastle.util.Selector;
+import org.spongycastle.util.Store;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE
  * (6 y superiores).
@@ -528,6 +548,103 @@ public final class JseCryptoHelper extends CryptoHelper {
 	private static org.spongycastle.math.ec.ECPoint toSpongyCastleECPoint(final ECPoint point, final ECParameterSpec params) {
 		final org.spongycastle.math.ec.ECCurve bcCurve = toSpongyCastleECCurve(params);
 		return bcCurve.createPoint(point.getAffineX(), point.getAffineY());
+	}
+
+	@Override
+	public X509Certificate[] validateCmsSignature(final byte[] signedDataBytes) throws SignatureException, IOException, CertificateException {
+
+		final CMSSignedData cmsSignedData;
+		try {
+			cmsSignedData = new CMSSignedData(signedDataBytes);
+		}
+		catch (final CMSException e2) {
+			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS: " + e2, e2); //$NON-NLS-1$
+		}
+		final Store<X509CertificateHolder> store = cmsSignedData.getCertificates();
+		final List<X509Certificate> certChain = new ArrayList<>();
+		for (final SignerInformation si : cmsSignedData.getSignerInfos().getSigners()) {
+			final Iterator<X509CertificateHolder> certIt = store.getMatches(
+				new CertHolderBySignerIdSelector(si.getSID())
+			).iterator();
+			final X509Certificate cert;
+            try {
+				cert = CertificateUtils.generateCertificate(certIt.next().getEncoded());
+			}
+            catch (final IOException e1) {
+            	throw new CertificateException(
+					"El SignedData contiene un certificado en formato incorrecto: " + e1, e1//$NON-NLS-1$
+				);
+			}
+            try {
+				cert.checkValidity();
+			}
+            catch (final CertificateExpiredException | CertificateNotYetValidException e1) {
+            	throw new CertificateException(
+					"El SignedData contiene un certificado fuera de su periodo temporal de validez: " + e1, e1 //$NON-NLS-1$
+				);
+			}
+			try {
+				if (
+					!si.verify(
+						new SignerInformationVerifier(
+							new	DefaultCMSSignatureAlgorithmNameGenerator(),
+							new DefaultSignatureAlgorithmIdentifierFinder(),
+							new JcaContentVerifierProviderBuilder().setProvider(
+								new BouncyCastleProvider()
+							).build(cert),
+							new BcDigestCalculatorProvider()
+						)
+					)
+				) {
+					throw new SignatureException("Firma del SOD no valida"); //$NON-NLS-1$
+				}
+			}
+			catch (final Exception e) {
+				throw new SignatureException(
+					"No se ha podido comprobar la firma del SOD: " + e, e //$NON-NLS-1$
+				);
+			}
+            certChain.add(cert);
+		}
+		return certChain.toArray(new X509Certificate[certChain.size()]);
+	}
+
+	/** Selector interno para la lectura de los certificados del firmante del SOD. */
+	private static final class CertHolderBySignerIdSelector implements Selector<X509CertificateHolder> {
+
+		private final SignerId signerId;
+
+		CertHolderBySignerIdSelector(final SignerId sid) {
+			if (sid == null) {
+				throw new IllegalArgumentException("El ID del firmante no puede ser nulo"); //$NON-NLS-1$
+			}
+			this.signerId = sid;
+		}
+
+		@Override
+		public boolean match(final X509CertificateHolder o) {
+			return CertHolderBySignerIdSelector.this.signerId.getSerialNumber().equals(
+				o.getSerialNumber()
+			);
+		}
+
+		@Override
+		public Object clone() {
+			throw new UnsupportedOperationException();
+		}
+
+	}
+
+	@Override
+	public byte[] getCmsSignatureSignedContent(final byte[] signedDataBytes) throws IOException {
+		final CMSSignedData cmsSignedData;
+		try {
+			cmsSignedData = new CMSSignedData(signedDataBytes);
+		}
+		catch (final CMSException e2) {
+			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS: " + e2, e2); //$NON-NLS-1$
+		}
+		return (byte[]) cmsSignedData.getSignedContent().getContent();
 	}
 
 }

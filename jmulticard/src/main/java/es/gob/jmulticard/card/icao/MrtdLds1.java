@@ -1,13 +1,15 @@
 package es.gob.jmulticard.card.icao;
 
 import java.io.IOException;
+import java.security.SignatureException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
 import es.gob.jmulticard.asn1.icao.Sod;
-import es.gob.jmulticard.asn1.icao.SodException;
 import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
 import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
 import es.gob.jmulticard.card.Location;
@@ -233,6 +235,13 @@ public interface MrtdLds1 {
      * @throws InvalidSecurityObjectException Si un objeto de seguridad no supera
      *                                        las comprobaciones de seguridad.
      * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
-     * @throws SodException Si el SOD es estructuralmente incorrecto. */
-    X509Certificate[] checkSecurityObjects() throws IOException, InvalidSecurityObjectException, SodException, TlvException;
+     * @throws Asn1Exception Si el SOD es estructuralmente incorrecto.
+     * @throws CertificateException Si los certificados de firma del SOD presentan problemas.
+     * @throws SignatureException Si la firma del SOD es inv&aacute;lida o presenta problemas. */
+    X509Certificate[] checkSecurityObjects() throws IOException,
+                                                    InvalidSecurityObjectException,
+                                                    TlvException,
+                                                    Asn1Exception,
+                                                    SignatureException,
+                                                    CertificateException;
 }
