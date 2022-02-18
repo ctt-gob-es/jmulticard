@@ -204,7 +204,7 @@ public final class SecureMessaging {
 		this.crypto.init(this.kmac, this.ssc, this.cryptoHelper);
 		byte[] cc;
 		try {
-			cc = this.crypto.getMAC(bout.toByteArray());
+			cc = this.crypto.getMac(bout.toByteArray());
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e1) {
 			throw new SecureMessagingException(
@@ -298,7 +298,7 @@ public final class SecureMessaging {
 		this.crypto.init(this.kmac, this.ssc, this.cryptoHelper);
 
 		try {
-			return new DO8E(this.crypto.getMAC(m.toByteArray()));
+			return new DO8E(this.crypto.getMac(m.toByteArray()));
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new SecureMessagingException(

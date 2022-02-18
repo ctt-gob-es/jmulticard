@@ -100,7 +100,7 @@ public final class AmAESCrypto extends AmCryptoProvider {
 	}
 
 	@Override
-	public byte[] getMAC(final byte[] data) throws InvalidKeyException,
+	public byte[] getMac(final byte[] data) throws InvalidKeyException,
 	                                               NoSuchAlgorithmException {
 
 		byte[] n = new byte[this.sscBytes.length + data.length];

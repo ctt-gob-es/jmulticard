@@ -62,7 +62,7 @@ public abstract class AmCryptoProvider {
 	 * @return MAC de los datos.
 	 * @throws NoSuchAlgorithmException
 	 * @throws InvalidKeyException */
-	public abstract byte[] getMAC(byte[] data) throws InvalidKeyException,
+	public abstract byte[] getMac(byte[] data) throws InvalidKeyException,
 	                                                  NoSuchAlgorithmException;
 
 	/** Encripta datos (el algoritmo depende de la implementaci&oacute;n
