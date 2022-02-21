@@ -189,20 +189,25 @@ public abstract class CryptoHelper {
      * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
      *           un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
+     * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     encriptado. */
-    public abstract byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException;
+    public abstract byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key, final String padding) throws IOException;
 
     /** Encripta datos mediante AES (modo CBC sin relleno).
      * @param data Datos a encriptar.
      * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
      *           un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
+     * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     encriptado. */
-    public abstract byte[] aesEncrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException;
+    public abstract byte[] aesEncrypt(final byte[] data,
+    		                          final byte[] iv,
+    		                          final byte[] key,
+    		                          final String padding) throws IOException;
 
     /** Desencripta datos mediante RSA.
      * @param cipheredData Datos a desencriptar.

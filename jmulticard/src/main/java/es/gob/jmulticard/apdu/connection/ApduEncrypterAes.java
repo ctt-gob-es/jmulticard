@@ -77,12 +77,14 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		final byte[] iv = cryptoHelper.aesEncrypt(
 			ssc,
 			new byte[0],
-			key
+			key,
+			null // Sin relleno
 		);
 		return cryptoHelper.aesEncrypt(
 			data,
 			iv,
-			key
+			key,
+			null // Sin relleno
 		);
 	}
 

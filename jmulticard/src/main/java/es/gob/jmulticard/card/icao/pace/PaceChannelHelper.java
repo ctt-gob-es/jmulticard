@@ -29,7 +29,6 @@ import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
@@ -185,7 +184,8 @@ public final class PaceChannelHelper {
 			secret_nonce = cryptoHelper.aesDecrypt(
 				nonce,
 				new byte[0],
-				sk
+				sk,
+				null // Sin relleno
 			);
 		}
 		catch (final Exception e) {
@@ -426,10 +426,9 @@ public final class PaceChannelHelper {
 		}
 
 		return new SecureMessaging(
-			new AmAESCrypto(),
 			kenc,
 			kmac,
-			new byte[AmCryptoProvider.BLOCK_SIZE],
+			new byte[AmAESCrypto.BLOCK_SIZE],
 			cryptoHelper
 		);
 	}

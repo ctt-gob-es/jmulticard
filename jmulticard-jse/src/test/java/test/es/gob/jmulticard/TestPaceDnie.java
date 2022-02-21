@@ -64,7 +64,12 @@ public final class TestPaceDnie {
 		Assert.assertEquals(
 			"10EA7515CF362555AB77B7DCE0384E89", //$NON-NLS-1$
 			HexUtils.hexify(
-				new JseCryptoHelper().aesDecrypt(nonce, new byte[0], sk),
+				new JseCryptoHelper().aesDecrypt(
+					nonce,
+					new byte[0],
+					sk,
+					null // Sin relleno
+				),
 				false
 			)
 		);

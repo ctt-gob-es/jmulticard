@@ -259,6 +259,7 @@ public final class JseCryptoHelper extends CryptoHelper {
     private static byte[] aesCrypt(final byte[] data,
     		                       final byte[] iv,
     		                       final byte[] key,
+    		                       final String padding,
     		                       final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
@@ -272,7 +273,9 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
 		final Cipher aesCipher;
 		try {
-			aesCipher = Cipher.getInstance("AES/CBC/NoPadding"); //$NON-NLS-1$
+			aesCipher = Cipher.getInstance(
+				"AES/CBC/" + (padding != null && !padding.isEmpty() ? padding : "NoPadding") //$NON-NLS-1$ //$NON-NLS-2$
+			);
 		}
 		catch (final Exception e) {
 			throw new IOException(
@@ -321,13 +324,19 @@ public final class JseCryptoHelper extends CryptoHelper {
     }
 
 	@Override
-	public byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException {
-		return aesCrypt(data, iv, key, Cipher.DECRYPT_MODE);
+	public byte[] aesDecrypt(final byte[] data,
+			                 final byte[] iv,
+			                 final byte[] key,
+			                 final String padding) throws IOException {
+		return aesCrypt(data, iv, key, padding, Cipher.DECRYPT_MODE);
 	}
 
 	@Override
-	public byte[] aesEncrypt(final byte[] data, final byte[] iv, final byte[] key) throws IOException {
-		return aesCrypt(data, iv, key, Cipher.ENCRYPT_MODE);
+	public byte[] aesEncrypt(final byte[] data,
+			                 final byte[] iv,
+			                 final byte[] key,
+			                 final String padding) throws IOException {
+		return aesCrypt(data, iv, key, padding, Cipher.ENCRYPT_MODE);
 	}
 
 	@Override

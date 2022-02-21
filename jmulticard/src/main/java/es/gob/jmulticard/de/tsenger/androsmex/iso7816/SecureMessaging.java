@@ -31,8 +31,8 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoProvider;
 
 /** Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
  * para establecer una mensajer&iacute;a segura.
@@ -42,7 +42,6 @@ public final class SecureMessaging {
 	private final byte[] kenc;
 	private final byte[] kmac;
 	private final byte[] ssc;
-	private final AmCryptoProvider crypto;
 	private final CryptoHelper cryptoHelper;
 
 	/** Constructor.
@@ -52,12 +51,10 @@ public final class SecureMessaging {
 	 * @param ksmac Clave de sesi&oacute;n para el <i>checksum</i>.
 	 * @param initialSSC Contador de sequencia de env&iacute;o.
 	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
-	public SecureMessaging(final AmCryptoProvider acp,
-						   final byte[] ksenc,
+	public SecureMessaging(final byte[] ksenc,
 						   final byte[] ksmac,
 						   final byte[] initialSSC,
 						   final CryptoHelper ch) {
-		this.crypto = acp;
 		this.cryptoHelper = ch;
 		this.kenc = ksenc.clone();
 		this.kmac = ksmac.clone();
@@ -201,10 +198,9 @@ public final class SecureMessaging {
 			throw new SecureMessagingException(e);
 		}
 
-		this.crypto.init(this.kmac, this.ssc, this.cryptoHelper);
-		byte[] cc;
+		final byte[] cc;
 		try {
-			cc = this.crypto.getMac(bout.toByteArray());
+			cc = AmAESCrypto.getMac(bout.toByteArray(), this.ssc, this.kmac, this.cryptoHelper);
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e1) {
 			throw new SecureMessagingException(
@@ -225,11 +221,10 @@ public final class SecureMessaging {
 		// Desencriptar DO87
 		final byte[] unwrappedAPDUBytes;
 		if (do87 != null) {
-			this.crypto.init(this.kenc, this.ssc, this.cryptoHelper);
 			final byte[] do87Data = do87.getData();
 			final byte[] data;
 			try {
-				data = this.crypto.decrypt(do87Data);
+				data = AmAESCrypto.decrypt(do87Data, this.kenc, this.ssc, this.cryptoHelper);
 			}
 			catch (final AmCryptoException e) {
 				throw new SecureMessagingException(e);
@@ -258,10 +253,10 @@ public final class SecureMessaging {
 	 * @return DO87 Par&aacute;metros del comando.
 	 * @throws SecureMessagingException En caso de error en el cifrado. */
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
-		this.crypto.init(this.kenc, this.ssc, this.cryptoHelper);
-		byte[] enc_data;
+		//this.crypto.init(this.kenc, this.ssc, this.cryptoHelper);
+		final byte[] enc_data;
 		try {
-			enc_data = this.crypto.encrypt(data);
+			enc_data = AmAESCrypto.encrypt(data, this.kenc, this.ssc, this.cryptoHelper);
 		}
 		catch (final AmCryptoException e) {
 			throw new SecureMessagingException(e);
@@ -278,7 +273,7 @@ public final class SecureMessaging {
 		 * De lo contrario solo se hace padding en el calculo del MAC */
 		try {
 			if (do87 != null || do97 != null) {
-				m.write(AmCryptoProvider.addPadding(header));
+				m.write(AmAESCrypto.addPadding(header));
 			}
 			else {
 				m.write(header);
@@ -295,10 +290,8 @@ public final class SecureMessaging {
 			throw new SecureMessagingException(e);
 		}
 
-		this.crypto.init(this.kmac, this.ssc, this.cryptoHelper);
-
 		try {
-			return new DO8E(this.crypto.getMac(m.toByteArray()));
+			return new DO8E(AmAESCrypto.getMac(m.toByteArray(), this.ssc, this.kmac, this.cryptoHelper));
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new SecureMessagingException(
