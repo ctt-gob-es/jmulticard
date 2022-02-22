@@ -18,52 +18,43 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
-import java.io.IOException;
-
-import org.spongycastle.asn1.ASN1InputStream;
-import org.spongycastle.asn1.DEROctetString;
-import org.spongycastle.asn1.DERTaggedObject;
+import es.gob.jmulticard.asn1.Tlv;
+import es.gob.jmulticard.asn1.TlvException;
 
 /** Checksum.
+ * <code>| 0x8E | 0x08 | Checksum (8 octetos) |</code>
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO8E {
 
-    private byte[] data = null;
-    private DERTaggedObject to = null;
+	private static final byte TAG = (byte) 0x8e;
+	private final Tlv tlv;
 
-	DO8E() {
-		// Vacio
+	DO8E(final byte[] checksumOrEncoded) throws SecureMessagingException {
+		if (checksumOrEncoded == null) {
+			throw new IllegalArgumentException(
+				"El checksum para el DO8E no puede ser nulo" //$NON-NLS-1$
+			);
+		}
+		if (checksumOrEncoded.length == 10) {
+			try {
+				this.tlv = new Tlv(checksumOrEncoded);
+			}
+			catch (final TlvException e) {
+				throw new SecureMessagingException(
+					"Los datos proporcionados no son un TLV valido: " + e, e //$NON-NLS-1$
+				);
+			}
+		}
+		else {
+			this.tlv = new Tlv(TAG, checksumOrEncoded);
+		}
 	}
 
-	DO8E(final byte[] checksum){
-		this.data = checksum.clone();
-		this.to = new DERTaggedObject(false, 0x0E, new DEROctetString(checksum));
+	byte[] getEncoded() {
+		return this.tlv.getBytes();
 	}
-
-	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
-    	try (
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedData)
-		) {
-			this.to = (DERTaggedObject)asn1in.readObject();
-		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
-		final DEROctetString ocs = (DEROctetString) this.to.getObject();
-		this.data = ocs.getOctets();
-    }
-
-	byte[] getEncoded() throws SecureMessagingException {
-    	try {
-			return this.to.getEncoded();
-		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
-    }
 
 	byte[] getData() {
-    	return this.data;
-    }
-
+		return this.tlv.getValue();
+	}
 }

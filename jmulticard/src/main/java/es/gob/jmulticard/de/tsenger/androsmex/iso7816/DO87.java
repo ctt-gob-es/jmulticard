@@ -25,6 +25,7 @@ import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
 /** Par&aacute;metros de comando.
+ * <code>| 0x87 | L | 0x01 | Datos encriptados (L-1 octetos) |</code>
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO87 {
 

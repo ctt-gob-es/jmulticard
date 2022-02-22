@@ -25,6 +25,7 @@ import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
 /** Objeto de Datos 99.
+ * <code>| 0x99 | 0x01 | SW1, SW2 (2 octetos) |</code>
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO99 {
 
@@ -33,11 +34,6 @@ final class DO99 {
 
 	DO99() {
 		// Vacio
-	}
-
-	DO99(final byte[] le) {
-		this.data = le.clone();
-		this.to = new DERTaggedObject(false, 0x19, new DEROctetString(le));
 	}
 
 	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {

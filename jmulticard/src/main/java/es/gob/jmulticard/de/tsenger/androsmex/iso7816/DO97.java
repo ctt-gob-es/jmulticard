@@ -20,44 +20,22 @@ package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
 import java.io.IOException;
 
-import org.spongycastle.asn1.ASN1InputStream;
 import org.spongycastle.asn1.DEROctetString;
 import org.spongycastle.asn1.DERTaggedObject;
 
 /** <i>Payload</i> de respuesta.
+ * <code>| 0x97 | L | Longitud (L octetos) |</code>
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO97 {
 
     private byte[] data = null;
     private DERTaggedObject to = null;
 
-	DO97() {
-		// Vacio
-	}
-
-	DO97(final byte[] le) {
-		this.data = le.clone();
-		this.to = new DERTaggedObject(false, 0x17, new DEROctetString(this.data));
-	}
-
 	DO97(final int le) {
 		this.data = new byte[1];
 		this.data[0] = (byte) le;
 		this.to = new DERTaggedObject(false, 0x17, new DEROctetString(this.data));
 	}
-
-	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
-    	try (
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedData)
-		) {
-			this.to = (DERTaggedObject)asn1in.readObject();
-		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
-    	final DEROctetString ocs = (DEROctetString) this.to.getObject();
-    	this.data = ocs.getOctets();
-    }
 
 	byte[] getEncoded() throws SecureMessagingException {
     	try {
@@ -66,10 +44,6 @@ final class DO97 {
     	catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
-    }
-
-	byte[] getData() {
-    	return this.data;
     }
 
 }
