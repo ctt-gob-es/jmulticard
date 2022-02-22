@@ -31,6 +31,8 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.asn1.Tlv;
+import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
 
@@ -145,13 +147,13 @@ public final class SecureMessaging {
 			);
 
 			final byte[] encodedBytes;
-			try (
-				final ASN1InputStream asn1sp = new ASN1InputStream(subArray)
-			) {
-				encodedBytes = asn1sp.readObject().getEncoded();
+			try {
+				encodedBytes = new Tlv(subArray).getBytes();
 			}
-			catch (final IOException e) {
-				throw new SecureMessagingException(e);
+			catch (final TlvException e1) {
+				throw new SecureMessagingException(
+					"Los datos de la APDU protegida no forman un TLV valido: " + e1, e1 //$NON-NLS-1$
+				);
 			}
 
 			try (
