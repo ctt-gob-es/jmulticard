@@ -252,8 +252,8 @@ public final class Vdsned {
 		return this.issuingCountry;
 	}
 
-	/** Obtiene la autoridad de certificacion y referencia para este documento.
-	 * @return C&oacute;digo de autoridad de certificacion y referencia para este documento. */
+	/** Obtiene la autoridad de certificaci&oacute;n y referencia para este documento.
+	 * @return C&oacute;digo de autoridad de certificaci&oacute;n y referencia para este documento. */
 	public String getCaCr() {
 		return this.caCr;
 	}

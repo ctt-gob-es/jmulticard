@@ -7,7 +7,10 @@ import es.gob.jmulticard.apdu.CommandApdu;
 public class ChangePINApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
+
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
 	private static final byte INS_CHANGE_PIN = (byte) 0x24;
+
 	private static final byte INSTRUCTION_PARAMETER_P1 = 0x00;
 	private static final byte INSTRUCTION_PARAMETER_P2 = 0x00;
 

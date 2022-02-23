@@ -48,6 +48,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 public final class LoadDataApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
+
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
 	private static final byte INS_LOAD_DATA = (byte) 0x58;
 
 	/** Construye una APDU de carga de datos.

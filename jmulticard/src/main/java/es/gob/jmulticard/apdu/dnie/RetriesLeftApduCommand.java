@@ -47,6 +47,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class RetriesLeftApduCommand extends CommandApdu {
 
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
     private static final byte INS_VERIFY = (byte) 0x20;
 
     /** Construye una APDU ISO 7816-4 de obtenci&oacute;n de intentos de PIN.*/

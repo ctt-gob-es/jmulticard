@@ -24,6 +24,7 @@ import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import org.spongycastle.asn1.ASN1InputStream;
 
@@ -38,6 +39,7 @@ import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
 
 /** Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
  * para establecer una mensajer&iacute;a segura.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class SecureMessaging {
 
@@ -47,8 +49,6 @@ public final class SecureMessaging {
 	private final CryptoHelper cryptoHelper;
 
 	/** Constructor.
-	 * @param acp Proveedor de operaciones criptogr&aacute;ficas (t&iacute;picamente,
-	 * una instancia de <code>AmAESCrypto</code>).
 	 * @param ksenc Clave de sesi&oacute;n para encriptar.
 	 * @param ksmac Clave de sesi&oacute;n para el <i>checksum</i>.
 	 * @param initialSSC Contador de sequencia de env&iacute;o.
@@ -172,6 +172,9 @@ public final class SecureMessaging {
 						do8E = new DO8E(asn1in.readObject().getEncoded());
 						break;
 					default:
+						Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+							"Encontrada estructura desconocida en la APDU protegida: " + HexUtils.hexify(encodedBytes, false) //$NON-NLS-1$
+						);
 						break;
 				}
 			}

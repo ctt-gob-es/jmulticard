@@ -50,6 +50,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresVerifyApduCommand extends CommandApdu {
 
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
 	private static final byte INS_VERIFY = (byte) 0x20;
 
     /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN

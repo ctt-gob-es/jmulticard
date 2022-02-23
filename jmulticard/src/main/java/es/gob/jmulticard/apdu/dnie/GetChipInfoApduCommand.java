@@ -46,6 +46,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 public final class GetChipInfoApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
+
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
     private static final byte INS_GET_CHIP_INFO = (byte) 0xb8;
 
     private static final byte INSTRUCTION_PARAMETER_P1 = 0x00;

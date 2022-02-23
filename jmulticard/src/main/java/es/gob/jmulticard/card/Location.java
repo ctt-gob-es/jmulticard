@@ -93,7 +93,8 @@ public final class Location {
     }
 
     /** Obtiene el fichero hijo del <code>Location</code> proporcionado.
-     * @return Devuelve un objeto location que contiene el hijo del fichero actual si existe. Si no tiene hijos devuelve null. */
+     * @return Devuelve un objeto location que contiene el hijo del fichero actual si existe.
+     *         Si no tiene hijos devuelve <code>null</code>. */
     public Location getChild() {
         final Location aux = new Location(this.path);
         if (aux.path != null && aux.path.size() > 1) {
@@ -125,8 +126,8 @@ public final class Location {
     }
 
     /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico.
-     * @param absolutePath Ruta a comprobar
-     * @throws IllegalArgumentException si la ruta es inv&aacute;lida */
+     * @param absolutePath Ruta a comprobar.
+     * @throws IllegalArgumentException si la ruta es inv&aacute;lida. */
     private static void checkValidPath(final String absolutePath) throws IllegalArgumentException {
     	if (absolutePath == null) {
     		throw new IllegalArgumentException("Ruta nula"); //$NON-NLS-1$
@@ -181,7 +182,8 @@ public final class Location {
         }
     }
 
-    /** Devuelve una representaci&oacute;n de la ruta absoluta del fichero separando cada identificador mediante barras.
+    /** Devuelve una representaci&oacute;n de la ruta absoluta del fichero,
+     * separando cada identificador mediante barras (/).
      * @see java.lang.Object#toString() */
     @Override
     public String toString() {

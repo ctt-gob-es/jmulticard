@@ -222,7 +222,7 @@ public final class PaceChannelHelper {
 
 		// ... Y la enviamos a la tarjeta
 		comm = new GeneralAuthenticateApduCommand(
-			(byte) 0x10,
+			(byte) 0x10, // CLA
 			tlv.getBytes()
 		);
 
@@ -283,7 +283,7 @@ public final class PaceChannelHelper {
 
 
 		comm = new GeneralAuthenticateApduCommand(
-			(byte) 0x10,
+			(byte) 0x10, // CLA
 			tlv.getBytes()
 		);
 

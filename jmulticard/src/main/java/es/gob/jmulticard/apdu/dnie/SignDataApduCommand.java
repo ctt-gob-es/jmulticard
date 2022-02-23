@@ -48,7 +48,10 @@ import es.gob.jmulticard.apdu.CommandApdu;
 public final class SignDataApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
+
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
 	private static final byte INS_SIGN_DATA = (byte) 0x5A;
+
 	private static final byte RSA_SIGN = (byte) 0x80;
 
 	/** Construye una APDU de firma de datos.

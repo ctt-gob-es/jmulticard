@@ -45,10 +45,11 @@ import java.util.logging.Logger;
 
 import es.gob.jmulticard.HexUtils;
 
-/** Representaci&oacute;n de un TLV (Top-Longitud-Valor) binario en forma ASN&#46;1 DER. */
+/** Representaci&oacute;n de un TLV (Tipo-Longitud-Valor) binario en forma ASN&#46;1 DER.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Tlv {
 
-    /** Octeto de tipo (equiqueta). */
+    /** Octeto de tipo (etiqueta). */
     private final byte tag;
 
     /** Longitud del valor. */
@@ -194,7 +195,7 @@ public final class Tlv {
         return out;
     }
 
-    /** Obtiene un TLV de un flujo de entrada, leyendo del mismo s&oacute;lo los octetos
+    /** Obtiene un TLV de un flujo de entrada, leyendo del mismo &uacute;nicamente los octetos
      * correspondientes al TLV en cuesti&oacute;n.
      * @param recordOfTlv Flujo de entrada.
      * @return TLV recuperado del flujo.
@@ -232,7 +233,9 @@ public final class Tlv {
 
         final byte[] value = new byte[size];
         if (value.length != recordOfTlv.read(value)) {
-            throw new IndexOutOfBoundsException("La longitud de los datos leidos no coincide con el parametro indicado"); //$NON-NLS-1$
+            throw new IndexOutOfBoundsException(
+        		"La longitud de los datos leidos no coincide con el parametro indicado" //$NON-NLS-1$
+    		);
         }
 
         return new Tlv(tag, value);
