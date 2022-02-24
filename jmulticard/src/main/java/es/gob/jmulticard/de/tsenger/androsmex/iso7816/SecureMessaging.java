@@ -26,8 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-import org.spongycastle.asn1.ASN1InputStream;
-
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -156,29 +154,23 @@ public final class SecureMessaging {
 				);
 			}
 
-			try (
-				final ASN1InputStream asn1in = new ASN1InputStream(encodedBytes)
-			) {
-				switch (encodedBytes[0]) {
-					case (byte) 0x87:
-						do87 = new DO87(asn1in.readObject().getEncoded());
-						break;
-					case (byte) 0x99:
-						do99 = new DO99(asn1in.readObject().getEncoded());
-						break;
-					case (byte) 0x8E:
-						do8E = new DO8E(asn1in.readObject().getEncoded());
-						break;
-					default:
-						Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-							"Encontrada estructura desconocida en la APDU protegida: " + HexUtils.hexify(encodedBytes, false) //$NON-NLS-1$
-						);
-						break;
-				}
+			switch (encodedBytes[0]) {
+				case (byte) 0x87:
+					do87 = new DO87(encodedBytes);
+					break;
+				case (byte) 0x99:
+					do99 = new DO99(encodedBytes);
+					break;
+				case (byte) 0x8E:
+					do8E = new DO8E(encodedBytes);
+					break;
+				default:
+					Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+						"Encontrada estructura desconocida en la APDU protegida: " + HexUtils.hexify(encodedBytes, false) //$NON-NLS-1$
+					);
+					break;
 			}
-			catch (final IOException e) {
-				throw new SecureMessagingException(e);
-			}
+
 			pointer += encodedBytes.length;
 		}
 
