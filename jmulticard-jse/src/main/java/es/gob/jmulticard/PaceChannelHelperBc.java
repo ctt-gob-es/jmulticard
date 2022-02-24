@@ -1,10 +1,9 @@
-package es.gob.jmulticard.card.icao.pace;
+package es.gob.jmulticard;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Random;
-import java.util.logging.Logger;
 
 import org.spongycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.spongycastle.asn1.x9.X9ECParameters;
@@ -14,8 +13,7 @@ import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.math.ec.ECPoint;
 import org.spongycastle.util.Arrays;
 
-import es.gob.jmulticard.CryptoHelper;
-import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -28,62 +26,26 @@ import es.gob.jmulticard.card.SmartCard;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
+import es.gob.jmulticard.card.icao.pace.PaceException;
 import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class PaceChannelHelper {
+public final class PaceChannelHelperBc extends PaceChannelHelper {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
-	private static final byte[] CAN_MRZ_PADDING = {
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
-	};
-
-	private static final byte[] KENC_PADDING = {
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
-	};
-
-	private static final byte[] KMAC_PADDING = {
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
-	};
-
-	private static final byte[] MAC_PADDING = {
-		(byte) 0x7F, (byte) 0x49, (byte) 0x4F, (byte) 0x06
-	};
-
-	private static final byte[] MAC2_PADDING = {
-		(byte) 0x86, (byte) 0x41, (byte) 0x04
-	};
-
-	private static final byte TAG_DYNAMIC_AUTHENTICATION_DATA = (byte) 0x7C;
-
-	private static final byte TAG_GEN_AUTH_2 = (byte) 0x81;
-
-	private static final byte TAG_GEN_AUTH_3 = (byte) 0x83;
-
-	private static final byte TAG_GEN_AUTH_4 = (byte) 0x85;
-
-	private PaceChannelHelper() {
-		// No instanciable
+	/** Constructor
+	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
+	public PaceChannelHelperBc(final CryptoHelper ch) {
+		super(ch);
 	}
 
-	/** Abre un canal PACE.
-	 * @param cla Clase de APDU para los comandos de establecimiento de canal.
-	 * @param pi Valor de inicializaci&oacute;n del canal. Puede ser un CAN
-	 *           (<i>Card Access Number</i>) o una MRZ (<i>Machine Readable Zone</i>).
-	 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
-	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas auxiliares.
-	 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.
-	 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
-	 * @throws IcaoException Si hay problemas en la apertura del canal. */
-	public static SecureMessaging openPaceChannel(final byte cla,
-			                                      final WirelessInitializer pi,
-			                                      final ApduConnection conn,
-			                                      final CryptoHelper cryptoHelper) throws ApduConnectionException,
-			                                                                              IcaoException {
+	@Override
+	public SecureMessaging openPaceChannel(final byte cla,
+			                               final WirelessInitializer pi,
+			                               final ApduConnection conn) throws ApduConnectionException,
+			                                                                 IcaoException {
 		if (conn == null) {
 			throw new IllegalArgumentException(
 				"El canal de conexion no puede ser nulo" //$NON-NLS-1$
@@ -94,7 +56,7 @@ public final class PaceChannelHelper {
 				"Es necesario proporcionar un inicializador para abrir canal PACE" //$NON-NLS-1$
 			);
 		}
-		if (cryptoHelper == null) {
+		if (this.cryptoHelper == null) {
 			throw new IllegalArgumentException(
 				"El CryptoHelper no puede ser nulo" //$NON-NLS-1$
 			);
@@ -148,7 +110,9 @@ public final class PaceChannelHelper {
 		}
 		catch (final TlvException e) {
 			throw new PaceException(
-				"El aleatorio de calculo PACE (Nonce) obtenido (" + HexUtils.hexify(res.getData(), true) + ") no sigue el formato esperado: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+				"El aleatorio de calculo PACE (Nonce) obtenido (" + //$NON-NLS-1$
+					HexUtils.hexify(res.getData(), true) +
+						") no sigue el formato esperado: " + e, e //$NON-NLS-1$
 			);
 		}
 
@@ -158,7 +122,7 @@ public final class PaceChannelHelper {
 		final byte[] sk = new byte[16];
 		try {
 			System.arraycopy(
-				cryptoHelper.digest(
+				this.cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						pi.getBytes(),
@@ -181,7 +145,7 @@ public final class PaceChannelHelper {
 
 		final byte[] secret_nonce;
 		try {
-			secret_nonce = cryptoHelper.aesDecrypt(
+			secret_nonce = this.cryptoHelper.aesDecrypt(
 				nonce,
 				new byte[0],
 				sk,
@@ -200,7 +164,7 @@ public final class PaceChannelHelper {
 
 		final X9ECParameters ecdhParameters = TeleTrusTNamedCurves.getByName("brainpoolp256r1"); //$NON-NLS-1$
 		final ECPoint pointG = ecdhParameters.getG();
-		final Fp curve = (org.spongycastle.math.ec.ECCurve.Fp) ecdhParameters.getCurve();
+		final Fp curve = (ECCurve.Fp) ecdhParameters.getCurve();
 
 		// La privada del terminal se genera aleatoriamente (PrkIFDDH1)
 		// La publica de la tarjeta sera devuelta por ella misma al enviar nuesra publica (pukIFDDH1)
@@ -211,12 +175,13 @@ public final class PaceChannelHelper {
 		final BigInteger PrkIFDDH1 = new BigInteger(1, x1);
 		// Enviamos nuestra clave publica (pukIFDDH1 = G*PrkIFDDH1)
 		final ECPoint pukIFDDH1 = pointG.multiply(PrkIFDDH1);
+		final byte[] pukIFDDH1UncompressedBytes = pukIFDDH1.getEncoded(false);
 
 		Tlv tlv = new Tlv(
 			TAG_DYNAMIC_AUTHENTICATION_DATA,
 			new Tlv(
 				TAG_GEN_AUTH_2,
-				pukIFDDH1.getEncoded(false)
+				pukIFDDH1UncompressedBytes
 			).getBytes()
 		);
 
@@ -303,7 +268,7 @@ public final class PaceChannelHelper {
 		final ECPoint y2FromNewG = byteArrayToECPoint(pukIccDh2, curve);
 
 		// Se calcula el secreto k = PukICCDH2 * PrkIFDDH2
-		final ECPoint.Fp SharedSecret_K = (org.spongycastle.math.ec.ECPoint.Fp) y2FromNewG.multiply(PrkIFDDH2);
+		final ECPoint.Fp SharedSecret_K = (ECPoint.Fp) y2FromNewG.multiply(PrkIFDDH2);
 		final byte[] secretK = bigIntToByteArray(SharedSecret_K.normalize().getXCoord().toBigInteger());
 
 		// 1.3.6 Cuarto comando General Authenticate
@@ -315,7 +280,7 @@ public final class PaceChannelHelper {
 		final byte[] kenc = new byte[16];
 		try {
 			System.arraycopy(
-				cryptoHelper.digest(
+				this.cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						secretK,
@@ -338,7 +303,7 @@ public final class PaceChannelHelper {
 		final byte[] kmac = new byte[16];
 		try {
 			System.arraycopy(
-				cryptoHelper.digest(
+				this.cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						secretK,
@@ -375,7 +340,7 @@ public final class PaceChannelHelper {
 
 		final byte[] mac8bytes;
 		try {
-			mac8bytes = cryptoHelper.doAesCmac(
+			mac8bytes = this.cryptoHelper.doAesCmac(
 				data,
 				kmac
 			);
@@ -429,22 +394,8 @@ public final class PaceChannelHelper {
 			kenc,
 			kmac,
 			new byte[AmAESCrypto.BLOCK_SIZE],
-			cryptoHelper
+			this.cryptoHelper
 		);
-	}
-
-	private static byte[] bigIntToByteArray(final BigInteger bi) {
-		final byte[] temp = bi.toByteArray();
-		if (temp[0] == 0) {
-			final byte[] returnbytes = new byte[temp.length - 1];
-			System.arraycopy(temp, 1, returnbytes, 0, returnbytes.length);
-			return returnbytes;
-		}
-		return temp;
-	}
-
-	private static byte[] unwrapEcKey(final byte[] key) throws TlvException {
-		return new Tlv(new Tlv(key).getValue()).getValue();
 	}
 
 	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve) throws IllegalArgumentException {
@@ -455,8 +406,8 @@ public final class PaceChannelHelper {
 		}
 		System.arraycopy(value, 1, x, 0, (value.length - 1) / 2);
 		System.arraycopy(value, 1 + (value.length - 1) / 2, y, 0, (value.length - 1) / 2);
-		final ECFieldElement.Fp xE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, x));
-		final ECFieldElement.Fp yE = (org.spongycastle.math.ec.ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, y));
+		final ECFieldElement.Fp xE = (ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, x));
+		final ECFieldElement.Fp yE = (ECFieldElement.Fp) curve.fromBigInteger(new BigInteger(1, y));
 
 		return curve.createPoint(xE.toBigInteger(), yE.toBigInteger());
 	}

@@ -9,6 +9,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
@@ -22,7 +23,6 @@ import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.card.icao.WirelessInitializerCan;
 import es.gob.jmulticard.card.icao.WirelessInitializerMrz;
-import es.gob.jmulticard.card.icao.pace.PaceChannelHelper;
 import es.gob.jmulticard.card.icao.pace.PaceConnection;
 import es.gob.jmulticard.card.icao.pace.PaceException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
@@ -107,12 +107,12 @@ public class DnieNFC extends Dnie3 {
 			try {
 				tic = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
 			}
-			catch (InstantiationException |
-				   IllegalAccessException |
-				   IllegalArgumentException |
+			catch (InstantiationException    |
+				   IllegalAccessException    |
+				   IllegalArgumentException  |
 				   InvocationTargetException |
-				   NoSuchMethodException |
-				   SecurityException |
+				   NoSuchMethodException     |
+				   SecurityException         |
 				   ClassNotFoundException e1) {
 				throw new IllegalStateException(
 					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e1, e1 //$NON-NLS-1$
@@ -163,7 +163,9 @@ public class DnieNFC extends Dnie3 {
 				paceInitType = getPasswordType(paceInitValue);
 
 				if (paceInitValue == null || paceInitValue.isEmpty() || paceInitType == null)  {
-					throw new InvalidCanOrMrzException("El CAN/MRZ no puede ser nulo ni vacio"); //$NON-NLS-1$
+					throw new InvalidCanOrMrzException(
+						"El CAN/MRZ no puede ser nulo ni vacio" //$NON-NLS-1$
+					);
 				}
 			}
 			try {
@@ -181,11 +183,10 @@ public class DnieNFC extends Dnie3 {
 						);
 				}
 
-				final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
+				final SecureMessaging sm = cryptoHelper.getPaceChannelHelper().openPaceChannel(
 					(byte)0x00,
 					paceInitializer,
-					con,
-					cryptoHelper
+					con
 				);
 
 				return new PaceConnection(
@@ -215,13 +216,13 @@ public class DnieNFC extends Dnie3 {
 
 	}
 
-	private static ApduConnection getPaceConnection(final ApduConnection con,
-                                                    final CryptoHelper cryptoHelper) throws ApduConnectionException,
-	                                                                                        IcaoException {
+	private ApduConnection getPaceConnection(final ApduConnection con,
+                                                    final PaceChannelHelper pch) throws ApduConnectionException,
+	                                                                                    IcaoException {
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
-				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, cryptoHelper);
+				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, this.cryptoHelper);
 				break;
 			case CAN:
 				paceInitializer = new WirelessInitializerCan(paceInitValue);
@@ -232,17 +233,16 @@ public class DnieNFC extends Dnie3 {
 				);
 		}
 
-		final SecureMessaging sm = PaceChannelHelper.openPaceChannel(
+		final SecureMessaging sm = pch.openPaceChannel(
 			(byte) 0x00,
 			paceInitializer, // CAN/MRZ
-			con,
-			cryptoHelper
+			con
 		);
 
         // Establecemos el canal PACE
     	return new PaceConnection(
     		con,
-    		cryptoHelper,
+    		this.cryptoHelper,
     		sm
 		);
 
@@ -254,7 +254,10 @@ public class DnieNFC extends Dnie3 {
 															 PinException {
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
-				this.rawConnection = getPaceConnection(getConnection(), this.cryptoHelper);
+				this.rawConnection = getPaceConnection(
+					getConnection(),
+					this.cryptoHelper.getPaceChannelHelper()
+				);
 			}
 			catch (final ApduConnectionException e) {
 				throw new CryptoCardException(

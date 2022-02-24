@@ -65,7 +65,7 @@ public final class AmAESCrypto {
 	 * los datos proporcionados.
 	 * El algoritmo depende de la implementaci&oacute;n concreta de la clase.
 	 * @param data Datos sobre los que calcular el MAC.
-	 * @param ssc Contador de secuencia de env&iacute;os (Send Sequence Counter).
+	 * @param ssc Contador de secuencia de env&iacute;os (<i>Send Sequence Counter</i>).
 	 * @param keyBytes Clave de creaci&oacute;n de MAC.
 	 * @param cryptoHelper Utilidad para las operaciones criptogr&aacute;ficas.
 	 * @return MAC de los datos.
@@ -99,7 +99,7 @@ public final class AmAESCrypto {
 	/** Encripta datos (AES/CBC/ISO7816d4Padding).
 	 * @param in Datos en claro (a cifrar).
 	 * @param key Clave de cifrado.
-	 * @param ssc Contador de secuencia de env&iacute;os (Send Sequence Counter).
+	 * @param ssc Contador de secuencia de env&iacute;os (<i>Send Sequence Counter</i>).
 	 * @param ch Utilidad para las operaciones criptogr&aacute;ficas.
 	 * @return Datos cifrados.
 	 * @throws AmCryptoException En cualquier error. */
@@ -169,7 +169,7 @@ public final class AmAESCrypto {
 	 * concreta de la clase).
 	 * @param in Datos cifrados.
 	 * @param key Clave de descifrado.
-	 * @param ssc Contador de secuencia de env&iacute;os (Send Sequence Counter).
+	 * @param ssc Contador de secuencia de env&iacute;os (<i>Send Sequence Counter</i>).
 	 * @param ch Utilidad para las operaciones criptogr&aacute;ficas.
 	 * @return Datos descifrados (en claro).
 	 * @throws AmCryptoException En cualquier error. */

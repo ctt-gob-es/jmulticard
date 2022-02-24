@@ -11,7 +11,14 @@ public class PaceException extends IcaoException {
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 6633945897491338530L;
 
-	PaceException(final StatusWord retCode, final Apdu origin, final String description) {
+	/** Constructor.
+	 * @param retCode Palabra de estado obtenida como c&oacute;digo
+	 *                de retorno.
+	 * @param origin APDU que origin&oacute; el error.
+	 * @param description Descripci&oacute;n de la excepci&oacute;n. */
+	public PaceException(final StatusWord retCode,
+			             final Apdu origin,
+			             final String description) {
         super(retCode, origin, description);
 	}
 

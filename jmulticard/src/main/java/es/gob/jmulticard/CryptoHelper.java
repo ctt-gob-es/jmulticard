@@ -41,6 +41,7 @@ package es.gob.jmulticard;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -51,6 +52,15 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
+import java.util.logging.Logger;
+
+import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.asn1.Tlv;
+import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.card.icao.IcaoException;
+import es.gob.jmulticard.card.icao.WirelessInitializer;
+import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre
  * JSE/JME/Dalvik.
@@ -291,4 +301,105 @@ public abstract class CryptoHelper {
 	public abstract X509Certificate[] validateCmsSignature(final byte[] signedDataBytes) throws SignatureException,
 	                                                                                            IOException,
 	                                                                                            CertificateException;
+
+	/** Obtiene las utilidades para el establecimiento de un canal PACE
+	 * (Password Authenticated Connection Establishment).
+	 * @return Utilidades para el establecimiento de un canal PACE */
+	public abstract PaceChannelHelper getPaceChannelHelper();
+
+	/** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
+	 * (Password Authenticated Connection Establishment).
+	 * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+	public abstract static class PaceChannelHelper {
+
+		/** <code>Logger</code>. */
+		protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+
+		/** Relleno para el CAN o la MRZ. */
+		protected static final byte[] CAN_MRZ_PADDING = {
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
+		};
+
+		/** Relleno para el <i>kenc</i>. */
+		protected static final byte[] KENC_PADDING = {
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
+		};
+
+		/** Relleno para el <i>kmac</i>. */
+		protected static final byte[] KMAC_PADDING = {
+			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
+		};
+
+		/** Relleno para el MAC. */
+		protected static final byte[] MAC_PADDING = {
+			(byte) 0x7F, (byte) 0x49, (byte) 0x4F, (byte) 0x06
+		};
+
+		/** Relleno para el MAC2. */
+		protected static final byte[] MAC2_PADDING = {
+			(byte) 0x86, (byte) 0x41, (byte) 0x04
+		};
+
+		/** Etiqueta de los datos de autenticaci&oacute;n din&aacute;mica dentro de un
+		 * comando <i>General Autenticate</i>. */
+		protected static final byte TAG_DYNAMIC_AUTHENTICATION_DATA = (byte) 0x7C;
+
+		/** Etiqueta del segundo TLV de los datos de autenticaci&oacute;n din&aacute;mica
+		 * dentro de un comando <i>General Autenticate</i>. */
+		protected static final byte TAG_GEN_AUTH_2 = (byte) 0x81;
+
+		/** Etiqueta del tercer TLV de los datos de autenticaci&oacute;n din&aacute;mica
+		 * dentro de un comando <i>General Autenticate</i>. */
+		protected static final byte TAG_GEN_AUTH_3 = (byte) 0x83;
+
+		/** Etiqueta del cuarto TLV de los datos de autenticaci&oacute;n din&aacute;mica
+		 * dentro de un comando <i>General Autenticate</i>. */
+		protected static final byte TAG_GEN_AUTH_4 = (byte) 0x85;
+
+		/** Utilidad para operaciones criptogr&aacute;ficas. */
+		protected final CryptoHelper cryptoHelper;
+
+		/** Constructor
+		 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
+		public PaceChannelHelper(final CryptoHelper ch) {
+			this.cryptoHelper = ch;
+		}
+
+		/** Abre un canal PACE.
+		 * @param cla Clase de APDU para los comandos de establecimiento de canal.
+		 * @param pi Valor de inicializaci&oacute;n del canal. Puede ser un CAN
+		 *           (<i>Card Access Number</i>) o una MRZ (<i>Machine Readable Zone</i>).
+		 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
+		 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.
+		 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
+		 * @throws IcaoException Si hay problemas en la apertura del canal. */
+		public abstract SecureMessaging openPaceChannel(final byte cla,
+				                                        final WirelessInitializer pi,
+				                                        final ApduConnection conn) throws ApduConnectionException,
+				                                                                                IcaoException;
+
+		/** Obtiene la representaci&oacute;n de un <code>BigInteger</code> como un
+		 * array de octetos.
+		 * @param bi <code>BigInteger</code> a convertir.
+		 * @return Array de octetos que representa el <code>BigInteger</code> de entrada. */
+		protected static byte[] bigIntToByteArray(final BigInteger bi) {
+			final byte[] temp = bi.toByteArray();
+			if (temp[0] == 0) {
+				final byte[] returnbytes = new byte[temp.length - 1];
+				System.arraycopy(temp, 1, returnbytes, 0, returnbytes.length);
+				return returnbytes;
+			}
+			return temp;
+		}
+
+		/** Obtiene la representaci&oacute;n de una clave de curva el&iacute;ptica como un
+		 * array de octetos.
+		 * @param key Clave de curva el&iacute;ptica de entrada.
+		 * @return Array de octetos que representa la clave de curva el&iacute;ptica de entrada.
+		 * @throws TlvException Si hay problemas desempaquetando la clave como array de octetos. */
+		protected static byte[] unwrapEcKey(final byte[] key) throws TlvException {
+			return new Tlv(new Tlv(key).getValue()).getValue();
+		}
+	}
+
 }

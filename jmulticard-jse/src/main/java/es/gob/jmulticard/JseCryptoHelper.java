@@ -110,6 +110,8 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 	private static final String ECDH = "ECDH"; //$NON-NLS-1$
 
+	private PaceChannelHelper paceChannelHelper = null;
+
     @Override
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 
@@ -134,6 +136,12 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
     }
 
+    /** Realiza una operaci&oacute;n 3DES.
+     * @param data Datos a cifrar o descifrar.
+     * @param key Clave 3DES.
+     * @param direction Si se debe cifrar o descifrar.
+     * @return Datos cifrados o descifrados.
+     * @throws IOException Si ocurre cualquier error durante el proceso. */
     private static byte[] doDesede(final byte[] data, final byte[] key, final int direction) throws IOException {
         final byte[] ivBytes = new byte[8];
         for (int i = 0; i < 8; i++) {
@@ -646,6 +654,17 @@ public final class JseCryptoHelper extends CryptoHelper {
 			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS: " + e2, e2); //$NON-NLS-1$
 		}
 		return (byte[]) cmsSignedData.getSignedContent().getContent();
+	}
+
+	@Override
+	public PaceChannelHelper getPaceChannelHelper() {
+		// Solo creamos el PaceChannelHelper si nos lo piden,
+		// asi evitamos crearlo en uso con contactos (PACE solo
+		// se usa con NFC).
+		if (this.paceChannelHelper == null) {
+			this.paceChannelHelper = new PaceChannelHelperBc(this);
+		}
+		return this.paceChannelHelper;
 	}
 
 }
