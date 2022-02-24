@@ -18,30 +18,21 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
-import java.io.IOException;
-
-import org.spongycastle.asn1.ASN1InputStream;
-import org.spongycastle.asn1.DEROctetString;
-import org.spongycastle.asn1.DERTaggedObject;
+import es.gob.jmulticard.asn1.Tlv;
 
 /** Par&aacute;metros de comando.
  * <code>| 0x87 | L | 0x01 | Datos encriptados (L-1 octetos) |</code>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO87 {
 
-    private byte[] value_ = null;
-    private byte[] data = null;
-    private DERTaggedObject to = null;
+	private static final byte TAG = (byte) 0x87;
+
+	private Tlv tlv = null;
 
     DO87() {
     	// Vacio
     }
-
-	DO87(final byte[] data) {
-		this.data = data.clone();
-		this.value_ = addOne(data);
-		this.to = new DERTaggedObject(false, 7, new DEROctetString(this.value_));
-	}
 
 	private static byte[] addOne(final byte[] data) {
 		final byte[] ret = new byte[data.length+1];
@@ -56,31 +47,34 @@ final class DO87 {
 		return ret;
 	}
 
-	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
-    	try (
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedData)
-		) {
-			this.to = (DERTaggedObject)asn1in.readObject();
+	DO87(final byte[] encodedOrValue) {
+		Tlv tmpTlv;
+		if (encodedOrValue == null) {
+			throw new IllegalArgumentException(
+				"Los datos para construir el DO8E no pueden ser nulos" //$NON-NLS-1$
+			);
 		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
+    	try {
+    		tmpTlv = new Tlv(encodedOrValue);
 		}
-    	final DEROctetString ocs = (DEROctetString) this.to.getObject();
-		this.value_ = ocs.getOctets();
-		this.data = removeOne(this.value_);
+    	catch (final Exception e) {
+    		tmpTlv = null;
+		}
+    	if (tmpTlv != null && (TAG != tmpTlv.getTag() || tmpTlv.getValue()[0] != 0x01)) {
+			tmpTlv = null;
+		}
+    	if (tmpTlv == null) {
+    		tmpTlv = new Tlv(TAG, addOne(encodedOrValue));
+    	}
+    	this.tlv = tmpTlv;
     }
 
-	byte[] getEncoded() throws SecureMessagingException {
-    	try {
-			return this.to.getEncoded();
-		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
+	byte[] getEncoded() {
+    	return this.tlv.getBytes();
     }
 
 	byte[] getData() {
-    	return this.data;
+    	return removeOne(this.tlv.getValue());
     }
 
 }

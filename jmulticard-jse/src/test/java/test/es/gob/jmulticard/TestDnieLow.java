@@ -43,9 +43,9 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "961984"; //$NON-NLS-1$
+	private static final String CAN = "123456"; //$NON-NLS-1$
 
-	private static final String PIN = "rock2048"; //$NON-NLS-1$
+	private static final String PIN = "PIN_DNIE"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */

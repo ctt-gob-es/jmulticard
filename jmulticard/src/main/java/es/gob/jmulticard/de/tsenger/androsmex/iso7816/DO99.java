@@ -18,48 +18,42 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
-import java.io.IOException;
-
-import org.spongycastle.asn1.ASN1InputStream;
-import org.spongycastle.asn1.DEROctetString;
-import org.spongycastle.asn1.DERTaggedObject;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.Tlv;
+import es.gob.jmulticard.asn1.TlvException;
 
 /** Objeto de Datos 99.
- * <code>| 0x99 | 0x01 | SW1, SW2 (2 octetos) |</code>
+ * <code>| 0x99 | 0x02 | SW1, SW2 (2 octetos) |</code>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO99 {
 
-	private byte[] data = null;
-	private DERTaggedObject to = null;
+	private static final byte TAG = (byte) 0x99;
 
-	DO99() {
-		// Vacio
+	private final Tlv tlv;
+
+	DO99(final byte[] encodedData) throws SecureMessagingException {
+		try {
+			this.tlv = new Tlv(encodedData);
+		}
+		catch (final TlvException e) {
+			throw new SecureMessagingException(
+				"Los datos proporcionados para el DO99 no conforman un TLV valido: " + e, e //$NON-NLS-1$
+			);
+		}
+		if (TAG != this.tlv.getTag()) {
+			throw new SecureMessagingException(
+				"Los datos proporcionados para el DO99 conforman un TLV con una etiqueta desconocida: " + //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { this.tlv.getTag() }, false)
+			);
+		}
 	}
 
-	void fromByteArray(final byte[] encodedData) throws SecureMessagingException {
-		try (
-			final ASN1InputStream asn1in = new ASN1InputStream(encodedData)
-		) {
-			this.to = (DERTaggedObject) asn1in.readObject();
-			asn1in.close();
-		}
-		catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
-		final DEROctetString ocs = (DEROctetString) this.to.getObject();
-		this.data = ocs.getOctets();
-	}
-
-	byte[] getEncoded() throws SecureMessagingException {
-    	try {
-			return this.to.getEncoded();
-		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
+	byte[] getEncoded() {
+		return this.tlv.getBytes();
     }
 
 	byte[] getData() {
-		return this.data;
+		return this.tlv.getValue();
 	}
 }

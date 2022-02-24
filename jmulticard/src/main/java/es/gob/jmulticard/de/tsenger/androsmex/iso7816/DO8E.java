@@ -18,11 +18,13 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Checksum.
  * <code>| 0x8E | 0x08 | Checksum (8 octetos) |</code>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO8E {
 
@@ -42,6 +44,12 @@ final class DO8E {
 			catch (final TlvException e) {
 				throw new SecureMessagingException(
 					"Los datos proporcionados no son un TLV valido: " + e, e //$NON-NLS-1$
+				);
+			}
+			if (TAG != this.tlv.getTag()) {
+				throw new SecureMessagingException(
+					"Los datos proporcionados para el DO8E conforman un TLV con una etiqueta desconocida: " + //$NON-NLS-1$
+						HexUtils.hexify(new byte[] { this.tlv.getTag() }, false)
 				);
 			}
 		}

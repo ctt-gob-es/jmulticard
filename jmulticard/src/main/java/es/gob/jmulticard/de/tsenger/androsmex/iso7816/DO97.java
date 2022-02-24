@@ -18,32 +18,23 @@
  */
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
-import java.io.IOException;
-
-import org.spongycastle.asn1.DEROctetString;
-import org.spongycastle.asn1.DERTaggedObject;
+import es.gob.jmulticard.asn1.Tlv;
 
 /** <i>Payload</i> de respuesta.
  * <code>| 0x97 | L | Longitud (L octetos) |</code>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Tobias Senger (tobias@t-senger.de). */
 final class DO97 {
 
-    private byte[] data = null;
-    private DERTaggedObject to = null;
+    private static final byte TAG = (byte) 0x97;
+    private final Tlv tlv;
 
 	DO97(final int le) {
-		this.data = new byte[1];
-		this.data[0] = (byte) le;
-		this.to = new DERTaggedObject(false, 0x17, new DEROctetString(this.data));
+		this.tlv = new Tlv(TAG, new byte[] { (byte) le });
 	}
 
-	byte[] getEncoded() throws SecureMessagingException {
-    	try {
-			return this.to.getEncoded();
-		}
-    	catch (final IOException e) {
-			throw new SecureMessagingException(e);
-		}
+	byte[] getEncoded() {
+		return this.tlv.getBytes();
     }
 
 }

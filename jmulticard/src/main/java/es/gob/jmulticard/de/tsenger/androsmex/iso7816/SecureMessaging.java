@@ -161,12 +161,10 @@ public final class SecureMessaging {
 			) {
 				switch (encodedBytes[0]) {
 					case (byte) 0x87:
-						do87 = new DO87();
-						do87.fromByteArray(asn1in.readObject().getEncoded());
+						do87 = new DO87(asn1in.readObject().getEncoded());
 						break;
 					case (byte) 0x99:
-						do99 = new DO99();
-						do99.fromByteArray(asn1in.readObject().getEncoded());
+						do99 = new DO99(asn1in.readObject().getEncoded());
 						break;
 					case (byte) 0x8E:
 						do8E = new DO8E(asn1in.readObject().getEncoded());
@@ -257,14 +255,14 @@ public final class SecureMessaging {
 	 * @return DO87 Par&aacute;metros del comando.
 	 * @throws SecureMessagingException En caso de error en el cifrado. */
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
-		final byte[] enc_data;
+		final byte[] encData;
 		try {
-			enc_data = AmAESCrypto.encrypt(data, this.kenc, this.ssc, this.cryptoHelper);
+			encData = AmAESCrypto.encrypt(data, this.kenc, this.ssc, this.cryptoHelper);
 		}
 		catch (final AmCryptoException e) {
 			throw new SecureMessagingException(e);
 		}
-		return new DO87(enc_data);
+		return new DO87(encData);
 	}
 
 	private DO8E buildDO8E(final byte[] header, final DO87 do87, final DO97 do97) throws SecureMessagingException {
