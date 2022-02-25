@@ -23,10 +23,5 @@
 			<artifactId>prov</artifactId>
 			<version>1.58.0.0</version>
 		</dependency>
-		<dependency>
-			<groupId>com.madgag.spongycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.58.0.0</version>
-		</dependency>
 	</dependencies>
 </project>
