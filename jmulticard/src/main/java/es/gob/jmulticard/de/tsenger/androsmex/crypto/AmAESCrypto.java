@@ -27,7 +27,13 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
-import org.spongycastle.crypto.BlockCipher;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.spongycastle.crypto.BufferedBlockCipher;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
@@ -84,16 +90,24 @@ public final class AmAESCrypto {
 	}
 
 	/** Encripta un bloque usando AES.
-	 * @param key Clave AES.
+	 * @param aesKey Clave AES.
 	 * @param z Bloque a crifrar.
-	 * @return Bloque cifrado. */
-	private static byte[] encryptBlock(final byte[] key, final byte[] z) {
-		final byte[] s = new byte[BLOCK_SIZE];
-		final KeyParameter encKey = new KeyParameter(key);
-		final BlockCipher cipher = new AESEngine();
-		cipher.init(true, encKey);
-		cipher.processBlock(z, 0, s, 0);
-		return s;
+	 * @return Bloque cifrado.
+	 * @throws NoSuchPaddingException No debe producirse, no se aplica relleno a los datos de entrada.
+	 * @throws NoSuchAlgorithmException Si no se encuentra un cifrador para el algoritmo 'AES/ECB/NoPadding'.
+	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida.
+	 * @throws BadPaddingException No debe producirse, no se aplica relleno a los datos de entrada.
+	 * @throws IllegalBlockSizeException Si los datos proporcionados no miden exactamente un bloque AES (16 octetos). */
+	private static byte[] encryptBlock(final byte[] aesKey,
+			                           final byte[] z) throws NoSuchAlgorithmException,
+	                                                          NoSuchPaddingException,
+	                                                          InvalidKeyException,
+	                                                          IllegalBlockSizeException,
+	                                                          BadPaddingException {
+		final Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding"); //$NON-NLS-1$
+		final SecretKey originalKey = new SecretKeySpec(aesKey, "AES"); //$NON-NLS-1$
+		cipher.init(Cipher.ENCRYPT_MODE, originalKey);
+		return cipher.doFinal(z);
 	}
 
 	/** Encripta datos (AES/CBC/ISO7816d4Padding).
@@ -119,10 +133,22 @@ public final class AmAESCrypto {
 			ISO7816D4_PADDING
 		);
 		// Creamos los parametros de cifrado con el vector de inicializacion (iv)
-		final ParametersWithIV parameterIV = new ParametersWithIV(
-			new KeyParameter(key),
-			encryptBlock(key, ssc) // El vector de inicializacion se crea a partir del SSC
-		);
+		final ParametersWithIV parameterIV;
+		try {
+			parameterIV = new ParametersWithIV(
+				new KeyParameter(key),
+				encryptBlock(key, ssc) // El vector de inicializacion se crea a partir del SSC
+			);
+		}
+		catch (InvalidKeyException       |
+			   NoSuchAlgorithmException  |
+			   NoSuchPaddingException    |
+			   IllegalBlockSizeException |
+			   BadPaddingException e1) {
+			throw new AmCryptoException(
+				"Error creando el vector de inicializacion AES mediante un cifrado de bloque AES: " + e1, e1 //$NON-NLS-1$
+			);
+		}
 		// Inicializamos
 		encryptCipher.init(true, parameterIV);
 
@@ -188,10 +214,22 @@ public final class AmAESCrypto {
 			ISO7816D4_PADDING
 		);
 		// Creamos los parametros de descifrado con el vector de inicializacion (iv)
-		final ParametersWithIV parameterIV = new ParametersWithIV(
-			new KeyParameter(key),
-			encryptBlock(key, ssc)
-		);
+		final ParametersWithIV parameterIV;
+		try {
+			parameterIV = new ParametersWithIV(
+				new KeyParameter(key),
+				encryptBlock(key, ssc)
+			);
+		}
+		catch (InvalidKeyException       |
+			   NoSuchAlgorithmException  |
+			   NoSuchPaddingException    |
+			   IllegalBlockSizeException |
+			   BadPaddingException e1) {
+			throw new AmCryptoException(
+				"Error creando el vector de inicializacion AES mediante un cifrado de bloque AES: " + e1, e1 //$NON-NLS-1$
+			);
+		}
 		// Inicializamos
 		decryptCipher.init(false, parameterIV);
 

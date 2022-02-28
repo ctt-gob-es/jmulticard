@@ -28,4 +28,8 @@ public final class AmCryptoException extends Exception {
 		super(cause);
 	}
 
+	AmCryptoException(final String desc, final Throwable e) {
+		super(desc, e);
+	}
+
 }
