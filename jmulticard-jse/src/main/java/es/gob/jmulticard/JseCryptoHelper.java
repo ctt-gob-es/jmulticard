@@ -112,6 +112,13 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 	private PaceChannelHelper paceChannelHelper = null;
 
+	// Unicamente anade BouncyCastle si no estaba ya anadido como proveedor
+	static {
+		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastleProvider());
+		}
+	}
+
     @Override
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
 

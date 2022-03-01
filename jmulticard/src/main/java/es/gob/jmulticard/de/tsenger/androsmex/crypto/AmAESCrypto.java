@@ -22,7 +22,6 @@ package es.gob.jmulticard.de.tsenger.androsmex.crypto;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -31,10 +30,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.spongycastle.crypto.paddings.BlockCipherPadding;
-import org.spongycastle.crypto.paddings.ISO7816d4Padding;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-
 import es.gob.jmulticard.CryptoHelper;
 
 /** Implementaci&oacute;n de las operaciones criptogr&aacute;ficas usando AES.
@@ -42,17 +37,8 @@ import es.gob.jmulticard.CryptoHelper;
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class AmAESCrypto {
 
-	private static final BlockCipherPadding ISO7816D4_PADDING = new ISO7816d4Padding();
-
 	/** Tama&ntilde;o de bloque de cifrado. */
 	public static final int BLOCK_SIZE = 16;
-
-	// Unicamente anade BouncyCastle si no estaba ya anadido como proveedor
-	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-	}
 
 	private AmAESCrypto() {
 		// No instanciable
@@ -148,7 +134,6 @@ public final class AmAESCrypto {
                                  final byte[] aesKey,
                                  final byte[] ssc,
                                  final CryptoHelper ch) throws AmCryptoException {
-
 		try {
 			return ch.aesDecrypt(
 				in,
@@ -179,12 +164,18 @@ public final class AmAESCrypto {
 	 * @param data Datos a rellenar.
 	 * @return Datos con el relleno aplicado. */
 	public static byte[] addPadding(final byte[] data) {
-		final int len = data.length;
+		int len = data.length;
 		final int nLen = (len / BLOCK_SIZE + 1) * BLOCK_SIZE;
-		final byte[] n = new byte[nLen];
-		System.arraycopy(data, 0, n, 0, data.length);
-		ISO7816D4_PADDING.addPadding(n, len);
-		return n;
+		final byte[] in = new byte[nLen];
+		System.arraycopy(data, 0, in, 0, data.length);
+
+        in [len]= (byte) 0x80;
+        len ++;
+        while (len < in.length) {
+            in[len] = (byte) 0;
+            len++;
+        }
+        return in;
 	}
 
 	/** Retira un relleno (<i>padding</i>) ISO9797-1 / ISO7816d4-Padding.
