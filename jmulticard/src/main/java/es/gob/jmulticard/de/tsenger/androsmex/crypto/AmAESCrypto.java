@@ -56,7 +56,7 @@ public final class AmAESCrypto {
 	/** Tama&ntilde;o de bloque de cifrado. */
 	public static final int BLOCK_SIZE = 16;
 
-	// Unicamente a&ntilde;ade BouncyCastle si no estaba ya anadido como proveedor
+	// Unicamente anade BouncyCastle si no estaba ya anadido como proveedor
 	static {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
@@ -68,8 +68,7 @@ public final class AmAESCrypto {
 	}
 
 	/** Obtiene el C&oacute;digo de Autenticaci&oacute;n de Mensaje (MAC) de
-	 * los datos proporcionados.
-	 * El algoritmo depende de la implementaci&oacute;n concreta de la clase.
+	 * tipo AES para los datos proporcionados.
 	 * @param data Datos sobre los que calcular el MAC.
 	 * @param ssc Contador de secuencia de env&iacute;os (<i>Send Sequence Counter</i>).
 	 * @param keyBytes Clave de creaci&oacute;n de MAC.
@@ -91,7 +90,7 @@ public final class AmAESCrypto {
 
 	/** Encripta un bloque usando AES.
 	 * @param aesKey Clave AES.
-	 * @param z Bloque a crifrar.
+	 * @param z Bloque a crifrar (debe tener el tama&ntilde;o justo para la clave proporcionada).
 	 * @return Bloque cifrado.
 	 * @throws NoSuchPaddingException No debe producirse, no se aplica relleno a los datos de entrada.
 	 * @throws NoSuchAlgorithmException Si no se encuentra un cifrador para el algoritmo 'AES/ECB/NoPadding'.
@@ -112,83 +111,38 @@ public final class AmAESCrypto {
 
 	/** Encripta datos (AES/CBC/ISO7816d4Padding).
 	 * @param in Datos en claro (a cifrar).
-	 * @param key Clave de cifrado.
+	 * @param aesKey Clave de cifrado.
 	 * @param ssc Contador de secuencia de env&iacute;os (<i>Send Sequence Counter</i>).
 	 * @param ch Utilidad para las operaciones criptogr&aacute;ficas.
 	 * @return Datos cifrados.
 	 * @throws AmCryptoException En cualquier error. */
 	public static byte[] encrypt(final byte[] in,
-			                     final byte[] key,
+			                     final byte[] aesKey,
 			                     final byte[] ssc,
 			                     final CryptoHelper ch) throws AmCryptoException {
-
-		int noBytesRead = 0; // Numero de octetos leidos de la entrada
-		int noBytesProcessed = 0; // Numero de octetos procesados
-
-		// AES block cipher en modo CBC con padding ISO7816d4
-		final BufferedBlockCipher encryptCipher = new PaddedBufferedBlockCipher(
-			new CBCBlockCipher(
-				new AESEngine()
-			),
-			ISO7816D4_PADDING
-		);
-		// Creamos los parametros de cifrado con el vector de inicializacion (iv)
-		final ParametersWithIV parameterIV;
 		try {
-			parameterIV = new ParametersWithIV(
-				new KeyParameter(key),
-				encryptBlock(key, ssc) // El vector de inicializacion se crea a partir del SSC
+			return ch.aesEncrypt(
+				in,
+				encryptBlock(aesKey, ssc),
+				aesKey,
+				"ISO7816-4Padding" //$NON-NLS-1$
 			);
 		}
-		catch (InvalidKeyException       |
-			   NoSuchAlgorithmException  |
-			   NoSuchPaddingException    |
-			   IllegalBlockSizeException |
-			   BadPaddingException e1) {
+		catch (final InvalidKeyException       |
+		             NoSuchAlgorithmException  |
+		             NoSuchPaddingException    |
+		             IllegalBlockSizeException |
+		             BadPaddingException e1) {
 			throw new AmCryptoException(
 				"Error creando el vector de inicializacion AES mediante un cifrado de bloque AES: " + e1, e1 //$NON-NLS-1$
 			);
 		}
-		// Inicializamos
-		encryptCipher.init(true, parameterIV);
-
-		// Buffers para mover octetos de un flujo a otro
-		final byte[] buf = new byte[16]; // Buffer de entrada
-		final byte[] obuf = new byte[512]; // Buffer de salida
-
-		try (
-			final InputStream bin = new ByteArrayInputStream(in);
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
-		) {
-			try {
-				while ((noBytesRead = bin.read(buf)) >= 0) {
-					noBytesProcessed = encryptCipher.processBytes(
-						buf,
-						0,
-						noBytesRead,
-						obuf,
-						0
-					);
-					bout.write(obuf, 0, noBytesProcessed);
-				}
-			}
-			catch (final Exception e) {
-				throw new AmCryptoException(e);
-			}
-
-			try {
-				noBytesProcessed = encryptCipher.doFinal(obuf, 0);
-				bout.write(obuf, 0, noBytesProcessed);
-				bout.flush();
-				return bout.toByteArray();
-			}
-			catch (final Exception e) {
-				throw new AmCryptoException(e);
-			}
+		catch (final IOException e) {
+			throw new AmCryptoException(
+				"Error en el cifrado AES: " + e, e //$NON-NLS-1$
+			);
 		}
-		catch (final IOException ioe) {
-			throw new AmCryptoException(ioe);
-		}
+
 	}
 
 	/** Desencripta datos (el algoritmo depende de la implementaci&oacute;n
@@ -221,11 +175,11 @@ public final class AmAESCrypto {
 				encryptBlock(key, ssc)
 			);
 		}
-		catch (InvalidKeyException       |
-			   NoSuchAlgorithmException  |
-			   NoSuchPaddingException    |
-			   IllegalBlockSizeException |
-			   BadPaddingException e1) {
+		catch (final InvalidKeyException       |
+			         NoSuchAlgorithmException  |
+			         NoSuchPaddingException    |
+			         IllegalBlockSizeException |
+			         BadPaddingException e1) {
 			throw new AmCryptoException(
 				"Error creando el vector de inicializacion AES mediante un cifrado de bloque AES: " + e1, e1 //$NON-NLS-1$
 			);
