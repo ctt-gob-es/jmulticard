@@ -18,7 +18,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
-import es.gob.jmulticard.apdu.gemalto.VerifyApduCommand;
+import es.gob.jmulticard.apdu.gemalto.GemaltoVerifyApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
@@ -265,7 +265,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     @Override
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
-		final VerifyApduCommand verifyPinApduCommand = new VerifyApduCommand(
+		final GemaltoVerifyApduCommand verifyPinApduCommand = new GemaltoVerifyApduCommand(
 			CLA,
 			this.passwordCallback
 		);

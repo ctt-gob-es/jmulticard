@@ -24,8 +24,8 @@ import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.gide.RetriesLeftApduCommand;
-import es.gob.jmulticard.apdu.gide.VerifyApduCommand;
+import es.gob.jmulticard.apdu.gide.GiDeRetriesLeftApduCommand;
+import es.gob.jmulticard.apdu.gide.GiDeVerifyApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
@@ -448,7 +448,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
     	}
-    	VerifyApduCommand verifyCommandApdu = new VerifyApduCommand(psc);
+    	GiDeVerifyApduCommand verifyCommandApdu = new GiDeVerifyApduCommand(psc);
     	final ResponseApdu verifyResponse = getConnection().transmit(
 			verifyCommandApdu
     	);
@@ -563,7 +563,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     }
 
     private int getPinRetriesLeft() throws PinException {
-    	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
+    	final CommandApdu verifyCommandApdu = new GiDeRetriesLeftApduCommand();
     	final ResponseApdu verifyResponse;
 		try {
 			verifyResponse = getConnection().transmit(

@@ -59,8 +59,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.ceres.CeresVerifyApduCommand;
-import es.gob.jmulticard.apdu.ceres.LoadDataApduCommand;
-import es.gob.jmulticard.apdu.ceres.SignDataApduCommand;
+import es.gob.jmulticard.apdu.ceres.CeresLoadDataApduCommand;
+import es.gob.jmulticard.apdu.ceres.CeresSignDataApduCommand;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.dnie.RetriesLeftApduCommand;
@@ -402,7 +402,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 		final ResponseApdu res;
 
-		final CommandApdu cmd = new SignDataApduCommand(
+		final CommandApdu cmd = new CeresSignDataApduCommand(
 			ceresPrivateKey.getKeyReference(), // Referencia
 			ceresPrivateKey.getKeyBitSize()    // Tamano en bits de la clave
 		);
@@ -439,7 +439,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		// Si la clave es de 1024 la carga se puede hacer en una unica APDU
 		if (keyBitSize < 2048) {
 			try {
-				res = sendArbitraryApdu(new LoadDataApduCommand(paddedData));
+				res = sendArbitraryApdu(new CeresLoadDataApduCommand(paddedData));
 			}
 			catch (final Exception e) {
 				throw new CryptoCardException(

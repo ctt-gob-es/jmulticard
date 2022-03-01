@@ -56,7 +56,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 	@Override
 	public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
 		// Si es el comando para verificar el PIN se creara una instancia nueva de la clase
-		// CommandApdu ya que la clase VerifyApduCommand no incluye la contrasena como parte
+		// CommandApdu ya que la clase StcmVerifyApduCommand no incluye la contrasena como parte
 		// la APDU, sino en un attributo aparte
 		final CommandApdu finalCommand = new CommandApdu(
 			command.getCla(),

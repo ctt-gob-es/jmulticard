@@ -9,7 +9,7 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.bit4id.stcm.VerifyApduCommand;
+import es.gob.jmulticard.apdu.bit4id.stcm.StcmVerifyApduCommand;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.BadPinException;
@@ -91,7 +91,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 		if (pinPc == null) {
 			throw new BadPinException("No se ha establecido un PasswordCallback"); //$NON-NLS-1$
 		}
-		final CommandApdu chv = new VerifyApduCommand(CLA, pinPc);
+		final CommandApdu chv = new StcmVerifyApduCommand(CLA, pinPc);
 		final ResponseApdu verifyResponse = sendArbitraryApdu(chv);
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
