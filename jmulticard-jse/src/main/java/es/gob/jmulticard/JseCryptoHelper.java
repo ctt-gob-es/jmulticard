@@ -272,11 +272,11 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-    private static byte[] aesCrypt(final byte[] data,
-    		                       final byte[] iv,
-    		                       final byte[] key,
-    		                       final String padding,
-    		                       final int mode) throws IOException {
+    private byte[] aesCrypt(final byte[] data,
+    		                final byte[] iv,
+    		                final byte[] key,
+    		                final String padding,
+    		                final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -305,8 +305,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
 			// para IvParameterSpec.getIV(), normalmente todo ceros
 			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
-			ivector = new byte[aesCipher.getBlockSize()];
-			new SecureRandom().nextBytes(ivector);
+			ivector = generateRandomBytes(aesCipher.getBlockSize());
 		}
 		else if (iv.length == 0) {
 			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$

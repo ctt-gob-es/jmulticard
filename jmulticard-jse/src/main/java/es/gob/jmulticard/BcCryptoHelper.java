@@ -13,7 +13,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
@@ -263,13 +262,13 @@ public final class BcCryptoHelper extends CryptoHelper {
     	return ret;
     }
 
-    private static byte[] bcAesEncrypt(final byte[] data,
-                                       final byte[] iv,
-                                       final byte[] aesKey,
-                                       final BlockCipherPadding padding) throws DataLengthException,
-                                                                                IllegalStateException,
-                                                                                InvalidCipherTextException,
-                                                                                IOException {
+    private byte[] bcAesEncrypt(final byte[] data,
+                                final byte[] iv,
+                                final byte[] aesKey,
+                                final BlockCipherPadding padding) throws DataLengthException,
+                                                                         IllegalStateException,
+                                                                         InvalidCipherTextException,
+                                                                         IOException {
 		// BouncyCastle directo
 
     	final BlockCipher engine = new AESEngine();
@@ -280,8 +279,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
 			// para IvParameterSpec.getIV(), normalmente todo ceros
 			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
-			ivector = new byte[engine.getBlockSize()];
-			new SecureRandom().nextBytes(ivector);
+			ivector = generateRandomBytes(engine.getBlockSize());
 		}
 		else if (iv.length == 0) {
 			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
