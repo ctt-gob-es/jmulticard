@@ -63,6 +63,8 @@ import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
+import org.spongycastle.crypto.prng.DigestRandomGenerator;
+import org.spongycastle.crypto.prng.RandomGenerator;
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.ECPointUtil;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
@@ -254,17 +256,11 @@ public final class BcCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] generateRandomBytes(final int numBytes) throws IOException {
-        final SecureRandom sr;
-        try {
-            sr = SecureRandom.getInstance("SHA1PRNG"); //$NON-NLS-1$
-        }
-        catch (final NoSuchAlgorithmException e) {
-            throw new IOException("Algoritmo de generacion de aleatorios no valido: " + e, e); //$NON-NLS-1$
-        }
-        final byte[] randomBytes = new byte[numBytes];
-        sr.nextBytes(randomBytes);
-        return randomBytes;
+    public byte[] generateRandomBytes(final int numBytes) {
+    	final RandomGenerator sr = new DigestRandomGenerator(new SHA1Digest());
+    	final byte[] ret = new byte[numBytes];
+    	sr.nextBytes(ret);
+    	return ret;
     }
 
     private static byte[] bcAesEncrypt(final byte[] data,

@@ -68,6 +68,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
@@ -259,7 +260,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     @Override
     public byte[] generateRandomBytes(final int numBytes) throws IOException {
-        final SecureRandom sr;
+        final Random sr;
         try {
             sr = SecureRandom.getInstance("SHA1PRNG"); //$NON-NLS-1$
         }
