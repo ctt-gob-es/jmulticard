@@ -31,6 +31,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.Padding;
 
 /** Implementaci&oacute;n de las operaciones criptogr&aacute;ficas usando AES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
@@ -102,7 +103,7 @@ public final class AmAESCrypto {
 				in,
 				encryptBlock(aesKey, ssc),
 				aesKey,
-				"ISO7816-4Padding" //$NON-NLS-1$
+				Padding.ISO7816_4PADDING
 			);
 		}
 		catch (final InvalidKeyException       |
@@ -139,7 +140,7 @@ public final class AmAESCrypto {
 				in,
 				encryptBlock(aesKey, ssc),
 				aesKey,
-				"ISO7816-4Padding" //$NON-NLS-1$
+				Padding.ISO7816_4PADDING
 			);
 		}
 		catch (final InvalidKeyException       |

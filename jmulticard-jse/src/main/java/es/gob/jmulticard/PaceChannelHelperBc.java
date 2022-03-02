@@ -14,6 +14,7 @@ import org.spongycastle.math.ec.ECPoint;
 import org.spongycastle.util.Arrays;
 
 import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
+import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -149,7 +150,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 				nonce,
 				new byte[0],
 				sk,
-				null // Sin relleno
+				Padding.NOPADDING // Sin relleno
 			);
 		}
 		catch (final Exception e) {

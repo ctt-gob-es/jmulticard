@@ -18,6 +18,7 @@ import org.spongycastle.jce.spec.ECParameterSpec;
 import org.spongycastle.jce.spec.ECPrivateKeySpec;
 
 import es.gob.jmulticard.CryptoHelper.EcCurve;
+import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -68,7 +69,7 @@ public final class TestPaceDnie {
 					nonce,
 					new byte[0],
 					sk,
-					null // Sin relleno
+					Padding.NOPADDING // Sin relleno
 				),
 				false
 			)

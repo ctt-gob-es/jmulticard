@@ -1,45 +1,9 @@
-/*
- * Controlador Java de la Secretaria de Estado de Administraciones Publicas
- * para el DNI electronico.
- *
- * El Controlador Java para el DNI electronico es un proveedor de seguridad de JCA/JCE
- * que permite el acceso y uso del DNI electronico en aplicaciones Java de terceros
- * para la realizacion de procesos de autenticacion, firma electronica y validacion
- * de firma. Para ello, se implementan las funcionalidades KeyStore y Signature para
- * el acceso a los certificados y claves del DNI electronico, asi como la realizacion
- * de operaciones criptograficas de firma con el DNI electronico. El Controlador ha
- * sido disenado para su funcionamiento independiente del sistema operativo final.
- *
- * Copyright (C) 2012 Direccion General de Modernizacion Administrativa, Procedimientos
- * e Impulso de la Administracion Electronica
- *
- * Este programa es software libre y utiliza un licenciamiento dual (LGPL 2.1+
- * o EUPL 1.1+), lo cual significa que los usuarios podran elegir bajo cual de las
- * licencias desean utilizar el codigo fuente. Su eleccion debera reflejarse
- * en las aplicaciones que integren o distribuyan el Controlador, ya que determinara
- * su compatibilidad con otros componentes.
- *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
- * Lesser GNU General Public License publicada por la Free Software Foundation,
- * tanto en la version 2.1 de la Licencia, o en una version posterior.
- *
- * El Controlador puede ser redistribuido y/o modificado bajo los terminos de la
- * European Union Public License publicada por la Comision Europea,
- * tanto en la version 1.1 de la Licencia, o en una version posterior.
- *
- * Deberia recibir una copia de la GNU Lesser General Public License, si aplica, junto
- * con este programa. Si no, consultelo en <http://www.gnu.org/licenses/>.
- *
- * Deberia recibir una copia de la European Union Public License, si aplica, junto
- * con este programa. Si no, consultelo en <http://joinup.ec.europa.eu/software/page/eupl>.
- *
- * Este programa es distribuido con la esperanza de que sea util, pero
- * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
- * o idoneidad para un proposito particular.
- */
 package es.gob.jmulticard;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -47,7 +11,6 @@ import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -84,10 +47,22 @@ import org.spongycastle.cms.SignerId;
 import org.spongycastle.cms.SignerInformation;
 import org.spongycastle.cms.SignerInformationVerifier;
 import org.spongycastle.crypto.BlockCipher;
+import org.spongycastle.crypto.BufferedBlockCipher;
+import org.spongycastle.crypto.DataLengthException;
+import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.Mac;
+import org.spongycastle.crypto.digests.SHA1Digest;
+import org.spongycastle.crypto.digests.SHA256Digest;
+import org.spongycastle.crypto.digests.SHA384Digest;
+import org.spongycastle.crypto.digests.SHA512Digest;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.macs.CMac;
+import org.spongycastle.crypto.modes.CBCBlockCipher;
+import org.spongycastle.crypto.paddings.BlockCipherPadding;
+import org.spongycastle.crypto.paddings.ISO7816d4Padding;
+import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
+import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.ECPointUtil;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
@@ -101,10 +76,9 @@ import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.spongycastle.util.Selector;
 import org.spongycastle.util.Store;
 
-/** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE
- * (6 y superiores).
+/** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante BouncyCastle.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class JseCryptoHelper extends CryptoHelper {
+public final class BcCryptoHelper extends CryptoHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
@@ -121,7 +95,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 
     @Override
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
-
         if (algorithm == null) {
             throw new IllegalArgumentException(
         		"El algoritmo de huella digital no puede ser nulo" //$NON-NLS-1$
@@ -132,15 +105,38 @@ public final class JseCryptoHelper extends CryptoHelper {
     			"Los datos para realizar la huella digital no pueden ser nulos" //$NON-NLS-1$
 			);
         }
-
-        try {
-			return MessageDigest.getInstance(algorithm.toString()).digest(data);
-		}
-        catch (final NoSuchAlgorithmException e) {
-        	throw new IOException(
-    			"No se soporta el algoritmo de huella digital indicado ('" + algorithm + "'): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
-			);
-		}
+    	byte[] out;
+    	switch(algorithm) {
+	    	case SHA512:
+	    		final SHA512Digest digest512 = new SHA512Digest();
+	    		digest512.update(data, 0, data.length);
+	    		out = new byte[digest512.getDigestSize()];
+	    		digest512.doFinal(out, 0);
+	    		break;
+	    	case SHA384:
+	    		final SHA384Digest digest384 = new SHA384Digest();
+	    		digest384.update(data, 0, data.length);
+	    		out = new byte[digest384.getDigestSize()];
+	    		digest384.doFinal(out, 0);
+	    		break;
+	    	case SHA256:
+	    		final SHA256Digest digest256 = new SHA256Digest();
+	    		digest256.update(data, 0, data.length);
+	    		out = new byte[digest256.getDigestSize()];
+	    		digest256.doFinal(out, 0);
+	    		break;
+	    	case SHA1:
+	    		final SHA1Digest digest = new SHA1Digest();
+	    		digest.update(data, 0, data.length);
+	    		out = new byte[digest.getDigestSize()];
+	    		digest.doFinal(out, 0);
+	    		break;
+	    	default:
+	        	throw new IOException(
+        			"No se soporta el algoritmo de huella digital indicado: " + algorithm //$NON-NLS-1$
+    			);
+    	}
+    	return out;
     }
 
     /** Realiza una operaci&oacute;n 3DES.
@@ -271,11 +267,94 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-    private static byte[] aesCrypt(final byte[] data,
-    		                       final byte[] iv,
-    		                       final byte[] key,
-    		                       final String padding,
-    		                       final int mode) throws IOException {
+    private static byte[] bcAesEncrypt(final byte[] data,
+                                       final byte[] iv,
+                                       final byte[] aesKey,
+                                       final BlockCipherPadding padding) throws DataLengthException,
+                                                                                IllegalStateException,
+                                                                                InvalidCipherTextException,
+                                                                                IOException {
+		// BouncyCastle directo
+
+    	final BlockCipher engine = new AESEngine();
+
+		// Vector de inicializacion
+		final byte[] ivector;
+		if (iv == null) {
+			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
+			// para IvParameterSpec.getIV(), normalmente todo ceros
+			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
+			ivector = new byte[engine.getBlockSize()];
+			new SecureRandom().nextBytes(ivector);
+		}
+		else if (iv.length == 0) {
+			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
+			ivector = new byte[engine.getBlockSize()];
+		}
+		else {
+			ivector = iv;
+		}
+
+		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesProcessed = 0; // Numero de octetos procesados
+
+		// AES block cipher en modo CBC
+		final BufferedBlockCipher encryptCipher =
+			padding != null ?
+				// Con relleno
+				new PaddedBufferedBlockCipher(
+					new CBCBlockCipher(
+						new AESEngine()
+					),
+					padding) :
+						// Sin relleno
+						new BufferedBlockCipher(
+							new CBCBlockCipher(
+								engine
+							)
+						);
+
+		// Creamos los parametros de cifrado con el vector de inicializacion (iv)
+		final ParametersWithIV parameterIV = new ParametersWithIV(
+			new KeyParameter(aesKey),
+			ivector
+		);
+		// Inicializamos
+		encryptCipher.init(true, parameterIV);
+
+		// Buffers para mover octetos de un flujo a otro
+		final byte[] buf = new byte[16]; // Buffer de entrada
+		final byte[] obuf = new byte[512]; // Buffer de salida
+
+		try (
+			final InputStream bin = new ByteArrayInputStream(data);
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
+		) {
+			while ((noBytesRead = bin.read(buf)) >= 0) {
+				noBytesProcessed = encryptCipher.processBytes(
+					buf,
+					0,
+					noBytesRead,
+					obuf,
+					0
+				);
+				bout.write(obuf, 0, noBytesProcessed);
+			}
+
+			noBytesProcessed = encryptCipher.doFinal(obuf, 0);
+			bout.write(obuf, 0, noBytesProcessed);
+			bout.flush();
+			return bout.toByteArray();
+		}
+    }
+
+    private static byte[] bcAesDecrypt(final byte[] data,
+    		                           final byte[] iv,
+    		                           final byte[] key,
+    		                           final BlockCipherPadding padding) throws IOException,
+                                                                                DataLengthException,
+                                                                                IllegalStateException,
+                                                                                InvalidCipherTextException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -286,55 +365,49 @@ public final class JseCryptoHelper extends CryptoHelper {
 				"La clave de cifrado no puede ser nula" //$NON-NLS-1$
 			);
 		}
-		final Cipher aesCipher;
-		try {
-			aesCipher = Cipher.getInstance(
-				"AES/CBC/" + (padding != null && !padding.isEmpty() ? padding : "NoPadding") //$NON-NLS-1$ //$NON-NLS-2$
-			);
-		}
-		catch (final Exception e) {
-			throw new IOException(
-				"No se ha podido obtener una instancia del cifrador 'AES/CBC/NoPadding': " + e, e //$NON-NLS-1$
-			);
-		}
+		// Creamos los parametros de descifrado con el vector de inicializacion (iv)
+		final ParametersWithIV parameterIV = new ParametersWithIV(
+			new KeyParameter(key),
+			iv
+		);
 
-		// Vector de inicializacion
-		final byte[] ivector;
-		if (iv == null) {
-			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
-			// para IvParameterSpec.getIV(), normalmente todo ceros
-			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
-			ivector = new byte[aesCipher.getBlockSize()];
-			new SecureRandom().nextBytes(ivector);
-		}
-		else if (iv.length == 0) {
-			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
-			ivector = new byte[aesCipher.getBlockSize()];
-		}
-		else {
-			ivector = iv;
-		}
+		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesProcessed = 0; // Numero de octetos procesados
 
-		try {
-			aesCipher.init(
-				mode,
-				new SecretKeySpec(key, "AES"), //$NON-NLS-1$
-				new IvParameterSpec(ivector)
-			);
-		}
-		catch (final Exception e) {
-			throw new IOException(
-				"La clave proporcionada no es valida: " + e, e//$NON-NLS-1$
-			);
-		}
+		final BufferedBlockCipher decryptCipher = new PaddedBufferedBlockCipher(
+			new CBCBlockCipher(
+				new AESEngine()
+			),
+			padding
+		);
 
-		try {
-			return aesCipher.doFinal(data);
-		}
-		catch (final Exception e) {
-			throw new IOException(
-				"Error en el descifrado, posiblemente los datos proporcionados no sean validos: "  + e, e//$NON-NLS-1$
-			);
+		// Inicializamos
+		decryptCipher.init(false, parameterIV);
+
+		// Buffers para mover octetos de un flujo a otro
+		final byte[] buf = new byte[16]; // Buffer de entrada
+		final byte[] obuf = new byte[512]; // Buffer de salida
+
+		try (
+			final InputStream bin = new ByteArrayInputStream(data);
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
+		) {
+			while ((noBytesRead = bin.read(buf)) >= 0) {
+				noBytesProcessed = decryptCipher.processBytes(
+					buf,
+					0,
+					noBytesRead,
+					obuf,
+					0
+				);
+				bout.write(obuf, 0, noBytesProcessed);
+			}
+
+			noBytesProcessed = decryptCipher.doFinal(obuf, 0);
+			bout.write(obuf, 0, noBytesProcessed);
+			bout.flush();
+
+			return bout.toByteArray();
 		}
     }
 
@@ -343,7 +416,29 @@ public final class JseCryptoHelper extends CryptoHelper {
 			                 final byte[] iv,
 			                 final byte[] key,
 			                 final Padding padding) throws IOException {
-		return aesCrypt(data, iv, key, padding.toString(), Cipher.DECRYPT_MODE);
+		final BlockCipherPadding bcPadding;
+		switch(padding) {
+			case NOPADDING:
+				bcPadding = null;
+				break;
+			case ISO7816_4PADDING:
+				bcPadding = new ISO7816d4Padding();
+				break;
+			default:
+				throw new IOException(
+					"Algoritmo de relleno no soportado para AES: " + padding //$NON-NLS-1$
+				);
+		}
+		try {
+			return bcAesDecrypt(data, iv, key, bcPadding);
+		}
+		catch (final DataLengthException   |
+				     IllegalStateException |
+				     InvalidCipherTextException e) {
+			throw new IOException(
+				"Error en el descifrado AES: "+ e, e //$NON-NLS-1$
+			);
+		}
 	}
 
 	@Override
@@ -351,7 +446,35 @@ public final class JseCryptoHelper extends CryptoHelper {
 			                 final byte[] iv,
 			                 final byte[] key,
 			                 final Padding padding) throws IOException {
-		return aesCrypt(data, iv, key, padding.toString(), Cipher.ENCRYPT_MODE);
+		final BlockCipherPadding bcPadding;
+		switch(padding) {
+			case NOPADDING:
+				bcPadding = null;
+				break;
+			case ISO7816_4PADDING:
+				bcPadding = new ISO7816d4Padding();
+				break;
+			default:
+				throw new IOException(
+					"Algoritmo de relleno no soportado para AES: " + padding //$NON-NLS-1$
+				);
+		}
+		try {
+			return bcAesEncrypt(
+				data,
+				iv,
+				key,
+				bcPadding
+			);
+		}
+		catch (final DataLengthException        |
+				     IllegalStateException      |
+				     InvalidCipherTextException |
+				     IOException e) {
+			throw new IOException(
+				"Error en el cifrado AES: " + e, e //$NON-NLS-1$
+			);
+		}
 	}
 
 	@Override
@@ -367,7 +490,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
 		catch (final Exception e) {
 			LOGGER.warning(
-				"No se ha podido obtener un generador de pares de claves de curva eliptica con SpongyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
+				"No se ha podido obtener un generador de pares de claves de curva eliptica con BouncyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
 			);
 			kpg = KeyPairGenerator.getInstance(ECDH);
 		}
@@ -665,9 +788,8 @@ public final class JseCryptoHelper extends CryptoHelper {
 
 	@Override
 	public PaceChannelHelper getPaceChannelHelper() {
-		// Solo creamos el PaceChannelHelper si nos lo piden,
-		// asi evitamos crearlo en uso con contactos (PACE solo
-		// se usa con NFC).
+		// Solo creamos el PaceChannelHelper si nos lo piden, asi
+		// evitamos crearlo en uso con contactos (PACE solo se usa con NFC).
 		if (this.paceChannelHelper == null) {
 			this.paceChannelHelper = new PaceChannelHelperBc(this);
 		}

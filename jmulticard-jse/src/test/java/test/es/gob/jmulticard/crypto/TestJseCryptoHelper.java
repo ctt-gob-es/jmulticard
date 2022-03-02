@@ -7,6 +7,7 @@ import java.security.Security;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.Ignore;
@@ -22,6 +23,7 @@ import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 
@@ -31,11 +33,94 @@ public final class TestJseCryptoHelper {
 
 	private static final CryptoHelper CH = new JseCryptoHelper();
 
-	/** Pruebas de CMAC con AES.
+	/** Pruebas de cifrado AES.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	public void testAes() throws Exception {
+	public void testAesDecrypt() throws Exception {
+
+		Security.addProvider(new BouncyCastleProvider());
+
+		final String testString = "prhjdhakjshdkahskjdhaksdhkjashdkjahsjkdhkajshkdueb"; //$NON-NLS-1$
+		final byte[] key = {
+			0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+			0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00
+		};
+		final byte[] iv = {
+			0x04, 0x00, 0x06, 0x00, 0x00, (byte) 0xee, 0x00, 0x30,
+			0x00, 0x01, 0x00, 0x08, (byte) 0xff, 0x00, 0x20, 0x00
+		};
+		final byte[] in = new JseCryptoHelper().aesEncrypt(testString.getBytes(), iv, key, Padding.ISO7816_4PADDING);
+
+
+		// BouncyCastle puro
+
+		// Creamos los parametros de descifrado con el vector de inicializacion (iv)
+		final ParametersWithIV parameterIV = new ParametersWithIV(
+			new KeyParameter(key),
+			iv
+		);
+
+		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesProcessed = 0; // Numero de octetos procesados
+
+		final BufferedBlockCipher decryptCipher = new PaddedBufferedBlockCipher(
+			new CBCBlockCipher(
+				new AESEngine()
+			),
+			new ISO7816d4Padding()
+		);
+
+		// Inicializamos
+		decryptCipher.init(false, parameterIV);
+
+		// Buffers para mover octetos de un flujo a otro
+		final byte[] buf = new byte[16]; // Buffer de entrada
+		final byte[] obuf = new byte[512]; // Buffer de salida
+
+		try (
+			final InputStream bin = new ByteArrayInputStream(in);
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
+		) {
+			while ((noBytesRead = bin.read(buf)) >= 0) {
+				noBytesProcessed = decryptCipher.processBytes(
+					buf,
+					0,
+					noBytesRead,
+					obuf,
+					0
+				);
+				bout.write(obuf, 0, noBytesProcessed);
+			}
+
+			noBytesProcessed = decryptCipher.doFinal(obuf, 0);
+			bout.write(obuf, 0, noBytesProcessed);
+			bout.flush();
+
+			System.out.println(HexUtils.hexify(bout.toByteArray(), false));
+		}
+
+
+		// Ahora con JCA/JCE
+
+		final Cipher aesCipher = Cipher.getInstance(
+			"AES/CBC/ISO7816-4Padding" //$NON-NLS-1$
+		);
+		aesCipher.init(
+			Cipher.DECRYPT_MODE,
+			new SecretKeySpec(key, "AES"), //$NON-NLS-1$
+			new IvParameterSpec(iv)
+		);
+
+		System.out.println(HexUtils.hexify(aesCipher.doFinal(in), false));
+
+	}
+
+	/** Pruebas de cifrado AES.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void testAesEncrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
 
@@ -55,7 +140,7 @@ public final class TestJseCryptoHelper {
 			testBytes,
 			iv,
 			aesKey,
-			"ISO7816-4Padding" //$NON-NLS-1$
+			Padding.ISO7816_4PADDING
 		);
 		System.out.println(HexUtils.hexify(tmp, false));
 
@@ -106,23 +191,6 @@ public final class TestJseCryptoHelper {
 			tmp = bout.toByteArray();
 			System.out.println(HexUtils.hexify(tmp, false));
 		}
-
-
-
-
-
-//		System.out.println(
-//			HexUtils.hexify(tmp, false)
-//		);
-//		tmp = CH.aesDecrypt(
-//			tmp,
-//			iv,
-//			aesKey,
-//			"ISO7816-4Padding" //$NON-NLS-1$
-//		);
-//		System.out.println(new String(tmp));
-//
-//		System.out.println();
 
 	}
 

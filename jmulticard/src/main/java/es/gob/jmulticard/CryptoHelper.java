@@ -67,6 +67,27 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class CryptoHelper {
 
+	/** Tipos de relleno para cifrados. */
+	public enum Padding {
+
+		/** Sin relleno.  */
+		NOPADDING("NOPADDING"), //$NON-NLS-1$
+
+		/** Relleno ISO7816-4. */
+		ISO7816_4PADDING("ISO7816-4Padding"); //$NON-NLS-1$
+
+		private final String algName;
+
+		Padding(final String alg) {
+			this.algName = alg;
+		}
+
+		@Override
+		public String toString() {
+			return this.algName;
+		}
+	}
+
 	/** Nombres de curva el&iacute;ptica. */
 	public enum EcCurve {
 
@@ -152,7 +173,7 @@ public abstract class CryptoHelper {
      * @param data Datos de entrada.
      * @return Huella digital de los datos.
      * @throws IOException Si ocurre alg&uacute;n problema generando la huella
-     *         digital. */
+     *                     digital. */
     public abstract byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException;
 
     /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con una
@@ -203,12 +224,15 @@ public abstract class CryptoHelper {
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     encriptado. */
-    public abstract byte[] aesDecrypt(final byte[] data, final byte[] iv, final byte[] key, final String padding) throws IOException;
+    public abstract byte[] aesDecrypt(final byte[] data,
+    		                          final byte[] iv,
+    		                          final byte[] key,
+    		                          final Padding padding) throws IOException;
 
     /** Encripta datos mediante AES (modo CBC sin relleno).
      * @param data Datos a encriptar.
-     * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
-     *           un vector con valores aleatorios.
+     * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code>
+     *           se usar&aacute; un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
      * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
@@ -217,7 +241,7 @@ public abstract class CryptoHelper {
     public abstract byte[] aesEncrypt(final byte[] data,
     		                          final byte[] iv,
     		                          final byte[] key,
-    		                          final String padding) throws IOException;
+    		                          final Padding padding) throws IOException;
 
     /** Desencripta datos mediante RSA.
      * @param cipheredData Datos a desencriptar.
@@ -376,7 +400,7 @@ public abstract class CryptoHelper {
 		public abstract SecureMessaging openPaceChannel(final byte cla,
 				                                        final WirelessInitializer pi,
 				                                        final ApduConnection conn) throws ApduConnectionException,
-				                                                                                IcaoException;
+				                                                                          IcaoException;
 
 		/** Obtiene la representaci&oacute;n de un <code>BigInteger</code> como un
 		 * array de octetos.
