@@ -9,14 +9,14 @@ final class PasswordResult {
 
 	private boolean useCache;
 
-	PasswordResult(final char[] password) {
-		this.password = password != null ? password.clone() : null;
+	PasswordResult(final char[] passwd) {
+		this.password = passwd != null ? passwd.clone() : null;
 		this.useCache = false;
 	}
 
-	PasswordResult(final char[] password, final boolean useCache) {
-		this.password = password != null ? password.clone() : null;
-		this.useCache = useCache;
+	PasswordResult(final char[] passwd, final boolean cachePassword) {
+		this.password = passwd != null ? passwd.clone() : null;
+		this.useCache = cachePassword;
 	}
 
 	char[] getPassword() {

@@ -12,14 +12,14 @@ public final class WirelessInitializerCan implements WirelessInitializer {
 	private final String can;
 
 	/** Construye un CAN para inicializaci&oacute;n de un canal PACE.
-	 * @param can CAN. */
-	public WirelessInitializerCan(final String can) {
-		if (can == null || can.isEmpty()) {
+	 * @param cardAccessNumber CAN. */
+	public WirelessInitializerCan(final String cardAccessNumber) {
+		if (cardAccessNumber == null || cardAccessNumber.isEmpty()) {
 			throw new IllegalArgumentException(
 				"El valor no puede ser nulo ni vacio" //$NON-NLS-1$
 			);
 		}
-		this.can = can;
+		this.can = cardAccessNumber;
 	}
 
 	@Override

@@ -59,11 +59,11 @@ public final class CustomAuthorizeCallback implements Callback {
     }
 
     /** Sets if authorization is allowed or not.
-     * @param authorized <code>true</code> if authorization is allowed;
+     * @param auth <code>true</code> if authorization is allowed;
      *                   <code>false</code> otherwise.
      * @see #isAuthorized() */
-    public void setAuthorized(final boolean authorized) {
-        this.authorized = authorized;
+    public void setAuthorized(final boolean auth) {
+        this.authorized = auth;
     }
 
 }

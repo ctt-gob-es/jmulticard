@@ -23,7 +23,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 	/** Construye una clase que representa un MRTD accedido de forma
 	 * inal&aacute;mbrica mediante PACE.
 	 * @param conn Conexi&oacute;n con el lector NFC.
-	 * @param cryptoHelper Clase de utilidad de funciones criptogr&aacute;ficas.
+	 * @param cryptoHlpr Clase de utilidad de funciones criptogr&aacute;ficas.
 	 * @param ch <code>CallbackHandler</code> que debe proporcionar, mediante un
 	 *           <code>es.gob.jmulticard.callback.CustomTextInputCallback</code> o
 	 *           un <code>javax.security.auth.callback.TextInputCallback</code>, el
@@ -31,13 +31,13 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 	 * @throws IcaoException Si no se puede establecer el canal PACE.
 	 * @throws ApduConnectionException Si no se puede establecer la conexi&oacute;n NFC. */
 	public IcaoMrtdWithPace(final ApduConnection conn,
-			                       final CryptoHelper cryptoHelper,
+			                       final CryptoHelper cryptoHlpr,
 			                       final CallbackHandler ch) throws IcaoException,
 	                                                                ApduConnectionException {
 		super(
 			conn,
 			null,          // No hay PIN
-			cryptoHelper,
+			cryptoHlpr,
 			ch,            // CallbackHandler, debe proporcionar la MRZ o el CAN
 			false          // No se cargan claves ni certificados
 		);

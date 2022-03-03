@@ -13,14 +13,14 @@ public final class IcaoMrtdWithBac extends Dnie3 {
 	/** Construye una clase que representa un MRTD accedido de forma
 	 * inal&aacute;mbrica mediante BAC..
 	 * @param conn Conexi&oacute;n con el lector NFC.
-	 * @param cryptoHelper Clase de utilidad de funciones criptogr&aacute;ficas.
+	 * @param cryptoHlpr Clase de utilidad de funciones criptogr&aacute;ficas.
 	 * @throws ApduConnectionException Si no se puede establecer la conexi&oacute;n NFC. */
 	public IcaoMrtdWithBac(final ApduConnection conn,
-			                   final CryptoHelper cryptoHelper) throws ApduConnectionException {
+			               final CryptoHelper cryptoHlpr) throws ApduConnectionException {
 		super(
 			conn,
 			null,          // No hay PIN
-			cryptoHelper,
+			cryptoHlpr,
 			null,          // No hace falta CAN ni MRZ
 			false          // No se cargan claves y certificados
 		);

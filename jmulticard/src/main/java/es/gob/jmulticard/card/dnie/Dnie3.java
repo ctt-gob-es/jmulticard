@@ -381,7 +381,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
      *                     variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
      * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
@@ -393,11 +393,11 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
      *                                 cerrada y no es posible abrirla.*/
     protected Dnie3(final ApduConnection conn,
     	            final PasswordCallback pwc,
-    	            final CryptoHelper cryptoHelper,
+    	            final CryptoHelper cryptoHlpr,
     	            final CallbackHandler ch,
     	            final boolean loadCertsAndKeys) throws ApduConnectionException {
 
-        super(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
+        super(conn, pwc, cryptoHlpr, ch, loadCertsAndKeys);
         this.rawConnection = conn;
         if (loadCertsAndKeys) {
         	try {
@@ -423,16 +423,16 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
      *                     variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla.*/
     Dnie3(final ApduConnection conn,
     	  final PasswordCallback pwc,
-    	  final CryptoHelper cryptoHelper,
+    	  final CryptoHelper cryptoHlpr,
     	  final CallbackHandler ch) throws ApduConnectionException {
-        this(conn, pwc, cryptoHelper, ch, true);
+        this(conn, pwc, cryptoHlpr, ch, true);
     }
 
     /** Abre el canal seguro de usuario.

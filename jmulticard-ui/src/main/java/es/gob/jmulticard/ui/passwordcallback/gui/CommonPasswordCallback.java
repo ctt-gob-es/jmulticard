@@ -94,38 +94,38 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
      * en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
-	 * @param title T&iacute;tulo de la ventana gr&aacute;fica.
-	 * @param isDnie Si es un Dnie. */
-	public CommonPasswordCallback(final String prompt, final String title, final boolean isDnie) {
-		this(prompt, title, isDnie, false, false);
+	 * @param dialogTitle T&iacute;tulo de la ventana gr&aacute;fica.
+	 * @param isDni Si es un DNIe. */
+	public CommonPasswordCallback(final String prompt, final String dialogTitle, final boolean isDni) {
+		this(prompt, dialogTitle, isDni, false, false);
 	}
 
 	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
      * en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
-	 * @param title T&iacute;tulo de la ventana gr&aacute;fica.
-	 * @param isDnie Si es un Dnie.
-	 * @param allowUseCache Si se permite el cach&acute; del PIN.
-	 * @param defaultUseCacheValue Si por defecto debe usarse el valor del PIN en cach&eacute;. */
+	 * @param dialogTitle T&iacute;tulo de la ventana gr&aacute;fica.
+	 * @param isDni Si es un DNIe.
+	 * @param allowPinCache Si se permite el cach&acute; del PIN.
+	 * @param defaultPinCacheValue Si por defecto debe usarse el valor del PIN en cach&eacute;. */
 	public CommonPasswordCallback(final String prompt,
-			                      final String title,
-			                      final boolean isDnie,
-			                      final boolean allowUseCache,
-			                      final boolean defaultUseCacheValue) {
+			                      final String dialogTitle,
+			                      final boolean isDni,
+			                      final boolean allowPinCache,
+			                      final boolean defaultPinCacheValue) {
 		super(prompt, true);
 		if (prompt == null) {
 			throw new IllegalArgumentException("El texto de solicitud no puede ser nulo"); //$NON-NLS-1$
 		}
-		if (title == null) {
+		if (dialogTitle == null) {
 			this.title = prompt;
 		}
 		else {
-			this.title = title;
+			this.title = dialogTitle;
 		}
 
-		this.isDnie = isDnie;
-		this.allowUseCache = allowUseCache;
-		this.defaultUseCacheValue = defaultUseCacheValue;
+		this.isDnie = isDni;
+		this.allowUseCache = allowPinCache;
+		this.defaultUseCacheValue = defaultPinCacheValue;
 		this.useCacheChecked = this.defaultUseCacheValue;
 	}
 

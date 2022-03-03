@@ -252,9 +252,9 @@ final class RSACore {
         final BigInteger u;
         final BigInteger v;
 
-        BlindingRandomPair(final BigInteger u, final BigInteger v) {
-            this.u = u;
-            this.v = v;
+        BlindingRandomPair(final BigInteger pairU, final BigInteger pairV) {
+            this.u = pairU;
+            this.v = pairV;
         }
     }
 
@@ -285,18 +285,20 @@ final class RSACore {
         // r ^ (-1) mod n (CRT) , or ((r ^ (-1)) ^ d) mod n (Non-CRT)
         private BigInteger v;
 
-        // e: the exponent
-        // d: the private exponent
-        // n: the modulus
-        BlindingParameters(final BigInteger e, final BigInteger d, final BigInteger n) {
+        // e: Exponente
+        // d: Exponente privado
+        // n: Modulo
+        BlindingParameters(final BigInteger exponent,
+        		           final BigInteger privateExponent,
+        		           final BigInteger modulus) {
             this.u = null;
             this.v = null;
-            this.e = e;
-            this.d = d;
+            this.e = exponent;
+            this.d = privateExponent;
 
-            final int len = n.bitLength();
+            final int len = modulus.bitLength();
             final SecureRandom random = new SecureRandom();
-            this.u = new BigInteger(len, random).mod(n);
+            this.u = new BigInteger(len, random).mod(modulus);
             // Although the possibility is very much limited that u is zero
             // or is not relatively prime to n, we still want to be careful
             // about the special value.
@@ -313,7 +315,7 @@ final class RSACore {
                 // The call to BigInteger.modInverse() checks that u is
                 // relatively prime to n.  Otherwise, ArithmeticException is
                 // thrown.
-                this.v = this.u.modInverse(n);
+                this.v = this.u.modInverse(modulus);
             }
             catch (final ArithmeticException ae) {
                 // if u is not relatively prime to n, use 1 this time
@@ -321,13 +323,13 @@ final class RSACore {
                 this.v = BigInteger.ONE;
             }
 
-            if (e != null) {
-                this.u = this.u.modPow(e, n);   // e: El exponente publico
+            if (exponent != null) {
+                this.u = this.u.modPow(exponent, modulus);   // e: El exponente publico
                                       // u: random ^ e
                                       // v: random ^ (-1)
             }
             else {
-                this.v = this.v.modPow(d, n);   // d: El exponente privado
+                this.v = this.v.modPow(privateExponent, modulus);   // d: El exponente privado
                                       // u: random
                                       // v: random ^ (-d)
             }

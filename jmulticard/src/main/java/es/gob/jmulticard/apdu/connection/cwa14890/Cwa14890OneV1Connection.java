@@ -136,11 +136,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
-     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas. */
+     * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas. */
     public Cwa14890OneV1Connection(final ApduConnection connection,
-    		                       final CryptoHelper cryptoHelper) {
+    		                       final CryptoHelper cryptoHlpr) {
 
-        if (cryptoHelper == null) {
+        if (cryptoHlpr == null) {
             throw new IllegalArgumentException(
         		"CryptoHelper no puede ser nulo" //$NON-NLS-1$
             );
@@ -149,31 +149,31 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     	this.subConnection = connection instanceof Cwa14890Connection ?
 			((Cwa14890Connection)connection).getSubConnection() :
 				connection;
-        this.cryptoHelper = cryptoHelper;
+        this.cryptoHelper = cryptoHlpr;
     	this.apduEncrypter = instantiateApduEncrypter();
     }
 
     /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
      * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
      * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
-     * @param card Tarjeta con la funcionalidad CWA-14890.
+     * @param connectedCard Tarjeta con la funcionalidad CWA-14890.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
-     * @param cryptoHelper Motor de operaciones criptogr&aacute;ficas.
+     * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas.
      * @param cwaConsts Clase de claves p&uacute;blicas CWA-14890.
      * @param cwaPrivConsts Clase de claves privadas CWA-14890. */
-    public Cwa14890OneV1Connection(final Cwa14890Card card,
+    public Cwa14890OneV1Connection(final Cwa14890Card connectedCard,
     		                       final ApduConnection connection,
-    		                       final CryptoHelper cryptoHelper,
+    		                       final CryptoHelper cryptoHlpr,
     		                       final Cwa14890PublicConstants cwaConsts,
     		                       final Cwa14890PrivateConstants cwaPrivConsts) {
 
-        if (card == null) {
+        if (connectedCard == null) {
             throw new IllegalArgumentException(
         		"No se ha proporcionado la tarjeta CWA-14890 con la que abrir el canal seguro" //$NON-NLS-1$
             );
         }
 
-        if (cryptoHelper == null) {
+        if (cryptoHlpr == null) {
             throw new IllegalArgumentException(
         		"CryptoHelper no puede ser nulo" //$NON-NLS-1$
             );
@@ -185,11 +185,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
             );
         }
 
-        this.card = card;
+        this.card = connectedCard;
         this.subConnection = connection instanceof Cwa14890Connection ?
 			((Cwa14890Connection)connection).getSubConnection() :
 				connection;
-        this.cryptoHelper = cryptoHelper;
+        this.cryptoHelper = cryptoHlpr;
     	this.apduEncrypter = instantiateApduEncrypter();
     	this.pubConsts = cwaConsts;
     	this.privConsts = cwaPrivConsts;

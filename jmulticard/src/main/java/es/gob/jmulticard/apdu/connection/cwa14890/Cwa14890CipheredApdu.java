@@ -71,26 +71,26 @@ public final class Cwa14890CipheredApdu extends CommandApdu {
      * @param ins Instrucci&oacute;n (INS).
      * @param p1 Primer par&aacute;metro.
      * @param p2 Segundo par&aacute;metro.
-     * @param data Datos del TLV criptograma.
-     * @param mac C&oacute;digo de autenticaci&oacute;n del criptograma (MAC). */
+     * @param apduData Datos del TLV criptograma.
+     * @param apduMac C&oacute;digo de autenticaci&oacute;n del criptograma (MAC). */
     Cwa14890CipheredApdu(final byte cla,
     		     final byte ins,
     		     final byte p1,
     		     final byte p2,
-    		     final byte[] data,
-    		     final byte[] mac) {
+    		     final byte[] apduData,
+    		     final byte[] apduMac) {
         super(
-    		cla,					// CLA
-    		ins,					// INS
-    		p1,						// P1
-    		p2,						// P2
-    		buildData(data, mac),	// Data
-    		null					// Le
+    		cla,					      // CLA
+    		ins,					      // INS
+    		p1,						      // P1
+    		p2,						      // P2
+    		buildData(apduData, apduMac), // Data
+    		null					      // Le
 		);
-        this.mac = new byte[mac.length];
-        System.arraycopy(mac, 0, this.mac, 0, mac.length);
-        this.data = new byte[data.length];
-        System.arraycopy(data, 0, this.data, 0, data.length);
+        this.mac = new byte[apduMac.length];
+        System.arraycopy(apduMac, 0, this.mac, 0, apduMac.length);
+        this.data = new byte[apduData.length];
+        System.arraycopy(apduData, 0, this.data, 0, apduData.length);
     }
 
     private static byte[] buildData(final byte[] data, final byte[] mac) {

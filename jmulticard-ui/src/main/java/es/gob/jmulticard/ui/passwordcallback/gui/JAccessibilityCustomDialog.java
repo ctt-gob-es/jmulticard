@@ -103,11 +103,11 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	 * @param dialog Di&aacute;logo base.
 	 * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
 	 *              <code>false</code> en caso contrario.
-	 * @param isInputDialog <code>true</code> si el di&aacute;logo es de entrada de datos,
+	 * @param isInputDlg <code>true</code> si el di&aacute;logo es de entrada de datos,
 	 *              <code>false</code> en caso contrario. */
-	JAccessibilityCustomDialog(final JDialog dialog, final boolean modal, final boolean isInputDialog){
+	JAccessibilityCustomDialog(final JDialog dialog, final boolean modal, final boolean isInputDlg){
 		super(dialog, modal);
-		this.isInputDialog = isInputDialog;
+		this.isInputDialog = isInputDlg;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
 		setResizable(false);
@@ -117,20 +117,20 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	 * @param frame Componente base.
 	 * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
 	 *              <code>false</code> en caso contrario.
-	 * @param isInputDialog <code>true</code> si el di&aacute;logo es de entrada de datos,
+	 * @param isInputDlg <code>true</code> si el di&aacute;logo es de entrada de datos,
 	 *              <code>false</code> en caso contrario. */
-	JAccessibilityCustomDialog(final JFrame frame, final boolean modal, final boolean isInputDialog){
+	JAccessibilityCustomDialog(final JFrame frame, final boolean modal, final boolean isInputDlg){
 		super(frame, modal);
-		this.isInputDialog = isInputDialog;
+		this.isInputDialog = isInputDlg;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
 		setResizable(false);
 	}
 
 	/** Constructor.
-	 * @param isInputDialog Indica si el di&aacute;logo es de entrada de datos. */
-	JAccessibilityCustomDialog(final boolean isInputDialog){
-		this.isInputDialog = isInputDialog;
+	 * @param isInputDlg Indica si el di&aacute;logo es de entrada de datos. */
+	JAccessibilityCustomDialog(final boolean isInputDlg){
+		this.isInputDialog = isInputDlg;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
 		setResizable(false);
@@ -148,9 +148,9 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	}
 
 	/** Establece el componente horizontal de la posici&oacute;n en pantalla del di&aacute;logo.
-	 * @param actualPositionX Componente horizontal de la posici&oacute;n del di&aacute;logo. */
-	static void setActualPositionX(final int actualPositionX) {
-		JAccessibilityCustomDialog.actualPositionX = actualPositionX;
+	 * @param positionX Componente horizontal de la posici&oacute;n del di&aacute;logo. */
+	static void setActualPositionX(final int positionX) {
+		JAccessibilityCustomDialog.actualPositionX = positionX;
 	}
 
 	/** Obtiene el componente vertical de la posici&oacute;n en pantalla del di&aacute;logo.
@@ -160,9 +160,9 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	}
 
 	/** Establece el componente vertical de la posici&oacute;n en pantalla del di&aacute;logo.
-	 * @param actualPositionY Componente vertical de la posici&oacute;n del di&aacute;logo. */
-	static void setActualPositionY(final int actualPositionY) {
-		JAccessibilityCustomDialog.actualPositionY = actualPositionY;
+	 * @param positionY Componente vertical de la posici&oacute;n del di&aacute;logo. */
+	static void setActualPositionY(final int positionY) {
+		JAccessibilityCustomDialog.actualPositionY = positionY;
 	}
 
 	/**
@@ -174,9 +174,9 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	}
 
 	/** Establece el ancho del di&aacute;logo.
-     * @param actualWidth Ancho del di&aacute;logo. */
-	static void setActualWidth(final int actualWidth) {
-		JAccessibilityCustomDialog.actualWidth = actualWidth;
+     * @param width Ancho del di&aacute;logo. */
+	static void setActualWidth(final int width) {
+		JAccessibilityCustomDialog.actualWidth = width;
 	}
 
 	/**
@@ -188,9 +188,9 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	}
 
 	/** Establece el alto del di&aacute;logo.
-     * @param actualHeight Alto del di&aacute;logo. */
-	static void setActualHeight(final int actualHeight) {
-		JAccessibilityCustomDialog.actualHeight = actualHeight;
+     * @param height Alto del di&aacute;logo. */
+	static void setActualHeight(final int height) {
+		JAccessibilityCustomDialog.actualHeight = height;
 	}
 
 	/** Indica si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto.
@@ -200,10 +200,10 @@ abstract class JAccessibilityCustomDialog extends JDialog {
 	}
 
 	/** Indica si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto.
-	 * @param bigSizeDefault <code>true</code> si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto,
+	 * @param bigSizeByDefault <code>true</code> si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto,
 	 *                       <code>false</code> en caso contrario. */
-	void setBigSizeDefault(final boolean bigSizeDefault) {
-		this.bigSizeDefault = bigSizeDefault;
+	void setBigSizeDefault(final boolean bigSizeByDefault) {
+		this.bigSizeDefault = bigSizeByDefault;
 	}
 
 	/**
@@ -479,8 +479,8 @@ abstract class JAccessibilityCustomDialog extends JDialog {
         /** Bot&oacute;n asociado a la acci&oacute;n. */
         private final JButton button;
 
-        ButtonAbstractAction(final JButton button) {
-            this.button = button;
+        ButtonAbstractAction(final JButton actionButton) {
+            this.button = actionButton;
         }
 
         /** Indica que la accion es la de pulsar el boton cancelar. */

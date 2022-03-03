@@ -43,19 +43,19 @@ final class TlsRsaPremasterSecretParameterSpec implements AlgorithmParameterSpec
     /**
      * Constructs a new TlsRsaPremasterSecretParameterSpec.
      *
-     * @param clientVersion the version of the TLS protocol by which the
+     * @param clientVer the version of the TLS protocol by which the
      *        client wishes to communicate during this session
-     * @param serverVersion the negotiated version of the TLS protocol which
+     * @param serverVer the negotiated version of the TLS protocol which
      *        contains the lower of that suggested by the client in the client
      *        hello and the highest supported by the server.
      *
      * @throws IllegalArgumentException if clientVersion or serverVersion are
      *   negative or larger than (2^16 - 1)
      */
-    TlsRsaPremasterSecretParameterSpec(final int clientVersion, final int serverVersion) {
+    TlsRsaPremasterSecretParameterSpec(final int clientVer, final int serverVer) {
 
-        this.clientVersion = checkVersion(clientVersion);
-        this.serverVersion = checkVersion(serverVersion);
+        this.clientVersion = checkVersion(clientVer);
+        this.serverVersion = checkVersion(serverVer);
     }
 
     /**

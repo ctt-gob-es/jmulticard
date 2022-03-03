@@ -81,13 +81,13 @@ public final class Location {
     }
 
     /** Constructor privado. Necesario para algunas operaciones internas.
-     * @param path Ruta asociada */
-    private Location(final Vector<Integer> path) {
-        if (path != null) {
-            final int numElements = path.size();
+     * @param locationPath Ruta asociada */
+    private Location(final Vector<Integer> locationPath) {
+        if (locationPath != null) {
+            final int numElements = locationPath.size();
             this.path = new Vector<>(numElements);
             for (int i = 0; i < numElements; i++) {
-                this.path.insertElementAt(path.elementAt(i), i);
+                this.path.insertElementAt(locationPath.elementAt(i), i);
             }
         }
     }

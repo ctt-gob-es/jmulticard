@@ -9,8 +9,8 @@ final class ResetCacheTimerTask extends TimerTask {
 
 	private final CacheElement element;
 
-	ResetCacheTimerTask(final CacheElement element) {
-		this.element = element;
+	ResetCacheTimerTask(final CacheElement cacheElement) {
+		this.element = cacheElement;
 	}
 
 	@Override

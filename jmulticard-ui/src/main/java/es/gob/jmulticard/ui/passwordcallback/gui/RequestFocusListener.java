@@ -54,9 +54,9 @@ final class RequestFocusListener implements AncestorListener {
 	}
 
 	/** Constructor.
-	 * @param removeListener Clase a la que se notifica la p&eacute;rdida de foco. */
-	RequestFocusListener(final boolean removeListener) {
-		this.removeListener = removeListener;
+	 * @param rmvListener Clase a la que se notifica la p&eacute;rdida de foco. */
+	RequestFocusListener(final boolean rmvListener) {
+		this.removeListener = rmvListener;
 	}
 
 	/** Asigna el foco al componente que ha lanzado el evento. */

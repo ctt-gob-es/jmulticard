@@ -138,26 +138,26 @@ final class RSAPadding {
     }
 
     /** Constructor interno. */
-    private RSAPadding(final int type,
-    		           final int paddedSize,
-    		           final SecureRandom random,
+    private RSAPadding(final int paddingType,
+    		           final int sizeAfterPadding,
+    		           final SecureRandom randomSrc,
     		           final OAEPParameterSpec spec) throws InvalidKeyException,
                                                             InvalidAlgorithmParameterException {
-        this.type = type;
-        this.paddedSize = paddedSize;
-        this.random = random;
-        if (paddedSize < 64) {
+        this.type = paddingType;
+        this.paddedSize = sizeAfterPadding;
+        this.random = randomSrc;
+        if (sizeAfterPadding < 64) {
             throw new InvalidKeyException(
-        		"El tamano tras el relleno debe ser de al menos 64 octetos, y es de " + paddedSize + " octetos"//$NON-NLS-1$ //$NON-NLS-2$
+        		"El tamano tras el relleno debe ser de al menos 64 octetos, y es de " + sizeAfterPadding + " octetos"//$NON-NLS-1$ //$NON-NLS-2$
     		);
         }
-        switch (type) {
+        switch (paddingType) {
 	        case PAD_BLOCKTYPE_1:
 	        case PAD_BLOCKTYPE_2:
-	            this.maxDataSize = paddedSize - 11;
+	            this.maxDataSize = sizeAfterPadding - 11;
 	            break;
 	        case PAD_NONE:
-	            this.maxDataSize = paddedSize;
+	            this.maxDataSize = sizeAfterPadding;
 	            break;
 	        case PAD_OAEP_MGF1:
 	            String mdName = "SHA-1"; //$NON-NLS-1$
@@ -187,13 +187,13 @@ final class RSAPadding {
 	            }
 	            this.lHash = getInitialHash(this.md, digestInput);
 	            final int digestLen = this.lHash.length;
-	            this.maxDataSize = paddedSize - 2 - 2 * digestLen;
+	            this.maxDataSize = sizeAfterPadding - 2 - 2 * digestLen;
 	            if (this.maxDataSize <= 0) {
 	                throw new InvalidKeyException("Key is too short for encryption using OAEPPadding with " + mdName + " and MGF1" + mgfMdName); //$NON-NLS-1$ //$NON-NLS-2$
 	            }
 	            break;
 	        default:
-	            throw new InvalidKeyException("Tipo de relleno invalido: " + type); //$NON-NLS-1$
+	            throw new InvalidKeyException("Tipo de relleno invalido: " + paddingType); //$NON-NLS-1$
         }
     }
 

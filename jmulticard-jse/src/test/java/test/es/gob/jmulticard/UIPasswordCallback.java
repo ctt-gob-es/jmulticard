@@ -75,19 +75,22 @@ public class UIPasswordCallback extends PasswordCallback {
      * mediante un di&aacute;logo gr&aacute;fico. La contrase&ntilde;a no se
      * retiene ni almacena internamente en ning&uacute;n momento.
      * @param prompt Texto del di&aacute;logo para solicitar la contrase&ntilde;a.
-     * @param parent Componente padre para la modalidad del di&aacute;logo.
-     * @param message Mensaje.
-     * @param title T&iacute;tulo del di&aacute;logo. */
-    public UIPasswordCallback(final String prompt, final Object parent, final String message, final String title) {
+     * @param parentComponent Componente padre para la modalidad del di&aacute;logo.
+     * @param dialogMessage Mensaje.
+     * @param dialogTitle T&iacute;tulo del di&aacute;logo. */
+    public UIPasswordCallback(final String prompt,
+    		                  final Object parentComponent,
+    		                  final String dialogMessage,
+    		                  final String dialogTitle) {
         super(prompt, false);
-        this.parent = parent instanceof Component ? (Component) parent : null;
+        this.parent = parentComponent instanceof Component ? (Component) parentComponent : null;
         if (prompt != null) {
             this.message = prompt;
         }
         else {
-            this.message = message;
+            this.message = dialogMessage;
         }
-        this.title = title;
+        this.title = dialogTitle;
     }
 
     @Override

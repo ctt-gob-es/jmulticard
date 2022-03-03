@@ -30,12 +30,12 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 
 	/** Conexi&oacute;n PACE para establecimiento de canal seguro por NFC.
 	 * @param connection Conexi&oacute;n base sobre la que crear el nuevo canal.
-	 * @param cryptoHelper Clase para el cifrado de datos.
+	 * @param cryptoHlpr Clase para el cifrado de datos.
 	 * @param secMsg Clase contenedora de las variables para establecer el canal PACE (Kenc, Kmac, Ssc). */
 	public PaceConnection(final ApduConnection connection,
-			              final CryptoHelper cryptoHelper,
+			              final CryptoHelper cryptoHlpr,
 			              final SecureMessaging secMsg) {
-		super(connection, cryptoHelper);
+		super(connection, cryptoHlpr);
 		this.sm = secMsg;
 		this.subConnection = connection;
 	}

@@ -119,18 +119,18 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     /** Construye un objeto que representa una tarjeta G&amp;D SmartCafe con el
      * Applet PKCS#15 de AET.
      * @param conn Conexi&oacute;n con la tarjeta.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
-     *                     pueden variar entre m&aacute;quinas virtuales.
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que
+     *                   pueden variar entre m&aacute;quinas virtuales.
      * @throws IOException Si hay errores de entrada / salida. */
     public SmartCafePkcs15Applet(final ApduConnection conn,
-    		                     final CryptoHelper cryptoHelper) throws IOException {
-    	this(conn, cryptoHelper, true);
+    		                     final CryptoHelper cryptoHlpr) throws IOException {
+    	this(conn, cryptoHlpr, true);
     }
 
     /** Construye un objeto que representa una tarjeta G&amp;D SmartCafe con el
      * Applet PKCS#15 de AET.
      * @param conn Conexi&oacute;n con la tarjeta.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que
      *                     pueden variar entre m&aacute;quinas virtuales.
      * @param failIfNoCerts Si se establece a <code>true</code> y la tarjeta no
      *                      contiene ningun par certificado + clave privada la
@@ -139,14 +139,14 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
      *                      se completa haya o no haya claves y certificados.
      * @throws IOException Si hay errores de entrada / salida. */
     public SmartCafePkcs15Applet(final ApduConnection conn,
-    		                     final CryptoHelper cryptoHelper,
+    		                     final CryptoHelper cryptoHlpr,
     		                     final boolean failIfNoCerts) throws IOException {
         super(CLA, conn);
 
-        if (cryptoHelper == null) {
+        if (cryptoHlpr == null) {
             throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
-        this.cryptoHelper = cryptoHelper;
+        this.cryptoHelper = cryptoHlpr;
 
         // Conectamos
         conn.reset();

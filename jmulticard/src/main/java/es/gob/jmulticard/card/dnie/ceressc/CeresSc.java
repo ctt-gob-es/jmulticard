@@ -68,7 +68,7 @@ public final class CeresSc extends Dnie {
 	/** Construye una tarjeta FNMT CERES con canal seguro.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN de la tarjeta.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
      *                     variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se
@@ -76,10 +76,10 @@ public final class CeresSc extends Dnie {
 	 * @throws InvalidCardException Si la tarjeta no es una CERES 4.30 o superior. */
 	public CeresSc(final ApduConnection conn,
 			       final PasswordCallback pwc,
-			       final CryptoHelper cryptoHelper,
+			       final CryptoHelper cryptoHlpr,
 			       final CallbackHandler ch) throws ApduConnectionException,
 	                                                InvalidCardException {
-		super(conn, pwc, cryptoHelper, ch);
+		super(conn, pwc, cryptoHlpr, ch);
 		checkAtr(conn.reset());
 	}
 

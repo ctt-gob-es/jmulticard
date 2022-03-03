@@ -79,34 +79,34 @@ public final class UIPasswordCallbackAccessibility extends PasswordCallback {
      * mediante un di&aacute;logo gr&aacute;fico. La contrase&ntilde;a no se
      * retiene ni almacena internamente en ning&uacute;n momento.
      * @param prompt Texto del di&aacute;logo para solicitar la contrase&ntilde;a.
-     * @param parent Componente padre para la modalidad del di&aacute;logo.
-     * @param message Mensaje.
-     * @param mnemonic Mnem&oacute;nico para el propio campo de texto.
-     * @param title T&iacute;tulo del di&aacute;logo.
+     * @param parentComponent Componente padre para la modalidad del di&aacute;logo.
+     * @param dialogMessage Mensaje.
+     * @param textFieldMnemonic Mnem&oacute;nico para el propio campo de texto.
+     * @param dialogTitle T&iacute;tulo del di&aacute;logo.
      * @param iconFileName Ruta hacia el icono del di&aacute;logo.
-     * @param allowUseCache Hace mostrarse la casilla para seleccionar el <i>cacheo</i> del PIN.
-     * @param defaultUseCache Valor por defecto de la opci&oacute;n de <i>cacheo</i> de PIN. */
+     * @param allowDniCache Hace mostrarse la casilla para seleccionar el <i>cacheo</i> del PIN.
+     * @param defaultDniCache Valor por defecto de la opci&oacute;n de <i>cacheo</i> de PIN. */
     public UIPasswordCallbackAccessibility(final String prompt,
-    		                               final Component parent,
-    		                               final String message,
-    		                               final int mnemonic,
-    		                               final String title,
+    		                               final Component parentComponent,
+    		                               final String dialogMessage,
+    		                               final int textFieldMnemonic,
+    		                               final String dialogTitle,
     		                               final String iconFileName,
-    		                               final boolean allowUseCache,
-    		                               final boolean defaultUseCache) {
+    		                               final boolean allowDniCache,
+    		                               final boolean defaultDniCache) {
         super(prompt, false);
-        this.parent = parent;
+        this.parent = parentComponent;
         if (prompt != null) {
             this.message = prompt;
         }
         else {
-            this.message = message;
+            this.message = dialogMessage;
         }
-        this.mnemonic = mnemonic;
-        this.title = title;
+        this.mnemonic = textFieldMnemonic;
+        this.title = dialogTitle;
         this.iconPath = iconFileName;
-        this.allowUseCache = allowUseCache;
-        this.defaultUseCache = defaultUseCache;
+        this.allowUseCache = allowDniCache;
+        this.defaultUseCache = defaultDniCache;
         this.useCache = false;
     }
 

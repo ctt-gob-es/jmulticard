@@ -100,25 +100,25 @@ public class CommandApdu extends Apdu {
 	}
 
 	/** Construye una APDU gen&eacute;rica.
-	 * @param cla Clase (CLA) de APDU.
-	 * @param ins Identificador de la instrucci&oacute;n (INS) que esta APDU representa.
+	 * @param apduCla Clase (CLA) de APDU.
+	 * @param apduIns Identificador de la instrucci&oacute;n (INS) que esta APDU representa.
 	 * @param param1 Primer par&aacute;metro (P1) de la APDU.
 	 * @param param2 Segundo par&aacute;metro (P2) de la APDU.
 	 * @param data Datos del comando.
 	 * @param ne N&uacute;mero de octetos esperados en la respuesta (Ne). */
-	public CommandApdu(final byte cla,
-			           final byte ins,
+	public CommandApdu(final byte apduCla,
+			           final byte apduIns,
 			           final byte param1,
 			           final byte param2,
 			           final byte[] data,
 			           final Integer ne) {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		this.cla = cla;
-		baos.write(cla);
+		this.cla = apduCla;
+		baos.write(apduCla);
 
-		this.ins = ins;
-		baos.write(ins);
+		this.ins = apduIns;
+		baos.write(apduIns);
 
 		this.p1 = param1;
 		baos.write(param1);
@@ -215,9 +215,9 @@ public class CommandApdu extends Apdu {
 	}
 
 	/** Establece el n&uacute;mero de octetos esperados en la APDU de respuesta.
-	 * @param le N&uacute;mero esperado de octetos. */
-	public void setLe(final int le) {
-		this.le = Integer.valueOf(String.valueOf(le));
+	 * @param apduLe N&uacute;mero esperado de octetos. */
+	public void setLe(final int apduLe) {
+		this.le = Integer.valueOf(String.valueOf(apduLe));
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write(this.cla);
 		baos.write(this.ins);
@@ -233,7 +233,7 @@ public class CommandApdu extends Apdu {
 				);
 			}
 		}
-		baos.write(le);
+		baos.write(apduLe);
 		setBytes(baos.toByteArray());
 	}
 }

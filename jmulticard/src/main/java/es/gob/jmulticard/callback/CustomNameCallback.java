@@ -26,32 +26,32 @@ public final class CustomNameCallback implements Callback, java.io.Serializable 
     private String inputName;
 
     /** Construct a <code>NameCallback</code> with a prompt.
-     * @param prompt the prompt used to request the name.
+     * @param userPrompt the prompt used to request the name.
      * @exception IllegalArgumentException if <code>prompt</code> is null
      *                  or if <code>prompt</code> has a length of 0. */
-    public CustomNameCallback(final String prompt) {
-        if (prompt == null || prompt.length() == 0) {
+    public CustomNameCallback(final String userPrompt) {
+        if (userPrompt == null || userPrompt.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-        this.prompt = prompt;
+        this.prompt = userPrompt;
     }
 
     /** Construct a <code>NameCallback</code> with a prompt
      * and default name.
-     * @param prompt the prompt used to request the information.
-     * @param defaultName the name to be used as the default name displayed
+     * @param userPrompt the prompt used to request the information.
+     * @param defltName the name to be used as the default name displayed
      *                  with the prompt.
      * @exception IllegalArgumentException if <code>prompt</code> is null,
      *                  if <code>prompt</code> has a length of 0,
      *                  if <code>defaultName</code> is null,
      *                  or if <code>defaultName</code> has a length of 0. */
-    public CustomNameCallback(final String prompt, final String defaultName) {
-        if (prompt == null || prompt.length() == 0 ||
-            defaultName == null || defaultName.length() == 0) {
+    public CustomNameCallback(final String userPrompt, final String defltName) {
+        if (userPrompt == null || userPrompt.length() == 0 ||
+            defltName == null || defltName.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-        this.prompt = prompt;
-        this.defaultName = defaultName;
+        this.prompt = userPrompt;
+        this.defaultName = defltName;
     }
 
     /** Get the prompt.

@@ -73,16 +73,16 @@ final class IconLabel extends JLabel {
     }
 
     /** Asigna el icono de la etiqueta.
-     * @param icon Icono a asignar. */
+     * @param icn Icono a asignar. */
     @Override
-    public void setIcon(final Icon icon) {
-        this.icon = icon;
+    public void setIcon(final Icon icn) {
+        this.icon = icn;
     }
 
     /** Asigna el icono original.
-     * @param originalIcon Icono a asignar. */
-    void setOriginalIcon(final Icon originalIcon) {
-        this.originalIcon = originalIcon;
+     * @param originalIcn Icono a asignar. */
+    void setOriginalIcon(final Icon originalIcn) {
+        this.originalIcon = originalIcn;
     }
 
     /** obtiene la dimension inicial del icono.

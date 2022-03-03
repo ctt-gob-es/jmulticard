@@ -254,22 +254,22 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que
      *                     pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla.*/
     protected Dnie(final ApduConnection conn,
     	           final PasswordCallback pwc,
-    	           final CryptoHelper cryptoHelper,
+    	           final CryptoHelper cryptoHlpr,
     	           final CallbackHandler ch) throws ApduConnectionException {
-    	this(conn, pwc, cryptoHelper, ch, true);
+    	this(conn, pwc, cryptoHlpr, ch, true);
     }
 
     /** Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHelper Funcionalidades criptogr&aacute;ficas de utilidad que
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que
      *                     pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
      * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
@@ -281,7 +281,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
      *                                 cerrada y no es posible abrirla.*/
     protected Dnie(final ApduConnection conn,
     	           final PasswordCallback pwc,
-    	           final CryptoHelper cryptoHelper,
+    	           final CryptoHelper cryptoHlpr,
     	           final CallbackHandler ch,
     	           final boolean loadCertsAndKeys) throws ApduConnectionException {
         super((byte) 0x00, conn);
@@ -302,10 +302,10 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 
         this.passwordCallback = pwc;
 
-        if (cryptoHelper == null) {
+        if (cryptoHlpr == null) {
             throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
-        this.cryptoHelper = cryptoHelper;
+        this.cryptoHelper = cryptoHlpr;
 
         if (loadCertsAndKeys) {
 
