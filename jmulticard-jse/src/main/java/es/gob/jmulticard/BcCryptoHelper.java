@@ -269,8 +269,6 @@ public final class BcCryptoHelper extends CryptoHelper {
                                                                          IllegalStateException,
                                                                          InvalidCipherTextException,
                                                                          IOException {
-		// BouncyCastle directo
-
     	final BlockCipher engine = new AESEngine();
 
 		// Vector de inicializacion
@@ -342,38 +340,55 @@ public final class BcCryptoHelper extends CryptoHelper {
 		}
     }
 
-    private static byte[] bcAesDecrypt(final byte[] data,
-    		                           final byte[] iv,
-    		                           final byte[] key,
-    		                           final BlockCipherPadding padding) throws IOException,
-                                                                                DataLengthException,
-                                                                                IllegalStateException,
-                                                                                InvalidCipherTextException {
-		if (data == null) {
-			throw new IllegalArgumentException(
-				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
-			);
+    private byte[] bcAesDecrypt(final byte[] data,
+    		                    final byte[] iv,
+    		                    final byte[] key,
+    		                    final BlockCipherPadding padding) throws IOException,
+                                                                         DataLengthException,
+                                                                         IllegalStateException,
+                                                                         InvalidCipherTextException {
+		final BlockCipher engine = new AESEngine();
+
+		// Vector de inicializacion
+		final byte[] ivector;
+		if (iv == null) {
+			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
+			// para IvParameterSpec.getIV(), normalmente todo ceros
+			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
+			ivector = generateRandomBytes(engine.getBlockSize());
 		}
-		if (key == null) {
-			throw new IllegalArgumentException(
-				"La clave de cifrado no puede ser nula" //$NON-NLS-1$
-			);
+		else if (iv.length == 0) {
+			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
+			ivector = new byte[engine.getBlockSize()];
 		}
+		else {
+			ivector = iv;
+		}
+
 		// Creamos los parametros de descifrado con el vector de inicializacion (iv)
 		final ParametersWithIV parameterIV = new ParametersWithIV(
 			new KeyParameter(key),
-			iv
+			ivector
 		);
 
 		int noBytesRead = 0; // Numero de octetos leidos de la entrada
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
-		final BufferedBlockCipher decryptCipher = new PaddedBufferedBlockCipher(
-			new CBCBlockCipher(
-				new AESEngine()
-			),
-			padding
-		);
+		// AES block cipher en modo CBC
+		final BufferedBlockCipher decryptCipher =
+			padding != null ?
+				// Con relleno
+				new PaddedBufferedBlockCipher(
+					new CBCBlockCipher(
+						new AESEngine()
+					),
+					padding) :
+						// Sin relleno
+						new BufferedBlockCipher(
+							new CBCBlockCipher(
+								engine
+							)
+						);
 
 		// Inicializamos
 		decryptCipher.init(false, parameterIV);
@@ -410,6 +425,16 @@ public final class BcCryptoHelper extends CryptoHelper {
 			                 final byte[] iv,
 			                 final byte[] key,
 			                 final Padding padding) throws IOException {
+		if (data == null) {
+			throw new IllegalArgumentException(
+				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
+			);
+		}
+		if (key == null) {
+			throw new IllegalArgumentException(
+				"La clave de cifrado no puede ser nula" //$NON-NLS-1$
+			);
+		}
 		final BlockCipherPadding bcPadding;
 		switch(padding) {
 			case NOPADDING:
@@ -440,6 +465,16 @@ public final class BcCryptoHelper extends CryptoHelper {
 			                 final byte[] iv,
 			                 final byte[] key,
 			                 final Padding padding) throws IOException {
+		if (data == null) {
+			throw new IllegalArgumentException(
+				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
+			);
+		}
+		if (key == null) {
+			throw new IllegalArgumentException(
+				"La clave de cifrado no puede ser nula" //$NON-NLS-1$
+			);
+		}
 		final BlockCipherPadding bcPadding;
 		switch(padding) {
 			case NOPADDING:

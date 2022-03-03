@@ -155,7 +155,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		}
 		catch (final Exception e) {
 			throw new PaceException(
-				"Error descifranco el 'nonce': " + e, e //$NON-NLS-1$
+				"Error descifrando el 'nonce': " + e, e //$NON-NLS-1$
 			);
 		}
 
