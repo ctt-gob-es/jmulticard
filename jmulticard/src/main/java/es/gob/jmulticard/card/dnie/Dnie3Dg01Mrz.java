@@ -104,7 +104,7 @@ public final class Dnie3Dg01Mrz implements Mrz {
 
     @Override
 	public Date getDateOfBirth() throws ParseException {
-        return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfBirth);
+        return SDFORMAT.parse(this.dateOfBirth);
     }
 
     @Override
@@ -120,7 +120,7 @@ public final class Dnie3Dg01Mrz implements Mrz {
 
     @Override
 	public Date getDateOfExpiry() throws ParseException {
-        return Dnie3Dg01Mrz.SDFORMAT.parse(this.dateOfExpiry);
+        return SDFORMAT.parse(this.dateOfExpiry);
     }
 
     @Override

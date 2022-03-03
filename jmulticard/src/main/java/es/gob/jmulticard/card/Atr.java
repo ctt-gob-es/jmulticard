@@ -86,17 +86,12 @@ public final class Atr implements Serializable {
     /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o) {
-
-    	final byte[] tmpAtrBytes;
-    	if (o instanceof Atr) {
-    		tmpAtrBytes = ((Atr) o).getBytes();
-    	}
-    	else if (o instanceof byte[]) {
-    		tmpAtrBytes = (byte[]) o;
-    	}
-    	else {
+    	if (!(o instanceof Atr)) {
     		return false;
     	}
+
+    	final byte[] tmpAtrBytes;
+    	tmpAtrBytes = ((Atr) o).getBytes();
 
         if (this.atrBytes.length < tmpAtrBytes.length) {
         	return false;

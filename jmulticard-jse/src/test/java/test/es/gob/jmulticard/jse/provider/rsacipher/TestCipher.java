@@ -5,9 +5,9 @@ import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Enumeration;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.smartcardio.CommandAPDU;
@@ -140,7 +140,7 @@ public final class TestCipher {
 	@Test
 	public void testCommandAdpu() {
 		final byte[] data = new byte[256];
-		new Random().nextBytes(data);
+		new SecureRandom().nextBytes(data);
 
 		final CommandAPDU apu = new CommandAPDU(0x00, (byte) 0x2a, (byte) 0x9e, (byte) 0x9a, data);
 		System.out.println(HexUtils.hexify(apu.getBytes(), false));

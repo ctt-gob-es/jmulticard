@@ -76,11 +76,13 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         if (!(cert instanceof X509Certificate)) {
             return null;
         }
+
         final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
         final X500Principal principal = ((X509Certificate) cert).getIssuerX500Principal();
+
         for (final String alias : userCertAliases) {
         	final X509Certificate c = (X509Certificate) engineGetCertificate(alias);
-            if (c.getSerialNumber() == serial && principal.equals(principal)) {
+            if (c.getSerialNumber().equals(serial) && c.getIssuerX500Principal().equals(principal)) {
                 return alias;
             }
         }
@@ -105,7 +107,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     		return null;
     	}
 
-    	// No permitimos PIN nulo, si llega nulo pedimos por dialogo grafico
+    	// No permitimos PIN nulo, si llega nulo pedimos por callback
     	if (password != null) {
     		this.cryptoCard.setPasswordCallback(
 				new CachePasswordCallback(password)
