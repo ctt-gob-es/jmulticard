@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -79,12 +80,14 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 			ssc,
 			new byte[0], // Vector de inicializacion vacio
 			key,
+			BlockMode.CBC,
 			Padding.NOPADDING // Sin relleno
 		);
 		return cryptoHelper.aesEncrypt(
 			data,
 			iv,
 			key,
+			BlockMode.CBC,
 			Padding.NOPADDING // Sin relleno
 		);
 	}

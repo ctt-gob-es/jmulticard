@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
@@ -238,12 +239,14 @@ public final class TestApduEncrypter extends ApduEncrypter {
 			ssc,
 			new byte[0],
 			key,
+			BlockMode.CBC,
 			Padding.NOPADDING // Sin relleno
 		);
 		return cryptoHelper.aesEncrypt(
 			data,
 			iv,
 			key,
+			BlockMode.CBC,
 			Padding.NOPADDING // Sin relleno
 		);
 	}

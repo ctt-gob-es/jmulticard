@@ -23,6 +23,7 @@ import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
@@ -50,7 +51,13 @@ public final class TestJseCryptoHelper {
 			0x04, 0x00, 0x06, 0x00, 0x00, (byte) 0xee, 0x00, 0x30,
 			0x00, 0x01, 0x00, 0x08, (byte) 0xff, 0x00, 0x20, 0x00
 		};
-		final byte[] in = new JseCryptoHelper().aesEncrypt(testString.getBytes(), iv, key, Padding.ISO7816_4PADDING);
+		final byte[] in = new JseCryptoHelper().aesEncrypt(
+			testString.getBytes(),
+			iv,
+			key,
+			BlockMode.CBC,
+			Padding.ISO7816_4PADDING
+		);
 
 
 		// BouncyCastle puro
@@ -140,6 +147,7 @@ public final class TestJseCryptoHelper {
 			testBytes,
 			iv,
 			aesKey,
+			BlockMode.CBC,
 			Padding.ISO7816_4PADDING
 		);
 		System.out.println(HexUtils.hexify(tmp, false));

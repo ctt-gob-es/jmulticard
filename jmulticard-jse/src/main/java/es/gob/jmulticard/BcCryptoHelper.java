@@ -274,7 +274,6 @@ public final class BcCryptoHelper extends CryptoHelper {
 		// Vector de inicializacion
 		final byte[] ivector;
 		if (iv == null) {
-			LOGGER.info("No se usara un vector de inicializacion en AES"); //$NON-NLS-1$
 			ivector = null;
 		}
 		else if (iv.length == 0) {
@@ -350,7 +349,6 @@ public final class BcCryptoHelper extends CryptoHelper {
 		// Vector de inicializacion
 		final byte[] ivector;
 		if (iv == null) {
-			LOGGER.info("No se usara un vector de inicializacion en AES"); //$NON-NLS-1$
 			ivector = null;
 		}
 		else if (iv.length == 0) {
@@ -420,6 +418,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	public byte[] aesDecrypt(final byte[] data,
 			                 final byte[] iv,
 			                 final byte[] key,
+	                         final BlockMode blockMode,
 			                 final Padding padding) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
@@ -460,6 +459,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	public byte[] aesEncrypt(final byte[] data,
 			                 final byte[] iv,
 			                 final byte[] key,
+	                         final BlockMode blockMode,
 			                 final Padding padding) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(

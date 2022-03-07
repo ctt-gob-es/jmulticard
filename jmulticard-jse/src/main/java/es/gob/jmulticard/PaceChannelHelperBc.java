@@ -13,6 +13,7 @@ import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.math.ec.ECPoint;
 import org.spongycastle.util.Arrays;
 
+import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -150,6 +151,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 				nonce,
 				new byte[0],
 				sk,
+				BlockMode.CBC,
 				Padding.NOPADDING // Sin relleno
 			);
 		}

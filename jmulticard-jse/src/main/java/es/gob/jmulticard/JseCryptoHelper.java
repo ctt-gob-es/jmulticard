@@ -275,6 +275,7 @@ public final class JseCryptoHelper extends CryptoHelper {
     private static byte[] aesCrypt(final byte[] data,
     		                       final byte[] iv,
     		                       final byte[] key,
+    		                       final String blockmode,
     		                       final String padding,
     		                       final int mode) throws IOException {
 		if (data == null) {
@@ -290,7 +291,7 @@ public final class JseCryptoHelper extends CryptoHelper {
 		final Cipher aesCipher;
 		try {
 			aesCipher = Cipher.getInstance(
-				"AES/CBC/" + (padding != null && !padding.isEmpty() ? padding : "NoPadding") //$NON-NLS-1$ //$NON-NLS-2$
+				"AES/" + blockmode + "/" + (padding != null && !padding.isEmpty() ? padding : "NoPadding") //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
 		catch (final Exception e) {
@@ -302,7 +303,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 		// Vector de inicializacion
 		final byte[] ivector;
 		if (iv == null) {
-			LOGGER.info("No se usara un vector de inicializacion en AES"); //$NON-NLS-1$
 			ivector = null;
 		}
 		else if (iv.length == 0) {
@@ -348,16 +348,18 @@ public final class JseCryptoHelper extends CryptoHelper {
 	public byte[] aesDecrypt(final byte[] data,
 			                 final byte[] iv,
 			                 final byte[] key,
+	                         final BlockMode blockMode,
 			                 final Padding padding) throws IOException {
-		return aesCrypt(data, iv, key, padding.toString(), Cipher.DECRYPT_MODE);
+		return aesCrypt(data, iv, key, blockMode.toString(), padding.toString(), Cipher.DECRYPT_MODE);
 	}
 
 	@Override
 	public byte[] aesEncrypt(final byte[] data,
 			                 final byte[] iv,
 			                 final byte[] key,
+	                         final BlockMode blockMode,
 			                 final Padding padding) throws IOException {
-		return aesCrypt(data, iv, key, padding.toString(), Cipher.ENCRYPT_MODE);
+		return aesCrypt(data, iv, key, blockMode.toString(), padding.toString(), Cipher.ENCRYPT_MODE);
 	}
 
 	@Override

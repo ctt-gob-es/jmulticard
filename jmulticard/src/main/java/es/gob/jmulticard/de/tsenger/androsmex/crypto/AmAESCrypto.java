@@ -23,14 +23,8 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 
 /** Implementaci&oacute;n de las operaciones criptogr&aacute;ficas usando AES.
@@ -69,22 +63,19 @@ public final class AmAESCrypto {
 	/** Encripta un bloque usando AES.
 	 * @param aesKey Clave AES.
 	 * @param z Bloque a crifrar (debe tener el tama&ntilde;o justo para la clave proporcionada).
+	 * @param ch Utilidad para las operaciones criptogr&aacute;ficas.
 	 * @return Bloque cifrado.
-	 * @throws NoSuchPaddingException No debe producirse, no se aplica relleno a los datos de entrada.
-	 * @throws NoSuchAlgorithmException Si no se encuentra un cifrador para el algoritmo 'AES/ECB/NoPadding'.
-	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida.
-	 * @throws BadPaddingException No debe producirse, no se aplica relleno a los datos de entrada.
-	 * @throws IllegalBlockSizeException Si los datos proporcionados no miden exactamente un bloque AES (16 octetos). */
+	 * @throws IOException Si no puede cifrarse el bloque. */
 	private static byte[] encryptBlock(final byte[] aesKey,
-			                           final byte[] z) throws NoSuchAlgorithmException,
-	                                                          NoSuchPaddingException,
-	                                                          InvalidKeyException,
-	                                                          IllegalBlockSizeException,
-	                                                          BadPaddingException {
-		final Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding"); //$NON-NLS-1$
-		final SecretKey originalKey = new SecretKeySpec(aesKey, "AES"); //$NON-NLS-1$
-		cipher.init(Cipher.ENCRYPT_MODE, originalKey);
-		return cipher.doFinal(z);
+			                           final byte[] z,
+					                   final CryptoHelper ch) throws IOException {
+		return ch.aesEncrypt(
+			z,      // Datos
+			null,   // Sin vector de inicializacion
+			aesKey, // Clave
+			BlockMode.ECB,
+			Padding.NOPADDING
+		);
 	}
 
 	/** Encripta datos (AES/CBC/ISO7816d4Padding).
@@ -101,18 +92,10 @@ public final class AmAESCrypto {
 		try {
 			return ch.aesEncrypt(
 				in,
-				encryptBlock(aesKey, ssc), // Vector de inicializacion
+				encryptBlock(aesKey, ssc, ch), // Vector de inicializacion
 				aesKey,
+				BlockMode.CBC,
 				Padding.ISO7816_4PADDING
-			);
-		}
-		catch (final InvalidKeyException       |
-		             NoSuchAlgorithmException  |
-		             NoSuchPaddingException    |
-		             IllegalBlockSizeException |
-		             BadPaddingException e1) {
-			throw new AmCryptoException(
-				"Error creando el vector de inicializacion AES mediante un cifrado de bloque AES: " + e1, e1 //$NON-NLS-1$
 			);
 		}
 		catch (final IOException e) {
@@ -138,18 +121,10 @@ public final class AmAESCrypto {
 		try {
 			return ch.aesDecrypt(
 				in,
-				encryptBlock(aesKey, ssc), // Vector de inicializacion
+				encryptBlock(aesKey, ssc, ch), // Vector de inicializacion
 				aesKey,
+				BlockMode.CBC,
 				Padding.ISO7816_4PADDING
-			);
-		}
-		catch (final InvalidKeyException       |
-		             NoSuchAlgorithmException  |
-		             NoSuchPaddingException    |
-		             IllegalBlockSizeException |
-		             BadPaddingException e1) {
-			throw new AmCryptoException(
-				"Error creando el vector de inicializacion AES mediante un cifrado de bloque AES: " + e1, e1 //$NON-NLS-1$
 			);
 		}
 		catch (final IOException e) {

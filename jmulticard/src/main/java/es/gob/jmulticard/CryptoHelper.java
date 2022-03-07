@@ -88,6 +88,16 @@ public abstract class CryptoHelper {
 		}
 	}
 
+	/** Tipos de manejo de bbloques para cifrado. */
+	public enum BlockMode {
+
+		/** Cipher Block Chaining. */
+		CBC,
+
+		/** Electronic CodeBook.*/
+		ECB
+	}
+
 	/** Nombres de curva el&iacute;ptica. */
 	public enum EcCurve {
 
@@ -215,11 +225,12 @@ public abstract class CryptoHelper {
      *         desencriptado. */
     public abstract byte[] desDecrypt(final byte[] data, final byte[] key) throws IOException;
 
-    /** Desencripta datos mediante AES (modo CBC sin relleno).
+    /** Desencripta datos mediante AES.
      * @param data Datos a encriptar.
      * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
      *           un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
+     * @param blockMode Modo de gesti&oacute;n de bloques.
      * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
@@ -227,13 +238,15 @@ public abstract class CryptoHelper {
     public abstract byte[] aesDecrypt(final byte[] data,
     		                          final byte[] iv,
     		                          final byte[] key,
+    		                          final BlockMode blockMode,
     		                          final Padding padding) throws IOException;
 
-    /** Encripta datos mediante AES (modo CBC sin relleno).
+    /** Encripta datos mediante AES.
      * @param data Datos a encriptar.
      * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code>
      *           se usar&aacute; un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
+     * @param blockMode Modo de gesti&oacute;n de bloques.
      * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
@@ -241,6 +254,7 @@ public abstract class CryptoHelper {
     public abstract byte[] aesEncrypt(final byte[] data,
     		                          final byte[] iv,
     		                          final byte[] key,
+    		                          final BlockMode blockMode,
     		                          final Padding padding) throws IOException;
 
     /** Desencripta datos mediante RSA.
