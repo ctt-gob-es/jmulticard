@@ -262,6 +262,19 @@ public final class BcCryptoHelper extends CryptoHelper {
     	return ret;
     }
 
+	/** Encripta un bloque usando AES.
+	 * @param key Clave AES.
+	 * @param z Bloque a crifrar.
+	 * @return Bloque cifrado. */
+	private static byte[] encryptBlock(final byte[] key, final byte[] z) {
+		final KeyParameter encKey = new KeyParameter(key);
+		final BlockCipher cipher = new AESEngine();
+		cipher.init(true, encKey);
+		final byte[] s = new byte[cipher.getBlockSize()];
+		cipher.processBlock(z, 0, s, 0);
+		return s;
+	}
+
     private static byte[] bcAesEncrypt(final byte[] data,
                                        final byte[] iv,
                                        final byte[] aesKey,
@@ -471,6 +484,13 @@ public final class BcCryptoHelper extends CryptoHelper {
 				"La clave de cifrado no puede ser nula" //$NON-NLS-1$
 			);
 		}
+
+		// Si es un cifrado ECB sin relleno y los datos son exactamente un bloque,
+		// hacemos la operacion directamente
+		if (BlockMode.ECB.equals(blockMode) && Padding.NOPADDING.equals(padding) && data.length == 16) {
+			return encryptBlock(key, data);
+		}
+
 		final BlockCipherPadding bcPadding;
 		switch(padding) {
 			case NOPADDING:
