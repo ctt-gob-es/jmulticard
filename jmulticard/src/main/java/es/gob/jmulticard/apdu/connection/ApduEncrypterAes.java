@@ -77,7 +77,7 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		// de inicializacion todo a 0x00
 		final byte[] iv = cryptoHelper.aesEncrypt(
 			ssc,
-			new byte[0],
+			new byte[0], // Vector de inicializacion vacio
 			key,
 			Padding.NOPADDING // Sin relleno
 		);

@@ -262,22 +262,20 @@ public final class BcCryptoHelper extends CryptoHelper {
     	return ret;
     }
 
-    private byte[] bcAesEncrypt(final byte[] data,
-                                final byte[] iv,
-                                final byte[] aesKey,
-                                final BlockCipherPadding padding) throws DataLengthException,
-                                                                         IllegalStateException,
-                                                                         InvalidCipherTextException,
-                                                                         IOException {
+    private static byte[] bcAesEncrypt(final byte[] data,
+                                       final byte[] iv,
+                                       final byte[] aesKey,
+                                       final BlockCipherPadding padding) throws DataLengthException,
+                                                                                IllegalStateException,
+                                                                                InvalidCipherTextException,
+                                                                                IOException {
     	final BlockCipher engine = new AESEngine();
 
 		// Vector de inicializacion
 		final byte[] ivector;
 		if (iv == null) {
-			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
-			// para IvParameterSpec.getIV(), normalmente todo ceros
-			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
-			ivector = generateRandomBytes(engine.getBlockSize());
+			LOGGER.info("No se usara un vector de inicializacion en AES"); //$NON-NLS-1$
+			ivector = null;
 		}
 		else if (iv.length == 0) {
 			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
@@ -340,22 +338,20 @@ public final class BcCryptoHelper extends CryptoHelper {
 		}
     }
 
-    private byte[] bcAesDecrypt(final byte[] data,
-    		                    final byte[] iv,
-    		                    final byte[] key,
-    		                    final BlockCipherPadding padding) throws IOException,
-                                                                         DataLengthException,
-                                                                         IllegalStateException,
-                                                                         InvalidCipherTextException {
+    private static byte[] bcAesDecrypt(final byte[] data,
+    		                           final byte[] iv,
+    		                           final byte[] key,
+    		                           final BlockCipherPadding padding) throws IOException,
+                                                                                DataLengthException,
+                                                                                IllegalStateException,
+                                                                                InvalidCipherTextException {
 		final BlockCipher engine = new AESEngine();
 
 		// Vector de inicializacion
 		final byte[] ivector;
 		if (iv == null) {
-			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
-			// para IvParameterSpec.getIV(), normalmente todo ceros
-			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
-			ivector = generateRandomBytes(engine.getBlockSize());
+			LOGGER.info("No se usara un vector de inicializacion en AES"); //$NON-NLS-1$
+			ivector = null;
 		}
 		else if (iv.length == 0) {
 			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
@@ -530,6 +526,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 
 		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
 		kpg.initialize(parameterSpec);
+
 		return kpg.generateKeyPair();
 	}
 

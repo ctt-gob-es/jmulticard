@@ -101,7 +101,7 @@ public final class AmAESCrypto {
 		try {
 			return ch.aesEncrypt(
 				in,
-				encryptBlock(aesKey, ssc),
+				encryptBlock(aesKey, ssc), // Vector de inicialización
 				aesKey,
 				Padding.ISO7816_4PADDING
 			);
@@ -138,7 +138,7 @@ public final class AmAESCrypto {
 		try {
 			return ch.aesDecrypt(
 				in,
-				encryptBlock(aesKey, ssc),
+				encryptBlock(aesKey, ssc), // Vector de inicializacion
 				aesKey,
 				Padding.ISO7816_4PADDING
 			);

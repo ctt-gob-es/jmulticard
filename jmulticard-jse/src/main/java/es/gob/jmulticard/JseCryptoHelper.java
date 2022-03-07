@@ -272,11 +272,11 @@ public final class JseCryptoHelper extends CryptoHelper {
         return randomBytes;
     }
 
-    private byte[] aesCrypt(final byte[] data,
-    		                final byte[] iv,
-    		                final byte[] key,
-    		                final String padding,
-    		                final int mode) throws IOException {
+    private static byte[] aesCrypt(final byte[] data,
+    		                       final byte[] iv,
+    		                       final byte[] key,
+    		                       final String padding,
+    		                       final int mode) throws IOException {
 		if (data == null) {
 			throw new IllegalArgumentException(
 				"Los datos a cifrar no pueden ser nulos" //$NON-NLS-1$
@@ -302,10 +302,8 @@ public final class JseCryptoHelper extends CryptoHelper {
 		// Vector de inicializacion
 		final byte[] ivector;
 		if (iv == null) {
-			// Creamos el IV de forma aleatoria, porque ciertos proveedores (como Android) dan arrays fijos
-			// para IvParameterSpec.getIV(), normalmente todo ceros
-			LOGGER.info("Se usara un vector de inicializacion AES aleatorio"); //$NON-NLS-1$
-			ivector = generateRandomBytes(aesCipher.getBlockSize());
+			LOGGER.info("No se usara un vector de inicializacion en AES"); //$NON-NLS-1$
+			ivector = null;
 		}
 		else if (iv.length == 0) {
 			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
@@ -316,13 +314,21 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
 
 		try {
-			aesCipher.init(
-				mode,
-				new SecretKeySpec(key, "AES"), //$NON-NLS-1$
-				new IvParameterSpec(ivector)
-			);
+			if (iv != null) {
+				aesCipher.init(
+					mode,
+					new SecretKeySpec(key, "AES"), //$NON-NLS-1$
+					new IvParameterSpec(ivector)
+				);
+			}
+			else {
+				aesCipher.init(
+					mode,
+					new SecretKeySpec(key, "AES") //$NON-NLS-1$
+				);
+			}
 		}
-		catch (final Exception e) {
+		catch (final InvalidKeyException | InvalidAlgorithmParameterException e) {
 			throw new IOException(
 				"La clave proporcionada no es valida: " + e, e//$NON-NLS-1$
 			);
