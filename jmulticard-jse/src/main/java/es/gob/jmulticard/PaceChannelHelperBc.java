@@ -29,13 +29,15 @@ import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.card.icao.pace.PaceException;
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PaceChannelHelperBc extends PaceChannelHelper {
+
+	/** Tama&ntilde;o de bloque de cifrado AES. */
+	public static final int BLOCK_SIZE = 16;
 
 	/** Constructor
 	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
@@ -325,7 +327,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 			);
 		}
 
-		//Elimina el byte '04' del inicio que es el indicador de punto descomprimido
+		// Elimina el byte '04' del inicio que es el indicador de punto descomprimido
 		final byte[] pukIccDh2Descompressed = new byte[pukIccDh2.length-1];
 		System.arraycopy(pukIccDh2, 1, pukIccDh2Descompressed, 0, pukIccDh2.length-1);
 
@@ -396,7 +398,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		return new SecureMessaging(
 			kenc,
 			kmac,
-			new byte[AmAESCrypto.BLOCK_SIZE],
+			new byte[BLOCK_SIZE], // El tamano de bloque AES es el SSC inicial
 			this.cryptoHelper
 		);
 	}

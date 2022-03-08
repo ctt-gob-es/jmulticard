@@ -94,7 +94,7 @@ public abstract class CryptoHelper {
 		/** Cipher Block Chaining. */
 		CBC,
 
-		/** Electronic CodeBook.*/
+		/** Electronic CodeBook. */
 		ECB
 	}
 

@@ -27,13 +27,13 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.CryptoHelper.BlockMode;
+import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmAESCrypto;
-import es.gob.jmulticard.de.tsenger.androsmex.crypto.AmCryptoException;
 
 /** Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
  * para establecer una mensajer&iacute;a segura.
@@ -194,7 +194,7 @@ public final class SecureMessaging {
 
 		final byte[] cc;
 		try {
-			cc = AmAESCrypto.getMac(bout.toByteArray(), this.ssc, this.kmac, this.cryptoHelper);
+			cc = getMac(bout.toByteArray(), this.ssc, this.kmac);
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e1) {
 			throw new SecureMessagingException(
@@ -218,9 +218,22 @@ public final class SecureMessaging {
 			final byte[] do87Data = do87.getData();
 			final byte[] data;
 			try {
-				data = AmAESCrypto.decrypt(do87Data, this.kenc, this.ssc, this.cryptoHelper);
+				data = this.cryptoHelper.aesDecrypt(
+					do87Data,
+					// Vector de inicializacion a partir del cifrado del SSC
+					this.cryptoHelper.aesEncrypt(
+						this.ssc,  // Datos
+						null,      // Sin vector de inicializacion
+						this.kenc, // Clave
+						BlockMode.ECB,
+						Padding.NOPADDING
+					),
+					this.kenc,
+					BlockMode.CBC,
+					Padding.ISO7816_4PADDING
+				);
 			}
-			catch (final AmCryptoException e) {
+			catch (final IOException e) {
 				throw new SecureMessagingException(e);
 			}
 			// Construir la respuesta APDU desencriptada
@@ -249,9 +262,22 @@ public final class SecureMessaging {
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
 		final byte[] encData;
 		try {
-			encData = AmAESCrypto.encrypt(data, this.kenc, this.ssc, this.cryptoHelper);
+			encData = this.cryptoHelper.aesEncrypt(
+				data,
+				// Vector de inicializacion a partir del cifrado del SSC
+				this.cryptoHelper.aesEncrypt(
+					this.ssc,  // Datos
+					null,      // Sin vector de inicializacion
+					this.kenc, // Clave
+					BlockMode.ECB,
+					Padding.NOPADDING
+				),
+				this.kenc,
+				BlockMode.CBC,
+				Padding.ISO7816_4PADDING
+			);
 		}
-		catch (final AmCryptoException e) {
+		catch (final IOException e) {
 			throw new SecureMessagingException(e);
 		}
 		return new DO87(encData);
@@ -266,7 +292,7 @@ public final class SecureMessaging {
 		 * De lo contrario solo se hace padding en el calculo del MAC */
 		try {
 			if (do87 != null || do97 != null) {
-				m.write(AmAESCrypto.addPadding(header));
+				m.write(addPadding(header));
 			}
 			else {
 				m.write(header);
@@ -284,7 +310,7 @@ public final class SecureMessaging {
 		}
 
 		try {
-			return new DO8E(AmAESCrypto.getMac(m.toByteArray(), this.ssc, this.kmac, this.cryptoHelper));
+			return new DO8E(getMac(m.toByteArray(), this.ssc, this.kmac));
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new SecureMessagingException(
@@ -341,5 +367,46 @@ public final class SecureMessaging {
 				array[lengthA - 1 - i] = result[lengthR - 1 - i];
 			}
 		}
+	}
+
+	/** Obtiene el C&oacute;digo de Autenticaci&oacute;n de Mensaje (MAC) de
+	 * tipo AES para los datos proporcionados.
+	 * @param data Datos sobre los que calcular el MAC.
+	 * @param ssCounter Contador de secuencia de env&iacute;os (<i>Send Sequence Counter</i>).
+	 * @param keyBytes Clave de creaci&oacute;n de MAC.
+	 * @return MAC de los datos.
+	 * @throws NoSuchAlgorithmException Si no se encuentra el algoritmo de creaci&oacute;n
+	 *                                  del MAC.
+	 * @throws InvalidKeyException Si la clave de creaci&oacute;n del MAC es inv&aacute;lida. */
+	private byte[] getMac(final byte[] data,
+			              final byte[] ssCounter,
+			              final byte[] keyBytes) throws InvalidKeyException,
+	                                                    NoSuchAlgorithmException {
+		final byte[] n = new byte[ssCounter.length + data.length];
+		System.arraycopy(ssCounter, 0, n, 0, ssCounter.length);
+		System.arraycopy(data, 0, n, ssCounter.length, data.length);
+		return this.cryptoHelper.doAesCmac(addPadding(n), keyBytes);
+	}
+
+	/** Tama&ntilde;o de bloque de cifrado AES. */
+	public static final int BLOCK_SIZE = 16;
+
+	/** A&ntilde;ade un relleno ISO9797-1 (m&eacute;todo 2) / ISO7816d4-Padding
+	 * a los datos proporcionados.
+	 * @param data Datos a rellenar.
+	 * @return Datos con el relleno aplicado. */
+	private static byte[] addPadding(final byte[] data) {
+		int len = data.length;
+		final int nLen = (len / BLOCK_SIZE + 1) * BLOCK_SIZE;
+		final byte[] in = new byte[nLen];
+		System.arraycopy(data, 0, in, 0, data.length);
+
+        in [len]= (byte) 0x80;
+        len ++;
+        while (len < in.length) {
+            in[len] = (byte) 0;
+            len++;
+        }
+        return in;
 	}
 }
