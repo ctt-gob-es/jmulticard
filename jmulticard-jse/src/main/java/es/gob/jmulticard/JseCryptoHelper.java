@@ -313,7 +313,9 @@ public final class JseCryptoHelper extends CryptoHelper {
 		}
 		catch (final NoSuchAlgorithmException | NoSuchPaddingException e) {
 			throw new IOException(
-				"No se ha podido obtener una instancia del cifrador 'AES/CBC/NoPadding': " + e, e //$NON-NLS-1$
+				"No se ha podido obtener una instancia del cifrador AES (" + //$NON-NLS-1$
+					"AES/" + blockmode + "/" + (padding != null && !padding.isEmpty() ? padding : "NoPadding") + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						"): " + e, e //$NON-NLS-1$
 			);
 		}
 

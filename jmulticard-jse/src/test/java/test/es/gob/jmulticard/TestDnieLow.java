@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
@@ -43,9 +44,9 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "123456"; //$NON-NLS-1$
+	private static final String CAN = "961984"; //$NON-NLS-1$
 
-	private static final String PIN = "PIN_DNIE"; //$NON-NLS-1$
+	private static final String PIN = "rock2048"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -76,7 +77,7 @@ public final class TestDnieLow {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler(CAN, PIN),
 			true
 		);
