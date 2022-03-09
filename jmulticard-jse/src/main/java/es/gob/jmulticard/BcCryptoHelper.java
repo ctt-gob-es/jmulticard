@@ -32,8 +32,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -72,6 +75,7 @@ import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.spongycastle.operator.OperatorCreationException;
 import org.spongycastle.operator.bc.BcDigestCalculatorProvider;
 import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.spongycastle.util.Selector;
@@ -90,7 +94,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	// Unicamente anade BouncyCastle si no estaba ya anadido como proveedor
 	static {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
+			Security.insertProviderAt(new BouncyCastleProvider(), 1);
 		}
 	}
 
@@ -163,7 +167,12 @@ public final class BcCryptoHelper extends CryptoHelper {
             }
             return cipheredData;
         }
-        catch (final Exception e) {
+        catch (final NoSuchAlgorithmException           |
+        		     NoSuchPaddingException             |
+        		     InvalidKeyException                |
+        		     InvalidAlgorithmParameterException |
+        		     IllegalBlockSizeException          |
+        		     BadPaddingException e) {
             // Machacamos los datos para evitar que queden en memoria
             for(int i=0;i<data.length;i++) {
                 data[i] = '\0';
@@ -214,7 +223,11 @@ public final class BcCryptoHelper extends CryptoHelper {
             cipher.init(direction, new SecretKeySpec(key, "DES")); //$NON-NLS-1$
             return cipher.doFinal(data);
         }
-        catch (final Exception e) {
+        catch (final NoSuchAlgorithmException  |
+        		     NoSuchPaddingException    |
+        		     InvalidKeyException       |
+        		     IllegalBlockSizeException |
+        		     BadPaddingException e) {
             throw new IOException("Error cifrando los datos con DES: " + e, e); //$NON-NLS-1$
         }
     }
@@ -237,7 +250,11 @@ public final class BcCryptoHelper extends CryptoHelper {
             dec.init(direction, key);
             return dec.doFinal(cipheredData);
         }
-        catch (final Exception e) {
+        catch (final NoSuchAlgorithmException  |
+        		     NoSuchPaddingException    |
+        		     InvalidKeyException       |
+        		     IllegalBlockSizeException |
+        		     BadPaddingException e) {
             throw new IOException(
         		"Error cifrando / descifrando los datos mediante la clave RSA: " + e, e //$NON-NLS-1$
     		);
@@ -262,7 +279,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     	return ret;
     }
 
-	/** Encripta un bloque usando AES.
+	/** Encripta un &uacute;nico bloque usando AES.
 	 * @param key Clave AES.
 	 * @param z Bloque a crifrar.
 	 * @return Bloque cifrado. */
@@ -525,15 +542,11 @@ public final class BcCryptoHelper extends CryptoHelper {
 	@Override
 	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                 InvalidAlgorithmParameterException {
-
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.insertProviderAt(new BouncyCastleProvider(), 1);
-		}
 		KeyPairGenerator kpg;
 		try {
 			kpg = KeyPairGenerator.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
-		catch (final Exception e) {
+		catch (final NoSuchProviderException e) {
 			LOGGER.warning(
 				"No se ha podido obtener un generador de pares de claves de curva eliptica con BouncyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
 			);
@@ -568,11 +581,6 @@ public final class BcCryptoHelper extends CryptoHelper {
 			             final EcCurve curveName) throws NoSuchAlgorithmException,
 			                                             InvalidKeyException,
 			                                             InvalidKeySpecException {
-
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.insertProviderAt(new BouncyCastleProvider(), 1);
-		}
-
 		KeyAgreement ka;
 		try {
 			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
@@ -785,7 +793,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 					throw new SignatureException("Firma del SOD no valida"); //$NON-NLS-1$
 				}
 			}
-			catch (final Exception e) {
+			catch (final OperatorCreationException | CMSException e) {
 				throw new SignatureException(
 					"No se ha podido comprobar la firma del SOD: " + e, e //$NON-NLS-1$
 				);
