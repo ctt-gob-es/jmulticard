@@ -133,10 +133,6 @@ public final class SecureMessaging {
 
 		int pointer = 0;
 		final byte[] responseApduBytes = responseApduEncrypted.getData();
-		if (responseApduBytes.length < 2) {
-			System.out.println("PROBLEMA");
-		}
-
 		final byte[] subArray = new byte[responseApduBytes.length];
 
 		while (pointer < responseApduBytes.length) {
