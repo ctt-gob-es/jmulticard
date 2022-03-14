@@ -71,10 +71,10 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 			preloadCertificates();
 		}
 		catch (final Asn1Exception e) {
-			throw new IOException("Error creando las estructuras ASN.1: " + e, e); //$NON-NLS-1$
+			throw new IOException("Error creando las estructuras ASN.1", e); //$NON-NLS-1$
 		}
 		catch (final TlvException e) {
-			throw new IOException("Error tratando los TLV internos de las estructuras ASN.1: " + e, e); //$NON-NLS-1$
+			throw new IOException("Error tratando los TLV internos de las estructuras ASN.1", e); //$NON-NLS-1$
 		}
 
 	}

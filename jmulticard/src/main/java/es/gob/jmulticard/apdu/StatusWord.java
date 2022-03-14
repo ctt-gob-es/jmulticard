@@ -117,4 +117,11 @@ public final class StatusWord implements Serializable {
     public String toString() {
     	return StandardErrorCodes.getErrorDescription(this);
     }
+
+    /** Indica si la palabra de estado corresponde a una ejecuci&oacute;n sin errores (90-00)-
+     * @return <code>true</code> si la palabra de estado corresponde a una ejecuci&oacute;n sin errores,
+     *         <code>false</code> en caso contrario. */
+    public boolean isOk() {
+    	return this.msb == (byte) 0x90 && this.lsb == (byte) 0x00;
+    }
 }

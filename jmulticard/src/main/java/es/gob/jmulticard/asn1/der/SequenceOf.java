@@ -74,8 +74,7 @@ public abstract class SequenceOf extends DecoderObject {
         	}
         	catch (final Exception e) {
         		throw new Asn1Exception(
-    				"No se ha podido instanciar un " + this.elementsType.getName() + //$NON-NLS-1$
-    				" en la secuencia: " + e, e  //$NON-NLS-1$
+    				"No se ha podido instanciar un " + this.elementsType.getName() + " en la secuencia", e  //$NON-NLS-1$ //$NON-NLS-2$
         		);
         	}
         	offset = offset + tlv.getBytes().length;

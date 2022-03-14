@@ -83,7 +83,7 @@ public class ResponseApdu extends Apdu {
         if (getBytes() == null || getBytes().length < 2) {
             return false;
         }
-        return getBytes()[getBytes().length - 1] == (byte) 0x00 && getBytes()[getBytes().length - 2] == (byte) 0x90;
+        return getStatusWord().isOk();
     }
 
 	/** Obtiene la codificaci&oacute;n encriptada de la APDU.

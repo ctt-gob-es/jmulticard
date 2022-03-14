@@ -54,7 +54,7 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 			);
 		}
 		catch (final IOException ex) {
-			throw new MalformedMrzException("La MRZ no tiene formato valido: " + ex, ex); //$NON-NLS-1$
+			throw new MalformedMrzException("La MRZ no tiene formato valido", ex); //$NON-NLS-1$
 		}
 	}
 

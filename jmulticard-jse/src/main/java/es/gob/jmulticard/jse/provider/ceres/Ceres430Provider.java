@@ -101,7 +101,7 @@ public final class Ceres430Provider extends Provider {
 		}
         catch (final Exception e) {
 			throw new ProviderException(
-				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto: " + e, e //$NON-NLS-1$
+				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto", e //$NON-NLS-1$
 			);
 		}
 
@@ -110,7 +110,9 @@ public final class Ceres430Provider extends Provider {
         	defaultConnection.close();
         }
         catch(final Exception e) {
-        	throw new ProviderException("No se ha podido inicializar el proveedor de Ceres 4.30 y superior: " + e, e); //$NON-NLS-1$
+        	throw new ProviderException(
+    			"No se ha podido inicializar el proveedor de Ceres 4.30 y superior", e //$NON-NLS-1$
+			);
         }
 
         // KeyStore

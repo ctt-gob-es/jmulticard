@@ -43,7 +43,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
 /** Define los requerimientos de clases que representen una conexi&oacute;n con una tarjeta inteligente insertada en un lector.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote, Gonzalo Henr&iacute;quez Manzano
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote
+ * @author Gonzalo Henr&iacute;quez Manzano.
  * @version 1.0 */
 public interface ApduConnection {
 

@@ -116,7 +116,7 @@ public final class CeresSc extends Dnie {
                 digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
             }
             catch (final IOException e) {
-                throw new DnieCardException("Error en el calculo del hash para firmar: " + e, e); //$NON-NLS-1$
+                throw new DnieCardException("Error en el calculo del hash para firmar", e); //$NON-NLS-1$
             }
 
             apdu = new PsoSignHashApduCommand((byte) 0x00, digestInfo);
@@ -137,12 +137,12 @@ public final class CeresSc extends Dnie {
                 }
             }
             catch (final Exception ex) {
-                throw new DnieCardException("No se pudo recuperar el canal seguro para firmar (" + e + "): " + ex, ex); //$NON-NLS-1$ //$NON-NLS-2$
+                throw new DnieCardException("No se pudo recuperar el canal seguro para firmar (" + e + ")", ex); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return signOperation(data, algorithm, privateKeyReference);
         }
         catch (final ApduConnectionException e) {
-            throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
+            throw new DnieCardException("Error en la transmision de comandos a la tarjeta", e); //$NON-NLS-1$
         }
         return res.getData();
 	}
@@ -165,7 +165,7 @@ public final class CeresSc extends Dnie {
 			preload();
 		}
 		catch (final Exception e) {
-			throw new ApduConnectionException("Error cargando las estructuras iniciales de la tarjeta: " + e, e); //$NON-NLS-1$
+			throw new ApduConnectionException("Error cargando las estructuras iniciales de la tarjeta", e); //$NON-NLS-1$
 		}
     }
 
@@ -291,7 +291,7 @@ public final class CeresSc extends Dnie {
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(
-	        		"Error en el establecimiento del canal inicial: " + e, e //$NON-NLS-1$
+	        		"Error en el establecimiento del canal inicial", e //$NON-NLS-1$
 	    		);
 			}
         }
@@ -319,7 +319,7 @@ public final class CeresSc extends Dnie {
         		setConnection(secureConnection);
         	}
         	catch (final ApduConnectionException e) {
-        		throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
+        		throw new CryptoCardException("Error en el establecimiento del canal seguro", e); //$NON-NLS-1$
         	}
     	}
 
@@ -327,7 +327,7 @@ public final class CeresSc extends Dnie {
     		verifyPin(getInternalPasswordCallback());
     	}
     	catch (final ApduConnectionException e) {
-    		throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
+    		throw new CryptoCardException("Error en la apertura del canal seguro", e); //$NON-NLS-1$
     	}
     }
 

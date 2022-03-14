@@ -353,10 +353,10 @@ public final class MrzInfo {
         }
         catch (final NumberFormatException nfe) {
             // No deberia pasar
-            throw new IllegalStateException("Error calculando el digito de control: " + nfe, nfe); //$NON-NLS-1$
+            throw new IllegalStateException("Error calculando el digito de control", nfe); //$NON-NLS-1$
         }
         catch (final Exception e) {
-            throw new IllegalArgumentException("Error calculando el digito de control: " + e, e); //$NON-NLS-1$
+            throw new IllegalArgumentException("Error calculando el digito de control", e); //$NON-NLS-1$
         }
     }
 

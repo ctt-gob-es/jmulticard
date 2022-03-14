@@ -496,7 +496,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 				}
         		catch (final ApduConnectionException e) {
 					throw new CryptoCardException(
-						"Error cargando las rutas hacia los certificados: " + e, e //$NON-NLS-1$
+						"Error cargando las rutas hacia los certificados", e //$NON-NLS-1$
 					);
 				}
         	}
@@ -546,18 +546,18 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
         catch (final ApduConnectionException e) {
             throw new IOException(
-        		"Error en el envio de APDU para la seleccion del certificado de componente de la tarjeta: " + e, e //$NON-NLS-1$
+        		"Error en el envio de APDU para la seleccion del certificado de componente de la tarjeta", e //$NON-NLS-1$
     		);
         }
         catch (final Iso7816FourCardException e) {
-            throw new IOException("Error en la seleccion del certificado de componente de la tarjeta: " + e, e); //$NON-NLS-1$
+            throw new IOException("Error en la seleccion del certificado de componente de la tarjeta", e); //$NON-NLS-1$
         }
         try {
 			return CertificateUtils.generateCertificate(iccCertEncoded);
 		}
         catch (final CertificateException e) {
         	throw new IOException(
-        		"No se pudo obtener el certificado de componente: " + e, e //$NON-NLS-1$
+        		"No se pudo obtener el certificado de componente", e //$NON-NLS-1$
             );
 		}
     }
@@ -589,7 +589,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
-        		"Error en la verificacion del certificado de la CA intermedia de Terminal: " + e, e //$NON-NLS-1$
+        		"Error en la verificacion del certificado de la CA intermedia de Terminal", e //$NON-NLS-1$
     		);
         }
 
@@ -602,7 +602,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
-        		"Error al establecer la clave publica del certificado de CA intermedia de Terminal para su verificacion en tarjeta: " + e, e //$NON-NLS-1$
+        		"Error al establecer la clave publica del certificado de CA intermedia de Terminal para su verificacion en tarjeta", e //$NON-NLS-1$
     		);
         }
 
@@ -614,7 +614,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
         catch (final SecureChannelException e) {
             throw new SecureChannelException(
-        		"Error en la verificacion del certificado de Terminal: " + e, e //$NON-NLS-1$
+        		"Error en la verificacion del certificado de Terminal", e //$NON-NLS-1$
     		);
         }
     }
@@ -836,7 +836,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         	throw e;
         }
         catch (final ApduConnectionException e) {
-            throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
+            throw new DnieCardException("Error en la transmision de comandos a la tarjeta", e); //$NON-NLS-1$
         }
 
         return res.getData();
@@ -878,7 +878,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                 digestInfo = DigestInfo.encode(signAlgorithm, data, this.cryptoHelper);
             }
             catch (final IOException e) {
-                throw new DnieCardException("Error en el calculo de la huella para firmar: " + e, e); //$NON-NLS-1$
+                throw new DnieCardException("Error en el calculo de la huella para firmar", e); //$NON-NLS-1$
             }
 
             apdu = new PsoSignHashApduCommand((byte) 0x00, digestInfo);
@@ -902,12 +902,12 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                 }
             }
             catch (final Exception ex) {
-                throw new DnieCardException("No se pudo recuperar el canal seguro para firmar (" + e + "): " + ex, ex); //$NON-NLS-1$ //$NON-NLS-2$
+                throw new DnieCardException("No se pudo recuperar el canal seguro para firmar (" + e + ")", ex); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return signOperation(data, signAlgorithm, privateKeyReference);
         }
         catch (final ApduConnectionException e) {
-            throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
+            throw new DnieCardException("Error en la transmision de comandos a la tarjeta", e); //$NON-NLS-1$
         }
 
         return res.getData();
@@ -944,7 +944,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
                     setConnection(secureConnection);
                 }
                 catch (final ApduConnectionException e) {
-                    throw new CryptoCardException("Error en el establecimiento del canal seguro: " + e, e); //$NON-NLS-1$
+                    throw new CryptoCardException("Error en el establecimiento del canal seguro", e); //$NON-NLS-1$
                 }
             }
             if (doChv) {
@@ -952,7 +952,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	                verifyPin(getInternalPasswordCallback());
 	            }
 	            catch (final ApduConnectionException e) {
-	                throw new CryptoCardException("Error en la apertura del canal seguro: " + e, e); //$NON-NLS-1$
+	                throw new CryptoCardException("Error en la apertura del canal seguro", e); //$NON-NLS-1$
 	            }
             }
         }
@@ -968,7 +968,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		}
 		catch (final ApduConnectionException e) {
 			throw new PinException(
-				"Error obteniendo el PIN del CallbackHandler: " + e, e  //$NON-NLS-1$
+				"Error obteniendo el PIN del CallbackHandler", e  //$NON-NLS-1$
 			);
 		}
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;
@@ -1022,12 +1022,12 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 			}
 			catch (final IOException e) {
 				throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e, e//$NON-NLS-1$
+					"Error obteniendo el PIN del CallbackHandler", e//$NON-NLS-1$
 				);
 			}
 			catch (final UnsupportedCallbackException e) {
 				throw new PasswordCallbackNotFoundException(
-					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, e//$NON-NLS-1$
+					"El CallbackHandler no soporta pedir el PIN al usuario", e//$NON-NLS-1$
 				);
 			}
 			if (pwc.getPassword() == null || pwc.getPassword().length < 1) {
@@ -1085,17 +1085,17 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		        }
 		        catch (final CertificateException e) {
 		            throw new CryptoCardException(
-		        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509: " + e, e //$NON-NLS-1$
+		        		"Error al cargar los certificados del DNIe, no es posible obtener una factoria de certificados X.509", e //$NON-NLS-1$
 		    		);
 		        }
 		        catch (final IOException e) {
 		            throw new CryptoCardException(
-		        		"Error al cargar los certificados del DNIe, error en la descompresion de los datos: " + e, e //$NON-NLS-1$
+		        		"Error al cargar los certificados del DNIe, error en la descompresion de los datos", e //$NON-NLS-1$
 		    		);
 				}
 		        catch (final Iso7816FourCardException e) {
 		            throw new CryptoCardException(
-		        		"Error al cargar los certificados del DNIe: " + e, e //$NON-NLS-1$
+		        		"Error al cargar los certificados del DNIe", e //$NON-NLS-1$
 		    		);
 				}
     	}
@@ -1209,14 +1209,14 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 				return changePIN(oldPin, newPin);
 			}
 			catch (final Exception ex) {
-				throw new DnieCardException("No se pudo recuperar el canal seguro para firmar: " + ex, ex); //$NON-NLS-1$
+				throw new DnieCardException("No se pudo recuperar el canal seguro para firmar", ex); //$NON-NLS-1$
 			}
 		}
 		catch (final ApduConnectionException e) {
-			throw new DnieCardException("Error en la transmision de comandos a la tarjeta: " + e, e); //$NON-NLS-1$
+			throw new DnieCardException("Error en la transmision de comandos a la tarjeta", e); //$NON-NLS-1$
 		}
 		catch (final Iso7816FourCardException e) {
-			throw new DnieCardException("No se pudo seleccionar el fichero de PIN de la tarjeta: " + e, e); //$NON-NLS-1$
+			throw new DnieCardException("No se pudo seleccionar el fichero de PIN de la tarjeta", e); //$NON-NLS-1$
 		}
 	}
 

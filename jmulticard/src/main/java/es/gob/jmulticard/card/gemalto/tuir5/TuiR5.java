@@ -17,8 +17,8 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
-import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.apdu.gemalto.GemaltoVerifyApduCommand;
+import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
@@ -144,7 +144,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 			cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
 		}
         catch (final Exception e) {
-        	throw new IOException("Error en la lectura del CDF: " + e, e); //$NON-NLS-1$
+        	throw new IOException("Error en la lectura del CDF", e); //$NON-NLS-1$
 		}
 
         for (int i=0; i<cdf.getCertificateCount(); i++) {
@@ -157,7 +157,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 				);
 			}
         	catch (final CertificateException e) {
-				throw new IOException("Error en la lectura del certificado " + i + " del dispositivo: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new IOException("Error en la lectura del certificado " + i + " del dispositivo", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
         }
     }
@@ -219,7 +219,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 			res = sendArbitraryApdu(mseSet);
 		}
 		catch (final Exception e) {
-			throw new CryptoCardException("Error enviando la APDU de establecimiento de clave privada para firma: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error enviando la APDU de establecimiento de clave privada para firma", e); //$NON-NLS-1$
 		}
 		if (res.isOk()) {
 			return new TuiPrivateKeyReference(index);

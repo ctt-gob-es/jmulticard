@@ -270,7 +270,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 					Ceres430Provider.getDefaultApduConnection();
     	}
     	catch(final Exception e) {
-    		throw new IllegalStateException("No hay una conexion de APDU por defecto: " + e, e); //$NON-NLS-1$
+    		throw new IllegalStateException("No hay una conexion de APDU por defecto", e); //$NON-NLS-1$
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe

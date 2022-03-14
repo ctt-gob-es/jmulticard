@@ -49,7 +49,7 @@ public final class MseSetComputationApduCommand extends MseSetApduCommand {
 		}
 		catch(final Exception e) {
 			throw new IllegalStateException(
-				"Error creando el cuerpo del DST: " + e, e //$NON-NLS-1$
+				"Error creando el cuerpo del DST", e //$NON-NLS-1$
 			);
 		}
 		return dstData.toByteArray();

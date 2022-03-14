@@ -157,7 +157,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         }
         catch (final Iso7816FourCardException e) {
         	 throw new IOException(
-                "No se ha podido seleccionar el Applet AET PKCS#15: " + e, e //$NON-NLS-1$
+                "No se ha podido seleccionar el Applet AET PKCS#15", e //$NON-NLS-1$
             );
         }
 
@@ -167,7 +167,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		}
         catch (final Iso7816FourCardException | Asn1Exception | TlvException e) {
             throw new IOException(
-        		"No se han podido leer los certificados: " + e, e //$NON-NLS-1$
+        		"No se han podido leer los certificados", e //$NON-NLS-1$
     		);
         }
 
@@ -326,7 +326,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
         }
         catch (final Exception e) {
             throw new ApduConnectionException(
-                "No se ha podido cargar el CDF de la tarjeta: " + e, e //$NON-NLS-1$
+                "No se ha podido cargar el CDF de la tarjeta", e //$NON-NLS-1$
             );
         }
 
@@ -509,7 +509,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 				this.authenticated = true;
 			}
 			catch (final ApduConnectionException e1) {
-				throw new CryptoCardException("Error en la verificacion de PIN: " + e1, e1); //$NON-NLS-1$
+				throw new CryptoCardException("Error en la verificacion de PIN", e1); //$NON-NLS-1$
 			}
 		}
 
@@ -526,7 +526,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		}
 		catch (final ApduConnectionException e) {
 			throw new CryptoCardException(
-				"Error estableciendo la clave y el algoritmo de firma (repuesta=" + res + "): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+				"Error estableciendo la clave y el algoritmo de firma (repuesta=" + res + ")", e //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
 		if (res == null || !res.isOk()) {
@@ -541,7 +541,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
             digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
         }
         catch (final IOException e) {
-            throw new CryptoCardException("Error en el calculo de la huella para firmar: " + e, e); //$NON-NLS-1$
+            throw new CryptoCardException("Error en el calculo de la huella para firmar", e); //$NON-NLS-1$
         }
 
         // Y lo enviamos a firmar
@@ -550,7 +550,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		}
         catch (final ApduConnectionException e) {
         	throw new CryptoCardException(
-				"Error firmando (repuesta=" + res + "): " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+				"Error firmando (repuesta=" + res + ")", e //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
         if (res == null || !res.isOk()) {
@@ -572,7 +572,7 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 		}
 		catch (final ApduConnectionException e) {
 			throw new PinException(
-				"Error obteniendo el PIN del CallbackHandler: " + e, e  //$NON-NLS-1$
+				"Error obteniendo el PIN del CallbackHandler", e  //$NON-NLS-1$
 			);
 		}
 		if (verifyResponse.isOk() || verifyResponse.getBytes().length > 2) {
@@ -610,12 +610,12 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
 			}
 			catch (final IOException e) {
 				throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e, e//$NON-NLS-1$
+					"Error obteniendo el PIN del CallbackHandler", e//$NON-NLS-1$
 				);
 			}
 			catch (final UnsupportedCallbackException e) {
 				throw new PinException(
-					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, e //$NON-NLS-1$
+					"El CallbackHandler no soporta pedir el PIN al usuario", e //$NON-NLS-1$
 				);
 			}
 			return pwc;

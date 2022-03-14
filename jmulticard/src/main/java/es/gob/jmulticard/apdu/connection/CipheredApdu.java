@@ -113,7 +113,7 @@ public final class CipheredApdu extends CommandApdu {
        }
        catch(final Exception e) {
     	   throw new IllegalStateException(
-			   "Error creando la APDU cifrada: " + e, e //$NON-NLS-1$
+			   "Error creando la APDU cifrada", e //$NON-NLS-1$
 		   );
        }
        return baos.toByteArray();

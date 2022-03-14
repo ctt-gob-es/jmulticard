@@ -173,7 +173,7 @@ public class ApduEncrypterDes extends ApduEncrypter {
         }
         catch (final NegativeArraySizeException e) {
             throw new ApduConnectionException(
-        		"Error en el formato de la respuesta remitida por el canal seguro: " + e, e //$NON-NLS-1$
+        		"Error en el formato de la respuesta remitida por el canal seguro", e //$NON-NLS-1$
     		);
         }
 
@@ -245,7 +245,7 @@ public class ApduEncrypterDes extends ApduEncrypter {
     	}
     	catch (final IOException e) {
     		throw new SecurityException(
-				"No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion: " + e, e //$NON-NLS-1$
+				"No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion", e //$NON-NLS-1$
 			);
 		}
 

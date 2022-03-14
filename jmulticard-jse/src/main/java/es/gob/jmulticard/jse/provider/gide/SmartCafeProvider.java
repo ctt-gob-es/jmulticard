@@ -100,7 +100,7 @@ public final class SmartCafeProvider extends Provider {
 		}
         catch (final Exception e) {
 			throw new ProviderException(
-				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto: " + e, e //$NON-NLS-1$
+				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto", e //$NON-NLS-1$
 			);
 		}
 
@@ -109,7 +109,7 @@ public final class SmartCafeProvider extends Provider {
         	defaultConnection.close();
         }
         catch(final Exception e) {
-        	throw new ProviderException("No se ha podido inicializar el proveedor: " + e, e); //$NON-NLS-1$
+        	throw new ProviderException("No se ha podido inicializar el proveedor", e); //$NON-NLS-1$
         }
 
         // KeyStore

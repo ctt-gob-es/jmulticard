@@ -177,7 +177,7 @@ public final class BcCryptoHelper extends CryptoHelper {
             for(int i=0;i<data.length;i++) {
                 data[i] = '\0';
             }
-            throw new IOException("Error encriptando datos: " + e, e); //$NON-NLS-1$
+            throw new IOException("Error encriptando datos", e); //$NON-NLS-1$
         }
     }
 
@@ -228,7 +228,7 @@ public final class BcCryptoHelper extends CryptoHelper {
         		     InvalidKeyException       |
         		     IllegalBlockSizeException |
         		     BadPaddingException e) {
-            throw new IOException("Error cifrando los datos con DES: " + e, e); //$NON-NLS-1$
+            throw new IOException("Error cifrando los datos con DES", e); //$NON-NLS-1$
         }
     }
 
@@ -256,7 +256,7 @@ public final class BcCryptoHelper extends CryptoHelper {
         		     IllegalBlockSizeException |
         		     BadPaddingException e) {
             throw new IOException(
-        		"Error cifrando / descifrando los datos mediante la clave RSA: " + e, e //$NON-NLS-1$
+        		"Error cifrando / descifrando los datos mediante la clave RSA", e //$NON-NLS-1$
     		);
         }
     }
@@ -534,7 +534,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 				     InvalidCipherTextException |
 				     IOException e) {
 			throw new IOException(
-				"Error en el cifrado AES: " + e, e //$NON-NLS-1$
+				"Error en el cifrado AES", e //$NON-NLS-1$
 			);
 		}
 	}
@@ -752,7 +752,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			cmsSignedData = new CMSSignedData(signedDataBytes);
 		}
 		catch (final CMSException e2) {
-			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS: " + e2, e2); //$NON-NLS-1$
+			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS", e2); //$NON-NLS-1$
 		}
 		final Store<X509CertificateHolder> store = cmsSignedData.getCertificates();
 		final List<X509Certificate> certChain = new ArrayList<>();
@@ -766,7 +766,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			}
             catch (final IOException e1) {
             	throw new CertificateException(
-					"El SignedData contiene un certificado en formato incorrecto: " + e1, e1//$NON-NLS-1$
+					"El SignedData contiene un certificado en formato incorrecto", e1//$NON-NLS-1$
 				);
 			}
             try {
@@ -774,7 +774,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			}
             catch (final CertificateExpiredException | CertificateNotYetValidException e1) {
             	throw new CertificateException(
-					"El SignedData contiene un certificado fuera de su periodo temporal de validez: " + e1, e1 //$NON-NLS-1$
+					"El SignedData contiene un certificado fuera de su periodo temporal de validez", e1 //$NON-NLS-1$
 				);
 			}
 			try {
@@ -795,7 +795,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			}
 			catch (final OperatorCreationException | CMSException e) {
 				throw new SignatureException(
-					"No se ha podido comprobar la firma del SOD: " + e, e //$NON-NLS-1$
+					"No se ha podido comprobar la firma del SOD", e //$NON-NLS-1$
 				);
 			}
             certChain.add(cert);
@@ -835,7 +835,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			cmsSignedData = new CMSSignedData(signedDataBytes);
 		}
 		catch (final CMSException e2) {
-			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS: " + e2, e2); //$NON-NLS-1$
+			throw new IOException("Los datos no son un SignedData de PKCS#7/CMS", e2); //$NON-NLS-1$
 		}
 		return (byte[]) cmsSignedData.getSignedContent().getContent();
 	}

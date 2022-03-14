@@ -195,11 +195,11 @@ public final class JMultiCardProviderFactory {
 			         SecurityException         |
 			         ClassNotFoundException e2) {
 			throw new IllegalStateException(
-				"No se ha podido instanciar la conexion '" + //$NON-NLS-1$
+				"No se ha podido instanciar la conexion " + //$NON-NLS-1$
 					(connectionClassName != null && !connectionClassName.isEmpty() ?
 						connectionClassName :
-							ProviderUtil.DEFAULT_PROVIDER_CLASSNAME) +
-				"': " + e2, e2); //$NON-NLS-1$
+							ProviderUtil.DEFAULT_PROVIDER_CLASSNAME),
+				e2);
 		}
 		final long[] terminals;
 		try {

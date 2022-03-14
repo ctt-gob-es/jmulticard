@@ -22,12 +22,14 @@ import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.jse.provider.DniePrivateKey;
 import es.gob.jmulticard.jse.provider.DnieProvider;
+import test.es.gob.jmulticard.TestingDnieCallbackHandler;
 
 /** Pruebas de cifrado RSA.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestCipher {
 
-	private static final char[] PASSWORD = "password".toCharArray(); //$NON-NLS-1$
+	private static final String CAN = "123456"; //$NON-NLS-1$
+	private static final String PIN = "pin"; //$NON-NLS-1$
 
 	/** Main para pruebas.
 	 * @param args No se usa.
@@ -42,15 +44,22 @@ public final class TestCipher {
 		Security.insertProviderAt(provider, 1);
 
 		final Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", provider); //$NON-NLS-1$
-		final KeyStore ks = KeyStore.getInstance("DNI"); //$NON-NLS-1$
 
-		ks.load(null, PASSWORD);
+		final KeyStore.Builder builder = KeyStore.Builder.newInstance(
+			"DNI", //$NON-NLS-1$
+			new DnieProvider(),
+			new KeyStore.CallbackHandlerProtection(
+				new TestingDnieCallbackHandler(CAN, PIN)
+			)
+		);
+		final KeyStore ks = builder.getKeyStore();
+
 		final Enumeration<String> aliases = ks.aliases();
 		while (aliases.hasMoreElements()) {
 			System.out.println(aliases.nextElement());
 		}
 
-		final DniePrivateKey prK = (DniePrivateKey) ks.getKey(Dnie.CERT_ALIAS_AUTH, PASSWORD);
+		final DniePrivateKey prK = (DniePrivateKey) ks.getKey(Dnie.CERT_ALIAS_AUTH, PIN.toCharArray());
 		final DniePrivateKeyReference dpkr = prK.getDniePrivateKeyReference();
 
 		System.out.println(dpkr);
@@ -152,6 +161,7 @@ public final class TestCipher {
 	/** Lista los servicios soportados por cada proveedor instalado. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testProviderSupp() {
 		for (final Provider provider: Security.getProviders()) {
 		  System.out.println(provider.getName());

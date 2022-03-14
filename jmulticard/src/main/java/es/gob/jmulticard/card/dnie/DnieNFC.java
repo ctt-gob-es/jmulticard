@@ -115,7 +115,7 @@ public class DnieNFC extends Dnie3 {
 				   SecurityException         |
 				   ClassNotFoundException e1) {
 				throw new IllegalStateException(
-					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e1, e1 //$NON-NLS-1$
+					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'es.gob.jmulticard.callback.CustomTextInputCallback'", e1 //$NON-NLS-1$
 				);
 			}
 		}
@@ -136,7 +136,7 @@ public class DnieNFC extends Dnie3 {
 					);
 				}
 				catch (final Exception e) {
-					throw new PaceException("Error obteniendo el CAN: " + e, e); //$NON-NLS-1$
+					throw new PaceException("Error obteniendo el CAN", e); //$NON-NLS-1$
 				}
 
 				try {
@@ -155,7 +155,7 @@ public class DnieNFC extends Dnie3 {
 					         IllegalArgumentException |
 					         InvocationTargetException e) {
 					throw new IllegalStateException(
-						"El TextInputCallback no tiene un metodo 'getText': " + e, e //$NON-NLS-1$
+						"El TextInputCallback no tiene un metodo 'getText'", e //$NON-NLS-1$
 					);
 				}
 
@@ -261,12 +261,12 @@ public class DnieNFC extends Dnie3 {
 			}
 			catch (final ApduConnectionException e) {
 				throw new CryptoCardException(
-					"Error en la transmision de la APDU: " + e, e //$NON-NLS-1$
+					"Error en la transmision de la APDU", e //$NON-NLS-1$
 				);
 			}
 			catch (final IcaoException e) {
 				throw new CryptoCardException(
-					"Error en el establecimiento del canal PACE: " + e, e //$NON-NLS-1$
+					"Error en el establecimiento del canal PACE", e //$NON-NLS-1$
 				);
 			}
 		}

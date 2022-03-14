@@ -44,9 +44,9 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "961984"; //$NON-NLS-1$
+	private static final String CAN = "123456"; //$NON-NLS-1$
 
-	private static final String PIN = "rock2048"; //$NON-NLS-1$
+	private static final String PIN = "pin"; //$NON-NLS-1$
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
@@ -72,7 +72,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -94,7 +94,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),

@@ -58,9 +58,9 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
-import es.gob.jmulticard.apdu.ceres.CeresVerifyApduCommand;
 import es.gob.jmulticard.apdu.ceres.CeresLoadDataApduCommand;
 import es.gob.jmulticard.apdu.ceres.CeresSignDataApduCommand;
+import es.gob.jmulticard.apdu.ceres.CeresVerifyApduCommand;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.dnie.RetriesLeftApduCommand;
@@ -230,7 +230,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		catch (final Exception e) {
 			throw new ApduConnectionException(
-				"Error cargando las estructuras iniciales de la tarjeta: " + e, e //$NON-NLS-1$
+				"Error cargando las estructuras iniciales de la tarjeta", e //$NON-NLS-1$
 			);
 		}
 		this.cryptoHelper = ch;
@@ -331,7 +331,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		catch (final Exception e) {
 			throw new IllegalStateException(
-				"No se han podido leer los alias de los certificados de la tarjeta CERES: " + e, e //$NON-NLS-1$
+				"No se han podido leer los alias de los certificados de la tarjeta CERES", e //$NON-NLS-1$
 			);
 		}
 		for (final String alias : aliases) {
@@ -384,7 +384,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				this.authenticated = true;
 			}
 			catch (final ApduConnectionException e1) {
-				throw new CryptoCardException("Error en la verificacion de PIN: " + e1, e1); //$NON-NLS-1$
+				throw new CryptoCardException("Error en la verificacion de PIN", e1); //$NON-NLS-1$
 			}
 		}
 
@@ -394,7 +394,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		catch(final Exception e) {
 			throw new CryptoCardException(
-				"Error creando el DigestInfo para la firma con el algoritmo " + algorithm + ": " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+				"Error creando el DigestInfo para la firma con el algoritmo " + algorithm, e //$NON-NLS-1$
 			);
 		}
 
@@ -410,7 +410,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			res = sendArbitraryApdu(cmd);
 		}
 		catch (final Exception e) {
-			throw new CryptoCardException("Error firmando los datos: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error firmando los datos", e); //$NON-NLS-1$
 		}
 		if (!res.isOk()) {
 			throw new CryptoCardException(
@@ -430,7 +430,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		catch (final Exception e1) {
 			throw new CryptoCardException(
-				"Error realizando el relleno PKCS#1 de los datos a firmar: " + e1, e1 //$NON-NLS-1$
+				"Error realizando el relleno PKCS#1 de los datos a firmar", e1 //$NON-NLS-1$
 			);
 		}
 
@@ -443,7 +443,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			}
 			catch (final Exception e) {
 				throw new CryptoCardException(
-					"Error enviando los datos a firmar a la tarjeta: " + e, e //$NON-NLS-1$
+					"Error enviando los datos a firmar a la tarjeta", e //$NON-NLS-1$
 				);
 			}
 			if (!res.isOk()) {
@@ -471,7 +471,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			}
 			catch (final Exception e) {
 				throw new CryptoCardException(
-					"Error en el primer envio a la tarjeta de los datos a firmar: " + e, e //$NON-NLS-1$
+					"Error en el primer envio a la tarjeta de los datos a firmar", e //$NON-NLS-1$
 				);
 			}
 			if (!res.isOk()) {
@@ -489,7 +489,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			}
 			catch (final Exception e) {
 				throw new CryptoCardException(
-					"Error en el segundo envio a la tarjeta de los datos a firmar: " + e, e //$NON-NLS-1$
+					"Error en el segundo envio a la tarjeta de los datos a firmar", e //$NON-NLS-1$
 				);
 			}
 			if (!res.isOk()) {
@@ -578,12 +578,12 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			}
 			catch (final IOException e) {
 				throw new PinException(
-					"Error obteniendo el PIN del CallbackHandler: " + e, e //$NON-NLS-1$
+					"Error obteniendo el PIN del CallbackHandler", e //$NON-NLS-1$
 				);
 			}
 			catch (final UnsupportedCallbackException e) {
 				throw new PinException(
-					"El CallbackHandler no soporta pedir el PIN al usuario: " + e, e //$NON-NLS-1$
+					"El CallbackHandler no soporta pedir el PIN al usuario", e //$NON-NLS-1$
 				);
 			}
 			return pwc;
@@ -601,7 +601,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		}
 		catch (final ApduConnectionException e) {
 			throw new PinException(
-				"Error obteniendo el PIN del CallbackHandler: " + e, e  //$NON-NLS-1$
+				"Error obteniendo el PIN del CallbackHandler", e  //$NON-NLS-1$
 			);
 		}
     	return verifyResponse.getStatusWord().getLsb() - (byte) 0xC0;

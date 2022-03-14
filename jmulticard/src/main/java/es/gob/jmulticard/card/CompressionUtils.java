@@ -73,7 +73,7 @@ public final class CompressionUtils {
             return buffer.toByteArray();
         }
         catch (final DataFormatException ex) {
-            throw new IOException("Error al descomprimir el certificado: " + ex, ex); //$NON-NLS-1$
+            throw new IOException("Error al descomprimir el certificado", ex); //$NON-NLS-1$
         }
     }
 

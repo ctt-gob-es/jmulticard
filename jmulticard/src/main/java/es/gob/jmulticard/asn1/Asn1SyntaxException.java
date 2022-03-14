@@ -63,6 +63,6 @@ public final class Asn1SyntaxException extends Exception {
      * @param message Mensaje de la excepci&oacute;n.
      * @param cause causa de la excepci&oacute;n. */
     public Asn1SyntaxException(final String message, final Throwable cause) {
-        super(message + ": " + cause.toString()); //$NON-NLS-1$
+        super(message, cause);
     }
 }

@@ -150,7 +150,7 @@ public class CommandApdu extends Apdu {
 				}
 				catch (final Exception e) {
 					throw new IllegalArgumentException(
-						"No se pueden tratar los datos de la APDU: " + e, e //$NON-NLS-1$
+						"No se pueden tratar los datos de la APDU", e //$NON-NLS-1$
 					);
 				}
 			}
@@ -229,7 +229,7 @@ public class CommandApdu extends Apdu {
 			}
 			catch (final Exception e) {
 				throw new IllegalArgumentException(
-					"No se pueden tratar los datos de la APDU: " + e, e //$NON-NLS-1$
+					"No se pueden tratar los datos de la APDU", e //$NON-NLS-1$
 				);
 			}
 		}

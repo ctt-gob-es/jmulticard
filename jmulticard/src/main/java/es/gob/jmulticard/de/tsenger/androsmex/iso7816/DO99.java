@@ -38,7 +38,7 @@ final class DO99 {
 		}
 		catch (final TlvException e) {
 			throw new SecureMessagingException(
-				"Los datos proporcionados para el DO99 no conforman un TLV valido: " + e, e //$NON-NLS-1$
+				"Los datos proporcionados para el DO99 no conforman un TLV valido", e //$NON-NLS-1$
 			);
 		}
 		if (TAG != this.tlv.getTag()) {

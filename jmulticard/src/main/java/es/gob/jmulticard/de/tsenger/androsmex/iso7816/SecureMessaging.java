@@ -132,16 +132,20 @@ public final class SecureMessaging {
 		incrementAtIndex(this.ssc);
 
 		int pointer = 0;
-		final byte[] rapduBytes = responseApduEncrypted.getData();
-		final byte[] subArray = new byte[rapduBytes.length];
+		final byte[] responseApduBytes = responseApduEncrypted.getData();
+		if (responseApduBytes.length < 2) {
+			System.out.println("PROBLEMA");
+		}
 
-		while (pointer < rapduBytes.length) {
+		final byte[] subArray = new byte[responseApduBytes.length];
+
+		while (pointer < responseApduBytes.length) {
 			System.arraycopy(
-				rapduBytes,
+				responseApduBytes,
 				pointer,
 				subArray,
 				0,
-				rapduBytes.length - pointer
+				responseApduBytes.length - pointer
 			);
 
 			final byte[] encodedBytes;
@@ -150,7 +154,7 @@ public final class SecureMessaging {
 			}
 			catch (final TlvException e1) {
 				throw new SecureMessagingException(
-					"Los datos de la APDU protegida no forman un TLV valido: " + e1, e1 //$NON-NLS-1$
+					"Los datos de la APDU protegida no forman un TLV valido", e1 //$NON-NLS-1$
 				);
 			}
 
@@ -176,7 +180,8 @@ public final class SecureMessaging {
 
 		if (do99 == null || do8E == null) {
 			throw new SecureMessagingException(
-				"Error desempaquetando el mensaje seguro: DO99 o DO8E no encontrados" // DO99 es obligatorio //$NON-NLS-1$
+				"Error desempaquetando el mensaje seguro, DO99 o DO8E no encontrados en la APDU de respuesta: " + //$NON-NLS-1$
+					HexUtils.hexify(responseApduBytes, true)
 			);
 		}
 
@@ -198,7 +203,7 @@ public final class SecureMessaging {
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e1) {
 			throw new SecureMessagingException(
-				"Error calculando el CMAC: " + e1, e1 //$NON-NLS-1$
+				"Error calculando el CMAC", e1 //$NON-NLS-1$
 			);
 		}
 
@@ -314,7 +319,7 @@ public final class SecureMessaging {
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new SecureMessagingException(
-				"Error calculando el CMAC: " + e, e //$NON-NLS-1$
+				"Error calculando el CMAC", e //$NON-NLS-1$
 			);
 		}
 	}

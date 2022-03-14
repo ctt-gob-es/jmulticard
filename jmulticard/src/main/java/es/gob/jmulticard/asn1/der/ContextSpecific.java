@@ -69,7 +69,7 @@ public abstract class ContextSpecific extends DecoderObject {
         }
         catch (final Exception e) {
             throw new Asn1Exception(
-        		"No se ha podido instanciar un " + this.elementType.getName() + " en el contexto especifico: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+        		"No se ha podido instanciar un " + this.elementType.getName() + " en el contexto especifico", e //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
         tmpDo.setDerValue(tlv.getValue());

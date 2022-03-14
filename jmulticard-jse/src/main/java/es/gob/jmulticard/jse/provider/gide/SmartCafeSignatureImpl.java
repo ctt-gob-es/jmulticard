@@ -116,7 +116,7 @@ abstract class SmartCafeSignatureImpl extends SignatureSpi {
             }
             catch (final NoSuchProviderException e) {
                 throw new IllegalStateException(
-            		"No esta instalado el proveedor por defecto de firma: " + e, e //$NON-NLS-1$
+            		"No esta instalado el proveedor por defecto de firma", e //$NON-NLS-1$
                 );
             }
         }

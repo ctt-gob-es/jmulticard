@@ -135,7 +135,7 @@ public final class DnieFactory {
 				}
 				catch (final IcaoException e) {
 					throw new ApduConnectionException(
-						"No se ha podido abrir el canal PACE: " + e, e //$NON-NLS-1$
+						"No se ha podido abrir el canal PACE", e //$NON-NLS-1$
 					);
 				}
 			}

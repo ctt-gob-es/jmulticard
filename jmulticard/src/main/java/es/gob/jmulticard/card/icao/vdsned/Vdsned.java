@@ -100,7 +100,7 @@ public final class Vdsned {
 		}
 		catch (final ParseException e) {
 			throw new IllegalArgumentException(
-				"La fecha de emision del documento es invalida (" + HexUtils.hexify(tmpDateBytes, false) + ", " + tmpDate + "): " + e, e //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"La fecha de emision del documento es invalida (" + HexUtils.hexify(tmpDateBytes, false) + ", " + tmpDate + ")", e //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
 		}
 
@@ -116,7 +116,7 @@ public final class Vdsned {
 		}
 		catch (final ParseException e) {
 			throw new IllegalArgumentException(
-				"La fecha de creacion de la firma es invalida (" + HexUtils.hexify(tmpDateBytes, false) + ", " + tmpDate + "): " + e, e //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"La fecha de creacion de la firma es invalida (" + HexUtils.hexify(tmpDateBytes, false) + ", " + tmpDate + ")", e //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
 		}
 

@@ -99,7 +99,7 @@ public final class DnieProvider extends Provider {
 		}
         catch (final Exception e) {
 			throw new ProviderException(
-				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto: " + e, e //$NON-NLS-1$
+				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto", e //$NON-NLS-1$
 			);
 		}
 
@@ -108,7 +108,7 @@ public final class DnieProvider extends Provider {
         	defaultConnection.close();
         }
         catch(final Exception e) {
-        	throw new ProviderException("No se ha podido inicializar el proveedor de DNIe: " + e, e); //$NON-NLS-1$
+        	throw new ProviderException("No se ha podido inicializar el proveedor de DNIe", e); //$NON-NLS-1$
         }
 
         // KeyStore

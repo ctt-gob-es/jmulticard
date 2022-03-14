@@ -80,11 +80,22 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 		}
 		catch (final SecureMessagingException e) {
 			throw new ApduConnectionException(
-				"No ha sido posible cifrar un mensaje seguro con el canal PACE: " + e, e //$NON-NLS-1$
+				"No ha sido posible cifrar un mensaje seguro con el canal PACE", e //$NON-NLS-1$
 			);
 		}
 
 		final ResponseApdu responseApdu = this.subConnection.transmit(protectedApdu);
+
+		// Ignoramos los errores 62-82 (lectura fuera de limites) por ser comunes y estar tratados especificamente
+		if (!responseApdu.getStatusWord().isOk() && !new StatusWord((byte) 0x62, (byte) 0x82).equals(responseApdu.getStatusWord())) {
+			throw new ApduConnectionException(
+				"Error transmitiendo la APDU cifrada:\n" +            //$NON-NLS-1$
+					"Error: " + responseApdu.getStatusWord() + '\n' + //$NON-NLS-1$
+					"Respuesta:\n" + responseApdu + '\n' +            //$NON-NLS-1$
+					"Comando cifrado:\n" + protectedApdu + '\n' +     //$NON-NLS-1$
+					"Comando en claro:\n" + finalCommand + '\n'       //$NON-NLS-1$
+			);
+		}
 
 		final ResponseApdu decipherApdu;
 		try {
@@ -92,7 +103,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 		}
 		catch (final SecureMessagingException e1) {
 			throw new ApduConnectionException(
-				"No ha sido posible descifrar un mensaje seguro con el canal PACE: " + e1, e1 //$NON-NLS-1$
+				"No ha sido posible descifrar un mensaje seguro con el canal PACE", e1 //$NON-NLS-1$
 			);
 		}
 

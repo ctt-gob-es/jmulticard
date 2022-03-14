@@ -61,7 +61,7 @@ public final class CeresProvider extends Provider {
 		}
         catch (final Exception e) {
 			throw new ProviderException(
-				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto: " + e, e //$NON-NLS-1$
+				"No se ha proporcionado una conexion con un lector y no ha podido instanciarse la por defecto", e //$NON-NLS-1$
 			);
 		}
 
@@ -71,7 +71,7 @@ public final class CeresProvider extends Provider {
 		}
         catch (final Exception e) {
         	throw new ProviderException(
-				"No se ha podido conectar con la tarjeta CERES: " + e, e //$NON-NLS-1$
+				"No se ha podido conectar con la tarjeta CERES", e //$NON-NLS-1$
 			);
 		}
 

@@ -104,8 +104,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		catch (final NoSuchAlgorithmException e) {
 			throw new IOException(
 				"No se soporta el algoritmo de huella indicado en el SOD (" + //$NON-NLS-1$
-					ldsSecurityObject.getDigestAlgorithm() +
-						"): " + e, e //$NON-NLS-1$
+					ldsSecurityObject.getDigestAlgorithm() + ")", e //$NON-NLS-1$
 			);
 		}
 
@@ -202,7 +201,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("CardAcess no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el CardAccess: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el CardAccess", e); //$NON-NLS-1$
 		}
     }
 
@@ -215,7 +214,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("ATR/INFO no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el ATR/INFO: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el ATR/INFO", e); //$NON-NLS-1$
 		}
     }
 
@@ -230,7 +229,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG1 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG1: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG1", e); //$NON-NLS-1$
 		}
 	}
 
@@ -244,7 +243,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG2 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
-			throw new CryptoCardException("Error leyendo el DG2: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG2", e); //$NON-NLS-1$
 		}
 		return ret;
 	}
@@ -260,11 +259,11 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		// El DG3 necesita canal administrativo, le damos un tratamiento especial
 		catch(final RequiredSecurityStateNotSatisfiedException e) {
 			throw new CardSecurityException(
-				"No se tienen permisos para leer el DG3: " + e, e //$NON-NLS-1$
+				"No se tienen permisos para leer el DG3", e //$NON-NLS-1$
 			);
 		}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG3: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG3", e); //$NON-NLS-1$
 		}
 	}
 
@@ -278,7 +277,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG7 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
-			throw new CryptoCardException("Error leyendo el DG7: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG7", e); //$NON-NLS-1$
 		}
 		return ret;
 	}
@@ -292,7 +291,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG11 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG11: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG11", e); //$NON-NLS-1$
 		}
 	}
 
@@ -305,7 +304,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG12 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG12: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG12", e); //$NON-NLS-1$
 		}
 	}
 
@@ -322,7 +321,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG13 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
-			throw new CryptoCardException("Error leyendo el DG13: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG13", e); //$NON-NLS-1$
 		}
 	}
 
@@ -335,7 +334,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("DG14 no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
-			throw new CryptoCardException("Error leyendo el DG14: " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el DG14", e); //$NON-NLS-1$
 		}
 	}
 
@@ -349,7 +348,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		}
     	catch (final Asn1Exception | TlvException | Iso7816FourCardException e) {
 			throw new IOException(
-				"No se puede crear un SOD a partir del contenido del fichero: " + e, e //$NON-NLS-1$
+				"No se puede crear un SOD a partir del contenido del fichero", e //$NON-NLS-1$
 			);
 		}
     	return sod;
@@ -368,7 +367,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		throw new FileNotFoundException("COM no encontrado: " + e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
-			throw new CryptoCardException("Error leyendo el 'Common Data' (COM): " + e, e); //$NON-NLS-1$
+			throw new CryptoCardException("Error leyendo el 'Common Data' (COM)", e); //$NON-NLS-1$
 		}
 	}
 
@@ -405,7 +404,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			}
         	catch (final CryptoCardException e) {
 				throw new ApduConnectionException(
-					"Error cargando los certificados del DNIe 3.0: " + e, e //$NON-NLS-1$
+					"Error cargando los certificados del DNIe 3.0", e //$NON-NLS-1$
 				);
 			}
         }
@@ -453,7 +452,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		}
 		catch (final Exception e) {
 			throw new CryptoCardException(
-        		"Error seleccionando el MF tras el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		"Error seleccionando el MF tras el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
     		);
 		}
 
@@ -462,7 +461,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
         }
         catch (final ApduConnectionException e) {
             throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
     		);
         }
     	return getConnection();
@@ -500,7 +499,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(
-	        		"Error en el establecimiento del canal inicial previo al seguro de PIN: " + e, e //$NON-NLS-1$
+	        		"Error en el establecimiento del canal inicial previo al seguro de PIN", e //$NON-NLS-1$
 	    		);
 			}
         }
@@ -529,7 +528,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	        }
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(
-	    			"Error en el establecimiento del canal seguro de PIN: " + e, e //$NON-NLS-1$
+	    			"Error en el establecimiento del canal seguro de PIN", e //$NON-NLS-1$
 				);
 	        }
 
@@ -545,7 +544,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(
-	    			"Error en la verificacion de PIN: " + e, e //$NON-NLS-1$
+	    			"Error en la verificacion de PIN", e //$NON-NLS-1$
 				);
 	        }
         }
@@ -564,7 +563,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		}
 		catch (final Exception e) {
 			throw new CryptoCardException(
-        		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario", e //$NON-NLS-1$
     		);
 		}
 
@@ -573,7 +572,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
         }
         catch (final ApduConnectionException e) {
             throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de usuario: " + e, e //$NON-NLS-1$
+        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
     		);
         }
 

@@ -43,7 +43,7 @@ final class DO8E {
 			}
 			catch (final TlvException e) {
 				throw new SecureMessagingException(
-					"Los datos proporcionados no son un TLV valido: " + e, e //$NON-NLS-1$
+					"Los datos proporcionados no son un TLV valido", e //$NON-NLS-1$
 				);
 			}
 			if (TAG != this.tlv.getTag()) {

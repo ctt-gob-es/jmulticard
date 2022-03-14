@@ -205,7 +205,7 @@ public final class HexUtils {
 			}
 			catch (final IOException e) {
 				throw new IllegalStateException(
-					"Error construyendo el campo de datos: " + e, e //$NON-NLS-1$
+					"Error construyendo el campo de datos", e //$NON-NLS-1$
 				);
 			}
 		}

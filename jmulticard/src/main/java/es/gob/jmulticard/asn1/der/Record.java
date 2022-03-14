@@ -106,7 +106,7 @@ public abstract class Record extends DecoderObject {
 	            catch (final Exception e) {
 	                throw new Asn1Exception(
 	            		"No se ha podido instanciar un " + this.elementsTypes[i].getElementType().getName() + //$NON-NLS-1$
-	                        " en la posicion " + Integer.toString(i) + " del registro: " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+	                        " en la posicion " + Integer.toString(i) + " del registro", e //$NON-NLS-1$ //$NON-NLS-2$
 	                );
 	            }
 	            tmpDo.checkTag(tlv.getTag());
@@ -116,7 +116,7 @@ public abstract class Record extends DecoderObject {
                 	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
             		continue;
             	}
-            	throw new Asn1Exception("Error en el elemento " + i + " del registro ASN.1: " + e, e); //$NON-NLS-1$ //$NON-NLS-2$
+            	throw new Asn1Exception("Error en el elemento " + i + " del registro ASN.1", e); //$NON-NLS-1$ //$NON-NLS-2$
         	}
             offset = offset + tlv.getBytes().length;
         	tmpDo.setDerValue(tlv.getBytes());

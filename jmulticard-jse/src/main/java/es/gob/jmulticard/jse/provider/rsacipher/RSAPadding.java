@@ -509,16 +509,16 @@ final class RSAPadding {
                 this.mgfMd.digest(digest, 0, digest.length);
             }
             catch (final DigestException e) {
-                // should never happen
+                // No deberia ocurrir
                 throw new BadPaddingException(e.toString());
             }
             for (int i = 0; i < digest.length && maskLen > 0; maskLen--) {
                 out[outOfs++] ^= digest[i++];
             }
             if (maskLen > 0) {
-                // increment counter
+                // Incrementamos el contador
                 for (int i = C.length - 1; ++C[i] == 0 && i > 0; i--) {
-                    // empty
+                    // vacio
                 }
             }
         }

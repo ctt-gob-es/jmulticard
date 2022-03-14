@@ -90,10 +90,10 @@ public final class DnieCipherImpl extends CipherSpi {
     // mode constant for public key decryption (verifying)
     private final static int MODE_VERIFY  = 4;
 
-    // constant for raw RSA
+    /** RSA sin relleno. */
     private final static String PAD_NONE  = "NoPadding"; //$NON-NLS-1$
 
-    // constant for PKCS#1 v1.5 RSA
+    /** RSA con relleno PKCS#1 v1.5. */
     private final static String PAD_PKCS1 = "PKCS1Padding"; //$NON-NLS-1$
 
     // constant for PKCS#2 v2.0 OAEP with MGF1
@@ -410,7 +410,9 @@ public final class DnieCipherImpl extends CipherSpi {
         catch (final CryptoCardException  |
         		     PinException         |
         		     LostChannelException e) {
-			throw new BadPaddingException("Error en la operacion RSA con el DNIe: " + e); //$NON-NLS-1$
+        	final BadPaddingException bpe = new BadPaddingException("Error en la operacion RSA con el DNIe"); //$NON-NLS-1$
+        	bpe.initCause(e);
+			throw bpe;
 		}
     }
 
@@ -435,7 +437,9 @@ public final class DnieCipherImpl extends CipherSpi {
 		catch (final CryptoCardException |
 				     PinException        |
 				     LostChannelException e) {
-			throw new BadPaddingException("Error en la operacion RSA con el DNIe: " + e); //$NON-NLS-1$
+        	final BadPaddingException bpe = new BadPaddingException("Error en la operacion RSA con el DNIe"); //$NON-NLS-1$
+        	bpe.initCause(e);
+			throw bpe;
 		}
         final int n = result.length;
         System.arraycopy(result, 0, out, outOfs, n);
@@ -457,12 +461,12 @@ public final class DnieCipherImpl extends CipherSpi {
         }
         catch (final BadPaddingException e) {
             // No deberia ocurrir
-            throw new InvalidKeyException("Ha fallado la envoltura por un relleno invalido: " + e, e); //$NON-NLS-1$
+            throw new InvalidKeyException("Ha fallado la envoltura por un relleno invalido", e); //$NON-NLS-1$
         }
         catch (final CryptoCardException |
         		     PinException        |
         		     LostChannelException e) {
-        	throw new InvalidKeyException("Error en la operacion RSA con el DNIe: " + e, e); //$NON-NLS-1$
+        	throw new InvalidKeyException("Error en la operacion RSA con el DNIe", e); //$NON-NLS-1$
 		}
     }
 
@@ -488,18 +492,18 @@ public final class DnieCipherImpl extends CipherSpi {
         }
         catch (final BadPaddingException e) {
             if (!isTlsRsaPremasterSecret) {
-                throw new InvalidKeyException("Ha fallado la desenvoltura: " + e, e); //$NON-NLS-1$
+                throw new InvalidKeyException("Ha fallado la desenvoltura", e); //$NON-NLS-1$
             }
 			failover = e;
         }
         catch (final IllegalBlockSizeException e) {
             // No deberia ocurrir, esto se controla anteriormente
-            throw new InvalidKeyException("Ha fallado la desenvoltura por un tamano de bloque invalido: " + e, e); //$NON-NLS-1$
+            throw new InvalidKeyException("Ha fallado la desenvoltura por un tamano de bloque invalido", e); //$NON-NLS-1$
         }
         catch (final CryptoCardException |
 	   		         PinException        |
 	   		         LostChannelException e) {
-        	throw new InvalidKeyException("Error en la operacion RSA con el DNIe: " + e, e); //$NON-NLS-1$
+        	throw new InvalidKeyException("Error en la operacion RSA con el DNIe", e); //$NON-NLS-1$
 		}
 
         if (isTlsRsaPremasterSecret) {

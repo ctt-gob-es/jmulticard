@@ -63,7 +63,7 @@ public abstract class CardException extends IOException {
      * @param description Descripci&oacute;n de la excepci&oacute;n.
      * @param cause Causa original de la excepci&oacute;n. */
     protected CardException(final String description, final Throwable cause) {
-        super(description + ": " + cause.getMessage(), cause); //$NON-NLS-1$
+        super(description, cause);
     }
 
     /** Construye una excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.

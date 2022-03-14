@@ -38,7 +38,7 @@ public final class ProviderUtil {
     		   SecurityException         |
     		   ClassNotFoundException e) {
 			throw new IllegalStateException(
-				"No se ha podido instanciar la conexion '" + DEFAULT_PROVIDER_CLASSNAME + "': " + e, e //$NON-NLS-1$ //$NON-NLS-2$
+				"No se ha podido instanciar la conexion " + DEFAULT_PROVIDER_CLASSNAME, e //$NON-NLS-1$
 			);
 		}
     }
