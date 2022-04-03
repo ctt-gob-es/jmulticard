@@ -3,6 +3,7 @@ package test.es.gob.jmulticard.crypto;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.security.KeyPair;
 import java.security.Security;
 
 import javax.crypto.Cipher;
@@ -10,6 +11,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.spongycastle.crypto.BlockCipher;
@@ -22,15 +24,18 @@ import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
+import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 
+
 /** Pruebas de operaciones criptogr&aacute;ficas con JseCryptoHelper.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestJseCryptoHelper {
+public final class TestCryptoHelper {
 
 	private static final CryptoHelper CH = new JseCryptoHelper();
 
@@ -232,6 +237,40 @@ public final class TestJseCryptoHelper {
 		bCipher.init(true, encKey);
 		bCipher.processBlock(aesKey, 0, s, 0);
 		System.out.println(HexUtils.hexify(s, false));
+	}
+
+	/** Prueba de la generaci&oacute;n de un par de claves de curva el&iacute;ptica.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testEcKeyPairGeneration() throws Exception {
+		final KeyPair kp = CH.generateEcKeyPair(EcCurve.BRAINPOOL_P256_R1);
+		System.out.println(kp);
+	}
+
+	/** Prueba de cifrado DES ECB sin relleno.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void testDes() throws Exception {
+		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
+		final byte[] indata = "87654321".getBytes(); //$NON-NLS-1$
+
+		final byte[] c1 = new JseCryptoHelper().desEncrypt(indata, key);
+		final byte[] c2 = new BcCryptoHelper().desEncrypt(indata, key);
+
+		System.out.println(HexUtils.hexify(c1, false));
+		System.out.println(HexUtils.hexify(c2, false));
+
+		final byte[] c3 = new JseCryptoHelper().desDecrypt(c2, key);
+		final byte[] c4 = new BcCryptoHelper().desDecrypt(c1, key);
+
+		System.out.println(new String(c3));
+		System.out.println(new String(c4));
+
+		Assert.assertTrue(HexUtils.arrayEquals(c3, c4));
+		Assert.assertTrue(HexUtils.arrayEquals(indata, c4));
 	}
 
 }

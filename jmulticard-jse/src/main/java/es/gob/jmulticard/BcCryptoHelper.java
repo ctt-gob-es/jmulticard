@@ -58,6 +58,7 @@ import org.spongycastle.crypto.digests.SHA256Digest;
 import org.spongycastle.crypto.digests.SHA384Digest;
 import org.spongycastle.crypto.digests.SHA512Digest;
 import org.spongycastle.crypto.engines.AESEngine;
+import org.spongycastle.crypto.engines.DESEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.BlockCipherPadding;
@@ -209,37 +210,33 @@ public final class BcCryptoHelper extends CryptoHelper {
 		);
     }
 
-    private static byte[] doDes(final byte[] data, final byte[] key, final int direction) throws IOException {
-        if (key == null) {
-            throw new IllegalArgumentException("La clave DES no puede ser nula"); //$NON-NLS-1$
-        }
-        if (key.length != 8) {
-            throw new IllegalArgumentException(
-               "La clave DES debe ser de 8 octetos, pero la proporcionada es de " + key.length //$NON-NLS-1$
-            );
-        }
-        try {
-            final Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding"); //$NON-NLS-1$
-            cipher.init(direction, new SecretKeySpec(key, "DES")); //$NON-NLS-1$
-            return cipher.doFinal(data);
-        }
-        catch (final NoSuchAlgorithmException  |
-        		     NoSuchPaddingException    |
-        		     InvalidKeyException       |
-        		     IllegalBlockSizeException |
-        		     BadPaddingException e) {
-            throw new IOException("Error cifrando los datos con DES", e); //$NON-NLS-1$
-        }
+    private static byte[] doDes(final byte[] data,
+    		                    final byte[] key,
+    		                    final boolean forEncryption) throws IOException {
+    	final BlockCipher engine = new DESEngine();
+    	final BufferedBlockCipher cipher = new BufferedBlockCipher(engine);
+    	cipher.init(forEncryption, new KeyParameter(key));
+    	final byte[] cipherText = new byte[cipher.getOutputSize(data.length)];
+    	final int outputLen = cipher.processBytes(data, 0, data.length, cipherText, 0);
+    	try {
+			cipher.doFinal(cipherText, outputLen);
+		}
+    	catch (final DataLengthException   |
+    			     IllegalStateException |
+    			     InvalidCipherTextException e) {
+			throw new IOException("Error el el cifrado/descifrado DES", e); //$NON-NLS-1$
+		}
+    	return cipherText;
     }
 
     @Override
     public byte[] desEncrypt(final byte[] data, final byte[] key) throws IOException {
-        return doDes(data, key, Cipher.ENCRYPT_MODE);
+    	return doDes(data, key, true);
     }
 
     @Override
     public byte[] desDecrypt(final byte[] data, final byte[] key) throws IOException {
-        return doDes(data, key, Cipher.DECRYPT_MODE);
+    	return doDes(data, key, false);
     }
 
     private static byte[] doRsa(final byte[] cipheredData,
@@ -708,14 +705,25 @@ public final class BcCryptoHelper extends CryptoHelper {
 		final BigInteger p = field.getP();
 		final BigInteger order = params.getOrder();
 		final int cofactor = params.getCofactor();
-		final ECPoint ephemeralGenerator = add(multiply(nonceS, generator, params), sharedSecretPointH, params);
+		final ECPoint ephemeralGenerator = add(
+			multiply(nonceS, generator, params),
+			sharedSecretPointH,
+			params
+		);
 		if (!toSpongyCastleECPoint(ephemeralGenerator, params).isValid()) {
 			LOGGER.warning("Se ha generado un punto invalido"); //$NON-NLS-1$
 		}
-		return new ECParameterSpec(new EllipticCurve(new ECFieldFp(p), a, b), ephemeralGenerator, order, cofactor);
+		return new ECParameterSpec(
+			new EllipticCurve(new ECFieldFp(p), a, b),
+			ephemeralGenerator,
+			order,
+			cofactor
+		);
 	}
 
-	private static ECPoint multiply(final BigInteger s, final ECPoint point, final ECParameterSpec params) {
+	private static ECPoint multiply(final BigInteger s,
+			                        final ECPoint point,
+			                        final ECParameterSpec params) {
 		final org.spongycastle.math.ec.ECPoint bcPoint = toSpongyCastleECPoint(point, params);
 		final org.spongycastle.math.ec.ECPoint bcProd = bcPoint.multiply(s);
 		return fromSpongyCastleECPoint(bcProd);
