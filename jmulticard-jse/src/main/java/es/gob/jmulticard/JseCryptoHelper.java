@@ -186,8 +186,8 @@ public final class JseCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] desedeEncrypt(final byte[] data, final byte[] key) throws IOException {
-        return doDesede(data, key, Cipher.ENCRYPT_MODE);
+    public byte[] desedeEncrypt(final byte[] data, final byte[] rawKey) throws IOException {
+        return doDesede(data, rawKey, Cipher.ENCRYPT_MODE);
     }
 
     @Override

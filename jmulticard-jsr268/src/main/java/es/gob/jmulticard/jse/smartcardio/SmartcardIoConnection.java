@@ -73,7 +73,7 @@ public final class SmartcardIoConnection extends ApduConnectionIso7816 {
 	/** Tama&ntilde;o m&aacute;ximo de las APDU.
 	 * Por encima de este tama&ntilde;o, se hace autom&aacute;ticamente una envoltura en
 	 * varias APDU. */
-	private static final int MAX_APDU_SIZE = 0xF0;
+	private static final int MAX_APDU_SIZE = 0xFF;
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
      * con la tarjeta. */

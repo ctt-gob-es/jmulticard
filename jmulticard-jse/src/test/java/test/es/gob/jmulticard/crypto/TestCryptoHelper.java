@@ -4,9 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.Security;
+import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,7 +25,9 @@ import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
+import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
 
 import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
@@ -255,7 +260,7 @@ public final class TestCryptoHelper {
 	@Test
 	public void testDes() throws Exception {
 		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
-		final byte[] indata = "87654321".getBytes(); //$NON-NLS-1$
+		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
 		final byte[] c1 = new JseCryptoHelper().desEncrypt(indata, key);
 		final byte[] c2 = new BcCryptoHelper().desEncrypt(indata, key);
@@ -271,6 +276,56 @@ public final class TestCryptoHelper {
 
 		Assert.assertTrue(HexUtils.arrayEquals(c3, c4));
 		Assert.assertTrue(HexUtils.arrayEquals(indata, c4));
+	}
+
+	/** Prueba de cifrado 3DES CBC sin relleno.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void testDesede() throws Exception {
+		final byte[] key = "12345678abcdefgh".getBytes(); //$NON-NLS-1$
+		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
+
+		final byte[] c1 = new JseCryptoHelper().desedeEncrypt(indata, key);
+		final byte[] c2 = new BcCryptoHelper().desedeEncrypt(indata, key);
+
+		System.out.println(HexUtils.hexify(c1, false));
+		System.out.println(HexUtils.hexify(c2, false));
+
+		final byte[] c3 = new JseCryptoHelper().desedeDecrypt(c2, key);
+		final byte[] c4 = new BcCryptoHelper().desedeDecrypt(c1, key);
+
+		System.out.println(new String(c3));
+		System.out.println(new String(c4));
+
+//		Assert.assertTrue(HexUtils.arrayEquals(c3, c4));
+//		Assert.assertTrue(HexUtils.arrayEquals(indata, c4));
+	}
+
+	/** Main para pruebas.
+	 * @param args No se usa.
+	 * @throws Exception En cualquier error. */
+	public static void main(final String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+
+		final KeyPairGenerator kpg = new KeyPairGeneratorSpi.ECDH();
+		final AlgorithmParameterSpec parameterSpec = new ECNamedCurveGenParameterSpec(
+			EcCurve.BRAINPOOL_P256_R1.toString()
+		);
+		kpg.initialize(parameterSpec);
+		final KeyPair kp = kpg.generateKeyPair();
+
+		//System.out.println(kp);
+
+//		final Cipher cipher = Cipher.getInstance("DESede/CBC/NoPadding", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
+//		System.out.println(cipher.getClass().getName());
+//		final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
+//		System.out.println(dec.getClass().getName());
+//		System.out.println(dec.getProvider());
+
+		final KeyAgreement ka = KeyAgreement.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME);
+		System.out.println(ka.getClass().getName());
+
 	}
 
 }

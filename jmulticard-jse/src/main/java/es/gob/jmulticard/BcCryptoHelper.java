@@ -22,7 +22,6 @@ import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
-import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
@@ -68,9 +67,11 @@ import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
 import org.spongycastle.crypto.prng.DigestRandomGenerator;
 import org.spongycastle.crypto.prng.RandomGenerator;
+import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.ECPointUtil;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
 import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
@@ -151,7 +152,9 @@ public final class BcCryptoHelper extends CryptoHelper {
      * @param direction Si se debe cifrar o descifrar.
      * @return Datos cifrados o descifrados.
      * @throws IOException Si ocurre cualquier error durante el proceso. */
-    private static byte[] doDesede(final byte[] data, final byte[] key, final int direction) throws IOException {
+    private static byte[] doDesede(final byte[] data,
+    		                       final byte[] key,
+    		                       final int direction) throws IOException {
         final byte[] ivBytes = new byte[8];
         for (int i = 0; i < 8; i++) {
             ivBytes[i] = 0x00;
@@ -178,18 +181,20 @@ public final class BcCryptoHelper extends CryptoHelper {
             for(int i=0;i<data.length;i++) {
                 data[i] = '\0';
             }
-            throw new IOException("Error encriptando datos", e); //$NON-NLS-1$
+            throw new IOException(
+        		"Error encriptando/desencriptando datos con 3DES", e //$NON-NLS-1$
+    		);
         }
     }
 
     @Override
-    public byte[] desedeEncrypt(final byte[] data, final byte[] key) throws IOException {
-        return doDesede(data, key, Cipher.ENCRYPT_MODE);
+    public byte[] desedeEncrypt(final byte[] data, final byte[] rawKey) throws IOException {
+        return doDesede(data, rawKey, Cipher.ENCRYPT_MODE);
     }
 
     @Override
-    public byte[] desedeDecrypt(final byte[] data, final byte[] key) throws IOException {
-        return doDesede(data, key, Cipher.DECRYPT_MODE);
+    public byte[] desedeDecrypt(final byte[] data, final byte[] rawKey) throws IOException {
+        return doDesede(data, rawKey, Cipher.DECRYPT_MODE);
     }
 
     private static byte[] prepareDesedeKey(final byte[] key) {
@@ -253,7 +258,7 @@ public final class BcCryptoHelper extends CryptoHelper {
         		     IllegalBlockSizeException |
         		     BadPaddingException e) {
             throw new IOException(
-        		"Error cifrando / descifrando los datos mediante la clave RSA", e //$NON-NLS-1$
+        		"Error cifrando / descifrando datos mediante RSA", e //$NON-NLS-1$
     		);
         }
     }
@@ -280,7 +285,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	 * @param key Clave AES.
 	 * @param z Bloque a crifrar.
 	 * @return Bloque cifrado. */
-	private static byte[] encryptBlock(final byte[] key, final byte[] z) {
+	private static byte[] aesEncryptSingleBlock(final byte[] key, final byte[] z) {
 		final KeyParameter encKey = new KeyParameter(key);
 		final BlockCipher cipher = new AESEngine();
 		cipher.init(true, encKey);
@@ -289,88 +294,14 @@ public final class BcCryptoHelper extends CryptoHelper {
 		return s;
 	}
 
-    private static byte[] bcAesEncrypt(final byte[] data,
-                                       final byte[] iv,
-                                       final byte[] aesKey,
-                                       final BlockCipherPadding padding) throws DataLengthException,
-                                                                                IllegalStateException,
-                                                                                InvalidCipherTextException,
-                                                                                IOException {
-    	final BlockCipher engine = new AESEngine();
-
-		// Vector de inicializacion
-		final byte[] ivector;
-		if (iv == null) {
-			ivector = null;
-		}
-		else if (iv.length == 0) {
-			LOGGER.warning("Se usara un vector de inicializacion AES vacio"); //$NON-NLS-1$
-			ivector = new byte[engine.getBlockSize()];
-		}
-		else {
-			ivector = iv;
-		}
-
-		int noBytesRead = 0; // Numero de octetos leidos de la entrada
-		int noBytesProcessed = 0; // Numero de octetos procesados
-
-		// AES block cipher en modo CBC
-		final BufferedBlockCipher encryptCipher =
-			padding != null ?
-				// Con relleno
-				new PaddedBufferedBlockCipher(
-					new CBCBlockCipher(
-						new AESEngine()
-					),
-					padding) :
-						// Sin relleno
-						new BufferedBlockCipher(
-							new CBCBlockCipher(
-								engine
-							)
-						);
-
-		// Creamos los parametros de cifrado con el vector de inicializacion (iv)
-		final ParametersWithIV parameterIV = new ParametersWithIV(
-			new KeyParameter(aesKey),
-			ivector
-		);
-		// Inicializamos
-		encryptCipher.init(true, parameterIV);
-
-		// Buffers para mover octetos de un flujo a otro
-		final byte[] buf = new byte[16]; // Buffer de entrada
-		final byte[] obuf = new byte[512]; // Buffer de salida
-
-		try (
-			final InputStream bin = new ByteArrayInputStream(data);
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
-		) {
-			while ((noBytesRead = bin.read(buf)) >= 0) {
-				noBytesProcessed = encryptCipher.processBytes(
-					buf,
-					0,
-					noBytesRead,
-					obuf,
-					0
-				);
-				bout.write(obuf, 0, noBytesProcessed);
-			}
-
-			noBytesProcessed = encryptCipher.doFinal(obuf, 0);
-			bout.write(obuf, 0, noBytesProcessed);
-			bout.flush();
-			return bout.toByteArray();
-		}
-    }
-
-    private static byte[] bcAesDecrypt(final byte[] data,
-    		                           final byte[] iv,
-    		                           final byte[] key,
-    		                           final BlockCipherPadding padding) throws IOException,
-                                                                                DataLengthException,
-                                                                                IllegalStateException,
-                                                                                InvalidCipherTextException {
+    private static byte[] doAes(final byte[] data,
+    		                    final byte[] iv,
+    		                    final byte[] aesKey,
+    		                    final BlockCipherPadding padding,
+    		                    final boolean forEncryption) throws IOException,
+                                                                    DataLengthException,
+                                                                    IllegalStateException,
+                                                                    InvalidCipherTextException {
 		final BlockCipher engine = new AESEngine();
 
 		// Vector de inicializacion
@@ -386,9 +317,9 @@ public final class BcCryptoHelper extends CryptoHelper {
 			ivector = iv;
 		}
 
-		// Creamos los parametros de descifrado con el vector de inicializacion (iv)
+		// Creamos los parametros de cifrado con el vector de inicializacion (iv)
 		final ParametersWithIV parameterIV = new ParametersWithIV(
-			new KeyParameter(key),
+			new KeyParameter(aesKey),
 			ivector
 		);
 
@@ -396,7 +327,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		// AES block cipher en modo CBC
-		final BufferedBlockCipher decryptCipher =
+		final BufferedBlockCipher aesCipher =
 			padding != null ?
 				// Con relleno
 				new PaddedBufferedBlockCipher(
@@ -412,7 +343,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 						);
 
 		// Inicializamos
-		decryptCipher.init(false, parameterIV);
+		aesCipher.init(forEncryption, parameterIV);
 
 		// Buffers para mover octetos de un flujo a otro
 		final byte[] buf = new byte[16]; // Buffer de entrada
@@ -423,7 +354,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
 		) {
 			while ((noBytesRead = bin.read(buf)) >= 0) {
-				noBytesProcessed = decryptCipher.processBytes(
+				noBytesProcessed = aesCipher.processBytes(
 					buf,
 					0,
 					noBytesRead,
@@ -433,7 +364,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 				bout.write(obuf, 0, noBytesProcessed);
 			}
 
-			noBytesProcessed = decryptCipher.doFinal(obuf, 0);
+			noBytesProcessed = aesCipher.doFinal(obuf, 0);
 			bout.write(obuf, 0, noBytesProcessed);
 			bout.flush();
 
@@ -471,7 +402,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 				);
 		}
 		try {
-			return bcAesDecrypt(data, iv, key, bcPadding);
+			return doAes(data, iv, key, bcPadding, false);
 		}
 		catch (final DataLengthException   |
 				     IllegalStateException |
@@ -502,7 +433,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 		// Si es un cifrado ECB sin relleno y los datos son exactamente un bloque,
 		// hacemos la operacion directamente
 		if (BlockMode.ECB.equals(blockMode) && Padding.NOPADDING.equals(padding) && data.length == 16) {
-			return encryptBlock(key, data);
+			return aesEncryptSingleBlock(key, data);
 		}
 
 		final BlockCipherPadding bcPadding;
@@ -519,11 +450,12 @@ public final class BcCryptoHelper extends CryptoHelper {
 				);
 		}
 		try {
-			return bcAesEncrypt(
+			return doAes(
 				data,
 				iv,
 				key,
-				bcPadding
+				bcPadding,
+				true
 			);
 		}
 		catch (final DataLengthException        |
@@ -539,24 +471,11 @@ public final class BcCryptoHelper extends CryptoHelper {
 	@Override
 	public KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                 InvalidAlgorithmParameterException {
-		KeyPairGenerator kpg;
-		try {
-			kpg = KeyPairGenerator.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
-		}
-		catch (final NoSuchProviderException e) {
-			LOGGER.warning(
-				"No se ha podido obtener un generador de pares de claves de curva eliptica con BouncyCastle, se usara el generador por defecto: " + e //$NON-NLS-1$
-			);
-			kpg = KeyPairGenerator.getInstance(ECDH);
-		}
-
-		LOGGER.info(
-			"Seleccionado el siguiente generador de claves de curva eliptica: " + kpg.getClass().getName() //$NON-NLS-1$
+		final KeyPairGenerator kpg = new KeyPairGeneratorSpi.ECDH();
+		final AlgorithmParameterSpec parameterSpec = new ECNamedCurveGenParameterSpec(
+			curveName.toString()
 		);
-
-		final AlgorithmParameterSpec parameterSpec = new ECGenParameterSpec(curveName.toString());
 		kpg.initialize(parameterSpec);
-
 		return kpg.generateKeyPair();
 	}
 
@@ -578,15 +497,14 @@ public final class BcCryptoHelper extends CryptoHelper {
 			             final EcCurve curveName) throws NoSuchAlgorithmException,
 			                                             InvalidKeyException,
 			                                             InvalidKeySpecException {
-		KeyAgreement ka;
+		final KeyAgreement ka;
 		try {
 			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
 		catch (final NoSuchProviderException e) {
-			LOGGER.warning(
-				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
+			throw new NoSuchAlgorithmException(
+				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle", e //$NON-NLS-1$
 			);
-			ka = KeyAgreement.getInstance(ECDH);
 		}
 		ka.init(privateKey);
 		ka.doPhase(loadEcPublicKey(publicKey, curveName), true);
@@ -614,7 +532,9 @@ public final class BcCryptoHelper extends CryptoHelper {
 	}
 
 	@Override
-	public AlgorithmParameterSpec getEcPoint(final byte[] nonceS, final byte[] sharedSecretH, final EcCurve curveName) {
+	public AlgorithmParameterSpec getEcPoint(final byte[] nonceS,
+			                                 final byte[] sharedSecretH,
+			                                 final EcCurve curveName) {
 		final AlgorithmParameterSpec ecParams = ECNamedCurveTable.getParameterSpec(curveName.toString());
 		final BigInteger affineX = os2i(sharedSecretH);
 		final BigInteger affineY = computeAffineY(affineX, (ECParameterSpec) ecParams);
@@ -747,14 +667,16 @@ public final class BcCryptoHelper extends CryptoHelper {
 		return fromSpongyCastleECPoint(bcSum);
 	}
 
-	private static org.spongycastle.math.ec.ECPoint toSpongyCastleECPoint(final ECPoint point, final ECParameterSpec params) {
+	private static org.spongycastle.math.ec.ECPoint toSpongyCastleECPoint(final ECPoint point,
+			                                                              final ECParameterSpec params) {
 		final org.spongycastle.math.ec.ECCurve bcCurve = toSpongyCastleECCurve(params);
 		return bcCurve.createPoint(point.getAffineX(), point.getAffineY());
 	}
 
 	@Override
-	public X509Certificate[] validateCmsSignature(final byte[] signedDataBytes) throws SignatureException, IOException, CertificateException {
-
+	public X509Certificate[] validateCmsSignature(final byte[] signedDataBytes) throws SignatureException,
+	                                                                                   IOException,
+	                                                                                   CertificateException {
 		final CMSSignedData cmsSignedData;
 		try {
 			cmsSignedData = new CMSSignedData(signedDataBytes);
