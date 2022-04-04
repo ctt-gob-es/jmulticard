@@ -84,7 +84,10 @@ import org.spongycastle.util.Selector;
 import org.spongycastle.util.Store;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante BouncyCastle.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+ * Contiene c&oacute;digo basado en el trabajo del <i>JMRTD team</i>, bajo licencia
+ * GNU Lesser General Public License (LGPL) versi&oacute;n 2.1 o posterior.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
+ * @author The JMRTD team. */
 public final class BcCryptoHelper extends CryptoHelper {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
