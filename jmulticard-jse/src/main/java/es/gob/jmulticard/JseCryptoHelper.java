@@ -57,6 +57,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
@@ -250,11 +251,11 @@ public final class JseCryptoHelper extends CryptoHelper {
     }
 
     private static byte[] doRsa(final byte[] cipheredData,
-    		                    final Key key,
+    		                    final RSAKey key,
     		                    final int direction) throws IOException {
         try {
             final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING"); //$NON-NLS-1$
-            dec.init(direction, key);
+            dec.init(direction, (Key) key);
             return dec.doFinal(cipheredData);
         }
         catch (final NoSuchAlgorithmException  |
@@ -269,12 +270,12 @@ public final class JseCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException {
+    public byte[] rsaDecrypt(final byte[] cipheredData, final RSAKey key) throws IOException {
         return doRsa(cipheredData, key, Cipher.DECRYPT_MODE);
     }
 
     @Override
-    public byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException {
+    public byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException {
         return doRsa(data, key, Cipher.ENCRYPT_MODE);
     }
 

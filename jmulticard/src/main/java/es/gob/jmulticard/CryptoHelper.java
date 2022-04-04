@@ -50,6 +50,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Logger;
@@ -263,7 +264,7 @@ public abstract class CryptoHelper {
      * @return Datos descifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     desencriptado. */
-    public abstract byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException;
+    public abstract byte[] rsaDecrypt(final byte[] cipheredData, final RSAKey key) throws IOException;
 
     /** Encripta datos mediante RSA.
      * @param data Datos a encriptar.
@@ -271,7 +272,7 @@ public abstract class CryptoHelper {
      * @return Datos encriptados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     encriptado. */
-    public abstract byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException;
+    public abstract byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException;
 
     /** Genera contenido aleatorio en un array de bytes.
      * @param numBytes N&uacute;mero de bytes aleatorios que generar.

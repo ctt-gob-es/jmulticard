@@ -19,6 +19,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
@@ -185,7 +186,7 @@ public final class BcCryptoHelper extends CryptoHelper {
                 data[i] = '\0';
             }
             throw new IOException(
-        		"Error encriptando/desencriptando datos con 3DES", e //$NON-NLS-1$
+        		"Error encriptando / desencriptando datos con 3DES", e //$NON-NLS-1$
     		);
         }
     }
@@ -232,7 +233,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     	catch (final DataLengthException   |
     			     IllegalStateException |
     			     InvalidCipherTextException e) {
-			throw new IOException("Error el el cifrado/descifrado DES", e); //$NON-NLS-1$
+			throw new IOException("Error el el cifrado / descifrado DES", e); //$NON-NLS-1$
 		}
     	return cipherText;
     }
@@ -248,11 +249,11 @@ public final class BcCryptoHelper extends CryptoHelper {
     }
 
     private static byte[] doRsa(final byte[] cipheredData,
-    		                    final Key key,
+    		                    final RSAKey key,
     		                    final int direction) throws IOException {
         try {
             final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING"); //$NON-NLS-1$
-            dec.init(direction, key);
+            dec.init(direction, (Key) key);
             return dec.doFinal(cipheredData);
         }
         catch (final NoSuchAlgorithmException  |
@@ -267,12 +268,12 @@ public final class BcCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] rsaDecrypt(final byte[] cipheredData, final Key key) throws IOException {
+    public byte[] rsaDecrypt(final byte[] cipheredData, final RSAKey key) throws IOException {
         return doRsa(cipheredData, key, Cipher.DECRYPT_MODE);
     }
 
     @Override
-    public byte[] rsaEncrypt(final byte[] data, final Key key) throws IOException {
+    public byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException {
         return doRsa(data, key, Cipher.ENCRYPT_MODE);
     }
 

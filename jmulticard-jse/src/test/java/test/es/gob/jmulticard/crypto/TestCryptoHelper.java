@@ -2,14 +2,24 @@ package test.es.gob.jmulticard.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,14 +27,20 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.spongycastle.crypto.AsymmetricBlockCipher;
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.BufferedBlockCipher;
+import org.spongycastle.crypto.InvalidCipherTextException;
+import org.spongycastle.crypto.encodings.PKCS1Encoding;
 import org.spongycastle.crypto.engines.AESEngine;
+import org.spongycastle.crypto.engines.RSAEngine;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.spongycastle.crypto.params.AsymmetricKeyParameter;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
+import org.spongycastle.crypto.params.RSAKeyParameters;
 import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
@@ -326,6 +342,47 @@ public final class TestCryptoHelper {
 		final KeyAgreement ka = KeyAgreement.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME);
 		System.out.println(ka.getClass().getName());
 
+	}
+
+	private static byte[] doRsaBc(final byte[] data, final RSAKey key) throws IOException {
+    	final boolean forEncryption = true;
+
+    	final boolean isPrivateKey = key instanceof RSAPrivateKey;
+
+    	final AsymmetricKeyParameter akp = new RSAKeyParameters(
+			isPrivateKey,
+			key.getModulus(),
+			isPrivateKey ?
+				((RSAPrivateKey)key).getPrivateExponent() :
+					((RSAPublicKey)key).getPublicExponent()
+		);
+    	final AsymmetricBlockCipher cipher = new PKCS1Encoding(new RSAEngine());
+    	cipher.init(forEncryption, akp);
+
+    	try {
+			return cipher.processBlock(data, 0, data.length);
+		}
+    	catch (final InvalidCipherTextException e) {
+			throw new IOException("Error en el cifrado/descifrado RSA", e); //$NON-NLS-1$
+		}
+	}
+
+	private static byte[] doRsaJca(final byte[] data, final RSAKey key) throws IOException {
+    	final int direction = Cipher.ENCRYPT_MODE;
+        try {
+            final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING"); //$NON-NLS-1$
+            dec.init(direction, (Key) key);
+            return dec.doFinal(data);
+        }
+        catch (final NoSuchAlgorithmException  |
+        		     NoSuchPaddingException    |
+        		     InvalidKeyException       |
+        		     IllegalBlockSizeException |
+        		     BadPaddingException e) {
+            throw new IOException(
+        		"Error cifrando / descifrando datos mediante RSA", e //$NON-NLS-1$
+    		);
+        }
 	}
 
 }

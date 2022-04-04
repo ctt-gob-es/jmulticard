@@ -132,6 +132,11 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
 
 		private static final long serialVersionUID = 7871208407563977221L;
 
+        @Override
+		public String toString() {
+        	return "Clave privada RSA del certificado de Terminal para tarjetas FNMT TIF"; //$NON-NLS-1$
+        }
+
 		private final BigInteger ifdModulus = new BigInteger(1, new byte[] {
             (byte) 0xD6, (byte) 0x31, (byte) 0xD3, (byte) 0xDD, (byte) 0x61, (byte) 0x97, (byte) 0x51, (byte) 0x16, (byte) 0x0B, (byte) 0x87,
             (byte) 0xBA, (byte) 0x04, (byte) 0xA6, (byte) 0xD2, (byte) 0xD0, (byte) 0xE3, (byte) 0x15, (byte) 0x2E, (byte) 0xBE, (byte) 0x40,
