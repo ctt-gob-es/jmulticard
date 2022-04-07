@@ -20,7 +20,8 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class TestCeres {
 
-	private static final char[] PIN = "eJh3Rhbf".toCharArray(); //$NON-NLS-1$
+//	private static final char[] PIN = "eJh3Rhbf".toCharArray(); //$NON-NLS-1$
+	private static final char[] PIN = "2gh4GRlJ".toCharArray(); //$NON-NLS-1$
 
 	/** Main.
 	 * @param args No se usa.
@@ -38,6 +39,12 @@ public final class TestCeres {
 		System.out.println(
 			HexUtils.hexify(
 				ceres.sign("hola".getBytes(), "SHA1withRSA", pkr),  //$NON-NLS-1$//$NON-NLS-2$
+				true
+			)
+		);
+		System.out.println(
+			HexUtils.hexify(
+				ceres.sign("manola".getBytes(), "SHA256withRSA", pkr),  //$NON-NLS-1$//$NON-NLS-2$
 				true
 			)
 		);

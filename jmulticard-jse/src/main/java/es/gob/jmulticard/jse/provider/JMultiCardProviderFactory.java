@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.jse.provider.ceres.Ceres430Provider;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
@@ -211,17 +212,26 @@ public final class JMultiCardProviderFactory {
 			);
 			return null;
 		}
-		byte[] atr = null;
+
 		for (final long terminal : terminals) {
 			conn.setTerminal((int) terminal);
 			try {
-				atr = conn.reset();
+				final byte[] atr = conn.reset();
+				final Provider provider = getProvider(atr);
+				if (provider != null) {
+					return provider;
+				}
+			}
+			catch (final CardNotPresentException e) {
+				LOGGER.info("No hay tarjeta insertada en el lector " + terminal + ": " + e); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
 			}
 			catch(final Exception e) {
+				LOGGER.warning("Error reiniciando el lector " + terminal + ": " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
 		}
-		return getProvider(atr);
+		return null;
 	}
 
 	/** Obtiene el proveedor (con la conexi&oacute;n por defecto) correspondiente
