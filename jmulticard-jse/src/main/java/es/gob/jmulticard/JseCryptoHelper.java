@@ -107,8 +107,8 @@ import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.spongycastle.util.Selector;
 import org.spongycastle.util.Store;
 
-/** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante proveedores de seguridad JSE
- * (6 y superiores).
+/** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante
+ * proveedores de seguridad JSE (7 y superiores).
  * Contiene c&oacute;digo basado en el trabajo del <i>JMRTD team</i>, bajo licencia
  * GNU Lesser General Public License (LGPL) versi&oacute;n 2.1 o posterior.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
@@ -168,12 +168,7 @@ public final class JseCryptoHelper extends CryptoHelper {
         try {
             final Cipher cipher = Cipher.getInstance("DESede/CBC/NoPadding"); //$NON-NLS-1$
             cipher.init(direction, k, new IvParameterSpec(ivBytes));
-            final byte[] cipheredData = cipher.doFinal(data);
-            // Machacamos los datos para evitar que queden en memoria
-            for(int i=0;i<data.length;i++) {
-                data[i] = '\0';
-            }
-            return cipheredData;
+            return cipher.doFinal(data);
         }
         catch (final NoSuchAlgorithmException           |
         		     NoSuchPaddingException             |
@@ -181,11 +176,13 @@ public final class JseCryptoHelper extends CryptoHelper {
         		     InvalidAlgorithmParameterException |
         		     IllegalBlockSizeException          |
         		     BadPaddingException e) {
+            throw new IOException("Error encriptando datos", e); //$NON-NLS-1$
+        }
+        finally {
             // Machacamos los datos para evitar que queden en memoria
             for(int i=0;i<data.length;i++) {
                 data[i] = '\0';
             }
-            throw new IOException("Error encriptando datos", e); //$NON-NLS-1$
         }
     }
 

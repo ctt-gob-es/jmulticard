@@ -174,12 +174,7 @@ public final class BcCryptoHelper extends CryptoHelper {
         try {
             final Cipher cipher = Cipher.getInstance("DESede/CBC/NoPadding"); //$NON-NLS-1$
             cipher.init(direction, k, new IvParameterSpec(ivBytes));
-            final byte[] cipheredData = cipher.doFinal(data);
-            // Machacamos los datos para evitar que queden en memoria
-            for(int i=0;i<data.length;i++) {
-                data[i] = '\0';
-            }
-            return cipheredData;
+            return cipher.doFinal(data);
         }
         catch (final NoSuchAlgorithmException           |
         		     NoSuchPaddingException             |
@@ -187,13 +182,15 @@ public final class BcCryptoHelper extends CryptoHelper {
         		     InvalidAlgorithmParameterException |
         		     IllegalBlockSizeException          |
         		     BadPaddingException e) {
+            throw new IOException(
+        		"Error encriptando / desencriptando datos con 3DES", e //$NON-NLS-1$
+    		);
+        }
+        finally {
             // Machacamos los datos para evitar que queden en memoria
             for(int i=0;i<data.length;i++) {
                 data[i] = '\0';
             }
-            throw new IOException(
-        		"Error encriptando / desencriptando datos con 3DES", e //$NON-NLS-1$
-    		);
         }
     }
 

@@ -58,12 +58,16 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Ceres430Provider extends Provider {
 
+	/** Firma RSA con huellas SHA-512. */
     private static final String SHA512WITH_RSA = "SHA512withRSA"; //$NON-NLS-1$
 
+    /** Firma RSA con huellas SHA-384. */
     private static final String SHA384WITH_RSA = "SHA384withRSA"; //$NON-NLS-1$
 
+    /** Firma RSA con huellas SHA-256. */
     private static final String SHA256WITH_RSA = "SHA256withRSA"; //$NON-NLS-1$
 
+    /** Firma RSA con huellas SHA-1. */
     private static final String SHA1WITH_RSA = "SHA1withRSA"; //$NON-NLS-1$
 
     private static final String CERES_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$

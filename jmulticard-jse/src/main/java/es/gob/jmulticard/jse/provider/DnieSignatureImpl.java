@@ -73,6 +73,7 @@ abstract class DnieSignatureImpl extends SignatureSpi {
 
     private DniePrivateKey privateKey = null;
 
+    /** Algoritmo de firma. */
     private final String signatureAlgo;
 
     DnieSignatureImpl(final String signatureAlgorithm) {

@@ -60,7 +60,7 @@ public final class TestCryptoHelper {
 
 	private static final CryptoHelper CH = new JseCryptoHelper();
 
-	/** Pruebas de cifrado AES.
+	/** Pruebas de descifrado AES.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
