@@ -52,7 +52,6 @@ public final class RdnSequence extends SequenceOf {
 		super(RelativeDistinguishedName.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		final StringBuffer sb = new StringBuffer();

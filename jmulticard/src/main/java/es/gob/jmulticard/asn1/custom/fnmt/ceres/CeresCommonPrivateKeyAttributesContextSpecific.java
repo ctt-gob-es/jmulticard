@@ -55,7 +55,6 @@ public final class CeresCommonPrivateKeyAttributesContextSpecific extends Contex
 		super(Null.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
@@ -66,7 +65,6 @@ public final class CeresCommonPrivateKeyAttributesContextSpecific extends Contex
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return "Contexto especifico vacio"; //$NON-NLS-1$

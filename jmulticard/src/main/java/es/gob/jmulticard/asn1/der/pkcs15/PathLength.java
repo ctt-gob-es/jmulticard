@@ -68,7 +68,6 @@ public final class PathLength extends ContextSpecific {
 		this.value = Integer.valueOf(String.valueOf(HexUtils.getUnsignedInt(new Tlv(getRawDerValue()).getValue(), 0)));
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {

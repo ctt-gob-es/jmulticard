@@ -148,7 +148,6 @@ public final class X509CertificateAttributes extends Sequence {
     	return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return "Atributos del certificado\n" + //$NON-NLS-1$

@@ -94,7 +94,6 @@ public abstract class ContextSpecific extends DecoderObject {
         throw new UnsupportedOperationException("No hay tipo por defecto"); //$NON-NLS-1$
     }
 
-    /** {@inheritDoc} */
     @Override
     public void checkTag(final byte tag) throws Asn1Exception {
         if ((tag & 0x0c0) != 0x080) {

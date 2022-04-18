@@ -134,31 +134,26 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
             (byte) 0xC6, (byte) 0x3B, (byte) 0x35, (byte) 0x8B, (byte) 0x7C, (byte) 0x11, (byte) 0x5A, (byte) 0xA1
         });
 
-        /** {@inheritDoc} */
         @Override
         public BigInteger getModulus() {
             return this.ifdModulus;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getFormat() {
             return "PKCS#8"; //$NON-NLS-1$
         }
 
-        /** {@inheritDoc} */
         @Override
         public byte[] getEncoded() {
         	throw new UnsupportedOperationException();
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getAlgorithm() {
             return "RSA"; //$NON-NLS-1$
         }
 
-        /** {@inheritDoc} */
         @Override
         public BigInteger getPrivateExponent() {
             return this.ifdPrivateExponent;

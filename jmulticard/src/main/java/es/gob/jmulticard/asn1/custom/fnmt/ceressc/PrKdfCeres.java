@@ -107,7 +107,6 @@ public final class PrKdfCeres extends PrKdf {
 		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyLength();
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String toString() {
 		final StringBuilder sb = new StringBuilder();

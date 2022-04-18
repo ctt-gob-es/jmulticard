@@ -26,13 +26,11 @@ public final class IcaoMrtdWithBac extends Dnie3 {
 		);
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String getCardName() {
         return "MRTD accedido de forma inalambrica mediante BAC"; //$NON-NLS-1$
     }
 
-	/** {@inheritDoc} */
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() {
 		throw new UnsupportedOperationException(

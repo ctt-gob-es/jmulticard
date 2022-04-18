@@ -65,7 +65,6 @@ public final class CommonPrivateKeyAttributesCeresContextSpecific extends Contex
 		super(CommonPrivateKeyAttributesEmpty.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
@@ -76,7 +75,6 @@ public final class CommonPrivateKeyAttributesCeresContextSpecific extends Contex
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return getObject().toString();

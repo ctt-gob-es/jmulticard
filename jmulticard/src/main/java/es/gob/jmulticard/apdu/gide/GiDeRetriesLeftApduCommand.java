@@ -61,7 +61,6 @@ public final class GiDeRetriesLeftApduCommand extends CommandApdu {
 		);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getData() {
         return null;

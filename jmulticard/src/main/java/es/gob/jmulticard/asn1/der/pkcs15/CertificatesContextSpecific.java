@@ -32,7 +32,6 @@ public final class CertificatesContextSpecific extends ContextSpecific {
 		);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {

@@ -64,7 +64,6 @@ public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpec
 		super(CommonPrivateKeyAttributes.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
@@ -75,7 +74,6 @@ public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpec
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return getObject().toString();

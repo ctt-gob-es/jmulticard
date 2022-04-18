@@ -55,7 +55,6 @@ public final class CeresPrivateRsaKeyAttributesContextSpecific extends ContextSp
 		super(Path.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
@@ -66,7 +65,6 @@ public final class CeresPrivateRsaKeyAttributesContextSpecific extends ContextSp
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return getObject().toString();

@@ -70,7 +70,6 @@ final class ConsolePasswordCallback extends PasswordCallback {
 	    return input.replace("<br/>", "").replace("&nbsp;", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
-	/** {@inheritDoc} */
     @Override
     public char[] getPassword() {
         Console console = System.console();

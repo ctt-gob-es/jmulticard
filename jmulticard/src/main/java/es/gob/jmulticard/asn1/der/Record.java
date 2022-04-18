@@ -124,7 +124,6 @@ public abstract class Record extends DecoderObject {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected byte getDefaultTag() {
         throw new UnsupportedOperationException("No hay tipo por defecto"); //$NON-NLS-1$

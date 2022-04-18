@@ -78,7 +78,6 @@ public class DnieNFC extends Dnie3 {
 		);
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String getCardName() {
         return "DNIe 3.0 accedido de forma inalambrica"; //$NON-NLS-1$
@@ -248,7 +247,6 @@ public class DnieNFC extends Dnie3 {
 
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
 															 PinException {

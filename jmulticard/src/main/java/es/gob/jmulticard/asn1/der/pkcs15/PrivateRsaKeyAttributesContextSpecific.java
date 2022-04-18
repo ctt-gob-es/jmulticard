@@ -62,7 +62,6 @@ public final class PrivateRsaKeyAttributesContextSpecific extends ContextSpecifi
 		super(PrivateRsaKeyAttributes.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
@@ -73,7 +72,6 @@ public final class PrivateRsaKeyAttributesContextSpecific extends ContextSpecifi
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return getObject().toString();

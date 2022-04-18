@@ -72,7 +72,6 @@ final class BerTlvIdentifier {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -87,13 +86,11 @@ final class BerTlvIdentifier {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return new BigInteger(this.value).intValue();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         if (this.value == null) {

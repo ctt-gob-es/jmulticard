@@ -43,13 +43,11 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 		);
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String getCardName() {
         return "MRTD accedido de forma inalambrica mediante PACE"; //$NON-NLS-1$
     }
 
-	/** {@inheritDoc} */
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() {
 		LOGGER.warning(
@@ -57,7 +55,6 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 		);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) {
 		LOGGER.warning(

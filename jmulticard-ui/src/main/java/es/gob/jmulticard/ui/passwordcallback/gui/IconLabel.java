@@ -60,7 +60,6 @@ final class IconLabel extends JLabel {
     /** Dimension original */
     private Dimension originalDimension;
 
-    /** {@inheritDoc} */
     @Override
     public Icon getIcon() {
         return this.icon;

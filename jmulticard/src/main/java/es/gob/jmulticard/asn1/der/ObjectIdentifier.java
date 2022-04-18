@@ -54,7 +54,6 @@ public final class ObjectIdentifier extends DecoderObject {
 
 	private byte[] rawValue = null;
 
-	/** {@inheritDoc} */
     @Override
     public void checkTag(final byte tag) throws Asn1Exception {
     	if (TAG_OBJECTID != tag && RELATIVE_OID != tag) {

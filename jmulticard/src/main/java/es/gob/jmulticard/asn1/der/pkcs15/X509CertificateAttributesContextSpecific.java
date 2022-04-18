@@ -56,7 +56,6 @@ public final class X509CertificateAttributesContextSpecific extends ContextSpeci
 		super(X509CertificateAttributes.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
@@ -67,7 +66,6 @@ public final class X509CertificateAttributesContextSpecific extends ContextSpeci
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return getObject().toString();

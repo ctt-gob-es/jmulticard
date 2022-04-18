@@ -78,7 +78,6 @@ public final class CeresCertificateObject extends CertificateObject {
     	return ((CommonCertificateAttributes)getClassAttributes()).getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return getTypeAttributes().toString() +

@@ -21,7 +21,6 @@ public final class TrustedPublicKeysContextSpecific extends ContextSpecific {
 		super(Path.class);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {

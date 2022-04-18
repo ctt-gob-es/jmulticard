@@ -66,7 +66,6 @@ public abstract class BitString extends DecoderObject {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected byte getDefaultTag() {
         return TAG_BITSTRING;

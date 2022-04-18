@@ -371,7 +371,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		}
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String getCardName() {
         return "DNIe 3.0"; //$NON-NLS-1$
@@ -579,7 +578,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
         LOGGER.info("Canal seguro de Usuario para DNIe establecido"); //$NON-NLS-1$
     }
 
-	/** {@inheritDoc} */
 	@Override
 	protected byte[] signInternal(final byte[] data,
                                   final String signAlgorithm,

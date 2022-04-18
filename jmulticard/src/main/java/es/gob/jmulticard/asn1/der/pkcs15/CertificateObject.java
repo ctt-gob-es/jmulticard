@@ -152,7 +152,6 @@ public class CertificateObject extends Pkcs15Object {
 		return getCommonObjectAttributes().getLabel();
 	}
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return getTypeAttributes().toString() +

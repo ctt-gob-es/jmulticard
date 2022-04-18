@@ -28,8 +28,8 @@ import test.es.gob.jmulticard.TestingDnieCallbackHandler;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestCipher {
 
-	private static final String CAN = "123456"; //$NON-NLS-1$
-	private static final String PIN = "pin"; //$NON-NLS-1$
+	private static final String CAN = "961984"; //$NON-NLS-1$
+	private static final String PIN = "rock2048"; //$NON-NLS-1$
 
 	/** Main para pruebas.
 	 * @param args No se usa.
@@ -147,6 +147,7 @@ public final class TestCipher {
 	/** Prueba de conformaci&oacute;n de APDU PSO Sign Hash. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testCommandAdpu() {
 		final byte[] data = new byte[256];
 		new SecureRandom().nextBytes(data);

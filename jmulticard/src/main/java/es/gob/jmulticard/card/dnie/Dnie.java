@@ -393,13 +393,11 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		);
     }
 
-    /** {@inheritDoc} */
 	@Override
     public String getCardName() {
         return "DNIe"; //$NON-NLS-1$
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] getAliases() {
     	if (this.aliases == null) {
@@ -484,7 +482,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public X509Certificate getCertificate(final String alias) throws CryptoCardException, PinException {
 
@@ -524,19 +521,16 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void verifyCaIntermediateIcc() {
         // No se comprueba
     }
 
-    /** {@inheritDoc} */
     @Override
     public void verifyIcc() {
         // No se comprueba
     }
 
-    /** {@inheritDoc} */
     @Override
     public X509Certificate getIccCert() throws IOException {
         final byte[] iccCertEncoded;
@@ -562,7 +556,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		}
     }
 
-    /** {@inheritDoc} */
     @Override
     public void verifyIfdCertificateChain(final Cwa14890PublicConstants consts) throws ApduConnectionException {
 
@@ -619,25 +612,21 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getRefIccPrivateKey(final Cwa14890PublicConstants consts) {
         return consts.getRefIccPrivateKey();
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getChrCCvIfd(final Cwa14890PublicConstants consts) {
         return consts.getChrCCvIfd();
     }
 
-    /** {@inheritDoc} */
     @Override
     public RSAPrivateKey getIfdPrivateKey(final Cwa14890PrivateConstants consts) {
         return consts.getIfdPrivateKey();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setKeysToAuthentication(final byte[] refPublicKey,
     		                            final byte[] refPrivateKey) throws ApduConnectionException {
@@ -655,7 +644,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getInternalAuthenticateMessage(final byte[] randomIfd, final byte[] chrCCvIfd) throws ApduConnectionException {
         final CommandApdu apdu = new InternalAuthenticateApduCommand((byte) 0x00, randomIfd, chrCCvIfd);
@@ -668,14 +656,12 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 		);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean externalAuthentication(final byte[] extAuthenticationData) throws ApduConnectionException {
         final CommandApdu apdu = new ExternalAuthenticateApduCommand((byte) 0x00, extAuthenticationData);
         return getConnection().transmit(apdu).isOk();
     }
 
-    /** {@inheritDoc} */
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
     	if (this.authKeyRef == null) {
@@ -696,7 +682,6 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] sign(final byte[] data,
     		           final String signAlgorithm,

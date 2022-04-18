@@ -719,7 +719,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return paddedSerial;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void close() throws ApduConnectionException {
     	if (this.openState) {
@@ -728,7 +727,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     	}
     }
 
-    /** {@inheritDoc} */
     @Override
     public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
 
@@ -784,7 +782,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 		}
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] reset() throws ApduConnectionException {
 
@@ -799,37 +796,31 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return atr;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void addCardConnectionListener(final CardConnectionListener ccl) {
         this.subConnection.addCardConnectionListener(ccl);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void removeCardConnectionListener(final CardConnectionListener ccl) {
         this.subConnection.removeCardConnectionListener(ccl);
     }
 
-    /** {@inheritDoc} */
     @Override
     public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
         return this.subConnection.getTerminals(onlyWithCardPresent);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getTerminalInfo(final int terminal) throws ApduConnectionException {
         return this.subConnection.getTerminalInfo(terminal);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setTerminal(final int t) {
         this.subConnection.setTerminal(t);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isOpen() {
         return this.openState && this.subConnection.isOpen();

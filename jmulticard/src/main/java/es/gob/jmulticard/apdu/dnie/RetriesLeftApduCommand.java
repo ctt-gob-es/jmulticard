@@ -63,7 +63,6 @@ public final class RetriesLeftApduCommand extends CommandApdu {
 		);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getData() {
         return null;

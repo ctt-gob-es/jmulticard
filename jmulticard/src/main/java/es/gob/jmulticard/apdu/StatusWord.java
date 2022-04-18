@@ -112,7 +112,6 @@ public final class StatusWord implements Serializable {
 		);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return StandardErrorCodes.getErrorDescription(this);

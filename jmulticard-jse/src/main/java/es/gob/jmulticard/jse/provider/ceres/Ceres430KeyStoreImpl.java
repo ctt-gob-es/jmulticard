@@ -90,19 +90,16 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     private Dnie cryptoCard = null;
     private List<String> aliases = null;
 
-    /** {@inheritDoc} */
     @Override
     public Enumeration<String> engineAliases() {
         return Collections.enumeration(this.aliases);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineContainsAlias(final String alias) {
         return this.aliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Certificate engineGetCertificate(final String alias) {
     	if (!engineContainsAlias(alias)) {
@@ -119,7 +116,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 		}
     }
 
-    /** {@inheritDoc} */
     @Override
     public String engineGetCertificateAlias(final Certificate cert) {
         if (!(cert instanceof X509Certificate)) {
@@ -134,7 +130,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Certificate[] engineGetCertificateChain(final String alias) {
 
@@ -145,7 +140,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	return new X509Certificate[] { (X509Certificate) engineGetCertificate(alias) };
     }
 
-    /** {@inheritDoc} */
     @Override
     public Key engineGetKey(final String alias, final char[] password) {
     	if (!engineContainsAlias(alias)) {
@@ -168,7 +162,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 		);
     }
 
-    /** {@inheritDoc} */
     @Override
     public KeyStore.Entry engineGetEntry(final String alias,
     		                             final ProtectionParameter protParam) {
@@ -201,19 +194,16 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
         return this.aliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineIsKeyEntry(final String alias) {
         return this.aliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
     	if (param != null) {
@@ -259,7 +249,6 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
-    /** {@inheritDoc} */
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException {
     	// Ponemos la conexion por defecto
@@ -286,13 +275,11 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
-    /** {@inheritDoc} */
     @Override
     public int engineSize() {
         return this.aliases.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
         if (!engineContainsAlias(alias)) {

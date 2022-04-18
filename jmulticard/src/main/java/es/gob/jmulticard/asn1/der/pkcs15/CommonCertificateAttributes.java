@@ -69,13 +69,12 @@ public final class CommonCertificateAttributes extends Sequence {
     /** Obtiene el identificador de este <i>CommonCertificateAttributes</i>.
      * @return Identificador del <i>CommonCertificateAttributes</i> */
     public byte[] getId() {
-        if (this.getElementAt(0) == null) {
+        if (getElementAt(0) == null) {
         	throw new IllegalStateException("No existe el identificador dentro del objeto"); //$NON-NLS-1$
         }
-        return ((OctectString) this.getElementAt(0)).getOctectStringByteValue();
+        return ((OctectString) getElementAt(0)).getOctectStringByteValue();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return HexUtils.hexify(getId(), false);

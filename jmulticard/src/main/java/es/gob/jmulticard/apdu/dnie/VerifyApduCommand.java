@@ -74,7 +74,6 @@ public final class VerifyApduCommand extends CommandApdu {
         this.pwc = pinPc;
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getData() {
         final char[] p = this.pwc.getPassword();

@@ -117,7 +117,6 @@ public final class Cwa14890CipheredApdu extends CommandApdu {
        return baos.toByteArray();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setLe(final int le) {
         throw new UnsupportedOperationException("No se puede establecer el Le en una APDU cifrada"); //$NON-NLS-1$

@@ -61,13 +61,11 @@ public final class Utf8String extends DecoderObject {
     /** Tipo ASN&#46;1 "T61String". */
     private static final byte TAG_T61STRING = (byte) 0x14;
 
-    /** {@inheritDoc} */
     @Override
     protected byte getDefaultTag() {
         return TAG_UTF8STRING;
     }
 
-	/** {@inheritDoc} */
     @Override
     public void checkTag(final byte tag) throws Asn1Exception {
     	if (TAG_UTF8STRING != tag && TAG_PRINTABLESTRING != tag && TAG_T61STRING != tag) {
@@ -90,7 +88,6 @@ public final class Utf8String extends DecoderObject {
 	    	this.stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return this.stringValue;

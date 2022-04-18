@@ -72,7 +72,6 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		this.modulus   = mod;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String getAlgorithm() {
 		return "RSA"; //$NON-NLS-1$
@@ -84,13 +83,11 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		return this.dniPrivateKeyReference.getDnieCard();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public byte[] getEncoded() {
 		return null;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String getFormat() {
 		return null;
@@ -119,7 +116,6 @@ public final class DniePrivateKey implements RSAPrivateKey {
 		throw new UnsupportedOperationException();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return this.dniPrivateKeyReference.getLabel();

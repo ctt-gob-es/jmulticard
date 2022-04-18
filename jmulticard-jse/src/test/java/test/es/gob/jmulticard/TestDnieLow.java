@@ -44,20 +44,22 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "123456"; //$NON-NLS-1$
+	private static final String CAN = "961984"; //$NON-NLS-1$
 
-	private static final String PIN = "pin"; //$NON-NLS-1$
+	private static final String PIN = "rock2048"; //$NON-NLS-1$
+
+	private static final CryptoHelper CH = new BcCryptoHelper();
 
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
 	@Ignore
-	public void testDnieReadSubject() throws Exception {
+ 	public void testDnieReadSubject() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			CH,
 			null,
 			false
 		);
@@ -72,12 +74,12 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new BcCryptoHelper(),
+			CH,
 			new TestingDnieCallbackHandler(CAN, PIN),
 			true
 		);
@@ -94,12 +96,12 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			CH,
 			new TestingDnieCallbackHandler(CAN, PIN),
 			//new SmartcardCallbackHandler(),
 			true
@@ -138,7 +140,7 @@ public final class TestDnieLow {
 	@Ignore
 	public void testAuthNoPin() throws Exception {
 
-		final CryptoHelper cryptoHelper = new JseCryptoHelper();
+		final CryptoHelper cryptoHelper = new BcCryptoHelper();
 
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),

@@ -71,19 +71,16 @@ public final class SmartCafePrivateKey implements RSAPrivateKey {
 		this.card = cryptoCard;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String getAlgorithm() {
 		return "RSA"; //$NON-NLS-1$
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public byte[] getEncoded() {
 		return null;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String getFormat() {
 		return null;
@@ -107,7 +104,6 @@ public final class SmartCafePrivateKey implements RSAPrivateKey {
 		throw new UnsupportedOperationException();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "Clave privada para G&D SmartCafe (con Applet PKCS#15) con ordinal " + this.id; //$NON-NLS-1$

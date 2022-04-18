@@ -80,19 +80,16 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     private SmartCafePkcs15Applet cryptoCard = null;
     private List<String> aliases = null;
 
-    /** {@inheritDoc} */
     @Override
     public Enumeration<String> engineAliases() {
         return Collections.enumeration(this.aliases);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineContainsAlias(final String alias) {
         return this.aliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Certificate engineGetCertificate(final String alias) {
     	if (!engineContainsAlias(alias)) {
@@ -101,7 +98,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return this.cryptoCard.getCertificate(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String engineGetCertificateAlias(final Certificate cert) {
         if (!(cert instanceof X509Certificate)) {
@@ -116,7 +112,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Certificate[] engineGetCertificateChain(final String alias) {
     	LOGGER.warning(
@@ -125,7 +120,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	return new Certificate[] { engineGetCertificate(alias) };
     }
 
-    /** {@inheritDoc} */
     @Override
     public Key engineGetKey(final String alias, final char[] password) {
     	if (!engineContainsAlias(alias)) {
@@ -147,7 +141,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 		return new SmartCafePrivateKey((SmartCafePrivateKeyReference) pkRef, this.cryptoCard);
     }
 
-    /** {@inheritDoc} */
     @Override
     public KeyStore.Entry engineGetEntry(final String alias,
     		                             final ProtectionParameter protParam) {
@@ -180,25 +173,21 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineIsKeyEntry(final String alias) {
         return this.aliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int engineSize() {
         return this.aliases.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
         if (!engineContainsAlias(alias)) {
@@ -207,7 +196,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
         return entryClass.equals(PrivateKeyEntry.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException {
     	// Ponemos la conexion por defecto
@@ -221,7 +209,6 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
-    /** {@inheritDoc} */
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
 		final ApduConnection conn = ProviderUtil.getDefaultConnection();

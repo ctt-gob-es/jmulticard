@@ -357,7 +357,6 @@ public final class SmartcardIoConnection extends ApduConnectionIso7816 {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public ResponseApdu internalTransmit(final byte[] command) throws ApduConnectionException {
 

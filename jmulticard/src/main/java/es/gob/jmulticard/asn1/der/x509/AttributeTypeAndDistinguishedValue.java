@@ -70,7 +70,6 @@ public final class AttributeTypeAndDistinguishedValue extends Sequence {
 		);
 	}
 
-	/** {@inheritDoc} */
 	@Override
     public String toString() {
 		return getElementAt(0).toString() + "=\"" + getElementAt(1).toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$

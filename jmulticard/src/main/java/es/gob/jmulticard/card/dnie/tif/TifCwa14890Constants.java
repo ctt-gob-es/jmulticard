@@ -212,19 +212,16 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
     		(byte) 0x00
         };
 
-        /** {@inheritDoc} */
         @Override
         public BigInteger getModulus() {
             return this.ifdModulus;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getFormat() {
             return "PKCS#8"; //$NON-NLS-1$
         }
 
-        /** {@inheritDoc} */
         @Override
         public byte[] getEncoded() {
             final byte[] out = new byte[this.encoded.length];
@@ -232,13 +229,11 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
             return out;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getAlgorithm() {
             return "RSA"; //$NON-NLS-1$
         }
 
-        /** {@inheritDoc} */
         @Override
         public BigInteger getPrivateExponent() {
             return this.ifdPrivateExponent;
@@ -270,13 +265,11 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
                 (byte) 0x01
         };
 
-        /** {@inheritDoc} */
         @Override
         public String getFormat() {
             return "X.509"; //$NON-NLS-1$
         }
 
-        /** {@inheritDoc} */
         @Override
         public byte[] getEncoded() {
             final byte[] out = new byte[this.encoded.length];
@@ -284,7 +277,6 @@ final class TifCwa14890Constants implements Cwa14890PublicConstants, Cwa14890Pri
             return out;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getAlgorithm() {
             return "RSA"; //$NON-NLS-1$

@@ -149,7 +149,6 @@ public final class Cdf extends Record implements Pkcs15Cdf {
     	return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(BUFFER_SIZE);

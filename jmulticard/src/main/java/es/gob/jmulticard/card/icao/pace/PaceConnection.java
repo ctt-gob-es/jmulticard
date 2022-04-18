@@ -52,7 +52,6 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 		this.openState = true;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
 		// Si es el comando para verificar el PIN se creara una instancia nueva de la clase

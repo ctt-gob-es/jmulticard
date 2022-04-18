@@ -90,7 +90,6 @@ public final class CeresPrivateKeyObject extends PrivateKeyObject {
 		return ((CeresPrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getPath();
 	}
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return "Clave privada con ruta '" + getKeyPath() + //$NON-NLS-1$

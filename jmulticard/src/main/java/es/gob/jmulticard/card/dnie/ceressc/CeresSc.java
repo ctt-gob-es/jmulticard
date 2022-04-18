@@ -175,13 +175,11 @@ public final class CeresSc extends Dnie {
     	// Vacio, lo hacemos todo en la precarga de certificados
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] getAliases() {
     	return this.certs.keySet().toArray(new String[0]);
     }
 
-    /** {@inheritDoc} */
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
     	return this.keyReferences.get(alias);

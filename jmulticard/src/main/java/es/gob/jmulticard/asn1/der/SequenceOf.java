@@ -94,7 +94,6 @@ public abstract class SequenceOf extends DecoderObject {
 		this.elementsType = type;
 	}
 
-    /** {@inheritDoc} */
     @Override
     protected byte getDefaultTag() {
         return TAG_SEQUENCE;

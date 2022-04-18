@@ -49,19 +49,16 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	Collections.addAll(userCertAliases, aliases);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Enumeration<String> engineAliases() {
         return Collections.enumeration(userCertAliases);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineContainsAlias(final String alias) {
         return userCertAliases.contains(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Certificate engineGetCertificate(final String alias) {
     	if (!engineContainsAlias(alias)) {
@@ -70,7 +67,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         return this.cryptoCard.getCertificate(alias);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String engineGetCertificateAlias(final Certificate cert) {
         if (!(cert instanceof X509Certificate)) {
@@ -89,7 +85,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Certificate[] engineGetCertificateChain(final String alias) {
     	if (!engineContainsAlias(alias)) {
@@ -100,7 +95,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 		};
     }
 
-    /** {@inheritDoc} */
     @Override
     public Key engineGetKey(final String alias, final char[] password) {
     	if (!engineContainsAlias(alias)) {
@@ -126,7 +120,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 		);
     }
 
-    /** {@inheritDoc} */
     @Override
     public KeyStore.Entry engineGetEntry(final String alias,
     		                             final ProtectionParameter protParam) {
@@ -144,14 +137,12 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	return new PrivateKeyEntry(key, engineGetCertificateChain(alias));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineIsCertificateEntry(final String alias) {
     	// Solo se soportan certificados con clave privada
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineIsKeyEntry(final String alias) {
         return userCertAliases.contains(alias);
@@ -161,7 +152,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	return CeresProvider.getDefaultApduConnection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
     	if (param != null) {
@@ -203,7 +193,6 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	userCertAliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
-    /** {@inheritDoc} */
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException {
         // Aqui se realiza el acceso e inicializacion de la tarjeta
@@ -216,13 +205,11 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         loadAliases();
     }
 
-    /** {@inheritDoc} */
     @Override
     public int engineSize() {
         return userCertAliases.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean engineEntryInstanceOf(final String alias, final Class<? extends KeyStore.Entry> entryClass) {
         if (!engineContainsAlias(alias)) {

@@ -121,7 +121,6 @@ public class PrivateKeyObject extends Pkcs15Object {
 		return null;
 	}
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
     	return "Nombre de la clave privada: " + getCommonObjectAttributes().getLabel() + //$NON-NLS-1$

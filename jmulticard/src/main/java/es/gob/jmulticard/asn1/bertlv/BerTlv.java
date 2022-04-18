@@ -123,7 +123,6 @@ public final class BerTlv {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "[TLV: T=" + this.tag + "; L=" + this.length + "d; V=" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

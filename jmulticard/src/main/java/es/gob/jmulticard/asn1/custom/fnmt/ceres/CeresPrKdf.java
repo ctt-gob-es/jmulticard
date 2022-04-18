@@ -122,7 +122,6 @@ public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyReference();
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String toString() {
 		final StringBuilder sb = new StringBuilder();

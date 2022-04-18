@@ -20,6 +20,8 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECField;
 import java.security.spec.ECFieldFp;
@@ -48,6 +50,7 @@ import org.spongycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
 import org.spongycastle.cms.SignerId;
 import org.spongycastle.cms.SignerInformation;
 import org.spongycastle.cms.SignerInformationVerifier;
+import org.spongycastle.crypto.AsymmetricBlockCipher;
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.BufferedBlockCipher;
 import org.spongycastle.crypto.DataLengthException;
@@ -59,13 +62,16 @@ import org.spongycastle.crypto.digests.SHA384Digest;
 import org.spongycastle.crypto.digests.SHA512Digest;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.engines.DESEngine;
+import org.spongycastle.crypto.engines.RSAEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.BlockCipherPadding;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
 import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.spongycastle.crypto.params.AsymmetricKeyParameter;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.crypto.params.ParametersWithIV;
+import org.spongycastle.crypto.params.RSAKeyParameters;
 import org.spongycastle.crypto.prng.DigestRandomGenerator;
 import org.spongycastle.crypto.prng.RandomGenerator;
 import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
@@ -248,33 +254,37 @@ public final class BcCryptoHelper extends CryptoHelper {
     	return doDes(data, key, false);
     }
 
-    private static byte[] doRsa(final byte[] cipheredData,
+    private static byte[] doRsa(final byte[] data,
     		                    final RSAKey key,
-    		                    final int direction) throws IOException {
-        try {
-            final Cipher dec = Cipher.getInstance("RSA/ECB/NOPADDING"); //$NON-NLS-1$
-            dec.init(direction, (Key) key);
-            return dec.doFinal(cipheredData);
-        }
-        catch (final NoSuchAlgorithmException  |
-        		     NoSuchPaddingException    |
-        		     InvalidKeyException       |
-        		     IllegalBlockSizeException |
-        		     BadPaddingException e) {
-            throw new IOException(
-        		"Error cifrando / descifrando datos mediante RSA", e //$NON-NLS-1$
-    		);
-        }
+    		                    final boolean forEncryption) throws IOException {
+    	final boolean isPrivateKey = key instanceof RSAPrivateKey;
+
+    	final AsymmetricKeyParameter akp = new RSAKeyParameters(
+			isPrivateKey,
+			key.getModulus(),
+			isPrivateKey ?
+				((RSAPrivateKey)key).getPrivateExponent() :
+					((RSAPublicKey)key).getPublicExponent()
+		);
+    	final AsymmetricBlockCipher cipher = new RSAEngine();
+    	cipher.init(forEncryption, akp);
+
+    	try {
+			return cipher.processBlock(data, 0, data.length);
+		}
+    	catch (final InvalidCipherTextException e) {
+			throw new IOException("Error en el cifrado/descifrado RSA", e); //$NON-NLS-1$
+		}
     }
 
     @Override
     public byte[] rsaDecrypt(final byte[] cipheredData, final RSAKey key) throws IOException {
-        return doRsa(cipheredData, key, Cipher.DECRYPT_MODE);
+        return doRsa(cipheredData, key, false);
     }
 
     @Override
     public byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException {
-        return doRsa(data, key, Cipher.ENCRYPT_MODE);
+        return doRsa(data, key, true);
     }
 
     @Override

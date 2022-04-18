@@ -111,7 +111,6 @@ public abstract class Sequence extends DecoderObject {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected byte getDefaultTag() {
         return TAG_SEQUENCE;

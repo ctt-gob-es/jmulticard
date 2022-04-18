@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.apdu.gemalto;
 
+import java.util.Arrays;
+
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -79,7 +81,6 @@ public final class GemaltoVerifyApduCommand extends CommandApdu {
         this.pwc = pinPc;
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getBytes() {
     	final byte[] currentApdu = super.getBytes();
@@ -87,9 +88,7 @@ public final class GemaltoVerifyApduCommand extends CommandApdu {
         for (int i=0; i<p.length;i++) {
         	currentApdu[i+5] = (byte) p[i];
         }
-        for (int i=0;i<p.length;i++) {
-            p[i] = '\0';
-        }
+        Arrays.fill(p, '\0');
         return currentApdu;
     }
 }

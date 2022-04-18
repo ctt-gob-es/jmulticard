@@ -108,7 +108,6 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyLength();
 	}
 
-    /** {@inheritDoc} */
 	@Override
     public String toString() {
 		final StringBuilder sb = new StringBuilder();
