@@ -528,18 +528,24 @@ public final class BcCryptoHelper extends CryptoHelper {
 	private static Key loadEcPublicKey(final byte [] pubKey,
                                        final EcCurve curveName) throws NoSuchAlgorithmException,
                                                                        InvalidKeySpecException {
-	    final ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec(curveName.toString());
-	    KeyFactory kf;
+	    final ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec(
+    		curveName.toString()
+		);
+	    final KeyFactory kf;
 		try {
 			kf = KeyFactory.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
 		}
 		catch (final NoSuchProviderException e) {
-			LOGGER.warning(
-				"No se ha podido obtener el KeyFactory ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
+			throw new NoSuchAlgorithmException(
+				"No se ha podido obtener el KeyFactory ECDH de BouncyCastle", e //$NON-NLS-1$
 			);
-			kf = KeyFactory.getInstance(ECDH);
 		}
-	    final ECNamedCurveSpec params = new ECNamedCurveSpec(curveName.toString(), spec.getCurve(), spec.getG(), spec.getN());
+	    final ECNamedCurveSpec params = new ECNamedCurveSpec(
+    		curveName.toString(),
+    		spec.getCurve(),
+    		spec.getG(),
+    		spec.getN()
+		);
 	    final ECPoint point =  ECPointUtil.decodePoint(params.getCurve(), pubKey);
 	    final java.security.spec.ECPublicKeySpec pubKeySpec = new java.security.spec.ECPublicKeySpec(point, params);
 	    return kf.generatePublic(pubKeySpec);
@@ -549,7 +555,9 @@ public final class BcCryptoHelper extends CryptoHelper {
 	public AlgorithmParameterSpec getEcPoint(final byte[] nonceS,
 			                                 final byte[] sharedSecretH,
 			                                 final EcCurve curveName) {
-		final AlgorithmParameterSpec ecParams = ECNamedCurveTable.getParameterSpec(curveName.toString());
+		final AlgorithmParameterSpec ecParams = ECNamedCurveTable.getParameterSpec(
+			curveName.toString()
+		);
 		final BigInteger affineX = os2i(sharedSecretH);
 		final BigInteger affineY = computeAffineY(affineX, (ECParameterSpec) ecParams);
 		final ECPoint sharedSecretPointH = new ECPoint(affineX, affineY);
