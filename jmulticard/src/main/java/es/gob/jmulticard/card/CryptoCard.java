@@ -57,7 +57,7 @@ public interface CryptoCard {
      * @throws CryptoCardException Si ocurre alg&uacute;n problema al recuperar el certificado.
      * @throws PinException Si el PIN proporcionado es incorrecto.
      * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
-    X509Certificate getCertificate(final String alias) throws CryptoCardException, PinException;
+    X509Certificate getCertificate(String alias) throws CryptoCardException, PinException;
 
     /** Obtiene una referencia a la clave privada correspondiente al alias proporcionado.
      * @param alias Alias del certificado

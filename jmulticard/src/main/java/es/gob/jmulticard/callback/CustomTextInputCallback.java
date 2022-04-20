@@ -38,7 +38,7 @@ public final class CustomTextInputCallback implements Callback, java.io.Serializ
     private final String prompt;
 
     /** Texto introducido. */
-    private String inputText;
+    private transient String inputText;
 
     /** Crea una <i>callback</i> de solicitud de texto.
      * @param p Mensaje a mostrar al usuario para solicitarle el texto. Puede ser nulo. */

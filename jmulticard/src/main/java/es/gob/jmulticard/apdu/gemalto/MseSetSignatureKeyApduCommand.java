@@ -75,7 +75,7 @@ public final class MseSetSignatureKeyApduCommand extends CommandApdu {
 
     	private final byte value;
 
-    	private CryptographicMechanism(final byte v) {
+    	CryptographicMechanism(final byte v) {
     		this.value = v;
     	}
 

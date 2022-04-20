@@ -52,7 +52,7 @@ public final class VerifyApduCommand extends CommandApdu {
 	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
     private static final byte INS_VERIFY = (byte) 0x20;
 
-    private final PasswordCallback pwc;
+    private transient final PasswordCallback pwc;
 
     /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
      * @param cla Clase (CLA) de la APDU

@@ -47,9 +47,9 @@ import es.gob.jmulticard.apdu.ResponseApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SelectFileApduResponse extends ResponseApdu {
 
-    private byte[] dfName = null;
-    private byte[] fileId = null;
-    private byte[] fileLength = null;
+    private transient byte[] dfName = null;
+    private transient byte[] fileId = null;
+    private transient byte[] fileLength = null;
 
     /** Construye una APDU respuesta al comando APDU ISO 7816-4 de selecci&oacute;n de fichero.
      * @param apduResponse APDU devuelta por la operaci&oacute;n de selecci&oacute;n de fichero. */

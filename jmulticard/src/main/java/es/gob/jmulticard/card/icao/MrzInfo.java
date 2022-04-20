@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.card.SmartCard;
+import es.gob.jmulticard.card.AbstractSmartCard;
 
 /** Estructura de datos para almacenar la informaci&oacute;n de la MRZ,
  * tal y como se encuentra en el DG1. Basado en el documento 9303 de ICAO, partes 1 y 3.
@@ -51,22 +51,22 @@ public final class MrzInfo {
     /** @deprecated
      * A reemplazar por <code>documentCode</code>. */
     @Deprecated
-    private int documentType;
+    private transient int documentType;
 
-    private String documentCode;
-    private String documentNumber;
+    private transient String documentCode;
+    private transient String documentNumber;
 
     /** Fecha de nacimiento del titular. */
-    private String dateOfBirth;
+    private transient String dateOfBirth;
 
     /** Fecha de caducidad del documento. */
-    private String dateOfExpiry;
+    private transient String dateOfExpiry;
 
-    private char documentNumberCheckDigit;
+    private transient char documentNumberCheckDigit;
 
     /** Contiene el n&uacute;mero del titular en ciertos pa&iacute;ses (como Holanda),
      * pero normalmente contiene parte del n&uacute;mero de documento. */
-    private String optionalData1;
+    private transient String optionalData1;
 
     /** Devuelve el 'MRZ Information' como array de octetos.
      * @return 'MRZ Information' (binario). */
@@ -78,7 +78,7 @@ public final class MrzInfo {
 		final byte[] expiryBytes = getDateOfExpiry().getBytes();
 		final byte[] expiryCheck = { (byte) MrzInfo.checkDigit(getDateOfExpiry()) };
 
-		if (SmartCard.DEBUG) {
+		if (AbstractSmartCard.DEBUG) {
 			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 				"Info de la MRZ: numero=" + new String(numberBytes) + //$NON-NLS-1$
 					"; nacimiento=" + new String(birthBytes) + //$NON-NLS-1$

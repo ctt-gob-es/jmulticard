@@ -51,7 +51,7 @@ public abstract class BitString extends DecoderObject {
     /** Tipo ASN&#46;1 "BIT STRING". */
     private static final byte TAG_BITSTRING = (byte) 0x03;
 
-    private Tlv tlv = null;
+    private transient Tlv tlv = null;
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {

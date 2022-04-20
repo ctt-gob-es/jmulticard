@@ -25,7 +25,7 @@ public final class Vdsned {
 
 	private static final byte MAGIC = (byte) 0xdc;
 
-	private final byte[] encoded;
+	private transient final byte[] encoded;
 
 	private final int version;
 
@@ -38,12 +38,12 @@ public final class Vdsned {
 	private final int documentFeatureDefinitionReference;
 	private final int documentTypeCategory;
 
-	private String mrzB = null;
-	private int nEntries = 0;
-	private int durationOfStay = 0;
-	private String passportNumber = null;
-	private byte[] signature = null;
-	private byte[] dataTbs = null;
+	private transient String mrzB = null;
+	private transient int nEntries = 0;
+	private transient int durationOfStay = 0;
+	private transient String passportNumber = null;
+	private transient byte[] signature = null;
+	private transient byte[] dataTbs = null;
 
 	private static final String DEFAULT_SIGNATURE_ALGORITHM = "SHA256withECDSA"; //$NON-NLS-1$
 

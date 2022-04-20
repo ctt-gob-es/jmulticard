@@ -79,7 +79,7 @@ public final class Utf8String extends DecoderObject {
 		}
     }
 
-    private String stringValue = null;
+    private transient String stringValue = null;
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {

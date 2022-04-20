@@ -41,7 +41,7 @@ package es.gob.jmulticard.apdu.connection.cwa14890;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduEncrypter;
+import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.apdu.connection.ApduEncrypterDesMac8;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
@@ -51,7 +51,7 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 
 	@Override
-	protected ApduEncrypter instantiateApduEncrypter() {
+	protected AbstractApduEncrypter instantiateApduEncrypter() {
     	return new ApduEncrypterDesMac8();
     }
 

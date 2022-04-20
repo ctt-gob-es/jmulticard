@@ -51,7 +51,7 @@ public class DerInteger extends DecoderObject {
 
 	private static final byte TAG_INTEGER = (byte) 0x02;
 
-	private BigInteger value = null;
+	private transient BigInteger value = null;
 
 	@Override
     protected void decodeValue() throws TlvException {

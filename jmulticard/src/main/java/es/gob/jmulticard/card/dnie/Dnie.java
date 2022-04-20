@@ -93,13 +93,13 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.icao.pace.PaceConnection;
-import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
+import es.gob.jmulticard.card.iso7816eight.AbstractIso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
+public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card {
 
 	private static final int DEFAULT_KEY_SIZE = 2048;
 
@@ -123,9 +123,9 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private CallbackHandler callbackHandler;
+    private transient CallbackHandler callbackHandler;
 
-	private String[] aliases = null;
+	private transient String[] aliases = null;
 
     private static final boolean PIN_AUTO_RETRY;
     static {
@@ -170,48 +170,48 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
 	protected static final Location IDESP_LOCATION = new Location("3F000006"); //$NON-NLS-1$
 
 	/** Certificado de autenticaci&oacute;n. */
-    protected X509Certificate authCert;
+    protected transient X509Certificate authCert;
 
     /** Certificado de firma. */
-    protected X509Certificate signCert;
+    protected transient X509Certificate signCert;
 
     /** Certificado de cifrado. */
-    protected X509Certificate cyphCert;
+    protected transient X509Certificate cyphCert;
 
     /** Certificado de firma con seud&oacute;nimo. */
-    protected X509Certificate signAliasCert;
+    protected transient X509Certificate signAliasCert;
 
     /** Certificado de CA intermedia. */
-    protected X509Certificate intermediateCaCert;
+    protected transient X509Certificate intermediateCaCert;
 
-    private Location authCertPath;
+    private transient Location authCertPath;
 
     /** Localizaci&oacute;n del certificado de firma.
      * Es opcional, ya que no est&aacute; presente en los DNI de menores de edad no emancipados. */
-    private Location signCertPath = null;
+    private transient Location signCertPath = null;
 
     /** Localizaci&oacute;n del certificado de cifrado.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
-    private Location cyphCertPath = null;
+    private transient Location cyphCertPath = null;
 
     /** Localizaci&oacute;n del certificado de firma con seud&oacute;nimo.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
-    private Location signAliasCertPath = null;
+    private transient Location signAliasCertPath = null;
 
-    private DniePrivateKeyReference authKeyRef;
+    private transient DniePrivateKeyReference authKeyRef;
 
-    private DniePrivateKeyReference signKeyRef;
+    private transient DniePrivateKeyReference signKeyRef;
 
     /** Referencia a la clave privada de cifrado.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
-    private DniePrivateKeyReference cyphKeyRef = null;
+    private transient DniePrivateKeyReference cyphKeyRef = null;
 
     /** Referencia a la clave privada de firma con seud&oacute;nimo.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
-    private DniePrivateKeyReference signAliasKeyRef = null;
+    private transient DniePrivateKeyReference signAliasKeyRef = null;
 
     /** Conexi&oacute;n inicial con la tarjeta, sin ning&uacute;n canal seguro. */
-    protected ApduConnection rawConnection;
+    protected transient ApduConnection rawConnection;
 
     /** Manejador de funciones criptogr&aacute;ficas. */
     protected final CryptoHelper cryptoHelper;
@@ -1087,7 +1087,7 @@ public class Dnie extends Iso7816EightCard implements Dni, Cwa14890Card {
     }
 
 	@Override
-	protected void selectMasterFile() throws ApduConnectionException, Iso7816FourCardException {
+	protected final void selectMasterFile() throws ApduConnectionException, Iso7816FourCardException {
     	selectFileByName(MASTER_FILE_NAME);
     }
 

@@ -53,8 +53,8 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	private final byte[] identifier;
 	private final Location keyPath;
 	private final String label;
-	private final byte reference;
-	private final int keySize;
+	private transient final byte reference;
+	private transient final int keySize;
 
 	/** Crea una referencia a una clave privada del DNIe.
 	 * @param card Tarjeta en la que se almacena la clave privada.

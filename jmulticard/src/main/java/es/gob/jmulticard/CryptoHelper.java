@@ -264,7 +264,7 @@ public abstract class CryptoHelper {
      * @return Datos descifrados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     desencriptado. */
-    public abstract byte[] rsaDecrypt(final byte[] cipheredData, final RSAKey key) throws IOException;
+    public abstract byte[] rsaDecrypt(byte[] cipheredData, RSAKey key) throws IOException;
 
     /** Encripta datos mediante RSA.
      * @param data Datos a encriptar.
@@ -272,7 +272,7 @@ public abstract class CryptoHelper {
      * @return Datos encriptados.
      * @throws IOException Si ocurre alg&uacute;n problema durante el
      *                     encriptado. */
-    public abstract byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException;
+    public abstract byte[] rsaEncrypt(byte[] data, RSAKey key) throws IOException;
 
     /** Genera contenido aleatorio en un array de bytes.
      * @param numBytes N&uacute;mero de bytes aleatorios que generar.
@@ -288,8 +288,8 @@ public abstract class CryptoHelper {
 	 *                                  curvas el&iacute;pticas.
 	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva
 	 *                                            el&iacute;ptica indicada. */
-	public abstract KeyPair generateEcKeyPair(final EcCurve curveName) throws NoSuchAlgorithmException,
-	                                                                          InvalidAlgorithmParameterException;
+	public abstract KeyPair generateEcKeyPair(EcCurve curveName) throws NoSuchAlgorithmException,
+	                                                                    InvalidAlgorithmParameterException;
 
 	/** Realiza un CMAC con AES.
 	 * @param data Datos (deben estar ya con el relleno adecuado).
@@ -298,8 +298,8 @@ public abstract class CryptoHelper {
 	 * @throws NoSuchAlgorithmException Si no se encuentra un proveedor que permita realizar
 	 *                                  CMAC con AES.
 	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
-	public abstract byte[] doAesCmac(final byte[] data, final byte[] key) throws NoSuchAlgorithmException,
-	                                                                             InvalidKeyException;
+	public abstract byte[] doAesCmac(byte[] data, byte[] key) throws NoSuchAlgorithmException,
+	                                                                 InvalidKeyException;
 
 	/** Realiza un acuerdo de claves <i>Diffie Hellman</i> con algoritmo de curva el&iacute;ptica.
 	 * @param privateKey Clave privada.
@@ -310,26 +310,26 @@ public abstract class CryptoHelper {
 	 *                                  algoritmo <i>ECDH</i>.
 	 * @throws InvalidKeySpecException Si alguna de las claves es inv&aacute;lida.
 	 * @throws InvalidKeyException Si alguna de las claves es inv&aacute;lida. */
-	public abstract byte[] doEcDh(final Key privateKey,
-			                      final byte[] publicKey,
-			                      final EcCurve curveName) throws NoSuchAlgorithmException,
-	                                                              InvalidKeyException,
-	                                                              InvalidKeySpecException;
+	public abstract byte[] doEcDh(Key privateKey,
+			                      byte[] publicKey,
+			                      EcCurve curveName) throws NoSuchAlgorithmException,
+	                                                        InvalidKeyException,
+	                                                        InvalidKeySpecException;
 
 	/** Obtiene un punto en una curva el&iacute;ptica.
 	 * @param nonceS Aleatorio de un solo uso.
 	 * @param sharedSecretH Secreto compartido.
 	 * @param curveName Nombre de la curva.
 	 * @return Punto encapsulado. */
-	public abstract AlgorithmParameterSpec getEcPoint(final byte[] nonceS,
-			                                          final byte[] sharedSecretH,
-			                                          final EcCurve curveName);
+	public abstract AlgorithmParameterSpec getEcPoint(byte[] nonceS,
+			                                          byte[] sharedSecretH,
+			                                          EcCurve curveName);
 
 	/** Obtiene el contenido firmado de una firma CMS/OPKCS#7.
 	 * @param signedDataBytes Firma CMS/OPKCS#7.
 	 * @return Contenido firmado de una firma CMS/OPKCS#7.
 	 * @throws IOException Si los datos proporcionados no son una firma CMS/OPKCS#7 bien formada. */
-	public abstract byte[] getCmsSignatureSignedContent(final byte[] signedDataBytes) throws IOException;
+	public abstract byte[] getCmsSignatureSignedContent(byte[] signedDataBytes) throws IOException;
 
 	/** Valida una firma CMS/OPKCS#7. No comprueba la validez de los certificados de firma.
 	 * @param signedDataBytes Firma CMS/OPKCS#7.
@@ -337,9 +337,9 @@ public abstract class CryptoHelper {
 	 * @throws SignatureException Si la firma es inv&aacute;lida o est&aacute; mal formada.
 	 * @throws IOException Si los datos proporcionados no son una firma CMS/OPKCS#7 bien formada.
 	 * @throws CertificateException Si hay problemas relacionados con los certificados de firma. */
-	public abstract X509Certificate[] validateCmsSignature(final byte[] signedDataBytes) throws SignatureException,
-	                                                                                            IOException,
-	                                                                                            CertificateException;
+	public abstract X509Certificate[] validateCmsSignature(byte[] signedDataBytes) throws SignatureException,
+	                                                                                      IOException,
+	                                                                                      CertificateException;
 
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).
@@ -396,7 +396,7 @@ public abstract class CryptoHelper {
 		protected static final byte TAG_GEN_AUTH_4 = (byte) 0x85;
 
 		/** Utilidad para operaciones criptogr&aacute;ficas. */
-		protected final CryptoHelper cryptoHelper;
+		protected transient final CryptoHelper cryptoHelper;
 
 		/** Constructor
 		 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
@@ -412,10 +412,10 @@ public abstract class CryptoHelper {
 		 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.
 		 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
 		 * @throws IcaoException Si hay problemas en la apertura del canal. */
-		public abstract SecureMessaging openPaceChannel(final byte cla,
-				                                        final WirelessInitializer pi,
-				                                        final ApduConnection conn) throws ApduConnectionException,
-				                                                                          IcaoException;
+		public abstract SecureMessaging openPaceChannel(byte cla,
+				                                        WirelessInitializer pi,
+				                                        ApduConnection conn) throws ApduConnectionException,
+				                                                                    IcaoException;
 
 		/** Obtiene la representaci&oacute;n de un <code>BigInteger</code> como un
 		 * array de octetos.

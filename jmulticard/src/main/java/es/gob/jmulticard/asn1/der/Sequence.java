@@ -55,9 +55,9 @@ public abstract class Sequence extends DecoderObject {
     /** Tipo ASN&#46;1 <i>Sequence</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private final List<DecoderObject> elements = new ArrayList<>();
+    private transient final List<DecoderObject> elements = new ArrayList<>();
 
-    private final OptionalDecoderObjectElement[] elementsTypes;
+    private transient final OptionalDecoderObjectElement[] elementsTypes;
 
     /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
      * @return N&uacute;mero de elementos que contiene la secuencia. */
@@ -68,7 +68,7 @@ public abstract class Sequence extends DecoderObject {
     /** Construye un tipo ASN&#46;1 <i>Sequence</i>.
      * Un <i>Sequence</i> contiene una secuencia de tipos ASN&#46;1 (que pueden ser distintos).
      * @param types Tipos (etiquetas) de objetos ASN&#46;1 (cero a n elementos) que va a contener la secuencia. El orden es relevante. */
-	protected Sequence(final OptionalDecoderObjectElement[] types) {
+	protected Sequence(final OptionalDecoderObjectElement... types) {
         if (types == null) {
             throw new IllegalArgumentException();
         }

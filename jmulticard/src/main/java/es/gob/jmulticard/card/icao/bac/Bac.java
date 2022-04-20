@@ -77,6 +77,7 @@ public final class Bac {
 //	(byte)0x23, (byte)0x9A, (byte)0xB9, (byte)0xCB, (byte)0x28, (byte)0x2D, (byte)0xAF, (byte)0x66,
 //	(byte)0x23, (byte)0x1D, (byte)0xC5, (byte)0xA4, (byte)0xDF, (byte)0x6B, (byte)0xFB, (byte)0xAE
 //};
+
 		System.out.println("keySeed: " + HexUtils.hexify(kSeed, false));
 
 		// D.1 Calculamos las claves a partir de Kseed

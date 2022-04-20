@@ -58,7 +58,7 @@ public final class Tlv {
     /** Estructura binaria completa del TLV. */
     private final byte[] bytes;
 
-    private final int valueOffset;
+    private transient final int valueOffset;
 
     /** Construye un TLV simple con etiqueta y longitud de un solo octeto cada uno.
      * @param t Etiqueta (tipo) del TLV.

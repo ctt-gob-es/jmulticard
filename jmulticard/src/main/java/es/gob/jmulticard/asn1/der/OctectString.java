@@ -51,7 +51,7 @@ public class OctectString extends DecoderObject {
 	/** Tipo ASN&#46;1 <i>OctectString</i>. */
     private static final byte TAG_OCTECTSTRING = (byte) 0x04;
 
-    private byte[] value = null;
+    private transient byte[] value = null;
 
     @Override
     protected void decodeValue() throws TlvException {

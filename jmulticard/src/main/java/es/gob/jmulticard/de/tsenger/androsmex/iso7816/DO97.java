@@ -27,7 +27,7 @@ import es.gob.jmulticard.asn1.Tlv;
 final class DO97 {
 
     private static final byte TAG = (byte) 0x97;
-    private final Tlv tlv;
+    private transient final Tlv tlv;
 
 	DO97(final int le) {
 		this.tlv = new Tlv(TAG, new byte[] { (byte) le });

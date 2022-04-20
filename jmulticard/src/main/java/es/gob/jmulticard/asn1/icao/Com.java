@@ -41,19 +41,19 @@ public final class Com extends DecoderObject {
 		DGTAGS.put(Byte.valueOf((byte) 0x70), "DG16"); //$NON-NLS-1$
 	}
 
-	private String ldsVersion = null;
-	private String unicodeVersion = null;
+	private transient String ldsVersion = null;
+	private transient String unicodeVersion = null;
 	private final List<String> presentDgs = new ArrayList<>();
 
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
 
-		BerTlv tlv = BerTlv.getInstance(getRawDerValue());
+		BerTlv tlv = BerTlv.createInstance(getRawDerValue());
 		checkTag(tlv.getTag());
 
 		final ByteArrayInputStream tlvs = new ByteArrayInputStream(tlv.getValue());
 
-		tlv = BerTlv.getInstance(tlvs);
+		tlv = BerTlv.createInstance(tlvs);
 		if (tlv.getLength() != 4) {
 			throw new Asn1Exception(
 				"El valor del TLV de version LDS debe tener exactamente cuarto octetos, pero se han encontrado " + tlv.getLength() //$NON-NLS-1$
@@ -70,7 +70,7 @@ public final class Com extends DecoderObject {
 				DOT +
 					new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] });
 
-		tlv = BerTlv.getInstance(tlvs);
+		tlv = BerTlv.createInstance(tlvs);
 		if (tlv.getLength() != 6) {
 			throw new Asn1Exception(
 				"El valor del TLV de version Unicode debe tener exactamente seis octetos, pero se han encontrado " + tlv.getLength() //$NON-NLS-1$
@@ -89,7 +89,7 @@ public final class Com extends DecoderObject {
 						DOT +
 							new String(new byte[] { tlv.getValue()[4], tlv.getValue()[5] });
 
-		tlv = BerTlv.getInstance(tlvs);
+		tlv = BerTlv.createInstance(tlvs);
 		if (tlv.getTag() != 0x5c) {
 			throw new Asn1Exception(
 				"El valor del TLV de lista de rotulos debe tener etiqueta '5C', pero se han encontrado '" + //$NON-NLS-1$

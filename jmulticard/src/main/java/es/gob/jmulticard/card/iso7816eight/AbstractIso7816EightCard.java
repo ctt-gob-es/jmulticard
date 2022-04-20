@@ -37,58 +37,41 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.apdu.gemalto;
+package es.gob.jmulticard.card.iso7816eight;
 
-import java.util.Arrays;
-
-import javax.security.auth.callback.PasswordCallback;
-
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
+import es.gob.jmulticard.apdu.iso7816eight.PsoVerifyCertificateApduCommand;
+import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 
-/** APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
- * <b>Importante</b>: La implementaci&oacute;n actual est&aacute; ligada a Gemalto en el sentido
- * de que siempre se usa una longitud de 16 (0x10h) caracteres para el PIN, completando con
- * 0x00h el valor real del PIN.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class GemaltoVerifyApduCommand extends CommandApdu {
+/** Tarjeta compatible ISO-7816-8. */
+public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
 
-    private static final byte INS_VERIFY = (byte) 0x20;
-
-    private transient final PasswordCallback pwc;
-
-    /** Construye una APDU ISO 7816-4 de verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
-     * @param cla Clase (CLA) de la APDU.
-     * @param pinPc Pin de la tarjeta inteligente. */
-    public GemaltoVerifyApduCommand(final byte cla, final PasswordCallback pinPc) {
-        super(
-    		cla,																 // CLA
-    		GemaltoVerifyApduCommand.INS_VERIFY, 										 // INS
-    		(byte)0x00, 														 // P1
-    		(byte)0x81,															 // P2
-    		new byte[] {                                                         // Data
-    			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, //  Siempre de 0x10h
-    			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,  //  de tamano
-    			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-    			(byte) 0x00
-			},
-    		null																 // Le
-		);
-        if (pinPc == null) {
-        	throw new IllegalArgumentException(
-    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
-        	);
-        }
-        this.pwc = pinPc;
+    /** Construye una tarjeta compatible ISO 7816-8.
+     * @param c Clase (CLA) de la APDU
+     * @param conn Connexi&oacute;n con la tarjeta. */
+    public AbstractIso7816EightCard(final byte c, final ApduConnection conn) {
+        super(c, conn);
     }
 
-    @Override
-    public byte[] getBytes() {
-    	final byte[] currentApdu = super.getBytes();
-        final char[] p = this.pwc.getPassword();
-        for (int i=0; i<p.length;i++) {
-        	currentApdu[i+5] = (byte) p[i];
+    /** Verifica un certificado en base a una clave p&uacute;blica cargada anteriormente
+     * y que deber&aacute; ser la del certificado a partir del cual se gener&oacute; el
+     * certificado que ahora se valida.
+     * @param cert Certificado que se desea comprobar.
+     * @throws SecureChannelException Cuando el certificado no es correcto u ocurre alg&uacute;n error en la validaci&oacute;n.
+     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
+    public void verifyCertificate(final byte[] cert) throws ApduConnectionException {
+        final CommandApdu apdu = new PsoVerifyCertificateApduCommand((byte) 0x00, cert);
+        final ResponseApdu res = getConnection().transmit(apdu);
+        if (!res.isOk()) {
+            throw new SecureChannelException(
+        		"Error en la verificacion del certificado. Se obtuvo el error: " + //$NON-NLS-1$
+                HexUtils.hexify(res.getBytes(), true)
+            );
         }
-        Arrays.fill(p, '\0');
-        return currentApdu;
     }
 }

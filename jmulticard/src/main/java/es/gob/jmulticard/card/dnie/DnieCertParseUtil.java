@@ -11,9 +11,9 @@ public final class DnieCertParseUtil {
 	private static final Logger LOGGER = Logger.getLogger("es.gob.afirma"); //$NON-NLS-1$
 
 	private final String name;
-	private String sn1;
-	private final String sn2;
-	private final String num;
+	private transient String sn1;
+	private transient final String sn2;
+	private transient final String num;
 
 	/** Construye la utilidad para el an&aacute;lisis de los campos personales del certificado DNIe.
 	 * @param c Certificado de DNIe. */

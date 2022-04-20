@@ -85,13 +85,13 @@ import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.iso7816eight.Iso7816EightCard;
+import es.gob.jmulticard.card.iso7816eight.AbstractIso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta FNMT-RCM CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class Ceres extends Iso7816EightCard implements CryptoCard {
+public final class Ceres extends AbstractIso7816EightCard implements CryptoCard {
 
 	private static final byte[] ATR_MASK_TC = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
@@ -133,7 +133,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-	private final CryptoHelper cryptoHelper;
+	private transient final CryptoHelper cryptoHelper;
 
     private static final Location CDF_LOCATION = new Location("50156004"); //$NON-NLS-1$
     private static final Location PRKDF_LOCATION = new Location("50156001"); //$NON-NLS-1$
@@ -154,19 +154,19 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 	private static final boolean AUTO_RETRY = true;
 
     /** Certificados de la tarjeta indexados por su alias. */
-    private Map<String, X509Certificate> certs;
+    private transient Map<String, X509Certificate> certs;
 
     /** Alias de los certificados de la tarjeta indexados por el identificador
      * interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
-    private Map<String, String> aliasByCertAndKeyId;
+    private transient Map<String, String> aliasByCertAndKeyId;
 
     /** Claves privadas de la tarjeta indexadas por el alias de su certificado
      * asociado. */
-    private Map<String, Byte> keys;
+    private transient Map<String, Byte> keys;
 
-    private PasswordCallback passwordCallback = null;
+    private transient PasswordCallback passwordCallback = null;
 
-    private boolean authenticated = false;
+    private transient boolean authenticated = false;
 	private CallbackHandler callbackHandler;
 
 	/** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.

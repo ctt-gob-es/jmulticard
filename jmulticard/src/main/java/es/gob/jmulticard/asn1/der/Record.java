@@ -53,14 +53,14 @@ import es.gob.jmulticard.asn1.TlvException;
  * objetos concatenados deben ser del mismo tipo ASN&#46;1. */
 public abstract class Record extends DecoderObject {
 
-    private final OptionalDecoderObjectElement[] elementsTypes;
+    private transient final OptionalDecoderObjectElement[] elementsTypes;
 
-    private final List<DecoderObject> elements = new ArrayList<>();
+    private transient final List<DecoderObject> elements = new ArrayList<>();
 
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN&#46;1 que va a contener el registro (que obligatoriamente deben ser
      *              subclases de <code>DecoderObject</code>. */
-	protected Record(final OptionalDecoderObjectElement[] types) {
+	protected Record(final OptionalDecoderObjectElement... types) {
         if (types == null || types.length == 0) {
             throw new IllegalArgumentException(
         		"Los tipos de los elementos del registro no pueden ser nulos ni vacios" //$NON-NLS-1$

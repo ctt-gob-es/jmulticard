@@ -55,7 +55,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionIso7816;
+import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
 import es.gob.jmulticard.apdu.connection.ApduConnectionOpenedInExclusiveModeException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
@@ -64,9 +64,9 @@ import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
- * JSR-268 SmartCard I/O.
+ * JSR-268 AbstractSmartCard I/O.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class SmartcardIoConnection extends ApduConnectionIso7816 {
+public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
 	private static final boolean DEBUG = false;
 

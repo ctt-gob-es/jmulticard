@@ -28,12 +28,12 @@ import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
+import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta Atos / Siemens CardOS.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class CardOS extends Iso7816FourCard implements CryptoCard {
+public final class CardOS extends AbstractIso7816FourCard implements CryptoCard {
 
     private static final byte[] ATR_MASK = {
         (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,

@@ -52,9 +52,9 @@ public abstract class SequenceOf extends DecoderObject {
 	/** Tipo ASN&#46;1 <i>SequenceOf</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private final Class<? extends DecoderObject> elementsType;
+    private transient final Class<? extends DecoderObject> elementsType;
 
-    private Vector<DecoderObject> sequenceObjects = null;
+    private transient Vector<DecoderObject> sequenceObjects = null;
 
 	@Override
     protected void decodeValue() throws Asn1Exception, TlvException {

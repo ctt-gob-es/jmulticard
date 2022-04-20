@@ -81,7 +81,7 @@ import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedExcep
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class Dnie3 extends Dnie implements MrtdLds1 {
 
-    private String idesp = null;
+    private transient String idesp = null;
 
 	@Override
 	public X509Certificate[] checkSecurityObjects() throws IOException,
@@ -254,7 +254,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			return selectFileByLocationAndRead(FILE_DG03_LOCATION);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG3 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG3 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		// El DG3 necesita canal administrativo, le damos un tratamiento especial
 		catch(final RequiredSecurityStateNotSatisfiedException e) {
@@ -274,7 +274,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			ret.setDerValue(selectFileByLocationAndRead(FILE_DG07_LOCATION));
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG7 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG7 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG7", e); //$NON-NLS-1$
@@ -288,7 +288,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			return selectFileByLocationAndRead(FILE_DG11_LOCATION);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG11 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG11 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG11", e); //$NON-NLS-1$
@@ -301,7 +301,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			return selectFileByLocationAndRead(FILE_DG12_LOCATION);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG12 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG12 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG12", e); //$NON-NLS-1$
@@ -318,7 +318,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			return ret;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG13 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG13 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG13", e); //$NON-NLS-1$
@@ -331,7 +331,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			return selectFileByLocationAndRead(FILE_DG14_LOCATION);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG14 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG14 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG14", e); //$NON-NLS-1$
@@ -364,7 +364,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 			return com;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("COM no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("COM no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el 'Common Data' (COM)", e); //$NON-NLS-1$
@@ -548,15 +548,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	        }
         }
 
-        // Establecemos ahora el canal de usuario
-        final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
-    		this,
-    		getConnection(),
-    		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
-		);
-
 		try {
 			selectMasterFile();
 		}
@@ -565,6 +556,15 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
         		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario", e //$NON-NLS-1$
     		);
 		}
+
+        // Establecemos ahora el canal de usuario
+        final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
+    		this,
+    		getConnection(),
+    		getCryptoHelper(),
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
+		);
 
         try {
             setConnection(usrSecureConnection);

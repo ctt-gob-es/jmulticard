@@ -47,13 +47,13 @@ import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
+import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta G&amp;D SmartCafe con Applet PKCS#15.
  * @author Vicente Ortiz
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class SmartCafePkcs15Applet extends Iso7816FourCard implements CryptoCard {
+public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard implements CryptoCard {
 
 	private static final byte[] ATR_MASK = {
 		(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
@@ -108,13 +108,13 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
 
-    private PasswordCallback passwordCallback = null;
-    private CallbackHandler callbackHandler = null;
+    private transient PasswordCallback passwordCallback = null;
+    private transient CallbackHandler callbackHandler = null;
 
-    private boolean authenticated = false;
+    private transient boolean authenticated = false;
 
     /** Manejador de funciones criptogr&aacute;ficas. */
-    protected final CryptoHelper cryptoHelper;
+    private transient final CryptoHelper cryptoHelper;
 
     /** Construye un objeto que representa una tarjeta G&amp;D SmartCafe con el
      * Applet PKCS#15 de AET.

@@ -50,7 +50,7 @@ public class DerBoolean extends DecoderObject {
 
 	private static final byte TAG_BOOLEAN = (byte)0x01;
 
-	private Boolean booleanValue = null;
+	private transient Boolean booleanValue = null;
 
 	@Override
     protected void decodeValue() throws Asn1Exception, TlvException {

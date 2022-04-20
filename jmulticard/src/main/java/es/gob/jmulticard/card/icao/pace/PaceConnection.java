@@ -11,7 +11,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksumException;
-import es.gob.jmulticard.card.SmartCard;
+import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 
@@ -26,7 +26,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 	private static final byte MSB_INCORRECT_LE = (byte) 0x6C;
 
 	/** Octeto de valor m&aacute;s significativo que indica un <i>Le</i> incorrecto en la petici&oacute;n. */
-	private final SecureMessaging sm;
+	private transient final SecureMessaging sm;
 
 	/** Conexi&oacute;n PACE para establecimiento de canal seguro por NFC.
 	 * @param connection Conexi&oacute;n base sobre la que crear el nuevo canal.
@@ -66,7 +66,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			command.getLe()
 		);
 
-		if (SmartCard.DEBUG) {
+		if (AbstractSmartCard.DEBUG) {
 			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 				"APDU de comando en claro: " + HexUtils.hexify(finalCommand.getBytes(), true) //$NON-NLS-1$
 			);
@@ -106,7 +106,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			);
 		}
 
-		if (SmartCard.DEBUG) {
+		if (AbstractSmartCard.DEBUG) {
 			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
 				"APDU de respuesta en claro: " + HexUtils.hexify(decipherApdu.getBytes(), true) //$NON-NLS-1$
 			);

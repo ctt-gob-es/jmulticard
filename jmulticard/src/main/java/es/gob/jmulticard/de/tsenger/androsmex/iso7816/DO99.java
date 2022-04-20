@@ -30,7 +30,7 @@ final class DO99 {
 
 	private static final byte TAG = (byte) 0x99;
 
-	private final Tlv tlv;
+	private transient final Tlv tlv;
 
 	DO99(final byte[] encodedData) throws SecureMessagingException {
 		try {

@@ -52,7 +52,7 @@ public final class PathLength extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0x80;
 
-	private Integer value = null;
+	private transient Integer value = null;
 
 	int getIntValue() {
 		return this.value.intValue();

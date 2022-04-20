@@ -9,7 +9,7 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 
 /** Conexi&oacute;n seg&uacute;n ISO 7816 con una tarjeta inteligente insertada en un lector.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public abstract class ApduConnectionIso7816 implements ApduConnection {
+public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 
     /** Etiqueta que identifica que es necesario recuperar el resultado del comando anterior. */
     private static final byte TAG_RESPONSE_PENDING = 0x61;

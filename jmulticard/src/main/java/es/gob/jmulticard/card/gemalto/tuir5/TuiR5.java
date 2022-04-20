@@ -28,12 +28,12 @@ import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
-import es.gob.jmulticard.card.iso7816four.Iso7816FourCard;
+import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta Gemalto TUI R5 MPCOS.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
+public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
 
     private static final byte[] ATR_MASK = {
         (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
@@ -57,7 +57,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private final PasswordCallback passwordCallback;
+    private transient final PasswordCallback passwordCallback;
 
     private static final Map<String, X509Certificate> CERTIFICATES_BY_ALIAS = new ConcurrentHashMap<>();
 

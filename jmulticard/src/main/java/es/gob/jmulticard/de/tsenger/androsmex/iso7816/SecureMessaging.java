@@ -41,10 +41,10 @@ import es.gob.jmulticard.asn1.TlvException;
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class SecureMessaging {
 
-	private final byte[] kenc;
-	private final byte[] kmac;
-	private final byte[] ssc;
-	private final CryptoHelper cryptoHelper;
+	private transient final byte[] kenc;
+	private transient final byte[] kmac;
+	private transient final byte[] ssc;
+	private transient final CryptoHelper cryptoHelper;
 
 	/** Constructor.
 	 * @param ksenc Clave de sesi&oacute;n para encriptar.

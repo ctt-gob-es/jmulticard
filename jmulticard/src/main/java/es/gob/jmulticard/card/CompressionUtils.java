@@ -16,7 +16,7 @@ import es.gob.jmulticard.CertificateUtils;
 public final class CompressionUtils {
 
 	/** Registro. */
-	protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	/** Constructor privado y vac&iacute;o. */
 	private CompressionUtils() {

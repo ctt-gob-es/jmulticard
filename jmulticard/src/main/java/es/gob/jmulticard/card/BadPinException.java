@@ -9,7 +9,7 @@ public class BadPinException extends PinException {
 
 	/** N&uacute;mero de intentos de introducci&oacute;n de PIN que quedan tras
 	 * producirse este error. */
-	private final int retries;
+	private transient final int retries;
 
 	/** Construye una excepci&oacute;n de introducci&oacute;n incorrecta del PIN del DNIe.
 	 * @param retriesLeft Intentos restantes. */

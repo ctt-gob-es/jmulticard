@@ -18,13 +18,13 @@ import es.gob.jmulticard.asn1.TlvException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Sod extends DecoderObject {
 
-	private final CryptoHelper cryptoHelper;
+	private transient final CryptoHelper cryptoHelper;
 
 	private static final byte TAG = 0x77;
 
-	private byte[] ldsSecurityObjectBytes = null;
-	private LdsSecurityObject ldsSecurityObject = null;
-	private X509Certificate[] certificateChain = null;
+	private transient byte[] ldsSecurityObjectBytes = null;
+	private transient LdsSecurityObject ldsSecurityObject = null;
+	private transient X509Certificate[] certificateChain = null;
 
 	/** Constructor.
 	 * @param ch Clase de utilidad para operaciones criptogr&aacute;ficas. */

@@ -52,7 +52,7 @@ public final class CipheredApdu extends CommandApdu {
 	private static final byte TAG_CRYPTOGRAPHIC_CHECKSUM = (byte) 0x8E;
 
 	private final byte[] mac;
-	private final byte[] data;
+	private transient final byte[] data;
 
 	/** Obtiene el MAC de la APDU.
 	 * @return MAC de la APDU. */

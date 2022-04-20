@@ -52,7 +52,7 @@ public final class ObjectIdentifier extends DecoderObject {
 	private static final byte TAG_OBJECTID = (byte) 0x06;
 	private static final byte RELATIVE_OID = (byte) 0x0d;
 
-	private byte[] rawValue = null;
+	private transient byte[] rawValue = null;
 
     @Override
     public void checkTag(final byte tag) throws Asn1Exception {

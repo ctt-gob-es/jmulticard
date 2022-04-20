@@ -20,7 +20,7 @@ public final class OptionalDetailsDnie3 extends OptionalDetails {
 
 	private static final byte TAG = 0x6D;
 
-	private String[] parsedValues = null;
+	private transient String[] parsedValues = null;
 
 	/** Obtiene el nombre del titular.
 	 * @return Nombre del titular. */

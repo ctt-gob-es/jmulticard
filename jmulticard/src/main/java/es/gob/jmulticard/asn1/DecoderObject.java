@@ -46,7 +46,7 @@ import es.gob.jmulticard.HexUtils;
  * @author Alberto Mart&iacute;nez. */
 public abstract class DecoderObject {
 
-    private byte[] rawDerValue = null;
+    private transient byte[] rawDerValue = null;
 
 	/** Obtiene el valor directo ASN&#46;1 DER.
 	 * @return Valor directo ASN&#46;1 DER. */

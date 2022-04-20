@@ -24,7 +24,7 @@ import es.gob.jmulticard.apdu.iso7816four.GeneralAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
-import es.gob.jmulticard.card.SmartCard;
+import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
@@ -386,7 +386,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] ssc = new byte[16];
 		Arrays.fill(ssc, (byte)0);
 
-		if (SmartCard.DEBUG) {
+		if (AbstractSmartCard.DEBUG) {
 			LOGGER.info("Canal Pace abierto"); //$NON-NLS-1$
 			LOGGER.info(
 				"\nKenc: " + HexUtils.hexify(kenc, true) + //$NON-NLS-1$

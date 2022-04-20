@@ -57,7 +57,7 @@ public final class Location {
     private static final int MASTER_FILE_ID = 0x3F00;
 
     /** Elementos de la ruta hacia el fichero. */
-    private Vector<Integer> path = new Vector<>();
+    private transient Vector<Integer> path = new Vector<>();
 
     private static final Map<String, Integer> HEXBYTES = new ConcurrentHashMap<>();
 

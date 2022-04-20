@@ -21,7 +21,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 
 		private final byte[] paramBytes;
 
-		private PaceAlgorithmParam(final byte[] paramId) {
+		PaceAlgorithmParam(final byte[] paramId) {
 			this.paramBytes = paramId.clone();
 		}
 
@@ -54,7 +54,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 
 		private final byte[] pwdTypeBytes;
 
-		private PacePasswordType(final byte[] tpy) {
+		PacePasswordType(final byte[] tpy) {
 			this.pwdTypeBytes = tpy.clone();
 		}
 
@@ -106,7 +106,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 
 		private final byte[] oidBytes;
 
-		private PaceAlgorithmOid(final byte[] oid) {
+		PaceAlgorithmOid(final byte[] oid) {
 			this.oidBytes = oid.clone();
 		}
 

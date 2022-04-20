@@ -54,7 +54,7 @@ import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.ApduEncrypter;
+import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.apdu.connection.ApduEncrypterDes;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
@@ -91,36 +91,36 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     };
 
     /** Utilidad para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
-    protected final CryptoHelper cryptoHelper;
+    protected transient final CryptoHelper cryptoHelper;
 
     /** Tarjeta CWA-14890 con la que se desea establecer el canal seguro. */
-    private Cwa14890Card card;
+    private transient Cwa14890Card card;
 
     /** Conexi&oacute;n subyacente para el env&iacute;o de APDUs. */
-    protected ApduConnection subConnection;
+    protected transient ApduConnection subConnection;
 
     /** Clave Triple DES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
-    private byte[] kenc = null;
+    private transient byte[] kenc = null;
 
     /** Clave Triple DES (TDES o DESEDE) para calcular y verificar <i>checksums</i>. */
-    private byte[] kmac = null;
+    private transient byte[] kmac = null;
 
     /** Contador de secuencia. */
-    private byte[] ssc = null;
+    private transient byte[] ssc = null;
 
     /** Indica el estado de la conexi&oacute;n. */
-    protected boolean openState = false;
+    protected transient boolean openState = false;
 
     /** Clase de utilidad para encriptar las APDU. */
-    protected final ApduEncrypter apduEncrypter;
+    protected transient final AbstractApduEncrypter apduEncrypter;
 
-    private Cwa14890PublicConstants pubConsts;
-    private Cwa14890PrivateConstants privConsts;
+    private transient Cwa14890PublicConstants pubConsts;
+    private transient Cwa14890PrivateConstants privConsts;
 
     /** Obtiene la clase de utilidad para encriptar las APDU.
      * @return Clase de utilidad para encriptar las APDU. */
     @SuppressWarnings("static-method")
-	protected ApduEncrypter instantiateApduEncrypter() {
+	protected AbstractApduEncrypter instantiateApduEncrypter() {
     	return new ApduEncrypterDes();
     }
 

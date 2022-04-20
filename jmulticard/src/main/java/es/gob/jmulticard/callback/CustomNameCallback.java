@@ -19,11 +19,11 @@ public final class CustomNameCallback implements Callback, java.io.Serializable 
 
     /** @serial
      * @since 1.4 */
-    private String defaultName;
+    private transient String defaultName;
 
     /** @serial
      * @since 1.4 */
-    private String inputName;
+    private transient String inputName;
 
     /** Construct a <code>NameCallback</code> with a prompt.
      * @param userPrompt the prompt used to request the name.

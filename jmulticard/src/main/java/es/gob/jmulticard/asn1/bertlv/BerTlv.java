@@ -22,9 +22,9 @@ import es.gob.jmulticard.HexUtils;
 /** TLV seg&uacute;n ASN&#46;1 BER. Soporta etiquetas de doble octeto.
  * @author Isaac Levin. */
 public final class BerTlv {
-    private BerTlvIdentifier tag;
-    private int length;
-    private byte[] value;
+    private transient BerTlvIdentifier tag;
+    private transient int length;
+    private transient byte[] value;
 
     /** Obtiene la etiqueta (tipo) del TLV.
      * @return Etiqueta (tipo) del TLV. */
@@ -52,7 +52,7 @@ public final class BerTlv {
     /** Obtiene una instancia del TLV.
      * @param stream Representaci&oacute;n binaria del TLV.
      * @return Instancia del TLV. */
-    public static BerTlv getInstance(final byte[] stream) {
+    public static BerTlv createInstance(final byte[] stream) {
         final BerTlv tlv = new BerTlv();
         tlv.decode(new ByteArrayInputStream(stream));
         return tlv;
@@ -62,7 +62,7 @@ public final class BerTlv {
      * @param stream Flujo hacia la representaci&oacute;n binaria del TLV.
      *               El flujo se devuelve con avanzado hasta el final del TLV.
      * @return Instancia del TLV. */
-    public static BerTlv getInstance(final ByteArrayInputStream stream) {
+    public static BerTlv createInstance(final ByteArrayInputStream stream) {
         final BerTlv tlv = new BerTlv();
         tlv.decode(stream);
         return tlv;

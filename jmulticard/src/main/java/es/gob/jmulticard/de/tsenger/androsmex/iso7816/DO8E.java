@@ -29,7 +29,7 @@ import es.gob.jmulticard.asn1.TlvException;
 final class DO8E {
 
 	private static final byte TAG = (byte) 0x8e;
-	private final Tlv tlv;
+	private transient final Tlv tlv;
 
 	DO8E(final byte[] checksumOrEncoded) throws SecureMessagingException {
 		if (checksumOrEncoded == null) {

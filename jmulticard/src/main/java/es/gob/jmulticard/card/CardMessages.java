@@ -1,5 +1,6 @@
 package es.gob.jmulticard.card;
 
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public final class CardMessages {
         try {
             return RESOURCE_BUNDLE.getString(key).replace("%0", text); //$NON-NLS-1$
         }
-        catch (final Exception e) {
+        catch (final NullPointerException | MissingResourceException | ClassCastException  e) {
         	LOGGER.severe("No se ha encontrado el recurso de texto con clave '" + key + "': " + e); //$NON-NLS-1$ //$NON-NLS-2$
             return '!' + key + '!';
         }
@@ -40,7 +41,7 @@ public final class CardMessages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         }
-        catch (final Exception e) {
+        catch (final NullPointerException | MissingResourceException | ClassCastException e) {
         	LOGGER.severe("No se ha encontrado el recurso de texto con clave '" + key + "': " + e); //$NON-NLS-1$ //$NON-NLS-2$
             return '!' + key + '!';
         }

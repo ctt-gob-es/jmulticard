@@ -11,7 +11,7 @@ import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.Pa
  * @author Ignacio Mar&iacute;n. */
 public final class WirelessInitializerMrz implements WirelessInitializer {
 
-	private final byte[] k;
+	private transient final byte[] k;
 
 	/** Construye una MRZ para inicializaci&oacute;n de un canal PACE.
 	 * @param mrz MRZ. */

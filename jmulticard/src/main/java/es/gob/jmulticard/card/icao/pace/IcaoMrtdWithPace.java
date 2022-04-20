@@ -111,7 +111,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG04_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG4 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG4 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch(final RequiredSecurityStateNotSatisfiedException e) {
 			throw new CryptoCardSecurityException(
@@ -129,7 +129,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG05_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG5 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG5 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG5", e); //$NON-NLS-1$
@@ -142,7 +142,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG06_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG6 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG6 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG6", e); //$NON-NLS-1$
@@ -155,7 +155,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG08_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG8 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG8 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG8", e); //$NON-NLS-1$
@@ -168,7 +168,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG09_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG9 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG9 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG9", e); //$NON-NLS-1$
@@ -181,7 +181,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG10_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG10 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG10 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG10", e); //$NON-NLS-1$
@@ -194,7 +194,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG15_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG15 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG15 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG15", e); //$NON-NLS-1$
@@ -207,7 +207,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG16_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG16 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG16 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG16", e); //$NON-NLS-1$

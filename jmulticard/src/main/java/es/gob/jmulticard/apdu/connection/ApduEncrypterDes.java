@@ -52,7 +52,7 @@ import es.gob.jmulticard.asn1.bertlv.BerTlv;
 /** Cifrador de APDU seg&uacute;n CWA-14890 mediante 3DES y MAC de 4 octetos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Carlos Gamuci Mill&aacute;n */
-public class ApduEncrypterDes extends ApduEncrypter {
+public class ApduEncrypterDes extends AbstractApduEncrypter {
 
 	/** Constructor de la clase para operaciones de cifrado cifrado DES. */
 	public ApduEncrypterDes() {
@@ -158,14 +158,14 @@ public class ApduEncrypterDes extends ApduEncrypter {
         BerTlv swTlv = null;
         BerTlv macTlv = null;
         try {
-            BerTlv tlv = BerTlv.getInstance(recordOfTlvs);
+            BerTlv tlv = BerTlv.createInstance(recordOfTlvs);
             if (tlv.getTag() == TAG_DATA_TLV) {
                 dataTlv = tlv;
-                tlv = BerTlv.getInstance(recordOfTlvs);
+                tlv = BerTlv.createInstance(recordOfTlvs);
             }
             if (tlv.getTag() == TAG_SW_TLV) {
             	swTlv = tlv;
-                tlv = BerTlv.getInstance(recordOfTlvs);
+                tlv = BerTlv.createInstance(recordOfTlvs);
             }
             if (tlv.getTag() == TAG_MAC_TLV) {
                 macTlv = tlv;

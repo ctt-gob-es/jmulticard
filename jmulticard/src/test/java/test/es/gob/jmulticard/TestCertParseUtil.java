@@ -21,7 +21,7 @@ public final class TestCertParseUtil {
 	@Test
 	public void testGetFields() throws Exception {
 		final X509Certificate c;
-		try (final InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
+		try (InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
 			c = CertificateUtils.generateCertificate(is);
 		}
 		final String dn = c.getSubjectDN().toString();

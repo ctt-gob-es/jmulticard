@@ -7,7 +7,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public class TuiPrivateKeyReference implements PrivateKeyReference {
 
-	private final byte keyIndex;
+	private transient final byte keyIndex;
 
 	/** Construye una clave privada de una TUI.
 	 * @param index &Iacute;ndice hacia la clave privada */

@@ -24,7 +24,7 @@ import es.gob.jmulticard.HexUtils;
  * @author Isaac Levin */
 final class BerTlvIdentifier {
 
-    private byte[] value;
+    private transient byte[] value;
 
     /** Obtiene el valor de la etiqueta (tipo) del TLV.
      * @return Valor de la etiqueta (tipo) del TLV. */

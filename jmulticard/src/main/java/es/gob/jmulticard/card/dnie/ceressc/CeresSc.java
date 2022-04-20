@@ -57,13 +57,15 @@ public final class CeresSc extends Dnie {
     }, ATR_MASK_TC);
 
     /** Certificados de la tarjeta indexados por su alias. */
-    private Map<String, X509Certificate> certs;
+    private transient Map<String, X509Certificate> certs;
 
-    /** Alias de los certificados de la tarjeta indexados por el identificador interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
-    private Map<String, String> aliasByCertAndKeyId;
+    /** Alias de los certificados de la tarjeta indexados por el identificador
+     * interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
+    private transient Map<String, String> aliasByCertAndKeyId;
 
-    /** Referencias a las claves privadas de la tarjeta indexadas por el alias de su certificado asociado. */
-    private Map<String, DniePrivateKeyReference> keyReferences;
+    /** Referencias a las claves privadas de la tarjeta indexadas por el alias
+     * de su certificado asociado. */
+    private transient Map<String, DniePrivateKeyReference> keyReferences;
 
 	/** Construye una tarjeta FNMT CERES con canal seguro.
      * @param conn Conexi&oacute;n con la tarjeta.

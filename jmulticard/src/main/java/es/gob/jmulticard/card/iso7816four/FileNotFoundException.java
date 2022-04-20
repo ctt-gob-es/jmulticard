@@ -49,7 +49,7 @@ public final class FileNotFoundException extends Iso7816FourCardException {
     private static final long serialVersionUID = -1114043381519603316L;
 
     /** Identificador del fichero no encontrado. */
-    private final byte[] id;
+    private transient final byte[] id;
 
     private static final StatusWord FILE_NOT_FOUND_RETURN_CODE = new StatusWord((byte) 0x6A, (byte) 0x82);
 

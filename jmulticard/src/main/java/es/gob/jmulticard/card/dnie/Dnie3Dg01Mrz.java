@@ -14,19 +14,19 @@ public final class Dnie3Dg01Mrz implements Mrz {
 
     private static final SimpleDateFormat SDFORMAT = new SimpleDateFormat("yyMMdd"); //$NON-NLS-1$
 
-	private final String mrzString;
+	private transient final String mrzString;
     private final byte[] rawData;
 
-    private String name;
-    private String surname;
-    private String dateOfBirth;
-    private String nationality;
-    private String sex;
-    private String dateOfExpiry;
-    private String docNumber;
-    private String docType;
-    private String issuer;
-    private String optData;
+    private transient String name;
+    private transient String surname;
+    private transient String dateOfBirth;
+    private transient String nationality;
+    private transient String sex;
+    private transient String dateOfExpiry;
+    private transient String docNumber;
+    private transient String docType;
+    private transient String issuer;
+    private transient String optData;
 
     /** Construye la ICAO MRZ del DNIe 3&#46;0 a partir del fichero DG1.
      * @param rawBytes Contenido del fichero DG1 del DNIe 3&#46;0. */

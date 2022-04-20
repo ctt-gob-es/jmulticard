@@ -17,7 +17,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduEncrypter;
+import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.apdu.connection.ApduEncrypterAes;
 import es.gob.jmulticard.apdu.connection.ApduEncrypterDes;
 import es.gob.jmulticard.apdu.connection.CipheredApdu;
@@ -25,7 +25,7 @@ import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 
 /** Pruebas del cifrado de APDU seg&uacute;n CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestApduEncrypter extends ApduEncrypter {
+public final class TestApduEncrypter extends AbstractApduEncrypter {
 
 	private static final CryptoHelper CRYPTO_HELPER = new JseCryptoHelper();
 
@@ -182,7 +182,7 @@ public final class TestApduEncrypter extends ApduEncrypter {
 			(byte) 0x00,
 			new CachePasswordCallback("CRYPTOKI".toCharArray()) //$NON-NLS-1$
 		);
-		final ApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
+		final AbstractApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
 		final byte[] res = apduEncrypterDes.protectAPDU(
 			verifyCommandApdu,
 			KENC,
@@ -201,7 +201,7 @@ public final class TestApduEncrypter extends ApduEncrypter {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testEncryptionDes() throws Exception {
-		final ApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
+		final AbstractApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
 		final CipheredApdu a = apduEncrypterDes.protectAPDU(
 			new CommandApdu(
 				(byte)0x00,

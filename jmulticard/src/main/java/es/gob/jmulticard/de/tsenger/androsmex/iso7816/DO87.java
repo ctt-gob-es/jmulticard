@@ -28,7 +28,7 @@ final class DO87 {
 
 	private static final byte TAG = (byte) 0x87;
 
-	private Tlv tlv = null;
+	private transient Tlv tlv = null;
 
     DO87() {
     	// Vacio
