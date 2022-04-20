@@ -110,8 +110,8 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 							((PasswordCallback)cb).setPassword(pin);
 						}
 
-						 // Si no se ha hecho ya, programamos una tarea para el borrado de la contrasena cacheada para
-						// que se ejecute en un tiempo determinado
+						// Si no se ha hecho ya, programamos una tarea para el borrado de la
+						// contrasena cacheada para que se ejecute en un tiempo determinado
 						if (this.timer == null) {
 							this.timer = new Timer();
 							this.timer.schedule(new ResetCacheTimerTask(this), CACHE_TIMEOUT);
@@ -147,17 +147,23 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 
 	private static boolean loadUseCachePreference() {
 		try {
-			return Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).getBoolean(PREFERENCE_KEY_USE_CACHE, false);
+			return Preferences.userNodeForPackage(
+				DnieCacheCallbackHandler.class).getBoolean(PREFERENCE_KEY_USE_CACHE, false
+			);
 		}
 		catch (final Exception e) {
-			LOGGER.warning("No se puede acceder a la configuracion del cacheo del PIN de la tarjeta: " + e); //$NON-NLS-1$
+			LOGGER.warning(
+				"No se puede acceder a la configuracion del cacheo del PIN de la tarjeta: " + e //$NON-NLS-1$
+			);
 			return false;
 		}
 	}
 
 	private static void setUseCachePreference(final boolean useCache) {
 		try {
-			Preferences.userNodeForPackage(DnieCacheCallbackHandler.class).putBoolean(PREFERENCE_KEY_USE_CACHE, useCache);
+			Preferences.userNodeForPackage(
+				DnieCacheCallbackHandler.class).putBoolean(PREFERENCE_KEY_USE_CACHE, useCache
+			);
 		}
 		catch (final Exception e) {
 			LOGGER.warning("No se pudo guardar la configuracion del cacheo del PIN de la tarjeta: " + e); //$NON-NLS-1$

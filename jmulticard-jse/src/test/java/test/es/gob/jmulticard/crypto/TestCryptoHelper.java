@@ -94,7 +94,7 @@ public final class TestCryptoHelper {
 			iv
 		);
 
-		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesRead; // Numero de octetos leidos de la entrada
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		final BufferedBlockCipher decryptCipher = new PaddedBufferedBlockCipher(
@@ -182,7 +182,7 @@ public final class TestCryptoHelper {
 		//**********************************************************
 
 		// BouncyCastle directo
-		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesRead; // Numero de octetos leidos de la entrada
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		// AES block cipher en modo CBC con padding ISO7816d4

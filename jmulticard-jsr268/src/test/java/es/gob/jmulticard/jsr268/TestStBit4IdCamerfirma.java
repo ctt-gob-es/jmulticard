@@ -41,7 +41,7 @@ public final class TestStBit4IdCamerfirma {
 	public void test0000() throws Exception {
 		final byte[] data;
 		try (
-			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/0000_7076199932780544215.DER.txt") //$NON-NLS-1$
+			InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/0000_7076199932780544215.DER.txt") //$NON-NLS-1$
 		) {
 			data = getDataFromInputStream(
 				is
@@ -58,7 +58,7 @@ public final class TestStBit4IdCamerfirma {
 	public void test8028() throws Exception {
 		final byte[] data;
 		try (
-			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8028_6486727951599148607.DER.txt") //$NON-NLS-1$
+			InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8028_6486727951599148607.DER.txt") //$NON-NLS-1$
 		) {
 			data = getDataFromInputStream(
 				is
@@ -72,7 +72,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println(HexUtils.hexify(trimmedData, true));
 
 		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -86,7 +86,7 @@ public final class TestStBit4IdCamerfirma {
 	public void test8023() throws Exception {
 		final byte[] data;
 		try (
-			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8023_7519421280536555097.DER.txt") //$NON-NLS-1$
+			InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8023_7519421280536555097.DER.txt") //$NON-NLS-1$
 		) {
 			data = getDataFromInputStream(
 				is
@@ -99,7 +99,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -113,7 +113,7 @@ public final class TestStBit4IdCamerfirma {
 	public void test8024() throws Exception {
 		final byte[] data;
 		try (
-			final InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8024_3159855238388326518.DER.txt") //$NON-NLS-1$
+			InputStream is = TestStBit4IdCamerfirma.class.getResourceAsStream("/bit4id-stcm/8024_3159855238388326518.DER.txt") //$NON-NLS-1$
 		) {
 			data = getDataFromInputStream(
 				is
@@ -126,7 +126,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 		try (
-			final OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -146,7 +146,7 @@ public final class TestStBit4IdCamerfirma {
         if (input == null) {
             return new byte[0];
         }
-        int nBytes = 0;
+        int nBytes;
         final byte[] buffer = new byte[BUFFER_SIZE];
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         while ((nBytes = input.read(buffer)) != -1) {

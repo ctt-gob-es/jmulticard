@@ -54,7 +54,7 @@ final class RSACore {
     // cache for blinding parameters. Map<BigInteger, BlindingParameters>
     // use a weak hashmap so that cached values are automatically cleared
     // when the modulus is GC'ed
-    private final static Map<BigInteger, BlindingParameters> blindingCache = new WeakHashMap<>();
+    private final static Map<BigInteger, BlindingParameters> BLINDING_CACHE = new WeakHashMap<>();
 
     private RSACore() {
         // No instanciable
@@ -262,7 +262,7 @@ final class RSACore {
      * Set of blinding parameters for a given RSA key.
      *
      * The RSA modulus is usually unique, so we index by modulus in
-     * {@code blindingCache}.  However, to protect against the unlikely
+     * {@code BLINDING_CACHE}.  However, to protect against the unlikely
      * case of two keys sharing the same modulus, we also store the public
      * or the private exponent.  This means we cannot cache blinding
      * parameters for multiple keys that share the same modulus, but
@@ -373,15 +373,15 @@ final class RSACore {
     		                                                final BigInteger d,
     		                                                final BigInteger n) {
         BlindingParameters bps = null;
-        synchronized (blindingCache) {
-            bps = blindingCache.get(n);
+        synchronized (BLINDING_CACHE) {
+            bps = BLINDING_CACHE.get(n);
         }
 
         if (bps == null) {
             bps = new BlindingParameters(e, d, n);
-            synchronized (blindingCache) {
-            	if (blindingCache.get(n) == null) {
-            		blindingCache.put(n, bps);
+            synchronized (BLINDING_CACHE) {
+            	if (BLINDING_CACHE.get(n) == null) {
+            		BLINDING_CACHE.put(n, bps);
             	}
             }
         }
@@ -390,9 +390,9 @@ final class RSACore {
         if (brp == null) {
             // need to reset the blinding parameters
             bps = new BlindingParameters(e, d, n);
-            synchronized (blindingCache) {
-            	if (blindingCache.containsKey(n)) {
-					blindingCache.put(n, bps);
+            synchronized (BLINDING_CACHE) {
+            	if (BLINDING_CACHE.containsKey(n)) {
+					BLINDING_CACHE.put(n, bps);
 				}
             }
             return bps.getBlindingRandomPair(e, d, n);

@@ -467,7 +467,7 @@ abstract class JAccessibilityCustomDialog extends JDialog {
      * @param height Alto de la ventana.
      * @return int Posici&oacute;n Y. */
     private static int getInitialY(final int height) {
-        final Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         return screenSize.height / 2 - height / 2;
     }
 

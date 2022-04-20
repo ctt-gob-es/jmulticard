@@ -149,16 +149,16 @@ final class ResizingAdaptor extends ComponentAdapter {
                     final float resizeFactor = getImageResizeFactor(AccesiblityConstants.RESIZING_IMAGES_FACTOR);
 
                     // Se obtienen las dimensiones del icono original
-                    final int w = iconLabel.getOriginalDimension().width;
-                    final int h = iconLabel.getOriginalDimension().height;
+                    final int width = iconLabel.getOriginalDimension().width;
+                    final int height = iconLabel.getOriginalDimension().height;
                     // Se hace el resize de la imagen
-                    resizeImage(resizeFactor, actualComponent, w, h, multiplicando);
+                    resizeImage(resizeFactor, actualComponent, width, height, multiplicando);
                 }
             }
 
             // imagenes dentro de JButton
             if (actualComponent instanceof JButton && ((JButton) actualComponent).getIcon() != null) {
-                float resizeFactor = 0;
+                final float resizeFactor;
                 if (this.theCustomDialog != null) {
                     resizeFactor = getImageResizeFactor(AccesiblityConstants.RESIZING_IMAGES_FACTOR + 0.0010);
                 }
@@ -226,7 +226,7 @@ final class ResizingAdaptor extends ComponentAdapter {
         }
         final ImageIcon newImage = new ImageIcon(image.getScaledInstance((int) Math.round(w * multiplicando * factor),
                                                       (int) Math.round(h * multiplicando * factor),
-                                                      java.awt.Image.SCALE_SMOOTH));
+                                                      Image.SCALE_SMOOTH));
         ((JLabel) c).setIcon(newImage);
     }
 
@@ -253,11 +253,10 @@ final class ResizingAdaptor extends ComponentAdapter {
         // Se redimensionan las imagenes
         int lado = (int) Math.round(25 * 2 * factorAux);
         lado = lado < 25 ? 25 : lado;
-        final ImageIcon newImage = new ImageIcon(imageIcon.getImage().getScaledInstance(lado,
-                                                                     lado,
-                                                                     java.awt.Image.SCALE_SMOOTH));
+        final ImageIcon newImage = new ImageIcon(
+    		imageIcon.getImage().getScaledInstance(lado, lado, Image.SCALE_SMOOTH)
+		);
         button.setIcon(newImage);
-
         button.setPreferredSize(new Dimension(lado, lado));
     }
 

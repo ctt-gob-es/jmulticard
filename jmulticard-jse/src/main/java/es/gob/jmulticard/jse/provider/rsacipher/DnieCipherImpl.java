@@ -271,7 +271,7 @@ public final class DnieCipherImpl extends CipherSpi {
         final int n = RSACore.getByteLength(rsaKey.getModulus());
         this.outputSize = n;
         this.bufOfs = 0;
-        if (this.paddingType == PAD_NONE) {
+        if (PAD_NONE.equals(this.paddingType)) {
             if (params != null) {
                 throw new InvalidAlgorithmParameterException(
             		"Parametros no soportados para datos sin relleno" //$NON-NLS-1$
@@ -280,7 +280,7 @@ public final class DnieCipherImpl extends CipherSpi {
             this.padding = RSAPadding.getInstance(RSAPadding.PAD_NONE, n, rnd);
             this.buffer = new byte[n];
         }
-        else if (this.paddingType == PAD_PKCS1) {
+        else if (PAD_PKCS1.equals(this.paddingType)) {
             if (params != null) {
                 if (!(params instanceof TlsRsaPremasterSecretParameterSpec)) {
                     throw new InvalidAlgorithmParameterException(

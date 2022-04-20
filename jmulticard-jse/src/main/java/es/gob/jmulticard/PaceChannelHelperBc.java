@@ -147,9 +147,9 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		// Calcular secret = AES_Dec(nonce,sk);
 
-		final byte[] secret_nonce;
+		final byte[] secretNonce;
 		try {
-			secret_nonce = this.cryptoHelper.aesDecrypt(
+			secretNonce = this.cryptoHelper.aesDecrypt(
 				nonce,
 				new byte[0],
 				sk,
@@ -177,9 +177,9 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		rnd.setSeed(rnd.nextLong());
 		final byte[] x1 = new byte[curve.getFieldSize()/8];
 		rnd.nextBytes(x1);
-		final BigInteger PrkIFDDH1 = new BigInteger(1, x1);
+		final BigInteger prkIFDDH1 = new BigInteger(1, x1);
 		// Enviamos nuestra clave publica (pukIFDDH1 = G*PrkIFDDH1)
-		final ECPoint pukIFDDH1 = pointG.multiply(PrkIFDDH1);
+		final ECPoint pukIFDDH1 = pointG.multiply(prkIFDDH1);
 		final byte[] pukIFDDH1UncompressedBytes = pukIFDDH1.getEncoded(false);
 
 		Tlv tlv = new Tlv(
@@ -221,12 +221,12 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final ECPoint y1FromG = byteArrayToECPoint(pukIccDh1, curve);
 
 		//Calculamos el punto H secreto
-		final ECPoint SharedSecret_H = y1FromG.multiply(PrkIFDDH1);
+		final ECPoint sharedSecretH = y1FromG.multiply(prkIFDDH1);
 
 		//Se calcula el nuevo punto G' = nonce*G + H
-		final BigInteger ms = new BigInteger(1, secret_nonce);
+		final BigInteger ms = new BigInteger(1, secretNonce);
 		final ECPoint g_temp = pointG.multiply(ms);
-		final ECPoint newPointG = g_temp.add(SharedSecret_H);
+		final ECPoint newPointG = g_temp.add(sharedSecretH);
 
 
 		// 1.3.5 Tercer comando General Authenticate
@@ -237,10 +237,10 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] x2 = new byte[curve.getFieldSize()/8];
 		rnd.setSeed(rnd.nextLong());
 		rnd.nextBytes(x2);
-		final BigInteger PrkIFDDH2 = new BigInteger(1, x2);
+		final BigInteger prkIFDDH2 = new BigInteger(1, x2);
 
 		// Enviamos nuestra clave publica (pukIFDDH2 = G'*PrkIFDDH2)
-		final ECPoint pukIFDDH2 = newPointG.multiply(PrkIFDDH2);
+		final ECPoint pukIFDDH2 = newPointG.multiply(prkIFDDH2);
 
 		// ... La metemos en un TLV de autenticacion ...
 		tlv = new Tlv(
@@ -273,8 +273,8 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final ECPoint y2FromNewG = byteArrayToECPoint(pukIccDh2, curve);
 
 		// Se calcula el secreto k = PukICCDH2 * PrkIFDDH2
-		final ECPoint.Fp SharedSecret_K = (ECPoint.Fp) y2FromNewG.multiply(PrkIFDDH2);
-		final byte[] secretK = bigIntToByteArray(SharedSecret_K.normalize().getXCoord().toBigInteger());
+		final ECPoint.Fp sharedSecretK = (ECPoint.Fp) y2FromNewG.multiply(prkIFDDH2);
+		final byte[] secretK = bigIntToByteArray(sharedSecretK.normalize().getXCoord().toBigInteger());
 
 		// 1.3.6 Cuarto comando General Authenticate
 		// Se validan las claves de sesion generadas en el paso anterior,

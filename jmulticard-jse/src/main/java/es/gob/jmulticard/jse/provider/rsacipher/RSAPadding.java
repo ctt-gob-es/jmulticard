@@ -198,7 +198,7 @@ final class RSAPadding {
     }
 
     // cache of hashes of zero length data
-    private static final Map<String,byte[]> emptyHashes =
+    private static final Map<String,byte[]> EMPTY_HASHES =
         Collections.synchronizedMap(new HashMap<String,byte[]>());
 
     /**
@@ -213,10 +213,10 @@ final class RSAPadding {
         byte[] result;
         if (digestInput == null || digestInput.length == 0) {
             final String digestName = md.getAlgorithm();
-            result = emptyHashes.get(digestName);
+            result = EMPTY_HASHES.get(digestName);
             if (result == null) {
                 result = md.digest();
-                emptyHashes.put(digestName, result);
+                EMPTY_HASHES.put(digestName, result);
             }
         }
         else {

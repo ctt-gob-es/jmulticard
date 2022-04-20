@@ -52,8 +52,8 @@ public final class PasswordCallbackManager {
 	/** Establece el componente padre de los di&aacute;logos gr&aacute;ficos (para la modalidad)
 	 * @param comp Componente (<code>java.awt.Component</code>) padre de los di&aacute;logos gr&aacute;ficos (para la modalidad) */
 	public static void setDialogOwner(final Object comp) {
-		if (comp instanceof java.awt.Component) {
-			dialogOwner = (java.awt.Component) comp;
+		if (comp instanceof Component) {
+			dialogOwner = (Component) comp;
 		}
 	}
 

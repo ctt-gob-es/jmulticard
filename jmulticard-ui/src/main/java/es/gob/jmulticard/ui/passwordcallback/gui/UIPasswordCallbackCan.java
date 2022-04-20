@@ -69,14 +69,14 @@ public final class UIPasswordCallbackCan extends PasswordCallback {
     private static final String CAN_EXAMPLE = "/images/can_example.png"; //$NON-NLS-1$
 
     /** Mensaje que se va a mostrar. */
-    private String message = null;
+    private final String message;
 
     /** Componente padre sobre el que se mostrar&aacute; el di&aacute;logo para
      * la inserci&oacute;n de la contrase&ntilde;a. */
-    private Component parent = null;
+    private final Component parent;
 
     /** T&iacute;tulo del di&aacute;logo. */
-    private String title = null;
+    private final String title;
 
     /** Crea una <i>CallBack</i> para solicitar al usuario una contrase&ntilde;a
      * mediante un di&aacute;logo gr&aacute;fico. La contrase&ntilde;a no se

@@ -271,7 +271,7 @@ final class AccesibilityUtils {
     static String remarkMnemonic(final String text, final int key) {
         String newText = text;
         int pos = text.indexOf(key); // Se obtiene el indice del caracter
-        if (pos == -1) {// Se busca en minuscula
+        if (pos == -1) { // Se busca en minuscula
             final char keyChar = (char) key;
             pos = text.indexOf(String.valueOf(keyChar).toLowerCase(Locale.getDefault()));
         }
@@ -308,9 +308,9 @@ final class AccesibilityUtils {
         tipText.setFont((Font) UIManager.get("ToolTip.font")); //$NON-NLS-1$
         tipText.setOpaque(true);
         tip.add(tipText);
-        Point p = new Point();
+        Point point = new Point();
         try {
-            p = boton.getLocationOnScreen();
+            point = boton.getLocationOnScreen();
         }
         catch (final IllegalComponentStateException e) {
             Logger.getLogger("es.gob.jmulticard").warning("Error mostrando el tooltip: " + e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -319,7 +319,7 @@ final class AccesibilityUtils {
         if (boton.getSize().getHeight() > 34) {
             factor = (int) (boton.getSize().getHeight() * 0.5);
         }
-        tip.setLocation((int) p.getX(), (int) p.getY() + 30 + factor);
+        tip.setLocation((int) point.getX(), (int) point.getY() + 30 + factor);
         tip.pack();
         tip.setVisible(show);
     }

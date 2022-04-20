@@ -294,14 +294,14 @@ public final class BcCryptoHelper extends CryptoHelper {
 
 	/** Encripta un &uacute;nico bloque usando AES.
 	 * @param key Clave AES.
-	 * @param z Bloque a crifrar.
+	 * @param dataBlock Bloque a crifrar.
 	 * @return Bloque cifrado. */
-	private static byte[] aesEncryptSingleBlock(final byte[] key, final byte[] z) {
+	private static byte[] aesEncryptSingleBlock(final byte[] key, final byte[] dataBlock) {
 		final KeyParameter encKey = new KeyParameter(key);
 		final BlockCipher cipher = new AESEngine();
 		cipher.init(true, encKey);
 		final byte[] s = new byte[cipher.getBlockSize()];
-		cipher.processBlock(z, 0, s, 0);
+		cipher.processBlock(dataBlock, 0, s, 0);
 		return s;
 	}
 
@@ -334,7 +334,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			ivector
 		);
 
-		int noBytesRead = 0; // Numero de octetos leidos de la entrada
+		int noBytesRead; // Numero de octetos leidos de la entrada
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		// AES block cipher en modo CBC

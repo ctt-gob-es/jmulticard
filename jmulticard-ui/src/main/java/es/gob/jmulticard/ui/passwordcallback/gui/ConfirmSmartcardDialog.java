@@ -76,9 +76,6 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
     /** Panel de botones. */
     private JPanel buttonsPanel = null;
 
-    /** Panel principal. */
-    private JPanel mainPanel = null;
-
     /** Etiqueta que contiene el icono de la alerta. */
     protected final IconLabel iconLabel = new IconLabel();
 
@@ -200,7 +197,7 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
         container.setLayout(new GridBagLayout());
 
         // Panel con los datos del dialogo
-        this.mainPanel = new JPanel(new GridBagLayout());
+        final JPanel mainPanel = new JPanel(new GridBagLayout());
 
         // Restricciones para el panel de datos
         final GridBagConstraints c = new GridBagConstraints();
@@ -230,7 +227,7 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
         this.infoLabel.setVerticalAlignment(SwingConstants.CENTER); // Se alinea al centro el texto
 
         // Se anade la etiqueta al panel de informacion general
-        this.mainPanel.add(this.infoLabel, c);
+        mainPanel.add(this.infoLabel, c);
 
         // Panel de botones
         createMainButtonsPanel();
@@ -257,7 +254,7 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
         cons.gridheight = 3;
         cons.weighty = 0.65;
         cons.weightx = 0.90;
-        container.add(this.mainPanel, cons);
+        container.add(mainPanel, cons);
 
         //Se anade el icono
         cons.gridx = 0;

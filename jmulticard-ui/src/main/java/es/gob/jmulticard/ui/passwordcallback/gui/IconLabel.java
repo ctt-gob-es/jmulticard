@@ -57,7 +57,7 @@ final class IconLabel extends JLabel {
     /** Icono original. */
     private Icon originalIcon = null;
 
-    /** Dimension original */
+    /** Dimensi&oacute;n original */
     private Dimension originalDimension;
 
     @Override
@@ -84,18 +84,16 @@ final class IconLabel extends JLabel {
         this.originalIcon = originalIcn;
     }
 
-    /** obtiene la dimension inicial del icono.
-     * @return Dimension inicial del icono */
+    /** Obtiene la dimensi&oacute;n inicial del icono.
+     * @return Dimensi&oacute;n inicial del icono. */
     public Dimension getOriginalDimension(){
     	return this.originalDimension;
     }
 
-    /**
-     * Establece la dimension inicial del icono
-     * @param d Dimension inicial del icono
-     */
-    public void setOriginalDimension(final Dimension d){
-    	this.originalDimension = d;
+    /** Establece la dimensi&oacute;n inicial del icono
+     * @param dimension Dimensi&oacute;n inicial del icono. */
+    public void setOriginalDimension(final Dimension dimension){
+    	this.originalDimension = dimension;
     }
 
 }

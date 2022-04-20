@@ -232,7 +232,7 @@ public final class SmartcardIoConnection extends ApduConnectionIso7816 {
 			);
         }
         try {
-            if (terminales.size() < 1) {
+            if (terminales.isEmpty()) {
                 throw new NoReadersFoundException();
             }
             if (this.terminalNumber == -1) {
