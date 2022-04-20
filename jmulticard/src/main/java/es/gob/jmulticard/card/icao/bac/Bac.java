@@ -55,6 +55,10 @@ public final class Bac {
 		8, 5, 0, 8, 0, 8, 8, 0, 0, 8, 8, 0, 8, 0, 6, 8
 	};
 
+	private Bac() {
+		// No instanciable
+	}
+
 	/** Establecimiento de canal BAC.
 	 * @param mrz MRZ del documento de identidad electr&oacute;nico (MRTD).
 	 * @param ch Utilidad de operaciones criptogr&aacute;ficas.

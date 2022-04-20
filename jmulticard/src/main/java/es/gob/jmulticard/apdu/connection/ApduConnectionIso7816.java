@@ -26,7 +26,7 @@ public abstract class ApduConnectionIso7816 implements ApduConnection {
 	 * @param apdu Comando APDU a transmitir.
 	 * @return APSU de respuesta.
 	 * @throws ApduConnectionException Si hay cualquier problema durante el anv&iacute;o. */
-	protected abstract ResponseApdu internalTransmit(final byte[] apdu) throws ApduConnectionException;
+	protected abstract ResponseApdu internalTransmit(byte[] apdu) throws ApduConnectionException;
 
 	@Override
 	public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {

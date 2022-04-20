@@ -136,7 +136,7 @@ public final class CeresSc extends Dnie {
                     setConnection(((Cwa14890Connection) getConnection()).getSubConnection());
                 }
             }
-            catch (final Exception ex) {
+            catch (final ApduConnectionException ex) {
                 throw new DnieCardException("No se pudo recuperar el canal seguro para firmar (" + e + ")", ex); //$NON-NLS-1$ //$NON-NLS-2$
             }
             return signOperation(data, algorithm, privateKeyReference);
@@ -165,7 +165,9 @@ public final class CeresSc extends Dnie {
 			preload();
 		}
 		catch (final Exception e) {
-			throw new ApduConnectionException("Error cargando las estructuras iniciales de la tarjeta", e); //$NON-NLS-1$
+			throw new ApduConnectionException(
+				"Error cargando las estructuras iniciales de la tarjeta", e //$NON-NLS-1$
+			);
 		}
     }
 

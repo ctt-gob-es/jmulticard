@@ -21,20 +21,24 @@ import java.io.IOException;
 /** Decodificador de texto en formato C40. */
 final class C40Decoder {
 
-	 /** Juego b&aacute;sico de caracteres C40 (con el espacio cambiado a '&lt;'). */
-	  private static final char[] C40_BASIC_SET_CHARS = {
+	/** Juego b&aacute;sico de caracteres C40 (con el espacio cambiado a '&lt;'). */
+	private static final char[] C40_BASIC_SET_CHARS = {
 	      '*', '*', '*', '<', '0', '1', '2', '3', '4', '5',
 	      '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
 	      'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
 	      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-	  };
+	};
 
-	  /** Juego extendido de caracteres C40. */
-	  private static final char[] C40_SHIFT2_SET_CHARS = {
+	/** Juego extendido de caracteres C40. */
+	private static final char[] C40_SHIFT2_SET_CHARS = {
 		  '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*',
 		  '+', ',', '-', '.', '/', ':', ';', '<', '=', '>',
 		  '?', '@', '[', '\\', ']', '^', '_'
-	  };
+	};
+
+	private C40Decoder() {
+		// No instanciable
+	}
 
 	/** Decodifica un texto en formato C40 seg&uacute;n la ISO 16022:2006
 	 * (secci&oacute;n 5&#46;2&#46;5. anexo C, y tabla C&#46;1.

@@ -50,7 +50,7 @@ public interface ApduConnection {
 
 	/** Establece el Protocolo de conexi&oacute;n con la tarjeta.
      * @param p Protocolo de conexi&oacute;n con la tarjeta. */
-	void setProtocol(final ApduConnectionProtocol p);
+	void setProtocol(ApduConnectionProtocol p);
 
     /** Abre la conexi&oacute;n con la tarjeta inteligente actualmente insertada en el lector.
      * @throws ApduConnectionException Cuando ocurre cualquier problema abriendo la conexi&oacute;n.

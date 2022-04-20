@@ -2,6 +2,7 @@ package es.gob.jmulticard.card.bit4id.stcm;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -25,7 +26,7 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class StCard extends Iso7816FourCard implements CryptoCard {
 
-	private static byte CLA = (byte) 0x00;
+	private static final byte CLA = (byte) 0x00;
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;
@@ -40,7 +41,7 @@ public final class StCard extends Iso7816FourCard implements CryptoCard {
 		connect(conn);
 		final byte[] b1 = selectFileByLocationAndRead(new Location("2FFF0000")); //$NON-NLS-1$
 		try (
-			final FileOutputStream fos = new FileOutputStream(java.io.File.createTempFile("0000_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			final OutputStream fos = new FileOutputStream(java.io.File.createTempFile("0000_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(b1);
 			fos.flush();

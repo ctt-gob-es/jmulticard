@@ -39,9 +39,9 @@
  */
 package es.gob.jmulticard.card;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import es.gob.jmulticard.HexUtils;
 
@@ -59,7 +59,7 @@ public final class Location {
     /** Elementos de la ruta hacia el fichero. */
     private Vector<Integer> path = new Vector<>();
 
-    private static final Map<String, Integer> HEXBYTES = new HashMap<>();
+    private static final Map<String, Integer> HEXBYTES = new ConcurrentHashMap<>();
 
     static {
         final String hex[] = {
@@ -116,7 +116,7 @@ public final class Location {
     /** Obtiene la direcci&oacute;n del &uacute;ltimo fichero de la ruta indicada.
      * @return Path con la direcci&oacute;n del fichero. */
     public byte[] getLastFilePath() {
-    	if (this.path.size() < 1) {
+    	if (this.path.isEmpty()) {
     		return null;
     	}
         final int address = this.path.elementAt(this.path.size() - 1).intValue();

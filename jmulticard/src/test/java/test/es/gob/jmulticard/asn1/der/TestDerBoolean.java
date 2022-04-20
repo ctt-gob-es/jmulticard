@@ -33,7 +33,11 @@ public class TestDerBoolean extends TestCase {
         db.setDerValue(new byte[] {
                 (byte) 0x01, (byte) 0x01, (byte) 0x00
         });
-        Assert.assertEquals("010100", HexUtils.hexify(db.getBytes(), false)); //$NON-NLS-1$
+        Assert.assertEquals(
+    		"010100", //$NON-NLS-1$
+    		HexUtils.hexify(db.getBytes(), false),
+    		"Se esperaba '010100' y se ha obtenido '" + HexUtils.hexify(db.getBytes(), false) + "'" //$NON-NLS-1$ //$NON-NLS-2$
+		);
     }
 
     /** Test method for {@link es.gob.jmulticard.asn1.DecoderObject#checkTag(byte)}. */
@@ -42,10 +46,11 @@ public class TestDerBoolean extends TestCase {
             final DerBoolean db = new DerBoolean();
             db.checkTag((byte) 0x02);
         }
-        catch (final Exception e) {
-            if (!(e instanceof Asn1Exception)) {
-                Assert.fail("Se esperaba " + Asn1Exception.class.getName() + " pero se obtuvo " + e.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+        catch(final Asn1Exception e) {
+        	System.out.println("Todo normal, ha saltado " + e); //$NON-NLS-1$
+        }
+        catch(final Exception e) {
+            Assert.fail("Se esperaba " + Asn1Exception.class.getName() + " pero se obtuvo " + e.getClass().getName()); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 }

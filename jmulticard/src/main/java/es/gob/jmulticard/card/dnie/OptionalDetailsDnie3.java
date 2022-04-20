@@ -49,7 +49,7 @@ public final class OptionalDetailsDnie3 extends OptionalDetails {
 	/** Obtiene la fecha de nacimiento del titular.
 	 * @return Fecha de nacimiento del titular.
 	 * @throws ParseException Si la fecha encontrada no est&aacute; en el formato esperado. */
-	public Date getBirthDate() throws ParseException {
+	public synchronized Date getBirthDate() throws ParseException {
 		return DATE_FORMAT.parse(this.parsedValues[5]);
 	}
 

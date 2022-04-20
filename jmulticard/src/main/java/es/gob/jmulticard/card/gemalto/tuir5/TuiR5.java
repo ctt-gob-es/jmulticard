@@ -3,8 +3,8 @@ package es.gob.jmulticard.card.gemalto.tuir5;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -53,13 +53,13 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     private static final Location   CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
 
-    private static byte CLA = (byte) 0x00;
+    private static final byte CLA = (byte) 0x00;
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     private final PasswordCallback passwordCallback;
 
-    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<>();
+    private static final Map<String, X509Certificate> CERTIFICATES_BY_ALIAS = new ConcurrentHashMap<>();
 
 	/** Construye un objeto que representa una tarjeta Gemalto TUI R5 MPCOS.
      * @param conn Conexi&oacute;n con la tarjeta.
@@ -149,7 +149,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
         for (int i=0; i<cdf.getCertificateCount(); i++) {
         	try {
-				certificatesByAlias.put(
+				CERTIFICATES_BY_ALIAS.put(
 					cdf.getCertificateAlias(i),
 					CertificateUtils.generateCertificate(
 						selectFileByLocationAndRead(new Location(cdf.getCertificatePath(i)))
@@ -181,12 +181,12 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 
     @Override
 	public String[] getAliases() {
-		return certificatesByAlias.keySet().toArray(new String[0]);
+		return CERTIFICATES_BY_ALIAS.keySet().toArray(new String[0]);
 	}
 
 	@Override
 	public X509Certificate getCertificate(final String alias) {
-		return certificatesByAlias.get(alias);
+		return CERTIFICATES_BY_ALIAS.get(alias);
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		if (alias == null) {
 			throw new IllegalArgumentException("El alias no puede ser nulo"); //$NON-NLS-1$
 		}
-		if (!certificatesByAlias.containsKey(alias)) {
+		if (!CERTIFICATES_BY_ALIAS.containsKey(alias)) {
 			LOGGER.warning("La tarjeta no contiene el alias '" + alias + "', se devolvera null"); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
@@ -211,7 +211,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 		}
 		final MseSetSignatureKeyApduCommand mseSet = new MseSetSignatureKeyApduCommand(
 			CLA,
-			MseSetSignatureKeyApduCommand.CryptographicMechanism.RSASSA_PKCS1v1_5_SHA1,
+			MseSetSignatureKeyApduCommand.CryptographicMechanism.RSASSA_PKCS1V1_5_SHA1,
 			index
 		);
 		final ResponseApdu res;
@@ -280,7 +280,7 @@ public final class TuiR5 extends Iso7816FourCard implements CryptoCard {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(getCardName())
-		 .append("\n Tarjeta con ").append(certificatesByAlias.size()).append(" certificado(s):\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		 .append("\n Tarjeta con ").append(CERTIFICATES_BY_ALIAS.size()).append(" certificado(s):\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		final String[] aliases = getAliases();
 		for (int i=0;i<aliases.length;i++) {
 			sb.append("  "); //$NON-NLS-1$

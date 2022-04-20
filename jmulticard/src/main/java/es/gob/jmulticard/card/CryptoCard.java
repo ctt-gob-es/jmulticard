@@ -65,7 +65,7 @@ public interface CryptoCard {
      * 		   <code>null</code> si no existe ninguna clave privada con ese alias
      * @throws CryptoCardException Si ocurre alg&uacute;n problema al recuperar la clave privada.
      */
-    PrivateKeyReference getPrivateKey(final String alias) throws CryptoCardException;
+    PrivateKeyReference getPrivateKey(String alias) throws CryptoCardException;
 
     /** Realiza una firma electr&oacute;nica.
      * @param data Datos a firmar.

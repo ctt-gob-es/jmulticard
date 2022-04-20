@@ -23,6 +23,10 @@ public final class CertificateUtils {
 		}
 	}
 
+	private CertificateUtils() {
+		// No instanciable
+	}
+
 	/** Genera un certificado a partir de su codificaci&oacute;n binaria.
 	 * @param encoded Codificaci&oacute;n binaria del certificado.
 	 * @return Certificado.

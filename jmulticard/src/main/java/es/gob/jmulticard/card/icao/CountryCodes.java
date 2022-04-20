@@ -257,6 +257,10 @@ public final class CountryCodes {
         CC.put("ZWE", "Zimbabwe"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
+    private CountryCodes() {
+    	// No instanciable
+    }
+
     /** Obtiene el nombre de pa&iacute;s a partir de su c&oacute;digo ICAO.
      * @param code C&oacute;digo ICAO de pa&iacute;s.
      * @return Nombre del pa&iacute;s (en ingl&eacute;s). */

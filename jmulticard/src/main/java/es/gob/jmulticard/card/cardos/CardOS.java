@@ -3,9 +3,9 @@ package es.gob.jmulticard.card.cardos;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -50,11 +50,11 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 		(byte) 0x4B, (byte) 0x43, (byte) 0x53, (byte) 0x2D, (byte) 0x31, (byte) 0x35
 	};
 
-    private static byte CLA = (byte) 0x00;
+    private static final byte CLA = (byte) 0x00;
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private static final Map<String, X509Certificate> certificatesByAlias = new LinkedHashMap<>();
+    private static final Map<String, X509Certificate> CERTIFICATES_BY_ALIAS = new ConcurrentHashMap<>();
 
 	/** Construye un objeto que representa una tarjeta Atos / Siemens CardOS.
      * @param conn Conexi&oacute;n con la tarjeta.
@@ -183,7 +183,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 					continue;
 				}
 
-				final byte[] MASTER_FILE = { (byte) 0x50, (byte) 0x15 };
+				final byte[] masterFile = { (byte) 0x50, (byte) 0x15 };
 
 				sendArbitraryApdu(
 					new CommandApdu(
@@ -192,7 +192,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 						(byte) 0x08, // P1
 						(byte) 0x0C, // P2
 						new byte[] {
-							MASTER_FILE[0], MASTER_FILE[1], certPath[0], certPath[1], certPath[2], certPath[3]
+							masterFile[0], masterFile[1], certPath[0], certPath[1], certPath[2], certPath[3]
 						},
 						null
 					)
@@ -211,7 +211,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 					continue;
 				}
 
-				certificatesByAlias.put(co.getAlias(), cert);
+				CERTIFICATES_BY_ALIAS.put(co.getAlias(), cert);
 
 			}
 
@@ -224,12 +224,12 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 
 	@Override
 	public String[] getAliases() {
-		return certificatesByAlias.keySet().toArray(new String[0]);
+		return CERTIFICATES_BY_ALIAS.keySet().toArray(new String[0]);
 	}
 
 	@Override
 	public X509Certificate getCertificate(final String alias) {
-		return certificatesByAlias.get(alias);
+		return CERTIFICATES_BY_ALIAS.get(alias);
 	}
 
 	@Override
@@ -242,7 +242,7 @@ public final class CardOS extends Iso7816FourCard implements CryptoCard {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(getCardName())
-		 .append("\n Tarjeta con ").append(certificatesByAlias.size()).append(" certificado(s):\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		 .append("\n Tarjeta con ").append(CERTIFICATES_BY_ALIAS.size()).append(" certificado(s):\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		final String[] aliases = getAliases();
 		for (int i=0;i<aliases.length;i++) {
 			sb.append("  "); //$NON-NLS-1$

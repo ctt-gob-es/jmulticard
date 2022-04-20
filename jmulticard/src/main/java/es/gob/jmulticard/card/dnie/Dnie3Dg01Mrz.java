@@ -119,7 +119,7 @@ public final class Dnie3Dg01Mrz implements Mrz {
     }
 
     @Override
-	public Date getDateOfExpiry() throws ParseException {
+	public synchronized Date getDateOfExpiry() throws ParseException {
         return SDFORMAT.parse(this.dateOfExpiry);
     }
 

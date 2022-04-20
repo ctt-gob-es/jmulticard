@@ -54,15 +54,15 @@ public final class RdnSequence extends SequenceOf {
 
 	@Override
     public String toString() {
-		final StringBuffer sb = new StringBuffer();
+		final StringBuilder stringBuilder = new StringBuilder();
 		final int lastIndex = getElementCount();
 		for (int i=0; i<lastIndex;i++) {
-			sb.append(getElementAt(i));
+			stringBuilder.append(getElementAt(i));
 			if (i != lastIndex-1) {
-				sb.append(", "); //$NON-NLS-1$
+				stringBuilder.append(", "); //$NON-NLS-1$
 			}
 		}
-		return sb.toString();
+		return stringBuilder.toString();
 	}
 
 	/** Obtiene el <i>X&#46;500 Principal</i> de la clave.

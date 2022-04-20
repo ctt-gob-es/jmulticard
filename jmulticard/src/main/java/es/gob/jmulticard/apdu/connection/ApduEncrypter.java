@@ -133,10 +133,10 @@ import es.gob.jmulticard.asn1.Tlv;
      * @param cryptoHelper Clase con las funcionalidades de criptograf&iacute;a.
      * @return Datos enconcriptados.
      * @throws IOException En cualquier error. */
-    protected abstract byte[] encryptData(final byte[] data,
-    		                              final byte[] key,
-    		                              final byte[] ssc,
-    		                              final CryptoHelper cryptoHelper) throws IOException;
+    protected abstract byte[] encryptData(byte[] data,
+    		                              byte[] key,
+    		                              byte[] ssc,
+    		                              CryptoHelper cryptoHelper) throws IOException;
 
     /** Agrega un relleno (<i>padding</i>) a un array de bytes conforme las especificaciones ISO 7816.
      * Esto es, se agrega un byte <code>0x80</code> al array y se completa con bytes <code>0x00</code> hasta que el
@@ -182,10 +182,10 @@ import es.gob.jmulticard.asn1.Tlv;
      * @param cryptoHelper Manejador para la realizaci&oacute;n de las operaciones criptogr&aacute;ficas.
      * @return Clave de autenticaci&oacute;n de los datos.
      * @throws IOException Si hay errores de entrada / salida. */
-    protected abstract byte[] generateMac(final byte[] dataPadded,
-                                          final byte[] ssc,
-                                          final byte[] kMac,
-                                          final CryptoHelper cryptoHelper) throws IOException;
+    protected abstract byte[] generateMac(byte[] dataPadded,
+                                          byte[] ssc,
+                                          byte[] kMac,
+                                          CryptoHelper cryptoHelper) throws IOException;
 
     /** Desencripta la Apdu de respuesta recibida a partir de las variables del canal de cifrado (kenc, kmac, ssc).
      * @param responseApdu Respuesta a desencriptar.
@@ -195,11 +195,11 @@ import es.gob.jmulticard.asn1.Tlv;
      * @param cryptoHelper Instancia que lleva a cabo las operaciones de cifrado.
      * @return Apdu descifrada.
      * @throws IOException En cualquier error durante el proceso de descifrado. */
-    public abstract ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu,
-			                                         final byte[] keyCipher,
-			                                         final byte[] ssc,
-			                                         final byte[] kMac,
-			                                         final CryptoHelper cryptoHelper) throws IOException;
+    public abstract ResponseApdu decryptResponseApdu(ResponseApdu responseApdu,
+			                                         byte[] keyCipher,
+			                                         byte[] ssc,
+			                                         byte[] kMac,
+			                                         CryptoHelper cryptoHelper) throws IOException;
 
     /** Borra un array de octetos insertando nulos.
      * @param in Array a borrar, se modifica por mutabilidad. */

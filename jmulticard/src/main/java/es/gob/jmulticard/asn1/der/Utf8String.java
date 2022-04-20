@@ -83,9 +83,9 @@ public final class Utf8String extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-	    	final Tlv tlv = new Tlv(getRawDerValue());
-	    	checkTag(tlv.getTag());
-	    	this.stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
+    	final Tlv tlv = new Tlv(getRawDerValue());
+    	checkTag(tlv.getTag());
+    	this.stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
     }
 
     @Override

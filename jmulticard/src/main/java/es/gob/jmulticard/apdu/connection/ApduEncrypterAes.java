@@ -41,6 +41,8 @@
 package es.gob.jmulticard.apdu.connection;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
@@ -101,7 +103,7 @@ public final class ApduEncrypterAes extends ApduEncrypter {
 		try {
 			mac = cryptoHelper.doAesCmac(HexUtils.concatenateByteArrays(ssc, dataPadded), kMac);
 		}
-		catch (final Exception e) {
+		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new IOException(
 				"Error creando la CMAC de la APDU cifrada", e //$NON-NLS-1$
 			);

@@ -6,9 +6,9 @@ import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
@@ -98,12 +98,12 @@ public final class SmartCafePkcs15Applet extends Iso7816FourCard implements Cryp
     private static final byte[] ODF_PATH = { (byte) 0x50, (byte) 0x31 };
     private static final byte[] MF_PATH  = { (byte) 0x3F, (byte) 0x00 };
 
-    private static byte CLA = (byte) 0x00;
+    private static final byte CLA = (byte) 0x00;
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private static final Map<String, X509Certificate> CERTS_BY_ALIAS = new LinkedHashMap<>();
-    private static final Map<String, Integer> KEYNO_BY_ALIAS = new LinkedHashMap<>();
+    private static final Map<String, X509Certificate> CERTS_BY_ALIAS = new ConcurrentHashMap<>();
+    private static final Map<String, Integer> KEYNO_BY_ALIAS = new ConcurrentHashMap<>();
 
     /** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
     private final static byte ERROR_PIN_SW1 = (byte) 0x63;

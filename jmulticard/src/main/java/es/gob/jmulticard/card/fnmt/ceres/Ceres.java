@@ -409,7 +409,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 		try {
 			res = sendArbitraryApdu(cmd);
 		}
-		catch (final Exception e) {
+		catch (final ApduConnectionException e) {
 			throw new CryptoCardException("Error firmando los datos", e); //$NON-NLS-1$
 		}
 		if (!res.isOk()) {
@@ -428,7 +428,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 				keyBitSize
 			);
 		}
-		catch (final Exception e1) {
+		catch (final IOException e1) {
 			throw new CryptoCardException(
 				"Error realizando el relleno PKCS#1 de los datos a firmar", e1 //$NON-NLS-1$
 			);
@@ -441,7 +441,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			try {
 				res = sendArbitraryApdu(new CeresLoadDataApduCommand(paddedData));
 			}
-			catch (final Exception e) {
+			catch (final ApduConnectionException e) {
 				throw new CryptoCardException(
 					"Error enviando los datos a firmar a la tarjeta", e //$NON-NLS-1$
 				);
@@ -487,7 +487,7 @@ public final class Ceres extends Iso7816EightCard implements CryptoCard {
 			try {
 				res = sendArbitraryApdu(new EnvelopeDataApduCommand(data));
 			}
-			catch (final Exception e) {
+			catch (final ApduConnectionException e) {
 				throw new CryptoCardException(
 					"Error en el segundo envio a la tarjeta de los datos a firmar", e //$NON-NLS-1$
 				);

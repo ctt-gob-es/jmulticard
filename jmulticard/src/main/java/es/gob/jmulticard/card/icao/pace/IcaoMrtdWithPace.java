@@ -65,7 +65,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
     @Override
     public byte[] sign(final byte[] data,
     		           final String signAlgorithm,
-    		           final PrivateKeyReference privateKeyReference) {
+    		           final PrivateKeyReference privateKeyRef) {
     	throw new UnsupportedOperationException(
 			"No se permite firmar con MRTD" //$NON-NLS-1$
 		);
@@ -85,7 +85,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_CARD_SECURITY_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("CardSecurity no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("CardSecurity no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el CardSecurity", e); //$NON-NLS-1$
@@ -98,7 +98,7 @@ public final class IcaoMrtdWithPace extends DnieNFC {
 			return selectFileByLocationAndRead(FILE_DG03_LOCATION);
 		}
 		catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG3 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG3 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG3", e); //$NON-NLS-1$

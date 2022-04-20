@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.asn1.der;
 
+import java.lang.reflect.InvocationTargetException;
+
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
@@ -67,7 +69,12 @@ public abstract class ContextSpecific extends DecoderObject {
         try {
             tmpDo = this.elementType.getConstructor().newInstance();
         }
-        catch (final Exception e) {
+        catch (final IllegalAccessException    |
+        		     InstantiationException    |
+        		     IllegalArgumentException  |
+        		     InvocationTargetException |
+        		     NoSuchMethodException     |
+        		     SecurityException e) {
             throw new Asn1Exception(
         		"No se ha podido instanciar un " + this.elementType.getName() + " en el contexto especifico", e //$NON-NLS-1$ //$NON-NLS-2$
             );

@@ -68,10 +68,10 @@ public final class MseSetSignatureKeyApduCommand extends CommandApdu {
     	RSASSA_PSS_SHA1((byte) 0x01),
 
     	/** RSASSA con PKCS#1 v1.5 y SHA1. */
-    	RSASSA_PKCS1v1_5_SHA1((byte) 0x02),
+    	RSASSA_PKCS1V1_5_SHA1((byte) 0x02),
 
     	/** RSASSA con PKCS#1 v1.5 y MD5. */
-    	RSASSA_PKCS1v1_5_MD5((byte) 0x04);
+    	RSASSA_PKCS1V1_5_MD5((byte) 0x04);
 
     	private final byte value;
 
