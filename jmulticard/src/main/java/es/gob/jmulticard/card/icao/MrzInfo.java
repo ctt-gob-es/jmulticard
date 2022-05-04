@@ -229,14 +229,14 @@ public final class MrzInfo {
         trimFillerChars(mrzNameString.substring(0, delimIndex));
     }
 
-    private static String readString(final DataInputStream in, final int count) throws IOException {
+    private static String readString(final DataInputStream stringStream, final int count) throws IOException {
         final byte[] data = new byte[count];
-        in.readFully(data);
+        stringStream.readFully(data);
         return new String(data).trim();
     }
 
-    private static String readStringWithFillers(final DataInputStream in, final int count) throws IOException {
-        return trimFillerChars(readString(in, count));
+    private static String readStringWithFillers(final DataInputStream stringStream, final int count) throws IOException {
+        return trimFillerChars(readString(stringStream, count));
     }
 
     /** Lee el c&oacute;digo de estado emisor (tres letras) del flujo de entrada.
@@ -257,20 +257,20 @@ public final class MrzInfo {
 
     /** Lee la fecha de nacimiento del titular (seis d&iacute;gitos) del flujo de entrada.
      * No se comprueba que realmente sean valores num&eacute;ricos.
-     * @param in Flujo de entrada (como texto).
+     * @param inStream Flujo de entrada (como texto).
      * @return Fecha de nacimiento del titular.
      * @throws IOException En cualquier error. */
-    private static String readDateOfBirth(final DataInputStream in) throws IOException {
-        return readString(in, 6);
+    private static String readDateOfBirth(final DataInputStream inStream) throws IOException {
+        return readString(inStream, 6);
     }
 
     /** Lee la fecha de caducidad del documento (seis d&iacute;gitos) del flujo de entrada.
      * No se comprueba que realmente sean valores num&eacute;ricos.
-     * @param in Flujo de entrada (como texto).
+     * @param inStream Flujo de entrada (como texto).
      * @return Fecha de caducidad del documento.
      * @throws IOException En cualquier error. */
-    private static String readDateOfExpiry(final DataInputStream in) throws IOException {
-        return readString(in, 6);
+    private static String readDateOfExpiry(final DataInputStream inStream) throws IOException {
+        return readString(inStream, 6);
     }
 
     /** Determina el tipo de documento seg&uacute;n el c&oacute;digo de documento (pimeros
@@ -365,7 +365,7 @@ public final class MrzInfo {
      * @param ch Caracter de la MRZ.
      * @return Valor num&eacute;rico del caracter.
      * @throws NumberFormatException Si el caracter no es v&aacute;lido para una MRZ. */
-    private static int decodeMRZDigit(final byte ch) throws NumberFormatException {
+    private static int decodeMRZDigit(final byte ch) {
         switch (ch) {
             case '<':
             case '0':

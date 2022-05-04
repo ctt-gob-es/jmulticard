@@ -151,30 +151,30 @@ public abstract class CryptoHelper {
 	private static final byte PKCS1_DELIMIT = (byte) 0x00;
 
 	/** A&ntilde;ade relleno PKCS#1 para operaciones con clave privada.
-	 * @param in Datos a los que se quiere a&ntilde;adir relleno PKCS#1.
+	 * @param inByteArray Datos a los que se quiere a&ntilde;adir relleno PKCS#1.
 	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente con estos datos con
 	 *                relleno.
 	 * @return Datos con el relleno PKCS#1 a&ntilde;adido.
 	 * @throws IOException En caso de error el el tratamiento de datos. */
-	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] in,
+	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] inByteArray,
 			                                                         final int keySize) throws IOException {
-		if (in == null) {
+		if (inByteArray == null) {
 			throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
 		}
 		final int len = keySize / 8;
-		if (in.length > len - 3) {
+		if (inByteArray.length > len - 3) {
 			throw new IllegalArgumentException(
-				"Los datos son demasiado grandes para el valor de clave indicado: " + in.length + " > " + len + "-3" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"Los datos son demasiado grandes para el valor de clave indicado: " + inByteArray.length + " > " + len + "-3" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			);
 		}
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream(len);
 		baos.write(PKCS1_DELIMIT);    // Delimitador :   00
 		baos.write(PKCS1_BLOCK_TYPE); // Tipo de bloque: 01
-		while (baos.size() < len - (1 + in.length)) { // Se rellena hasta dejar sitio justo para un delimitador y los datos
+		while (baos.size() < len - (1 + inByteArray.length)) { // Se rellena hasta dejar sitio justo para un delimitador y los datos
 			baos.write(PKCS1_FILL);
 		}
 		baos.write(PKCS1_DELIMIT);    // Delimitador :   00
-		baos.write(in);               // Datos
+		baos.write(inByteArray);               // Datos
 
 		return baos.toByteArray();
 	}

@@ -288,20 +288,20 @@ public final class Bac {
 		// TODO: UNIFICAR CON OTRAS FUNCIONES DE RELLENO
 
 		int i = 0;
-		final byte[] tempdata = new byte[data.length + 8];
+		final byte[] tempData = new byte[data.length + 8];
 
 		for (i = 0; i < data.length; i++) {
-			tempdata[i] = data[i];
+			tempData[i] = data[i];
 		}
 
-		tempdata[i] = (byte) 0x80;
+		tempData[i] = (byte) 0x80;
 
 		for (i = i + 1; i % 8 != 0; i++) {
-			tempdata[i] = (byte) 0;
+			tempData[i] = (byte) 0;
 		}
 
 		final byte[] filledArray = new byte[i];
-		System.arraycopy(tempdata, 0, filledArray, 0, i);
+		System.arraycopy(tempData, 0, filledArray, 0, i);
 		return filledArray;
 	}
 

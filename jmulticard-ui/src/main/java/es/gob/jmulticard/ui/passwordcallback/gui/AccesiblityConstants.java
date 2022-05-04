@@ -85,37 +85,37 @@ final class AccesiblityConstants {
      * variaci&oacute;n de fuente en Linux. */
     static final int OPTION_FONT_INITIAL_HEIGHT_LINUX = 700;
 
-    /** Ancho inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
+    /** Ancho inicial de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_INITIAL_WIDTH = 530;
 
-    /** Alto inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
+    /** Alto inicial de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_INITIAL_HEIGHT = 210;
 
-    /** Ancho inicial de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+    /** Ancho inicial de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
      * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_WIDTH = 460;
 
-    /** Alto inicial de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+    /** Alto inicial de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
      * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_HEIGHT = 190;
 
-    /** Ancho inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
+    /** Ancho inicial de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_FONT_INITIAL_WIDTH = 555;
 
-    /** Alto inicial de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
+    /** Alto inicial de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_FONT_INITIAL_HEIGHT = 250;
 
-    /** Ancho de maximizado de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
+    /** Ancho de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_MAX_WIDTH = 770;
 
-    /** Alto de maximizado de los <code>JAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
+    /** Alto de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_MAX_HEIGHT = 299;
 
-    /** Ancho de maximizado de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+    /** Ancho de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
      * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_MAX_WIDTH = 700;
 
-    /** Alto de maximizado de los <code>JAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
+    /** Alto de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
      * aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_MAX_HEIGHT = 305;
 

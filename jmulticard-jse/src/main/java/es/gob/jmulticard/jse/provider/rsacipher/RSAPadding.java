@@ -125,7 +125,10 @@ final class RSAPadding {
      * Get a RSAPadding instance of the specified type.
      * Keys used with this padding must be paddedSize bytes long.
      */
-    static RSAPadding getInstance(final int type, final int paddedSize, final SecureRandom random) throws InvalidKeyException, InvalidAlgorithmParameterException {
+    static RSAPadding createInstance(final int type,
+    		                         final int paddedSize,
+    		                         final SecureRandom random) throws InvalidKeyException,
+                                                                       InvalidAlgorithmParameterException {
         return new RSAPadding(type, paddedSize, random, null); // TODO:MAXIMO paddedSize 102????
     }
 
@@ -133,7 +136,11 @@ final class RSAPadding {
      * Get a RSAPadding instance of the specified type, which must be
      * OAEP. Keys used with this padding must be paddedSize bytes long.
      */
-    static RSAPadding getInstance(final int type, final int paddedSize, final SecureRandom random, final OAEPParameterSpec spec) throws InvalidKeyException, InvalidAlgorithmParameterException {
+    static RSAPadding createInstance(final int type,
+    		                         final int paddedSize,
+    		                         final SecureRandom random,
+    		                         final OAEPParameterSpec spec) throws InvalidKeyException,
+                                                                          InvalidAlgorithmParameterException {
         return new RSAPadding(type, paddedSize, random, spec);
     }
 
@@ -256,7 +263,7 @@ final class RSAPadding {
 	        case PAD_BLOCKTYPE_2:
 	            return padV15(data);
 	        case PAD_OAEP_MGF1:
-	            return padOAEP(data);
+	            return padOaep(data);
 	        default:
 	            throw new AssertionError();
         }
@@ -372,7 +379,7 @@ final class RSAPadding {
      * PKCS#1 v2.0 OAEP padding (MGF1).
      * Paragraph references refer to PKCS#1 v2.1 (June 14, 2002)
      */
-    private byte[] padOAEP(final byte[] M) throws BadPaddingException {
+    private byte[] padOaep(final byte[] M) throws BadPaddingException {
         if (this.random == null) {
             this.random = new SecureRandom();
         }
@@ -384,19 +391,19 @@ final class RSAPadding {
         this.random.nextBytes(seed);
 
         // buffer for encoded message EM
-        final byte[] EM = new byte[this.paddedSize];
+        final byte[] encodedMessage = new byte[this.paddedSize];
 
         // start and length of seed (as index into EM)
         final int seedStart = 1;
         final int seedLen = hLen;
 
         // copy seed into EM
-        System.arraycopy(seed, 0, EM, seedStart, seedLen);
+        System.arraycopy(seed, 0, encodedMessage, seedStart, seedLen);
 
         // start and length of data block DB in EM
         // we place it inside of EM to reduce copying
         final int dbStart = hLen + 1;
-        final int dbLen = EM.length - dbStart;
+        final int dbLen = encodedMessage.length - dbStart;
 
         // start of message M in EM
         final int mStart = this.paddedSize - M.length;
@@ -406,28 +413,28 @@ final class RSAPadding {
         // 0x01, and the message M to form a data block DB of length
         // k - hLen -1 octets as DB = lHash || PS || 0x01 || M
         // (note that PS is all zeros)
-        System.arraycopy(this.lHash, 0, EM, dbStart, hLen);
-        EM[mStart - 1] = 1;
-        System.arraycopy(M, 0, EM, mStart, M.length);
+        System.arraycopy(this.lHash, 0, encodedMessage, dbStart, hLen);
+        encodedMessage[mStart - 1] = 1;
+        System.arraycopy(M, 0, encodedMessage, mStart, M.length);
 
         // produce maskedDB
-        mgf1(EM, seedStart, seedLen, EM, dbStart, dbLen);
+        mgf1(encodedMessage, seedStart, seedLen, encodedMessage, dbStart, dbLen);
 
         // produce maskSeed
-        mgf1(EM, dbStart, dbLen, EM, seedStart, seedLen);
+        mgf1(encodedMessage, dbStart, dbLen, encodedMessage, seedStart, seedLen);
 
-        return EM;
+        return encodedMessage;
     }
 
     /**
      * PKCS#1 v2.1 OAEP unpadding (MGF1).
      */
     private byte[] unpadOAEP(final byte[] padded) throws BadPaddingException {
-        final byte[] EM = padded;
+        final byte[] encodedMessage = padded;
         boolean bp = false;
         final int hLen = this.lHash.length;
 
-        if (EM[0] != 0) {
+        if (encodedMessage[0] != 0) {
             bp = true;
         }
 
@@ -435,14 +442,14 @@ final class RSAPadding {
         final int seedLen = hLen;
 
         final int dbStart = hLen + 1;
-        final int dbLen = EM.length - dbStart;
+        final int dbLen = encodedMessage.length - dbStart;
 
-        mgf1(EM, dbStart, dbLen, EM, seedStart, seedLen);
-        mgf1(EM, seedStart, seedLen, EM, dbStart, dbLen);
+        mgf1(encodedMessage, dbStart, dbLen, encodedMessage, seedStart, seedLen);
+        mgf1(encodedMessage, seedStart, seedLen, encodedMessage, dbStart, dbLen);
 
         // verify lHash == lHash'
         for (int i = 0; i < hLen; i++) {
-            if (this.lHash[i] != EM[dbStart + i]) {
+            if (this.lHash[i] != encodedMessage[dbStart + i]) {
                 bp = true;
 				break;
             }
@@ -451,8 +458,8 @@ final class RSAPadding {
         final int padStart = dbStart + hLen;
         int onePos = -1;
 
-        for (int i = padStart; i < EM.length; i++) {
-            final int value = EM[i];
+        for (int i = padStart; i < encodedMessage.length; i++) {
+            final int value = encodedMessage[i];
             if (onePos == -1) {
                 if (value == 0x00) {
                     // continue;
@@ -467,17 +474,17 @@ final class RSAPadding {
         // We either ran off the rails or found something other than 0/1.
         if (onePos == -1) {
             bp = true;
-            onePos = EM.length - 1;  // Don't inadvertently return any data.
+            onePos = encodedMessage.length - 1;  // Don't inadvertently return any data.
         }
 
         final int mStart = onePos + 1;
 
         // copy useless padding array for a constant-time method
         final byte [] tmp = new byte[mStart - padStart];
-        System.arraycopy(EM, padStart, tmp, 0, tmp.length);
+        System.arraycopy(encodedMessage, padStart, tmp, 0, tmp.length);
 
-        final byte [] m = new byte[EM.length - mStart];
-        System.arraycopy(EM, mStart, m, 0, m.length);
+        final byte [] m = new byte[encodedMessage.length - mStart];
+        System.arraycopy(encodedMessage, mStart, m, 0, m.length);
 
         final BadPaddingException bpe = new BadPaddingException("Decryption error"); //$NON-NLS-1$
 
@@ -495,16 +502,21 @@ final class RSAPadding {
      * We generate maskLen bytes of MGF1 from the seed and XOR it into
      * out[] starting at outOfs;
      */
-    private void mgf1(final byte[] seed, final int seedOfs, final int seedLen, final byte[] out, final int outOffset, final int maskLength)  throws BadPaddingException {
+    private void mgf1(final byte[] seed,
+    		          final int seedOfs,
+    		          final int seedLen,
+    		          final byte[] out,
+    		          final int outOffset,
+    		          final int maskLength)  throws BadPaddingException {
 
     	int maskLen = maskLength;
     	int outOfs = outOffset;
 
-        final byte[] C = new byte[4]; // Contador de 32 bits
+        final byte[] counter = new byte[4]; // Contador de 32 bits
         final byte[] digest = new byte[this.mgfMd.getDigestLength()];
         while (maskLen > 0) {
             this.mgfMd.update(seed, seedOfs, seedLen);
-            this.mgfMd.update(C);
+            this.mgfMd.update(counter);
             try {
                 this.mgfMd.digest(digest, 0, digest.length);
             }
@@ -517,7 +529,7 @@ final class RSAPadding {
             }
             if (maskLen > 0) {
                 // Incrementamos el contador
-                for (int i = C.length - 1; ++C[i] == 0 && i > 0; i--) {
+                for (int i = counter.length - 1; ++counter[i] == 0 && i > 0; i--) {
                     // vacio
                 }
             }

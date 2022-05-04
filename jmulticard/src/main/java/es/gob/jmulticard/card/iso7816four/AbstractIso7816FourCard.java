@@ -60,22 +60,31 @@ import es.gob.jmulticard.apdu.iso7816four.SelectDfByNameApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileApduResponse;
 import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
+import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
-import es.gob.jmulticard.card.AbstractSmartCard;
 
 /** Tarjeta compatible ISO-7816-4.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
  * @author Alberto Mart&iacute;nez. */
 public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 
+	/** Condici&oacute;n de seguridad no satisfecha. */
     private static final StatusWord SW_UNSATISFIED_SECURITY_STATE = new StatusWord((byte) 0x69, (byte) 0x82);
+
+    /** EF o DF no encontrado. */
     private static final StatusWord SW_FILE_NOT_FOUND = new StatusWord((byte) 0x6A, (byte) 0x82);
+
+    /** Se ha alcanzado prematuramente el final de fichero. */
     private static final StatusWord SW_EOF_REACHED = new StatusWord((byte) 0x62, (byte) 0x82);
+
+    /** El <i>offset</i> sobrepasa el l&iacute;mite de tama&ntilde;o del EF. */
     private static final StatusWord SW_OFFSET_OUTSIDE_EF = new StatusWord((byte) 0x6B, (byte) 0x00);
 
+    /** Tama&ntilde;o m&aacute;ximo de datos que se puede leer en una &uacute;nica APDU. */
     private static final int MAX_READ_CHUNK = 0xDE;
 
+    /** <code>Logger</code> por defecto. */
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Construye una tarjeta compatible ISO 7816-4.

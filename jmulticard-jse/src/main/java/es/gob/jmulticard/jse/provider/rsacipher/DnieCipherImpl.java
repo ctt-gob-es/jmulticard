@@ -123,7 +123,7 @@ public final class DnieCipherImpl extends CipherSpi {
     /** La clave p&uacute;blica, si se ha inicializado el cifrador con una clave p&uacute;blica. */
     private RSAPublicKey publicKey;
 
-    /** La clave privada, si se ha inicializado el cifrador con una clave privada. */
+    /** Clave privada, si se ha inicializado el cifrador con una clave privada. */
     private RSAPrivateKey privateKey;
 
     /** Algoritmo de huella para el OAEP. */
@@ -277,7 +277,7 @@ public final class DnieCipherImpl extends CipherSpi {
             		"Parametros no soportados para datos sin relleno" //$NON-NLS-1$
         		);
             }
-            this.padding = RSAPadding.getInstance(RSAPadding.PAD_NONE, n, rnd);
+            this.padding = RSAPadding.createInstance(RSAPadding.PAD_NONE, n, rnd);
             this.buffer = new byte[n];
         }
         else if (PAD_PKCS1.equals(this.paddingType)) {
@@ -294,7 +294,7 @@ public final class DnieCipherImpl extends CipherSpi {
             final int blockType = this.mode <= MODE_DECRYPT ?
         		RSAPadding.PAD_BLOCKTYPE_2 :
         			RSAPadding.PAD_BLOCKTYPE_1;
-            this.padding = RSAPadding.getInstance(blockType, n, rnd);
+            this.padding = RSAPadding.createInstance(blockType, n, rnd);
             if (encrypt) {
                 final int k = this.padding.getMaxDataSize();
                 this.buffer = new byte[k];
@@ -321,7 +321,7 @@ public final class DnieCipherImpl extends CipherSpi {
             		PSource.PSpecified.DEFAULT
         		);
             }
-            this.padding = RSAPadding.getInstance(RSAPadding.PAD_OAEP_MGF1, n, rnd, (OAEPParameterSpec)this.spec);
+            this.padding = RSAPadding.createInstance(RSAPadding.PAD_OAEP_MGF1, n, rnd, (OAEPParameterSpec)this.spec);
             if (encrypt) {
                 final int k = this.padding.getMaxDataSize();
                 this.buffer = new byte[k];
@@ -332,15 +332,15 @@ public final class DnieCipherImpl extends CipherSpi {
         }
     }
 
-    private void update(final byte[] in, final int inOfs, final int inLen) {
-        if (inLen == 0 || in == null) {
+    private void update(final byte[] inData, final int inOfs, final int inLen) {
+        if (inLen == 0 || inData == null) {
             return;
         }
         if (this.bufOfs + inLen > this.buffer.length) {
             this.bufOfs = this.buffer.length + 1;
             return;
         }
-        System.arraycopy(in, inOfs, this.buffer, this.bufOfs, inLen);
+        System.arraycopy(inData, inOfs, this.buffer, this.bufOfs, inLen);
         this.bufOfs += inLen;
     }
 
@@ -382,28 +382,28 @@ public final class DnieCipherImpl extends CipherSpi {
     }
 
     @Override
-	protected byte[] engineUpdate(final byte[] in, final int inOfs, final int inLen) {
-        update(in, inOfs, inLen);
+	protected byte[] engineUpdate(final byte[] inData, final int inOfs, final int inLen) {
+        update(inData, inOfs, inLen);
         return B0;
     }
 
     @Override
-	protected int engineUpdate(final byte[] in,
+	protected int engineUpdate(final byte[] inData,
 			                   final int inOfs,
 			                   final int inLen,
 			                   final byte[] out,
 			                   final int outOfs) {
 
-        update(in, inOfs, inLen);
+        update(inData, inOfs, inLen);
         return 0;
     }
 
     @Override
-	protected byte[] engineDoFinal(final byte[] in,
+	protected byte[] engineDoFinal(final byte[] inData,
 			                       final int inOfs,
 			                       final int inLen) throws BadPaddingException,
 	                                                       IllegalBlockSizeException {
-        update(in, inOfs, inLen);
+        update(inData, inOfs, inLen);
         try {
 			return doFinal();
 		}
@@ -417,7 +417,7 @@ public final class DnieCipherImpl extends CipherSpi {
     }
 
     @Override
-	protected int engineDoFinal(final byte[] in,
+	protected int engineDoFinal(final byte[] inData,
 			                    final int inOfs,
 			                    final int inLen,
 			                    final byte[] out,
@@ -429,7 +429,7 @@ public final class DnieCipherImpl extends CipherSpi {
         		"Se necesitan al menos " + this.outputSize + " bytes en el buffer de salida" //$NON-NLS-1$ //$NON-NLS-2$
     		);
         }
-        update(in, inOfs, inLen);
+        update(inData, inOfs, inLen);
         final byte[] result;
 		try {
 			result = doFinal();

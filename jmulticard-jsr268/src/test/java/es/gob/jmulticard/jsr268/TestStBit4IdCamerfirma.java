@@ -2,10 +2,11 @@ package es.gob.jmulticard.jsr268;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println(HexUtils.hexify(trimmedData, true));
 
 		try (
-			OutputStream fos = new FileOutputStream(File.createTempFile("8028_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			OutputStream fos = Files.newOutputStream(Paths.get(File.createTempFile("8028_TRIM_", ".DER").getAbsolutePath())) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -99,7 +100,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 		try (
-			OutputStream fos = new FileOutputStream(File.createTempFile("8023_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			OutputStream fos = Files.newOutputStream(Paths.get(File.createTempFile("8028_TRIM_", ".DER").getAbsolutePath())) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}
@@ -126,7 +127,7 @@ public final class TestStBit4IdCamerfirma {
 		System.out.println();
 		System.out.println(HexUtils.hexify(trimmedData, true));
 		try (
-			OutputStream fos = new FileOutputStream(File.createTempFile("8024_TRIM_", ".DER")) //$NON-NLS-1$ //$NON-NLS-2$
+			OutputStream fos = Files.newOutputStream(Paths.get(File.createTempFile("8024_TRIM_", ".DER").getAbsolutePath())) //$NON-NLS-1$ //$NON-NLS-2$
 		) {
 			fos.write(trimmedData);
 		}

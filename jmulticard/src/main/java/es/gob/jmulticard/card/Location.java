@@ -128,7 +128,7 @@ public final class Location {
     /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico.
      * @param absolutePath Ruta a comprobar.
      * @throws IllegalArgumentException si la ruta es inv&aacute;lida. */
-    private static void checkValidPath(final String absolutePath) throws IllegalArgumentException {
+    private static void checkValidPath(final String absolutePath) {
     	if (absolutePath == null) {
     		throw new IllegalArgumentException("Ruta nula"); //$NON-NLS-1$
     	}

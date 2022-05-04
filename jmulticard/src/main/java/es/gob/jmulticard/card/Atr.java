@@ -95,9 +95,9 @@ public final class Atr implements Serializable {
         if (this.atrBytes.length < tmpAtrBytes.length) {
         	return false;
         }
-        final int off = this.atrBytes.length - tmpAtrBytes.length;
+        final int offset = this.atrBytes.length - tmpAtrBytes.length;
         for (int i=tmpAtrBytes.length-1; i>=0; i--) {
-            if ((this.atrBytes[i+off] & this.mask[i+off]) != (tmpAtrBytes[i] & this.mask[i+off])) {
+            if ((this.atrBytes[i+offset] & this.mask[i+offset]) != (tmpAtrBytes[i] & this.mask[i+offset])) {
                 return false;
             }
         }

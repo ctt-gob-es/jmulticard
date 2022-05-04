@@ -58,20 +58,20 @@ public final class CommonPasswordCallback extends PasswordCallback {
     private static boolean headless = false;
 
     /** T&iacute;tulo de la ventana gr&aacute;fica donde se vava pedir la contrase&ntilde;a. */
-	private final String title;
+	private transient final String title;
 
 	/** Indica si se esta o no pidiendo el PIN de un DNIe. */
-	private final boolean isDnie;
+	private transient final boolean isDnie;
 
 	/** Indica si se debe dar al usuario la opcion de recordar el PIN. */
-	private final boolean allowUseCache;
+	private transient final boolean allowUseCache;
 
 	/** Indica el valor por defecto de la opci&oacute;n de guardar el PIN que se le
 	 * presentar&aacute; al usuario en caso de que se le permita configurarlo. */
-	private final boolean defaultUseCacheValue;
+	private transient final boolean defaultUseCacheValue;
 
 	/** Indica si el usuario configur&oacute; que desea recordar el PIN. */
-	private boolean useCacheChecked;
+	private transient boolean useCacheChecked;
 
     static {
         AccessController.doPrivileged(

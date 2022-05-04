@@ -46,8 +46,8 @@ import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
+import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta G&amp;D SmartCafe con Applet PKCS#15.
@@ -343,7 +343,7 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
                     	fileLength = selectFileById(id);
                     }
                     catch(final FileNotFoundException e) {
-                    	System.out.println(
+                    	LOGGER.warning(
                 			"El CDF indicaba un certificado en la ruta '" + certLocation + "', pero un elemento de esta no existe, se ignorara: " + e //$NON-NLS-1$//$NON-NLS-2$
             			);
                     }

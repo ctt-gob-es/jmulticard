@@ -34,8 +34,10 @@ abstract class CeresSignatureImpl extends SignatureSpi {
 
     private Signature signatureVerifier = null;
 
+    /** Clave privada. */
     private CeresPrivateKey privateKey = null;
 
+    /** Algoritmo de firma. */
     private final String signatureAlgo;
 
     CeresSignatureImpl(final String signatureAlgorithm) {

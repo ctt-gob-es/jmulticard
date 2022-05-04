@@ -1162,8 +1162,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	 * @throws PinException Si el PIN actual es incorrecto.
 	 * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
 	public byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException,
-	                                                                         PinException,
-	                                                                         AuthenticationModeLockedException {
+	                                                                         PinException {
 		openSecureChannelIfNotAlreadyOpened();
 		try {
 			//Seleccion de directorio maestro

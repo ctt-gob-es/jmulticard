@@ -213,25 +213,25 @@ public final class HexUtils {
 	}
 
     /** Convierte un <i>array</i> de caracteres en otro de octetos.
-     * @param in El <i>array</i> de <code>char</code> de entrada.
+     * @param inCharArray El <i>array</i> de <code>char</code> de entrada.
      * @return <i>Array</i> de <code>byte</code> correspondiente al
      *         <i>array</i> de <code>char</code> de entrada. */
-    public static byte[] charArrayToByteArray(final char[] in) {
-    	if (in == null) {
+    public static byte[] charArrayToByteArray(final char[] inCharArray) {
+    	if (inCharArray == null) {
     		LOGGER.warning(
 				"Se ha pedido convertir un array de caracteres nulo, se devolvera otro vacio de octetos" //$NON-NLS-1$
 			);
     		return new byte[0];
     	}
-    	if (in.length < 1) {
+    	if (inCharArray.length < 1) {
     		LOGGER.warning(
 				"El array de caracteres proporcionado esta vacio, se devolvera otro vacio de octetos" //$NON-NLS-1$
 			);
     		return new byte[0];
     	}
-    	final byte[] ret = new byte[in.length];
-    	for (int i=0; i<in.length; i++) {
-    		ret[i] = (byte) in[i];
+    	final byte[] ret = new byte[inCharArray.length];
+    	for (int i=0; i<inCharArray.length; i++) {
+    		ret[i] = (byte) inCharArray[i];
     	}
     	return ret;
     }

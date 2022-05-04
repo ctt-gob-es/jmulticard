@@ -68,7 +68,7 @@ public final class BerTlv {
         return tlv;
     }
 
-    private void decode(final ByteArrayInputStream stream) throws IndexOutOfBoundsException {
+    private void decode(final ByteArrayInputStream stream) {
         // Decodificamos el Tag
         this.tag = new BerTlvIdentifier();
         this.tag.decode(stream);

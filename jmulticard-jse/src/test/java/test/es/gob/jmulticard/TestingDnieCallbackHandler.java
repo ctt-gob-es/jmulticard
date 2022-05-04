@@ -31,7 +31,7 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 	 * @param p PIN. */
 	public TestingDnieCallbackHandler(final String c, final char[] p) {
 		this.can = c;
-		this.pin = p;
+		this.pin = p != null ? p.clone() : null;
 	}
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$

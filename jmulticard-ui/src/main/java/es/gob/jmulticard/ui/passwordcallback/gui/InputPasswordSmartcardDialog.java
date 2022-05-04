@@ -67,7 +67,7 @@ import es.gob.jmulticard.CancelledOperationException;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Componente di&aacute;logo que solicita una contrase&ntilde;a al usuario. */
-public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDialog implements ActionListener {
+public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCustomDialog implements ActionListener {
 
     /** UID. */
     private static final long serialVersionUID = 1L;
@@ -93,25 +93,25 @@ public final class InputPasswordSmartcardDialog extends JAccessibilityCustomDial
     private static String cancellText = Messages.getString("PrincipalGUI.cancelar"); //$NON-NLS-1$
 
     /** Etiqueta con la informaci&ntilde;n de la alerta. */
-    private InfoLabel infoLabel = null;
+    private transient InfoLabel infoLabel = null;
 
     /** Panel de botones. */
-    private JPanel buttonsPanel = null;
+    private transient JPanel buttonsPanel = null;
 
     /** Panel principal. */
-    private JPanel mainPanel = null;
+    private transient JPanel mainPanel = null;
 
     /** Campo de texto o campo de contrase&ntilde;a. */
-    private JSecurePasswordLabel component = null;
+    private transient JSecurePasswordLabel component = null;
 
     /** Indica si se muestra o no la casilla de "No volver a preguntar" (<i>cacheo</i> del PIN). */
-    private JCheckBox useCacheCheckBox = null;
+    private transient JCheckBox useCacheCheckBox = null;
 
     /** Etiqueta que contiene el icono de la alerta. */
-    protected final IconLabel iconLabel = new IconLabel();
+    private transient final IconLabel iconLabel = new IconLabel();
 
     /** Respuesta al mensaje */
-    private int answer;
+    private transient int answer;
 
     /** Constructor.
      * @param componentParent Componente padre para la modalidad.

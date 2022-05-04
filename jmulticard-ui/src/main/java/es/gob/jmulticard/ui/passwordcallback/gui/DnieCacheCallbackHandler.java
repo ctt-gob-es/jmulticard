@@ -29,11 +29,11 @@ public final class DnieCacheCallbackHandler implements CallbackHandler, CacheEle
 
 	private static final String PREFERENCE_KEY_USE_CACHE = "useCacheDni"; //$NON-NLS-1$
 
-	private char[] cachedPassword = null;
+	private transient char[] cachedPassword = null;
 
-	private boolean confirmed = false;
+	private transient boolean confirmed = false;
 
-	private Timer timer = null;
+	private transient Timer timer = null;
 
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {

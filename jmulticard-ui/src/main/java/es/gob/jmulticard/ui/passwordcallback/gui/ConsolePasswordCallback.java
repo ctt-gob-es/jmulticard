@@ -60,7 +60,7 @@ final class ConsolePasswordCallback extends PasswordCallback {
 		this.prompt = p;
 	}
 
-	private final String prompt;
+	private transient final String prompt;
 
 	/** Elimina elementos de HTML que puedan venir en los mensajes de <i>prompt</i>.
 	 * @param input <i>prompt</i>.

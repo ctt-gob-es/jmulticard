@@ -65,11 +65,11 @@ import javax.swing.border.TitledBorder;
 /** Adaptador de componentes para su redimensionamiento.
  * @author INTECO */
 final class ResizingAdaptor extends ComponentAdapter {
-    private final JAccessibilityCustomDialog theCustomDialog;
+    private transient final AbstractJAccessibilityCustomDialog theCustomDialog;
 
     /** Constructor.
      * @param customDialog Di&aacute;logo a redimensionar */
-    ResizingAdaptor(final JAccessibilityCustomDialog customDialog) {
+    ResizingAdaptor(final AbstractJAccessibilityCustomDialog customDialog) {
         this.theCustomDialog = customDialog;
     }
 

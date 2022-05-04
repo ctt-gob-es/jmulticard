@@ -65,19 +65,19 @@ import javax.swing.WindowConstants;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Componente di&aacute;logo que solicita confirmaci&oacute;n al usuario. */
-public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog implements ActionListener {
+public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDialog implements ActionListener {
 
     /** UID. */
     private static final long serialVersionUID = 1L;
 
     /** Etiqueta con la informaci&ntilde;n de la alerta. */
-    private InfoLabel infoLabel = null;
+    private transient InfoLabel infoLabel = null;
 
     /** Panel de botones. */
-    private JPanel buttonsPanel = null;
+    private transient JPanel buttonsPanel = null;
 
     /** Etiqueta que contiene el icono de la alerta. */
-    protected final IconLabel iconLabel = new IconLabel();
+    private transient final IconLabel iconLabel = new IconLabel();
 
     /** Bot&oacute;n de <b>Aceptar</b>. */
     private static JButton okButton = null;
@@ -87,7 +87,7 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
     }
 
     /** Bot&oacute;n de <b>No</b>. */
-    private JButton noButton = null;
+    private transient JButton noButton = null;
 
     JButton getNoButton() {
     	return this.noButton;
@@ -101,7 +101,7 @@ public final class ConfirmSmartcardDialog extends JAccessibilityCustomDialog imp
     }
 
     /** Respuesta al mensaje. */
-    private int answer;
+    private transient int answer;
 
     /** Texto para el bot&oacute;n. */
     private static String cancellText = Messages.getString("PrincipalGUI.cancelar"); //$NON-NLS-1$

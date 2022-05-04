@@ -70,7 +70,7 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 			                       final byte ref,
 			                       final int keyLength) {
 		this.dnieCard = card;
-		this.identifier = id;
+		this.identifier = id != null ? id.clone() : null;
 		this.keyPath = path;
 		this.label = lbl;
 		this.reference = ref;

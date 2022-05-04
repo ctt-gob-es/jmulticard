@@ -25,9 +25,9 @@ public final class SmartcardCacheCallbackHandler implements CallbackHandler, Cac
 
 	private static final String PREFERENCE_KEY_USE_CACHE = "useCacheCeres"; //$NON-NLS-1$
 
-	private char[] cachedPassword = null;
+	private transient char[] cachedPassword = null;
 
-	private Timer timer = null;
+	private transient Timer timer = null;
 
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {

@@ -47,6 +47,7 @@ import es.gob.jmulticard.HexUtils;
  * @author Alberto Mart&iacute;nez. */
 public class Apdu {
 
+	/** Codificaci&oacute;n binaria de la APDU. */
     private transient byte[] apduBytes = null;
 
     /** Obtiene los octetos que conforman la APDU.

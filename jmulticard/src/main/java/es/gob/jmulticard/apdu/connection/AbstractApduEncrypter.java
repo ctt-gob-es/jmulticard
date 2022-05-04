@@ -202,10 +202,10 @@ import es.gob.jmulticard.asn1.Tlv;
 			                                         CryptoHelper cryptoHelper) throws IOException;
 
     /** Borra un array de octetos insertando nulos.
-     * @param in Array a borrar, se modifica por mutabilidad. */
-    private static void wipeByteArray(final byte[] in) {
-    	if (in != null) {
-    		Arrays.fill(in, (byte)'\0');
+     * @param inArray Array a borrar, se modifica por mutabilidad. */
+    private static void wipeByteArray(final byte[] inArray) {
+    	if (inArray != null) {
+    		Arrays.fill(inArray, (byte)'\0');
     	}
     }
 

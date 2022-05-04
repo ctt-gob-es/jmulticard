@@ -50,30 +50,30 @@ public final class UIPasswordCallbackAccessibility extends PasswordCallback {
     private static final long serialVersionUID = 1719174318602363633L;
 
     /** Mensaje que se va a mostrar. */
-    private final String message;
+    private transient final String message;
 
     /** Atajo para el campo de inserci&oacute;n de contrasenia. */
-    private final int mnemonic;
+    private transient final int mnemonic;
 
     /** Componente padre sobre el que se mostrar&aacute; el di&aacute;logo para
      * la inserci&oacute;n de la contrase&ntilde;a. */
-    private final Component parent;
+    private transient final Component parent;
 
     /** T&iacute;tulo del di&aacute;logo. */
-    private final String title;
+    private transient final String title;
 
     /** Ruta hacia el fichero de icono del di&aacute;logo. */
-    private final String iconPath;
+    private transient final String iconPath;
 
     /** Si se permite o no <i>cachear</i> el PIN. */
-    private final boolean allowUseCache;
+    private transient final boolean allowUseCache;
 
     /** Si por defecto se debe mostrar o no la casilla "No volver a preguntar" para
      * <i>cachear</i> el PIN. */
-    private final boolean defaultUseCache;
+    private transient final boolean defaultUseCache;
 
     /** Si se muestra o no la casilla "No volver a preguntar" para <i>cachear</i> el PIN. */
-    private boolean useCache;
+    private transient boolean useCache;
 
     /** Crea una <i>Callback</i> para solicitar al usuario una contrase&ntilde;a
      * mediante un di&aacute;logo gr&aacute;fico. La contrase&ntilde;a no se

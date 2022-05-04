@@ -5,9 +5,9 @@ import java.util.Arrays;
 /** Resultado del di&aacute;logo de solicitud de contrase&ntilde;a. */
 final class PasswordResult {
 
-	private char[] password;
+	private transient char[] password;
 
-	private boolean useCache;
+	private transient boolean useCache;
 
 	PasswordResult(final char[] passwd) {
 		this.password = passwd != null ? passwd.clone() : null;

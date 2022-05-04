@@ -225,8 +225,8 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		//Se calcula el nuevo punto G' = nonce*G + H
 		final BigInteger ms = new BigInteger(1, secretNonce);
-		final ECPoint g_temp = pointG.multiply(ms);
-		final ECPoint newPointG = g_temp.add(sharedSecretH);
+		final ECPoint gTemp = pointG.multiply(ms);
+		final ECPoint newPointG = gTemp.add(sharedSecretH);
 
 
 		// 1.3.5 Tercer comando General Authenticate
@@ -403,7 +403,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		);
 	}
 
-	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve) throws IllegalArgumentException {
+	private static ECPoint byteArrayToECPoint(final byte[] value, final ECCurve.Fp curve) {
 		final byte[] x = new byte[(value.length - 1) / 2];
 		final byte[] y = new byte[(value.length - 1) / 2];
 		if (value[0] != (byte) 0x04) {

@@ -87,7 +87,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    private Dnie cryptoCard = null;
+    private transient Dnie cryptoCard = null;
     private List<String> aliases = null;
 
     @Override

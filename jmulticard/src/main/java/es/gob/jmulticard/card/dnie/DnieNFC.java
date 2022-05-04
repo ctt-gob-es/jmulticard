@@ -89,9 +89,9 @@ public class DnieNFC extends Dnie3 {
 	                                                                                        IcaoException {
 		// Primero obtenemos el CAN/MRZ
 		final String prompt = CardMessages.getString("DnieNFC.0"); //$NON-NLS-1$
-		Callback tic;
+		Callback textInputCallback;
 		try {
-			tic = (Callback) Class.forName("javax.security.auth.callback.TextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
+			textInputCallback = (Callback) Class.forName("javax.security.auth.callback.TextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
 		}
 		catch(final ClassNotFoundException    |
 				    InstantiationException    |
@@ -104,7 +104,7 @@ public class DnieNFC extends Dnie3 {
 				"No se ha encontrado la clase 'javax.security.auth.callback.TextInputCallback', se usara 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e //$NON-NLS-1$
 			);
 			try {
-				tic = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
+				textInputCallback = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
 			}
 			catch (InstantiationException    |
 				   IllegalAccessException    |
@@ -130,7 +130,7 @@ public class DnieNFC extends Dnie3 {
 				try {
 					ch.handle(
 						new Callback[] {
-							tic
+							textInputCallback
 						}
 					);
 				}
@@ -139,8 +139,8 @@ public class DnieNFC extends Dnie3 {
 				}
 
 				try {
-					final Method m = tic.getClass().getMethod("getText"); //$NON-NLS-1$
-					final Object o = m.invoke(tic);
+					final Method m = textInputCallback.getClass().getMethod("getText"); //$NON-NLS-1$
+					final Object o = m.invoke(textInputCallback);
 					if (!(o instanceof String)) {
 						throw new IllegalStateException(
 							"El TextInputCallback ha devuelto un dato de tipo " + (o == null ? "null" : o.getClass().getName()) //$NON-NLS-1$ //$NON-NLS-2$

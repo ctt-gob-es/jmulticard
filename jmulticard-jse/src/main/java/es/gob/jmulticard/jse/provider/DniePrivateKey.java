@@ -122,10 +122,10 @@ public final class DniePrivateKey implements RSAPrivateKey {
 	}
 
 	/** Serializaci&oacute;n no soportada, lanza un <code>NotSerializableException</code>.
-	 * @param out No se usa.
+	 * @param outStream No se usa.
 	 * @throws IOException No se lanza, siempre lanza un <code>NotSerializableException</code>. */
 	@SuppressWarnings({ "static-method" })
-	private void writeObject(final ObjectOutputStream out) throws IOException {
+	private void writeObject(final ObjectOutputStream outStream) throws IOException {
 		throw new NotSerializableException();
 	}
 

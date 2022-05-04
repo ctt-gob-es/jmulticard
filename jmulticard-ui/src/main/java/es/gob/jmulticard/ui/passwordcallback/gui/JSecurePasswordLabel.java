@@ -61,7 +61,7 @@ final class JSecurePasswordLabel extends JLabel {
 
 	private static final long serialVersionUID = -4343328489072897605L;
 
-	private final int delay = 500;
+	private transient final int delay = 500;
 
 	final char[] pass;
 	char[] getPass() {
@@ -69,7 +69,7 @@ final class JSecurePasswordLabel extends JLabel {
 	}
 
 	private final int maxChars;
-	int passwordLength;
+	transient int passwordLength;
 
 	private final Timer timer;
 	Timer getTimer() {
@@ -172,7 +172,7 @@ final class JSecurePasswordLabel extends JLabel {
 	synchronized void updateText() {
 		final StringBuilder text = new StringBuilder(" "); //$NON-NLS-1$
 		for(int i = 0; i < this.passwordLength; i++) {
-			text.append("*"); //$NON-NLS-1$
+			text.append('*');
 		}
 		text.append(getShowCursor() ? "|" : " "); //$NON-NLS-1$ //$NON-NLS-2$
 		setText(text.toString());

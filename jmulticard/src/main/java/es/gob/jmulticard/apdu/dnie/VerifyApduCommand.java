@@ -76,13 +76,13 @@ public final class VerifyApduCommand extends CommandApdu {
 
     @Override
     public byte[] getData() {
-        final char[] p = this.pwc.getPassword();
-        final byte[] k = new byte[p.length];
+        final char[] pass = this.pwc.getPassword();
+        final byte[] k = new byte[pass.length];
         for (int i=0; i<k.length;i++) {
-            k[i] = (byte) p[i];
+            k[i] = (byte) pass[i];
         }
         for (int i=0;i<k.length;i++) {
-            p[i] = '\0';
+            pass[i] = '\0';
         }
         return k;
     }

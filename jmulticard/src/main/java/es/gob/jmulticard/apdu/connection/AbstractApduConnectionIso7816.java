@@ -14,6 +14,7 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
     /** Etiqueta que identifica que es necesario recuperar el resultado del comando anterior. */
     private static final byte TAG_RESPONSE_PENDING = 0x61;
 
+    /** Etiqueta que identifica que la longitud de respuesta indicada no es correcta. */
     private static final byte TAG_RESPONSE_INVALID_LENGTH = 0x6C;
 
 	/** Obtiene el tama&ntilde;o m&aacute;ximo de APDU que se puede enviar sin necesidad de

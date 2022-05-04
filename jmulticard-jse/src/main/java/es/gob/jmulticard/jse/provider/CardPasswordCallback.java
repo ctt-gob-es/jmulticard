@@ -11,7 +11,7 @@ public final class CardPasswordCallback extends PasswordCallback {
 	private static final long serialVersionUID = -2511696590746468782L;
 
 	/** <code>PasswordProtection</code> para solicitar la contrase&ntilde;a. */
-	private final PasswordProtection passp;
+	private transient final PasswordProtection passp;
 
 	/** Constructor.
 	 * @param pp <code>PasswordProtection</code> para solicitar la contrase&ntilde;a.

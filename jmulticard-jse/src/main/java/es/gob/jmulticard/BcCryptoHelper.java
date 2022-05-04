@@ -97,11 +97,13 @@ import org.spongycastle.util.Store;
  * @author The JMRTD team. */
 public final class BcCryptoHelper extends CryptoHelper {
 
+	/** Logger por defecto. */
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
+	/** Elliptic Curve Diffie-Hellman. */
 	private static final String ECDH = "ECDH"; //$NON-NLS-1$
 
-	private PaceChannelHelper paceChannelHelper = null;
+	private transient PaceChannelHelper paceChannelHelper = null;
 
 	// Unicamente anade BouncyCastle si no estaba ya anadido como proveedor
 	static {
@@ -310,8 +312,6 @@ public final class BcCryptoHelper extends CryptoHelper {
     		                    final byte[] aesKey,
     		                    final BlockCipherPadding padding,
     		                    final boolean forEncryption) throws IOException,
-                                                                    DataLengthException,
-                                                                    IllegalStateException,
                                                                     InvalidCipherTextException {
 		final BlockCipher engine = new AESEngine();
 
@@ -755,7 +755,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	/** Selector interno para la lectura de los certificados del firmante del SOD. */
 	private static final class CertHolderBySignerIdSelector implements Selector<X509CertificateHolder> {
 
-		private final SignerId signerId;
+		private transient final SignerId signerId;
 
 		CertHolderBySignerIdSelector(final SignerId sid) {
 			if (sid == null) {
