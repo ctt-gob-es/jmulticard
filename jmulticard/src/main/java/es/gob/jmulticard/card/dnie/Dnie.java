@@ -76,6 +76,8 @@ import es.gob.jmulticard.apdu.iso7816four.ExternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.InternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetAuthenticationKeyApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
+import es.gob.jmulticard.asn1.Asn1Exception;
+import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
@@ -327,9 +329,12 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         		selectFileByLocationAndRead(PRKDF_LOCATION)
     		);
         }
-        catch (final Exception e) {
+        catch (final IOException   |
+        		     Asn1Exception |
+        		     TlvException  |
+        		     Iso7816FourCardException e) {
             throw new IllegalStateException(
-        		"No se ha podido cargar el PrKDF de la tarjeta: " + e.toString() //$NON-NLS-1$
+        		"No se ha podido cargar el PrKDF de la tarjeta", e //$NON-NLS-1$
     		);
         }
 
@@ -427,9 +432,12 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         	final byte[] cdfBytes = selectFileByLocationAndRead(CDF_LOCATION);
             cdf.setDerValue(cdfBytes);
         }
-        catch (final Exception e) {
+        catch (final IOException              |
+        		     Iso7816FourCardException |
+        		     Asn1Exception            |
+        		     TlvException e) {
             throw new ApduConnectionException (
-        		"No se ha podido cargar el CDF de la tarjeta: " + e.toString(), e //$NON-NLS-1$
+        		"No se ha podido cargar el CDF de la tarjeta", e //$NON-NLS-1$
     		);
         }
         return cdf;

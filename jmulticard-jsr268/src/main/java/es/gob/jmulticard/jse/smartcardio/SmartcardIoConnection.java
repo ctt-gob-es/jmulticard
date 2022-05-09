@@ -53,9 +53,9 @@ import javax.smartcardio.TerminalFactory;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
 import es.gob.jmulticard.apdu.connection.ApduConnectionOpenedInExclusiveModeException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
@@ -246,7 +246,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             }
             if (terminales.size() <= this.terminalNumber) {
                 throw new ApduConnectionException(
-            		"No se detecto el lector de tarjetas numero " + Integer.toString(this.terminalNumber) //$NON-NLS-1$
+            		"No se detecto el lector de tarjetas numero " + this.terminalNumber //$NON-NLS-1$
         		);
             }
             this.card = terminales.get(this.terminalNumber).connect(this.protocol.toString());
@@ -256,7 +256,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
         }
         catch (final CardException e) {
             throw new ApduConnectionException(
-                "No se ha podido abrir la conexion con el lector de tarjetas numero " + Integer.toString(this.terminalNumber), e  //$NON-NLS-1$
+                "No se ha podido abrir la conexion con el lector de tarjetas numero " + this.terminalNumber, e  //$NON-NLS-1$
     		);
         }
 
@@ -341,7 +341,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             try {
                 close();
             }
-            catch (final Exception e) {
+            catch (final ApduConnectionException e) {
                 LOGGER.warning(
                     "Error intentando cerrar la conexion con el lector: " + e); //$NON-NLS-1$
             }

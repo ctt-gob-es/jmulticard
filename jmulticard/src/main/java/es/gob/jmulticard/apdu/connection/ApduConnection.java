@@ -97,8 +97,8 @@ public interface ApduConnection {
     /** Establece el lector de tarjetas que se usar&aacute; para la conexi&oacute;n. Si se cambia el terminal
      * estando la conexi&oacute;n ya abierta, se intentar&aacute; reabrirla con el nuevo terminal.
      * @param t N&uacute;mero de terminal que se desea pase a ser el actual.
-     * @throws NullPointerException Cuando se especifica un n&uacute;mero de terminal no v&aacute;lido. */
-    void setTerminal(int t);
+     * @throws ApduConnectionException Cuando se especifica un n&uacute;mero de terminal no v&aacute;lido. */
+    void setTerminal(int t) throws ApduConnectionException;
 
     /** Indica si la conexi&oacute;n est&aacute; abierta o no.
      * @return <code>true</code> si la conexi&oacute;n esta abierta, <code>false</code> si est&aacute; cerrada. */

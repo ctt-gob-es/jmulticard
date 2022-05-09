@@ -214,7 +214,13 @@ public final class JMultiCardProviderFactory {
 		}
 
 		for (final long terminal : terminals) {
-			conn.setTerminal((int) terminal);
+			try {
+				conn.setTerminal((int) terminal);
+			}
+			catch (final ApduConnectionException e1) {
+				LOGGER.warning("Numero de terminal no valido (" + terminal + "): " + e1); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
+			}
 			try {
 				final byte[] atr = conn.reset();
 				final Provider provider = getProvider(atr);

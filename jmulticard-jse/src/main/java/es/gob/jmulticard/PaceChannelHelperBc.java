@@ -2,6 +2,8 @@ package es.gob.jmulticard;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -157,7 +159,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 				Padding.NOPADDING // Sin relleno
 			);
 		}
-		catch (final Exception e) {
+		catch (final IOException e) {
 			throw new PaceException(
 				"Error descifrando el 'nonce'", e //$NON-NLS-1$
 			);
@@ -211,7 +213,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		try {
 			pukIccDh1 = unwrapEcKey(res.getData());
 		}
-		catch(final Exception e) {
+		catch(final TlvException e) {
 			throw new PaceException(
 				"Error obteniendo la clave efimera EC publica de la tarjeta", e //$NON-NLS-1$
 			);
@@ -264,7 +266,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		try {
 			pukIccDh2 = unwrapEcKey(res.getData());
 		}
-		catch(final Exception e) {
+		catch(final TlvException e) {
 			throw new PaceException(
 				"Error obteniendo la clave efimera EC publica de la tarjeta", e //$NON-NLS-1$
 			);
@@ -350,7 +352,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 				kmac
 			);
 		}
-		catch (final Exception e) {
+		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new PaceException(
 				"Error descifrando el 'nonce'", e //$NON-NLS-1$
 			);

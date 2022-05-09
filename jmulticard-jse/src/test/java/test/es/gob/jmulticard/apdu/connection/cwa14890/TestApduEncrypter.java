@@ -1,6 +1,8 @@
 package test.es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -258,7 +260,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			eng = Mac.getInstance("AESCMAC", new BouncyCastleProvider()); //$NON-NLS-1$
 			eng.init(new SecretKeySpec(kMac, "AES")); //$NON-NLS-1$
 		}
-		catch(final Exception e) {
+		catch(final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new IOException(e);
 		}
 		final byte[] mac = eng.doFinal(HexUtils.concatenateByteArrays(ssc, dataPadded));

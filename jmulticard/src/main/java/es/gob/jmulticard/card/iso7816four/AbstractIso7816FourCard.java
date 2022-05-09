@@ -181,12 +181,17 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 	                readedResponse = readBinary(msbOffset, lsbOffset, (byte) MAX_READ_CHUNK);
 	            }
             }
-            catch(final Exception e) {
+            catch(final OffsetOutsideEfException e) {
             	LOGGER.warning(
         			"Se ha intentado una lectura fuera de los limites del fichero, se devolvera lo leido hasta ahora: " + e //$NON-NLS-1$
     			);
             	return out.toByteArray();
             }
+            catch (final RequiredSecurityStateNotSatisfiedException e) {
+				throw new IOException(
+					"Condicion de seguridad no satisfecha", e //$NON-NLS-1$
+				);
+			}
 
             final boolean eofReached = SW_EOF_REACHED.equals(readedResponse.getStatusWord());
 

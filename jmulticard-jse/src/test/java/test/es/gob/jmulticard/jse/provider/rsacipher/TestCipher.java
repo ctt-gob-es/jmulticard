@@ -28,8 +28,10 @@ import test.es.gob.jmulticard.TestingDnieCallbackHandler;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestCipher {
 
-	private static final String CAN = "961984"; //$NON-NLS-1$
-	private static final String PIN = "rock2048"; //$NON-NLS-1$
+	private static final String RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding"; //$NON-NLS-1$
+
+	private static final String CAN = "cancan"; //$NON-NLS-1$
+	private static final String PIN = "pinpin"; //$NON-NLS-1$
 
 	/** Main para pruebas.
 	 * @param args No se usa.
@@ -43,7 +45,7 @@ public final class TestCipher {
 		final Provider provider = new DnieProvider();
 		Security.insertProviderAt(provider, 1);
 
-		final Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", provider); //$NON-NLS-1$
+		final Cipher cipher = Cipher.getInstance(RSA_ECB_PKCS1PADDING, provider);
 
 		final KeyStore.Builder builder = KeyStore.Builder.newInstance(
 			"DNI", //$NON-NLS-1$
@@ -76,7 +78,7 @@ public final class TestCipher {
 		);
 
 		final PublicKey puK = ks.getCertificate(Dnie.CERT_ALIAS_AUTH).getPublicKey();
-		final Cipher cipherDec = Cipher.getInstance("RSA/ECB/PKCS1Padding"); //$NON-NLS-1$
+		final Cipher cipherDec = Cipher.getInstance(RSA_ECB_PKCS1PADDING);
 		cipherDec.init(Cipher.DECRYPT_MODE, puK);
 		final byte[] descifrado = cipherDec.doFinal(out);
 
@@ -117,7 +119,7 @@ public final class TestCipher {
             alias = ks.aliases().nextElement();
             pke = (PrivateKeyEntry) ks.getEntry(alias, new KeyStore.PasswordProtection(KEYSTORE_FIRST_ENTRY_PWD));
         }
-        final Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding"); //$NON-NLS-1$
+        final Cipher cipher = Cipher.getInstance(RSA_ECB_PKCS1PADDING);
 		final String data ="HolaManola"; //$NON-NLS-1$
 		cipher.init(Cipher.ENCRYPT_MODE, pke.getPrivateKey());
 		final byte[] out = cipher.doFinal(data.getBytes());
@@ -130,7 +132,7 @@ public final class TestCipher {
 		);
 
 		final PublicKey puK = ks.getCertificate(alias).getPublicKey();
-		final Cipher cipherDec = Cipher.getInstance("RSA/ECB/PKCS1Padding"); //$NON-NLS-1$
+		final Cipher cipherDec = Cipher.getInstance(RSA_ECB_PKCS1PADDING);
 		cipherDec.init(Cipher.DECRYPT_MODE, puK);
 		final byte[] descifrado = cipherDec.doFinal(out);
 

@@ -379,7 +379,7 @@ final class RSAPadding {
      * PKCS#1 v2.0 OAEP padding (MGF1).
      * Paragraph references refer to PKCS#1 v2.1 (June 14, 2002)
      */
-    private byte[] padOaep(final byte[] M) throws BadPaddingException {
+    private byte[] padOaep(final byte[] message) throws BadPaddingException {
         if (this.random == null) {
             this.random = new SecureRandom();
         }
@@ -406,7 +406,7 @@ final class RSAPadding {
         final int dbLen = encodedMessage.length - dbStart;
 
         // start of message M in EM
-        final int mStart = this.paddedSize - M.length;
+        final int mStart = this.paddedSize - message.length;
 
         // build DB
         // 2.b: Concatenate lHash, PS, a single octet with hexadecimal value
@@ -415,7 +415,7 @@ final class RSAPadding {
         // (note that PS is all zeros)
         System.arraycopy(this.lHash, 0, encodedMessage, dbStart, hLen);
         encodedMessage[mStart - 1] = 1;
-        System.arraycopy(M, 0, encodedMessage, mStart, M.length);
+        System.arraycopy(message, 0, encodedMessage, mStart, message.length);
 
         // produce maskedDB
         mgf1(encodedMessage, seedStart, seedLen, encodedMessage, dbStart, dbLen);

@@ -19,6 +19,8 @@ import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.gemalto.GemaltoVerifyApduCommand;
 import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
+import es.gob.jmulticard.asn1.Asn1Exception;
+import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.BadPinException;
@@ -27,8 +29,8 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
+import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta Gemalto TUI R5 MPCOS.
@@ -143,7 +145,7 @@ public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
         try {
 			cdf.setDerValue(selectFileByLocationAndRead(CDF_LOCATION));
 		}
-        catch (final Exception e) {
+        catch (final Asn1Exception | TlvException e) {
         	throw new IOException("Error en la lectura del CDF", e); //$NON-NLS-1$
 		}
 
@@ -218,7 +220,7 @@ public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
 		try {
 			res = sendArbitraryApdu(mseSet);
 		}
-		catch (final Exception e) {
+		catch (final ApduConnectionException e) {
 			throw new CryptoCardException("Error enviando la APDU de establecimiento de clave privada para firma", e); //$NON-NLS-1$
 		}
 		if (res.isOk()) {

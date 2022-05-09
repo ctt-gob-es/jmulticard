@@ -249,10 +249,10 @@ final class RSACore {
      * The total performance cost is small.
      */
     private static final class BlindingRandomPair {
-        final BigInteger u;
-        final BigInteger v;
+        private final BigInteger u;
+        private final BigInteger v;
 
-        BlindingRandomPair(final BigInteger pairU, final BigInteger pairV) {
+        private BlindingRandomPair(final BigInteger pairU, final BigInteger pairV) {
             this.u = pairU;
             this.v = pairV;
         }

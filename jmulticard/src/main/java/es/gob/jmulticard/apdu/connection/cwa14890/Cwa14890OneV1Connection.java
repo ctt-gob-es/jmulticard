@@ -51,10 +51,10 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
+import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.apdu.connection.ApduEncrypterDes;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.card.cwa14890.Cwa14890Card;
@@ -817,7 +817,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     }
 
     @Override
-    public void setTerminal(final int t) {
+    public void setTerminal(final int t) throws ApduConnectionException {
         this.subConnection.setTerminal(t);
     }
 

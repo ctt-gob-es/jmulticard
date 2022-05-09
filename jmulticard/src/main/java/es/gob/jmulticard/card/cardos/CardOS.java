@@ -27,8 +27,8 @@ import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
+import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 
 /** Tarjeta Atos / Siemens CardOS.
@@ -132,7 +132,11 @@ public final class CardOS extends AbstractIso7816FourCard implements CryptoCard 
     	throw new ApduConnectionException("No se ha podido conectar con ningun lector de tarjetas"); //$NON-NLS-1$
     }
 
-    private void preloadCertificates() throws FileNotFoundException, Iso7816FourCardException, IOException, Asn1Exception, TlvException {
+    private void preloadCertificates() throws FileNotFoundException,
+                                              Iso7816FourCardException,
+                                              IOException,
+                                              Asn1Exception,
+                                              TlvException {
     		// Entramos en el directorio PKCS#15
 			selectFileByName(PKCS15_NAME);
 

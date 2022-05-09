@@ -43,6 +43,7 @@ import java.security.Provider;
 import java.security.ProviderException;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.dnie.Dnie;
 
 /** Proveedor criptogr&aacute;fico JCA para DNIe.
@@ -111,7 +112,7 @@ public final class DnieProvider extends Provider {
         	Dnie.connect(defaultConnection);
         	defaultConnection.close();
         }
-        catch(final Exception e) {
+        catch(final ApduConnectionException e) {
         	throw new ProviderException("No se ha podido inicializar el proveedor de DNIe", e); //$NON-NLS-1$
         }
 

@@ -189,11 +189,13 @@ public final class DnieCipherImpl extends CipherSpi {
 		}
 		catch (final NoSuchAlgorithmException nsae) {
 		    // No deberia pasar
-		    throw new RuntimeException("Cannot find OAEP AlgorithmParameters implementation", nsae); //$NON-NLS-1$
+		    throw new RuntimeException(
+	    		"No se ha encontrado una implementacion OAEP de 'AlgorithmParameters'", nsae //$NON-NLS-1$
+    		);
 		}
 		catch (final InvalidParameterSpecException ipse) {
 		    // No deberia pasar
-		    throw new RuntimeException("No se soporta OAEPParameterSpec: " + ipse, ipse); //$NON-NLS-1$
+		    throw new RuntimeException("No se soporta OAEPParameterSpec", ipse); //$NON-NLS-1$
 		}
     }
 
@@ -205,7 +207,7 @@ public final class DnieCipherImpl extends CipherSpi {
             init(opmode, key, rnd, null);
         }
         catch (final InvalidAlgorithmParameterException iape) {
-            throw new InvalidKeyException("Parametros invalidos para la inicializacion: " + iape, iape); //$NON-NLS-1$
+            throw new InvalidKeyException("Parametros invalidos para la inicializacion", iape); //$NON-NLS-1$
         }
     }
 
@@ -233,7 +235,7 @@ public final class DnieCipherImpl extends CipherSpi {
             }
             catch (final InvalidParameterSpecException ipse) {
                 throw new InvalidAlgorithmParameterException(
-            		"Parametros invalidos para la inicializacion: " + ipse, ipse //$NON-NLS-1$
+            		"Parametros invalidos para la inicializacion", ipse //$NON-NLS-1$
         		);
             }
         }
@@ -305,7 +307,9 @@ public final class DnieCipherImpl extends CipherSpi {
         }
         else { // PAD_OAEP_MGF1
             if (this.mode == MODE_SIGN || this.mode == MODE_VERIFY) {
-                throw new InvalidKeyException("OAEP cannot be used to sign or verify signatures"); //$NON-NLS-1$
+                throw new InvalidKeyException(
+            		"OAEP no puede usarse para firmar ni para verificar firmas" //$NON-NLS-1$
+        		);
             }
             if (params != null) {
                 if (!(params instanceof OAEPParameterSpec)) {

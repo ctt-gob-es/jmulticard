@@ -49,7 +49,7 @@ public final class CreatePrivateKey {
 
 	/** Imprime la codificaci&oacute;n PKCS#8 de la clave interna.
 	 * @param args No se usa.
-	 * @throws Exception EN cualquier error. */
+	 * @throws Exception En cualquier error. */
 	public static void main(final String args[]) throws Exception {
         final RSAPrivateKeySpec privateSpec = new RSAPrivateKeySpec(MODULUS, PRIVATE_EXPONENT);
         final KeyFactory factory = KeyFactory.getInstance("RSA"); //$NON-NLS-1$

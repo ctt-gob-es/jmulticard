@@ -1,5 +1,7 @@
 package test.es.gob.jmulticard;
 
+import java.io.IOException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -67,7 +69,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG2: " + e); //$NON-NLS-1$
 		}
 
@@ -76,7 +78,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG3: " + e); //$NON-NLS-1$
 		}
 
@@ -85,7 +87,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG4: " + e); //$NON-NLS-1$
 		}
 
@@ -103,7 +105,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG6: " + e); //$NON-NLS-1$
 		}
 
@@ -112,7 +114,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG7: " + e); //$NON-NLS-1$
 		}
 
@@ -121,7 +123,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG8: " + e); //$NON-NLS-1$
 		}
 
@@ -130,7 +132,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG9: " + e); //$NON-NLS-1$
 		}
 
@@ -139,7 +141,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG10: " + e); //$NON-NLS-1$
 		}
 
@@ -157,7 +159,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG12: " + e); //$NON-NLS-1$
 		}
 
@@ -166,7 +168,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG13: " + e); //$NON-NLS-1$
 		}
 
@@ -175,7 +177,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG14: " + e); //$NON-NLS-1$
 		}
 
@@ -184,7 +186,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG15: " + e); //$NON-NLS-1$
 		}
 
@@ -193,7 +195,7 @@ public final class TestIcao {
 			System.out.println(new String(dg));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene DG16: " + e); //$NON-NLS-1$
 		}
 
@@ -203,7 +205,7 @@ public final class TestIcao {
 			System.out.println(new String(ca));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene CardAccess: " + e); //$NON-NLS-1$
 		}
 
@@ -213,7 +215,7 @@ public final class TestIcao {
 			System.out.println(new String(cs));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene CardSecurity: " + e); //$NON-NLS-1$
 		}
 
@@ -223,7 +225,7 @@ public final class TestIcao {
 			System.out.println(new String(ai));
 			System.out.println();
 		}
-		catch(final Exception e) {
+		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene ATR/INFO: " + e); //$NON-NLS-1$
 		}
 
