@@ -44,7 +44,6 @@ import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -65,7 +64,6 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -75,7 +73,6 @@ import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyAgreement;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -94,10 +91,7 @@ import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.params.KeyParameter;
 import org.spongycastle.jce.ECNamedCurveTable;
-import org.spongycastle.jce.ECPointUtil;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
@@ -415,47 +409,6 @@ public final class JseCryptoHelper extends CryptoHelper {
 		final byte[] out = new byte[mac.getMacSize()];
 		mac.doFinal(out, 0);
 		return out;
-	}
-
-	@Override
-	public byte[] doEcDh(final Key privateKey,
-			             final byte[] publicKey,
-			             final EcCurve curveName) throws NoSuchAlgorithmException,
-			                                             InvalidKeyException,
-			                                             InvalidKeySpecException {
-		KeyAgreement ka;
-		try {
-			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
-		}
-		catch (final NoSuchProviderException e) {
-			LOGGER.warning(
-				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
-			);
-			ka = KeyAgreement.getInstance(ECDH);
-		}
-		ka.init(privateKey);
-		ka.doPhase(loadEcPublicKey(publicKey, curveName), true);
-		return ka.generateSecret();
-	}
-
-	private static Key loadEcPublicKey(final byte [] pubKey,
-                                       final EcCurve curveName) throws NoSuchAlgorithmException,
-                                                                       InvalidKeySpecException {
-	    final ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec(curveName.toString());
-	    KeyFactory kf;
-		try {
-			kf = KeyFactory.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
-		}
-		catch (final NoSuchProviderException e) {
-			LOGGER.warning(
-				"No se ha podido obtener el KeyFactory ECDH de BouncyCastle, se intentara el por defecto: " + e //$NON-NLS-1$
-			);
-			kf = KeyFactory.getInstance(ECDH);
-		}
-	    final ECNamedCurveSpec params = new ECNamedCurveSpec(curveName.toString(), spec.getCurve(), spec.getG(), spec.getN());
-	    final ECPoint point =  ECPointUtil.decodePoint(params.getCurve(), pubKey);
-	    final java.security.spec.ECPublicKeySpec pubKeySpec = new java.security.spec.ECPublicKeySpec(point, params);
-	    return kf.generatePublic(pubKeySpec);
 	}
 
 	@Override

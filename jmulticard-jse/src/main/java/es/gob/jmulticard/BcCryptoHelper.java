@@ -6,13 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
@@ -28,13 +24,10 @@ import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
-
-import javax.crypto.KeyAgreement;
 
 import org.spongycastle.cert.X509CertificateHolder;
 import org.spongycastle.cms.CMSException;
@@ -70,11 +63,8 @@ import org.spongycastle.crypto.prng.DigestRandomGenerator;
 import org.spongycastle.crypto.prng.RandomGenerator;
 import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
 import org.spongycastle.jce.ECNamedCurveTable;
-import org.spongycastle.jce.ECPointUtil;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
-import org.spongycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.spongycastle.jce.spec.ECNamedCurveSpec;
 import org.spongycastle.math.ec.ECCurve;
 import org.spongycastle.math.ec.ECFieldElement;
 import org.spongycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
@@ -93,9 +83,6 @@ public final class BcCryptoHelper extends CryptoHelper {
 
 	/** Logger por defecto. */
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
-	/** Elliptic Curve Diffie-Hellman. */
-	private static final String ECDH = "ECDH"; //$NON-NLS-1$
 
 	private transient PaceChannelHelper paceChannelHelper = null;
 
@@ -487,52 +474,6 @@ public final class BcCryptoHelper extends CryptoHelper {
 		final byte[] out = new byte[mac.getMacSize()];
 		mac.doFinal(out, 0);
 		return out;
-	}
-
-	@Override
-	public byte[] doEcDh(final Key privateKey,
-			             final byte[] publicKey,
-			             final EcCurve curveName) throws NoSuchAlgorithmException,
-			                                             InvalidKeyException,
-			                                             InvalidKeySpecException {
-		final KeyAgreement ka;
-		try {
-			ka = KeyAgreement.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
-		}
-		catch (final NoSuchProviderException e) {
-			throw new NoSuchAlgorithmException(
-				"No se ha podido obtener el KeyAgreement ECDH de BouncyCastle", e //$NON-NLS-1$
-			);
-		}
-		ka.init(privateKey);
-		ka.doPhase(loadEcPublicKey(publicKey, curveName), true);
-		return ka.generateSecret();
-	}
-
-	private static Key loadEcPublicKey(final byte [] pubKey,
-                                       final EcCurve curveName) throws NoSuchAlgorithmException,
-                                                                       InvalidKeySpecException {
-	    final ECNamedCurveParameterSpec spec = ECNamedCurveTable.getParameterSpec(
-    		curveName.toString()
-		);
-	    final KeyFactory kf;
-		try {
-			kf = KeyFactory.getInstance(ECDH, BouncyCastleProvider.PROVIDER_NAME);
-		}
-		catch (final NoSuchProviderException e) {
-			throw new NoSuchAlgorithmException(
-				"No se ha podido obtener el KeyFactory ECDH de BouncyCastle", e //$NON-NLS-1$
-			);
-		}
-	    final ECNamedCurveSpec params = new ECNamedCurveSpec(
-    		curveName.toString(),
-    		spec.getCurve(),
-    		spec.getG(),
-    		spec.getN()
-		);
-	    final ECPoint point =  ECPointUtil.decodePoint(params.getCurve(), pubKey);
-	    final java.security.spec.ECPublicKeySpec pubKeySpec = new java.security.spec.ECPublicKeySpec(point, params);
-	    return kf.generatePublic(pubKeySpec);
 	}
 
 	@Override

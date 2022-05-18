@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -52,7 +51,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Logger;
 
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -300,21 +298,6 @@ public abstract class CryptoHelper {
 	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
 	public abstract byte[] doAesCmac(byte[] data, byte[] key) throws NoSuchAlgorithmException,
 	                                                                 InvalidKeyException;
-
-	/** Realiza un acuerdo de claves <i>Diffie Hellman</i> con algoritmo de curva el&iacute;ptica.
-	 * @param privateKey Clave privada.
-	 * @param publicKey Clave p&uacute;blica.
-	 * @param curveName Nombre de la curva a usar.
-	 * @return Resultado de acuerdo de claves.
-	 * @throws NoSuchAlgorithmException Si no hay ning&uacute;n proveedor en el sistema que soporte el
-	 *                                  algoritmo <i>ECDH</i>.
-	 * @throws InvalidKeySpecException Si alguna de las claves es inv&aacute;lida.
-	 * @throws InvalidKeyException Si alguna de las claves es inv&aacute;lida. */
-	public abstract byte[] doEcDh(Key privateKey,
-			                      byte[] publicKey,
-			                      EcCurve curveName) throws NoSuchAlgorithmException,
-	                                                        InvalidKeyException,
-	                                                        InvalidKeySpecException;
 
 	/** Obtiene un punto en una curva el&iacute;ptica.
 	 * @param nonceS Aleatorio de un solo uso.
