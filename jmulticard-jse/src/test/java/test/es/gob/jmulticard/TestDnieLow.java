@@ -44,9 +44,9 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "961984"; //$NON-NLS-1$
+	private static final String CAN = "can"; //$NON-NLS-1$
 
-	private static final String PIN = "rock2048"; //$NON-NLS-1$
+	private static final String PIN = "pin"; //$NON-NLS-1$
 
 	private static final CryptoHelper CH = new BcCryptoHelper();
 

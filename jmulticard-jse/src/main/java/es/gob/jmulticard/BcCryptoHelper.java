@@ -34,14 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyAgreement;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.spongycastle.cert.X509CertificateHolder;
 import org.spongycastle.cms.CMSException;
@@ -62,6 +55,7 @@ import org.spongycastle.crypto.digests.SHA384Digest;
 import org.spongycastle.crypto.digests.SHA512Digest;
 import org.spongycastle.crypto.engines.AESEngine;
 import org.spongycastle.crypto.engines.DESEngine;
+import org.spongycastle.crypto.engines.DESedeEngine;
 import org.spongycastle.crypto.engines.RSAEngine;
 import org.spongycastle.crypto.macs.CMac;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
@@ -161,49 +155,42 @@ public final class BcCryptoHelper extends CryptoHelper {
     /** Realiza una operaci&oacute;n 3DES.
      * @param data Datos a cifrar o descifrar.
      * @param key Clave 3DES.
-     * @param direction Si se debe cifrar o descifrar.
+     * @param forEncryption Si se debe cifrar o descifrar.
      * @return Datos cifrados o descifrados.
      * @throws IOException Si ocurre cualquier error durante el proceso. */
     private static byte[] doDesede(final byte[] data,
     		                       final byte[] key,
-    		                       final int direction) throws IOException {
-        final byte[] ivBytes = new byte[8];
-        for (int i = 0; i < 8; i++) {
-            ivBytes[i] = 0x00;
-        }
-
-        final SecretKey k = new SecretKeySpec(prepareDesedeKey(key), "DESede"); //$NON-NLS-1$
-        try {
-            final Cipher cipher = Cipher.getInstance("DESede/CBC/NoPadding"); //$NON-NLS-1$
-            cipher.init(direction, k, new IvParameterSpec(ivBytes));
-            return cipher.doFinal(data);
-        }
-        catch (final NoSuchAlgorithmException           |
-        		     NoSuchPaddingException             |
-        		     InvalidKeyException                |
-        		     InvalidAlgorithmParameterException |
-        		     IllegalBlockSizeException          |
-        		     BadPaddingException e) {
-            throw new IOException(
-        		"Error encriptando / desencriptando datos con 3DES", e //$NON-NLS-1$
-    		);
-        }
-        finally {
-            // Machacamos los datos para evitar que queden en memoria
-            for(int i=0;i<data.length;i++) {
-                data[i] = '\0';
-            }
-        }
+    		                       final boolean forEncryption) throws IOException {
+		final BufferedBlockCipher cipher = new BufferedBlockCipher(
+			new CBCBlockCipher(new DESedeEngine())
+		);
+		cipher.init(
+			forEncryption,
+			new KeyParameter(
+				prepareDesedeKey(key)
+			)
+		);
+		final byte[] result = new byte[cipher.getOutputSize(data.length)];
+		final int tam = cipher.processBytes(data, 0, data.length, result, 0);
+		try {
+			cipher.doFinal(result, tam);
+		}
+		catch (final DataLengthException   |
+				     IllegalStateException |
+				     InvalidCipherTextException e) {
+			throw new IOException("Error en el cifrado o descifrado 3DES", e); //$NON-NLS-1$
+		}
+		return result;
     }
 
     @Override
     public byte[] desedeEncrypt(final byte[] data, final byte[] rawKey) throws IOException {
-        return doDesede(data, rawKey, Cipher.ENCRYPT_MODE);
+        return doDesede(data, rawKey, true);
     }
 
     @Override
     public byte[] desedeDecrypt(final byte[] data, final byte[] rawKey) throws IOException {
-        return doDesede(data, rawKey, Cipher.DECRYPT_MODE);
+        return doDesede(data, rawKey, false);
     }
 
     private static byte[] prepareDesedeKey(final byte[] key) {

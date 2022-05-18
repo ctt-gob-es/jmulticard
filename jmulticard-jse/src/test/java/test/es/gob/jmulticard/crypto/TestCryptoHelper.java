@@ -5,11 +5,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -31,8 +33,10 @@ import org.junit.Test;
 import org.spongycastle.crypto.AsymmetricBlockCipher;
 import org.spongycastle.crypto.BlockCipher;
 import org.spongycastle.crypto.BufferedBlockCipher;
+import org.spongycastle.crypto.DataLengthException;
 import org.spongycastle.crypto.InvalidCipherTextException;
 import org.spongycastle.crypto.engines.AESEngine;
+import org.spongycastle.crypto.engines.DESedeEngine;
 import org.spongycastle.crypto.engines.RSAEngine;
 import org.spongycastle.crypto.modes.CBCBlockCipher;
 import org.spongycastle.crypto.paddings.ISO7816d4Padding;
@@ -481,5 +485,81 @@ public final class TestCryptoHelper {
     		);
         }
 	}
+
+	private static byte[] do3DesJca(final byte[] data, final byte[] key) throws IOException {
+        final byte[] ivBytes = new byte[8];
+        for (int i = 0; i < 8; i++) {
+            ivBytes[i] = 0x00;
+        }
+
+        final SecretKey k = new SecretKeySpec(prepareDesedeKey(key), "DESede"); //$NON-NLS-1$
+        try {
+            final Cipher cipher = Cipher.getInstance("DESede/CBC/NoPadding"); //$NON-NLS-1$
+            cipher.init(Cipher.ENCRYPT_MODE, k, new IvParameterSpec(ivBytes));
+            return cipher.doFinal(data);
+        }
+        catch (final NoSuchAlgorithmException           |
+        		     NoSuchPaddingException             |
+        		     InvalidKeyException                |
+        		     InvalidAlgorithmParameterException |
+        		     IllegalBlockSizeException          |
+        		     BadPaddingException e) {
+            throw new IOException("Error encriptando datos", e); //$NON-NLS-1$
+        }
+        finally {
+            // Machacamos los datos para evitar que queden en memoria
+            for(int i=0;i<data.length;i++) {
+                data[i] = '\0';
+            }
+        }
+	}
+
+	private static byte[] do3DesBc(final byte[] data, final byte[] key) throws DataLengthException, IllegalStateException, InvalidCipherTextException {
+		final BufferedBlockCipher cipher = new BufferedBlockCipher(new CBCBlockCipher(new DESedeEngine()));
+		cipher.init(true, new KeyParameter(key));
+		final byte[] result = new byte[cipher.getOutputSize(data.length)];
+		final int tam = cipher.processBytes(data, 0, data.length, result, 0);
+		cipher.doFinal(result, tam);
+		return result;
+	}
+
+	/** Pruebas 3DES BouncyCastle vs JCE.
+	 * @throws Exception Si falla el 3DES. */
+	@SuppressWarnings("static-method")
+	@Test
+	public void test3Des() throws Exception {
+		final byte[] key = {
+			(byte) 0xE0, (byte) 0x35, (byte) 0x76, (byte) 0xA0, (byte) 0x62, (byte) 0x53, (byte) 0x87, (byte) 0x36,
+			(byte) 0xD4, (byte) 0x37, (byte) 0xA1, (byte) 0x64, (byte) 0xFE, (byte) 0x72, (byte) 0x19, (byte) 0x0D,
+			(byte) 0xE0, (byte) 0x35, (byte) 0x76, (byte) 0xA0, (byte) 0x62, (byte) 0x53, (byte) 0x87, (byte) 0x36
+		};
+		final byte[] data = new byte[224];
+		new SecureRandom().nextBytes(data);
+		//System.out.println(HexUtils.hexify(data, false));
+		final byte[] res1 = do3DesBc(data, key);
+		final byte[] res2 = do3DesJca(data, key);
+		System.out.println(HexUtils.hexify(res1, false));
+		System.out.println(HexUtils.hexify(res2, false));
+		Assert.assertTrue(HexUtils.arrayEquals(res1, res2));
+	}
+
+    private static byte[] prepareDesedeKey(final byte[] key) {
+        if (key == null) {
+            throw new IllegalArgumentException("La clave 3DES no puede ser nula"); //$NON-NLS-1$
+        }
+        if (key.length == 24) {
+            return key;
+        }
+        if (key.length == 16) {
+            final byte[] newKey = new byte[24];
+            System.arraycopy(key, 0, newKey, 0, 16);
+            System.arraycopy(key, 0, newKey, 16, 8);
+            return newKey;
+        }
+        throw new IllegalArgumentException(
+    		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + key.length //$NON-NLS-1$
+		);
+    }
+
 
 }
