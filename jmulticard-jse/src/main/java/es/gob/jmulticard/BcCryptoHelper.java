@@ -9,7 +9,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
@@ -85,13 +84,6 @@ public final class BcCryptoHelper extends CryptoHelper {
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private transient PaceChannelHelper paceChannelHelper = null;
-
-	// Unicamente anade BouncyCastle si no estaba ya anadido como proveedor
-	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.insertProviderAt(new BouncyCastleProvider(), 1);
-		}
-	}
 
     @Override
     public byte[] digest(final DigestAlgorithm algorithm, final byte[] data) throws IOException {
