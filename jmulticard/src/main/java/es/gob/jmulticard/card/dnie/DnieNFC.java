@@ -2,7 +2,6 @@ package es.gob.jmulticard.card.dnie;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.logging.Logger;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -204,7 +203,7 @@ public class DnieNFC extends Dnie3 {
 				if (counter >= MAX_PACE_RETRIES) {
 					throw e;
 				}
-				Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				LOGGER.warning(
 					"Error en el intento " + Integer.toString(counter + 1) + " de establecimiento de canal PACE (probablemente por CAN/MRZ invalido): " + e //$NON-NLS-1$ //$NON-NLS-2$
 				);
 				//Si el CAN/MRZ es incorrecto volvemos a pedirlo
@@ -218,6 +217,7 @@ public class DnieNFC extends Dnie3 {
 	private ApduConnection getPaceConnection(final ApduConnection con,
                                                     final PaceChannelHelper pch) throws ApduConnectionException,
 	                                                                                    IcaoException {
+
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
@@ -250,6 +250,7 @@ public class DnieNFC extends Dnie3 {
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
 															 PinException {
+
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
 				this.rawConnection = getPaceConnection(
@@ -267,6 +268,16 @@ public class DnieNFC extends Dnie3 {
 					"Error en el establecimiento del canal PACE", e //$NON-NLS-1$
 				);
 			}
+
+			try {
+				setConnection(this.rawConnection);
+			}
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	        		"Error al abrir el canal PACE", e //$NON-NLS-1$
+	    		);
+			}
+
 		}
 
 		super.openSecureChannelIfNotAlreadyOpened();
@@ -278,6 +289,7 @@ public class DnieNFC extends Dnie3 {
     		           final String signAlgorithm,
     		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
     		                                                                 PinException {
+
     	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
     	try {
     		//Define el canal sin cifrar para resetearlo tras cada firma
