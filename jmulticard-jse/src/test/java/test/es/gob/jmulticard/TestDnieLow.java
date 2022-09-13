@@ -20,7 +20,6 @@ import org.junit.Test;
 import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
