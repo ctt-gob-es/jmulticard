@@ -20,7 +20,7 @@ import org.junit.Test;
 import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
@@ -237,7 +237,7 @@ public final class TestDnieLow {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler(CAN, (String)null), // No usamos el PIN
 			false
 		);
@@ -323,7 +323,7 @@ public final class TestDnieLow {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			null,
 			false
 		);
@@ -388,7 +388,7 @@ public final class TestDnieLow {
 		System.out.println();
 		final IcaoMrtdWithBac passport = new IcaoMrtdWithBac(
 			conn,
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 
 		System.out.println();

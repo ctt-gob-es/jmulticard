@@ -4,7 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.card.icao.WirelessInitializerMrz;
 import es.gob.jmulticard.card.icao.bac.Bac;
@@ -22,7 +22,7 @@ public final class TestBac {
 	@SuppressWarnings("static-method")
 	@Test
 	public void testMrz() throws Exception {
-		final WirelessInitializer pi = WirelessInitializerMrz.deriveMrz(TEST_MRZ, new JseCryptoHelper());
+		final WirelessInitializer pi = WirelessInitializerMrz.deriveMrz(TEST_MRZ, new BcCryptoHelper());
 		System.out.println(
 			HexUtils.hexify(pi.getBytes(), true)
 		);
@@ -34,7 +34,7 @@ public final class TestBac {
 	@Test
 	@Ignore
 	public void testBac() throws Exception {
-		Bac.doBac(TEST_MRZ, new JseCryptoHelper(), ProviderUtil.getDefaultConnection());
+		Bac.doBac(TEST_MRZ, new BcCryptoHelper(), ProviderUtil.getDefaultConnection());
 	}
 
 }

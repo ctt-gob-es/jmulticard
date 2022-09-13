@@ -7,7 +7,7 @@ import org.junit.Test;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
@@ -27,7 +27,7 @@ public final class TestPaceDnie {
 		final Dnie dni = DnieFactory.getDnie(
 			conn,
 			cpc,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			null
 		);
 		System.out.println("Canal PACE abierto"); //$NON-NLS-1$
@@ -52,7 +52,7 @@ public final class TestPaceDnie {
 		Assert.assertEquals(
 			"10EA7515CF362555AB77B7DCE0384E89", //$NON-NLS-1$
 			HexUtils.hexify(
-				new JseCryptoHelper().aesDecrypt(
+				new BcCryptoHelper().aesDecrypt(
 					nonce,
 					new byte[0],
 					sk,

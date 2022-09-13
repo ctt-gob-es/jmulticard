@@ -55,14 +55,13 @@ import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
 
 
-/** Pruebas de operaciones criptogr&aacute;ficas con JseCryptoHelper.
+/** Pruebas de operaciones criptogr&aacute;ficas con BcCryptoHelper.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestCryptoHelper {
 
-	private static final CryptoHelper CH = new JseCryptoHelper();
+	private static final CryptoHelper CH = new BcCryptoHelper();
 
 	/** Pruebas de descifrado AES.
 	 * @throws Exception En cualquier error. */
@@ -81,7 +80,7 @@ public final class TestCryptoHelper {
 			0x04, 0x00, 0x06, 0x00, 0x00, (byte) 0xee, 0x00, 0x30,
 			0x00, 0x01, 0x00, 0x08, (byte) 0xff, 0x00, 0x20, 0x00
 		};
-		final byte[] in = new JseCryptoHelper().aesEncrypt(
+		final byte[] in = new BcCryptoHelper().aesEncrypt(
 			testString.getBytes(),
 			iv,
 			key,
@@ -282,13 +281,13 @@ public final class TestCryptoHelper {
 		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
-		final byte[] c1 = new JseCryptoHelper().desEncrypt(indata, key);
+		final byte[] c1 = new BcCryptoHelper().desEncrypt(indata, key);
 		final byte[] c2 = new BcCryptoHelper().desEncrypt(indata, key);
 
 		System.out.println(HexUtils.hexify(c1, false));
 		System.out.println(HexUtils.hexify(c2, false));
 
-		final byte[] c3 = new JseCryptoHelper().desDecrypt(c2, key);
+		final byte[] c3 = new BcCryptoHelper().desDecrypt(c2, key);
 		final byte[] c4 = new BcCryptoHelper().desDecrypt(c1, key);
 
 		System.out.println(new String(c3));
@@ -306,13 +305,13 @@ public final class TestCryptoHelper {
 		final byte[] key = "12345678abcdefgh".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
-		final byte[] c1 = new JseCryptoHelper().desedeEncrypt(indata, key);
+		final byte[] c1 = new BcCryptoHelper().desedeEncrypt(indata, key);
 		final byte[] c2 = new BcCryptoHelper().desedeEncrypt(indata, key);
 
 		System.out.println(HexUtils.hexify(c1, false));
 		System.out.println(HexUtils.hexify(c2, false));
 
-		final byte[] c3 = new JseCryptoHelper().desedeDecrypt(c2, key);
+		final byte[] c3 = new BcCryptoHelper().desedeDecrypt(c2, key);
 		final byte[] c4 = new BcCryptoHelper().desedeDecrypt(c1, key);
 
 		System.out.println(new String(c3));
@@ -409,7 +408,7 @@ public final class TestCryptoHelper {
 
         @Override
         public BigInteger getModulus() {
-            return this.ifdModulus;
+            return ifdModulus;
         }
 
         @Override
@@ -429,7 +428,7 @@ public final class TestCryptoHelper {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return this.ifdPrivateExponent;
+            return ifdPrivateExponent;
         }
     };
 
@@ -560,6 +559,5 @@ public final class TestCryptoHelper {
     		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + key.length //$NON-NLS-1$
 		);
     }
-
 
 }

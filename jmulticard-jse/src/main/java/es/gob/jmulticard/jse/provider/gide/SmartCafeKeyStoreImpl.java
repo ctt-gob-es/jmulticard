@@ -63,7 +63,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
@@ -82,12 +82,12 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
     @Override
     public Enumeration<String> engineAliases() {
-        return Collections.enumeration(this.aliases);
+        return Collections.enumeration(aliases);
     }
 
     @Override
     public boolean engineContainsAlias(final String alias) {
-        return this.aliases.contains(alias);
+        return aliases.contains(alias);
     }
 
     @Override
@@ -95,7 +95,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	if (!engineContainsAlias(alias)) {
     		return null;
     	}
-        return this.cryptoCard.getCertificate(alias);
+        return cryptoCard.getCertificate(alias);
     }
 
     @Override
@@ -104,7 +104,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
             return null;
         }
         final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
-        for (final String alias : this.aliases) {
+        for (final String alias : aliases) {
             if (((X509Certificate) engineGetCertificate(alias)).getSerialNumber() == serial) {
                 return alias;
             }
@@ -128,9 +128,9 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	if (password != null) {
     		// Establecemos el PasswordCallback
     		final PasswordCallback pwc = new CachePasswordCallback(password);
-    		this.cryptoCard.setPasswordCallback(pwc);
+    		cryptoCard.setPasswordCallback(pwc);
     	}
-        final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
+        final PrivateKeyReference pkRef = cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof SmartCafePrivateKeyReference)) {
 			throw new ProviderException(
 				"La clave obtenida de la tarjeta no es del tipo '" + //$NON-NLS-1$
@@ -138,7 +138,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 						(pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$
 			);
 		}
-		return new SmartCafePrivateKey((SmartCafePrivateKeyReference) pkRef, this.cryptoCard);
+		return new SmartCafePrivateKey((SmartCafePrivateKeyReference) pkRef, cryptoCard);
     }
 
     @Override
@@ -149,13 +149,13 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     		// Establecemos el CallbackHandler
     		final CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
     		if(chp != null) {
-    			this.cryptoCard.setCallbackHandler(chp);
+    			cryptoCard.setCallbackHandler(chp);
     		}
     	}
     	else if (protParam instanceof KeyStore.PasswordProtection) {
     		// Establecemos el PasswordCallback
     		final PasswordCallback pwc = new CachePasswordCallback(((KeyStore.PasswordProtection)protParam).getPassword());
-    		this.cryptoCard.setPasswordCallback(pwc);
+    		cryptoCard.setPasswordCallback(pwc);
     	}
     	else {
     		LOGGER.warning(
@@ -180,12 +180,12 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
     @Override
     public boolean engineIsKeyEntry(final String alias) {
-        return this.aliases.contains(alias);
+        return aliases.contains(alias);
     }
 
     @Override
     public int engineSize() {
-        return this.aliases.size();
+        return aliases.size();
     }
 
     @Override
@@ -202,28 +202,28 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	final ApduConnection conn = ProviderUtil.getDefaultConnection();
 
         // Aqui se realiza el acceso e inicializacion de la tarjeta
-    	this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
+    	cryptoCard = new SmartCafePkcs15Applet(conn, new BcCryptoHelper());
     	if (password != null) {
-    		this.cryptoCard.setPasswordCallback(new CachePasswordCallback(password));
+    		cryptoCard.setPasswordCallback(new CachePasswordCallback(password));
     	}
-    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+    	aliases = Arrays.asList(cryptoCard.getAliases());
     }
 
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
 		final ApduConnection conn = ProviderUtil.getDefaultConnection();
-		this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
+		cryptoCard = new SmartCafePkcs15Applet(conn, new BcCryptoHelper());
     	if (param != null) {
     		final ProtectionParameter pp = param.getProtectionParameter();
     		if (pp instanceof KeyStore.CallbackHandlerProtection) {
     			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
     				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
     			}
-    			this.cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
+    			cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
     			final PasswordCallback pwc = new CachePasswordCallback(((PasswordProtection) pp).getPassword());
-    			this.cryptoCard.setPasswordCallback(pwc);
+    			cryptoCard.setPasswordCallback(pwc);
     		}
     		else {
     			LOGGER.warning(
@@ -231,7 +231,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 				);
     		}
     	}
-    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+    	aliases = Arrays.asList(cryptoCard.getAliases());
     }
 
     //***********************************************************************

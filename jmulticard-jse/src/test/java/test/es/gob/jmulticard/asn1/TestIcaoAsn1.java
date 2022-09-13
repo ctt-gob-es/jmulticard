@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.asn1.icao.Sod;
 
 /** Pruebas de estructuras ICAO.
@@ -50,7 +50,7 @@ public final class TestIcaoAsn1 {
     	try (final InputStream is = TestIcaoAsn1.class.getResourceAsStream("/SOD_1223499971262354764.asn1")) { //$NON-NLS-1$
     		sod1 = getDataFromInputStream(is);
     	}
-    	final Sod sod = new Sod(new JseCryptoHelper());
+    	final Sod sod = new Sod(new BcCryptoHelper());
 		sod.setDerValue(sod1);
 		System.out.println(sod);
 	}

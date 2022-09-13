@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.Sod;
@@ -41,7 +41,7 @@ public final class TestIcao {
 		System.out.println();
 		final IcaoMrtdWithPace passport = new IcaoMrtdWithPace(
 			conn,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler(MRZ, (String)null)
 		);
 

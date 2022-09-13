@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 
 /** Utilidad de generaci&oacute;n de claves a partir de constantes.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -23,7 +23,7 @@ public final class TestKeyGeneration {
         (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
     };
 
-	private static final CryptoHelper CRYPTO_HELPER = new JseCryptoHelper();
+	private static final CryptoHelper CRYPTO_HELPER = new BcCryptoHelper();
 
 	private static final byte[] K_IDF = {
 		(byte) 0xD8, (byte) 0xE2, (byte) 0x5F, (byte) 0x21, (byte) 0x3F, (byte) 0x58, (byte) 0xA3, (byte) 0x1F,
