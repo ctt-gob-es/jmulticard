@@ -19,14 +19,14 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 
 	/** Obtiene el tama&ntilde;o m&aacute;ximo de APDU que se puede enviar sin necesidad de
 	 * hacer una envoltura.
-	 * @return Tama&ntilde;o m&aacute;ximo (en octetor) de APDU que se puede enviar sin
+	 * @return Tama&ntilde;o m&aacute;ximo (en octetos) de APDU que se puede enviar sin
 	 *         necesidad de hacer una envoltura. */
 	public abstract int getMaxApduSize();
 
 	/** Transmite una APDU.
 	 * @param apdu Comando APDU a transmitir.
-	 * @return APSU de respuesta.
-	 * @throws ApduConnectionException Si hay cualquier problema durante el anv&iacute;o. */
+	 * @return APDU de respuesta.
+	 * @throws ApduConnectionException Si hay cualquier problema durante el env&iacute;o. */
 	protected abstract ResponseApdu internalTransmit(byte[] apdu) throws ApduConnectionException;
 
 	@Override
