@@ -110,7 +110,10 @@ public final class DialogBuilder {
         final String confirm = console.readLine().replace("\n", "").replace("\r", "").trim().toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ("si".equals(confirm) //$NON-NLS-1$
                 || "s".equals(confirm) //$NON-NLS-1$
-                || "s\u00ED".equals(confirm)) { //$NON-NLS-1$
+                || "s\u00ED".equals(confirm) //$NON-NLS-1$
+                || "y".equals(confirm) //$NON-NLS-1$
+                || "yes".equals(confirm) //$NON-NLS-1$
+        ) {
                 return 0;
         }
 		if ("no".equals(confirm) || "n".equals(confirm)) { //$NON-NLS-1$ //$NON-NLS-2$

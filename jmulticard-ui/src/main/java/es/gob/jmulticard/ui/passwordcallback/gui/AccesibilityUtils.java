@@ -72,10 +72,11 @@ import javax.swing.JWindow;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-/** Clase con utilidades varias para la accesibilidad. */
+/** Utilidades varias para la accesibilidad. */
 final class AccesibilityUtils {
 
-    /** Indica si el sistema operativo tiene activada una combinaci&oacute;n de colores de alto contraste. */
+    /** Indica si el sistema operativo tiene activada una combinaci&oacute;n
+     * de colores de alto contraste. */
     private static final boolean HIGH_CONTRAST;
 
     static boolean isHighContrast() {
@@ -102,7 +103,7 @@ final class AccesibilityUtils {
     }
 
     /** Configura el formato del remarcado del componente al ser seleccionado.
-     * @param component El componente seleccionado. */
+     * @param component Componente seleccionado. */
     static void remarcar(final JComponent component) {
 
         if (GeneralConfig.isRemarked()) {
@@ -194,22 +195,25 @@ final class AccesibilityUtils {
             }
             if (component instanceof JCheckBox) {
                 final JCheckBox checkBox = (JCheckBox) component;
-                checkBox.addFocusListener(new FocusListener() {
-                    @Override
-                    public void focusLost(final FocusEvent e) {
-                        ((JPanel) checkBox.getParent()).setBorder(BorderFactory.createEmptyBorder());
-                    }
+                checkBox.addFocusListener(
+            		new FocusListener() {
 
-                    @Override
-                    public void focusGained(final FocusEvent e) {
-                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
-                            ((JPanel) checkBox.getParent()).setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
-                        }
-                        else {
-                            ((JPanel) checkBox.getParent()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-                        }
-                    }
-                });
+	                    @Override
+	                    public void focusLost(final FocusEvent e) {
+	                        ((JPanel) checkBox.getParent()).setBorder(BorderFactory.createEmptyBorder());
+	                    }
+
+	                    @Override
+	                    public void focusGained(final FocusEvent e) {
+	                        if (GeneralConfig.isHighContrast() || isHighContrast()) {
+	                            ((JPanel) checkBox.getParent()).setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+	                        }
+	                        else {
+	                            ((JPanel) checkBox.getParent()).setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+	                        }
+	                    }
+	                }
+        		);
             }
         }
     }
@@ -218,12 +222,17 @@ final class AccesibilityUtils {
      * @param component Componente al que aplicar el alto contraste */
     static void setContrastColor(final JComponent component) {
         if (GeneralConfig.isHighContrast()) {
-            if (component instanceof JComboBox || component instanceof JPasswordField || component instanceof JTextField) {
+            if (
+        		component instanceof JComboBox      ||
+        		component instanceof JPasswordField ||
+        		component instanceof JTextField
+    		) {
                 component.setBackground(Color.WHITE);
             }
             else if (component instanceof JCheckBox) {
                 component.setForeground(Color.WHITE);
-            } else {
+            }
+            else {
 				if (component instanceof JPanel && component.getBorder() instanceof TitledBorder) {
 				    ((TitledBorder) component.getBorder()).setTitleColor(Color.WHITE);
 				}
@@ -255,12 +264,12 @@ final class AccesibilityUtils {
             } // Comprobacion del tipo de borde
         } else // Se comprueba si la configuracion pide que la fuente este en negrita
 		if (GeneralConfig.isFontBold()) {
-		        // Se indica que la fuente es negrita
-		        component.setFont(new Font(component.getFont().getName(), Font.BOLD, component.getFont().getSize()));
+	        // Se indica que la fuente es negrita
+	        component.setFont(new Font(component.getFont().getName(), Font.BOLD, component.getFont().getSize()));
 		}
 		else {
-		        // Se indica que la fuente es texto plano
-		        component.setFont(new Font(component.getFont().getName(), Font.PLAIN, component.getFont().getSize()));
+	        // Se indica que la fuente es texto plano
+	        component.setFont(new Font(component.getFont().getName(), Font.PLAIN, component.getFont().getSize()));
 		}
     }
 
@@ -282,8 +291,8 @@ final class AccesibilityUtils {
         return newText;
     }
 
-    /** Subraya el mnem&oacute;nico correspondiente en un bot&oacute;n. El car&aacute;cter
-     * deber&iacute;a indicarse en min&uacute;sculas.
+    /** Subraya el mnem&oacute;nico correspondiente en un bot&oacute;n.
+     * El car&aacute;cter deber&iacute;a indicarse en min&uacute;sculas.
      * @param button Bot&oacute;n en el que subrayar el mnem&oacute;nico.
      * @param key Caracter a subrayar. */
     static void remarkMnemonic(final AbstractButton button, final int key) {

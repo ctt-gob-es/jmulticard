@@ -49,7 +49,7 @@ final class InfoLabel extends JLabel {
 
     /** Constructor sencillo.
      * Se utilizar&aacute; para etiquetas con un componente asociado.
-     * @param text texto de la etiqueta */
+     * @param text Texto de la etiqueta */
     InfoLabel(final String text) {
         super("<HTML>" + text + "</HTML>"); //$NON-NLS-1$ //$NON-NLS-2$
         setOpaque(false);
@@ -60,8 +60,8 @@ final class InfoLabel extends JLabel {
     }
 
     /** Constructor de la clase.
-     * @param text Texto a mostrar
-     * @param opaque Indica si el componente ser&aacute; opaco */
+     * @param text Texto a mostrar.
+     * @param opaque Indica si el componente ser&aacute; opaco o no. */
     InfoLabel(final String text, final boolean opaque) {
         super("<HTML>" + text + "</HTML>"); //$NON-NLS-1$ //$NON-NLS-2$
         setFocusable(true); // Focusable

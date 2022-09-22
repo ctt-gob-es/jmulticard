@@ -72,32 +72,32 @@ public final class UIPasswordCallback extends PasswordCallback {
 
     /** Crea una <i>CallBack</i> para solicitar al usuario una contrase&ntilde;a
      * mediante un di&aacute;logo gr&aacute;fico. La contrase&ntilde;a no se
-     * retiene ni almacena internamente en ning&uacute;n momento
-     * @param prompt Texto del di&aacute;logo para solicitar la contrase&ntilde;a
-     * @param parentComponent Componente padre para la modalidad del di&aacute;logo
-     * @param dialogMessage Mensaje
-     * @param dialogTitle T&iacute;tulo del di&aacute;logo */
+     * retiene ni almacena internamente en ning&uacute;n momento.
+     * @param prompt Texto del di&aacute;logo para solicitar la contrase&ntilde;a.
+     * @param parentComponent Componente padre para la modalidad del di&aacute;logo.
+     * @param dialogMessage Mensaje.
+     * @param dialogTitle T&iacute;tulo del di&aacute;logo. */
     public UIPasswordCallback(final String prompt,
     		                  final Object parentComponent,
     		                  final String dialogMessage,
     		                  final String dialogTitle) {
         super(prompt, false);
-        this.parent = parentComponent instanceof Component ? (Component) parentComponent : null;
+        parent = parentComponent instanceof Component ? (Component) parentComponent : null;
         if (prompt != null) {
-            this.message = prompt;
+            message = prompt;
         }
         else {
-            this.message = dialogMessage;
+            message = dialogMessage;
         }
-        this.title = dialogTitle;
+        title = dialogTitle;
     }
 
     @Override
     public char[] getPassword() {
 
     	final JPasswordField pwd = new JPasswordField(10);
-        final JLabel lbText = new JLabel(this.message);
-        lbText.setMinimumSize(new Dimension(lbText.getFontMetrics(lbText.getFont()).stringWidth(this.message), lbText.getSize().height));
+        final JLabel lbText = new JLabel(message);
+        lbText.setMinimumSize(new Dimension(lbText.getFontMetrics(lbText.getFont()).stringWidth(message), lbText.getSize().height));
         lbText.setLabelFor(pwd);
         final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -116,7 +116,7 @@ public final class UIPasswordCallback extends PasswordCallback {
                 pwd.requestFocusInWindow();
             }
         };
-        pane.createDialog(this.parent, this.title).setVisible(true);
+        pane.createDialog(parent, title).setVisible(true);
 
         final Object selectedValue = pane.getValue();
         if (selectedValue == null) {
