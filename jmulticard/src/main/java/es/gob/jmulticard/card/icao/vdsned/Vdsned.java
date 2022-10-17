@@ -59,42 +59,42 @@ public final class Vdsned {
 				"La codificacion binaria del VDSNED no puede ser nula ni vacia" //$NON-NLS-1$
 			);
 		}
-		this.encoded = enc.clone();
+		encoded = enc.clone();
 		int offset = 0;
 
 		// Magic
-		if (this.encoded[offset++] != MAGIC) {
+		if (encoded[offset++] != MAGIC) {
 			throw new IllegalArgumentException(
 				"La codificacion binaria proporcionada no corresponde con un VDSNED" //$NON-NLS-1$
 			);
 		}
 
 		// Version
-		this.version = this.encoded[offset++] + 1;
-		if (this.version != 3 && this.version != 4) {
+		version = encoded[offset++] + 1;
+		if (version != 3 && version != 4) {
 			throw new IllegalArgumentException(
-				"Solo se soportan VDSNED v3 o v4, y se ha proporcionado un v" + this.version //$NON-NLS-1$
+				"Solo se soportan VDSNED v3 o v4, y se ha proporcionado un v" + version //$NON-NLS-1$
 			);
 		}
 
 		// Pais emisor
-		this.issuingCountry = C40Decoder.decode(new byte[] { this.encoded[offset++], this.encoded[offset++] });
+		issuingCountry = C40Decoder.decode(new byte[] { encoded[offset++], encoded[offset++] });
 
 		// CA-CR (texto en C40)
-		this.caCr = C40Decoder.decode(
+		caCr = C40Decoder.decode(
 			new byte[] {
-				this.encoded[offset++], this.encoded[offset++], this.encoded[offset++],
-				this.encoded[offset++], this.encoded[offset++], this.encoded[offset++]
+				encoded[offset++], encoded[offset++], encoded[offset++],
+				encoded[offset++], encoded[offset++], encoded[offset++]
 			}
 		);
 
 		// Fecha de emision del documento
 		byte[] tmpDateBytes = {
-			0x00, this.encoded[offset++], this.encoded[offset++], this.encoded[offset++]
+			0x00, encoded[offset++], encoded[offset++], encoded[offset++]
 		};
 		String tmpDate = Integer.toString(ByteBuffer.wrap(tmpDateBytes).getInt());
 		try {
-			this.documentIssueDate = new SimpleDateFormat(
+			documentIssueDate = new SimpleDateFormat(
 				tmpDate.length() == 7 ? "Mddyyyy" : "MMddyyyy" //$NON-NLS-1$ //$NON-NLS-2$
 			).parse(tmpDate);
 		}
@@ -106,11 +106,11 @@ public final class Vdsned {
 
 		// Fecha de creacion de la firma
 		tmpDateBytes = new byte[] {
-			0x00, this.encoded[offset++], this.encoded[offset++], this.encoded[offset++]
+			0x00, encoded[offset++], encoded[offset++], encoded[offset++]
 		};
 		tmpDate = Integer.toString(ByteBuffer.wrap(tmpDateBytes).getInt());
 		try {
-			this.signatureCreationDate = new SimpleDateFormat(
+			signatureCreationDate = new SimpleDateFormat(
 				tmpDate.length() == 7 ? "Mddyyyy" : "MMddyyyy" //$NON-NLS-1$ //$NON-NLS-2$
 			).parse(tmpDate);
 		}
@@ -121,39 +121,39 @@ public final class Vdsned {
 		}
 
 		// Referencia
-		this.documentFeatureDefinitionReference = this.encoded[offset++];
+		documentFeatureDefinitionReference = encoded[offset++];
 
 		// Categoria
-		this.documentTypeCategory = this.encoded[offset++];
-		if ( (this.documentTypeCategory & 1) == 0 ) {
+		documentTypeCategory = encoded[offset++];
+		if ((documentTypeCategory & 1) == 0 ) {
 			LOGGER.warning(
-				"La categoria deberia ser un numero impar, pero se ha encontrado " +  this.documentTypeCategory //$NON-NLS-1$
+				"La categoria deberia ser un numero impar, pero se ha encontrado " +  documentTypeCategory //$NON-NLS-1$
 			);
 		}
 
-		while(offset < this.encoded.length) {
+		while(offset < encoded.length) {
 
-			final byte[] data = new byte[this.encoded.length - offset];
-			System.arraycopy(this.encoded, offset, data, 0, data.length);
+			final byte[] data = new byte[encoded.length - offset];
+			System.arraycopy(encoded, offset, data, 0, data.length);
 
 			final Tlv tlv = new Tlv(data);
 
 			switch(tlv.getTag()) {
 				case 0x02:
-					this.mrzB = C40Decoder.decode(tlv.getValue());
+					mrzB = C40Decoder.decode(tlv.getValue());
 					break;
 				case 0x03:
-					this.nEntries = HexUtils.getUnsignedInt(tlv.getValue(), 0);
+					nEntries = HexUtils.getUnsignedInt(tlv.getValue(), 0);
 					break;
 				case 0x04:
 					final byte[] durBytes = tlv.getValue();
 					// Dos o una posiciones
 					if (durBytes.length < 3) {
-						this.durationOfStay = HexUtils.getUnsignedInt(durBytes, 0);
+						durationOfStay = HexUtils.getUnsignedInt(durBytes, 0);
 					}
 					// Tres posiciones
 					else if (durBytes.length == 3) {
-						this.durationOfStay = ByteBuffer.wrap(
+						durationOfStay = ByteBuffer.wrap(
 							new byte[] {
 								0x00, durBytes[2], durBytes[1], durBytes[0]
 							}
@@ -161,25 +161,25 @@ public final class Vdsned {
 					}
 					// Cuatro o mas posiciones
 					else {
-						this.durationOfStay = ByteBuffer.wrap(tmpDateBytes).getInt();
+						durationOfStay = ByteBuffer.wrap(tmpDateBytes).getInt();
 					}
 					break;
 				case 0x05:
-					this.passportNumber = C40Decoder.decode(tlv.getValue());
+					passportNumber = C40Decoder.decode(tlv.getValue());
 					break;
 				case (byte) 0xff:
 
 					// Hemos llegado a la firma, con lo que todo el conjunto anterior de
 					// datos es lo que se firma
-					this.dataTbs = new byte[offset];
-					System.arraycopy(this.encoded, 0, this.dataTbs, 0, offset);
+					dataTbs = new byte[offset];
+					System.arraycopy(encoded, 0, dataTbs, 0, offset);
 
 					final byte[] sig = tlv.getValue();
 					final byte[] r = new byte[tlv.getLength()/2];
 					System.arraycopy(sig, 0, r, 0, tlv.getLength()/2);
 					final byte[] s = new byte[tlv.getLength()/2];
 					System.arraycopy(sig, tlv.getLength()/2, s, 0, tlv.getLength()/2);
-					this.signature = encodeEcdsaSignature(r, s);
+					signature = encodeEcdsaSignature(r, s);
 					break;
 				default:
 					LOGGER.warning("Encontrado campo de datos desconocido: " + tlv); //$NON-NLS-1$
@@ -220,8 +220,8 @@ public final class Vdsned {
 			DEFAULT_SIGNATURE_ALGORITHM
 		);
 		sig.initVerify(publicKey);
-		sig.update(this.dataTbs);
-		if (!sig.verify(this.signature)) {
+		sig.update(dataTbs);
+		if (!sig.verify(signature)) {
 			throw new SignatureException(
 				"La firma no es valida" //$NON-NLS-1$
 			);
@@ -232,60 +232,60 @@ public final class Vdsned {
 	public String toString() {
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy"); //$NON-NLS-1$
 		return "Visible Digital Seal for Non-Electronic Documents\n" + //$NON-NLS-1$
-			" Version: " + this.version + '\n' + //$NON-NLS-1$
-			" Pais emisor: " + CountryCodes.getCountryName(this.issuingCountry) + '\n' + //$NON-NLS-1$
-			" Autoridad de certificacion y referencia: " + this.caCr + '\n' + //$NON-NLS-1$
-			" Fecha de emision del documento: " + sdf.format(this.documentIssueDate) + '\n' + //$NON-NLS-1$
-			" Fecha de creacion de la firma: " + sdf.format(this.signatureCreationDate) + '\n' + //$NON-NLS-1$
-			" Referencia: " + this.documentFeatureDefinitionReference + '\n' + //$NON-NLS-1$
-			" Categoria: " + this.documentTypeCategory + '\n' + //$NON-NLS-1$
-			" MRZ-B: " + this.mrzB + '\n' + //$NON-NLS-1$
-			" Numero de entradas: " + this.nEntries + '\n' + //$NON-NLS-1$
-			" Duracion de la estancia: " + this.durationOfStay + '\n' + //$NON-NLS-1$
-			" Numero de pasaporte: " + this.passportNumber + '\n' //$NON-NLS-1$
+			" Version: " + version + '\n' + //$NON-NLS-1$
+			" Pais emisor: " + CountryCodes.getCountryName(issuingCountry) + '\n' + //$NON-NLS-1$
+			" Autoridad de certificacion y referencia: " + caCr + '\n' + //$NON-NLS-1$
+			" Fecha de emision del documento: " + sdf.format(documentIssueDate) + '\n' + //$NON-NLS-1$
+			" Fecha de creacion de la firma: " + sdf.format(signatureCreationDate) + '\n' + //$NON-NLS-1$
+			" Referencia: " + documentFeatureDefinitionReference + '\n' + //$NON-NLS-1$
+			" Categoria: " + documentTypeCategory + '\n' + //$NON-NLS-1$
+			" MRZ-B: " + mrzB + '\n' + //$NON-NLS-1$
+			" Numero de entradas: " + nEntries + '\n' + //$NON-NLS-1$
+			" Duracion de la estancia: " + durationOfStay + '\n' + //$NON-NLS-1$
+			" Numero de pasaporte: " + passportNumber + '\n' //$NON-NLS-1$
 		;
 	}
 
 	/** Obtiene c&oacute;digo del pa&iacute;s emisor.
 	 * @return C&oacute;digo del pa&iacute;s emisor. */
 	public String getIssuingCountry() {
-		return this.issuingCountry;
+		return issuingCountry;
 	}
 
 	/** Obtiene la autoridad de certificaci&oacute;n y referencia para este documento.
 	 * @return C&oacute;digo de autoridad de certificaci&oacute;n y referencia para este documento. */
 	public String getCaCr() {
-		return this.caCr;
+		return caCr;
 	}
 
 	/** Obtiene la fecha de emisi&oacute;n del documento.
 	 * @return Fecha de emisi&oacute;n del documento. */
 	public Date getDocumentIssueDate() {
-		return this.documentIssueDate;
+		return documentIssueDate;
 	}
 
 	/** Obtiene la fecha de firma del documento.
 	 * @return Fecha de firma del documento. */
 	public Date getSignatureCreationDate() {
-		return this.signatureCreationDate;
+		return signatureCreationDate;
 	}
 
 	/** Obtiene la referencia de definici&oacute;n de caracter&iacute;sticas del documento.
 	 * @return Referencia de definici&oacute;n de caracter&iacute;sticas del documento. */
 	public int getDocumentFeatureDefinitionReference() {
-		return this.documentFeatureDefinitionReference;
+		return documentFeatureDefinitionReference;
 	}
 
 	/** Obtiene la categor&iacute;a del tipo del documento.
 	 * @return Categor&iacute;a del tipo del documento. */
 	public int getDocumentTypeCategory() {
-		return this.documentTypeCategory;
+		return documentTypeCategory;
 	}
 
 	/** Obtiene la versi&oacute;n del <i>Visible Digital Seal for Non-Electronic Documents</i>.
 	 * @return Versi&oacute;n del <i>Visible Digital Seal for Non-Electronic Documents</i>. */
 	public int getVersion() {
-		return this.version;
+		return version;
 	}
 
 }
