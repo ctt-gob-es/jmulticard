@@ -78,12 +78,12 @@ public abstract class CryptoHelper {
 		private final String algName;
 
 		Padding(final String alg) {
-			this.algName = alg;
+			algName = alg;
 		}
 
 		@Override
 		public String toString() {
-			return this.algName;
+			return algName;
 		}
 	}
 
@@ -105,12 +105,12 @@ public abstract class CryptoHelper {
 
 		private final String name;
 		EcCurve(final String n) {
-			this.name = n;
+			name = n;
 		}
 
 		@Override
 		public String toString() {
-			return this.name;
+			return name;
 		}
 	}
 
@@ -118,29 +118,42 @@ public abstract class CryptoHelper {
 	public enum DigestAlgorithm {
 
 		/** SHA-1. */
-		SHA1("SHA1"), //$NON-NLS-1$
+		SHA1("SHA1", 20), //$NON-NLS-1$
 
 		/** SHA-256. */
-		SHA256("SHA-256"), //$NON-NLS-1$
+		SHA256("SHA-256", 32), //$NON-NLS-1$
 
 		/** SHA-384. */
-		SHA384("SHA-384"), //$NON-NLS-1$
+		SHA384("SHA-384", 48), //$NON-NLS-1$
 
 		/** SHA-512. */
-		SHA512("SHA-512"); //$NON-NLS-1$
+		SHA512("SHA-512", 64); //$NON-NLS-1$
 
 		/** Nombre del algoritmo de huella digital. */
 		private final String name;
 
+		/** Longitud (en octetos) de las huellas resultantes con este algoritmo.
+		 * La longitud se proporciona est&aacute;ticamente para no introducir aqu&iacute;
+		 * dependencias con proveedores de seguridad de Java o con BouncyCastle. */
+		private final int length;
+
 		/** Construye el algoritmo de huella digital.
-		 * @param n Nombre del algoritmo. */
-		DigestAlgorithm(final String n) {
-			this.name = n;
+		 * @param n Nombre del algoritmo.
+		 * @param l Longitud (en octetos) de las huellas resultantes con este algoritmo. */
+		DigestAlgorithm(final String n, final int l) {
+			name = n;
+			length = l;
 		}
 
 		@Override
 		public String toString() {
-			return this.name;
+			return name;
+		}
+
+		/** Obtiene la longitud (en octetos) de las huellas resultantes con este algoritmo.
+		 * @return Longitud (en octetos) de las huellas resultantes con este algoritmo. */
+		public int getDigestLength() {
+			return length;
 		}
 	}
 
@@ -384,7 +397,7 @@ public abstract class CryptoHelper {
 		/** Constructor
 		 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
 		public PaceChannelHelper(final CryptoHelper ch) {
-			this.cryptoHelper = ch;
+			cryptoHelper = ch;
 		}
 
 		/** Abre un canal PACE.

@@ -39,8 +39,8 @@
  */
 package es.gob.jmulticard.apdu.connection;
 
-/** Evento de conexi&oacute;n con tarjetas inteligentes. Definido &uacute;nicamente la extracci&oacute;n
- * e inserci&oacute;n de tarjetas del lector.
+/** Evento de conexi&oacute;n con tarjetas inteligentes.
+ * Definido &uacute;nicamente para la extracci&oacute;n e inserci&oacute;n de tarjetas del lector.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote.
  * @version 1.0 */
 public final class CardConnectionEvent extends java.util.EventObject {

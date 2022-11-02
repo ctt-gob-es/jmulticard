@@ -338,7 +338,7 @@ public final class MrzInfo {
             final int[] weights = { 7, 3, 1 };
             int result = 0;
             for (int i = 0; i < chars.length; i++) {
-                result = (result + weights[i % 3] * decodeMRZDigit(chars[i])) % 10;
+                result = (result + weights[i % 3] * decodeMrzDigit(chars[i])) % 10;
             }
             final String checkDigitString = Integer.toString(result);
             if (checkDigitString.length() != 1) {
@@ -365,7 +365,7 @@ public final class MrzInfo {
      * @param ch Caracter de la MRZ.
      * @return Valor num&eacute;rico del caracter.
      * @throws NumberFormatException Si el caracter no es v&aacute;lido para una MRZ. */
-    private static int decodeMRZDigit(final byte ch) {
+    private static int decodeMrzDigit(final byte ch) {
         switch (ch) {
             case '<':
             case '0':

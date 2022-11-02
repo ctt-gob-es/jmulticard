@@ -43,7 +43,7 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 
 			int sentLength = 0;
 			final int totalLength = command.getBytes().length;
-			final int contentSizeEnvelope = getMaxApduSize()-5; // La cabecera de la APDU son 5 octetos
+			final int contentSizeEnvelope = getMaxApduSize() - 5; // La cabecera de la APDU son 5 octetos
 
 			while (totalLength - sentLength > contentSizeEnvelope) {
 				final byte[] apduChunk = Arrays.copyOfRange(
@@ -113,7 +113,7 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
             return transmit(new GetResponseApduCommand((byte) 0x00, response.getStatusWord().getLsb()));
         }
 
-        // En caso de longitud esperada incorrecta reenviamos la APDU con la longitud esperada.
+        // En caso de longitud esperada incorrecta, reenviamos la APDU con la longitud esperada recibida.
         // Incluimos la condicion del CLA igual 0x00 para que no afecte a las APDUs cifradas
         // (de eso se encargara la clase de conexion con canal seguro)
 		if (response.getStatusWord().getMsb() == TAG_RESPONSE_INVALID_LENGTH && command.getCla() == (byte) 0x00) {

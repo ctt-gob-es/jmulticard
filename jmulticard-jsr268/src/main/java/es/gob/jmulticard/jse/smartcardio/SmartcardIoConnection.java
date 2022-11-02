@@ -148,6 +148,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
         this.canal = null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getTerminalInfo(final int terminal) throws ApduConnectionException {
         try {
