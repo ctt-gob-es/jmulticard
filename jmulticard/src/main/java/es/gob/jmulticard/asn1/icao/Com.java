@@ -12,9 +12,10 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.bertlv.BerTlv;
 
-/** EF&#46;COM de aplicación de LDS1 para el eMRTD de ICAO 9303 parte 10.
+/** EF&#46;COM de aplicaci&oacute;n de LDS1 para el eMRTD de ICAO 9303 parte 10.
  * Contiene informaci&oacute;n sobre la versi&oacute;n LDS, informaci&oacute;n sobre
- * la versi&oacute;n de Unicode y una lista de los grupos de datos que están presentes en la aplicaci&oacute;n.
+ * la versi&oacute;n de Unicode y una lista de los grupos de datos que est&aacute;n
+ * presentes en la aplicaci&oacute;n.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Com extends DecoderObject {
 
@@ -65,7 +66,7 @@ public final class Com extends DecoderObject {
 					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
-		this.ldsVersion =
+		ldsVersion =
 			new String(new byte[] { tlv.getValue()[0], tlv.getValue()[1] }) +
 				DOT +
 					new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] });
@@ -82,7 +83,7 @@ public final class Com extends DecoderObject {
 					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
-		this.unicodeVersion =
+		unicodeVersion =
 			new String(new byte[] { tlv.getValue()[0], tlv.getValue()[1] }) +
 				DOT +
 					new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] }) +
@@ -98,16 +99,16 @@ public final class Com extends DecoderObject {
 		}
 		final byte[] dgList = tlv.getValue();
 		for (final byte dgTag : dgList) {
-			this.presentDgs.add(DGTAGS.get(Byte.valueOf(dgTag)));
+			presentDgs.add(DGTAGS.get(Byte.valueOf(dgTag)));
 		}
 
 	}
 
 	@Override
 	public String toString() {
-		return "Common Data (COM): Version de LDS = " +  this.ldsVersion + //$NON-NLS-1$
-			", version de Unicode = " + this.unicodeVersion + //$NON-NLS-1$
-				", Grupos de datos presentes = " + this.presentDgs; //$NON-NLS-1$
+		return "Common Data (COM): Version de LDS = " +  ldsVersion + //$NON-NLS-1$
+			", version de Unicode = " + unicodeVersion + //$NON-NLS-1$
+				", Grupos de datos presentes = " + presentDgs; //$NON-NLS-1$
 	}
 
 	@Override
@@ -119,7 +120,7 @@ public final class Com extends DecoderObject {
 	 * @return N&uacute;mero de versi&oacute;n LDS con formato <i>aa.bb</i>, donde <i>aa</i>
 	 *         define la versi&oacute;n de la LDS y <i>bb</i> define el nivel de actualizaci&oacute;n. */
 	public String getLdsVersion() {
-		return this.ldsVersion;
+		return ldsVersion;
 	}
 
 	/** Obtiene la versi&oacute;n de Unicode usada.
@@ -127,13 +128,13 @@ public final class Com extends DecoderObject {
 	 *         define la versi&oacute;n principal, <i>bb</i> define la versi&oacute;n menor y
 	 *         <i>cc</i> define el nivel de difusi&oacute;n. */
 	public String getUnicodeVersion() {
-		return this.unicodeVersion;
+		return unicodeVersion;
 	}
 
 	/** Obtiene la lista de r&oacute;tulos.
 	 * @return Lista de todos los grupos de datos presentes. */
 	public String[] getPresentDgs() {
-		return (String[]) this.presentDgs.toArray();
+		return (String[]) presentDgs.toArray();
 	}
 
 }

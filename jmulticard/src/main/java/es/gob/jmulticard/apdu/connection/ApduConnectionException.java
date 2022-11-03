@@ -70,5 +70,4 @@ public class ApduConnectionException extends IOException {
     public ApduConnectionException(final Throwable cause) {
         super(cause);
     }
-
 }

@@ -53,5 +53,4 @@ public final class CardConnectionEvent extends java.util.EventObject {
     public CardConnectionEvent(final ApduConnection conn) {
         super(conn);
     }
-
 }

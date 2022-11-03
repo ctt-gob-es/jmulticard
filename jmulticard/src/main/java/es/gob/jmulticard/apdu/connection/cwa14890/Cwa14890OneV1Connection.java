@@ -131,9 +131,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 					: "cerrada"); //$NON-NLS-1$
     }
 
-    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
-     * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
-     * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
+    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta.
+     * Es necesario abrir el canal asoci&aacute;ndolo a una conexi&oacute;n para
+     * poder trasmitir APDUs.
+     * Si no se indica una conexi&oacute;n se utilizar&aacute;a la conexi&oacute;n
+     * impl&iacute;cita de la tarjeta indicada.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas. */
     public Cwa14890OneV1Connection(final ApduConnection connection,
@@ -152,9 +154,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     	apduEncrypter = instantiateApduEncrypter();
     }
 
-    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta. Es necesario abrir el
-     * canal asoci&aacute;ndolo a una conexi&oacute;n para poder trasmitir APDUs. Si no se indica una conexi&oacute;n
-     * se utilizar&aacute;a la conexi&oacute;n impl&iacute;cita de la tarjeta indicada.
+    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta.
+     * Es necesario abrir el canal asoci&aacute;ndolo a una conexi&oacute;n para
+     * poder trasmitir APDUs.
+     * Si no se indica una conexi&oacute;n se utilizar&aacute;a la conexi&oacute;n
+     * impl&iacute;cita de la tarjeta indicada.
      * @param connectedCard Tarjeta con la funcionalidad CWA-14890.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas.

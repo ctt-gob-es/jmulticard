@@ -87,7 +87,7 @@ public abstract class CryptoHelper {
 		}
 	}
 
-	/** Tipos de manejo de bbloques para cifrado. */
+	/** Tipos de manejo de bloques para cifrado. */
 	public enum BlockMode {
 
 		/** Cipher Block Chaining. */
@@ -163,8 +163,8 @@ public abstract class CryptoHelper {
 
 	/** A&ntilde;ade relleno PKCS#1 para operaciones con clave privada.
 	 * @param inByteArray Datos a los que se quiere a&ntilde;adir relleno PKCS#1.
-	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente con estos datos con
-	 *                relleno.
+	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente
+	 *                con estos datos con relleno.
 	 * @return Datos con el relleno PKCS#1 a&ntilde;adido.
 	 * @throws IOException En caso de error el el tratamiento de datos. */
 	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] inByteArray,
@@ -185,7 +185,7 @@ public abstract class CryptoHelper {
 			baos.write(PKCS1_FILL);
 		}
 		baos.write(PKCS1_DELIMIT);    // Delimitador :   00
-		baos.write(inByteArray);               // Datos
+		baos.write(inByteArray);      // Datos
 
 		return baos.toByteArray();
 	}
@@ -199,10 +199,10 @@ public abstract class CryptoHelper {
     public abstract byte[] digest(DigestAlgorithm algorithm, byte[] data) throws IOException;
 
     /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con una
-     * semilla (IV) de 8 bytes establecidos a cero. Si se le indica una clave de 24 bytes,
-     * la utilizar&aacute;a tal cual. Si se le indica una clave de 16 bytes,
-     * duplicar&aacute; los 8 primeros y los agregar&aacute; al final para
-     * obtener una de 24.
+     * semilla (IV) de 8 bytes establecidos a cero.
+     * Si se le indica una clave de 24 bytes, la utilizar&aacute;a tal cual.
+     * Si se le indica una clave de 16 bytes, duplicar&aacute; los 8 primeros
+     * y los agregar&aacute; al final para obtener una de 24.
      * @param data Datos a encriptar.
      * @param key Clave 3DES de cifrado.
      * @return Datos cifrados.
@@ -239,7 +239,8 @@ public abstract class CryptoHelper {
 
     /** Desencripta datos mediante AES.
      * @param data Datos a encriptar.
-     * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
+     * @param iv Vector de inicializaci&oacute;n.
+     *           Si se proporciona <code>null</code> se usar&aacute;
      *           un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
      * @param blockMode Modo de gesti&oacute;n de bloques.
