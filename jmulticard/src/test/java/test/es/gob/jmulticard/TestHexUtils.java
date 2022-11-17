@@ -80,11 +80,13 @@ public class TestHexUtils extends TestCase {
         }
     }
 
-    /** Pruebas de longitud de huella. */
+    /** Pruebas de longitud de huella.
+     * @param args No se usa.
+     * @throws Exception En cualquier error. */
     public static void main(final String[] args) throws Exception {
-    	System.out.println(MessageDigest.getInstance("SHA1").getDigestLength());
-    	System.out.println(MessageDigest.getInstance("SHA-256").getDigestLength());
-    	System.out.println(MessageDigest.getInstance("SHA-384").getDigestLength());
-    	System.out.println(MessageDigest.getInstance("SHA-512").getDigestLength());
+    	System.out.println(MessageDigest.getInstance("SHA1").getDigestLength()); //$NON-NLS-1$
+    	System.out.println(MessageDigest.getInstance("SHA-256").getDigestLength()); //$NON-NLS-1$
+    	System.out.println(MessageDigest.getInstance("SHA-384").getDigestLength()); //$NON-NLS-1$
+    	System.out.println(MessageDigest.getInstance("SHA-512").getDigestLength()); //$NON-NLS-1$
     }
 }

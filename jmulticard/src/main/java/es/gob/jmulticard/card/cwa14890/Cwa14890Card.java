@@ -46,8 +46,7 @@ import java.security.interfaces.RSAPrivateKey;
 
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 
-/** M&eacute;todos necesarios para la operaci&oacute;n de las tarjetas
- * acordes a la especificaci&oacute;n CWA-14890.
+/** Tarjetas acordes a la especificaci&oacute;n CWA-14890.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Cwa14890Card {
@@ -114,7 +113,7 @@ public interface Cwa14890Card {
     /** Recupera el n&uacute;mero de serie de la tarjeta.
      * @return N&uacute;mero de serie.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
-     *         la tarjeta. */
+     *                                 la tarjeta. */
     byte[] getSerialNumber() throws ApduConnectionException;
 
     /** Recupera la referencia a la clave privada del certificado de componente.

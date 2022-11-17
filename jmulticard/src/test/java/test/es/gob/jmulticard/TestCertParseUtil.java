@@ -24,7 +24,7 @@ public final class TestCertParseUtil {
 		try (InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
 			c = CertificateUtils.generateCertificate(is);
 		}
-		final String dn = c.getSubjectDN().toString();
+		final String dn = c.getSubjectX500Principal().toString();
 		String cn = getCN(dn);
 		if (cn.contains("(")) { //$NON-NLS-1$
 			cn = cn.substring(
