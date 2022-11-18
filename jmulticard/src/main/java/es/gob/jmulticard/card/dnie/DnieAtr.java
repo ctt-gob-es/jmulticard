@@ -74,6 +74,12 @@ public final class DnieAtr extends Atr {
 		}
 		sb.append('\n');
 
+		sb.append("  Version del sistema operativo: "); //$NON-NLS-1$
+		sb.append(HexUtils.hexify(new byte[] { atrBytes[15] }, false));
+		sb.append('.');
+		sb.append(HexUtils.hexify(new byte[] { atrBytes[16] }, false));
+		sb.append('\n');
+
 		sb.append("  Fase del ciclo de vida: "); //$NON-NLS-1$
 		switch(atrBytes[17]) {
 			case (byte) 0x00:

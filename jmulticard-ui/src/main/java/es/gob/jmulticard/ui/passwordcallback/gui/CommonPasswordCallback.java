@@ -39,9 +39,7 @@
  */
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
-import java.security.AccessController;
 import java.security.KeyStore.PasswordProtection;
-import java.security.PrivilegedAction;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
@@ -74,24 +72,15 @@ public final class CommonPasswordCallback extends PasswordCallback {
 	private transient boolean useCacheChecked;
 
     static {
-        AccessController.doPrivileged(
-    		new PrivilegedAction<Void>() {
-	            @Override
-	            public Void run() {
-	                setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
-	                return null;
-	            }
-	        }
-		);
+        setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
     }
-
 
     static void setHeadLess(final boolean hl) {
         headless = hl;
     }
 
-	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero revirtiendo a consola
-     * en caso de un <code>java.awt.HeadLessException</code>.
+	/** Construye un <i>PasswordCallback</i> que funciona en modo gr&aacute;fico pero
+	 * revirtiendo a consola en caso de un <code>java.awt.HeadLessException</code>.
 	 * @param prompt Texto para la solicitud de la contrase&ntilde;a
 	 * @param dialogTitle T&iacute;tulo de la ventana gr&aacute;fica.
 	 * @param isDni Si es un DNIe. */
