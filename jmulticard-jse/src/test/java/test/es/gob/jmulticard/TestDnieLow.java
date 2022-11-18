@@ -49,6 +49,28 @@ public final class TestDnieLow {
 
 	private static final CryptoHelper CH = new BcCryptoHelper();
 
+	/** Prueba de la factor&iacute;a de DNIe.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+ 	public void testDnieFactory() throws Exception {
+
+//		TS2 - 3B-7F-38-00-00-00-6A-44-4E-49-65-10-02-4C-34-01-13-03-90-00
+//		TS3 = 3B-7F-96-00-00-00-6A-44-4E-49-65-10-01-01-55-04-21-03-90-00
+//		TJ3 = 3B-7F-96-00-00-00-6A-44-4E-49-65-10-01-01-55-04-21-03-90-00
+//		TJ4 = 3B-7F-96-00-00-00-6A-44-4E-49-65-20-01-01-55-04-21-03-90-00
+
+		final Dnie dnie = DnieFactory.getDnie(
+			ProviderUtil.getDefaultConnection(),
+			null,
+			CH,
+			null,
+			false
+		);
+		System.out.println(dnie);
+	}
+
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")

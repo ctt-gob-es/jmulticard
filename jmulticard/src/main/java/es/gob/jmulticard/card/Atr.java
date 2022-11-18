@@ -72,7 +72,7 @@ public class Atr implements Serializable {
 
     @Override
 	public String toString() {
-    	return HexUtils.hexify(getBytes(), true);
+    	return HexUtils.hexify(getBytes(), false);
     }
 
     /** Obtiene la m&aacute;scara de comparaci&oacute;n del ATR.

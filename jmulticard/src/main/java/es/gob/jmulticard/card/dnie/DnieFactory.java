@@ -131,7 +131,8 @@ public final class DnieFactory {
 			if(ATR_NFC.equals(actualAtr) || ATR_NFC2.equals(actualAtr)) {
 				try {
 					LOGGER.info("Detectado DNIe 3.0 o 4.0 por NFC"); //$NON-NLS-1$
-					return new DnieNFC(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
+					LOGGER.info(new DnieAtr(actualAtr).toString());
+					return new DnieNfc(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
 				catch (final IcaoException e) {
 					throw new ApduConnectionException(
@@ -142,9 +143,11 @@ public final class DnieFactory {
 			if (ATR.equals(actualAtr)) {
 				if (actualAtrBytes[15] == 0x04) {
 					LOGGER.info("Detectado DNIe 3.0 o 4.0"); //$NON-NLS-1$
+					LOGGER.info(new DnieAtr(actualAtr).toString());
 					return new Dnie3(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 				}
 				LOGGER.info("Detectado DNIe 2.0"); //$NON-NLS-1$
+				LOGGER.info(new DnieAtr(actualAtr).toString());
 				return new Dnie(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 			}
 			if (ATR_TIF.equals(actualAtr)) {
