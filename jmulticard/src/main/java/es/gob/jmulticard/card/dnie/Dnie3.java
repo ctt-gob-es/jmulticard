@@ -41,8 +41,6 @@ package es.gob.jmulticard.card.dnie;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -86,7 +84,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	//*************************************************************************
 	//************************ CONSTRUCTORES **********************************
 
-    /** Construye una clase que representa un DNIe 3.0.
+    /** Construye una clase que representa un DNIe 3&#46;0.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
      * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
@@ -128,7 +126,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		}
     }
 
-    /** Construye una clase que representa un DNIe 3.0.
+    /** Construye una clase que representa un DNIe 3&#46;0.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
      * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
@@ -328,19 +326,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		sod.validateSignature();
 		final LdsSecurityObject ldsSecurityObject = sod.getLdsSecurityObject();
 
-		final MessageDigest md;
-		try {
-			md = MessageDigest.getInstance(
-				ldsSecurityObject.getDigestAlgorithm()
-			);
-		}
-		catch (final NoSuchAlgorithmException e) {
-			throw new IOException(
-				"No se soporta el algoritmo de huella indicado en el SOD (" + //$NON-NLS-1$
-					ldsSecurityObject.getDigestAlgorithm() + ")", e //$NON-NLS-1$
-			);
-		}
-
 		openSecureChannelIfNotAlreadyOpened(false);
 
 		for (final DataGroupHash dgh : ldsSecurityObject.getDataGroupHashes()) {
@@ -410,8 +395,11 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 						"El SOD define huella para un DG inexistente: " + dgh.getDataGroupNumber() //$NON-NLS-1$
 					);
 			}
-			final byte[] actualHash = md.digest(dgBytes);
-			md.reset();
+			final byte[] actualHash = cryptoHelper.digest(
+				CryptoHelper.DigestAlgorithm.getDigestAlgorithm(ldsSecurityObject.getDigestAlgorithm()),
+				dgBytes
+			);
+
 			if (!Arrays.equals(actualHash, dgh.getDataGroupHashValue())) {
 				throw new InvalidSecurityObjectException(
 					"El DG" + dgh.getDataGroupNumber() + " no concuerda con la huella del SOD, " + //$NON-NLS-1$ //$NON-NLS-2$

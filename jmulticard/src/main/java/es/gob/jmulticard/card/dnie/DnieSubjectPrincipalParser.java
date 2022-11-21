@@ -11,55 +11,54 @@ public class DnieSubjectPrincipalParser {
 	private final String surname2;
 	private final String id;
 
-
-	/** Construye un nalizador del nombre X&#46;500 del titular de un DNIe.
+	/** Construye un analizador del nombre X&#46;500 del titular de un DNIe.
 	 * @param subjectPrincipal Nombre X&#46;500 del titular. */
 	public DnieSubjectPrincipalParser(final String subjectPrincipal) {
-		this.name = getRDNvalueFromLdapName("GIVENNAME", subjectPrincipal); //$NON-NLS-1$
-		this.surname1 =  getRDNvalueFromLdapName("SURNAME", subjectPrincipal); //$NON-NLS-1$
-		this.surname2 = getRDNvalueFromLdapName("CN", subjectPrincipal) != null ? //$NON-NLS-1$
+		name = getRDNvalueFromLdapName("GIVENNAME", subjectPrincipal); //$NON-NLS-1$
+		surname1 =  getRDNvalueFromLdapName("SURNAME", subjectPrincipal); //$NON-NLS-1$
+		surname2 = getRDNvalueFromLdapName("CN", subjectPrincipal) != null ? //$NON-NLS-1$
 			getRDNvalueFromLdapName("CN", subjectPrincipal) //$NON-NLS-1$
 				.replace("(AUTENTICACI\u00D3N)", "") //$NON-NLS-1$ //$NON-NLS-2$
 				.replace("(FIRMA)", "") //$NON-NLS-1$ //$NON-NLS-2$
 				.replace(",", "") //$NON-NLS-1$ //$NON-NLS-2$
-				.replace(this.name, "") //$NON-NLS-1$
-				.replace(this.surname1, "") //$NON-NLS-1$
+				.replace(name, "") //$NON-NLS-1$
+				.replace(surname1, "") //$NON-NLS-1$
 				.trim():
 					null;
-		this.id = getRDNvalueFromLdapName("SERIALNUMBER", subjectPrincipal); //$NON-NLS-1$
+		id = getRDNvalueFromLdapName("SERIALNUMBER", subjectPrincipal); //$NON-NLS-1$
 	}
 
 	/** Obtiene el nombre del titular del DNIe.
 	 * @return Nombre del titular del DNIe. */
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	/** Obtiene el primer apellido del titular del DNIe.
 	 * @return Primer apellido del titular del DNIe. */
 	public String getSurname1() {
-		return this.surname1;
+		return surname1;
 	}
 
 	/** Obtiene el segundo apellido del titular del DNIe.
 	 * @return Segundo apellido del titular del DNIe. */
 	public String getSurname2() {
-		return this.surname2;
+		return surname2;
 	}
 
 	/** Obtiene el n&uacute;mero del DNIe.
 	 * @return N&uacute;mero del DNIe. */
 	public String getId() {
-		return this.id;
+		return id;
 	}
 
 	@Override
 	public String toString() {
 		return
-			"Nombre: " + this.name + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			"Primer apellido: " + this.surname1 + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			"Segundo apellido: " + this.surname2 + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-			"Numero: " + this.id; //$NON-NLS-1$
+			"Nombre: " + name + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+			"Primer apellido: " + surname1 + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+			"Segundo apellido: " + surname2 + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+			"Numero: " + id; //$NON-NLS-1$
 	}
 
     /** Recupera el valor de un RDN (<i>Relative Distinguished Name</i>) de un principal.

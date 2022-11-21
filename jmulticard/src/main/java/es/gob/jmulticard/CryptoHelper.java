@@ -41,6 +41,7 @@ package es.gob.jmulticard;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -154,6 +155,27 @@ public abstract class CryptoHelper {
 		 * @return Longitud (en octetos) de las huellas resultantes con este algoritmo. */
 		public int getDigestLength() {
 			return length;
+		}
+
+		/** Obtiene un algoritmo de huella digital a partir de su nombre.
+		 * @param name Nombre del algoritmo de huella digital a partir de su nombre.
+		 * @return Algoritmo de huella digital. */
+		public static DigestAlgorithm getDigestAlgorithm(final String name) {
+			if ("SHA1".equals(name) || "SHA-1".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA1;
+			}
+			if ("SHA256".equals(name) || "SHA-256".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA256;
+			}
+			if ("SHA384".equals(name) || "SHA-384".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA384;
+			}
+			if ("SHA512".equals(name) || "SHA-512".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA512;
+			}
+			throw new IllegalArgumentException(
+				"Algoritmo de huella no soportado: " + name //$NON-NLS-1$
+			);
 		}
 	}
 
@@ -337,6 +359,20 @@ public abstract class CryptoHelper {
 	public abstract X509Certificate[] validateCmsSignature(byte[] signedDataBytes) throws SignatureException,
 	                                                                                      IOException,
 	                                                                                      CertificateException;
+
+	/** Genera un certificado a partir de su codificaci&oacute;n binaria.
+	 * @param encoded Codificaci&oacute;n binaria del certificado.
+	 * @return Certificado.
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
+	 *                              certificado. */
+	public abstract X509Certificate generateCertificate(final byte[] encoded) throws CertificateException;
+
+	/** Genera un certificado a partir de un flujo hacia su codificaci&oacute;n binaria.
+	 * @param is Flujo de lectura hacia la Codificaci&oacute;n binaria del certificado.
+	 * @return Certificado.
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
+	 *                              certificado o no se pudo leer del flujo de entrada. */
+	public abstract X509Certificate generateCertificate(final InputStream is) throws CertificateException;
 
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).

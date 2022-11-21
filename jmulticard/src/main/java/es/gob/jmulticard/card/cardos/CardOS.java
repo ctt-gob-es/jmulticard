@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.CertificateUtils;
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
@@ -56,12 +56,20 @@ public final class CardOS extends AbstractIso7816FourCard implements CryptoCard 
 
     private static final Map<String, X509Certificate> CERTIFICATES_BY_ALIAS = new ConcurrentHashMap<>();
 
+    /** Manejador de funciones criptogr&aacute;ficas. */
+    private final CryptoHelper cryptoHelper;
+
 	/** Construye un objeto que representa una tarjeta Atos / Siemens CardOS.
      * @param conn Conexi&oacute;n con la tarjeta.
+	 * @param cryptoHlpr Manejador de funciones criptogr&aacute;ficas.
 	 * @throws Iso7816FourCardException Cuando hay errores relativos a la ISO-7816-4.
 	 * @throws IOException Si hay errores de entrada / salida. */
-	public CardOS(final ApduConnection conn) throws Iso7816FourCardException, IOException {
+	public CardOS(final ApduConnection conn,
+		          final CryptoHelper cryptoHlpr) throws Iso7816FourCardException,
+	                                                    IOException {
 		super(CLA, conn);
+
+		cryptoHelper = cryptoHlpr;
 
 		// Conectamos
 		connect(conn);
@@ -206,7 +214,7 @@ public final class CardOS extends AbstractIso7816FourCard implements CryptoCard 
 
 				final X509Certificate cert;
 				try {
-					cert = CertificateUtils.generateCertificate(certBytes);
+					cert = cryptoHelper.generateCertificate(certBytes);
 				}
 				catch (final CertificateException e) {
 					LOGGER.severe(

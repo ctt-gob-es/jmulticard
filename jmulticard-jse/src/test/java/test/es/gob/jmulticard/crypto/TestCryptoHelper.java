@@ -11,8 +11,11 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateFactorySpi;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -67,6 +70,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testAesDecrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
@@ -156,6 +160,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testAesEncrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
@@ -277,6 +282,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDes() throws Exception {
 		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
@@ -301,6 +307,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDesede() throws Exception {
 		final byte[] key = "12345678abcdefgh".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
@@ -436,6 +443,7 @@ public final class TestCryptoHelper {
 	 * @throws IOException En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testRsa() throws IOException {
 		final byte[] res1 = doRsaJca(RSA_TEST_DATA, RSA_TEST_PRIVATE_KEY);
 		System.out.println("Resultado con JCA: " + HexUtils.hexify(res1, false)); //$NON-NLS-1$
@@ -526,6 +534,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception Si falla el 3DES. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void test3Des() throws Exception {
 		final byte[] key = {
 			(byte) 0xE0, (byte) 0x35, (byte) 0x76, (byte) 0xA0, (byte) 0x62, (byte) 0x53, (byte) 0x87, (byte) 0x36,
@@ -558,6 +567,19 @@ public final class TestCryptoHelper {
         throw new IllegalArgumentException(
     		"Longitud de clave invalida, se esperaba 16 o 24, pero se indico " + key.length //$NON-NLS-1$
 		);
+    }
+
+    /** Pruebas de generaci&oaccute;n dee certificados.
+     * @throws Exception En cualquier error. */
+    @SuppressWarnings("static-method")
+	@Test
+    public void testCertFactory() throws Exception {
+    	final Provider p = new BouncyCastleProvider();
+    	Security.insertProviderAt(p, 1);
+    	final CertificateFactory cf = CertificateFactory.getInstance("X.509", p);
+    	System.out.println(cf.getClass().getName());
+    	final CertificateFactorySpi cfspi = new org.spongycastle.jcajce.provider.asymmetric.x509.CertificateFactory();
+
     }
 
 }

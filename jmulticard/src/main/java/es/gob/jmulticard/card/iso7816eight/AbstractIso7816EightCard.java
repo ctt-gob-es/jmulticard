@@ -52,7 +52,7 @@ import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
 
     /** Construye una tarjeta compatible ISO 7816-8.
-     * @param c Clase (CLA) de la APDU
+     * @param c Clase (CLA) de la APDU.
      * @param conn Connexi&oacute;n con la tarjeta. */
     public AbstractIso7816EightCard(final byte c, final ApduConnection conn) {
         super(c, conn);

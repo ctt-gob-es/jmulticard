@@ -66,7 +66,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.BcCryptoHelper;
-import es.gob.jmulticard.CertificateUtils;
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
@@ -86,6 +86,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
+
+	private static final CryptoHelper CRYPTO_HELPER = new BcCryptoHelper();
 
     private Dnie cryptoCard = null;
     private List<String> aliases = null;
@@ -195,7 +197,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	    	try (
     			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2-2.crt") //$NON-NLS-1$
 			) {
-				sha2DnieRoot = CertificateUtils.generateCertificate(is);
+				sha2DnieRoot = CRYPTO_HELPER.generateCertificate(is);
 			}
 	    	catch (final Exception e) {
 	    		sha2DnieRoot = null;
@@ -217,7 +219,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 		    		try (
 	        			final InputStream is = DnieKeyStoreImpl.class.getResourceAsStream("/ACRAIZ-SHA2.crt") //$NON-NLS-1$
 	    			) {
-	    				sha2DnieRoot = CertificateUtils.generateCertificate(is);
+	    				sha2DnieRoot = CRYPTO_HELPER.generateCertificate(is);
 	    			}
 	    	    	catch (final Exception ex) {
 	    	    		sha2DnieRoot = null;
@@ -325,7 +327,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     			cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					null,
-					new BcCryptoHelper(),
+					CRYPTO_HELPER,
 					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
 				);
     		}
@@ -337,7 +339,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     			cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					pwc,
-					new BcCryptoHelper(),
+					CRYPTO_HELPER,
 					null
 				);
     		}
@@ -352,7 +354,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	    	cryptoCard = DnieFactory.getDnie(
 				DnieProvider.getDefaultApduConnection(),
 				null,
-				new BcCryptoHelper(),
+				CRYPTO_HELPER,
 				null
 			);
     	}
@@ -379,7 +381,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		password != null ?
 				new CachePasswordCallback(password) :
 					null,
-    		new BcCryptoHelper(),
+						CRYPTO_HELPER,
     		null
 		);
 

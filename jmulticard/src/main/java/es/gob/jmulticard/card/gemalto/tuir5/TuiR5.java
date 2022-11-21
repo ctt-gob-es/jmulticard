@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.CertificateUtils;
+import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -53,7 +53,7 @@ public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
     	{ (byte) 0xA0, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x18, (byte) 0x0C, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x63, (byte) 0x42, (byte) 0x00 }
 	};
 
-    private static final Location   CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
+    private static final Location CDF_LOCATION = new Location("50005003"); //$NON-NLS-1$
 
     private static final byte CLA = (byte) 0x00;
 
@@ -63,18 +63,26 @@ public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
 
     private static final Map<String, X509Certificate> CERTIFICATES_BY_ALIAS = new ConcurrentHashMap<>();
 
+    /** Manejador de funciones criptogr&aacute;ficas. */
+    private final CryptoHelper cryptoHelper;
+
 	/** Construye un objeto que representa una tarjeta Gemalto TUI R5 MPCOS.
      * @param conn Conexi&oacute;n con la tarjeta.
 	 * @param pwc <i>PasswordCallback</i> para obtener el PIN de la TUI.
+	 * @param cryptoHlpr Manejador de funciones criptogr&aacute;ficas.
 	 * @throws Iso7816FourCardException Cuando hay errores relativos a la ISO-7816-4.
 	 * @throws IOException Si hay errores de entrada / salida. */
-	public TuiR5(final ApduConnection conn, final PasswordCallback pwc) throws Iso7816FourCardException, IOException {
+	public TuiR5(final ApduConnection conn,
+			     final PasswordCallback pwc,
+			     final CryptoHelper cryptoHlpr) throws Iso7816FourCardException, IOException {
 		super(CLA, conn);
+
+		cryptoHelper = cryptoHlpr;
 
 		if (pwc == null) {
 			throw new IllegalArgumentException("El PasswordCallback no puede ser nulo"); //$NON-NLS-1$
 		}
-		this.passwordCallback = pwc;
+		passwordCallback = pwc;
 
 		// Conectamos
 		connect(conn);
@@ -153,7 +161,7 @@ public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
         	try {
 				CERTIFICATES_BY_ALIAS.put(
 					cdf.getCertificateAlias(i),
-					CertificateUtils.generateCertificate(
+					cryptoHelper.generateCertificate(
 						selectFileByLocationAndRead(new Location(cdf.getCertificatePath(i)))
 					)
 				);
@@ -269,7 +277,7 @@ public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
 	public void verifyPin(final PasswordCallback pinPc) throws ApduConnectionException, BadPinException {
 		final GemaltoVerifyApduCommand verifyPinApduCommand = new GemaltoVerifyApduCommand(
 			CLA,
-			this.passwordCallback
+			passwordCallback
 		);
 		final ResponseApdu verifyResponse = getConnection().transmit(
 			verifyPinApduCommand

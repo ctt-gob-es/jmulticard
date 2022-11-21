@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
-import es.gob.jmulticard.CertificateUtils;
+import es.gob.jmulticard.CryptoHelper;
 
 /** Utilidades de compresi&oacute;n de certificados seg&uacute;n uso com&uacute;n en
  * tarjetas FNMT.
@@ -27,14 +27,21 @@ public final class CompressionUtils {
 	 * X&#46;509 o la codificaci&oacute;n de este comprmida seg&uacute;n esquema FNMT.
 	 * De utilidad en todas las tarjetas FNMT-RCM, incluyendo DNIe.
 	 * @param data Datos del certificado, que pueden estar comprimidos o no.
+	 * @param cryptoHelper Utilidad que permita la generaci&oacute;n de certificaddos.
 	 * @return Certificado X&#46;509.
 	 * @throws IOException Si no pueden leerse los datos.
 	 * @throws CertificateException Si los datos no son, ni comprimidos ni descomprimidos, un
 	 *                              certificado X&#46;509. */
-	public static X509Certificate getCertificateFromCompressedOrNotData(final byte[] data) throws IOException,
-	                                                                                              CertificateException {
+	public static X509Certificate getCertificateFromCompressedOrNotData(final byte[] data,
+			                                                            final CryptoHelper cryptoHelper) throws IOException,
+	                                                                                                            CertificateException {
 		if (data == null || data.length < 1) {
 			throw new IOException("Los datos del certificado eran nulos o vacios"); //$NON-NLS-1$
+		}
+		if (cryptoHelper == null) {
+			throw new IllegalArgumentException(
+				"El CryptoHelper no puede ser nulo" //$NON-NLS-1$
+			);
 		}
 		byte[] rawData;
 		try {
@@ -48,7 +55,7 @@ public final class CompressionUtils {
 			);
         	rawData = data;
         }
-		return CertificateUtils.generateCertificate(rawData);
+		return cryptoHelper.generateCertificate(rawData);
 	}
 
     /** Descomprime un certificado.

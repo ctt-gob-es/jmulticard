@@ -41,12 +41,13 @@ package es.gob.jmulticard.apdu.iso7816four;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-/** APDU ISO 7816-4 mediante la que se env&iacute;a un token para la autenticaci&oacute;n
- * externa ante la tarjeta.
- * @author Carlos Gamuci Mill&aacute;n */
+/** APDU ISO 7816-4 mediante la que se env&iacute;a un <i>token</i>
+ * para la autenticaci&oacute;n externa ante la tarjeta.
+ * @author Carlos Gamuci Mill&aacute;n
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class ExternalAuthenticateApduCommand extends CommandApdu {
 
-    /** Byte de instrucci&oacute;n de la APDU. */
+    /** Octeto de instrucci&oacute;n de la APDU. */
     private static final byte INS_EXTERNAL_AUTHENTICATE = (byte) 0x82;
 
     /** Valor para indicar que no se dispone de informaci&oacute;n al respecto. */

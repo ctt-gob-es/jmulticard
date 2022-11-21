@@ -53,7 +53,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.CancelledOperationException;
-import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -64,7 +63,7 @@ import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
-import es.gob.jmulticard.apdu.dnie.ChangePINApduCommand;
+import es.gob.jmulticard.apdu.dnie.ChangePinApduCommand;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.LoadDataApduCommand;
 import es.gob.jmulticard.apdu.dnie.RetriesLeftApduCommand;
@@ -470,7 +469,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 						)
     				);
             		intermediateCaCert = CompressionUtils.getCertificateFromCompressedOrNotData(
-        				intermediateCaCertEncoded
+        				intermediateCaCertEncoded,
+        				cryptoHelper
     				);
             	}
             	catch (final Exception e) {
@@ -556,7 +556,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
             throw new IOException("Error en la seleccion del certificado de componente de la tarjeta", e); //$NON-NLS-1$
         }
         try {
-			return CertificateUtils.generateCertificate(iccCertEncoded);
+			return cryptoHelper.generateCertificate(iccCertEncoded);
 		}
         catch (final CertificateException e) {
         	throw new IOException(
@@ -1050,7 +1050,10 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
                                                                             CertificateException {
     	selectMasterFile();
         final byte[] certEncoded = selectFileByLocationAndRead(location);
-        return CompressionUtils.getCertificateFromCompressedOrNotData(certEncoded);
+        return CompressionUtils.getCertificateFromCompressedOrNotData(
+    		certEncoded,
+    		cryptoHelper
+		);
     }
 
     /** Carga los certificados del DNIe.
@@ -1183,7 +1186,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 			final byte[] pinFile = {(byte)0x00, (byte) 0x00};
 			selectFileById(pinFile);
 			//Envio de APDU de cambio de PIN
-			final CommandApdu apdu = new ChangePINApduCommand(oldPin.getBytes(), newPin.getBytes());
+			final CommandApdu apdu = new ChangePinApduCommand(oldPin.getBytes(), newPin.getBytes());
 			final ResponseApdu res = getConnection().transmit(apdu);
 			if (!res.isOk()) {
 				throw new DnieCardException(
