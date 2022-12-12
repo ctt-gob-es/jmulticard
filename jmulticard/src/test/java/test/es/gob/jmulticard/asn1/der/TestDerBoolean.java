@@ -34,9 +34,9 @@ public class TestDerBoolean extends TestCase {
                 (byte) 0x01, (byte) 0x01, (byte) 0x00
         });
         Assert.assertEquals(
+        	"Error de decodificacion DER", //$NON-NLS-1$
     		"010100", //$NON-NLS-1$
-    		HexUtils.hexify(db.getBytes(), false),
-    		"Se esperaba '010100' y se ha obtenido '" + HexUtils.hexify(db.getBytes(), false) + "'" //$NON-NLS-1$ //$NON-NLS-2$
+    		HexUtils.hexify(db.getBytes(), false)
 		);
     }
 

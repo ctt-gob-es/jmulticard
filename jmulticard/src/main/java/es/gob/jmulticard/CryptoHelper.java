@@ -308,17 +308,17 @@ public abstract class CryptoHelper {
 			                                          byte[] sharedSecretH,
 			                                          EcCurve curveName);
 
-	/** Obtiene el contenido firmado de una firma CMS/OPKCS#7.
-	 * @param signedDataBytes Firma CMS/OPKCS#7.
-	 * @return Contenido firmado de una firma CMS/OPKCS#7.
-	 * @throws IOException Si los datos proporcionados no son una firma CMS/OPKCS#7 bien formada. */
+	/** Obtiene el contenido firmado de una firma CMS/PKCS#7.
+	 * @param signedDataBytes Firma CMS/PKCS#7.
+	 * @return Contenido firmado de una firma CMS/PKCS#7.
+	 * @throws IOException Si los datos proporcionados no son una firma CMS/PKCS#7 bien formada. */
 	public abstract byte[] getCmsSignatureSignedContent(byte[] signedDataBytes) throws IOException;
 
-	/** Valida una firma CMS/OPKCS#7. No comprueba la validez de los certificados de firma.
-	 * @param signedDataBytes Firma CMS/OPKCS#7.
+	/** Valida una firma CMS/PKCS#7. No comprueba la validez de los certificados de firma.
+	 * @param signedDataBytes Firma CMS/PKCS#7.
 	 * @return Cadena de certificados del firmante (para validaci&oacute;n externa).
 	 * @throws SignatureException Si la firma es inv&aacute;lida o est&aacute; mal formada.
-	 * @throws IOException Si los datos proporcionados no son una firma CMS/OPKCS#7 bien formada.
+	 * @throws IOException Si los datos proporcionados no son una firma CMS/PKCS#7 bien formada.
 	 * @throws CertificateException Si hay problemas relacionados con los certificados de firma. */
 	public abstract X509Certificate[] validateCmsSignature(byte[] signedDataBytes) throws SignatureException,
 	                                                                                      IOException,
