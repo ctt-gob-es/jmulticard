@@ -187,7 +187,6 @@ public final class Vdsned {
 
 			offset = offset + tlv.getBytes().length;
 		}
-
 	}
 
 	private static byte[] encodeEcdsaSignature(final byte[] r, final byte[] s) {

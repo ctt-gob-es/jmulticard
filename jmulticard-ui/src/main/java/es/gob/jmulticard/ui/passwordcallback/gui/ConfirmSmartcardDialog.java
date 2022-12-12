@@ -90,7 +90,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
     private transient JButton noButton = null;
 
     JButton getNoButton() {
-    	return this.noButton;
+    	return noButton;
     }
 
     /** Bot&oacute;n de <b>Cancelar</b>. */
@@ -190,7 +190,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
         setTitle(title);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        this.answer = JOptionPane.NO_OPTION;
+        answer = JOptionPane.NO_OPTION;
         // Contenedor del dialogo
         final Container container = getContentPane();
         // Layout del contenedor
@@ -212,7 +212,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
         final GridBagConstraints consIconPanel = new GridBagConstraints();
         consIconPanel.fill = GridBagConstraints.BOTH;
 
-        iconPanel.add(this.iconLabel, consIconPanel);
+        iconPanel.add(iconLabel, consIconPanel);
 
         c.insets = new Insets(10, 5, 0, 10); // right padding
         c.gridx++;
@@ -220,14 +220,14 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
         c.weighty = 1.0;
 
         // Se crea una etiqueta focusable
-        this.infoLabel = new InfoLabel(message, false);
-        this.infoLabel.setHorizontalAlignment(SwingConstants.CENTER); // Se centra el texto
+        infoLabel = new InfoLabel(message, false);
+        infoLabel.setHorizontalAlignment(SwingConstants.CENTER); // Se centra el texto
         // Foco a la etiqueta
-        this.infoLabel.addAncestorListener(new RequestFocusListener());
-        this.infoLabel.setVerticalAlignment(SwingConstants.CENTER); // Se alinea al centro el texto
+        infoLabel.addAncestorListener(new RequestFocusListener());
+        infoLabel.setVerticalAlignment(SwingConstants.CENTER); // Se alinea al centro el texto
 
         // Se anade la etiqueta al panel de informacion general
-        mainPanel.add(this.infoLabel, c);
+        mainPanel.add(infoLabel, c);
 
         // Panel de botones
         createMainButtonsPanel();
@@ -272,7 +272,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
         cons.gridheight = 1;
         cons.weighty = 0.35;
         cons.weightx = 0.0;
-        container.add(this.buttonsPanel, cons);
+        container.add(buttonsPanel, cons);
 
         pack();
     }
@@ -288,16 +288,16 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
 				)
 			);
 	        final Dimension dimensionInicial = new Dimension(100, (int)(100f / icon.getIconWidth() * icon.getIconHeight()));
-	        this.iconLabel.setOriginalIcon(icon);
-	        this.iconLabel.setOriginalDimension(dimensionInicial);
+	        iconLabel.setOriginalIcon(icon);
+	        iconLabel.setOriginalDimension(dimensionInicial);
 	        icon = new ImageIcon(icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH));
-	        this.iconLabel.setIcon(icon);
+	        iconLabel.setIcon(icon);
     	}
     }
 
     /** Panel que contiene los botones principales de las alerta. */
     void createMainButtonsPanel() {
-        this.buttonsPanel = new JPanel(new GridBagLayout());
+        buttonsPanel = new JPanel(new GridBagLayout());
 
         // Restricciones para el panel de botones
         final GridBagConstraints consButtons = new GridBagConstraints();
@@ -324,7 +324,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
 		});
 
         okPanel.add(okButton);
-        this.buttonsPanel.add(okPanel, consButtons);
+        buttonsPanel.add(okPanel, consButtons);
 
         okButton.addActionListener(this);
 
@@ -334,10 +334,10 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
      * @param componentParent Componente padre.
      * @param modal Modal.
      * @param message Mensaje a mostrar.
-     * @param title Titulo del di&aacute;logo.
+     * @param title T&iacute;o del di&aacute;logo.
      * @param typeOption Opciones de interaci&oacute;n.
      * @param iconPath Ruta hacia el icono del di&aacute;logo.
-     * @return respuesta del usuario. */
+     * @return Respuesta del usuario. */
     public static int showConfirmDialog(final Component componentParent,
                                         final boolean modal,
                                         final String message,
@@ -345,7 +345,13 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
                                         final int typeOption,
                                         final String iconPath) {
 
-        final ConfirmSmartcardDialog customDialog = ConfirmSmartcardDialog.getInstanceCustomDialog(componentParent, modal, message, title, iconPath);
+        final ConfirmSmartcardDialog customDialog = ConfirmSmartcardDialog.getInstanceCustomDialog(
+    		componentParent,
+    		modal,
+    		message,
+    		title,
+    		iconPath
+		);
         okButton.setEnabled(true);
         customDialog.getRootPane().setDefaultButton(null);
 
@@ -359,6 +365,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
         if (typeOption != JOptionPane.YES_NO_OPTION) {
             throw new UnsupportedOperationException("Solo se soportan dialogos de tipo Si/No"); //$NON-NLS-1$
         }
+
 		// Boton Si
 		okButton.setText(Messages.getString("CustomDialog.confirmDialog.yes")); //$NON-NLS-1$
 		okButton.setMnemonic(KeyEvent.VK_S);
@@ -404,8 +411,16 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
         if (text.equalsIgnoreCase(cancellText)) {
             // Se asigna la tecla escape a dicho boton
             final String cancelKey = "cancel"; //$NON-NLS-1$
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelKey);
-            getRootPane().getActionMap().put(cancelKey, new ButtonAbstractAction(getCancelButton()));
+            getRootPane().getInputMap(
+        		JComponent.WHEN_IN_FOCUSED_WINDOW
+    		).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				cancelKey
+			);
+            getRootPane().getActionMap().put(
+        		cancelKey,
+        		new ButtonAbstractAction(getCancelButton())
+    		);
         }
 
         return button;
@@ -418,7 +433,7 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
 
     /** @return the answer */
     private int getAnswer() {
-        return this.answer;
+        return answer;
     }
 
     /** Devuelve una instancia de <code>CustomDialog</code>.
@@ -430,17 +445,29 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
      * @param iconPath Ruta hacia el recurso de fichero de icono.
      * @return Instancia del di&aacute;logo. */
     static ConfirmSmartcardDialog getInstanceCustomDialog(final Component componentParent,
-                                                final boolean modal,
-                                                final String message,
-                                                final String title,
-                                                final String iconPath) {
+                                                          final boolean modal,
+                                                          final String message,
+                                                          final String title,
+                                                          final String iconPath) {
     	// Se chequea el tipo del componente padre
     	final ConfirmSmartcardDialog customDialog;
         if (componentParent instanceof JDialog) {
-            customDialog = new ConfirmSmartcardDialog((JDialog) componentParent, modal, message, title, iconPath);
+            customDialog = new ConfirmSmartcardDialog(
+        		(JDialog) componentParent,
+        		modal,
+        		message,
+        		title,
+        		iconPath
+    		);
         }
         else if (componentParent instanceof JFrame) {
-            customDialog = new ConfirmSmartcardDialog((JFrame) componentParent, modal, message, title, iconPath);
+            customDialog = new ConfirmSmartcardDialog(
+        		(JFrame) componentParent,
+        		modal,
+        		message,
+        		title,
+        		iconPath
+    		);
         }
         else {
             customDialog = new ConfirmSmartcardDialog(componentParent, modal, message, title, iconPath);
@@ -453,13 +480,13 @@ public final class ConfirmSmartcardDialog extends AbstractJAccessibilityCustomDi
     public void actionPerformed(final ActionEvent e) {
 
         if (e.getSource().equals(ConfirmSmartcardDialog.okButton)) {
-            this.answer = JOptionPane.YES_OPTION;
+            answer = JOptionPane.YES_OPTION;
         }
-        else if (e.getSource().equals(this.noButton)) {
-            this.answer = JOptionPane.NO_OPTION;
+        else if (e.getSource().equals(noButton)) {
+            answer = JOptionPane.NO_OPTION;
         }
         else {
-            this.answer = JOptionPane.CANCEL_OPTION;
+            answer = JOptionPane.CANCEL_OPTION;
         }
         setVisible(false);
     }

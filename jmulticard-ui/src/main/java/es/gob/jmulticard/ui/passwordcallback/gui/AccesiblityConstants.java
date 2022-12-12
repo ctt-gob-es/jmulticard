@@ -69,8 +69,8 @@ final class AccesiblityConstants {
     /** Alto inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n. */
     static final int OPTION_INITIAL_HEIGHT = 600;
 
-    /** Ancho inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n con
-     * variaci&oacute;n de fuente. */
+    /** Ancho inicial de los <code>JAccessibilityDialog</code> de la
+     * aplicaci&oacute;n con variaci&oacute;n de fuente. */
     static final int OPTION_FONT_INITIAL_WIDTH = 650;
 
     /** Alto inicial de los <code>JAccessibilityDialog</code> de la aplicaci&oacute;n con
@@ -91,12 +91,12 @@ final class AccesiblityConstants {
     /** Alto inicial de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_INITIAL_HEIGHT = 210;
 
-    /** Ancho inicial de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
-     * aplicaci&oacute;n. */
+    /** Ancho inicial de los <code>AbstractJAccessibilityCustomDialog</code> de
+     * confirmaci&oacute;n de firma de la aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_WIDTH = 460;
 
-    /** Alto inicial de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
-     * aplicaci&oacute;n. */
+    /** Alto inicial de los <code>AbstractJAccessibilityCustomDialog</code> de
+     * confirmaci&oacute;n de firma de la aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_INITIAL_HEIGHT = 190;
 
     /** Ancho inicial de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
@@ -111,12 +111,12 @@ final class AccesiblityConstants {
     /** Alto de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de la aplicaci&oacute;n. */
     static final int CUSTOMDIALOG_MAX_HEIGHT = 299;
 
-    /** Ancho de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
-     * aplicaci&oacute;n. */
+    /** Ancho de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de
+     * confirmaci&oacute;n de firma de la aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_MAX_WIDTH = 700;
 
-    /** Alto de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de confirmaci&oacute;n de firma de la
-     * aplicaci&oacute;n. */
+    /** Alto de maximizado de los <code>AbstractJAccessibilityCustomDialog</code> de
+     * confirmaci&oacute;n de firma de la aplicaci&oacute;n. */
     static final int CUSTOMCONFIRMATION_MAX_HEIGHT = 305;
 
     /** Factor de redimensionado para las im&aacute;genes. */
@@ -126,13 +126,16 @@ final class AccesiblityConstants {
     static final int MAXIMIZE_VERTICAL_MARGIN_LINUX = 52;
 
 	 /** Variable que almacena el icono original del bot&oacute;n de maximizar. */
-	static final ImageIcon IMAGEICON_MAXIMIZE = new ImageIcon(AccesiblityConstants.class.getResource("/images/maximize.png")); //$NON-NLS-1$
+	static final ImageIcon IMAGEICON_MAXIMIZE = new ImageIcon(
+		AccesiblityConstants.class.getResource("/images/maximize.png") //$NON-NLS-1$
+	);
 
 	 /** Icono original del bot&oacute;n de restaurar. */
-	static final ImageIcon IMAGEICONRESTORE = new ImageIcon(AccesiblityConstants.class.getResource("/images/restore.png")); //$NON-NLS-1$
+	static final ImageIcon IMAGEICONRESTORE = new ImageIcon(
+		AccesiblityConstants.class.getResource("/images/restore.png") //$NON-NLS-1$
+	);
 
 	/** C&oacute;digo HTML para el salto de l&iacute;nea. */
 	static final String HTML_SALTO_LINEA = "<br>"; //$NON-NLS-1$
-
 }
 

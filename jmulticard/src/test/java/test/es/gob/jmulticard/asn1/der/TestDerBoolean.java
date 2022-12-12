@@ -12,6 +12,13 @@ import junit.framework.TestCase;
 /** @author Alberto Mart&iacute;nez */
 public class TestDerBoolean extends TestCase {
 
+	/** Main para pruebas.
+	 * @param args No se usa.
+	 * @throws Exception En cualquier error. */
+	public static void main(final String[] args) throws Exception {
+		TestDerBoolean.testGetBytes();
+	}
+
     /** Test method for {@link es.gob.jmulticard.asn1.DecoderObject#setDerValue(byte[])}. */
     public final static void testSetDerValueWithNullArgumentMustGenerateIllegalArgumentException() {
         final DerBoolean db = new DerBoolean();
@@ -30,13 +37,14 @@ public class TestDerBoolean extends TestCase {
      * @throws Asn1Exception Si falla la creaci&oacute;n del tipo ASN1. */
     public final static void testGetBytes() throws Asn1Exception, TlvException {
         final DerBoolean db = new DerBoolean();
-        db.setDerValue(new byte[] {
+        db.setDerValue(
+    		new byte[] {
                 (byte) 0x01, (byte) 0x01, (byte) 0x00
-        });
+    		}
+		);
         Assert.assertEquals(
     		"010100", //$NON-NLS-1$
-    		HexUtils.hexify(db.getBytes(), false),
-    		"Se esperaba '010100' y se ha obtenido '" + HexUtils.hexify(db.getBytes(), false) + "'" //$NON-NLS-1$ //$NON-NLS-2$
+    		HexUtils.hexify(db.getBytes(), false)
 		);
     }
 

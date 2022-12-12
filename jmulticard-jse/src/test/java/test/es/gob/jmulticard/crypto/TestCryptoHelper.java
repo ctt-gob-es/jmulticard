@@ -233,7 +233,6 @@ public final class TestCryptoHelper {
 			tmp = bout.toByteArray();
 			System.out.println(HexUtils.hexify(tmp, false));
 		}
-
 	}
 
 	/** Pruebas de cifrado de un solo bloque AES.
@@ -278,54 +277,37 @@ public final class TestCryptoHelper {
 		System.out.println(kp);
 	}
 
-	/** Prueba de cifrado DES ECB sin relleno.
+	/** Prueba de cifrado DES ECB sin relleno contra proveedor JSE.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testDes() throws Exception {
+	//@Ignore
+	public void testDesJca() throws Exception {
 		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
+		// La parte JSE
+		Cipher des = Cipher.getInstance("DES/ECB/NoPadding"); //$NON-NLS-1$
+		SecretKeySpec skeya = new SecretKeySpec(key, "DES"); //$NON-NLS-1$
+		des.init(Cipher.ENCRYPT_MODE, skeya);
+
 		final byte[] c1 = new BcCryptoHelper().desEncrypt(indata, key);
-		final byte[] c2 = new BcCryptoHelper().desEncrypt(indata, key);
+		final byte[] c2 = des.update(indata);
 
 		System.out.println(HexUtils.hexify(c1, false));
 		System.out.println(HexUtils.hexify(c2, false));
 
+		des = Cipher.getInstance("DES/ECB/NoPadding"); //$NON-NLS-1$
+		skeya = new SecretKeySpec(key, "DES"); //$NON-NLS-1$
+		des.init(Cipher.DECRYPT_MODE, skeya);
 		final byte[] c3 = new BcCryptoHelper().desDecrypt(c2, key);
-		final byte[] c4 = new BcCryptoHelper().desDecrypt(c1, key);
+		final byte[] c4 = des.update(c1);
 
 		System.out.println(new String(c3));
 		System.out.println(new String(c4));
 
 		Assert.assertTrue(HexUtils.arrayEquals(c3, c4));
 		Assert.assertTrue(HexUtils.arrayEquals(indata, c4));
-	}
-
-	/** Prueba de cifrado 3DES CBC sin relleno.
-	 * @throws Exception En cualquier error. */
-	@SuppressWarnings("static-method")
-	@Test
-	@Ignore
-	public void testDesede() throws Exception {
-		final byte[] key = "12345678abcdefgh".getBytes(); //$NON-NLS-1$
-		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
-
-		final byte[] c1 = new BcCryptoHelper().desedeEncrypt(indata, key);
-		final byte[] c2 = new BcCryptoHelper().desedeEncrypt(indata, key);
-
-		System.out.println(HexUtils.hexify(c1, false));
-		System.out.println(HexUtils.hexify(c2, false));
-
-		final byte[] c3 = new BcCryptoHelper().desedeDecrypt(c2, key);
-		final byte[] c4 = new BcCryptoHelper().desedeDecrypt(c1, key);
-
-		System.out.println(new String(c3));
-		System.out.println(new String(c4));
-
-//		Assert.assertTrue(HexUtils.arrayEquals(c3, c4));
-//		Assert.assertTrue(HexUtils.arrayEquals(indata, c4));
 	}
 
 	/** Main para pruebas.
@@ -573,13 +555,14 @@ public final class TestCryptoHelper {
      * @throws Exception En cualquier error. */
     @SuppressWarnings("static-method")
 	@Test
+	@Ignore
     public void testCertFactory() throws Exception {
     	final Provider p = new BouncyCastleProvider();
     	Security.insertProviderAt(p, 1);
-    	final CertificateFactory cf = CertificateFactory.getInstance("X.509", p);
+    	final CertificateFactory cf = CertificateFactory.getInstance("X.509", p); //$NON-NLS-1$
     	System.out.println(cf.getClass().getName());
     	final CertificateFactorySpi cfspi = new org.spongycastle.jcajce.provider.asymmetric.x509.CertificateFactory();
+    	System.out.println(cfspi);
 
     }
-
 }

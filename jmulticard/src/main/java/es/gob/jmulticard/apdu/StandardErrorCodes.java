@@ -1,6 +1,7 @@
 package es.gob.jmulticard.apdu;
 
-import java.util.Hashtable;
+import java.util.AbstractMap;
+import java.util.HashMap;
 
 import es.gob.jmulticard.HexUtils;
 
@@ -13,7 +14,7 @@ final class StandardErrorCodes {
 		// No instanciable
 	}
 
-    private static final Hashtable<StatusWord, String> ERRORS = new Hashtable<>();
+    private static final AbstractMap<StatusWord, String> ERRORS = new HashMap<>();
     static {
         ERRORS.put(new StatusWord((byte) 0x62, (byte) 0x83), "El fichero seleccionado esta invalidado (6283)"); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x65, (byte) 0x81), "Fallo en la memoria (6581)"); //$NON-NLS-1$
