@@ -82,7 +82,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
     @Override
     public Enumeration<String> engineAliases() {
-        return Collections.enumeration(this.aliases);
+        return Collections.enumeration(aliases);
     }
 
     @Override

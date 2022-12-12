@@ -8,7 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
@@ -29,7 +29,7 @@ public final class TestCeres {
 	public static void main(final String[] args) throws Exception {
 		final Ceres ceres = new Ceres(
 			ProviderUtil.getDefaultConnection(),
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 		ceres.setPasswordCallback(new CachePasswordCallback(PIN));
 		System.out.println(ceres.getCardName());
@@ -59,7 +59,7 @@ public final class TestCeres {
 		final CeresSc ceres430 = new CeresSc(
 			ProviderUtil.getDefaultConnection(),
 			new CachePasswordCallback(PIN),
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler("can", PIN) //$NON-NLS-1$
 		);
 
@@ -85,7 +85,7 @@ public final class TestCeres {
 	public void testCeresUIPasswordCallbackSpecialCharsOnPin() throws Exception {
 		final Ceres ceres = new Ceres(
 			ProviderUtil.getDefaultConnection(),
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 		ceres.setPasswordCallback(
 			new PasswordCallback("PIN de la tarjeta CERES", false) //$NON-NLS-1$

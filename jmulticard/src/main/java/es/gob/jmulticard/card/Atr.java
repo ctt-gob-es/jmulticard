@@ -45,41 +45,47 @@ import es.gob.jmulticard.HexUtils;
 
 /** Respuesta al reset (ATR, <i>Answer To Reset</i>) de una tarjeta.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class Atr implements Serializable {
+public class Atr implements Serializable {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
     private static final long serialVersionUID = 1L;
 
     /** Octetos del ATR. */
-    private transient final byte[] atrBytes;
+    protected transient final byte[] atrBytes;
 
     /** M&aacute;scara de posiciones con valor constante dentro de los octetos del ATR. */
     private transient final byte[] mask;
 
     /** Construye una respuesta al reset.
-     * @param a ATR de la tarjeta
-     * @param m M&aacute;scara de comparaci&oacute;n del ATR para determinar modelo espec&iacute;fico
+     * @param cardAtr ATR de la tarjeta
+     * @param atrMask M&aacute;scara de comparaci&oacute;n del ATR para determinar modelo espec&iacute;fico
      *        de tarjeta */
-    public Atr(final byte[] a, final byte[] m) {
-        if (a == null || m == null) {
+    public Atr(final byte[] cardAtr, final byte[] atrMask) {
+        if (cardAtr == null || atrMask == null) {
             throw new IllegalArgumentException("El ATR y su mascara no pueden ser nulos"); //$NON-NLS-1$
         }
-        this.atrBytes = new byte[a.length];
-        System.arraycopy(a, 0, this.atrBytes, 0, a.length);
-        this.mask = new byte[m.length];
-        System.arraycopy(m, 0, this.mask, 0, m.length);
+        atrBytes = new byte[cardAtr.length];
+        System.arraycopy(cardAtr, 0, atrBytes, 0, cardAtr.length);
+        mask = new byte[atrMask.length];
+        System.arraycopy(atrMask, 0, mask, 0, atrMask.length);
     }
 
     @Override
 	public String toString() {
-    	return HexUtils.hexify(getBytes(), true);
+    	return HexUtils.hexify(getBytes(), false);
+    }
+
+    /** Obtiene la m&aacute;scara de comparaci&oacute;n del ATR.
+     * @return M&aacute;scara de comparaci&oacute;n del ATR. */
+    public byte[] getMask() {
+    	return mask.clone();
     }
 
     /** Obtiene los octetos binarios de la respuesta al reset.
      * @return Representaci&oacute;n binaria de la respuesta al reset */
     public byte[] getBytes() {
-        final byte[] tmp = new byte[this.atrBytes.length];
-        System.arraycopy(this.atrBytes, 0, tmp, 0, this.atrBytes.length);
+        final byte[] tmp = new byte[atrBytes.length];
+        System.arraycopy(atrBytes, 0, tmp, 0, atrBytes.length);
         return tmp;
     }
 
@@ -92,12 +98,12 @@ public final class Atr implements Serializable {
     	final byte[] tmpAtrBytes;
     	tmpAtrBytes = ((Atr) o).getBytes();
 
-        if (this.atrBytes.length < tmpAtrBytes.length) {
+        if (atrBytes.length < tmpAtrBytes.length) {
         	return false;
         }
-        final int offset = this.atrBytes.length - tmpAtrBytes.length;
+        final int offset = atrBytes.length - tmpAtrBytes.length;
         for (int i=tmpAtrBytes.length-1; i>=0; i--) {
-            if ((this.atrBytes[i+offset] & this.mask[i+offset]) != (tmpAtrBytes[i] & this.mask[i+offset])) {
+            if ((atrBytes[i+offset] & mask[i+offset]) != (tmpAtrBytes[i] & mask[i+offset])) {
                 return false;
             }
         }
@@ -106,7 +112,7 @@ public final class Atr implements Serializable {
 
     @Override
     public int hashCode() {
-        return hashCode(this.atrBytes) + hashCode(this.mask);
+        return hashCode(atrBytes) + hashCode(mask);
     }
 
     private static int hashCode(final byte[] a) {

@@ -20,7 +20,6 @@ import org.junit.Test;
 import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
@@ -50,6 +49,28 @@ public final class TestDnieLow {
 
 	private static final CryptoHelper CH = new BcCryptoHelper();
 
+	/** Prueba de la factor&iacute;a de DNIe.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+ 	public void testDnieFactory() throws Exception {
+
+//		TS2 - 3B-7F-38-00-00-00-6A-44-4E-49-65-10-02-4C-34-01-13-03-90-00
+//		TS3 = 3B-7F-96-00-00-00-6A-44-4E-49-65-10-01-01-55-04-21-03-90-00
+//		TJ3 = 3B-7F-96-00-00-00-6A-44-4E-49-65-10-01-01-55-04-21-03-90-00
+//		TJ4 = 3B-7F-96-00-00-00-6A-44-4E-49-65-20-01-01-55-04-21-03-90-00
+
+		final Dnie dnie = DnieFactory.getDnie(
+			ProviderUtil.getDefaultConnection(),
+			null,
+			CH,
+			null,
+			false
+		);
+		System.out.println(dnie);
+	}
+
 	/** Prueba de lectura sin PIN de los datos del titular.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
@@ -74,7 +95,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -96,7 +117,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -237,7 +258,7 @@ public final class TestDnieLow {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler(CAN, (String)null), // No usamos el PIN
 			false
 		);
@@ -323,7 +344,7 @@ public final class TestDnieLow {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
-			new JseCryptoHelper(),
+			new BcCryptoHelper(),
 			null,
 			false
 		);
@@ -388,7 +409,7 @@ public final class TestDnieLow {
 		System.out.println();
 		final IcaoMrtdWithBac passport = new IcaoMrtdWithBac(
 			conn,
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 
 		System.out.println();

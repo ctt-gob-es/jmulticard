@@ -63,7 +63,7 @@ public final class ApduEncrypterAes extends AbstractApduEncrypter {
 		LOGGER.info(
 			"Se usara AES y CMAC para el cifrado de mensajes en el canal seguro" //$NON-NLS-1$
 		);
-		this.paddingLength = 16;
+		paddingLength = 16;
 	}
 
 	@Override
@@ -76,8 +76,8 @@ public final class ApduEncrypterAes extends AbstractApduEncrypter {
 				"El contador de secuencia no puede ser nulo en esta version de CWA-14890" //$NON-NLS-1$
 			);
 		}
-		// El vector de inicializacion del cifrado AES se calcula cifrando el SSC igualmente en AES con la misma clave y un vector
-		// de inicializacion todo a 0x00
+		// El vector de inicializacion del cifrado AES se calcula cifrando el SSC igualmente en AES
+		// con la misma clave y un vector de inicializacion todo a 0x00
 		final byte[] iv = cryptoHelper.aesEncrypt(
 			ssc,
 			new byte[0], // Vector de inicializacion vacio

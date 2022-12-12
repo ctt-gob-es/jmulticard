@@ -48,12 +48,13 @@
  */
 package es.gob.jmulticard.ui.passwordcallback.gui;
 
-
 /** Configuraci&oacute;n global de la aplicaci&oacute;n. */
 final class GeneralConfig {
 
-    /** Indica si el ususario ha activado o desactivado la opci&oacute;n de tama&ntilde;o de fuente grande
-     * @return boolean Indicando el estado de la opcion */
+    /** Indica si el ususario ha activado o desactivado la opci&oacute;n de tama&ntilde;o
+     * de fuente grande.
+     * @return <code>true</code> si el ususario ha activado la opci&oacute;n de
+     *         tama&ntilde;o de fuente grande. */
     static boolean isBigFontSize() {
         return false;
     }

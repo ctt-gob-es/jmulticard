@@ -45,7 +45,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class GeneralAuthenticateApduCommand extends CommandApdu {
 
-	/** Byte de instrucci&oacute;n de la APDU. */
+	/** Octeto de instrucci&oacute;n de la APDU. */
 	private static final byte INS_GENERAL_AUTHENTICATE = (byte) 0x86;
 
 	/** Valor para indicar que no se dispone de informaci&oacute;n al respecto. */

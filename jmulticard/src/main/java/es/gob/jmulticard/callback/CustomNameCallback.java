@@ -13,16 +13,10 @@ public final class CustomNameCallback implements Callback, java.io.Serializable 
 
     private static final long serialVersionUID = 3770938795909392253L;
 
-    /** @serial
-     * @since 1.4 */
     private final String prompt;
 
-    /** @serial
-     * @since 1.4 */
     private transient String defaultName;
 
-    /** @serial
-     * @since 1.4 */
     private transient String inputName;
 
     /** Construct a <code>NameCallback</code> with a prompt.
@@ -33,7 +27,7 @@ public final class CustomNameCallback implements Callback, java.io.Serializable 
         if (userPrompt == null || userPrompt.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-        this.prompt = userPrompt;
+        prompt = userPrompt;
     }
 
     /** Construct a <code>NameCallback</code> with a prompt
@@ -50,34 +44,34 @@ public final class CustomNameCallback implements Callback, java.io.Serializable 
             defltName == null || defltName.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-        this.prompt = userPrompt;
-        this.defaultName = defltName;
+        prompt = userPrompt;
+        defaultName = defltName;
     }
 
     /** Get the prompt.
      * @return the prompt. */
     public String getPrompt() {
-        return this.prompt;
+        return prompt;
     }
 
     /** Get the default name.
      * @return the default name, or null if this <code>NameCallback</code>
      *          was not instantiated with a <code>defaultName</code>. */
     public String getDefaultName() {
-        return this.defaultName;
+        return defaultName;
     }
 
     /** Set the retrieved name.
      * @param name the retrieved name (which may be null).
      * @see #getName */
     public void setName(final String name) {
-        this.inputName = name;
+        inputName = name;
     }
 
     /** Get the retrieved name.
      * @return the retrieved name (which may be null).
      * @see #setName */
     public String getName() {
-        return this.inputName;
+        return inputName;
     }
 }

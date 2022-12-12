@@ -16,7 +16,7 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
@@ -29,7 +29,7 @@ import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestApduEncrypter extends AbstractApduEncrypter {
 
-	private static final CryptoHelper CRYPTO_HELPER = new JseCryptoHelper();
+	private static final CryptoHelper CRYPTO_HELPER = new BcCryptoHelper();
 
 	private static final byte[] KENC = {
 		(byte)0x59, (byte)0x8f, (byte)0x26, (byte)0xe3, (byte)0x6e, (byte)0x11, (byte)0xa8, (byte)0xec,

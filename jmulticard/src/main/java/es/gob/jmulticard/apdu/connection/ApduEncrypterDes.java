@@ -56,7 +56,7 @@ public class ApduEncrypterDes extends AbstractApduEncrypter {
 
 	/** Constructor de la clase para operaciones de cifrado cifrado DES. */
 	public ApduEncrypterDes() {
-        this.paddingLength = 8;
+        paddingLength = 8;
     }
 
     /** <i>Tag</i> del TLV de estado de respuesta de una APDU de respuesta. */
@@ -241,11 +241,11 @@ public class ApduEncrypterDes extends AbstractApduEncrypter {
 
     	final byte[] calculatedMac;
     	try {
-    		calculatedMac = generateMac(addPadding7816(verificableData, this.paddingLength), ssc, kMac, cryptoHelper);
+    		calculatedMac = generateMac(addPadding7816(verificableData, paddingLength), ssc, kMac, cryptoHelper);
     	}
     	catch (final IOException e) {
     		throw new SecurityException(
-				"No se pudo calcular el MAC teorico de la respuesta del DNIe para su verificacion", e //$NON-NLS-1$
+				"No se pudo calcular el MAC teorico de la respuesta de la tarjeta para su verificacion", e //$NON-NLS-1$
 			);
 		}
 

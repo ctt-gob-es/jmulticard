@@ -56,7 +56,7 @@ public interface CryptoCard {
      *         existe ning&uacute;n certificado con ese alias.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema al recuperar el certificado.
      * @throws PinException Si el PIN proporcionado es incorrecto.
-     * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
+     * @throws AuthenticationModeLockedException Cuando la tarjeta est&aacute; bloqueada. */
     X509Certificate getCertificate(String alias) throws CryptoCardException, PinException;
 
     /** Obtiene una referencia a la clave privada correspondiente al alias proporcionado.
@@ -72,7 +72,7 @@ public interface CryptoCard {
      * @param algorithm Algoritmo de firma.
      * @param keyRef Referencia a la clave privada de firma.
      * @return Datos firmados (PKCS#1 v1.5).
-     * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
+     * @throws AuthenticationModeLockedException Cuando la tarjeta est&aacute; bloqueada.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema durante la firma.
      * @throws PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo. */
     byte[] sign(byte[] data, String algorithm, PrivateKeyReference keyRef) throws CryptoCardException, PinException;

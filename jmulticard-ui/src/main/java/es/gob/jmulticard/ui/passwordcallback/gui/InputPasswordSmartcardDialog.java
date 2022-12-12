@@ -213,14 +213,14 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         setTitle(title);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        this.answer = JOptionPane.NO_OPTION;
+        answer = JOptionPane.NO_OPTION;
         // Contenedor del dialogo
         final Container container = getContentPane();
         // Layout del contenedor
         container.setLayout(new GridBagLayout());
 
         // Panel con los datos del dialogo
-        this.mainPanel = new JPanel(new GridBagLayout());
+        mainPanel = new JPanel(new GridBagLayout());
 
         // Restricciones para el panel de datos
         final GridBagConstraints c = new GridBagConstraints();
@@ -237,33 +237,33 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         final GridBagConstraints consIconPanel = new GridBagConstraints();
         consIconPanel.fill = GridBagConstraints.BOTH;
 
-        iconPanel.add(this.iconLabel, consIconPanel);
+        iconPanel.add(iconLabel, consIconPanel);
 
         // Se crea una etiqueta sencilla
-        this.infoLabel = new InfoLabel(message);
-        this.infoLabel.setHorizontalAlignment(SwingConstants.LEFT); // Se alinea a la izqda
-        this.infoLabel.setVerticalAlignment(SwingConstants.CENTER); // Se alinea al centro el texto
+        infoLabel = new InfoLabel(message);
+        infoLabel.setHorizontalAlignment(SwingConstants.LEFT); // Se alinea a la izqda
+        infoLabel.setVerticalAlignment(SwingConstants.CENTER); // Se alinea al centro el texto
 
         // Se anade la etiqueta al panel de informacion general
-        this.mainPanel.add(this.infoLabel, c);
+        mainPanel.add(infoLabel, c);
 
 
         // campo de password del dialogo
-        this.component = new JSecurePasswordLabel(16);
+        component = new JSecurePasswordLabel(16);
 
         c.gridy++;
         c.insets = new Insets(2, 5, 2, 10); // right padding
 
         // Se anade el campo de texto al panel de informacion general
-        this.mainPanel.add(this.component, c);
+        mainPanel.add(component, c);
 
         // Si corresponde, se agrega la casilla de verificacion para el uso de la cache
         if (allowUseCache) {
-        	this.useCacheCheckBox = new JCheckBox(Messages.getString("InputPasswordSmartcardDialog.useCache")); //$NON-NLS-1$
-        	this.useCacheCheckBox.setSelected(defaultUseCache);
+        	useCacheCheckBox = new JCheckBox(Messages.getString("InputPasswordSmartcardDialog.useCache")); //$NON-NLS-1$
+        	useCacheCheckBox.setSelected(defaultUseCache);
 
         	c.gridy++;
-        	this.mainPanel.add(this.useCacheCheckBox, c);
+        	mainPanel.add(useCacheCheckBox, c);
         }
 
         // Panel de botones
@@ -291,7 +291,7 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         cons.gridheight = 2;
         cons.weighty = 0.35;
         cons.weightx = 0.90;
-        container.add(this.mainPanel, cons);
+        container.add(mainPanel, cons);
 
         //Se anade el icono
         cons.gridx = 0;
@@ -309,7 +309,7 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         cons.gridheight = 1;
         cons.weighty = 0.65;
         cons.weightx = 0.0;
-        container.add(this.buttonsPanel, cons);
+        container.add(buttonsPanel, cons);
 
         pack();
     }
@@ -325,11 +325,15 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
 				)
 			);
 	        final Dimension dimensionInicial = new Dimension(100, (int)(100f / icon.getIconWidth() * icon.getIconHeight()));
-	        this.iconLabel.setOriginalIcon(icon);
-	        this.iconLabel.setOriginalDimension(dimensionInicial);
-	        this.iconLabel.setIcon(
+	        iconLabel.setOriginalIcon(icon);
+	        iconLabel.setOriginalDimension(dimensionInicial);
+	        iconLabel.setIcon(
         		new ImageIcon(
-    				icon.getImage().getScaledInstance(dimensionInicial.width, dimensionInicial.height, Image.SCALE_SMOOTH)
+    				icon.getImage().getScaledInstance(
+						dimensionInicial.width,
+						dimensionInicial.height,
+						Image.SCALE_SMOOTH
+					)
 				)
     		);
     	}
@@ -337,7 +341,7 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
 
     /** Panel que contiene los botones principales de las alerta. */
     void createMainButtonsPanel() {
-        this.buttonsPanel = new JPanel(new GridBagLayout());
+        buttonsPanel = new JPanel(new GridBagLayout());
 
         // Restricciones para el panel de botones
         final GridBagConstraints consButtons = new GridBagConstraints();
@@ -369,7 +373,7 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
 		);
 
         okPanel.add(okButton);
-        this.buttonsPanel.add(okPanel, consButtons);
+        buttonsPanel.add(okPanel, consButtons);
 
         okButton.addActionListener(this);
 
@@ -441,8 +445,9 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         AccesibilityUtils.remarcar(inputPasswordDialog.component);
         AccesibilityUtils.setContrastColor(inputPasswordDialog.component);
         AccesibilityUtils.setFontBold(inputPasswordDialog.component);
-        inputPasswordDialog.component.getAccessibleContext()
-                              .setAccessibleName(message.replace(AccesiblityConstants.HTML_SALTO_LINEA, "") + "  ALT + " + mnemonic + ". "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        inputPasswordDialog.component.getAccessibleContext().setAccessibleName(
+    		message.replace(AccesiblityConstants.HTML_SALTO_LINEA, "") + "  ALT + " + mnemonic + ". " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		);
 
         // Etiqueta principal
         // Se relaciona la etiqueta con el componente
@@ -526,7 +531,6 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         	inputPasswordDialog.component.setText(null);
         	inputPasswordDialog.component = null;
         	inputPasswordDialog.dispose();
-        	System.runFinalization();
         	System.gc();
 
         	// Recuperamos el valor del checkbox de usar cache si existe
@@ -537,14 +541,16 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
 
             return new PasswordResult(finalPin, useCache);
         }
-        throw new CancelledOperationException("La insercion de contrasena ha sido cancelada por el usuario"); //$NON-NLS-1$
+        throw new CancelledOperationException(
+    		"La insercion de contrasena ha sido cancelada por el usuario" //$NON-NLS-1$
+		);
     }
 
-    /** Metodo que crea un bot&oacute;n.
+    /** Crea un bot&oacute;n.
      * Si el bot&oacute;n corresponde al de cancelar, se le asigna la tecla escape.
-     * @param text texto del bot&oacute;n.
-     * @param mnemonic atajo.
-     * @return bot&oacute;n. */
+     * @param text Texto del bot&oacute;n.
+     * @param mnemonic Atajo.
+     * @return Bot&oacute;n creado. */
     private JButton getButton(final String text, final int mnemonic) {
         final JButton button = new JButton(text);
         button.setMnemonic(mnemonic);
@@ -555,7 +561,12 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         if (text.equalsIgnoreCase(cancellText)) {
             // Se asigna la tecla escape a dicho boton
             final String cancelKey = "cancel"; //$NON-NLS-1$
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancelKey);
+            getRootPane().getInputMap(
+        		JComponent.WHEN_IN_FOCUSED_WINDOW
+    		).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				cancelKey
+			);
             getRootPane().getActionMap().put(cancelKey, new ButtonAbstractAction(getCancelButton()));
         }
 
@@ -567,16 +578,15 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
         return 7;
     }
 
-    /** @return the answer */
     private int getAnswer() {
-        return this.answer;
+        return answer;
     }
 
     JSecurePasswordLabel getComponent() {
-        return this.component;
+        return component;
     }
 
-    /** Devuelve una instancia de CustomDialog.
+    /** Devuelve una instancia de <code>CustomDialog</code>.
      * @param componentParent Componente padre para la modalidad.
      * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
      *              <code>false</code> en caso contrario.
@@ -610,10 +620,10 @@ public final class InputPasswordSmartcardDialog extends AbstractJAccessibilityCu
     public void actionPerformed(final ActionEvent e) {
 
         if (e.getSource().equals(okButton)) {
-            this.answer = JOptionPane.YES_OPTION;
+            answer = JOptionPane.YES_OPTION;
         }
         else {
-            this.answer = JOptionPane.CANCEL_OPTION;
+            answer = JOptionPane.CANCEL_OPTION;
         }
         setVisible(false);
     }

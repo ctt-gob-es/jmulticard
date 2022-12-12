@@ -40,8 +40,6 @@
 package es.gob.jmulticard.ui.passwordcallback;
 
 import java.io.Console;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -56,23 +54,15 @@ public final class DialogBuilder {
 
 	private static boolean headless = false;
 
+    static {
+        setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
+    }
+
     /** Establece el modo sin interfaz.
      * @param hl <code>true</code> para operar sin interaz, <code>false</code> para operar con interfaz
      *           (con di&aacute;logos hacia el usuario, etc.). */
     public static void setHeadLess(final boolean hl) {
         headless = hl;
-    }
-
-    static {
-        AccessController.doPrivileged(
-    		new PrivilegedAction<Void>() {
-		        @Override
-		        public Void run() {
-		            setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
-		            return null;
-		        }
-		    }
-		);
     }
 
     private DialogBuilder() {
@@ -110,7 +100,10 @@ public final class DialogBuilder {
         final String confirm = console.readLine().replace("\n", "").replace("\r", "").trim().toLowerCase(Locale.getDefault()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ("si".equals(confirm) //$NON-NLS-1$
                 || "s".equals(confirm) //$NON-NLS-1$
-                || "s\u00ED".equals(confirm)) { //$NON-NLS-1$
+                || "s\u00ED".equals(confirm) //$NON-NLS-1$
+                || "y".equals(confirm) //$NON-NLS-1$
+                || "yes".equals(confirm) //$NON-NLS-1$
+        ) {
                 return 0;
         }
 		if ("no".equals(confirm) || "n".equals(confirm)) { //$NON-NLS-1$ //$NON-NLS-2$

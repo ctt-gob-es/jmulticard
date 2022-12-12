@@ -6,7 +6,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
@@ -31,7 +31,7 @@ public final class TestAccv {
 	public void testReadCertificates() throws Exception {
 		final CryptoCard card = new SmartCafePkcs15Applet(
 			ProviderUtil.getDefaultConnection(),
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 		final String[] aliases = card.getAliases();
 		if (aliases.length < 1) {
@@ -56,7 +56,7 @@ public final class TestAccv {
 	public void testVerifyPin() throws Exception {
 		final AbstractIso7816FourCard card = new SmartCafePkcs15Applet(
 			ProviderUtil.getDefaultConnection(),
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 		card.verifyPin(new CachePasswordCallback(PIN));
 	}
@@ -69,7 +69,7 @@ public final class TestAccv {
 	public void testSign() throws Exception {
 		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
 			ProviderUtil.getDefaultConnection(),
-			new JseCryptoHelper()
+			new BcCryptoHelper()
 		);
 		card.setPasswordCallback(new CachePasswordCallback(PIN));
 		final PrivateKeyReference pkr = card.getPrivateKey(card.getAliases()[0]);
@@ -84,7 +84,7 @@ public final class TestAccv {
 //	public void testPinRetriesLeft() throws Exception {
 //		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
 //			new SmartcardIoConnection(),
-//	        new JseCryptoHelper()
+//	        new BcCryptoHelper()
 //		);
 //		System.out.println(
 //			"INTENTOS DE PIN RESTANTES: " + card.getPinRetriesLeft() //$NON-NLS-1$

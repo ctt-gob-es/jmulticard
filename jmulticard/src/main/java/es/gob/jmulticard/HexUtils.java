@@ -52,8 +52,8 @@ public final class HexUtils {
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
-    /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector. Para
-     * ser usado en <code>hexify()</code>. */
+    /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector.
+     * Para ser usado en <code>hexify()</code>. */
     private static final char[] HEX_CHARS = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
@@ -66,7 +66,8 @@ public final class HexUtils {
     /** Comprueba si dos <i>arrays</i> de octetos son iguales.
      * @param v Primer <i>array</i> de octetos.
      * @param w Segundo <i>array</i> de octetos.
-     * @return <code>true</code> si los <i>arrays</i> son iguales, <code>false</code> en caso contrario. */
+     * @return <code>true</code> si los <i>arrays</i> son iguales,
+     *         <code>false</code> en caso contrario. */
     public static boolean arrayEquals(final byte[] v, final byte[] w) {
         return HexUtils.arrayEquals(v, 0, v.length, w, 0, w.length);
     }
@@ -162,9 +163,9 @@ public final class HexUtils {
         return temp;
     }
 
-    /** Realiza la operaci&oacute;n XOR entre dos <i>array</i> de octetos. El resultado se recortar&aacute; para
-     * ser del tama&ntilde;o del primer <i>array</i> recibido tomando los octetos menos significativos
-     * del resultado.
+    /** Realiza la operaci&oacute;n XOR entre dos <i>array</i> de octetos.
+     * El resultado se recortar&aacute; para ser del tama&ntilde;o del primer <i>array</i>
+     * recibido tomando los octetos menos significativos del resultado.
      * @param v Primer <i>array</i> de bytes.
      * @param w Segundo <i>array</i> de bytes.
      * @return Resultado del XOR de los <i>arrays</i> de entrada. */

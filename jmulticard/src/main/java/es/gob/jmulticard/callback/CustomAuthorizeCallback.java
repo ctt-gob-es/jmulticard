@@ -48,14 +48,13 @@ public final class CustomAuthorizeCallback implements Callback {
      * on behalf of the authorization id. */
     private boolean authorized = false;
 
-
     /** Determines if the identity represented by authentication ID is allowed to
      * act on behalf of the authorization ID.     *
      * @return <code>true</code> if authorization is allowed; <code>false</code>
      *         otherwise.
      * @see #setAuthorized(boolean) */
     public boolean isAuthorized() {
-        return this.authorized;
+        return authorized;
     }
 
     /** Sets if authorization is allowed or not.
@@ -63,7 +62,7 @@ public final class CustomAuthorizeCallback implements Callback {
      *                   <code>false</code> otherwise.
      * @see #isAuthorized() */
     public void setAuthorized(final boolean auth) {
-        this.authorized = auth;
+        authorized = auth;
     }
 
 }

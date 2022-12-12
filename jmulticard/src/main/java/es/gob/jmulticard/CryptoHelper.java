@@ -41,6 +41,7 @@ package es.gob.jmulticard;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -78,16 +79,16 @@ public abstract class CryptoHelper {
 		private final String algName;
 
 		Padding(final String alg) {
-			this.algName = alg;
+			algName = alg;
 		}
 
 		@Override
 		public String toString() {
-			return this.algName;
+			return algName;
 		}
 	}
 
-	/** Tipos de manejo de bbloques para cifrado. */
+	/** Tipos de manejo de bloques para cifrado. */
 	public enum BlockMode {
 
 		/** Cipher Block Chaining. */
@@ -105,12 +106,12 @@ public abstract class CryptoHelper {
 
 		private final String name;
 		EcCurve(final String n) {
-			this.name = n;
+			name = n;
 		}
 
 		@Override
 		public String toString() {
-			return this.name;
+			return name;
 		}
 	}
 
@@ -118,29 +119,63 @@ public abstract class CryptoHelper {
 	public enum DigestAlgorithm {
 
 		/** SHA-1. */
-		SHA1("SHA1"), //$NON-NLS-1$
+		SHA1("SHA1", 20), //$NON-NLS-1$
 
 		/** SHA-256. */
-		SHA256("SHA-256"), //$NON-NLS-1$
+		SHA256("SHA-256", 32), //$NON-NLS-1$
 
 		/** SHA-384. */
-		SHA384("SHA-384"), //$NON-NLS-1$
+		SHA384("SHA-384", 48), //$NON-NLS-1$
 
 		/** SHA-512. */
-		SHA512("SHA-512"); //$NON-NLS-1$
+		SHA512("SHA-512", 64); //$NON-NLS-1$
 
 		/** Nombre del algoritmo de huella digital. */
 		private final String name;
 
+		/** Longitud (en octetos) de las huellas resultantes con este algoritmo.
+		 * La longitud se proporciona est&aacute;ticamente para no introducir aqu&iacute;
+		 * dependencias con proveedores de seguridad de Java o con BouncyCastle. */
+		private final int length;
+
 		/** Construye el algoritmo de huella digital.
-		 * @param n Nombre del algoritmo. */
-		DigestAlgorithm(final String n) {
-			this.name = n;
+		 * @param n Nombre del algoritmo.
+		 * @param l Longitud (en octetos) de las huellas resultantes con este algoritmo. */
+		DigestAlgorithm(final String n, final int l) {
+			name = n;
+			length = l;
 		}
 
 		@Override
 		public String toString() {
-			return this.name;
+			return name;
+		}
+
+		/** Obtiene la longitud (en octetos) de las huellas resultantes con este algoritmo.
+		 * @return Longitud (en octetos) de las huellas resultantes con este algoritmo. */
+		public int getDigestLength() {
+			return length;
+		}
+
+		/** Obtiene un algoritmo de huella digital a partir de su nombre.
+		 * @param name Nombre del algoritmo de huella digital a partir de su nombre.
+		 * @return Algoritmo de huella digital. */
+		public static DigestAlgorithm getDigestAlgorithm(final String name) {
+			if ("SHA1".equals(name) || "SHA-1".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA1;
+			}
+			if ("SHA256".equals(name) || "SHA-256".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA256;
+			}
+			if ("SHA384".equals(name) || "SHA-384".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA384;
+			}
+			if ("SHA512".equals(name) || "SHA-512".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
+				return SHA512;
+			}
+			throw new IllegalArgumentException(
+				"Algoritmo de huella no soportado: " + name //$NON-NLS-1$
+			);
 		}
 	}
 
@@ -150,8 +185,8 @@ public abstract class CryptoHelper {
 
 	/** A&ntilde;ade relleno PKCS#1 para operaciones con clave privada.
 	 * @param inByteArray Datos a los que se quiere a&ntilde;adir relleno PKCS#1.
-	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente con estos datos con
-	 *                relleno.
+	 * @param keySize Tama&ntilde;o de la clave privada que operar&aacute; posteriormente
+	 *                con estos datos con relleno.
 	 * @return Datos con el relleno PKCS#1 a&ntilde;adido.
 	 * @throws IOException En caso de error el el tratamiento de datos. */
 	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] inByteArray,
@@ -172,7 +207,7 @@ public abstract class CryptoHelper {
 			baos.write(PKCS1_FILL);
 		}
 		baos.write(PKCS1_DELIMIT);    // Delimitador :   00
-		baos.write(inByteArray);               // Datos
+		baos.write(inByteArray);      // Datos
 
 		return baos.toByteArray();
 	}
@@ -186,10 +221,10 @@ public abstract class CryptoHelper {
     public abstract byte[] digest(DigestAlgorithm algorithm, byte[] data) throws IOException;
 
     /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con una
-     * semilla (IV) de 8 bytes establecidos a cero. Si se le indica una clave de 24 bytes,
-     * la utilizar&aacute;a tal cual. Si se le indica una clave de 16 bytes,
-     * duplicar&aacute; los 8 primeros y los agregar&aacute; al final para
-     * obtener una de 24.
+     * semilla (IV) de 8 bytes establecidos a cero.
+     * Si se le indica una clave de 24 bytes, la utilizar&aacute;a tal cual.
+     * Si se le indica una clave de 16 bytes, duplicar&aacute; los 8 primeros
+     * y los agregar&aacute; al final para obtener una de 24.
      * @param data Datos a encriptar.
      * @param key Clave 3DES de cifrado.
      * @return Datos cifrados.
@@ -226,7 +261,8 @@ public abstract class CryptoHelper {
 
     /** Desencripta datos mediante AES.
      * @param data Datos a encriptar.
-     * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code> se usar&aacute;
+     * @param iv Vector de inicializaci&oacute;n.
+     *           Si se proporciona <code>null</code> se usar&aacute;
      *           un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
      * @param blockMode Modo de gesti&oacute;n de bloques.
@@ -324,6 +360,20 @@ public abstract class CryptoHelper {
 	                                                                                      IOException,
 	                                                                                      CertificateException;
 
+	/** Genera un certificado a partir de su codificaci&oacute;n binaria.
+	 * @param encoded Codificaci&oacute;n binaria del certificado.
+	 * @return Certificado.
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
+	 *                              certificado. */
+	public abstract X509Certificate generateCertificate(final byte[] encoded) throws CertificateException;
+
+	/** Genera un certificado a partir de un flujo hacia su codificaci&oacute;n binaria.
+	 * @param is Flujo de lectura hacia la Codificaci&oacute;n binaria del certificado.
+	 * @return Certificado.
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
+	 *                              certificado o no se pudo leer del flujo de entrada. */
+	public abstract X509Certificate generateCertificate(final InputStream is) throws CertificateException;
+
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).
 	 * @return Utilidades para el establecimiento de un canal PACE */
@@ -384,7 +434,7 @@ public abstract class CryptoHelper {
 		/** Constructor
 		 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
 		public PaceChannelHelper(final CryptoHelper ch) {
-			this.cryptoHelper = ch;
+			cryptoHelper = ch;
 		}
 
 		/** Abre un canal PACE.

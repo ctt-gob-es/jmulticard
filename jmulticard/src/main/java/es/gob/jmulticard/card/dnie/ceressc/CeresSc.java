@@ -87,7 +87,7 @@ public final class CeresSc extends Dnie {
 
 	@Override
 	public X509Certificate getCertificate(final String alias) {
-		return this.certs.get(alias);
+		return certs.get(alias);
 	}
 
 	@Override
@@ -115,7 +115,7 @@ public final class CeresSc extends Dnie {
 
             final byte[] digestInfo;
             try {
-                digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
+                digestInfo = DigestInfo.encode(algorithm, data, cryptoHelper);
             }
             catch (final IOException e) {
                 throw new DnieCardException("Error en el calculo del hash para firmar", e); //$NON-NLS-1$
@@ -181,12 +181,12 @@ public final class CeresSc extends Dnie {
 
     @Override
     public String[] getAliases() {
-    	return this.certs.keySet().toArray(new String[0]);
+    	return certs.keySet().toArray(new String[0]);
     }
 
     @Override
     public PrivateKeyReference getPrivateKey(final String alias) {
-    	return this.keyReferences.get(alias);
+    	return keyReferences.get(alias);
     }
 
 	private void preload() throws ApduConnectionException,
@@ -206,19 +206,20 @@ public final class CeresSc extends Dnie {
 		final Pkcs15Cdf cdf = new Cdf();
 		cdf.setDerValue(cdfBytes);
 
-		this.certs = new LinkedHashMap<>(cdf.getCertificateCount());
-		this.aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
+		certs = new LinkedHashMap<>(cdf.getCertificateCount());
+		aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
 
 		for (int i = 0; i < cdf.getCertificateCount(); i++) {
 			final Location l = new Location(
 				cdf.getCertificatePath(i).replace("\\", "").trim() //$NON-NLS-1$ //$NON-NLS-2$
 			);
 			final X509Certificate cert = CompressionUtils.getCertificateFromCompressedOrNotData(
-				selectFileByLocationAndRead(l)
+				selectFileByLocationAndRead(l),
+				cryptoHelper
 			);
 			final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
-			this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
-			this.certs.put(alias, cert);
+			aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
+			certs.put(alias, cert);
 		}
 
 		// Leemos el PrKDF
@@ -238,11 +239,11 @@ public final class CeresSc extends Dnie {
 			prkdf.setDerValue(prkdfValue);
 		}
 
-		this.keyReferences = new LinkedHashMap<>();
+		keyReferences = new LinkedHashMap<>();
 		for (int i = 0; i < prkdf.getKeyCount(); i++) {
-			final String alias = this.aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
+			final String alias = aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
 			if (alias != null) {
-				this.keyReferences.put(
+				keyReferences.put(
 					alias,
 					new DniePrivateKeyReference(
 						this,
@@ -250,7 +251,7 @@ public final class CeresSc extends Dnie {
 	            		new Location(prkdf.getKeyPath(i)),
 	            		prkdf.getKeyName(i),
 	            		prkdf.getKeyReference(i),
-	            		((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
+	            		((RSAPublicKey)certs.get(alias).getPublicKey()).getModulus().bitLength()
 					)
 				);
 			}
@@ -264,8 +265,8 @@ public final class CeresSc extends Dnie {
 	private void hideCertsWithoutKey() {
 		final String[] aliases = getAliases();
 		for (final String alias : aliases) {
-			if (this.keyReferences.get(alias) == null) {
-				this.certs.remove(alias);
+			if (keyReferences.get(alias) == null) {
+				certs.remove(alias);
 			}
 		}
 	}
@@ -283,13 +284,13 @@ public final class CeresSc extends Dnie {
 
     	if (DEBUG) {
     		LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
-    		LOGGER.info("Conexion subyacente: " + this.rawConnection); //$NON-NLS-1$
+    		LOGGER.info("Conexion subyacente: " + rawConnection); //$NON-NLS-1$
     	}
 
         // Si la conexion esta cerrada, la reestablecemos
         if (!getConnection().isOpen()) {
 	        try {
-				setConnection(this.rawConnection);
+				setConnection(rawConnection);
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(
@@ -303,7 +304,7 @@ public final class CeresSc extends Dnie {
     		final ApduConnection secureConnection = new Cwa14890OneV2Connection(
     				this,
     				getConnection(),
-    				this.cryptoHelper,
+    				cryptoHelper,
     				getCwa14890PublicConstants(),
     				getCwa14890PrivateConstants()
     				);

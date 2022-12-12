@@ -52,6 +52,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class GemaltoVerifyApduCommand extends CommandApdu {
 
+	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
     private static final byte INS_VERIFY = (byte) 0x20;
 
     private transient final PasswordCallback pwc;
@@ -78,13 +79,13 @@ public final class GemaltoVerifyApduCommand extends CommandApdu {
     			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
         }
-        this.pwc = pinPc;
+        pwc = pinPc;
     }
 
     @Override
     public byte[] getBytes() {
     	final byte[] currentApdu = super.getBytes();
-        final char[] p = this.pwc.getPassword();
+        final char[] p = pwc.getPassword();
         for (int i=0; i<p.length;i++) {
         	currentApdu[i+5] = (byte) p[i];
         }

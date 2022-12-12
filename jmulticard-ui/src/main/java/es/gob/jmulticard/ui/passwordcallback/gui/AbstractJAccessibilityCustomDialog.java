@@ -71,32 +71,23 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Posicion X actual.
-	 */
+	/** Posici&oacute;n X actual. */
 	private static int actualPositionX = -1;
 
-	/**
-	 * Posicion Y actual.
-	 */
+	/** Posici&oacute;n Y actual. */
 	private static int actualPositionY = -1;
 
-	/**
-	 * Ancho actual.
-	 */
+	/** Ancho actual. */
 	private static int actualWidth = -1;
 
-	/**
-	 * Alto actual.
-	 */
+	/** Alto actual. */
 	private static int actualHeight = -1;
 
-	/**
-	 * Indica si el di&aacute;logo requiere un tamano grande por defecto.
-	 */
+	/** Indica si el di&aacute;logo requiere un tama&ntilde;o
+	 * grande por defecto. */
 	private boolean bigSizeDefault = false;
 
-    /** Si se trata de un di&aacute;logo de confirmacion o tiene entradas */
+    /** Si se trata de un di&aacute;logo de confirmaci&oacute;n o tiene entradas */
     private transient final boolean isInputDialog;
 
 	/** Constructor con par&aacute;metros.
@@ -104,16 +95,16 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 	 * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
 	 *              <code>false</code> en caso contrario.
 	 * @param isInputDlg <code>true</code> si el di&aacute;logo es de entrada de datos,
-	 *              <code>false</code> en caso contrario. */
+	 *                   <code>false</code> en caso contrario. */
 	AbstractJAccessibilityCustomDialog(final JDialog dialog, final boolean modal, final boolean isInputDlg){
 		super(dialog, modal);
-		this.isInputDialog = isInputDlg;
+		isInputDialog = isInputDlg;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
 		setResizable(false);
 	}
 
-	/** Constructor con parametros.
+	/** Constructor con par&aacuute;metros.
 	 * @param frame Componente base.
 	 * @param modal <code>true</code> si el di&aacute;logo debe ser modal,
 	 *              <code>false</code> en caso contrario.
@@ -121,7 +112,7 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 	 *              <code>false</code> en caso contrario. */
 	AbstractJAccessibilityCustomDialog(final JFrame frame, final boolean modal, final boolean isInputDlg){
 		super(frame, modal);
-		this.isInputDialog = isInputDlg;
+		isInputDialog = isInputDlg;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
 		setResizable(false);
@@ -130,7 +121,7 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 	/** Constructor.
 	 * @param isInputDlg Indica si el di&aacute;logo es de entrada de datos. */
 	AbstractJAccessibilityCustomDialog(final boolean isInputDlg){
-		this.isInputDialog = isInputDlg;
+		isInputDialog = isInputDlg;
 		final ResizingAdaptor adaptador = new ResizingAdaptor(this);
 		addComponentListener(adaptador);
 		setResizable(false);
@@ -165,10 +156,8 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 		AbstractJAccessibilityCustomDialog.actualPositionY = positionY;
 	}
 
-	/**
-     * Getter para la variable ActualWidth.
-     * @return ActualWidth
-     */
+	/** Obtiene el ancho actual del di&aacute;logo.
+     * @return Ancho actual del di&aacute;logo. */
 	static int getActualWidth() {
 		return actualWidth;
 	}
@@ -179,10 +168,8 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 		AbstractJAccessibilityCustomDialog.actualWidth = width;
 	}
 
-	/**
-     * Getter para la variable ActualHeight.
-     * @return ActualHeight
-     */
+	/** Obtiene el alto actual del di&aacute;logo.
+     * @return Alto actual del di&aacute;logo. */
 	static int getActualHeight() {
 		return actualHeight;
 	}
@@ -194,63 +181,58 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 	}
 
 	/** Indica si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto.
-	 * @return boolean */
+	 * @return <code>true</code> si el di&aacute;logo debe tener un tama&ntilde;o
+	 *         grande por defecto, <code>false</code> en caso contrario. */
 	boolean isBigSizeDefault() {
-		return this.bigSizeDefault;
+		return bigSizeDefault;
 	}
 
 	/** Indica si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto.
-	 * @param bigSizeByDefault <code>true</code> si el di&aacute;logo debe tener un tama&ntilde;o grande por defecto,
-	 *                       <code>false</code> en caso contrario. */
+	 * @param bigSizeByDefault <code>true</code> si el di&aacute;logo debe tener un
+	 *                         tama&ntilde;o grande por defecto, <code>false</code>
+	 *                         en caso contrario. */
 	void setBigSizeDefault(final boolean bigSizeByDefault) {
-		this.bigSizeDefault = bigSizeByDefault;
+		bigSizeDefault = bigSizeByDefault;
 	}
 
-	/**
-     * Retorna el ancho inicial del di&aacute;logo
-     * @return Ancho inicial del di&aacute;logo
-     */
+	/** Devuelve el ancho inicial del di&aacute;logo.
+     * @return Ancho inicial del di&aacute;logo. */
     int getInitialWidth(){
-    	if(this.isInputDialog){
+    	if(isInputDialog){
     		return AccesiblityConstants.CUSTOMDIALOG_INITIAL_WIDTH;
-    	}return AccesiblityConstants.CUSTOMCONFIRMATION_INITIAL_WIDTH;
+    	}
+    	return AccesiblityConstants.CUSTOMCONFIRMATION_INITIAL_WIDTH;
     }
 
-    /**
-     * Retorna el alto inicial del di&aacute;logo
-     * @return Alto inicial del di&aacute;logo
-     */
+    /** Devuelve el alto inicial del di&aacute;logo.
+     * @return Alto inicial del di&aacute;logo. */
     int getInitialHeight(){
-    	if(this.isInputDialog){
+    	if(isInputDialog){
     		return AccesiblityConstants.CUSTOMDIALOG_INITIAL_HEIGHT;
     	}
     	return AccesiblityConstants.CUSTOMCONFIRMATION_INITIAL_HEIGHT;
     }
 
-    /**
-     * Retorna el ancho maximo del di&aacute;logo
-     * @return Ancho maximo del di&aacute;logo
-     */
+    /** Devuelve el ancho m&aacute;ximo del di&aacute;logo.
+     * @return Ancho m&aacute;ximo del di&aacute;logo. */
     int getMaxWidth(){
-    	if(this.isInputDialog){
+    	if(isInputDialog){
     		return AccesiblityConstants.CUSTOMDIALOG_MAX_WIDTH;
     	}
 		return AccesiblityConstants.CUSTOMCONFIRMATION_MAX_WIDTH;
     }
 
-    /**
-     * Retorna el alto maximo del di&aacute;logo
-     * @return Alto maximo del di&aacute;logo
-     */
+    /** Devuelve el alto m&aacute;ximo del di&aacute;logo.
+     * @return Alto m&aacute;ximo del di&aacute;logo. */
     int getMaxHeight(){
-    	if(this.isInputDialog){
+    	if(isInputDialog){
     		return AccesiblityConstants.CUSTOMDIALOG_MAX_HEIGHT;
     	}
     	return AccesiblityConstants.CUSTOMCONFIRMATION_MAX_HEIGHT;
     }
 
 
-    /** Se crea el panel de botones de accesibilidad.
+    /** Crea el panel de botones de accesibilidad.
      * @return Panel de botones de accesibilidad. */
     protected JPanel createAccessibilityButtonsPanel() {
     	final JPanel accessibilityButtonsPanel = new JPanel(new GridBagLayout());
@@ -295,18 +277,20 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
         });
         final Dimension dimension = new Dimension(20, 20);
         restoreButton.setPreferredSize(dimension);
-        restoreButton.addKeyListener(new KeyListener() {
+        restoreButton.addKeyListener(
+    		new KeyListener() {
 
-			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
-			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
 
-			@Override
-			public void keyPressed(final KeyEvent ke) {
-				if (10 == ke.getKeyCode()) {
-					restoreButton.doClick();
+				@Override
+				public void keyPressed(final KeyEvent ke) {
+					if (10 == ke.getKeyCode()) {
+						restoreButton.doClick();
+					}
 				}
 			}
-		});
+		);
         restoreButton.setName("restaurar"); //$NON-NLS-1$
         restorePanel.add(restoreButton);
 
@@ -325,18 +309,20 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
         maximizeButton.setMnemonic(KeyEvent.VK_M);
         maximizeButton.setToolTipText(Messages.getString("Wizard.maximizar.description")); //$NON-NLS-1$
         maximizeButton.getAccessibleContext().setAccessibleName(maximizeButton.getToolTipText());
-        maximizeButton.addKeyListener(new KeyListener() {
+        maximizeButton.addKeyListener(
+    		new KeyListener() {
 
-			@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
-			@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyTyped(final KeyEvent arg0) { /* No necesario */ }
+				@Override public void keyReleased(final KeyEvent arg0) { /* No necesario */ }
 
-			@Override
-			public void keyPressed(final KeyEvent ke) {
-				if (10 == ke.getKeyCode()) {
-					maximizeButton.doClick();
+				@Override
+				public void keyPressed(final KeyEvent ke) {
+					if (10 == ke.getKeyCode()) {
+						maximizeButton.doClick();
+					}
 				}
 			}
-		});
+		);
 
         maximizeButton.setName("maximizar"); //$NON-NLS-1$
         // Se asigna una dimension por defecto
@@ -375,20 +361,24 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
         accessibilityButtonsPanel.add(panel, c);
 
         // Asignamos las acciones
-        restoreButton.addActionListener(new ActionListener() {
-            /** Accion del boton. */
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                restaurarActionPerformed(restoreButton, maximizeButton);
-            }
-        });
-        maximizeButton.addActionListener(new ActionListener() {
-            /** Accion del boton. */
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                maximizarActionPerformed(restoreButton, maximizeButton);
-            }
-        });
+        restoreButton.addActionListener(
+    		new ActionListener() {
+	            /** Acci&oacute;n del bot&oacute;n. */
+	            @Override
+	            public void actionPerformed(final ActionEvent e) {
+	                restaurarActionPerformed(restoreButton, maximizeButton);
+	            }
+	        }
+		);
+        maximizeButton.addActionListener(
+    		new ActionListener() {
+	            /** Acci&oacute;n del bot&oacute;n. */
+	            @Override
+	            public void actionPerformed(final ActionEvent e) {
+	                maximizarActionPerformed(restoreButton, maximizeButton);
+	            }
+	        }
+		);
 
         // Habilitado/Deshabilitado de botones restaurar/maximizar
         if (GeneralConfig.isMaximized()) {
@@ -408,8 +398,8 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
     }
 
 
-    /** Cambia el tama&ntilde;o de la ventana al tama&ntilde;o m&aacute;ximo de pantalla menos el
-     * tama&ntilde;o de la barra de tareas de windows */
+    /** Cambia el tama&ntilde;o de la ventana al tama&ntilde;o m&aacute;ximo de pantalla
+     * menos el tama&ntilde;o de la barra de tareas de Windows. */
     void maximizarActionPerformed(final JButton restoreButton, final JButton maximizeButton) {
         setActualPositionX(getX());
         setActualPositionY(getY());
@@ -428,7 +418,7 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
         restoreButton.setEnabled(true);
     }
 
-    /** Restaura el tama&ntilde;o de la ventana a la posicion anterior al maximizado */
+    /** Restaura el tama&ntilde;o de la ventana a la posicion anterior al maximizado. */
     void restaurarActionPerformed(final JButton restoreButton, final JButton maximizeButton) {
         // Dimensiones de restaurado
         int minWidth = getInitialWidth();
@@ -480,14 +470,14 @@ abstract class AbstractJAccessibilityCustomDialog extends JDialog {
         private transient final JButton button;
 
         ButtonAbstractAction(final JButton actionButton) {
-            this.button = actionButton;
+            button = actionButton;
         }
 
         /** Indica que la accion es la de pulsar el boton cancelar. */
         @Override
         public void actionPerformed(final ActionEvent event) {
-        	if (this.button != null) {
-        		this.button.doClick();
+        	if (button != null) {
+        		button.doClick();
         	}
         }
     }

@@ -50,8 +50,8 @@ public interface CardConnectionListener {
      * @param cce Evento de conexi&oacute;n con la tarjeta inteligente. */
     void cardInserted(CardConnectionEvent cce);
 
-    /** Indica que se ha extra&iacute;do una tarjeta en el lector. La comunicaci&oacute;n con
-     * la tarjeta se suspender&aacute; temporalmente.
+    /** Indica que se ha extra&iacute;do una tarjeta en el lector.
+     * La comunicaci&oacute;n con la tarjeta se suspender&aacute; temporalmente.
      * @param cce Evento de conexi&oacute;n con la tarjeta inteligente. */
     void cardRemoved(CardConnectionEvent cce);
 

@@ -41,8 +41,6 @@ package es.gob.jmulticard.card.dnie;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -83,6 +81,239 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
     private transient String idesp = null;
 
+	//*************************************************************************
+	//************************ CONSTRUCTORES **********************************
+
+    /** Construye una clase que representa un DNIe 3&#46;0.
+     * @param conn Conexi&oacute;n con la tarjeta.
+     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     *                   variar entre m&aacute;quinas virtuales.
+     * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
+     * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
+     *                         las claves privadas y a los certificados mientras que, si se
+     *                         indica <code>false</code>, no se cargan, permitiendo la
+     *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
+     *                         autenticaci&oacute;n con certificados.
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
+     *                                 cerrada y no es posible abrirla.*/
+    protected Dnie3(final ApduConnection conn,
+    	            final PasswordCallback pwc,
+    	            final CryptoHelper cryptoHlpr,
+    	            final CallbackHandler ch,
+    	            final boolean loadCertsAndKeys) throws ApduConnectionException {
+
+        super(conn, pwc, cryptoHlpr, ch, loadCertsAndKeys);
+        rawConnection = conn;
+        if (loadCertsAndKeys) {
+        	try {
+				loadCertificates();
+			}
+        	catch (final CryptoCardException e) {
+				throw new ApduConnectionException(
+					"Error cargando los certificados del DNIe 3.0", e //$NON-NLS-1$
+				);
+			}
+        }
+
+    	// Identificamos numero de soporte (IDESP)
+		try {
+			idesp = getIdesp();
+		}
+		catch (final Exception e1) {
+			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
+			idesp = null;
+		}
+    }
+
+    /** Construye una clase que representa un DNIe 3&#46;0.
+     * @param conn Conexi&oacute;n con la tarjeta.
+     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     *                   variar entre m&aacute;quinas virtuales.
+     * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
+     *                                 cerrada y no es posible abrirla.*/
+    Dnie3(final ApduConnection conn,
+    	  final PasswordCallback pwc,
+    	  final CryptoHelper cryptoHlpr,
+    	  final CallbackHandler ch) throws ApduConnectionException {
+        this(conn, pwc, cryptoHlpr, ch, true);
+    }
+
+	//*************************************************************************
+	//******************* METODOS SOBRECARGADOS DE CLASES PADRE ***************
+
+	@Override
+    public String getCardName() {
+        return "DNIe 3.0"; //$NON-NLS-1$
+    }
+
+    /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
+     * solicita y comprueba el PIN e inmediatamente despu&eacute;s y, si la verificaci&oacute;n es correcta,
+     * establece el canal de <b>usuario</b> CWA-14890.
+     * Si falla alg&uacute;n punto del proceso, vuelve al modo inicial de conexi&oacute;n (sin canal seguro).
+     * @throws CryptoCardException Si hay problemas en el proceso.
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
+	@Override
+	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
+		openSecureChannelIfNotAlreadyOpened(true);
+	}
+
+	@Override
+	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException,
+	                                                                            PinException {
+
+        // Si el canal seguro esta ya abierto salimos sin hacer nada
+        if (isSecurityChannelOpen()) {
+        	return;
+        }
+
+        if (DEBUG) {
+        	LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
+        	LOGGER.info("Conexion subyacente: " + rawConnection); //$NON-NLS-1$
+        }
+
+        // Si la conexion esta cerrada, la reestablecemos
+        if (!getConnection().isOpen()) {
+	        try {
+				setConnection(rawConnection);
+			}
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	        		"Error en el establecimiento del canal inicial previo al seguro de PIN", e //$NON-NLS-1$
+	    		);
+			}
+        }
+
+        if (doChv) {
+	        // Establecemos el canal PIN y lo verificamos
+	        final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
+	    		this,
+	    		getConnection(),
+	    		getCryptoHelper(),
+	    		DnieFactory.getDnie3PinCwa14890Constants(idesp),
+	    		DnieFactory.getDnie3PinCwa14890Constants(idesp)
+			);
+
+	        try {
+	        	selectMasterFile();
+	        }
+	        catch (final Exception e) {
+	        	LOGGER.warning(
+	    			"Error seleccionando el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
+				);
+	        }
+
+	        try {
+	        	setConnection(pinSecureConnection);
+	        }
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	    			"Error en el establecimiento del canal seguro de PIN", e //$NON-NLS-1$
+				);
+	        }
+
+	        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
+
+	        try {
+	        	verifyPin(getInternalPasswordCallback());
+	        }
+	        catch (final PasswordCallbackNotFoundException e) {
+	        	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento del canal
+	        	// de PIN, pero continuamos para establecer el canal de usuario
+	        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN: " + e); //$NON-NLS-1$
+			}
+	        catch (final ApduConnectionException e) {
+	        	throw new CryptoCardException(
+	    			"Error en la verificacion de PIN", e //$NON-NLS-1$
+				);
+	        }
+        }
+
+		try {
+			selectMasterFile();
+		}
+		catch (final Exception e) {
+			throw new CryptoCardException(
+        		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario", e //$NON-NLS-1$
+    		);
+		}
+
+        // Establecemos ahora el canal de usuario
+        final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
+    		this,
+    		getConnection(),
+    		getCryptoHelper(),
+    		DnieFactory.getDnie3UsrCwa14890Constants(idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(idesp)
+		);
+
+        try {
+            setConnection(usrSecureConnection);
+        }
+        catch (final ApduConnectionException e) {
+            throw new CryptoCardException(
+        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
+    		);
+        }
+
+        LOGGER.info("Canal seguro de Usuario para DNIe establecido"); //$NON-NLS-1$
+    }
+
+	@Override
+	protected byte[] signInternal(final byte[] data,
+                                  final String signAlgorithm,
+                                  final PrivateKeyReference privateKeyReference) throws CryptoCardException,
+                                                                                        PinException {
+		if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
+            throw new IllegalArgumentException(
+        		"La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference" //$NON-NLS-1$
+    		);
+        }
+        return signOperation(data, signAlgorithm, privateKeyReference);
+	}
+
+	//*************************************************************************
+	//******************* METODOS DE EXCLUSIVOS DE ESTA CLASE *****************
+
+    /** Abre el canal seguro de usuario.
+     * @return Nueva conexi&oacute;n establecida.
+     * @throws CryptoCardException Si hay problemas en la apertura de canal. */
+    public ApduConnection openUserChannel() throws CryptoCardException {
+
+    	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
+    		this,
+    		getConnection(),
+    		getCryptoHelper(),
+    		DnieFactory.getDnie3UsrCwa14890Constants(idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(idesp)
+		);
+
+		try {
+			selectMasterFile();
+		}
+		catch (final Exception e) {
+			throw new CryptoCardException(
+        		"Error seleccionando el MF tras el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
+    		);
+		}
+
+        try {
+            setConnection(usrSecureConnection);
+        }
+        catch (final ApduConnectionException e) {
+            throw new CryptoCardException(
+        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
+    		);
+        }
+    	return getConnection();
+    }
+
+
+	//*************************************************************************
+	//*************** METODOS HEREDADOS DE ICAO MRTD LDS1 *********************
+
 	@Override
 	public X509Certificate[] checkSecurityObjects() throws IOException,
 	                                                       InvalidSecurityObjectException,
@@ -94,19 +325,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		final Sod sod = getSod();
 		sod.validateSignature();
 		final LdsSecurityObject ldsSecurityObject = sod.getLdsSecurityObject();
-
-		final MessageDigest md;
-		try {
-			md = MessageDigest.getInstance(
-				ldsSecurityObject.getDigestAlgorithm()
-			);
-		}
-		catch (final NoSuchAlgorithmException e) {
-			throw new IOException(
-				"No se soporta el algoritmo de huella indicado en el SOD (" + //$NON-NLS-1$
-					ldsSecurityObject.getDigestAlgorithm() + ")", e //$NON-NLS-1$
-			);
-		}
 
 		openSecureChannelIfNotAlreadyOpened(false);
 
@@ -177,8 +395,11 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 						"El SOD define huella para un DG inexistente: " + dgh.getDataGroupNumber() //$NON-NLS-1$
 					);
 			}
-			final byte[] actualHash = md.digest(dgBytes);
-			md.reset();
+			final byte[] actualHash = cryptoHelper.digest(
+				CryptoHelper.DigestAlgorithm.getDigestAlgorithm(ldsSecurityObject.getDigestAlgorithm()),
+				dgBytes
+			);
+
 			if (!Arrays.equals(actualHash, dgh.getDataGroupHashValue())) {
 				throw new InvalidSecurityObjectException(
 					"El DG" + dgh.getDataGroupNumber() + " no concuerda con la huella del SOD, " + //$NON-NLS-1$ //$NON-NLS-2$
@@ -340,7 +561,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
     @Override
 	public Sod getSod() throws IOException {
-    	final Sod sod = new Sod(this.cryptoHelper);
+    	final Sod sod = new Sod(cryptoHelper);
     	try {
 			sod.setDerValue(
 				selectFileByLocationAndRead(FILE_SOD_LOCATION)
@@ -369,226 +590,6 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el 'Common Data' (COM)", e); //$NON-NLS-1$
 		}
-	}
-
-	@Override
-    public String getCardName() {
-        return "DNIe 3.0"; //$NON-NLS-1$
-    }
-
-    /** Construye una clase que representa un DNIe.
-     * @param conn Conexi&oacute;n con la tarjeta.
-     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
-     *                     variar entre m&aacute;quinas virtuales.
-     * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
-     * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
-     *                         las claves privadas y a los certificados mientras que, si se
-     *                         indica <code>false</code>, no se cargan, permitiendo la
-     *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
-     *                         autenticaci&oacute;n con certificados.
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
-    protected Dnie3(final ApduConnection conn,
-    	            final PasswordCallback pwc,
-    	            final CryptoHelper cryptoHlpr,
-    	            final CallbackHandler ch,
-    	            final boolean loadCertsAndKeys) throws ApduConnectionException {
-
-        super(conn, pwc, cryptoHlpr, ch, loadCertsAndKeys);
-        this.rawConnection = conn;
-        if (loadCertsAndKeys) {
-        	try {
-				loadCertificates();
-			}
-        	catch (final CryptoCardException e) {
-				throw new ApduConnectionException(
-					"Error cargando los certificados del DNIe 3.0", e //$NON-NLS-1$
-				);
-			}
-        }
-
-    	// Identificamos numero de soporte (IDESP)
-		try {
-			this.idesp = getIdesp();
-		}
-		catch (final Exception e1) {
-			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
-			this.idesp = null;
-		}
-    }
-
-    /** Construye una clase que representa un DNIe.
-     * @param conn Conexi&oacute;n con la tarjeta.
-     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
-     *                     variar entre m&aacute;quinas virtuales.
-     * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
-    Dnie3(final ApduConnection conn,
-    	  final PasswordCallback pwc,
-    	  final CryptoHelper cryptoHlpr,
-    	  final CallbackHandler ch) throws ApduConnectionException {
-        this(conn, pwc, cryptoHlpr, ch, true);
-    }
-
-    /** Abre el canal seguro de usuario.
-     * @return Nueva conexi&oacute;n establecida.
-     * @throws CryptoCardException Si hay problemas en la apertura de canal. */
-    public ApduConnection openUserChannel() throws CryptoCardException {
-
-    	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
-    		this,
-    		getConnection(),
-    		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
-		);
-
-		try {
-			selectMasterFile();
-		}
-		catch (final Exception e) {
-			throw new CryptoCardException(
-        		"Error seleccionando el MF tras el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
-		}
-
-        try {
-            setConnection(usrSecureConnection);
-        }
-        catch (final ApduConnectionException e) {
-            throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
-        }
-    	return getConnection();
-    }
-
-    /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
-     * solicita y comprueba el PIN e inmediatamente despu&eacute;s y, si la verificaci&oacute;n es correcta,
-     * establece el canal de <b>usuario</b> CWA-14890.
-     * Si falla alg&uacute;n punto del proceso, vuelve al modo inicial de conexi&oacute;n (sin canal seguro).
-     * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
-	@Override
-	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
-		openSecureChannelIfNotAlreadyOpened(true);
-	}
-
-	@Override
-	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException,
-	                                                                            PinException {
-
-        // Si el canal seguro esta ya abierto salimos sin hacer nada
-        if (isSecurityChannelOpen()) {
-        	return;
-        }
-
-        if (DEBUG) {
-        	LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
-        	LOGGER.info("Conexion subyacente: " + this.rawConnection); //$NON-NLS-1$
-        }
-
-        // Si la conexion esta cerrada, la reestablecemos
-        if (!getConnection().isOpen()) {
-	        try {
-				setConnection(this.rawConnection);
-			}
-	        catch (final ApduConnectionException e) {
-	        	throw new CryptoCardException(
-	        		"Error en el establecimiento del canal inicial previo al seguro de PIN", e //$NON-NLS-1$
-	    		);
-			}
-        }
-
-        if (doChv) {
-	        // Establecemos el canal PIN y lo verificamos
-	        final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
-	    		this,
-	    		getConnection(),
-	    		getCryptoHelper(),
-	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
-	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
-			);
-
-	        try {
-	        	selectMasterFile();
-	        }
-	        catch (final Exception e) {
-	        	LOGGER.warning(
-	    			"Error seleccionando el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
-				);
-	        }
-
-	        try {
-	        	setConnection(pinSecureConnection);
-	        }
-	        catch (final ApduConnectionException e) {
-	        	throw new CryptoCardException(
-	    			"Error en el establecimiento del canal seguro de PIN", e //$NON-NLS-1$
-				);
-	        }
-
-	        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
-
-	        try {
-	        	verifyPin(getInternalPasswordCallback());
-	        }
-	        catch (final PasswordCallbackNotFoundException e) {
-	        	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento del canal
-	        	// de PIN, pero continuamos para establecer el canal de usuario
-	        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN: " + e); //$NON-NLS-1$
-			}
-	        catch (final ApduConnectionException e) {
-	        	throw new CryptoCardException(
-	    			"Error en la verificacion de PIN", e //$NON-NLS-1$
-				);
-	        }
-        }
-
-		try {
-			selectMasterFile();
-		}
-		catch (final Exception e) {
-			throw new CryptoCardException(
-        		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
-		}
-
-        // Establecemos ahora el canal de usuario
-        final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
-    		this,
-    		getConnection(),
-    		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
-		);
-
-        try {
-            setConnection(usrSecureConnection);
-        }
-        catch (final ApduConnectionException e) {
-            throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
-        }
-
-        LOGGER.info("Canal seguro de Usuario para DNIe establecido"); //$NON-NLS-1$
-    }
-
-	@Override
-	protected byte[] signInternal(final byte[] data,
-                                  final String signAlgorithm,
-                                  final PrivateKeyReference privateKeyReference) throws CryptoCardException,
-                                                                                        PinException {
-		if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
-            throw new IllegalArgumentException(
-        		"La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference" //$NON-NLS-1$
-    		);
-        }
-        return signOperation(data, signAlgorithm, privateKeyReference);
 	}
 
 	//*************************************************************************

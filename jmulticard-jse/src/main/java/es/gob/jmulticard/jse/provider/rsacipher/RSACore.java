@@ -249,12 +249,12 @@ final class RSACore {
      * The total performance cost is small.
      */
     private static final class BlindingRandomPair {
-        private final BigInteger u;
-        private final BigInteger v;
+        final BigInteger u;
+        final BigInteger v;
 
-        private BlindingRandomPair(final BigInteger pairU, final BigInteger pairV) {
-            this.u = pairU;
-            this.v = pairV;
+        BlindingRandomPair(final BigInteger pairU, final BigInteger pairV) {
+            u = pairU;
+            v = pairV;
         }
     }
 
@@ -291,14 +291,14 @@ final class RSACore {
         BlindingParameters(final BigInteger exponent,
         		           final BigInteger privateExponent,
         		           final BigInteger modulus) {
-            this.u = null;
-            this.v = null;
-            this.e = exponent;
-            this.d = privateExponent;
+            u = null;
+            v = null;
+            e = exponent;
+            d = privateExponent;
 
             final int len = modulus.bitLength();
             final SecureRandom random = new SecureRandom();
-            this.u = new BigInteger(len, random).mod(modulus);
+            u = new BigInteger(len, random).mod(modulus);
             // Although the possibility is very much limited that u is zero
             // or is not relatively prime to n, we still want to be careful
             // about the special value.
@@ -307,29 +307,29 @@ final class RSACore {
             // this time if this new generated random number is zero or is not
             // relatively prime to n.  Next time, new generated secure random
             // number will be used instead.
-            if (this.u.equals(BigInteger.ZERO)) {
-                this.u = BigInteger.ONE;     // use 1 this time
+            if (u.equals(BigInteger.ZERO)) {
+                u = BigInteger.ONE;     // use 1 this time
             }
 
             try {
                 // The call to BigInteger.modInverse() checks that u is
                 // relatively prime to n.  Otherwise, ArithmeticException is
                 // thrown.
-                this.v = this.u.modInverse(modulus);
+                v = u.modInverse(modulus);
             }
             catch (final ArithmeticException ae) {
                 // if u is not relatively prime to n, use 1 this time
-                this.u = BigInteger.ONE;
-                this.v = BigInteger.ONE;
+                u = BigInteger.ONE;
+                v = BigInteger.ONE;
             }
 
             if (exponent != null) {
-                this.u = this.u.modPow(exponent, modulus);   // e: El exponente publico
+                u = u.modPow(exponent, modulus);   // e: El exponente publico
                                       // u: random ^ e
                                       // v: random ^ (-1)
             }
             else {
-                this.v = this.v.modPow(privateExponent, modulus);   // d: El exponente privado
+                v = v.modPow(privateExponent, modulus);   // d: El exponente privado
                                       // u: random
                                       // v: random ^ (-d)
             }
@@ -340,25 +340,25 @@ final class RSACore {
         		                                 final BigInteger privateRsaExponentHash,
         		                                 final BigInteger n) {
 
-            if (this.e != null && this.e.equals(exponent) ||
-                this.d != null && this.d.equals(privateRsaExponentHash)) {
+            if (e != null && e.equals(exponent) ||
+                d != null && d.equals(privateRsaExponentHash)) {
 
                 BlindingRandomPair brp = null;
                 synchronized (this) {
-                    if (!this.u.equals(BigInteger.ZERO) &&
-                        !this.v.equals(BigInteger.ZERO)) {
+                    if (!u.equals(BigInteger.ZERO) &&
+                        !v.equals(BigInteger.ZERO)) {
 
-                        brp = new BlindingRandomPair(this.u, this.v);
-                        if (this.u.compareTo(BigInteger.ONE) <= 0 ||
-                            this.v.compareTo(BigInteger.ONE) <= 0) {
+                        brp = new BlindingRandomPair(u, v);
+                        if (u.compareTo(BigInteger.ONE) <= 0 ||
+                            v.compareTo(BigInteger.ONE) <= 0) {
 
                             // need to reset the random pair next time
-                            this.u = BigInteger.ZERO;
-                            this.v = BigInteger.ZERO;
+                            u = BigInteger.ZERO;
+                            v = BigInteger.ZERO;
                         }
                         else {
-                            this.u = this.u.modPow(BIG_TWO, n);
-                            this.v = this.v.modPow(BIG_TWO, n);
+                            u = u.modPow(BIG_TWO, n);
+                            v = v.modPow(BIG_TWO, n);
                         }
                     } // Otherwise, need to reset the random pair.
                 }

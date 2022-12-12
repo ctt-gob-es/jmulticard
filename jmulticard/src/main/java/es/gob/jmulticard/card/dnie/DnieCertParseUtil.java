@@ -23,7 +23,7 @@ public final class DnieCertParseUtil {
 				"El certificado no puede ser nulo" //$NON-NLS-1$
 			);
 		}
-		final String dn = c.getSubjectDN().toString();
+		final String dn = c.getSubjectX500Principal().toString();
 		String cn = getCN(dn);
 		if (cn.contains("(")) { //$NON-NLS-1$
 			cn = cn.substring(
@@ -31,46 +31,46 @@ public final class DnieCertParseUtil {
 				cn.indexOf('(')
 			).trim();
 		}
-		this.name = cn.substring(
+		name = cn.substring(
 			cn.indexOf(',') + 1
 		).trim();
-		this.sn1 = getRDNvalueFromLdapName("SN", dn); //$NON-NLS-1$
-		if (this.sn1 == null) {
-			this.sn1 = getRDNvalueFromLdapName("SURNAME", dn); //$NON-NLS-1$
+		sn1 = getRDNvalueFromLdapName("SN", dn); //$NON-NLS-1$
+		if (sn1 == null) {
+			sn1 = getRDNvalueFromLdapName("SURNAME", dn); //$NON-NLS-1$
 		}
-		if (this.sn1 == null) {
+		if (sn1 == null) {
 			// Forma del DN en Android
-            this.sn1 = getRDNvalueFromLdapName("OID.2.5.4.4", dn); //$NON-NLS-1$
+            sn1 = getRDNvalueFromLdapName("OID.2.5.4.4", dn); //$NON-NLS-1$
         }
-        if (this.sn1 == null) {
-            this.sn1 = getRDNvalueFromLdapName("2.5.4.4", dn); //$NON-NLS-1$
+        if (sn1 == null) {
+            sn1 = getRDNvalueFromLdapName("2.5.4.4", dn); //$NON-NLS-1$
         }
-		this.sn2 = cn.replace(",", "").replace(this.name, "").replace(this.sn1, "").trim(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		this.num = getRDNvalueFromLdapName("SERIALNUMBER", dn); //$NON-NLS-1$
+		sn2 = cn.replace(",", "").replace(name, "").replace(sn1, "").trim(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		num = getRDNvalueFromLdapName("SERIALNUMBER", dn); //$NON-NLS-1$
 	}
 
 	/** Obtiene el nombre del titular del DNIe.
 	 * @return Nombre del titular del DNIe. */
 	public String getName() {
-		return this.name;
+		return name;
 	}
 
 	/** Obtiene el primer apellido del titular del DNIe.
 	 * @return Primer apellido del titular del DNIe. */
 	public String getSurname1() {
-		return this.sn1;
+		return sn1;
 	}
 
 	/** Obtiene el segundo apellido del titular del DNIe.
 	 * @return Segundo apellido del titular del DNIe. */
 	public String getSurname2() {
-		return this.sn2;
+		return sn2;
 	}
 
 	/** Obtiene el n&uacute;mero del DNIe.
 	 * @return N&uacute;mero del DNIe. */
 	public String getNumber() {
-		return this.num;
+		return num;
 	}
 
     /** Obtiene el nombre com&uacute;n (Common Name, CN) de un <i>Principal</i>

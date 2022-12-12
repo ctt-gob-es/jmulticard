@@ -5,7 +5,7 @@ import javax.security.auth.callback.PasswordCallback;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
@@ -43,7 +43,7 @@ public final class TestDnieChangePIN {
 	public void testChangePIN() throws Exception {
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
 		final ApduConnection ac = ProviderUtil.getDefaultConnection();
-		final Dnie dni = DnieFactory.getDnie(ac , cpc, new JseCryptoHelper(), null);
+		final Dnie dni = DnieFactory.getDnie(ac , cpc, new BcCryptoHelper(), null);
 		dni.changePIN("password", "pinNuevo"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

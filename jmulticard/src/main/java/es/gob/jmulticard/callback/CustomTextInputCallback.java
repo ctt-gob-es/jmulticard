@@ -34,40 +34,43 @@ public final class CustomTextInputCallback implements Callback, java.io.Serializ
 
     private static final long serialVersionUID = -8064222478852811804L;
 
-    /** Mensaje a mostrar al usuario para solicitarle el texto. Puede ser nulo. */
+    /** Mensaje a mostrar al usuario para solicitarle el texto.
+     * Puede ser nulo. */
     private final String prompt;
 
     /** Texto introducido. */
     private transient String inputText;
 
     /** Crea una <i>callback</i> de solicitud de texto.
-     * @param p Mensaje a mostrar al usuario para solicitarle el texto. Puede ser nulo. */
+     * @param p Mensaje a mostrar al usuario para solicitarle el texto.
+     *          Puede ser nulo. */
     public CustomTextInputCallback(final String p) {
-    	this.prompt = p;
+    	prompt = p;
     }
 
     /** Crea una <i>callback</i> de solicitud de texto. */
     public CustomTextInputCallback() {
-    	this.prompt = null;
+    	prompt = null;
     }
 
     /** Establece el texto recuperado.
      * @param text Texto recuperado. Puede ser nulo.
      * @see #getText */
     public void setText(final String text) {
-        this.inputText = text;
+        inputText = text;
     }
 
     /** Obtiene el texto recuperado.
      * @return Texto recuperado, puede ser nulo.
      * @see #setText */
     public String getText() {
-        return this.inputText;
+        return inputText;
     }
 
     /** Obtiene el mensaje a mostrar al usuario para solicitarle el texto.
-     * @return Mensaje a mostrar al usuario para solicitarle el texto. Puede ser nulo. */
+     * @return Mensaje a mostrar al usuario para solicitarle el texto.
+     *         Puede ser nulo. */
     public String getPrompt() {
-    	return this.prompt;
+    	return prompt;
     }
 }

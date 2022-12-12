@@ -1,5 +1,7 @@
 package test.es.gob.jmulticard;
 
+import java.security.MessageDigest;
+
 import org.junit.Assert;
 
 import es.gob.jmulticard.HexUtils;
@@ -76,5 +78,15 @@ public class TestHexUtils extends TestCase {
         for (int i = 0; i < result.length; i++) {
             Assert.assertEquals(expectedResult[i], result[i]);
         }
+    }
+
+    /** Pruebas de longitud de huella.
+     * @param args No se usa.
+     * @throws Exception En cualquier error. */
+    public static void main(final String[] args) throws Exception {
+    	System.out.println(MessageDigest.getInstance("SHA1").getDigestLength()); //$NON-NLS-1$
+    	System.out.println(MessageDigest.getInstance("SHA-256").getDigestLength()); //$NON-NLS-1$
+    	System.out.println(MessageDigest.getInstance("SHA-384").getDigestLength()); //$NON-NLS-1$
+    	System.out.println(MessageDigest.getInstance("SHA-512").getDigestLength()); //$NON-NLS-1$
     }
 }

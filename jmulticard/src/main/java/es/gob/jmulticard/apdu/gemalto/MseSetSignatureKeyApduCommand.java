@@ -46,7 +46,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Carlos Gamuci Mill&aacute;n */
 public final class MseSetSignatureKeyApduCommand extends CommandApdu {
 
-    /** Byte de instrucci&oacute;n de la APDU. */
+    /** Octeto de instrucci&oacute;n de la APDU. */
     private static final byte INS_MANAGE_ENVIROMENT = (byte) 0x22;
 
     /** Establece la clave indicada para firma. */
@@ -58,7 +58,7 @@ public final class MseSetSignatureKeyApduCommand extends CommandApdu {
     /** Etiqueta para hacer referencia a un fichero dedicado. */
     private static final byte PRIVATE_KEY_REFERENCE = (byte) 0x84;
 
-    /** Etiqueta para hacer referencia a un fichero dedicado. */
+    /** Etiqueta para hacer referencia a un mecanismo criptogr&aacute;fico. */
     private static final byte CRYPTOGRAPHIC_MECHANISM = (byte) 0x80;
 
     /** Mecanismo criptogr&aacute;fico a usar con la clave privada establecida. */
@@ -76,13 +76,13 @@ public final class MseSetSignatureKeyApduCommand extends CommandApdu {
     	private final byte value;
 
     	CryptographicMechanism(final byte v) {
-    		this.value = v;
+    		value = v;
     	}
 
     	/** Obtiene el valor del mecanismo.
     	 * @return Valor del mecanismo */
     	public byte getValue() {
-    		return this.value;
+    		return value;
     	}
     }
 

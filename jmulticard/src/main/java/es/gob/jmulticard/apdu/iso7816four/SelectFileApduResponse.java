@@ -47,8 +47,13 @@ import es.gob.jmulticard.apdu.ResponseApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SelectFileApduResponse extends ResponseApdu {
 
+	/** Nombre del DF que contiene el EF. */
     private transient byte[] dfName = null;
+
+    /** Identificador del EF seleccionado. */
     private transient byte[] fileId = null;
+
+    /** Longitud (en octetos) del EF seleccionado. */
     private transient byte[] fileLength = null;
 
     /** Construye una APDU respuesta al comando APDU ISO 7816-4 de selecci&oacute;n de fichero.
@@ -70,25 +75,25 @@ public final class SelectFileApduResponse extends ResponseApdu {
                 // Tamano del fichero
                 if (getData()[propInformationIndex] == (byte) 0x81) {
                 	final int lengthLength = getData()[++propInformationIndex];
-                	this.fileLength = getBytesFromData(++propInformationIndex, lengthLength);
+                	fileLength = getBytesFromData(++propInformationIndex, lengthLength);
                 	propInformationIndex += lengthLength;
                 }
                 // FileID
                 if (getData()[propInformationIndex] == (byte) 0x81) {
                 	final int fileIdLength = getData()[++propInformationIndex];
-                	this.fileId = getBytesFromData(++propInformationIndex, fileIdLength);
+                	fileId = getBytesFromData(++propInformationIndex, fileIdLength);
                 	propInformationIndex += fileIdLength;
                 }
                 // Nombre del DF
                 if (getData()[propInformationIndex] == (byte) 0x84) {
                     final int nameLength = getData()[++propInformationIndex];
-                    this.dfName = getBytesFromData(++propInformationIndex, nameLength);
+                    dfName = getBytesFromData(++propInformationIndex, nameLength);
                     propInformationIndex += nameLength;
                 }
                 // El campo FCI propietario 0x85 en tarjetas FNMT contiene el FileID y el tamano
                 if (getData()[propInformationIndex] == (byte) 0x85 && getData()[propInformationIndex + 1] == 10) {
-                    this.fileId = getBytesFromData(propInformationIndex + 3, 2);
-                    this.fileLength = getBytesFromData(propInformationIndex + 5, 2);
+                    fileId = getBytesFromData(propInformationIndex + 3, 2);
+                    fileLength = getBytesFromData(propInformationIndex + 5, 2);
                 }
             }
         }
@@ -103,9 +108,9 @@ public final class SelectFileApduResponse extends ResponseApdu {
     /** Obtiene el nombre del DF.
      * @return Nombre del DF */
     byte[] getDfName() {
-    	if (this.dfName != null) {
-	        final byte[] out = new byte[this.dfName.length];
-	        System.arraycopy(this.dfName, 0, out, 0, this.dfName.length);
+    	if (dfName != null) {
+	        final byte[] out = new byte[dfName.length];
+	        System.arraycopy(dfName, 0, out, 0, dfName.length);
 	        return out;
     	}
     	return null;
@@ -114,9 +119,9 @@ public final class SelectFileApduResponse extends ResponseApdu {
     /** Devuelve el identificador del fichero seleccionado.
      * @return Identificador del fichero */
     byte[] getFileId() {
-    	if (this.fileId != null) {
-	        final byte[] out = new byte[this.fileId.length];
-	        System.arraycopy(this.fileId, 0, out, 0, this.fileId.length);
+    	if (fileId != null) {
+	        final byte[] out = new byte[fileId.length];
+	        System.arraycopy(fileId, 0, out, 0, fileId.length);
 	        return out;
     	}
     	return null;
@@ -125,8 +130,8 @@ public final class SelectFileApduResponse extends ResponseApdu {
     /** Devuelve la longitud del fichero seleccionado.
      * @return Longitud del fichero */
     public int getFileLength() {
-    	if (this.fileLength != null) {
-    		return (this.fileLength[0] & 0xFF) << 8 | this.fileLength[1] & 0xFF;
+    	if (fileLength != null) {
+    		return (fileLength[0] & 0xFF) << 8 | fileLength[1] & 0xFF;
     	}
     	// Un DF puede no tener tamano en el FCI
     	return 0;

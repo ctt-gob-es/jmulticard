@@ -11,14 +11,14 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PrivateKeyReference;
-import es.gob.jmulticard.card.dnie.DnieNFC;
+import es.gob.jmulticard.card.dnie.DnieNfc;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
 
 /** Pasaporte accedido de forma inal&aacute;mbrica mediante PACE.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class IcaoMrtdWithPace extends DnieNFC {
+public final class IcaoMrtdWithPace extends DnieNfc {
 
 	/** Construye una clase que representa un MRTD accedido de forma
 	 * inal&aacute;mbrica mediante PACE.

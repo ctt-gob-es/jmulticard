@@ -45,8 +45,7 @@ import es.gob.jmulticard.HexUtils;
 
 /** Palabra de estado (<cite>Status Word</cite>) de una APDU.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote
- * @author Gonzalo Henr&iacute;quez Manzano.
- * @version 1.0 */
+ * @author Gonzalo Henr&iacute;quez Manzano." */
 public final class StatusWord implements Serializable {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
@@ -62,28 +61,28 @@ public final class StatusWord implements Serializable {
      * @param mostSigniticativeByte Octeto m&aacute;s significativo de la palabra de estado.
      * @param lessSignificativeByte Octeto menos significativo de la palabra de estado. */
     public StatusWord(final byte mostSigniticativeByte, final byte lessSignificativeByte) {
-        this.msb = mostSigniticativeByte;
-        this.lsb = lessSignificativeByte;
+        msb = mostSigniticativeByte;
+        lsb = lessSignificativeByte;
     }
 
     /** Obtiene el octeto m&aacute;s significativo de la palabra de estado.
      * @return Octeto m&aacute;s significativo de la palabra de estado.
      * @see #getLsb() */
     public byte getMsb() {
-        return this.msb;
+        return msb;
     }
 
     /** Obtiene el octeto menos significativo de la palabra de estado.
      * @return Octeto menos significativo de la palabra de estado.
      * @see #getMsb() */
     public byte getLsb() {
-        return this.lsb;
+        return lsb;
     }
 
     /** Obtiene los octetos que conforman el StatusWord.
      * @return Array de octetos que conforman el <i>StatusWord</i>. */
     public byte[] getBytes() {
-    	return new byte[] { this.msb, this.lsb };
+    	return new byte[] { msb, lsb };
     }
 
     /** Compara dos palabras de estado.
@@ -94,7 +93,7 @@ public final class StatusWord implements Serializable {
             return false;
         }
         final StatusWord other = (StatusWord) obj;
-        if (this.lsb == other.lsb && this.msb == other.msb) {
+        if (lsb == other.lsb && msb == other.msb) {
             return true;
         }
         return false;
@@ -106,7 +105,7 @@ public final class StatusWord implements Serializable {
     public int hashCode() {
         return HexUtils.getShort(
     		new byte[] {
-                this.msb, this.lsb
+                msb, lsb
     		},
     		0
 		);
@@ -117,10 +116,10 @@ public final class StatusWord implements Serializable {
     	return StandardErrorCodes.getErrorDescription(this);
     }
 
-    /** Indica si la palabra de estado corresponde a una ejecuci&oacute;n sin errores (90-00)-
+    /** Indica si la palabra de estado corresponde a una ejecuci&oacute;n sin errores (90-00).
      * @return <code>true</code> si la palabra de estado corresponde a una ejecuci&oacute;n sin errores,
      *         <code>false</code> en caso contrario. */
     public boolean isOk() {
-    	return this.msb == (byte) 0x90 && this.lsb == (byte) 0x00;
+    	return msb == (byte) 0x90 && lsb == (byte) 0x00;
     }
 }

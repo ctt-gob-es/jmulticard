@@ -45,20 +45,20 @@ import java.security.PublicKey;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.  */
 public interface Cwa14890PublicConstants {
 
-    /** Obtiene la referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
-     * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.
+    /** Obtiene la referencia al fichero en donde reside la clave p&uacute;blica de la autoridad
+     * certificadora ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.
      * @return Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
-     * ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.*/
+     *         ra&iacute;z de la jerarqu&iacute;a de certificados verificables por la tarjeta.*/
     byte[] getRefCCvCaPublicKey();
 
     /** Obtiene el certificado de la CA intermedia de terminal verificable por la tarjeta.
      * @return Certificado de la CA intermedia de terminal verificable por la tarjeta.*/
     byte[] getCCvCa();
 
-    /** Obtiene el identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
-     * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
-     * Aqu&iacute; se obtienen los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
-     * utiliza).
+    /** Obtiene el identificador de la CA intermedia (CHR).
+     * El campo ocupa siempre 12 bytes, y si el n&uacute;mero de serie es de menor longitud se rellena
+     * con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
+     * Aqu&iacute; se obtienen los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se utiliza).
      * @return Identificador de la CA intermedia (CHR). */
     byte[] getChrCCvCa();
 
@@ -72,8 +72,7 @@ public interface Cwa14890PublicConstants {
 
     /** Obtiene el identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
-     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
-     * utiliza).
+     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se utiliza).
      * @return Identificador de la CA intermedia (CHR). */
     byte[] getChrCCvIfd();
 

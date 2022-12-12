@@ -11,8 +11,11 @@ import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.cert.CertificateFactory;
+import java.security.cert.CertificateFactorySpi;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -55,19 +58,19 @@ import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.JseCryptoHelper;
 
 
-/** Pruebas de operaciones criptogr&aacute;ficas con JseCryptoHelper.
+/** Pruebas de operaciones criptogr&aacute;ficas con BcCryptoHelper.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestCryptoHelper {
 
-	private static final CryptoHelper CH = new JseCryptoHelper();
+	private static final CryptoHelper CH = new BcCryptoHelper();
 
 	/** Pruebas de descifrado AES.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testAesDecrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
@@ -81,7 +84,7 @@ public final class TestCryptoHelper {
 			0x04, 0x00, 0x06, 0x00, 0x00, (byte) 0xee, 0x00, 0x30,
 			0x00, 0x01, 0x00, 0x08, (byte) 0xff, 0x00, 0x20, 0x00
 		};
-		final byte[] in = new JseCryptoHelper().aesEncrypt(
+		final byte[] in = new BcCryptoHelper().aesEncrypt(
 			testString.getBytes(),
 			iv,
 			key,
@@ -157,6 +160,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testAesEncrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
@@ -278,17 +282,18 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDes() throws Exception {
 		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
-		final byte[] c1 = new JseCryptoHelper().desEncrypt(indata, key);
+		final byte[] c1 = new BcCryptoHelper().desEncrypt(indata, key);
 		final byte[] c2 = new BcCryptoHelper().desEncrypt(indata, key);
 
 		System.out.println(HexUtils.hexify(c1, false));
 		System.out.println(HexUtils.hexify(c2, false));
 
-		final byte[] c3 = new JseCryptoHelper().desDecrypt(c2, key);
+		final byte[] c3 = new BcCryptoHelper().desDecrypt(c2, key);
 		final byte[] c4 = new BcCryptoHelper().desDecrypt(c1, key);
 
 		System.out.println(new String(c3));
@@ -302,17 +307,18 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testDesede() throws Exception {
 		final byte[] key = "12345678abcdefgh".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
-		final byte[] c1 = new JseCryptoHelper().desedeEncrypt(indata, key);
+		final byte[] c1 = new BcCryptoHelper().desedeEncrypt(indata, key);
 		final byte[] c2 = new BcCryptoHelper().desedeEncrypt(indata, key);
 
 		System.out.println(HexUtils.hexify(c1, false));
 		System.out.println(HexUtils.hexify(c2, false));
 
-		final byte[] c3 = new JseCryptoHelper().desedeDecrypt(c2, key);
+		final byte[] c3 = new BcCryptoHelper().desedeDecrypt(c2, key);
 		final byte[] c4 = new BcCryptoHelper().desedeDecrypt(c1, key);
 
 		System.out.println(new String(c3));
@@ -409,7 +415,7 @@ public final class TestCryptoHelper {
 
         @Override
         public BigInteger getModulus() {
-            return this.ifdModulus;
+            return ifdModulus;
         }
 
         @Override
@@ -429,7 +435,7 @@ public final class TestCryptoHelper {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return this.ifdPrivateExponent;
+            return ifdPrivateExponent;
         }
     };
 
@@ -437,6 +443,7 @@ public final class TestCryptoHelper {
 	 * @throws IOException En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void testRsa() throws IOException {
 		final byte[] res1 = doRsaJca(RSA_TEST_DATA, RSA_TEST_PRIVATE_KEY);
 		System.out.println("Resultado con JCA: " + HexUtils.hexify(res1, false)); //$NON-NLS-1$
@@ -527,6 +534,7 @@ public final class TestCryptoHelper {
 	 * @throws Exception Si falla el 3DES. */
 	@SuppressWarnings("static-method")
 	@Test
+	@Ignore
 	public void test3Des() throws Exception {
 		final byte[] key = {
 			(byte) 0xE0, (byte) 0x35, (byte) 0x76, (byte) 0xA0, (byte) 0x62, (byte) 0x53, (byte) 0x87, (byte) 0x36,
@@ -561,5 +569,17 @@ public final class TestCryptoHelper {
 		);
     }
 
+    /** Pruebas de generaci&oaccute;n dee certificados.
+     * @throws Exception En cualquier error. */
+    @SuppressWarnings("static-method")
+	@Test
+    public void testCertFactory() throws Exception {
+    	final Provider p = new BouncyCastleProvider();
+    	Security.insertProviderAt(p, 1);
+    	final CertificateFactory cf = CertificateFactory.getInstance("X.509", p);
+    	System.out.println(cf.getClass().getName());
+    	final CertificateFactorySpi cfspi = new org.spongycastle.jcajce.provider.asymmetric.x509.CertificateFactory();
+
+    }
 
 }

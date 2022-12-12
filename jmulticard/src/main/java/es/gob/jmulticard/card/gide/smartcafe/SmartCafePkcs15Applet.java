@@ -16,7 +16,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
@@ -146,7 +145,7 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
         if (cryptoHlpr == null) {
             throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
-        this.cryptoHelper = cryptoHlpr;
+        cryptoHelper = cryptoHlpr;
 
         // Conectamos
         conn.reset();
@@ -277,13 +276,13 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
 	/** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.
      * @param pwc <code>PasswordCallback</code> para el PIN de la tarjeta. */
     public void setPasswordCallback(final PasswordCallback pwc) {
-    	this.passwordCallback = pwc;
+    	passwordCallback = pwc;
     }
 
     /** Establece el <code>CallbackHandler</code>.
      * @param callh <code>CallbackHandler</code> a establecer. */
 	public void setCallbackHandler(final CallbackHandler callh) {
-		this.callbackHandler = callh;
+		callbackHandler = callh;
 	}
 
     /** Conecta con el lector del sistema que tenga una tarjeta insertada.
@@ -362,7 +361,7 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
 
                 CERTS_BY_ALIAS.put(
                     cdf.getCertificateAlias(i),
-                    CertificateUtils.generateCertificate(certBytes)
+                    cryptoHelper.generateCertificate(certBytes)
                 );
             }
             catch (final Exception e) {
@@ -503,10 +502,10 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
 		final SmartCafePrivateKeyReference scPrivateKey = (SmartCafePrivateKeyReference) keyRef;
 
 		// Pedimos el PIN si no se ha pedido antes
-		if (!this.authenticated) {
+		if (!authenticated) {
 			try {
 				verifyPin(getInternalPasswordCallback());
-				this.authenticated = true;
+				authenticated = true;
 			}
 			catch (final ApduConnectionException e1) {
 				throw new CryptoCardException("Error en la verificacion de PIN", e1); //$NON-NLS-1$
@@ -538,7 +537,7 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
 		// Creamos el DigestInfo
         final byte[] digestInfo;
         try {
-            digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
+            digestInfo = DigestInfo.encode(algorithm, data, cryptoHelper);
         }
         catch (final IOException e) {
             throw new CryptoCardException("Error en el calculo de la huella para firmar", e); //$NON-NLS-1$
@@ -585,14 +584,14 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
     }
 
     private PasswordCallback getInternalPasswordCallback() throws PinException {
-    	if (this.passwordCallback != null) {
+    	if (passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
     		if(retriesLeft == 0) {
     			throw new AuthenticationModeLockedException();
     		}
-    		return this.passwordCallback;
+    		return passwordCallback;
     	}
-    	if (this.callbackHandler != null) {
+    	if (callbackHandler != null) {
         	final int retriesLeft = getPinRetriesLeft();
         	if(retriesLeft == 0) {
         		throw new AuthenticationModeLockedException();
@@ -602,7 +601,7 @@ public final class SmartCafePkcs15Applet extends AbstractIso7816FourCard impleme
 				false
 			);
 			try {
-				this.callbackHandler.handle(
+				callbackHandler.handle(
 					new Callback[] {
 						pwc
 					}
