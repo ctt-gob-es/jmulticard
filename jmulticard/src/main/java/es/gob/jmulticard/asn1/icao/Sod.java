@@ -40,9 +40,9 @@ public final class Sod extends DecoderObject {
 
 	/** Valida la firma electr&oacute;nica del SOD.
 	 * @throws TlvException Si el SOD no es un TLV correctamente formado.
-	 * @throws IOException
-	 * @throws CertificateException
-	 * @throws SignatureException
+	 * @throws SignatureException Si la firma no es v&aacute;lida.
+	 * @throws CertificateException Si hay problemas relacionados con los certificados de firma.
+	 * @throws IOException Si los datos proporcionados no son una firma CMS/PKCS#7 bien formada.
 	 * @throws Asn1Exception Si el SOD no contiene un <code>LDSSecurityObject</code> v&aacute;lido. */
 	public void validateSignature() throws TlvException,
 	                                       SignatureException,

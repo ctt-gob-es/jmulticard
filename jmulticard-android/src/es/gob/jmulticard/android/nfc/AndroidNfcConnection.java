@@ -1,12 +1,11 @@
 package es.gob.jmulticard.android.nfc;
 
-import android.nfc.Tag;
-import android.nfc.tech.IsoDep;
-import android.util.Log;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import android.nfc.Tag;
+import android.nfc.tech.IsoDep;
+import android.util.Log;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
@@ -110,8 +109,8 @@ public final class AndroidNfcConnection implements ApduConnection {
             // Evitamos que salga el PIN en la traza de excepcion
             throw new ApduConnectionException(
                 "Error tratando de transmitir la APDU" + //$NON-NLS-1$
-                    ((command instanceof VerifyApduCommand) ? " de verificacion de PIN" : //$NON-NLS-1$
-                        (" " + HexUtils.hexify(command.getBytes(), true))) +
+                    (command instanceof VerifyApduCommand ? " de verificacion de PIN" : //$NON-NLS-1$
+                        " " + HexUtils.hexify(command.getBytes(), true)) +
                             " via NFC", //$NON-NLS-1$
                 e
             );
@@ -134,7 +133,7 @@ public final class AndroidNfcConnection implements ApduConnection {
         if (response.getStatusWord().getMsb() == 97) {
             if (response.getData().length > 0) {
                 final byte[] data = response.getData();
-                final byte[] additionalData = this.transmit(
+                final byte[] additionalData = transmit(
                     new GetResponseApduCommand(
                         (byte) 0, response.getStatusWord().getLsb()
                     )
@@ -150,13 +149,13 @@ public final class AndroidNfcConnection implements ApduConnection {
                 );
                 return new ResponseApdu(fullResponse);
             }
-            return this.transmit(
+            return transmit(
                 new GetResponseApduCommand((byte) 0, response.getStatusWord().getLsb())
             );
         }
         if (response.getStatusWord().getMsb() == 108 && command.getCla() == 0) {
             command.setLe(response.getStatusWord().getLsb());
-            return this.transmit(command);
+            return transmit(command);
         }
 
         if (DEBUG) {

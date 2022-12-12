@@ -43,6 +43,7 @@ public class TestDerBoolean extends TestCase {
     		}
 		);
         Assert.assertEquals(
+        	"Error de decodificacion DER", //$NON-NLS-1$
     		"010100", //$NON-NLS-1$
     		HexUtils.hexify(db.getBytes(), false)
 		);

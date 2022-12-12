@@ -48,13 +48,15 @@ public class DnieNFCCallbackHandler implements CallbackHandler {
 					final ShowPinDialogTask spdt = new ShowPinDialogTask(dialog, ft, this.activity, this.dialogDone);
 					final String input = spdt.getInput();
 
-					((PasswordCallback) cb).setPassword(input.toCharArray());
+					if (input != null) {
+						((PasswordCallback) cb).setPassword(input.toCharArray());
+					}
 
 					return;
 				}
 				String input;
 				if (cb instanceof CustomTextInputCallback) {
-					if(this.passwordCallback == null) {
+					if (this.passwordCallback == null) {
 						final PinDialog dialog = new PinDialog(
 							true,
 							this.activity,

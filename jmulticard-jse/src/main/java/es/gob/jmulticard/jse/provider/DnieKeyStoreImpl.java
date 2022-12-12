@@ -97,12 +97,13 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
      * @throws IOException Si no se puede leer el objeto DG01.
      * @throws UnsupportedOperationException Si el objeto actual no es un DNIe 3&#46;0. */
     public Dnie3Dg01Mrz getDnie3Dg01() throws IOException {
-    	if (!(cryptoCard instanceof Dnie3)) {
+    	if (!(this.cryptoCard instanceof Dnie3)) {
     		throw new UnsupportedOperationException(
 				"El objeto DG01 solo esta presente en DNIe 3.0" //$NON-NLS-1$
 			);
     	}
-    	return (Dnie3Dg01Mrz) ((Dnie3)cryptoCard).getDg1();
+
+    	return (Dnie3Dg01Mrz) ((Dnie3) this.cryptoCard).getDg1();
     }
 
     /** Obtiene el objeto DG02 (fotograf&iacute;a del titular en formato JPEG2000) del DNIe 3&#46;0.
@@ -110,22 +111,22 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
      * @throws IOException Si no se puede leer el objeto DG02.
      * @throws UnsupportedOperationException Si el objeto actual no es un DNIe 3&#46;0. */
     public byte[] getDnie3Dg02() throws IOException {
-    	if (!(cryptoCard instanceof Dnie3)) {
+    	if (!(this.cryptoCard instanceof Dnie3)) {
     		throw new UnsupportedOperationException(
 				"El objeto DG02 solo esta presente en DNIe 3.0" //$NON-NLS-1$
 			);
     	}
-    	return ((Dnie3)cryptoCard).getDg2().getBytes();
+    	return ((Dnie3) this.cryptoCard).getDg2().getBytes();
     }
 
     @Override
     public Enumeration<String> engineAliases() {
-        return Collections.enumeration(aliases);
+        return Collections.enumeration(this.aliases);
     }
 
     @Override
     public boolean engineContainsAlias(final String alias) {
-        return aliases.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     @Override
@@ -134,7 +135,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		return null;
     	}
         try {
-			return cryptoCard.getCertificate(alias);
+			return this.cryptoCard.getCertificate(alias);
 		}
         catch (final CryptoCardException e) {
 			throw new ProviderException(e);
@@ -150,7 +151,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
             return null;
         }
         final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
-        for (final String alias : aliases) {
+        for (final String alias : this.aliases) {
             if (((X509Certificate) engineGetCertificate(alias)).getSerialNumber() == serial) {
                 return alias;
             }
@@ -172,7 +173,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	// certificado de la CA intermedia. Si no se puede recuperar esta ultima, se obvia
     	X509Certificate intermediateCaCert;
     	try {
-    		intermediateCaCert = cryptoCard.getCertificate(INTERMEDIATE_CA_CERT_ALIAS);
+    		intermediateCaCert = this.cryptoCard.getCertificate(INTERMEDIATE_CA_CERT_ALIAS);
     	}
     	catch (final AuthenticationModeLockedException e) {
     		throw e;
@@ -257,9 +258,9 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	if (password != null) {
     		// Establecemos el PasswordCallback
     		final PasswordCallback pwc = new CachePasswordCallback(password);
-    		cryptoCard.setPasswordCallback(pwc);
+    		this.cryptoCard.setPasswordCallback(pwc);
     	}
-        final PrivateKeyReference pkRef = cryptoCard.getPrivateKey(alias);
+        final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof DniePrivateKeyReference)) {
 			throw new ProviderException(
 				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
@@ -279,7 +280,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		// Establecemos el CallbackHandler
     		final CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
     		if(chp != null) {
-    			cryptoCard.setCallbackHandler(chp);
+    			this.cryptoCard.setCallbackHandler(chp);
     		}
     	}
     	else if (protParam instanceof KeyStore.PasswordProtection) {
@@ -287,7 +288,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		final PasswordCallback pwc = new CachePasswordCallback(
 				((KeyStore.PasswordProtection)protParam).getPassword()
 			);
-    		cryptoCard.setPasswordCallback(pwc);
+    		this.cryptoCard.setPasswordCallback(pwc);
     	}
     	else {
     		LOGGER.warning(
@@ -313,7 +314,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 
     @Override
     public boolean engineIsKeyEntry(final String alias) {
-        return aliases.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     @Override
@@ -324,11 +325,10 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
     				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
     			}
-    			cryptoCard = DnieFactory.getDnie(
+    			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					null,
-					CRYPTO_HELPER,
-					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
+					CRYPTO_HELPER,					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
@@ -336,7 +336,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 					(PasswordProtection) pp,
 					JMultiCardProviderMessages.getString("DnieKeyStoreImpl.0") //$NON-NLS-1$
 				);
-    			cryptoCard = DnieFactory.getDnie(
+    			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					pwc,
 					CRYPTO_HELPER,
@@ -351,7 +351,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     		}
     	}
     	else {
-	    	cryptoCard = DnieFactory.getDnie(
+	    	this.cryptoCard = DnieFactory.getDnie(
 				DnieProvider.getDefaultApduConnection(),
 				null,
 				CRYPTO_HELPER,
@@ -359,7 +359,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 			);
     	}
 
-    	aliases = Arrays.asList(cryptoCard.getAliases());
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     @Override
@@ -376,21 +376,18 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
-    	cryptoCard = DnieFactory.getDnie(
+    	this.cryptoCard = DnieFactory.getDnie(
     		conn,
-    		password != null ?
-				new CachePasswordCallback(password) :
-					null,
-						CRYPTO_HELPER,
-    		null
+    		password != null ? new CachePasswordCallback(password) : null,
+			new BcCryptoHelper(),    		null
 		);
 
-    	aliases = Arrays.asList(cryptoCard.getAliases());
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     @Override
     public int engineSize() {
-        return aliases.size();
+        return this.aliases.size();
     }
 
     @Override
@@ -442,5 +439,4 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 		);
         return new Date();
     }
-
 }
