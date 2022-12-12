@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.x500.X500Principal;
 
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
@@ -162,7 +162,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     			}
     			this.cryptoCard = new Ceres(
 					CeresProvider.getDefaultApduConnection(),
-					new JseCryptoHelper()
+					new BcCryptoHelper()
 				);
     			this.cryptoCard.setCallbackHandler(((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler());
     		}
@@ -173,7 +173,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
 				);
     			this.cryptoCard = new Ceres(
 					CeresProvider.getDefaultApduConnection(),
-					new JseCryptoHelper()
+					new BcCryptoHelper()
 				);
     			this.cryptoCard.setPasswordCallback(pwc);
     		}
@@ -186,7 +186,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     	else {
 	    	this.cryptoCard = new Ceres(
 				CeresProvider.getDefaultApduConnection(),
-				new JseCryptoHelper()
+				new BcCryptoHelper()
 			);
     	}
 
@@ -198,7 +198,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
         // Aqui se realiza el acceso e inicializacion de la tarjeta
         this.cryptoCard = new Ceres(
     		getApduConnection(),
-    		new JseCryptoHelper()
+    		new BcCryptoHelper()
 		);
 
         // Precargamos los alias

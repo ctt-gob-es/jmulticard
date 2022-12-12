@@ -63,7 +63,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
@@ -202,7 +202,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     	final ApduConnection conn = ProviderUtil.getDefaultConnection();
 
         // Aqui se realiza el acceso e inicializacion de la tarjeta
-    	this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
+    	this.cryptoCard = new SmartCafePkcs15Applet(conn, new BcCryptoHelper());
     	if (password != null) {
     		this.cryptoCard.setPasswordCallback(new CachePasswordCallback(password));
     	}
@@ -212,7 +212,7 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     @Override
     public void engineLoad(final KeyStore.LoadStoreParameter param) throws IOException {
 		final ApduConnection conn = ProviderUtil.getDefaultConnection();
-		this.cryptoCard = new SmartCafePkcs15Applet(conn, new JseCryptoHelper());
+		this.cryptoCard = new SmartCafePkcs15Applet(conn, new BcCryptoHelper());
     	if (param != null) {
     		final ProtectionParameter pp = param.getProtectionParameter();
     		if (pp instanceof KeyStore.CallbackHandlerProtection) {

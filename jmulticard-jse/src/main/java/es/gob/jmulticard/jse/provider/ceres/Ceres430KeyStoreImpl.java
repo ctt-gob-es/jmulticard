@@ -64,7 +64,7 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.JseCryptoHelper;
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
@@ -215,7 +215,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     			this.cryptoCard = new CeresSc(
 					Ceres430Provider.getDefaultApduConnection(),
 					null,
-					new JseCryptoHelper(),
+					new BcCryptoHelper(),
 					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
 				);
     		}
@@ -227,7 +227,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     			this.cryptoCard = new CeresSc(
 					Ceres430Provider.getDefaultApduConnection(),
 					pwc,
-					new JseCryptoHelper(),
+					new BcCryptoHelper(),
 					null
 				);
     		}
@@ -241,7 +241,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
 	    	this.cryptoCard = new CeresSc(
 				Ceres430Provider.getDefaultApduConnection(),
 				null,
-				new JseCryptoHelper(),
+				new BcCryptoHelper(),
 				null
 			);
     	}
@@ -268,7 +268,7 @@ public final class Ceres430KeyStoreImpl extends KeyStoreSpi {
     		password != null ?
 				new CachePasswordCallback(password) :
 					null,
-    		new JseCryptoHelper(),
+    		new BcCryptoHelper(),
     		null
 		);
 

@@ -65,8 +65,8 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CertificateUtils;
-import es.gob.jmulticard.JseCryptoHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
@@ -325,7 +325,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					null,
-					new JseCryptoHelper(),
+					new BcCryptoHelper(),
 					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
 				);
     		}
@@ -337,7 +337,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
     			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					pwc,
-					new JseCryptoHelper(),
+					new BcCryptoHelper(),
 					null
 				);
     		}
@@ -352,7 +352,7 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
 	    	this.cryptoCard = DnieFactory.getDnie(
 				DnieProvider.getDefaultApduConnection(),
 				null,
-				new JseCryptoHelper(),
+				new BcCryptoHelper(),
 				null
 			);
     	}
@@ -376,10 +376,8 @@ public final class DnieKeyStoreImpl extends KeyStoreSpi {
         // Aqui se realiza el acceso e inicializacion del DNIe
     	this.cryptoCard = DnieFactory.getDnie(
     		conn,
-    		password != null ?
-				new CachePasswordCallback(password) :
-					null,
-    		new JseCryptoHelper(),
+    		password != null ? new CachePasswordCallback(password) : null,
+			new BcCryptoHelper(),
     		null
 		);
 
