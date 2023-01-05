@@ -25,24 +25,24 @@ public class XMSSPublicKey
     private final byte[] publicSeed;
     private final byte[] root;
 
-    public XMSSPublicKey(byte[] publicSeed, byte[] root)
+    public XMSSPublicKey(final byte[] publicSeed, final byte[] root)
     {
         this.publicSeed = Arrays.clone(publicSeed);
         this.root = Arrays.clone(root);
     }
 
-    private XMSSPublicKey(ASN1Sequence seq)
+    private XMSSPublicKey(final ASN1Sequence seq)
     {
         if (!ASN1Integer.getInstance(seq.getObjectAt(0)).hasValue(0))
         {
             throw new IllegalArgumentException("unknown version of sequence");
         }
 
-        this.publicSeed = Arrays.clone(DEROctetString.getInstance(seq.getObjectAt(1)).getOctets());
-        this.root = Arrays.clone(DEROctetString.getInstance(seq.getObjectAt(2)).getOctets());
+        publicSeed = Arrays.clone(DEROctetString.getInstance(seq.getObjectAt(1)).getOctets());
+        root = Arrays.clone(DEROctetString.getInstance(seq.getObjectAt(2)).getOctets());
     }
 
-    public static XMSSPublicKey getInstance(Object o)
+    public static XMSSPublicKey getInstance(final Object o)
     {
         if (o instanceof XMSSPublicKey)
         {
@@ -66,9 +66,10 @@ public class XMSSPublicKey
         return Arrays.clone(root);
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        final ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(new ASN1Integer(0)); // version
 

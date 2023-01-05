@@ -16,7 +16,8 @@ public class ISO7816d4Padding
      *
      * @param random - a SecureRandom if available.
      */
-    public void init(SecureRandom random)
+    @Override
+	public void init(SecureRandom random)
         throws IllegalArgumentException
     {
         // nothing to do.
@@ -27,7 +28,8 @@ public class ISO7816d4Padding
      *
      * @return the name of the algorithm the padder implements.
      */
-    public String getPaddingName()
+    @Override
+	public String getPaddingName()
     {
         return "ISO7816-4";
     }
@@ -36,7 +38,8 @@ public class ISO7816d4Padding
      * add the pad bytes to the passed in block, returning the
      * number of bytes added.
      */
-    public int addPadding(
+    @Override
+	public int addPadding(
         byte[]  in,
         int     inOff)
     {
@@ -57,7 +60,8 @@ public class ISO7816d4Padding
     /**
      * return the number of pad bytes present in the block.
      */
-    public int padCount(byte[] in)
+    @Override
+	public int padCount(byte[] in)
         throws InvalidCipherTextException
     {
         int count = in.length - 1;

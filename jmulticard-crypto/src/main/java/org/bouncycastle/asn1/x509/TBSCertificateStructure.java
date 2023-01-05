@@ -30,6 +30,7 @@ import org.bouncycastle.asn1.x500.X500Name;
  * will parse them, but you really shouldn't be creating new ones.
  * @deprecated use TBSCertificate
  */
+@Deprecated
 public class TBSCertificateStructure
     extends ASN1Object
     implements X509ObjectIdentifiers, PKCSObjectIdentifiers
@@ -48,14 +49,14 @@ public class TBSCertificateStructure
     X509Extensions          extensions;
 
     public static TBSCertificateStructure getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static TBSCertificateStructure getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof TBSCertificateStructure)
         {
@@ -70,7 +71,7 @@ public class TBSCertificateStructure
     }
 
     public TBSCertificateStructure(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
         int         seqStart = 0;
 
@@ -97,7 +98,7 @@ public class TBSCertificateStructure
         //
         // before and after dates
         //
-        ASN1Sequence  dates = (ASN1Sequence)seq.getObjectAt(seqStart + 4);
+        final ASN1Sequence  dates = (ASN1Sequence)seq.getObjectAt(seqStart + 4);
 
         startDate = Time.getInstance(dates.getObjectAt(0));
         endDate = Time.getInstance(dates.getObjectAt(1));
@@ -111,7 +112,7 @@ public class TBSCertificateStructure
 
         for (int extras = seq.size() - (seqStart + 6) - 1; extras > 0; extras--)
         {
-            ASN1TaggedObject extra = ASN1TaggedObject.getInstance(seq.getObjectAt(seqStart + 6 + extras));
+            final ASN1TaggedObject extra = ASN1TaggedObject.getInstance(seq.getObjectAt(seqStart + 6 + extras));
 
             switch (extra.getTagNo())
             {
@@ -187,7 +188,8 @@ public class TBSCertificateStructure
         return extensions;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return seq;
     }

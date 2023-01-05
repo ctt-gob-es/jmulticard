@@ -18,17 +18,20 @@ public class DERNull
     {
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, 0);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.NULL, zeroBytes);
     }

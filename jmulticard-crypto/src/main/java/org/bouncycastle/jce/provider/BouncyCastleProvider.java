@@ -150,7 +150,8 @@ public final class BouncyCastleProvider extends Provider
 
         AccessController.doPrivileged(new PrivilegedAction()
         {
-            public Object run()
+            @Override
+			public Object run()
             {
                 setup();
                 return null;
@@ -275,7 +276,8 @@ public final class BouncyCastleProvider extends Provider
         addKeyInfoConverter(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, new LMSKeyFactorySpi());
     }
 
-    public void setParameter(String parameterName, Object parameter)
+    @Override
+	public void setParameter(String parameterName, Object parameter)
     {
         synchronized (CONFIGURATION)
         {
@@ -283,12 +285,14 @@ public final class BouncyCastleProvider extends Provider
         }
     }
 
-    public boolean hasAlgorithm(String type, String name)
+    @Override
+	public boolean hasAlgorithm(String type, String name)
     {
         return containsKey(type + "." + name) || containsKey("Alg.Alias." + type + "." + name);
     }
 
-    public void addAlgorithm(String key, String value)
+    @Override
+	public void addAlgorithm(String key, String value)
     {
         if (containsKey(key))
         {
@@ -298,13 +302,15 @@ public final class BouncyCastleProvider extends Provider
         put(key, value);
     }
 
-    public void addAlgorithm(String type, ASN1ObjectIdentifier oid, String className)
+    @Override
+	public void addAlgorithm(String type, ASN1ObjectIdentifier oid, String className)
     {
         addAlgorithm(type + "." + oid, className);
         addAlgorithm(type + ".OID." + oid, className);
     }
 
-    public void addKeyInfoConverter(ASN1ObjectIdentifier oid, AsymmetricKeyInfoConverter keyInfoConverter)
+    @Override
+	public void addKeyInfoConverter(ASN1ObjectIdentifier oid, AsymmetricKeyInfoConverter keyInfoConverter)
     {
         synchronized (keyInfoConverters)
         {
@@ -312,12 +318,14 @@ public final class BouncyCastleProvider extends Provider
         }
     }
 
-    public AsymmetricKeyInfoConverter getKeyInfoConverter(ASN1ObjectIdentifier oid)
+    @Override
+	public AsymmetricKeyInfoConverter getKeyInfoConverter(ASN1ObjectIdentifier oid)
     {
         return (AsymmetricKeyInfoConverter)keyInfoConverters.get(oid);
     }
 
-    public void addAttributes(String key, Map<String, String> attributeMap)
+    @Override
+	public void addAttributes(String key, Map<String, String> attributeMap)
     {
         for (Iterator it = attributeMap.keySet().iterator(); it.hasNext();)
         {

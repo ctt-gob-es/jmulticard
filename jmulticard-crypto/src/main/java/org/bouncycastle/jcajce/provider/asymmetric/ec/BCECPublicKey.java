@@ -226,17 +226,20 @@ public class BCECPublicKey
         this.ecPublicKey = new ECPublicKeyParameters(derQ.getPoint(), ECUtil.getDomainParameters(configuration, params));
     }
 
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return algorithm;
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         boolean pcSet = Properties.isOverrideSet("org.bouncycastle.ec.enable_pc");
         if (encoding == null || oldPcSet != pcSet)
@@ -257,12 +260,14 @@ public class BCECPublicKey
         return Arrays.clone(encoding);
     }
 
-    public ECParameterSpec getParams()
+    @Override
+	public ECParameterSpec getParams()
     {
         return ecSpec;
     }
 
-    public org.bouncycastle.jce.spec.ECParameterSpec getParameters()
+    @Override
+	public org.bouncycastle.jce.spec.ECParameterSpec getParameters()
     {
         if (ecSpec == null)     // implictlyCA
         {
@@ -272,12 +277,14 @@ public class BCECPublicKey
         return EC5Util.convertSpec(ecSpec);
     }
 
-    public ECPoint getW()
+    @Override
+	public ECPoint getW()
     {
         return EC5Util.convertPoint(ecPublicKey.getQ());
     }
 
-    public org.bouncycastle.math.ec.ECPoint getQ()
+    @Override
+	public org.bouncycastle.math.ec.ECPoint getQ()
     {
         org.bouncycastle.math.ec.ECPoint q = ecPublicKey.getQ();
 
@@ -304,18 +311,21 @@ public class BCECPublicKey
         return configuration.getEcImplicitlyCa();
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return ECUtil.publicKeyToString("EC", ecPublicKey.getQ(), engineGetSpec());
     }
     
-    public void setPointFormat(String style)
+    @Override
+	public void setPointFormat(String style)
     {
        withCompression = !("UNCOMPRESSED".equalsIgnoreCase(style));
        encoding = null;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o instanceof BCECPublicKey)
         {
@@ -334,7 +344,8 @@ public class BCECPublicKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return ecPublicKey.getQ().hashCode() ^ engineGetSpec().hashCode();
     }

@@ -12,13 +12,15 @@ public class SPHINCSPlusKeyPairGenerator
     private SecureRandom random;
     private SPHINCSPlusParameters parameters;
 
-    public void init(KeyGenerationParameters param)
+    @Override
+	public void init(KeyGenerationParameters param)
     {
         random = param.getRandom();
         parameters = ((SPHINCSPlusKeyGenerationParameters)param).getParameters();
     }
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         SPHINCSPlusEngine engine = parameters.getEngine();
 

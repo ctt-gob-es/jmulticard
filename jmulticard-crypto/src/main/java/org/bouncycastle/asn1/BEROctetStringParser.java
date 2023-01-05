@@ -24,7 +24,8 @@ public class BEROctetStringParser
      *
      * @return an InputStream with its source as the OCTET STRING content.
      */
-    public InputStream getOctetStream()
+    @Override
+	public InputStream getOctetStream()
     {
         return new ConstructedOctetStream(_parser);
     }
@@ -35,7 +36,8 @@ public class BEROctetStringParser
      * @return a BEROctetString.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return parse(_parser);
@@ -46,7 +48,8 @@ public class BEROctetStringParser
      *
      * @return an BEROctetString
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

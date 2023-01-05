@@ -159,7 +159,8 @@ class BDSTreeHash
         return tailNode;
     }
 
-    protected BDSTreeHash clone()
+    @Override
+	protected BDSTreeHash clone()
     {
         BDSTreeHash th = new BDSTreeHash(this.initialHeight);
 

@@ -15,7 +15,7 @@ final class OTSHashAddress
     private final int chainAddress;
     private final int hashAddress;
 
-    private OTSHashAddress(Builder builder)
+    private OTSHashAddress(final Builder builder)
     {
         super(builder);
         otsAddress = builder.otsAddress;
@@ -37,38 +37,41 @@ final class OTSHashAddress
             super(TYPE);
         }
 
-        protected Builder withOTSAddress(int val)
+        protected Builder withOTSAddress(final int val)
         {
             otsAddress = val;
             return this;
         }
 
-        protected Builder withChainAddress(int val)
+        protected Builder withChainAddress(final int val)
         {
             chainAddress = val;
             return this;
         }
 
-        protected Builder withHashAddress(int val)
+        protected Builder withHashAddress(final int val)
         {
             hashAddress = val;
             return this;
         }
 
-        protected XMSSAddress build()
+        @Override
+		protected XMSSAddress build()
         {
             return new OTSHashAddress(this);
         }
 
-        protected Builder getThis()
+        @Override
+		protected Builder getThis()
         {
             return this;
         }
     }
 
-    protected byte[] toByteArray()
+    @Override
+	protected byte[] toByteArray()
     {
-        byte[] byteRepresentation = super.toByteArray();
+        final byte[] byteRepresentation = super.toByteArray();
         Pack.intToBigEndian(otsAddress, byteRepresentation,16);
         Pack.intToBigEndian(chainAddress, byteRepresentation, 20);
         Pack.intToBigEndian(hashAddress, byteRepresentation, 24);

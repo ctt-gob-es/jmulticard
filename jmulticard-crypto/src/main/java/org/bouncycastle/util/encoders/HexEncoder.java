@@ -62,12 +62,14 @@ public class HexEncoder
         return outPos - outOff;
     }
 
-    public int getEncodedLength(int inputLength)
+    @Override
+	public int getEncodedLength(int inputLength)
     {
         return inputLength * 2;
     }
 
-    public int getMaxDecodedLength(int inputLength)
+    @Override
+	public int getMaxDecodedLength(int inputLength)
     {
         return inputLength / 2;
     }
@@ -77,7 +79,8 @@ public class HexEncoder
      *
      * @return the number of bytes produced.
      */
-    public int encode(byte[] buf, int off, int len, OutputStream out) 
+    @Override
+	public int encode(byte[] buf, int off, int len, OutputStream out) 
         throws IOException
     {
         if (len < 0)
@@ -110,7 +113,8 @@ public class HexEncoder
      *
      * @return the number of bytes produced.
      */
-    public int decode(
+    @Override
+	public int decode(
         byte[]          data,
         int             off,
         int             length,
@@ -180,7 +184,8 @@ public class HexEncoder
      *
      * @return the number of bytes produced.
      */
-    public int decode(
+    @Override
+	public int decode(
         String          data,
         OutputStream    out)
         throws IOException

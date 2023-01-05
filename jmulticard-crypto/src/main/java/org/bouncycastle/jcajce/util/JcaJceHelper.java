@@ -61,7 +61,8 @@ public interface JcaJceHelper
         throws NoSuchAlgorithmException, NoSuchProviderException;
 
     /** @deprecated Use createMessageDigest instead */
-    MessageDigest createDigest(String algorithm)
+    @Deprecated
+	MessageDigest createDigest(String algorithm)
         throws NoSuchAlgorithmException, NoSuchProviderException;
 
     MessageDigest createMessageDigest(String algorithm)

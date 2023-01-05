@@ -5,5 +5,6 @@ public interface XMSSOid
 
     int getOid();
 
-    String toString();
+    @Override
+	String toString();
 }

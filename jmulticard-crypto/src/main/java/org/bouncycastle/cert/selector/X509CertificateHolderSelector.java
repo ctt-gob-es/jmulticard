@@ -73,7 +73,8 @@ public class X509CertificateHolderSelector
         return Arrays.clone(subjectKeyId);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int code = Arrays.hashCode(subjectKeyId);
 
@@ -90,7 +91,8 @@ public class X509CertificateHolderSelector
         return code;
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  o)
     {
         if (!(o instanceof X509CertificateHolderSelector))
@@ -110,7 +112,8 @@ public class X509CertificateHolderSelector
         return (a != null) ? a.equals(b) : b == null;
     }
 
-    public boolean match(Object obj)
+    @Override
+	public boolean match(Object obj)
     {
         if (obj instanceof X509CertificateHolder)
         {
@@ -145,7 +148,8 @@ public class X509CertificateHolderSelector
         return false;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new X509CertificateHolderSelector(this.issuer, this.serialNumber, this.subjectKeyId);
     }

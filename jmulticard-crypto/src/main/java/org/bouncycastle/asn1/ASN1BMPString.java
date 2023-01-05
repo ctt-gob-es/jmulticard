@@ -18,7 +18,8 @@ public abstract class ASN1BMPString
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1BMPString.class, BERTags.BMP_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -31,7 +32,7 @@ public abstract class ASN1BMPString
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return an ASN1BMPString instance, or null.
      */
-    public static ASN1BMPString getInstance(Object obj)
+    public static ASN1BMPString getInstance(final Object obj)
     {
         if (obj == null || obj instanceof ASN1BMPString)
         {
@@ -39,7 +40,7 @@ public abstract class ASN1BMPString
         }
         if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1BMPString)
             {
                 return (ASN1BMPString)primitive;
@@ -51,7 +52,7 @@ public abstract class ASN1BMPString
             {
                 return (ASN1BMPString)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -69,14 +70,14 @@ public abstract class ASN1BMPString
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return an ASN1BMPString instance.
      */
-    public static ASN1BMPString getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1BMPString getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1BMPString)TYPE.getContextInstance(taggedObject, explicit);
     }
 
     final char[] string;
 
-    ASN1BMPString(String string)
+    ASN1BMPString(final String string)
     {
         if (string == null)
         {
@@ -86,31 +87,31 @@ public abstract class ASN1BMPString
         this.string = string.toCharArray();
     }
 
-    ASN1BMPString(byte[] string)
+    ASN1BMPString(final byte[] string)
     {
         if (string == null)
         {
             throw new NullPointerException("'string' cannot be null");
         }
 
-        int byteLen = string.length;
+        final int byteLen = string.length;
         if (0 != (byteLen & 1))
         {
             throw new IllegalArgumentException("malformed BMPString encoding encountered");
         }
 
-        int charLen = byteLen / 2;
-        char[] cs = new char[charLen];
+        final int charLen = byteLen / 2;
+        final char[] cs = new char[charLen];
 
         for (int i = 0; i != charLen; i++)
         {
-            cs[i] = (char)((string[2 * i] << 8) | (string[2 * i + 1] & 0xff));
+            cs[i] = (char)(string[2 * i] << 8 | string[2 * i + 1] & 0xff);
         }
 
         this.string = cs;
     }
 
-    ASN1BMPString(char[] string)
+    ASN1BMPString(final char[] string)
     {
         if (string == null)
         {
@@ -120,56 +121,64 @@ public abstract class ASN1BMPString
         this.string = string;
     }
 
-    public final String getString()
+    @Override
+	public final String getString()
     {
         return new String(string);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getString();
     }
 
-    final boolean asn1Equals(ASN1Primitive other)
+    @Override
+	final boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1BMPString))
         {
             return false;
         }
 
-        ASN1BMPString that = (ASN1BMPString)other;
+        final ASN1BMPString that = (ASN1BMPString)other;
 
-        return Arrays.areEqual(this.string, that.string);
+        return Arrays.areEqual(string, that.string);
     }
 
-    public final int hashCode()
+    @Override
+	public final int hashCode()
     {
         return Arrays.hashCode(string);
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    final int encodedLength(boolean withTag)
+    @Override
+	final int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, string.length * 2);
     }
 
-    final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        int count = string.length;
+        final int count = string.length;
 
         out.writeIdentifier(withTag, BERTags.BMP_STRING);
         out.writeDL(count * 2);
 
-        byte[] buf = new byte[8];
+        final byte[] buf = new byte[8];
 
-        int i = 0, limit = count & -4;
+        int i = 0;
+		final int limit = count & -4;
         while (i < limit)
         {
-            char c0 = string[i], c1 = string[i + 1], c2 = string[i + 2], c3 = string[i + 3];
+            final char c0 = string[i], c1 = string[i + 1], c2 = string[i + 2], c3 = string[i + 3];
             i += 4;
 
             buf[0] = (byte)(c0 >> 8);
@@ -188,7 +197,7 @@ public abstract class ASN1BMPString
             int bufPos = 0;
             do
             {
-                char c0 = string[i];
+                final char c0 = string[i];
                 i += 1;
 
                 buf[bufPos++] = (byte)(c0 >> 8);
@@ -200,12 +209,12 @@ public abstract class ASN1BMPString
         }
     }
 
-    static ASN1BMPString createPrimitive(byte[] contents)
+    static ASN1BMPString createPrimitive(final byte[] contents)
     {
         return new DERBMPString(contents);
     }
 
-    static ASN1BMPString createPrimitive(char[] string)
+    static ASN1BMPString createPrimitive(final char[] string)
     {
         // TODO ASN1InputStream has a validator/converter that should be unified in this class somehow
         return new DERBMPString(string);

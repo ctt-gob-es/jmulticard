@@ -23,17 +23,20 @@ public class GLVTypeBEndomorphism implements GLVEndomorphism
         this.pointMap = new ScaleXPointMap(curve.fromBigInteger(parameters.getBeta()));
     }
 
-    public BigInteger[] decomposeScalar(BigInteger k)
+    @Override
+	public BigInteger[] decomposeScalar(BigInteger k)
     {
         return EndoUtil.decomposeScalar(parameters.getSplitParams(), k);
     }
 
-    public ECPointMap getPointMap()
+    @Override
+	public ECPointMap getPointMap()
     {
         return pointMap;
     }
 
-    public boolean hasEfficientPointMap()
+    @Override
+	public boolean hasEfficientPointMap()
     {
         return true;
     }

@@ -50,7 +50,8 @@ public class McEliecePublicKey
         return new GF2Matrix(g);
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector v = new ASN1EncodableVector();
 

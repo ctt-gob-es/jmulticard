@@ -30,17 +30,20 @@ public final class GOST3411_2012_256Digest
         reset(other);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "GOST3411-2012-256";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return 32;
     }
 
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(byte[] out, int outOff)
     {
         byte[] result = new byte[64];
         super.doFinal(result, 0);
@@ -50,7 +53,8 @@ public final class GOST3411_2012_256Digest
         return 32;
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new GOST3411_2012_256Digest(this);
     }

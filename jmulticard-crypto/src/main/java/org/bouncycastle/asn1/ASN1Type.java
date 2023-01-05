@@ -14,12 +14,14 @@ abstract class ASN1Type
         return javaClass;
     }
 
-    public final boolean equals(Object that)
+    @Override
+	public final boolean equals(Object that)
     {
         return this == that;
     }
 
-    public final int hashCode()
+    @Override
+	public final int hashCode()
     {
         return super.hashCode();
     }

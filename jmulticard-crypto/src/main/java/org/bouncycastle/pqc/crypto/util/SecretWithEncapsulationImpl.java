@@ -21,21 +21,24 @@ public class SecretWithEncapsulationImpl
         this.cipher_text = cipher_text;
     }
 
-    public byte[] getSecret()
+    @Override
+	public byte[] getSecret()
     {
         checkDestroyed();
 
         return Arrays.clone(sessionKey);
     }
 
-    public byte[] getEncapsulation()
+    @Override
+	public byte[] getEncapsulation()
     {
         checkDestroyed();
 
         return Arrays.clone(cipher_text);
     }
 
-    public void destroy()
+    @Override
+	public void destroy()
         throws DestroyFailedException
     {
         if (!hasBeenDestroyed.getAndSet(true))
@@ -45,7 +48,8 @@ public class SecretWithEncapsulationImpl
         }
     }
 
-    public boolean isDestroyed()
+    @Override
+	public boolean isDestroyed()
     {
         return hasBeenDestroyed.get();
     }

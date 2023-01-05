@@ -47,168 +47,192 @@ public class BcDefaultDigestProvider
 
         table.put(OIWObjectIdentifiers.idSHA1, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA1Digest();
             }
         });
         table.put(NISTObjectIdentifiers.id_sha224, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA224Digest();
             }
         });
         table.put(NISTObjectIdentifiers.id_sha256, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA256Digest();
             }
         });
         table.put(NISTObjectIdentifiers.id_sha384, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA384Digest();
             }
         });
         table.put(NISTObjectIdentifiers.id_sha512, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA512Digest();
             }
         });
         table.put(NISTObjectIdentifiers.id_sha3_224, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA3Digest(224);
             }
         });
         table.put(NISTObjectIdentifiers.id_sha3_256, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA3Digest(256);
             }
         });
         table.put(NISTObjectIdentifiers.id_sha3_384, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA3Digest(384);
             }
         });
         table.put(NISTObjectIdentifiers.id_sha3_512, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHA3Digest(512);
             }
         });
         table.put(NISTObjectIdentifiers.id_shake128, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHAKEDigest(128);
             }
         });
         table.put(NISTObjectIdentifiers.id_shake256, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SHAKEDigest(256);
             }
         });
         table.put(NISTObjectIdentifiers.id_shake128_len, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new AdjustedXof(new SHAKEDigest(128), ASN1Integer.getInstance(digestAlgorithmIdentifier.getParameters()).intValueExact());
             }
         });
         table.put(NISTObjectIdentifiers.id_shake256_len, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new AdjustedXof(new SHAKEDigest(256), ASN1Integer.getInstance(digestAlgorithmIdentifier.getParameters()).intValueExact());
             }
         });
         table.put(PKCSObjectIdentifiers.md5, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new MD5Digest();
             }
         });
         table.put(PKCSObjectIdentifiers.md4, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new MD4Digest();
             }
         });
         table.put(PKCSObjectIdentifiers.md2, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new MD2Digest();
             }
         });
         table.put(CryptoProObjectIdentifiers.gostR3411, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new GOST3411Digest();
             }
         });
         table.put(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_256, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new GOST3411_2012_256Digest();
             }
         });
         table.put(RosstandartObjectIdentifiers.id_tc26_gost_3411_12_512, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new GOST3411_2012_512Digest();
             }
         });
         table.put(TeleTrusTObjectIdentifiers.ripemd128, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new RIPEMD128Digest();
             }
         });
         table.put(TeleTrusTObjectIdentifiers.ripemd160, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new RIPEMD160Digest();
             }
         });
         table.put(TeleTrusTObjectIdentifiers.ripemd256, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new RIPEMD256Digest();
             }
         });
         table.put(GMObjectIdentifiers.sm3, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new SM3Digest();
             }
         });
         table.put(MiscObjectIdentifiers.blake3_256, new BcDigestProvider()
         {
-            public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+            @Override
+			public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
             {
                 return new Blake3Digest(256);
             }
@@ -224,7 +248,8 @@ public class BcDefaultDigestProvider
 
     }
 
-    public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
+    @Override
+	public ExtendedDigest get(AlgorithmIdentifier digestAlgorithmIdentifier)
         throws OperatorCreationException
     {
         BcDigestProvider extProv = (BcDigestProvider)lookup.get(digestAlgorithmIdentifier.getAlgorithm());
@@ -252,47 +277,56 @@ public class BcDefaultDigestProvider
             this.length = length;
         }
 
-        public String getAlgorithmName()
+        @Override
+		public String getAlgorithmName()
         {
             return xof.getAlgorithmName() + "-" + length;
         }
 
-        public int getDigestSize()
+        @Override
+		public int getDigestSize()
         {
             return (length + 7) / 8;
         }
 
-        public void update(byte in)
+        @Override
+		public void update(byte in)
         {
             xof.update(in);
         }
 
-        public void update(byte[] in, int inOff, int len)
+        @Override
+		public void update(byte[] in, int inOff, int len)
         {
             xof.update(in, inOff, len);
         }
 
-        public int doFinal(byte[] out, int outOff)
+        @Override
+		public int doFinal(byte[] out, int outOff)
         {
             return doFinal(out, outOff, getDigestSize());
         }
 
-        public void reset()
+        @Override
+		public void reset()
         {
             xof.reset();
         }
 
-        public int getByteLength()
+        @Override
+		public int getByteLength()
         {
             return xof.getByteLength();
         }
 
-        public int doFinal(byte[] out, int outOff, int outLen)
+        @Override
+		public int doFinal(byte[] out, int outOff, int outLen)
         {
             return xof.doFinal(out, outOff, outLen);
         }
 
-        public int doOutput(byte[] out, int outOff, int outLen)
+        @Override
+		public int doOutput(byte[] out, int outOff, int outLen)
         {
             return xof.doOutput(out, outOff, outLen);
         }

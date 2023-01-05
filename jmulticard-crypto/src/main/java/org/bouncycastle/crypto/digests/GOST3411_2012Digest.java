@@ -43,22 +43,26 @@ public abstract class GOST3411_2012Digest
 
     private int bOff = 64;
 
-    public GOST3411_2012Digest(byte[] IV)
+    public GOST3411_2012Digest(final byte[] IV)
     {
         System.arraycopy(IV, 0, this.IV, 0, 64);
         System.arraycopy(IV, 0, h, 0, 64);
     }
 
-    public int getByteLength()
+    @Override
+	public int getByteLength()
     {
         return 64;
     }
 
-    public abstract String getAlgorithmName();
+    @Override
+	public abstract String getAlgorithmName();
 
-    public abstract int getDigestSize();
+    @Override
+	public abstract int getDigestSize();
 
-    public void update(byte in)
+    @Override
+	public void update(final byte in)
     {
         block[--bOff] = in;
         if (bOff == 0)
@@ -70,7 +74,8 @@ public abstract class GOST3411_2012Digest
         }
     }
 
-    public void update(byte[] in, int inOff, int len)
+    @Override
+	public void update(final byte[] in, int inOff, int len)
     {
         while (bOff != 64 && len > 0)
         {
@@ -95,9 +100,10 @@ public abstract class GOST3411_2012Digest
         }
     }
 
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(final byte[] out, final int outOff)
     {
-        int lenM = 64 - bOff;
+        final int lenM = 64 - bOff;
 
         // At this point it is certain that lenM is smaller than 64
         for (int i = 0; i != 64 - lenM; i++)
@@ -125,7 +131,8 @@ public abstract class GOST3411_2012Digest
         return 64;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         bOff = 64;
         Arrays.fill(N, (byte)0);
@@ -134,114 +141,116 @@ public abstract class GOST3411_2012Digest
         Arrays.fill(block, (byte)0);
     }
 
-    public abstract Memoable copy();
+    @Override
+	public abstract Memoable copy();
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(final Memoable other)
     {
-        GOST3411_2012Digest o = (GOST3411_2012Digest)other;
+        final GOST3411_2012Digest o = (GOST3411_2012Digest)other;
 
-        System.arraycopy(o.IV, 0, this.IV, 0, 64);
-        System.arraycopy(o.N, 0, this.N, 0, 64);
-        System.arraycopy(o.Sigma, 0, this.Sigma, 0, 64);
-        System.arraycopy(o.Ki, 0, this.Ki, 0, 64);
-        System.arraycopy(o.m, 0, this.m, 0, 64);
-        System.arraycopy(o.h, 0, this.h, 0, 64);
+        System.arraycopy(o.IV, 0, IV, 0, 64);
+        System.arraycopy(o.N, 0, N, 0, 64);
+        System.arraycopy(o.Sigma, 0, Sigma, 0, 64);
+        System.arraycopy(o.Ki, 0, Ki, 0, 64);
+        System.arraycopy(o.m, 0, m, 0, 64);
+        System.arraycopy(o.h, 0, h, 0, 64);
 
-        System.arraycopy(o.block, 0, this.block, 0, 64);
-        this.bOff = o.bOff;
+        System.arraycopy(o.block, 0, block, 0, 64);
+        bOff = o.bOff;
     }
 
-    private void F(byte[] V)
+    private void F(final byte[] V)
     {
-        long[] res = new long[8];
+        final long[] res = new long[8];
         long r;
 
         r = 0;
-        r ^= T[0][(V[56] & 0xFF)];
-        r ^= T[1][(V[48] & 0xFF)];
-        r ^= T[2][(V[40] & 0xFF)];
-        r ^= T[3][(V[32] & 0xFF)];
-        r ^= T[4][(V[24] & 0xFF)];
-        r ^= T[5][(V[16] & 0xFF)];
-        r ^= T[6][(V[8] & 0xFF)];
-        r ^= T[7][(V[0] & 0xFF)];
+        r ^= T[0][V[56] & 0xFF];
+        r ^= T[1][V[48] & 0xFF];
+        r ^= T[2][V[40] & 0xFF];
+        r ^= T[3][V[32] & 0xFF];
+        r ^= T[4][V[24] & 0xFF];
+        r ^= T[5][V[16] & 0xFF];
+        r ^= T[6][V[8] & 0xFF];
+        r ^= T[7][V[0] & 0xFF];
         res[0] = r;
 
         r = 0;
-        r ^= T[0][(V[57] & 0xFF)];
-        r ^= T[1][(V[49] & 0xFF)];
-        r ^= T[2][(V[41] & 0xFF)];
-        r ^= T[3][(V[33] & 0xFF)];
-        r ^= T[4][(V[25] & 0xFF)];
-        r ^= T[5][(V[17] & 0xFF)];
-        r ^= T[6][(V[9] & 0xFF)];
-        r ^= T[7][(V[1] & 0xFF)];
+        r ^= T[0][V[57] & 0xFF];
+        r ^= T[1][V[49] & 0xFF];
+        r ^= T[2][V[41] & 0xFF];
+        r ^= T[3][V[33] & 0xFF];
+        r ^= T[4][V[25] & 0xFF];
+        r ^= T[5][V[17] & 0xFF];
+        r ^= T[6][V[9] & 0xFF];
+        r ^= T[7][V[1] & 0xFF];
         res[1] = r;
 
         r = 0;
-        r ^= T[0][(V[58] & 0xFF)];
-        r ^= T[1][(V[50] & 0xFF)];
-        r ^= T[2][(V[42] & 0xFF)];
-        r ^= T[3][(V[34] & 0xFF)];
-        r ^= T[4][(V[26] & 0xFF)];
-        r ^= T[5][(V[18] & 0xFF)];
-        r ^= T[6][(V[10] & 0xFF)];
-        r ^= T[7][(V[2] & 0xFF)];
+        r ^= T[0][V[58] & 0xFF];
+        r ^= T[1][V[50] & 0xFF];
+        r ^= T[2][V[42] & 0xFF];
+        r ^= T[3][V[34] & 0xFF];
+        r ^= T[4][V[26] & 0xFF];
+        r ^= T[5][V[18] & 0xFF];
+        r ^= T[6][V[10] & 0xFF];
+        r ^= T[7][V[2] & 0xFF];
         res[2] = r;
 
         r = 0;
-        r ^= T[0][(V[59] & 0xFF)];
-        r ^= T[1][(V[51] & 0xFF)];
-        r ^= T[2][(V[43] & 0xFF)];
-        r ^= T[3][(V[35] & 0xFF)];
-        r ^= T[4][(V[27] & 0xFF)];
-        r ^= T[5][(V[19] & 0xFF)];
-        r ^= T[6][(V[11] & 0xFF)];
-        r ^= T[7][(V[3] & 0xFF)];
+        r ^= T[0][V[59] & 0xFF];
+        r ^= T[1][V[51] & 0xFF];
+        r ^= T[2][V[43] & 0xFF];
+        r ^= T[3][V[35] & 0xFF];
+        r ^= T[4][V[27] & 0xFF];
+        r ^= T[5][V[19] & 0xFF];
+        r ^= T[6][V[11] & 0xFF];
+        r ^= T[7][V[3] & 0xFF];
         res[3] = r;
 
         r = 0;
-        r ^= T[0][(V[60] & 0xFF)];
-        r ^= T[1][(V[52] & 0xFF)];
-        r ^= T[2][(V[44] & 0xFF)];
-        r ^= T[3][(V[36] & 0xFF)];
-        r ^= T[4][(V[28] & 0xFF)];
-        r ^= T[5][(V[20] & 0xFF)];
-        r ^= T[6][(V[12] & 0xFF)];
-        r ^= T[7][(V[4] & 0xFF)];
+        r ^= T[0][V[60] & 0xFF];
+        r ^= T[1][V[52] & 0xFF];
+        r ^= T[2][V[44] & 0xFF];
+        r ^= T[3][V[36] & 0xFF];
+        r ^= T[4][V[28] & 0xFF];
+        r ^= T[5][V[20] & 0xFF];
+        r ^= T[6][V[12] & 0xFF];
+        r ^= T[7][V[4] & 0xFF];
         res[4] = r;
 
         r = 0;
-        r ^= T[0][(V[61] & 0xFF)];
-        r ^= T[1][(V[53] & 0xFF)];
-        r ^= T[2][(V[45] & 0xFF)];
-        r ^= T[3][(V[37] & 0xFF)];
-        r ^= T[4][(V[29] & 0xFF)];
-        r ^= T[5][(V[21] & 0xFF)];
-        r ^= T[6][(V[13] & 0xFF)];
-        r ^= T[7][(V[5] & 0xFF)];
+        r ^= T[0][V[61] & 0xFF];
+        r ^= T[1][V[53] & 0xFF];
+        r ^= T[2][V[45] & 0xFF];
+        r ^= T[3][V[37] & 0xFF];
+        r ^= T[4][V[29] & 0xFF];
+        r ^= T[5][V[21] & 0xFF];
+        r ^= T[6][V[13] & 0xFF];
+        r ^= T[7][V[5] & 0xFF];
         res[5] = r;
 
         r = 0;
-        r ^= T[0][(V[62] & 0xFF)];
-        r ^= T[1][(V[54] & 0xFF)];
-        r ^= T[2][(V[46] & 0xFF)];
-        r ^= T[3][(V[38] & 0xFF)];
-        r ^= T[4][(V[30] & 0xFF)];
-        r ^= T[5][(V[22] & 0xFF)];
-        r ^= T[6][(V[14] & 0xFF)];
-        r ^= T[7][(V[6] & 0xFF)];
+        r ^= T[0][V[62] & 0xFF];
+        r ^= T[1][V[54] & 0xFF];
+        r ^= T[2][V[46] & 0xFF];
+        r ^= T[3][V[38] & 0xFF];
+        r ^= T[4][V[30] & 0xFF];
+        r ^= T[5][V[22] & 0xFF];
+        r ^= T[6][V[14] & 0xFF];
+        r ^= T[7][V[6] & 0xFF];
         res[6] = r;
 
         r = 0;
-        r ^= T[0][(V[63] & 0xFF)];
-        r ^= T[1][(V[55] & 0xFF)];
-        r ^= T[2][(V[47] & 0xFF)];
-        r ^= T[3][(V[39] & 0xFF)];
-        r ^= T[4][(V[31] & 0xFF)];
-        r ^= T[5][(V[23] & 0xFF)];
-        r ^= T[6][(V[15] & 0xFF)];
-        r ^= T[7][(V[7] & 0xFF)];
+        r ^= T[0][V[63] & 0xFF];
+        r ^= T[1][V[55] & 0xFF];
+        r ^= T[2][V[47] & 0xFF];
+        r ^= T[3][V[39] & 0xFF];
+        r ^= T[4][V[31] & 0xFF];
+        r ^= T[5][V[23] & 0xFF];
+        r ^= T[6][V[15] & 0xFF];
+        r ^= T[7][V[7] & 0xFF];
         res[7] = r;
 
         r = res[0];
@@ -252,7 +261,7 @@ public abstract class GOST3411_2012Digest
         V[3] = (byte)(r >> 24);
         V[2] = (byte)(r >> 16);
         V[1] = (byte)(r >> 8);
-        V[0] = (byte)(r);
+        V[0] = (byte)r;
 
         r = res[1];
         V[15] = (byte)(r >> 56);
@@ -262,7 +271,7 @@ public abstract class GOST3411_2012Digest
         V[11] = (byte)(r >> 24);
         V[10] = (byte)(r >> 16);
         V[9] = (byte)(r >> 8);
-        V[8] = (byte)(r);
+        V[8] = (byte)r;
 
         r = res[2];
         V[23] = (byte)(r >> 56);
@@ -272,7 +281,7 @@ public abstract class GOST3411_2012Digest
         V[19] = (byte)(r >> 24);
         V[18] = (byte)(r >> 16);
         V[17] = (byte)(r >> 8);
-        V[16] = (byte)(r);
+        V[16] = (byte)r;
 
         r = res[3];
         V[31] = (byte)(r >> 56);
@@ -282,7 +291,7 @@ public abstract class GOST3411_2012Digest
         V[27] = (byte)(r >> 24);
         V[26] = (byte)(r >> 16);
         V[25] = (byte)(r >> 8);
-        V[24] = (byte)(r);
+        V[24] = (byte)r;
 
         r = res[4];
         V[39] = (byte)(r >> 56);
@@ -292,7 +301,7 @@ public abstract class GOST3411_2012Digest
         V[35] = (byte)(r >> 24);
         V[34] = (byte)(r >> 16);
         V[33] = (byte)(r >> 8);
-        V[32] = (byte)(r);
+        V[32] = (byte)r;
 
         r = res[5];
         V[47] = (byte)(r >> 56);
@@ -302,7 +311,7 @@ public abstract class GOST3411_2012Digest
         V[43] = (byte)(r >> 24);
         V[42] = (byte)(r >> 16);
         V[41] = (byte)(r >> 8);
-        V[40] = (byte)(r);
+        V[40] = (byte)r;
 
         r = res[6];
         V[55] = (byte)(r >> 56);
@@ -312,7 +321,7 @@ public abstract class GOST3411_2012Digest
         V[51] = (byte)(r >> 24);
         V[50] = (byte)(r >> 16);
         V[49] = (byte)(r >> 8);
-        V[48] = (byte)(r);
+        V[48] = (byte)r;
 
         r = res[7];
         V[63] = (byte)(r >> 56);
@@ -322,10 +331,10 @@ public abstract class GOST3411_2012Digest
         V[59] = (byte)(r >> 24);
         V[58] = (byte)(r >> 16);
         V[57] = (byte)(r >> 8);
-        V[56] = (byte)(r);
+        V[56] = (byte)r;
     }
 
-    private void xor512(byte[] A, byte[] B)
+    private void xor512(final byte[] A, final byte[] B)
     {
         for (int i = 0; i < 64; ++i)
         {
@@ -333,7 +342,7 @@ public abstract class GOST3411_2012Digest
         }
     }
 
-    private void E(byte[] K, byte[] m)
+    private void E(final byte[] K, final byte[] m)
     {
         System.arraycopy(K, 0, Ki, 0, 64);
         xor512(K, m);
@@ -350,7 +359,7 @@ public abstract class GOST3411_2012Digest
         xor512(K, Ki);
     }
 
-    private void g_N(byte[] h, byte[] N, byte[] m)
+    private void g_N(final byte[] h, final byte[] N, final byte[] m)
     {
         System.arraycopy(h, 0, tmp, 0, 64);
 
@@ -362,23 +371,23 @@ public abstract class GOST3411_2012Digest
         xor512(h, m);
     }
 
-    private void addMod512(byte[] A, int num)
+    private void addMod512(final byte[] A, final int num)
     {
         int c;
         c = (A[63] & 0xFF) + (num & 0xFF);
         A[63] = (byte)c;
 
-        c = (A[62] & 0xFF) + ((num >> 8) & 0xFF) + (c >> 8);
+        c = (A[62] & 0xFF) + (num >> 8 & 0xFF) + (c >> 8);
         A[62] = (byte)c;
 
-        for (int i = 61; (i >= 0) && (c > 0); --i)
+        for (int i = 61; i >= 0 && c > 0; --i)
         {
             c = (A[i] & 0xFF) + (c >> 8);
             A[i] = (byte)c;
         }
     }
 
-    private void addMod512(byte[] A, byte[] B)
+    private void addMod512(final byte[] A, final byte[] B)
     {
         for (int c = 0, i = 63; i >= 0; --i)
         {
@@ -387,7 +396,7 @@ public abstract class GOST3411_2012Digest
         }
     }
 
-    private void reverse(byte[] src, byte[] dst)
+    private void reverse(final byte[] src, final byte[] dst)
     {
         final int len = src.length;
         for (int i = 0; i < len; i++)

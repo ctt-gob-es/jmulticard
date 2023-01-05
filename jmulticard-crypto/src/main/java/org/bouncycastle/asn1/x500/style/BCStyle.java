@@ -45,7 +45,8 @@ public class BCStyle
      * device serial number name - StringType(SIZE(1..64))
      * @deprecated use SERIALNUMBER or SURNAME
      */
-    public static final ASN1ObjectIdentifier SN = new ASN1ObjectIdentifier("2.5.4.5").intern();
+    @Deprecated
+	public static final ASN1ObjectIdentifier SN = new ASN1ObjectIdentifier("2.5.4.5").intern();
 
     /**
      * street - StringType(SIZE(1..64))
@@ -289,7 +290,8 @@ public class BCStyle
         defaultLookUp = copyHashTable(DefaultLookUp);
     }
 
-    protected ASN1Encodable encodeStringValue(ASN1ObjectIdentifier oid, String value)
+    @Override
+	protected ASN1Encodable encodeStringValue(ASN1ObjectIdentifier oid, String value)
     {
         if (oid.equals(EmailAddress) || oid.equals(DC))
         {
@@ -308,27 +310,32 @@ public class BCStyle
         return super.encodeStringValue(oid, value);
     }
 
-    public String oidToDisplayName(ASN1ObjectIdentifier oid)
+    @Override
+	public String oidToDisplayName(ASN1ObjectIdentifier oid)
     {
         return (String)DefaultSymbols.get(oid);
     }
 
-    public String[] oidToAttrNames(ASN1ObjectIdentifier oid)
+    @Override
+	public String[] oidToAttrNames(ASN1ObjectIdentifier oid)
     {
         return IETFUtils.findAttrNamesForOID(oid, defaultLookUp);
     }
 
-    public ASN1ObjectIdentifier attrNameToOID(String attrName)
+    @Override
+	public ASN1ObjectIdentifier attrNameToOID(String attrName)
     {
         return IETFUtils.decodeAttrName(attrName, defaultLookUp);
     }
 
-    public RDN[] fromString(String dirName)
+    @Override
+	public RDN[] fromString(String dirName)
     {
         return IETFUtils.rDNsFromString(dirName, this);
     }
 
-    public String toString(X500Name name)
+    @Override
+	public String toString(X500Name name)
     {
         StringBuffer buf = new StringBuffer();
         boolean first = true;

@@ -140,7 +140,8 @@ public class RDN
      * </pre>
      * @return this object as its ASN1Primitive type
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return values;
     }

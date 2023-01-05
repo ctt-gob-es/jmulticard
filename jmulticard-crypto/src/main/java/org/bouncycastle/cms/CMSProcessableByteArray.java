@@ -32,23 +32,27 @@ public class CMSProcessableByteArray
         this.bytes = bytes;
     }
 
-    public InputStream getInputStream()
+    @Override
+	public InputStream getInputStream()
     {
         return new ByteArrayInputStream(bytes);
     }
 
-    public void write(OutputStream zOut)
+    @Override
+	public void write(OutputStream zOut)
         throws IOException, CMSException
     {
         zOut.write(bytes);
     }
 
-    public Object getContent()
+    @Override
+	public Object getContent()
     {
         return Arrays.clone(bytes);
     }
 
-    public ASN1ObjectIdentifier getContentType()
+    @Override
+	public ASN1ObjectIdentifier getContentType()
     {
         return type;
     }

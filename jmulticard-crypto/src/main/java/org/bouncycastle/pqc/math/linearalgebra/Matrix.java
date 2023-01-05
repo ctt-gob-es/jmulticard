@@ -126,6 +126,7 @@ public abstract class Matrix
     /**
      * @return a human readable form of the matrix.
      */
-    public abstract String toString();
+    @Override
+	public abstract String toString();
 
 }

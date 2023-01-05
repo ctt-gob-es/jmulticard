@@ -154,7 +154,8 @@ class BouncyCastleProviderConfiguration
         }
     }
 
-    public ECParameterSpec getEcImplicitlyCa()
+    @Override
+	public ECParameterSpec getEcImplicitlyCa()
     {
         ECParameterSpec spec = (ECParameterSpec)ecThreadSpec.get();
 
@@ -166,7 +167,8 @@ class BouncyCastleProviderConfiguration
         return ecImplicitCaParams;
     }
 
-    public DHParameterSpec getDHDefaultParameters(int keySize)
+    @Override
+	public DHParameterSpec getDHDefaultParameters(int keySize)
     {
         Object params = dhThreadSpec.get();
         if (params == null)
@@ -205,7 +207,8 @@ class BouncyCastleProviderConfiguration
         return null;
     }
 
-    public DSAParameterSpec getDSADefaultParameters(int keySize)
+    @Override
+	public DSAParameterSpec getDSADefaultParameters(int keySize)
     {
         DSAParameters dsaParams = CryptoServicesRegistrar.getSizedProperty(CryptoServicesRegistrar.Property.DSA_DEFAULT_PARAMS, keySize);
         if (dsaParams != null)
@@ -216,12 +219,14 @@ class BouncyCastleProviderConfiguration
         return null;
     }
 
-    public Set getAcceptableNamedCurves()
+    @Override
+	public Set getAcceptableNamedCurves()
     {
         return Collections.unmodifiableSet(acceptableNamedCurves);
     }
 
-    public Map getAdditionalECParameters()
+    @Override
+	public Map getAdditionalECParameters()
     {
         return Collections.unmodifiableMap(additionalECParameters);
     }

@@ -189,7 +189,8 @@ class MSOutlookKeyIdCalculator
             return DIGEST_LENGTH;
         }
 
-        protected void processWord(
+        @Override
+		protected void processWord(
             byte[]  in,
             int     inOff)
         {
@@ -207,7 +208,8 @@ class MSOutlookKeyIdCalculator
             }
         }
 
-        protected void processLength(
+        @Override
+		protected void processLength(
             long    bitLength)
         {
             if (xOff > 14)
@@ -239,7 +241,8 @@ class MSOutlookKeyIdCalculator
         /**
          * reset the chaining variables
          */
-        public void reset()
+        @Override
+		public void reset()
         {
             super.reset();
 
@@ -288,7 +291,8 @@ class MSOutlookKeyIdCalculator
             return ((u & v) | (u & w) | (v & w));
         }
 
-        protected void processBlock()
+        @Override
+		protected void processBlock()
         {
             //
             // expand 16 word block into 80 word block.

@@ -76,12 +76,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder curve25519 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new Curve25519());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -107,12 +109,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp128r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP128R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("000E0D4D696E6768756151750CC03A4473D03679");
             ECCurve curve = getCurve();
@@ -127,7 +131,8 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp160k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             GLVTypeBParameters glv = new GLVTypeBParameters(
                 new BigInteger("9ba48cba5ebcb9b6bd33b92830b2a2e0e192f10a", 16),
@@ -145,7 +150,8 @@ public class CustomNamedCurves
             return configureCurveGLV(new SecP160K1Curve(), glv);
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -160,12 +166,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp160r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP160R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("1053CDE42C14D696E67687561517533BF3F83345");
             ECCurve curve = getCurve();
@@ -180,12 +188,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp160r2 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP160R2Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("B99B99B099B323E02709A4D696E6768756151751");
             ECCurve curve = getCurve();
@@ -200,7 +210,8 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp192k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             GLVTypeBParameters glv = new GLVTypeBParameters(
                 new BigInteger("bb85691939b869c1d087f601554b96b80cb4f55b35f433c2", 16),
@@ -218,7 +229,8 @@ public class CustomNamedCurves
             return configureCurveGLV(new SecP192K1Curve(), glv);
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -233,12 +245,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp192r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP192R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("3045AE6FC8422F64ED579528D38120EAE12196D5");
             ECCurve curve = getCurve();
@@ -253,7 +267,8 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp224k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             GLVTypeBParameters glv = new GLVTypeBParameters(
                 new BigInteger("fe0e87005b4e83761908c5131d552a850b3f58b749c37cf5b84d6768", 16),
@@ -271,7 +286,8 @@ public class CustomNamedCurves
             return configureCurveGLV(new SecP224K1Curve(), glv);
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -286,12 +302,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp224r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP224R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("BD71344799D5C7FCDC45B59FA3B9AB8F6A948BC5");
             ECCurve curve = getCurve();
@@ -306,7 +324,8 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp256k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             GLVTypeBParameters glv = new GLVTypeBParameters(
                 new BigInteger("7ae96a2b657c07106e64479eac3434e99cf0497512f58995c1396c28719501ee", 16),
@@ -324,7 +343,8 @@ public class CustomNamedCurves
             return configureCurveGLV(new SecP256K1Curve(), glv);
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -339,12 +359,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp256r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP256R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("C49D360886E704936A6678E1139D26B7819F7E90");
             ECCurve curve = getCurve();
@@ -359,12 +381,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp384r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP384R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("A335926AA319A27A1D00896A6773A4827ACDAC73");
             ECCurve curve = getCurve();
@@ -380,12 +404,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder secp521r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecP521R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("D09E8800291CB85396CC6717393284AAA0DA64BA");
             ECCurve curve = getCurve();
@@ -401,12 +427,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect113r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT113R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("10E723AB14D696E6768756151756FEBF8FCB49A9");
             ECCurve curve = getCurve();
@@ -421,12 +449,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect113r2 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT113R2Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("10C0FB15760860DEF1EEF4D696E676875615175D");
             ECCurve curve = getCurve();
@@ -441,12 +471,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect131r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT131R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("4D696E676875615175985BD3ADBADA21B43A97E2");
             ECCurve curve = getCurve();
@@ -461,12 +493,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect131r2 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT131R2Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("985BD3ADBAD4D696E676875615175A21B43A97E3");
             ECCurve curve = getCurve();
@@ -481,12 +515,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect163k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT163K1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -501,12 +537,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect163r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT163R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("24B7B137C8A14D696E6768756151756FD0DA2E5C");
             ECCurve curve = getCurve();
@@ -521,12 +559,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect163r2 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT163R2Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("85E25BFE5C86226CDB12016F7553F9D0E693A268");
             ECCurve curve = getCurve();
@@ -541,12 +581,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect193r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT193R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("103FAEC74D696E676875615175777FC5B191EF30");
             ECCurve curve = getCurve();
@@ -561,12 +603,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect193r2 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT193R2Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("10B7B4D696E676875615175137C8A16FD0DA2211");
             ECCurve curve = getCurve();
@@ -581,12 +625,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect233k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT233K1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -601,12 +647,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect233r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT233R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("74D59FF07F6B413D0EA14B344B20A2DB049B50C3");
             ECCurve curve = getCurve();
@@ -621,12 +669,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect239k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT239K1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -641,12 +691,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect283k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT283K1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -662,12 +714,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect283r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT283R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("77E2B07370EB0F832A6DD5B62DFC88CD06BB84BE");
             ECCurve curve = getCurve();
@@ -683,12 +737,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect409k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT409K1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -704,12 +760,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect409r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT409R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("4099B5A457F9D69F79213D094C4BCD4D4262210B");
             ECCurve curve = getCurve();
@@ -725,12 +783,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect571k1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT571K1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -746,12 +806,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sect571r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SecT571R1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = Hex.decodeStrict("2AA058F73A0E33AB486B0F610410C53A7F132310");
             ECCurve curve = getCurve();
@@ -767,12 +829,14 @@ public class CustomNamedCurves
      */
     static X9ECParametersHolder sm2p256v1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             return configureCurve(new SM2P256V1Curve());
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();

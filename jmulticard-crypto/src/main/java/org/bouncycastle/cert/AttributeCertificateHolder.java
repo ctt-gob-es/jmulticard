@@ -274,12 +274,14 @@ public class AttributeCertificateHolder
         return null;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new AttributeCertificateHolder((ASN1Sequence)holder.toASN1Primitive());
     }
 
-    public boolean match(Object obj)
+    @Override
+	public boolean match(Object obj)
     {
         if (!(obj instanceof X509CertificateHolder))
         {
@@ -337,7 +339,8 @@ public class AttributeCertificateHolder
         return false;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (obj == this)
         {
@@ -354,7 +357,8 @@ public class AttributeCertificateHolder
         return this.holder.equals(other.holder);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.holder.hashCode();
     }

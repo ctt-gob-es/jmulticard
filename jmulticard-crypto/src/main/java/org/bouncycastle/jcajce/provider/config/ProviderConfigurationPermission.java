@@ -111,12 +111,14 @@ public class ProviderConfigurationPermission
         return mask;
     }
 
-    public String getActions()
+    @Override
+	public String getActions()
     {
         return actions;
     }
 
-    public boolean implies(
+    @Override
+	public boolean implies(
         Permission permission)
     {
         if (!(permission instanceof ProviderConfigurationPermission))
@@ -134,7 +136,8 @@ public class ProviderConfigurationPermission
         return (this.permissionMask & other.permissionMask) == other.permissionMask;
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object obj)
     {
         if (obj == this)
@@ -152,7 +155,8 @@ public class ProviderConfigurationPermission
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.getName().hashCode() + this.permissionMask;
     }

@@ -24,7 +24,8 @@ public class X509DefaultEntryConverter
      * @param value the value associated with it
      * @return the ASN.1 equivalent for the string value.
      */
-    public ASN1Primitive getConvertedValue(
+    @Override
+	public ASN1Primitive getConvertedValue(
         ASN1ObjectIdentifier  oid,
         String               value)
     {

@@ -6,6 +6,7 @@ import java.security.spec.AlgorithmParameterSpec;
  * ParameterSpec for keys using the LMS Hierarchical Signature System (HSS).
  * @deprecated use LMSKeyGenParameterSpec
  */
+@Deprecated
 public class LMSHSSParameterSpec
     implements AlgorithmParameterSpec
 {

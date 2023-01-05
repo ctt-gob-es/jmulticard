@@ -127,7 +127,8 @@ public class X509CRLHolder
      * @return a DER encoded byte array.
      * @throws IOException if an encoding cannot be generated.
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return x509CRL.getEncoded();
@@ -325,7 +326,8 @@ public class X509CRLHolder
         return verifier.verify(x509CRL.getSignature().getOctets());
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object o)
     {
         if (o == this)
@@ -343,7 +345,8 @@ public class X509CRLHolder
         return this.x509CRL.equals(other.x509CRL);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.x509CRL.hashCode();
     }

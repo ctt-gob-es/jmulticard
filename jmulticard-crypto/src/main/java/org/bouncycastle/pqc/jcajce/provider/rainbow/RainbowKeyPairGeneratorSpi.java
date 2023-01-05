@@ -28,7 +28,8 @@ public class RainbowKeyPairGeneratorSpi
         super("Rainbow");
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         int strength,
         SecureRandom random)
     {
@@ -36,7 +37,8 @@ public class RainbowKeyPairGeneratorSpi
         this.random = random;
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         AlgorithmParameterSpec params,
         SecureRandom random)
         throws InvalidAlgorithmParameterException
@@ -53,7 +55,8 @@ public class RainbowKeyPairGeneratorSpi
         initialised = true;
     }
 
-    public KeyPair generateKeyPair()
+    @Override
+	public KeyPair generateKeyPair()
     {
         if (!initialised)
         {

@@ -11,7 +11,8 @@ public abstract class ASN1GraphicString
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1GraphicString.class, BERTags.GRAPHIC_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -24,7 +25,7 @@ public abstract class ASN1GraphicString
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return an ASN1GraphicString instance, or null.
      */
-    public static ASN1GraphicString getInstance(Object obj)
+    public static ASN1GraphicString getInstance(final Object obj)
     {
         if (obj == null || obj instanceof ASN1GraphicString)
         {
@@ -32,7 +33,7 @@ public abstract class ASN1GraphicString
         }
         if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1GraphicString)
             {
                 return (ASN1GraphicString)primitive;
@@ -44,7 +45,7 @@ public abstract class ASN1GraphicString
             {
                 return (ASN1GraphicString)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -62,14 +63,14 @@ public abstract class ASN1GraphicString
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return an ASN1GraphicString instance, or null.
      */
-    public static ASN1GraphicString getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1GraphicString getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1GraphicString)TYPE.getContextInstance(taggedObject, explicit);
     }
 
     final byte[] contents;
 
-    ASN1GraphicString(byte[] contents, boolean clone)
+    ASN1GraphicString(final byte[] contents, final boolean clone)
     {
         if (null == contents)
         {
@@ -84,44 +85,50 @@ public abstract class ASN1GraphicString
         return Arrays.clone(contents);
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    final int encodedLength(boolean withTag)
+    @Override
+	final int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.GRAPHIC_STRING, contents);
     }
 
-    final boolean asn1Equals(ASN1Primitive other)
+    @Override
+	final boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1GraphicString))
         {
             return false;
         }
 
-        ASN1GraphicString that = (ASN1GraphicString)other;
+        final ASN1GraphicString that = (ASN1GraphicString)other;
 
-        return Arrays.areEqual(this.contents, that.contents);
+        return Arrays.areEqual(contents, that.contents);
     }
 
-    public final int hashCode()
+    @Override
+	public final int hashCode()
     {
         return Arrays.hashCode(contents);
     }
 
-    public final String getString()
+    @Override
+	public final String getString()
     {
         return Strings.fromByteArray(contents);
     }
 
-    static ASN1GraphicString createPrimitive(byte[] contents)
+    static ASN1GraphicString createPrimitive(final byte[] contents)
     {
         return new DERGraphicString(contents, false);
     }

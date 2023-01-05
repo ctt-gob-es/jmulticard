@@ -19,7 +19,8 @@ public class DERGeneralString
      * 
      * @deprecated Use {@link ASN1GeneralString#getInstance(Object)} instead.
      */
-    public static DERGeneralString getInstance(
+    @Deprecated
+	public static DERGeneralString getInstance(
         Object obj) 
     {
         if (obj == null || obj instanceof DERGeneralString) 
@@ -59,7 +60,8 @@ public class DERGeneralString
      *             {@link ASN1GeneralString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERGeneralString getInstance(
+    @Deprecated
+	public static DERGeneralString getInstance(
         ASN1TaggedObject obj, 
         boolean explicit) 
     {

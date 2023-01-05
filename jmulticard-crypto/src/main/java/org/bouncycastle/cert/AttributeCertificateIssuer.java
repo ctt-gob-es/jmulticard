@@ -82,12 +82,14 @@ public class AttributeCertificateIssuer
         return false;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new AttributeCertificateIssuer(AttCertIssuer.getInstance(form));
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (obj == this)
         {
@@ -104,12 +106,14 @@ public class AttributeCertificateIssuer
         return this.form.equals(other.form);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.form.hashCode();
     }
 
-    public boolean match(Object obj)
+    @Override
+	public boolean match(Object obj)
     {
         if (!(obj instanceof X509CertificateHolder))
         {

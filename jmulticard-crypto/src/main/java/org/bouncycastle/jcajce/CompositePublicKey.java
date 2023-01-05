@@ -51,17 +51,20 @@ public class CompositePublicKey
         return keys;
     }
 
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "Composite";
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         ASN1EncodableVector v = new ASN1EncodableVector();
 
@@ -81,12 +84,14 @@ public class CompositePublicKey
         }
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return keys.hashCode();
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {

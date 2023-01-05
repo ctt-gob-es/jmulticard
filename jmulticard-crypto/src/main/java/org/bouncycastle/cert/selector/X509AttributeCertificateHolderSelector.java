@@ -63,7 +63,8 @@ public class X509AttributeCertificateHolderSelector
      * @return <code>true</code> if the attribute certificate is a match
      *         <code>false</code> otherwise.
      */
-    public boolean match(Object obj)
+    @Override
+	public boolean match(Object obj)
     {
         if (!(obj instanceof X509AttributeCertificateHolder))
         {
@@ -179,7 +180,8 @@ public class X509AttributeCertificateHolderSelector
      *
      * @return the clone.
      */
-    public Object clone()
+    @Override
+	public Object clone()
     {
         X509AttributeCertificateHolderSelector sel = new X509AttributeCertificateHolderSelector(
             holder, issuer, serialNumber, attributeCertificateValid, attributeCert, targetNames, targetGroups);

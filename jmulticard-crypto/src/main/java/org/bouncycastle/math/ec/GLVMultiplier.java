@@ -21,7 +21,8 @@ public class GLVMultiplier extends AbstractECMultiplier
         this.glvEndomorphism = glvEndomorphism;
     }
 
-    protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
+    @Override
+	protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
     {
         if (!curve.equals(p.getCurve()))
         {

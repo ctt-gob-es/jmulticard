@@ -27,23 +27,23 @@ public class XMSSMTKeyParams
     private final int layers;
     private final AlgorithmIdentifier treeDigest;
 
-    public XMSSMTKeyParams(int height, int layers, AlgorithmIdentifier treeDigest)
+    public XMSSMTKeyParams(final int height, final int layers, final AlgorithmIdentifier treeDigest)
     {
-        this.version = new ASN1Integer(0);
+        version = new ASN1Integer(0);
         this.height = height;
         this.layers = layers;
         this.treeDigest = treeDigest;
     }
 
-    private XMSSMTKeyParams(ASN1Sequence sequence)
+    private XMSSMTKeyParams(final ASN1Sequence sequence)
     {
-        this.version = ASN1Integer.getInstance(sequence.getObjectAt(0));
-        this.height = ASN1Integer.getInstance(sequence.getObjectAt(1)).intValueExact();
-        this.layers = ASN1Integer.getInstance(sequence.getObjectAt(2)).intValueExact();
-        this.treeDigest = AlgorithmIdentifier.getInstance(sequence.getObjectAt(3));
+        version = ASN1Integer.getInstance(sequence.getObjectAt(0));
+        height = ASN1Integer.getInstance(sequence.getObjectAt(1)).intValueExact();
+        layers = ASN1Integer.getInstance(sequence.getObjectAt(2)).intValueExact();
+        treeDigest = AlgorithmIdentifier.getInstance(sequence.getObjectAt(3));
     }
 
-    public static XMSSMTKeyParams getInstance(Object o)
+    public static XMSSMTKeyParams getInstance(final Object o)
     {
         if (o instanceof XMSSMTKeyParams)
         {
@@ -72,9 +72,10 @@ public class XMSSMTKeyParams
         return treeDigest;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        final ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(version);
         v.add(new ASN1Integer(height));

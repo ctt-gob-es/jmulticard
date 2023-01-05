@@ -101,7 +101,8 @@ public class ECDomainParameters
         return Arrays.clone(seed);
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  obj)
     {
         if (this == obj)
@@ -121,7 +122,8 @@ public class ECDomainParameters
             && this.n.equals(other.n);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
 //        return Arrays.hashCode(new Object[]{ curve, G, n });
         int hc = 4;

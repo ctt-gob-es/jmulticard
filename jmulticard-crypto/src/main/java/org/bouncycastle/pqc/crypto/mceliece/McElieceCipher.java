@@ -49,7 +49,8 @@ public class McElieceCipher
     private boolean forEncryption;
 
 
-    public void init(boolean forEncryption,
+    @Override
+	public void init(boolean forEncryption,
                      CipherParameters param)
     {
         this.forEncryption = forEncryption;
@@ -128,7 +129,8 @@ public class McElieceCipher
      * @param input the plain text
      * @return the cipher text
      */
-    public byte[] messageEncrypt(byte[] input)
+    @Override
+	public byte[] messageEncrypt(byte[] input)
     {
         if (!forEncryption)
         {
@@ -159,7 +161,8 @@ public class McElieceCipher
      * @return the plain text
      * @throws InvalidCipherTextException if the cipher text is invalid.
      */
-    public byte[] messageDecrypt(byte[] input)
+    @Override
+	public byte[] messageDecrypt(byte[] input)
         throws InvalidCipherTextException
     {
         if (forEncryption)

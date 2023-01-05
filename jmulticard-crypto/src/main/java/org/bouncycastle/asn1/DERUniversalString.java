@@ -16,7 +16,8 @@ public class DERUniversalString
      * 
      * @deprecated Use {@link ASN1UniversalString#getInstance(Object)} instead.
      */
-    public static DERUniversalString getInstance(
+    @Deprecated
+	public static DERUniversalString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERUniversalString)
@@ -55,7 +56,8 @@ public class DERUniversalString
      * @deprecated Use {@link ASN1UniversalString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERUniversalString getInstance(
+    @Deprecated
+	public static DERUniversalString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

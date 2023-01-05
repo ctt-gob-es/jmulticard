@@ -56,7 +56,8 @@ public class BCSphincs256PrivateKey
      * @param o the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -73,7 +74,8 @@ public class BCSphincs256PrivateKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return treeDigest.hashCode() + 37 * Arrays.hashCode(params.getKeyData());
     }
@@ -81,12 +83,14 @@ public class BCSphincs256PrivateKey
     /**
      * @return name of the algorithm - "SPHINCS-256"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "SPHINCS-256";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
 
         try
@@ -111,7 +115,8 @@ public class BCSphincs256PrivateKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
@@ -121,7 +126,8 @@ public class BCSphincs256PrivateKey
         return treeDigest;
     }
     
-    public byte[] getKeyData()
+    @Override
+	public byte[] getKeyData()
     {
         return params.getKeyData();
     }

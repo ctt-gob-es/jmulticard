@@ -21,7 +21,8 @@ public class NHExchangePairGenerator
         return generateExchange(senderPublicKey);
     }
 
-    public ExchangePair generateExchange(AsymmetricKeyParameter senderPublicKey)
+    @Override
+	public ExchangePair generateExchange(AsymmetricKeyParameter senderPublicKey)
     {
         NHPublicKeyParameters pubKey = (NHPublicKeyParameters)senderPublicKey;
 

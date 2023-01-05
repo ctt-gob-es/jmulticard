@@ -21,7 +21,8 @@ public class BERSetParser
      * @return the next object in the SET, null if there are no more.
      * @throws IOException if there is an issue reading the underlying stream.
      */
-    public ASN1Encodable readObject()
+    @Override
+	public ASN1Encodable readObject()
         throws IOException
     {
         return _parser.readObject();
@@ -33,7 +34,8 @@ public class BERSetParser
      * @return a BERSet.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return parse(_parser);
@@ -44,7 +46,8 @@ public class BERSetParser
      *
      * @return an BERSet
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

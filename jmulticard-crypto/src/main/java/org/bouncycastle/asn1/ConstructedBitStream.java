@@ -26,7 +26,8 @@ class ConstructedBitStream
         return _padBits;
     }
 
-    public int read(byte[] b, int off, int len) throws IOException
+    @Override
+	public int read(byte[] b, int off, int len) throws IOException
     {
         if (_currentStream == null)
         {
@@ -76,7 +77,8 @@ class ConstructedBitStream
         }
     }
 
-    public int read()
+    @Override
+	public int read()
         throws IOException
     {
         if (_currentStream == null)

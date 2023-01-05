@@ -51,7 +51,8 @@ public class McElieceKobaraImaiCipher
     private boolean forEncryption;
 
 
-    public void init(boolean forEncryption,
+    @Override
+	public void init(boolean forEncryption,
                      CipherParameters param)
     {
         this.forEncryption = forEncryption;
@@ -118,7 +119,8 @@ public class McElieceKobaraImaiCipher
         t = privKey.getT();
     }
 
-    public byte[] messageEncrypt(byte[] input)
+    @Override
+	public byte[] messageEncrypt(byte[] input)
     {
         if (!forEncryption)
         {
@@ -217,7 +219,8 @@ public class McElieceKobaraImaiCipher
     }
 
 
-    public byte[] messageDecrypt(byte[] input)
+    @Override
+	public byte[] messageDecrypt(byte[] input)
         throws InvalidCipherTextException
     {
         if (forEncryption)

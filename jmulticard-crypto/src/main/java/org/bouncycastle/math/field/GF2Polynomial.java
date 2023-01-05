@@ -11,17 +11,20 @@ class GF2Polynomial implements Polynomial
         this.exponents = Arrays.clone(exponents);
     }
 
-    public int getDegree()
+    @Override
+	public int getDegree()
     {
         return exponents[exponents.length - 1];
     }
 
-    public int[] getExponentsPresent()
+    @Override
+	public int[] getExponentsPresent()
     {
         return Arrays.clone(exponents);
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -35,7 +38,8 @@ class GF2Polynomial implements Polynomial
         return Arrays.areEqual(exponents, other.exponents);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(exponents);
     }

@@ -12,13 +12,14 @@ import org.bouncycastle.util.Strings;
  * with optional escapes to other character sets.
  * </p>
  */
-public abstract class ASN1GeneralString 
+public abstract class ASN1GeneralString
     extends ASN1Primitive
     implements ASN1String
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1GeneralString.class, BERTags.GENERAL_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -31,15 +32,15 @@ public abstract class ASN1GeneralString
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return an ASN1GeneralString instance, or null.
      */
-    public static ASN1GeneralString getInstance(Object obj)
+    public static ASN1GeneralString getInstance(final Object obj)
     {
-        if (obj == null || obj instanceof ASN1GeneralString) 
+        if (obj == null || obj instanceof ASN1GeneralString)
         {
             return (ASN1GeneralString) obj;
         }
         if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1GeneralString)
             {
                 return (ASN1GeneralString)primitive;
@@ -51,7 +52,7 @@ public abstract class ASN1GeneralString
             {
                 return (ASN1GeneralString)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -70,19 +71,19 @@ public abstract class ASN1GeneralString
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return an ASN1GeneralString instance.
      */
-    public static ASN1GeneralString getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1GeneralString getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1GeneralString)TYPE.getContextInstance(taggedObject, explicit);
     }
 
     final byte[] contents;
 
-    ASN1GeneralString(String string) 
+    ASN1GeneralString(final String string)
     {
-        this.contents = Strings.toByteArray(string);
+        contents = Strings.toByteArray(string);
     }
 
-    ASN1GeneralString(byte[] contents, boolean clone)
+    ASN1GeneralString(final byte[] contents, final boolean clone)
     {
         this.contents = clone ? Arrays.clone(contents) : contents;
     }
@@ -92,12 +93,14 @@ public abstract class ASN1GeneralString
      *
      * @return a Java String representing our contents.
      */
-    public final String getString() 
+    @Override
+	public final String getString()
     {
         return Strings.fromByteArray(contents);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getString();
     }
@@ -107,44 +110,49 @@ public abstract class ASN1GeneralString
      *
      * @return a byte array representing our contents.
      */
-    public final byte[] getOctets() 
+    public final byte[] getOctets()
     {
         return Arrays.clone(contents);
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    final int encodedLength(boolean withTag)
+    @Override
+	final int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.GENERAL_STRING, contents);
     }
 
-    final boolean asn1Equals(ASN1Primitive other)
+    @Override
+	final boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1GeneralString))
         {
             return false;
         }
 
-        ASN1GeneralString that = (ASN1GeneralString)other;
+        final ASN1GeneralString that = (ASN1GeneralString)other;
 
-        return Arrays.areEqual(this.contents, that.contents);
+        return Arrays.areEqual(contents, that.contents);
     }
 
-    public final int hashCode() 
+    @Override
+	public final int hashCode()
     {
         return Arrays.hashCode(contents);
     }
 
-    static ASN1GeneralString createPrimitive(byte[] contents)
+    static ASN1GeneralString createPrimitive(final byte[] contents)
     {
         return new DERGeneralString(contents, false);
     }

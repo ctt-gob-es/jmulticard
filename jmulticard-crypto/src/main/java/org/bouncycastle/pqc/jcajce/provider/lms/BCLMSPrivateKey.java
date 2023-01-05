@@ -43,7 +43,8 @@ public class BCLMSPrivateKey
         this.keyParams = (LMSKeyParameters)PrivateKeyFactory.createKey(keyInfo);
     }
 
-    public long getIndex()
+    @Override
+	public long getIndex()
     {
         if (getUsagesRemaining() == 0)
         {
@@ -57,7 +58,8 @@ public class BCLMSPrivateKey
         return ((HSSPrivateKeyParameters)keyParams).getIndex();
     }
 
-    public long getUsagesRemaining()
+    @Override
+	public long getUsagesRemaining()
     {
         if (keyParams instanceof LMSPrivateKeyParameters)
         {
@@ -66,7 +68,8 @@ public class BCLMSPrivateKey
         return ((HSSPrivateKeyParameters)keyParams).getUsagesRemaining();
     }
 
-    public LMSPrivateKey extractKeyShard(int usageCount)
+    @Override
+	public LMSPrivateKey extractKeyShard(int usageCount)
     {
         if (keyParams instanceof LMSPrivateKeyParameters)
         {
@@ -75,17 +78,20 @@ public class BCLMSPrivateKey
         return new BCLMSPrivateKey(((HSSPrivateKeyParameters)keyParams).extractKeyShard(usageCount));
     }
 
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "LMS";
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -99,7 +105,8 @@ public class BCLMSPrivateKey
         }
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -123,7 +130,8 @@ public class BCLMSPrivateKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         try
         {
@@ -140,7 +148,8 @@ public class BCLMSPrivateKey
         return keyParams;
     }
 
-    public int getLevels()
+    @Override
+	public int getLevels()
     {
         if (keyParams instanceof LMSPrivateKeyParameters)
         {

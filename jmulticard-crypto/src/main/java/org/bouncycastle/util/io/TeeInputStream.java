@@ -25,18 +25,21 @@ public class TeeInputStream
         this.output = output;
     }
 
-    public int available() throws IOException
+    @Override
+	public int available() throws IOException
     {
         return input.available();
     }
 
-    public int read(byte[] buf)
+    @Override
+	public int read(byte[] buf)
         throws IOException
     {
         return read(buf, 0, buf.length);
     }
 
-    public int read(byte[] buf, int off, int len)
+    @Override
+	public int read(byte[] buf, int off, int len)
         throws IOException
     {
         int i = input.read(buf, off, len);
@@ -49,7 +52,8 @@ public class TeeInputStream
         return i;
     }
 
-    public int read()
+    @Override
+	public int read()
         throws IOException
     {
         int i = input.read();
@@ -62,7 +66,8 @@ public class TeeInputStream
         return i;
     }
 
-    public void close()
+    @Override
+	public void close()
         throws IOException
     {
         this.input.close();

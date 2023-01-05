@@ -34,7 +34,8 @@ public class CryptoServicesPermission
         this.actions.add(name);
     }
 
-    public boolean implies(Permission permission)
+    @Override
+	public boolean implies(Permission permission)
     {
         if (permission instanceof CryptoServicesPermission)
         {
@@ -54,7 +55,8 @@ public class CryptoServicesPermission
         return false;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (obj instanceof CryptoServicesPermission)
         {
@@ -69,12 +71,14 @@ public class CryptoServicesPermission
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return actions.hashCode();
     }
 
-    public String getActions()
+    @Override
+	public String getActions()
     {
         return actions.toString();
     }

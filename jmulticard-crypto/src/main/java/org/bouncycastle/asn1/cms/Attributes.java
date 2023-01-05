@@ -86,7 +86,8 @@ public class Attributes
     /** 
      * Produce an object suitable for an ASN1OutputStream.
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return attributes;
     }

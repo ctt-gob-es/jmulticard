@@ -13,15 +13,15 @@ public class GeneralNames
 {
     private final GeneralName[] names;
 
-    private static GeneralName[] copy(GeneralName[] names)
+    private static GeneralName[] copy(final GeneralName[] names)
     {
-        GeneralName[] result = new GeneralName[names.length];
+        final GeneralName[] result = new GeneralName[names.length];
         System.arraycopy(names, 0, result, 0, names.length);
         return result;
     }
 
     public static GeneralNames getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof GeneralNames)
         {
@@ -37,39 +37,39 @@ public class GeneralNames
     }
 
     public static GeneralNames getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return new GeneralNames(ASN1Sequence.getInstance(obj, explicit));
     }
 
-    public static GeneralNames fromExtensions(Extensions extensions, ASN1ObjectIdentifier extOID)
+    public static GeneralNames fromExtensions(final Extensions extensions, final ASN1ObjectIdentifier extOID)
     {
         return getInstance(Extensions.getExtensionParsedValue(extensions, extOID));
     }
 
     /**
      * Construct a GeneralNames object containing one GeneralName.
-     * 
+     *
      * @param name the name to be contained.
      */
     public GeneralNames(
-        GeneralName  name)
+        final GeneralName  name)
     {
-        this.names = new GeneralName[] { name };
+        names = new GeneralName[] { name };
     }
 
 
     public GeneralNames(
-        GeneralName[]  names)
+        final GeneralName[]  names)
     {
         this.names = copy(names);
     }
 
     private GeneralNames(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
-        this.names = new GeneralName[seq.size()];
+        names = new GeneralName[seq.size()];
 
         for (int i = 0; i != seq.size(); i++)
         {
@@ -88,23 +88,24 @@ public class GeneralNames
      * GeneralNames ::= SEQUENCE SIZE {1..MAX} OF GeneralName
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return new DERSequence(names);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
-        StringBuffer  buf = new StringBuffer();
-        String        sep = Strings.lineSeparator();
+        final StringBuilder  buf = new StringBuilder();
+        final String        sep = Strings.lineSeparator();
 
         buf.append("GeneralNames:");
         buf.append(sep);
 
-        for (int i = 0; i != names.length; i++)
-        {
+        for (final GeneralName name : names) {
             buf.append("    ");
-            buf.append(names[i]);
+            buf.append(name);
             buf.append(sep);
         }
         return buf.toString();

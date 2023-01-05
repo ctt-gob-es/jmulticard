@@ -51,7 +51,8 @@ public abstract class GeneralDigest
         byteCount = t.byteCount;
     }
 
-    public void update(
+    @Override
+	public void update(
         byte in)
     {
         xBuf[xBufOff++] = in;
@@ -65,7 +66,8 @@ public abstract class GeneralDigest
         byteCount++;
     }
 
-    public void update(
+    @Override
+	public void update(
         byte[]  in,
         int     inOff,
         int     len)
@@ -129,7 +131,8 @@ public abstract class GeneralDigest
         processBlock();
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         byteCount = 0;
 
@@ -147,7 +150,8 @@ public abstract class GeneralDigest
         Pack.longToBigEndian(byteCount, state, 8);
     }
 
-    public int getByteLength()
+    @Override
+	public int getByteLength()
     {
         return BYTE_LENGTH;
     }

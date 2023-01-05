@@ -184,7 +184,8 @@ public class HSSPrivateKeyParameters
         return indexLimit;
     }
 
-    public long getUsagesRemaining()
+    @Override
+	public long getUsagesRemaining()
     {
         return indexLimit - index;
     }
@@ -483,7 +484,8 @@ public class HSSPrivateKeyParameters
         return makeCopy(this);
     }
 
-    public LMSContext generateLMSContext()
+    @Override
+	public LMSContext generateLMSContext()
     {
         LMSSignedPubKey[] signed_pub_key;
         LMSPrivateKeyParameters nextKey;
@@ -518,7 +520,8 @@ public class HSSPrivateKeyParameters
         return nextKey.generateLMSContext().withSignedPublicKeys(signed_pub_key);
     }
 
-    public byte[] generateSignature(LMSContext context)
+    @Override
+	public byte[] generateSignature(LMSContext context)
     {
         try
         {

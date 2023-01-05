@@ -17,7 +17,7 @@ public final class XMSSMTPublicKeyParameters
     private final byte[] root;
     private final byte[] publicSeed;
 
-    private XMSSMTPublicKeyParameters(Builder builder)
+    private XMSSMTPublicKeyParameters(final Builder builder)
     {
         super(false, builder.params.getTreeDigest());
         params = builder.params;
@@ -25,48 +25,45 @@ public final class XMSSMTPublicKeyParameters
         {
             throw new NullPointerException("params == null");
         }
-        int n = params.getTreeDigestSize();
-        byte[] publicKey = builder.publicKey;
+        final int n = params.getTreeDigestSize();
+        final byte[] publicKey = builder.publicKey;
         if (publicKey != null)
         {
             /* import */
-            int oidSize = 4;
-            int rootSize = n;
-            int publicSeedSize = n;
+            final int oidSize = 4;
+            final int rootSize = n;
+            final int publicSeedSize = n;
             int position = 0;
             // pre-rfc final key without OID.
             if (publicKey.length == rootSize + publicSeedSize)
             {
                 oid = 0;
-                root = XMSSUtil.extractBytesAtOffset(publicKey, position, rootSize);
-                position += rootSize;
-                publicSeed = XMSSUtil.extractBytesAtOffset(publicKey, position, publicSeedSize);
             }
             else if (publicKey.length == oidSize + rootSize + publicSeedSize)
             {
                 oid = Pack.bigEndianToInt(publicKey, 0);
                 position += oidSize;
-                root = XMSSUtil.extractBytesAtOffset(publicKey, position, rootSize);
-                position += rootSize;
-                publicSeed = XMSSUtil.extractBytesAtOffset(publicKey, position, publicSeedSize);
             }
             else
             {
                 throw new IllegalArgumentException("public key has wrong size");
             }
+			root = XMSSUtil.extractBytesAtOffset(publicKey, position, rootSize);
+			position += rootSize;
+			publicSeed = XMSSUtil.extractBytesAtOffset(publicKey, position, publicSeedSize);
         }
         else
         {
             /* set */
             if (params.getOid() != null)
             {
-                this.oid = params.getOid().getOid();
+                oid = params.getOid().getOid();
             }
             else
             {
-                this.oid = 0;
+                oid = 0;
             }
-            byte[] tmpRoot = builder.root;
+            final byte[] tmpRoot = builder.root;
             if (tmpRoot != null)
             {
                 if (tmpRoot.length != n)
@@ -79,7 +76,7 @@ public final class XMSSMTPublicKeyParameters
             {
                 root = new byte[n];
             }
-            byte[] tmpPublicSeed = builder.publicSeed;
+            final byte[] tmpPublicSeed = builder.publicSeed;
             if (tmpPublicSeed != null)
             {
                 if (tmpPublicSeed.length != n)
@@ -95,7 +92,8 @@ public final class XMSSMTPublicKeyParameters
         }
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return toByteArray();
@@ -111,25 +109,24 @@ public final class XMSSMTPublicKeyParameters
         private byte[] publicSeed = null;
         private byte[] publicKey = null;
 
-        public Builder(XMSSMTParameters params)
+        public Builder(final XMSSMTParameters params)
         {
-            super();
             this.params = params;
         }
 
-        public Builder withRoot(byte[] val)
+        public Builder withRoot(final byte[] val)
         {
             root = XMSSUtil.cloneArray(val);
             return this;
         }
 
-        public Builder withPublicSeed(byte[] val)
+        public Builder withPublicSeed(final byte[] val)
         {
             publicSeed = XMSSUtil.cloneArray(val);
             return this;
         }
 
-        public Builder withPublicKey(byte[] val)
+        public Builder withPublicKey(final byte[] val)
         {
             publicKey = XMSSUtil.cloneArray(val);
             return this;
@@ -144,13 +141,15 @@ public final class XMSSMTPublicKeyParameters
     /**
      * @deprecated use getEncoded() - this method will become private.
      */
-    public byte[] toByteArray()
+    @Override
+	@Deprecated
+	public byte[] toByteArray()
     {
         /* oid || root || seed */
-        int n = params.getTreeDigestSize();
-        int oidSize = 4;
-        int rootSize = n;
-        int publicSeedSize = n;
+        final int n = params.getTreeDigestSize();
+        final int oidSize = 4;
+        final int rootSize = n;
+        final int publicSeedSize = n;
         byte[] out;
         int position = 0;
         /* copy oid */

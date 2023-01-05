@@ -76,7 +76,8 @@ public abstract class GF2nField
      * @param other another object
      * @return (this == other)
      */
-    public final boolean equals(Object other)
+    @Override
+	public final boolean equals(Object other)
     {
         if (other == null || !(other instanceof GF2nField))
         {
@@ -109,7 +110,8 @@ public abstract class GF2nField
     /**
      * @return the hash code of this field
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return mDegree + fieldPolynomial.hashCode();
     }

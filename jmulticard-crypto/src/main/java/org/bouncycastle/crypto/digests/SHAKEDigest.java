@@ -49,22 +49,26 @@ public class SHAKEDigest
         super(source);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SHAKE" + fixedOutputLength;
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return fixedOutputLength / 4;
     }
 
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(byte[] out, int outOff)
     {
         return doFinal(out, outOff, getDigestSize());
     }
 
-    public int doFinal(byte[] out, int outOff, int outLen)
+    @Override
+	public int doFinal(byte[] out, int outOff, int outLen)
     {
         int length = doOutput(out, outOff, outLen);
 
@@ -73,7 +77,8 @@ public class SHAKEDigest
         return length;
     }
 
-    public int doOutput(byte[] out, int outOff, int outLen)
+    @Override
+	public int doOutput(byte[] out, int outOff, int outLen)
     {
         if (!squeezing)
         {
@@ -88,7 +93,8 @@ public class SHAKEDigest
     /*
      * TODO Possible API change to support partial-byte suffixes.
      */
-    protected int doFinal(byte[] out, int outOff, byte partialByte, int partialBits)
+    @Override
+	protected int doFinal(byte[] out, int outOff, byte partialByte, int partialBits)
     {
         return doFinal(out, outOff, getDigestSize(), partialByte, partialBits);
     }

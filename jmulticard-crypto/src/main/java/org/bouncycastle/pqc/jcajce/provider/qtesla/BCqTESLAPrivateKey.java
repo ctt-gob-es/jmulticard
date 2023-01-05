@@ -46,22 +46,26 @@ public class BCqTESLAPrivateKey
     /**
      * @return name of the algorithm
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return QTESLASecurityCategory.getName(keyParams.getSecurityCategory());
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
 
-    public QTESLAParameterSpec getParams()
+    @Override
+	public QTESLAParameterSpec getParams()
     {
         return new QTESLAParameterSpec(getAlgorithm());
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         PrivateKeyInfo pki;
         try
@@ -76,7 +80,8 @@ public class BCqTESLAPrivateKey
         }
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -94,7 +99,8 @@ public class BCqTESLAPrivateKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return keyParams.getSecurityCategory() + 37 * Arrays.hashCode(keyParams.getSecret());
     }

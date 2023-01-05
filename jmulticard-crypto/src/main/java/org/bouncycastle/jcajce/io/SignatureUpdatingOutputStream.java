@@ -8,47 +8,50 @@ import java.security.SignatureException;
 class SignatureUpdatingOutputStream
     extends OutputStream
 {
-    private Signature sig;
+    private final Signature sig;
 
-    SignatureUpdatingOutputStream(Signature sig)
+    SignatureUpdatingOutputStream(final Signature sig)
     {
         this.sig = sig;
     }
 
-    public void write(byte[] bytes, int off, int len)
+    @Override
+	public void write(final byte[] bytes, final int off, final int len)
         throws IOException
     {
         try
         {
             sig.update(bytes, off, len);
         }
-        catch (SignatureException e)
+        catch (final SignatureException e)
         {
             throw new IOException(e.getMessage());
         }
     }
 
-    public void write(byte[] bytes)
+    @Override
+	public void write(final byte[] bytes)
         throws IOException
     {
         try
         {
             sig.update(bytes);
         }
-        catch (SignatureException e)
+        catch (final SignatureException e)
         {
             throw new IOException(e.getMessage());
         }
     }
 
-    public void write(int b)
+    @Override
+	public void write(final int b)
         throws IOException
     {
         try
         {
             sig.update((byte)b);
         }
-        catch (SignatureException e)
+        catch (final SignatureException e)
         {
             throw new IOException(e.getMessage());
         }

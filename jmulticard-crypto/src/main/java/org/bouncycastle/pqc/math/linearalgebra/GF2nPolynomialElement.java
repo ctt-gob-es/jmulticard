@@ -39,7 +39,7 @@ public class GF2nPolynomialElement
      * @param f    the GF2nField to use
      * @param rand the source of randomness
      */
-    public GF2nPolynomialElement(GF2nPolynomialField f, Random rand)
+    public GF2nPolynomialElement(final GF2nPolynomialField f, final Random rand)
     {
         mField = f;
         mDegree = mField.getDegree();
@@ -53,7 +53,7 @@ public class GF2nPolynomialElement
      * @param f  the GF2nPolynomialField to use
      * @param bs the desired value as Bitstring
      */
-    public GF2nPolynomialElement(GF2nPolynomialField f, GF2Polynomial bs)
+    public GF2nPolynomialElement(final GF2nPolynomialField f, final GF2Polynomial bs)
     {
         mField = f;
         mDegree = mField.getDegree();
@@ -69,7 +69,7 @@ public class GF2nPolynomialElement
      * @param os the octet string to assign to this GF2nPolynomialElement
      * @see "P1363 5.5.5 p23, OS2FEP/OS2BSP"
      */
-    public GF2nPolynomialElement(GF2nPolynomialField f, byte[] os)
+    public GF2nPolynomialElement(final GF2nPolynomialField f, final byte[] os)
     {
         mField = f;
         mDegree = mField.getDegree();
@@ -84,7 +84,7 @@ public class GF2nPolynomialElement
      * @param f  the GF2nField to use
      * @param is the integer string to assign to this GF2nPolynomialElement
      */
-    public GF2nPolynomialElement(GF2nPolynomialField f, int[] is)
+    public GF2nPolynomialElement(final GF2nPolynomialField f, final int[] is)
     {
         mField = f;
         mDegree = mField.getDegree();
@@ -98,7 +98,7 @@ public class GF2nPolynomialElement
      *
      * @param other the GF2nPolynomialElement to clone
      */
-    public GF2nPolynomialElement(GF2nPolynomialElement other)
+    public GF2nPolynomialElement(final GF2nPolynomialElement other)
     {
         mField = other.mField;
         mDegree = other.mDegree;
@@ -115,7 +115,8 @@ public class GF2nPolynomialElement
      *
      * @return a copy of this element
      */
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new GF2nPolynomialElement(this);
     }
@@ -127,7 +128,8 @@ public class GF2nPolynomialElement
     /**
      * Assigns the value 'zero' to this Polynomial.
      */
-    void assignZero()
+    @Override
+	void assignZero()
     {
         polynomial.assignZero();
     }
@@ -138,9 +140,9 @@ public class GF2nPolynomialElement
      * @param f the finite field
      * @return the zero element in the given finite field
      */
-    public static GF2nPolynomialElement ZERO(GF2nPolynomialField f)
+    public static GF2nPolynomialElement ZERO(final GF2nPolynomialField f)
     {
-        GF2Polynomial polynomial = new GF2Polynomial(f.getDegree());
+        final GF2Polynomial polynomial = new GF2Polynomial(f.getDegree());
         return new GF2nPolynomialElement(f, polynomial);
     }
 
@@ -150,9 +152,9 @@ public class GF2nPolynomialElement
      * @param f the finite field
      * @return the one element in the given finite field
      */
-    public static GF2nPolynomialElement ONE(GF2nPolynomialField f)
+    public static GF2nPolynomialElement ONE(final GF2nPolynomialField f)
     {
-        GF2Polynomial polynomial = new GF2Polynomial(f.getDegree(),
+        final GF2Polynomial polynomial = new GF2Polynomial(f.getDegree(),
             new int[]{1});
         return new GF2nPolynomialElement(f, polynomial);
     }
@@ -160,7 +162,8 @@ public class GF2nPolynomialElement
     /**
      * Assigns the value 'one' to this Polynomial.
      */
-    void assignOne()
+    @Override
+	void assignOne()
     {
         polynomial.assignOne();
     }
@@ -171,7 +174,7 @@ public class GF2nPolynomialElement
      *
      * @param rand the source of randomness
      */
-    private void randomize(Random rand)
+    private void randomize(final Random rand)
     {
         polynomial.expandN(mDegree);
         polynomial.randomize(rand);
@@ -186,7 +189,8 @@ public class GF2nPolynomialElement
      *
      * @return <tt>true</tt> if <tt>this</tt> is the zero element
      */
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         return polynomial.isZero();
     }
@@ -196,7 +200,8 @@ public class GF2nPolynomialElement
      *
      * @return true if <i>this</i> equals one (this == 1)
      */
-    public boolean isOne()
+    @Override
+	public boolean isOne()
     {
         return polynomial.isOne();
     }
@@ -208,22 +213,20 @@ public class GF2nPolynomialElement
      * @return <tt>true</tt> if the two objects are equal, <tt>false</tt>
      *         otherwise
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
         if (other == null || !(other instanceof GF2nPolynomialElement))
         {
             return false;
         }
-        GF2nPolynomialElement otherElem = (GF2nPolynomialElement)other;
+        final GF2nPolynomialElement otherElem = (GF2nPolynomialElement)other;
 
-        if (mField != otherElem.mField)
-        {
-            if (!mField.getFieldPolynomial().equals(
-                otherElem.mField.getFieldPolynomial()))
-            {
-                return false;
-            }
-        }
+        if ((mField != otherElem.mField) && !mField.getFieldPolynomial().equals(
+		    otherElem.mField.getFieldPolynomial()))
+		{
+		    return false;
+		}
 
         return polynomial.equals(otherElem.polynomial);
     }
@@ -231,7 +234,8 @@ public class GF2nPolynomialElement
     /**
      * @return the hash code of this element
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return mField.hashCode() + polynomial.hashCode();
     }
@@ -256,7 +260,8 @@ public class GF2nPolynomialElement
      * @param index the index of the bit to test
      * @return <tt>true</tt> if the indexed bit is set
      */
-    boolean testBit(int index)
+    @Override
+	boolean testBit(final int index)
     {
         return polynomial.testBit(index);
     }
@@ -267,7 +272,8 @@ public class GF2nPolynomialElement
      *
      * @return true if the rightmost bit of this element is set
      */
-    public boolean testRightmostBit()
+    @Override
+	public boolean testRightmostBit()
     {
         return polynomial.testBit(0);
     }
@@ -278,10 +284,11 @@ public class GF2nPolynomialElement
      * @param addend the addend
      * @return <tt>this + other</tt> (newly created)
      */
-    public GFElement add(GFElement addend)
+    @Override
+	public GFElement add(final GFElement addend)
         throws RuntimeException
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.addToThis(addend);
         return result;
     }
@@ -291,14 +298,11 @@ public class GF2nPolynomialElement
      *
      * @param addend the addend
      */
-    public void addToThis(GFElement addend)
+    @Override
+	public void addToThis(final GFElement addend)
         throws RuntimeException
     {
-        if (!(addend instanceof GF2nPolynomialElement))
-        {
-            throw new RuntimeException();
-        }
-        if (!mField.equals(((GF2nPolynomialElement)addend).mField))
+        if (!(addend instanceof GF2nPolynomialElement) || !mField.equals(((GF2nPolynomialElement)addend).mField))
         {
             throw new RuntimeException();
         }
@@ -310,9 +314,10 @@ public class GF2nPolynomialElement
      *
      * @return <tt>this</tt> + 'one'
      */
-    public GF2nElement increase()
+    @Override
+	public GF2nElement increase()
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.increaseThis();
         return result;
     }
@@ -320,7 +325,8 @@ public class GF2nPolynomialElement
     /**
      * Increases this element by 'one'.
      */
-    public void increaseThis()
+    @Override
+	public void increaseThis()
     {
         polynomial.increaseThis();
     }
@@ -331,10 +337,11 @@ public class GF2nPolynomialElement
      * @param factor the factor
      * @return <tt>this * factor</tt> (newly created)
      */
-    public GFElement multiply(GFElement factor)
+    @Override
+	public GFElement multiply(final GFElement factor)
         throws RuntimeException
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.multiplyThisBy(factor);
         return result;
     }
@@ -344,14 +351,11 @@ public class GF2nPolynomialElement
      *
      * @param factor the factor
      */
-    public void multiplyThisBy(GFElement factor)
+    @Override
+	public void multiplyThisBy(final GFElement factor)
         throws RuntimeException
     {
-        if (!(factor instanceof GF2nPolynomialElement))
-        {
-            throw new RuntimeException();
-        }
-        if (!mField.equals(((GF2nPolynomialElement)factor).mField))
+        if (!(factor instanceof GF2nPolynomialElement) || !mField.equals(((GF2nPolynomialElement)factor).mField))
         {
             throw new RuntimeException();
         }
@@ -374,7 +378,8 @@ public class GF2nPolynomialElement
      * @see GF2nPolynomialElement#invertEEA
      * @see GF2nPolynomialElement#invertSquare
      */
-    public GFElement invert()
+    @Override
+	public GFElement invert()
         throws ArithmeticException
     {
         return invertMAIA();
@@ -511,13 +516,12 @@ public class GF2nPolynomialElement
                 u.shiftRightThis(); // u = u / x
                 if (!b.testBit(0))
                 {
-                    b.shiftRightThis();
                 }
                 else
                 {
                     b.addToThis(mField.getFieldPolynomial());
-                    b.shiftRightThis();
                 }
+				b.shiftRightThis();
             }
             if (u.isOne())
             {
@@ -547,7 +551,8 @@ public class GF2nPolynomialElement
      * @return <tt>this<sup>2</sup></tt> (newly created)
      * @see GF2nPolynomialElement#squarePreCalc
      */
-    public GF2nElement square()
+    @Override
+	public GF2nElement square()
     {
         return squarePreCalc();
     }
@@ -556,7 +561,8 @@ public class GF2nPolynomialElement
      * This method is used internally to map the square()-calls within
      * GF2nPolynomialElement to one of the possible squaring methods.
      */
-    public void squareThis()
+    @Override
+	public void squareThis()
     {
         squareThisPreCalc();
     }
@@ -574,7 +580,7 @@ public class GF2nPolynomialElement
      */
     public GF2nPolynomialElement squareMatrix()
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.squareThisMatrix();
         result.reduceThis();
         return result;
@@ -592,7 +598,7 @@ public class GF2nPolynomialElement
      */
     public void squareThisMatrix()
     {
-        GF2Polynomial result = new GF2Polynomial(mDegree);
+        final GF2Polynomial result = new GF2Polynomial(mDegree);
         for (int i = 0; i < mDegree; i++)
         {
             if (polynomial
@@ -618,7 +624,7 @@ public class GF2nPolynomialElement
      */
     public GF2nPolynomialElement squareBitwise()
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.squareThisBitwise();
         result.reduceThis();
         return result;
@@ -651,7 +657,7 @@ public class GF2nPolynomialElement
      */
     public GF2nPolynomialElement squarePreCalc()
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.squareThisPreCalc();
         result.reduceThis();
         return result;
@@ -679,27 +685,27 @@ public class GF2nPolynomialElement
      * @param k the power
      * @return <i>this</i>^<i>k</i> in a new GF2nPolynomialElement
      */
-    public GF2nPolynomialElement power(int k)
+    public GF2nPolynomialElement power(final int k)
     {
         if (k == 1)
         {
             return new GF2nPolynomialElement(this);
         }
 
-        GF2nPolynomialElement result = GF2nPolynomialElement
+        final GF2nPolynomialElement result = GF2nPolynomialElement
             .ONE((GF2nPolynomialField)mField);
         if (k == 0)
         {
             return result;
         }
 
-        GF2nPolynomialElement x = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement x = new GF2nPolynomialElement(this);
         x.polynomial.expandN((x.mDegree << 1) + 32); // increase performance
         x.polynomial.reduceN();
 
         for (int i = 0; i < mDegree; i++)
         {
-            if ((k & (1 << i)) != 0)
+            if ((k & 1 << i) != 0)
             {
                 result.multiplyThisBy(x);
             }
@@ -715,9 +721,10 @@ public class GF2nPolynomialElement
      *
      * @return <tt>this<sup>1/2</sup></tt> (newly created)
      */
-    public GF2nElement squareRoot()
+    @Override
+	public GF2nElement squareRoot()
     {
-        GF2nPolynomialElement result = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement result = new GF2nPolynomialElement(this);
         result.squareRootThis();
         return result;
     }
@@ -725,7 +732,8 @@ public class GF2nPolynomialElement
     /**
      * Compute the square root of this element.
      */
-    public void squareRootThis()
+    @Override
+	public void squareRootThis()
     {
         // increase performance
         polynomial.expandN((mDegree << 1) + 32);
@@ -746,7 +754,8 @@ public class GF2nPolynomialElement
      *         equation <tt>z<sup>2</sup> + z = this</tt>
      * @see "IEEE 1363, Annex A.4.7"
      */
-    public GF2nElement solveQuadraticEquation()
+    @Override
+	public GF2nElement solveQuadraticEquation()
         throws RuntimeException
     {
         if (isZero())
@@ -764,7 +773,7 @@ public class GF2nPolynomialElement
         do
         {
             // step 1.
-            GF2nPolynomialElement p = new GF2nPolynomialElement(
+            final GF2nPolynomialElement p = new GF2nPolynomialElement(
                 (GF2nPolynomialField)mField, new Random());
             // step 2.
             z = ZERO((GF2nPolynomialField)mField);
@@ -796,9 +805,10 @@ public class GF2nPolynomialElement
      *
      * @return the trace of this GF2nPolynomialElement
      */
-    public int trace()
+    @Override
+	public int trace()
     {
-        GF2nPolynomialElement t = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement t = new GF2nPolynomialElement(this);
         int i;
 
         for (i = 1; i < mDegree; i++)
@@ -828,9 +838,9 @@ public class GF2nPolynomialElement
             throw new RuntimeException();
         }
         int i;
-        GF2nPolynomialElement h = new GF2nPolynomialElement(this);
+        final GF2nPolynomialElement h = new GF2nPolynomialElement(this);
 
-        for (i = 1; i <= ((mDegree - 1) >> 1); i++)
+        for (i = 1; i <= mDegree - 1 >> 1; i++)
         {
             h.squareThis();
             h.squareThis();
@@ -858,21 +868,20 @@ public class GF2nPolynomialElement
                 {
                     tc = ((GF2nPolynomialField)mField).getTc();
                 }
-                catch (RuntimeException NATExc)
+                catch (final RuntimeException NATExc)
                 {
                     throw new RuntimeException(
                         "GF2nPolynomialElement.reduce: the field"
                             + " polynomial is not a trinomial");
                 }
-                if (((mDegree - tc) <= 32) // do we have to use slow
+                if (mDegree - tc <= 32 // do we have to use slow
                     // bitwise reduction ?
-                    || (polynomial.getLength() > (mDegree << 1)))
+                    || polynomial.getLength() > mDegree << 1)
                 {
                     reduceTrinomialBitwise(tc);
                     return;
                 }
                 polynomial.reduceTrinomial(mDegree, tc);
-                return;
             }
             else if (((GF2nPolynomialField)mField).isPentanomial())
             { // fieldpolynomial
@@ -883,28 +892,27 @@ public class GF2nPolynomialElement
                 {
                     pc = ((GF2nPolynomialField)mField).getPc();
                 }
-                catch (RuntimeException NATExc)
+                catch (final RuntimeException NATExc)
                 {
                     throw new RuntimeException(
                         "GF2nPolynomialElement.reduce: the field"
                             + " polynomial is not a pentanomial");
                 }
-                if (((mDegree - pc[2]) <= 32) // do we have to use slow
+                if (mDegree - pc[2] <= 32 // do we have to use slow
                     // bitwise reduction ?
-                    || (polynomial.getLength() > (mDegree << 1)))
+                    || polynomial.getLength() > mDegree << 1)
                 {
                     reducePentanomialBitwise(pc);
                     return;
                 }
                 polynomial.reducePentanomial(mDegree, pc);
-                return;
             }
             else
             { // fieldpolynomial is something else
                 polynomial = polynomial.remainder(mField.getFieldPolynomial());
                 polynomial.expandN(mDegree);
-                return;
             }
+			return;
         }
         if (polynomial.getLength() < mDegree)
         {
@@ -916,10 +924,10 @@ public class GF2nPolynomialElement
      * Reduce this GF2nPolynomialElement using the trinomial x^n + x^tc + 1 as
      * fieldpolynomial. The coefficients are reduced bit by bit.
      */
-    private void reduceTrinomialBitwise(int tc)
+    private void reduceTrinomialBitwise(final int tc)
     {
         int i;
-        int k = mDegree - tc;
+        final int k = mDegree - tc;
         for (i = polynomial.getLength() - 1; i >= mDegree; i--)
         {
             if (polynomial.testBit(i))
@@ -940,12 +948,12 @@ public class GF2nPolynomialElement
      * x^pc[1] + x^pc[0] + 1 as fieldpolynomial. The coefficients are reduced
      * bit by bit.
      */
-    private void reducePentanomialBitwise(int[] pc)
+    private void reducePentanomialBitwise(final int[] pc)
     {
         int i;
-        int k = mDegree - pc[2];
-        int l = mDegree - pc[1];
-        int m = mDegree - pc[0];
+        final int k = mDegree - pc[2];
+        final int l = mDegree - pc[1];
+        final int m = mDegree - pc[0];
         for (i = polynomial.getLength() - 1; i >= mDegree; i--)
         {
             if (polynomial.testBit(i))
@@ -972,7 +980,8 @@ public class GF2nPolynomialElement
      *
      * @return a String representing this Bitstrings value.
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         return polynomial.toString(16);
     }
@@ -984,7 +993,8 @@ public class GF2nPolynomialElement
      * @param radix the radix to use (2 or 16, otherwise 2 is used)
      * @return a String representing this Bitstrings value.
      */
-    public String toString(int radix)
+    @Override
+	public String toString(final int radix)
     {
         return polynomial.toString(radix);
     }
@@ -995,7 +1005,8 @@ public class GF2nPolynomialElement
      * @return a byte[] representing the value of this GF2nPolynomialElement
      * @see "P1363 5.5.2 p22f BS2OSP, FE2OSP"
      */
-    public byte[] toByteArray()
+    @Override
+	public byte[] toByteArray()
     {
         return polynomial.toByteArray();
     }
@@ -1007,7 +1018,8 @@ public class GF2nPolynomialElement
      *         GF2nPolynomialElement
      * @see "P1363 5.5.1 p22 BS2IP"
      */
-    public BigInteger toFlexiBigInt()
+    @Override
+	public BigInteger toFlexiBigInt()
     {
         return polynomial.toFlexiBigInt();
     }

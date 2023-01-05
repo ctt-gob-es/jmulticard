@@ -216,7 +216,8 @@ public class DefaultCMSSignatureAlgorithmNameGenerator
         digestAlgs.put(oid, algorithmName);
     }
 
-    public String getSignatureName(AlgorithmIdentifier digestAlg, AlgorithmIdentifier encryptionAlg)
+    @Override
+	public String getSignatureName(AlgorithmIdentifier digestAlg, AlgorithmIdentifier encryptionAlg)
     {
         ASN1ObjectIdentifier encryptionAlgOID = encryptionAlg.getAlgorithm();
         if (EdECObjectIdentifiers.id_Ed25519.equals(encryptionAlgOID))

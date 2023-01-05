@@ -24,9 +24,9 @@ public class Salsa20Engine
 
     private final static int[] TAU_SIGMA = Pack.littleEndianToInt(Strings.toByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
 
-    protected void packTauOrSigma(int keyLength, int[] state, int stateOffset)
+    protected void packTauOrSigma(final int keyLength, final int[] state, final int stateOffset)
     {
-        int tsOff = (keyLength - 16) / 4;
+        final int tsOff = (keyLength - 16) / 4;
         state[stateOffset    ] = TAU_SIGMA[tsOff    ];
         state[stateOffset + 1] = TAU_SIGMA[tsOff + 1];
         state[stateOffset + 2] = TAU_SIGMA[tsOff + 2];
@@ -34,7 +34,8 @@ public class Salsa20Engine
     }
 
     /** @deprecated */
-    protected final static byte[]
+	@Deprecated
+	protected final static byte[]
         sigma = Strings.toByteArray("expand 32-byte k"),
         tau   = Strings.toByteArray("expand 16-byte k");
 
@@ -47,7 +48,7 @@ public class Salsa20Engine
     private int         index = 0;
     protected int[]     engineState = new int[STATE_SIZE]; // state
     protected int[]     x = new int[STATE_SIZE] ; // internal buffer
-    private byte[]      keyStream   = new byte[STATE_SIZE * 4]; // expanded state, 64 bytes
+    private final byte[]      keyStream   = new byte[STATE_SIZE * 4]; // expanded state, 64 bytes
     private boolean     initialised = false;
 
     /*
@@ -67,7 +68,7 @@ public class Salsa20Engine
      * Creates a Salsa20 engine with a specific number of rounds.
      * @param rounds the number of rounds (must be an even number).
      */
-    public Salsa20Engine(int rounds)
+    public Salsa20Engine(final int rounds)
     {
         if (rounds <= 0 || (rounds & 1) != 0)
         {
@@ -85,13 +86,14 @@ public class Salsa20Engine
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    public void init(
-        boolean             forEncryption, 
-        CipherParameters     params)
+    @Override
+	public void init(
+        final boolean             forEncryption,
+        final CipherParameters     params)
     {
-        /* 
+        /*
         * Salsa20 encryption and decryption is completely
-        * symmetrical, so the 'forEncryption' is 
+        * symmetrical, so the 'forEncryption' is
         * irrelevant. (Like 90% of stream ciphers)
         */
 
@@ -100,16 +102,16 @@ public class Salsa20Engine
             throw new IllegalArgumentException(getAlgorithmName() + " Init parameters must include an IV");
         }
 
-        ParametersWithIV ivParams = (ParametersWithIV) params;
+        final ParametersWithIV ivParams = (ParametersWithIV) params;
 
-        byte[] iv = ivParams.getIV();
+        final byte[] iv = ivParams.getIV();
         if (iv == null || iv.length != getNonceSize())
         {
             throw new IllegalArgumentException(getAlgorithmName() + " requires exactly " + getNonceSize()
                     + " bytes of IV");
         }
 
-        CipherParameters keyParam = ivParams.getParameters();
+        final CipherParameters keyParam = ivParams.getParameters();
         if (keyParam == null)
         {
             if (!initialised)
@@ -138,25 +140,27 @@ public class Salsa20Engine
         return 8;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
-        String name = "Salsa20";
+        StringBuilder name = new StringBuilder("Salsa20");
         if (rounds != DEFAULT_ROUNDS)
         {
-            name += "/" + rounds;
+            name.append("/").append(rounds);
         }
-        return name;
+        return name.toString();
     }
 
-    public byte returnByte(byte in)
+    @Override
+	public byte returnByte(final byte in)
     {
         if (limitExceeded())
         {
             throw new MaxBytesExceededException("2^70 byte limit per IV; Change IV");
         }
 
-        byte out = (byte)(keyStream[index]^in);
-        index = (index + 1) & 63;
+        final byte out = (byte)(keyStream[index]^in);
+        index = index + 1 & 63;
 
         if (index == 0)
         {
@@ -167,17 +171,17 @@ public class Salsa20Engine
         return out;
     }
 
-    protected void advanceCounter(long diff)
+    protected void advanceCounter(final long diff)
     {
-        int hi = (int)(diff >>> 32);
-        int lo = (int)diff;
+        final int hi = (int)(diff >>> 32);
+        final int lo = (int)diff;
 
         if (hi > 0)
         {
             engineState[9] += hi;
         }
 
-        int oldState = engineState[8];
+        final int oldState = engineState[8];
 
         engineState[8] += lo;
 
@@ -195,10 +199,10 @@ public class Salsa20Engine
         }
     }
 
-    protected void retreatCounter(long diff)
+    protected void retreatCounter(final long diff)
     {
-        int hi = (int)(diff >>> 32);
-        int lo = (int)diff;
+        final int hi = (int)(diff >>> 32);
+        final int lo = (int)diff;
 
         if (hi != 0)
         {
@@ -214,20 +218,15 @@ public class Salsa20Engine
 
         if ((engineState[8] & 0xffffffffL) >= (lo & 0xffffffffL))
         {
-            engineState[8] -= lo;
-        }
-        else
-        {
-            if (engineState[9] != 0)
-            {
-                --engineState[9];
-                engineState[8] -= lo;
-            }
-            else
-            {
-                throw new IllegalStateException("attempt to reduce counter past zero.");
-            }
-        }
+        } else if (engineState[9] != 0)
+		{
+		    --engineState[9];
+		}
+		else
+		{
+		    throw new IllegalStateException("attempt to reduce counter past zero.");
+		}
+		engineState[8] -= lo;
     }
 
     protected void retreatCounter()
@@ -243,24 +242,25 @@ public class Salsa20Engine
         }
     }
 
-    public int processBytes(
-        byte[]     in, 
-        int     inOff, 
-        int     len, 
-        byte[]     out, 
-        int     outOff)
+    @Override
+	public int processBytes(
+        final byte[]     in,
+        final int     inOff,
+        final int     len,
+        final byte[]     out,
+        final int     outOff)
     {
         if (!initialised)
         {
             throw new IllegalStateException(getAlgorithmName() + " not initialised");
         }
 
-        if ((inOff + len) > in.length)
+        if (inOff + len > in.length)
         {
             throw new DataLengthException("input buffer too short");
         }
 
-        if ((outOff + len) > out.length)
+        if (outOff + len > out.length)
         {
             throw new OutputLengthException("output buffer too short");
         }
@@ -273,7 +273,7 @@ public class Salsa20Engine
         for (int i = 0; i < len; i++)
         {
             out[i + outOff] = (byte)(keyStream[index] ^ in[i + inOff]);
-            index = (index + 1) & 63;
+            index = index + 1 & 63;
 
             if (index == 0)
             {
@@ -285,7 +285,8 @@ public class Salsa20Engine
         return len;
     }
 
-    public long skip(long numberOfBytes)
+    @Override
+	public long skip(final long numberOfBytes)
     {
         if (numberOfBytes >= 0)
         {
@@ -293,16 +294,16 @@ public class Salsa20Engine
 
             if (remaining >= 64)
             {
-                long count = remaining / 64;
+                final long count = remaining / 64;
 
                 advanceCounter(count);
 
                 remaining -= count * 64;
             }
 
-            int oldIndex = index;
+            final int oldIndex = index;
 
-            index = (index + (int)remaining) & 63;
+            index = index + (int)remaining & 63;
 
             if (index < oldIndex)
             {
@@ -315,7 +316,7 @@ public class Salsa20Engine
 
             if (remaining >= 64)
             {
-                long count = remaining / 64;
+                final long count = remaining / 64;
 
                 retreatCounter(count);
 
@@ -329,7 +330,7 @@ public class Salsa20Engine
                     retreatCounter();
                 }
 
-                index = (index - 1) & 63;
+                index = index - 1 & 63;
             }
         }
 
@@ -338,19 +339,22 @@ public class Salsa20Engine
         return numberOfBytes;
     }
 
-    public long seekTo(long position)
+    @Override
+	public long seekTo(final long position)
     {
         reset();
 
         return skip(position);
     }
 
-    public long getPosition()
+    @Override
+	public long getPosition()
     {
         return getCounter() * 64 + index;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         index = 0;
         resetLimitCounter();
@@ -361,7 +365,7 @@ public class Salsa20Engine
 
     protected long getCounter()
     {
-        return ((long)engineState[9] << 32) | (engineState[8] & 0xffffffffL);
+        return (long)engineState[9] << 32 | engineState[8] & 0xffffffffL;
     }
 
     protected void resetCounter()
@@ -369,16 +373,16 @@ public class Salsa20Engine
         engineState[8] = engineState[9] = 0;
     }
 
-    protected void setKey(byte[] keyBytes, byte[] ivBytes)
+    protected void setKey(final byte[] keyBytes, final byte[] ivBytes)
     {
         if (keyBytes != null)
         {
-            if ((keyBytes.length != 16) && (keyBytes.length != 32))
+            if (keyBytes.length != 16 && keyBytes.length != 32)
             {
                 throw new IllegalArgumentException(getAlgorithmName() + " requires 128 bit or 256 bit key");
             }
 
-            int tsOff = (keyBytes.length - 16) / 4;
+            final int tsOff = (keyBytes.length - 16) / 4;
             engineState[0 ] = TAU_SIGMA[tsOff    ];
             engineState[5 ] = TAU_SIGMA[tsOff + 1];
             engineState[10] = TAU_SIGMA[tsOff + 2];
@@ -393,7 +397,7 @@ public class Salsa20Engine
         Pack.littleEndianToInt(ivBytes, 0, engineState, 6, 2);
     }
 
-    protected void generateKeyStream(byte[] output)
+    protected void generateKeyStream(final byte[] output)
     {
         salsaCore(rounds, engineState, x);
         Pack.intToLittleEndian(x, output, 0);
@@ -403,14 +407,10 @@ public class Salsa20Engine
      * Salsa20 function
      *
      * @param   input   input data
-     */    
-    public static void salsaCore(int rounds, int[] input, int[] x)
+     */
+    public static void salsaCore(final int rounds, final int[] input, final int[] x)
     {
-        if (input.length != 16)
-        {
-            throw new IllegalArgumentException();
-        }
-        if (x.length != 16)
+        if ((input.length != 16) || (x.length != 16))
         {
             throw new IllegalArgumentException();
         }
@@ -500,13 +500,10 @@ public class Salsa20Engine
 
     private boolean limitExceeded()
     {
-        if (++cW0 == 0)
-        {
-            if (++cW1 == 0)
-            {
-                return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
-            }
-        }
+        if ((++cW0 == 0) && (++cW1 == 0))
+		{
+		    return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
+		}
 
         return false;
     }
@@ -514,16 +511,13 @@ public class Salsa20Engine
     /*
      * this relies on the fact len will always be positive.
      */
-    private boolean limitExceeded(int len)
+    private boolean limitExceeded(final int len)
     {
         cW0 += len;
-        if (cW0 < len && cW0 >= 0)
-        {
-            if (++cW1 == 0)
-            {
-                return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
-            }
-        }
+        if ((cW0 < len && cW0 >= 0) && (++cW1 == 0))
+		{
+		    return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
+		}
 
         return false;
     }

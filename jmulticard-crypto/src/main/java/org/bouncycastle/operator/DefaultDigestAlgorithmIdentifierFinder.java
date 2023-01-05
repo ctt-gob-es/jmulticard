@@ -216,7 +216,8 @@ public class DefaultDigestAlgorithmIdentifierFinder
         digestOidToAlgIds.put(oid, algId);
     }
 
-    public AlgorithmIdentifier find(AlgorithmIdentifier sigAlgId)
+    @Override
+	public AlgorithmIdentifier find(AlgorithmIdentifier sigAlgId)
     {
         ASN1ObjectIdentifier sigAlgOid = sigAlgId.getAlgorithm();
 
@@ -246,7 +247,8 @@ public class DefaultDigestAlgorithmIdentifierFinder
         return find(digAlgOid);
     }
 
-    public AlgorithmIdentifier find(ASN1ObjectIdentifier digAlgOid)
+    @Override
+	public AlgorithmIdentifier find(ASN1ObjectIdentifier digAlgOid)
     {
         if (digAlgOid == null)
         {
@@ -264,7 +266,8 @@ public class DefaultDigestAlgorithmIdentifierFinder
         }
     }
 
-    public AlgorithmIdentifier find(String digAlgName)
+    @Override
+	public AlgorithmIdentifier find(String digAlgName)
     {
         ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)digestNameToOids.get(digAlgName);
         if (oid != null)

@@ -79,7 +79,8 @@ public abstract class KeyPairGeneratorSpi
             this.configuration = configuration;
         }
 
-        public void initialize(
+        @Override
+		public void initialize(
             int             strength,
             SecureRandom    random)
         {
@@ -102,7 +103,8 @@ public abstract class KeyPairGeneratorSpi
             }
         }
 
-        public void initialize(
+        @Override
+		public void initialize(
             AlgorithmParameterSpec  params,
             SecureRandom            random)
             throws InvalidAlgorithmParameterException
@@ -154,7 +156,8 @@ public abstract class KeyPairGeneratorSpi
             initialised = true;
         }
 
-        public KeyPair generateKeyPair()
+        @Override
+		public KeyPair generateKeyPair()
         {
             if (!initialised)
             {

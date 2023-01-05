@@ -11,17 +11,20 @@ class PrimeField implements FiniteField
         this.characteristic = characteristic;
     }
 
-    public BigInteger getCharacteristic()
+    @Override
+	public BigInteger getCharacteristic()
     {
         return characteristic;
     }
 
-    public int getDimension()
+    @Override
+	public int getDimension()
     {
         return 1;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -35,7 +38,8 @@ class PrimeField implements FiniteField
         return characteristic.equals(other.characteristic);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return characteristic.hashCode();
     }

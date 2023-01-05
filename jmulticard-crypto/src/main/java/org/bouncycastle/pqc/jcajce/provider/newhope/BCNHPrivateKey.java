@@ -46,7 +46,8 @@ public class BCNHPrivateKey
      * @param o the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (!(o instanceof BCNHPrivateKey))
         {
@@ -57,7 +58,8 @@ public class BCNHPrivateKey
         return Arrays.areEqual(params.getSecData(), otherKey.params.getSecData());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(params.getSecData());
     }
@@ -65,12 +67,14 @@ public class BCNHPrivateKey
     /**
      * @return name of the algorithm - "NH"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "NH";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -84,12 +88,14 @@ public class BCNHPrivateKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
 
-    public short[] getSecretData()
+    @Override
+	public short[] getSecretData()
     {
         return params.getSecData();
     }

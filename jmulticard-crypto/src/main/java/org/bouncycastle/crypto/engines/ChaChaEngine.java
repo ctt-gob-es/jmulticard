@@ -25,12 +25,14 @@ public class ChaChaEngine extends Salsa20Engine
         super(rounds);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "ChaCha" + rounds;
     }
 
-    protected void advanceCounter(long diff)
+    @Override
+	protected void advanceCounter(long diff)
     {
         int hi = (int)(diff >>> 32);
         int lo = (int)diff;
@@ -50,7 +52,8 @@ public class ChaChaEngine extends Salsa20Engine
         }
     }
 
-    protected void advanceCounter()
+    @Override
+	protected void advanceCounter()
     {
         if (++engineState[12] == 0)
         {
@@ -58,7 +61,8 @@ public class ChaChaEngine extends Salsa20Engine
         }
     }
 
-    protected void retreatCounter(long diff)
+    @Override
+	protected void retreatCounter(long diff)
     {
         int hi = (int)(diff >>> 32);
         int lo = (int)diff;
@@ -93,7 +97,8 @@ public class ChaChaEngine extends Salsa20Engine
         }
     }
 
-    protected void retreatCounter()
+    @Override
+	protected void retreatCounter()
     {
         if (engineState[12] == 0 && engineState[13] == 0)
         {
@@ -106,17 +111,20 @@ public class ChaChaEngine extends Salsa20Engine
         }
     }
 
-    protected long getCounter()
+    @Override
+	protected long getCounter()
     {
         return ((long)engineState[13] << 32) | (engineState[12] & 0xffffffffL);
     }
 
-    protected void resetCounter()
+    @Override
+	protected void resetCounter()
     {
         engineState[12] = engineState[13] = 0;
     }
 
-    protected void setKey(byte[] keyBytes, byte[] ivBytes)
+    @Override
+	protected void setKey(byte[] keyBytes, byte[] ivBytes)
     {
         if (keyBytes != null)
         {
@@ -136,7 +144,8 @@ public class ChaChaEngine extends Salsa20Engine
         Pack.littleEndianToInt(ivBytes, 0, engineState, 14, 2);
     }
 
-    protected void generateKeyStream(byte[] output)
+    @Override
+	protected void generateKeyStream(byte[] output)
     {
         chachaCore(rounds, engineState, x);
         Pack.intToLittleEndian(x, output, 0);

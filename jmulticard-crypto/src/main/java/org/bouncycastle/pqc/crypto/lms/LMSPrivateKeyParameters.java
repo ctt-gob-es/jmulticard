@@ -188,7 +188,8 @@ public class LMSPrivateKeyParameters
         q++;
     }
 
-    public LMSContext generateLMSContext()
+    @Override
+	public LMSContext generateLMSContext()
     {
         // Step 1.
         LMSigParameters lmsParameter = this.getSigParameters();
@@ -213,7 +214,8 @@ public class LMSPrivateKeyParameters
         return otsPk.getSignatureContext(this.getSigParameters(), path);
     }
 
-    public byte[] generateSignature(LMSContext context)
+    @Override
+	public byte[] generateSignature(LMSContext context)
     {
         try
         {
@@ -284,7 +286,8 @@ public class LMSPrivateKeyParameters
         return Arrays.clone(masterSecret);
     }
 
-    public long getUsagesRemaining()
+    @Override
+	public long getUsagesRemaining()
     {
         return maxQ - q;
     }
@@ -434,7 +437,8 @@ public class LMSPrivateKeyParameters
         return result;
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         //
@@ -473,12 +477,14 @@ public class LMSPrivateKeyParameters
             this.index = index;
         }
 
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             return index;
         }
 
-        public boolean equals(Object o)
+        @Override
+		public boolean equals(Object o)
         {
             if (o instanceof CacheKey)
             {

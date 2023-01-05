@@ -7,6 +7,7 @@ package org.bouncycastle.asn1.x509;
  * StringTokenizer.
  * @deprecated use X500NameTokenizer
  */
+@Deprecated
 public class X509NameTokenizer
 {
     private String          value;

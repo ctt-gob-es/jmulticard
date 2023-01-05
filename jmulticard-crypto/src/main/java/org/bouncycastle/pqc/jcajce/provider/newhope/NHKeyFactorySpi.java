@@ -20,7 +20,8 @@ public class NHKeyFactorySpi
     extends KeyFactorySpi
     implements AsymmetricKeyInfoConverter
 {
-    public PrivateKey engineGeneratePrivate(KeySpec keySpec)
+    @Override
+	public PrivateKey engineGeneratePrivate(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof PKCS8EncodedKeySpec)
@@ -42,7 +43,8 @@ public class NHKeyFactorySpi
             + keySpec.getClass() + ".");
     }
 
-    public PublicKey engineGeneratePublic(KeySpec keySpec)
+    @Override
+	public PublicKey engineGeneratePublic(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof X509EncodedKeySpec)
@@ -64,7 +66,8 @@ public class NHKeyFactorySpi
         throw new InvalidKeySpecException("Unknown key specification: " + keySpec + ".");
     }
 
-    public final KeySpec engineGetKeySpec(Key key, Class keySpec)
+    @Override
+	public final KeySpec engineGetKeySpec(Key key, Class keySpec)
         throws InvalidKeySpecException
     {
         if (key instanceof BCNHPrivateKey)
@@ -91,7 +94,8 @@ public class NHKeyFactorySpi
             + keySpec + ".");
     }
 
-    public final Key engineTranslateKey(Key key)
+    @Override
+	public final Key engineTranslateKey(Key key)
         throws InvalidKeyException
     {
         if (key instanceof BCNHPrivateKey || key instanceof BCNHPublicKey)
@@ -102,13 +106,15 @@ public class NHKeyFactorySpi
         throw new InvalidKeyException("Unsupported key type");
     }
 
-    public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
+    @Override
+	public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
         throws IOException
     {
         return new BCNHPrivateKey(keyInfo);
     }
 
-    public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
+    @Override
+	public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
         throws IOException
     {
         return new BCNHPublicKey(keyInfo);

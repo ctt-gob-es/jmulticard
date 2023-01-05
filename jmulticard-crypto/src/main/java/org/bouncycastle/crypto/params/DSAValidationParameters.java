@@ -40,12 +40,14 @@ public class DSAValidationParameters
         return usageIndex;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return counter ^ Arrays.hashCode(seed);
     }
     
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object o)
     {
         if (!(o instanceof DSAValidationParameters))

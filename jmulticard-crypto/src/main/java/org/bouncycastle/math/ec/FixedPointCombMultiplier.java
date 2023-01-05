@@ -6,7 +6,8 @@ import org.bouncycastle.math.raw.Nat;
 
 public class FixedPointCombMultiplier extends AbstractECMultiplier
 {
-    protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
+    @Override
+	protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
     {
         ECCurve c = p.getCurve();
         int size = FixedPointUtil.getCombSize(c);

@@ -25,7 +25,8 @@ public class DHValidationParameters
         return Arrays.clone(seed);
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object o)
     {
         if (!(o instanceof DHValidationParameters))
@@ -43,7 +44,8 @@ public class DHValidationParameters
         return Arrays.areEqual(this.seed, other.seed);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return counter ^ Arrays.hashCode(seed);
     }

@@ -6,10 +6,11 @@ import org.bouncycastle.util.Arrays;
 
 /**
  * A DER encoding version of an application specific object.
- * 
+ *
  * @deprecated Will be removed. See comments for
  *             {@link ASN1ApplicationSpecific}.
  */
+@Deprecated
 public class DLApplicationSpecific
     extends ASN1ApplicationSpecific
 {
@@ -20,7 +21,7 @@ public class DLApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param contentsOctets the encoding of the object's body.
      */
-    public DLApplicationSpecific(int tagNo, byte[] contentsOctets)
+    public DLApplicationSpecific(final int tagNo, final byte[] contentsOctets)
     {
         super(new DLTaggedObject(false, BERTags.APPLICATION, tagNo, new DEROctetString(Arrays.clone(contentsOctets))));
     }
@@ -31,7 +32,7 @@ public class DLApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
      */
-    public DLApplicationSpecific(int tagNo, ASN1Encodable baseEncodable) throws IOException
+    public DLApplicationSpecific(final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {
         this(true, tagNo, baseEncodable);
     }
@@ -43,7 +44,7 @@ public class DLApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
      */
-    public DLApplicationSpecific(boolean explicit, int tagNo, ASN1Encodable baseEncodable) throws IOException
+    public DLApplicationSpecific(final boolean explicit, final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {
         super(new DLTaggedObject(explicit, BERTags.APPLICATION, tagNo, baseEncodable));
     }
@@ -54,17 +55,18 @@ public class DLApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param contentsElements   the objects making up the application specific object.
      */
-    public DLApplicationSpecific(int tagNo, ASN1EncodableVector contentsElements)
+    public DLApplicationSpecific(final int tagNo, final ASN1EncodableVector contentsElements)
     {
         super(new DLTaggedObject(false, BERTags.APPLICATION, tagNo, DLFactory.createSequence(contentsElements)));
     }
 
-    DLApplicationSpecific(ASN1TaggedObject taggedObject)
+    DLApplicationSpecific(final ASN1TaggedObject taggedObject)
     {
         super(taggedObject);
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

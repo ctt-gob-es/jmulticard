@@ -40,7 +40,7 @@ public final class XMSSPrivateKeyParameters
      */
     private volatile BDS bdsState;
 
-    private XMSSPrivateKeyParameters(Builder builder)
+    private XMSSPrivateKeyParameters(final Builder builder)
     {
         super(true, builder.params.getTreeDigest());
         params = builder.params;
@@ -48,17 +48,17 @@ public final class XMSSPrivateKeyParameters
         {
             throw new NullPointerException("params == null");
         }
-        int n = params.getTreeDigestSize();
-        byte[] privateKey = builder.privateKey;
+        final int n = params.getTreeDigestSize();
+        final byte[] privateKey = builder.privateKey;
         if (privateKey != null)
         {
             /* import */
-            int height = params.getHeight();
-            int indexSize = 4;
-            int secretKeySize = n;
-            int secretKeyPRFSize = n;
-            int publicSeedSize = n;
-            int rootSize = n;
+            final int height = params.getHeight();
+            final int indexSize = 4;
+            final int secretKeySize = n;
+            final int secretKeyPRFSize = n;
+            final int publicSeedSize = n;
+            final int rootSize = n;
             /*
             int totalSize = indexSize + secretKeySize + secretKeyPRFSize + publicSeedSize + rootSize;
             if (privateKey.length != totalSize) {
@@ -66,7 +66,7 @@ public final class XMSSPrivateKeyParameters
             }
             */
             int position = 0;
-            int index = Pack.bigEndianToInt(privateKey, position);
+            final int index = Pack.bigEndianToInt(privateKey, position);
             if (!XMSSUtil.isIndexValid(height, index))
             {
                 throw new IllegalArgumentException("index out of bounds");
@@ -81,21 +81,17 @@ public final class XMSSPrivateKeyParameters
             root = XMSSUtil.extractBytesAtOffset(privateKey, position, rootSize);
             position += rootSize;
             /* import BDS state */
-            byte[] bdsStateBinary = XMSSUtil.extractBytesAtOffset(privateKey, position, privateKey.length - position);
+            final byte[] bdsStateBinary = XMSSUtil.extractBytesAtOffset(privateKey, position, privateKey.length - position);
             try
             {
-                BDS bdsImport = (BDS)XMSSUtil.deserialize(bdsStateBinary, BDS.class);
+                final BDS bdsImport = (BDS)XMSSUtil.deserialize(bdsStateBinary, BDS.class);
                 if (bdsImport.getIndex() != index)
                 {
                     throw new IllegalStateException("serialized BDS has wrong index");
                 }
                 bdsState = bdsImport.withWOTSDigest(builder.params.getTreeDigestOID());
             }
-            catch (IOException e)
-            {
-                throw new IllegalArgumentException(e.getMessage(), e);
-            }
-            catch (ClassNotFoundException e)
+            catch (final IOException | ClassNotFoundException e)
             {
                 throw new IllegalArgumentException(e.getMessage(), e);
             }
@@ -103,7 +99,7 @@ public final class XMSSPrivateKeyParameters
         else
         {
             /* set */
-            byte[] tmpSecretKeySeed = builder.secretKeySeed;
+            final byte[] tmpSecretKeySeed = builder.secretKeySeed;
             if (tmpSecretKeySeed != null)
             {
                 if (tmpSecretKeySeed.length != n)
@@ -116,7 +112,7 @@ public final class XMSSPrivateKeyParameters
             {
                 secretKeySeed = new byte[n];
             }
-            byte[] tmpSecretKeyPRF = builder.secretKeyPRF;
+            final byte[] tmpSecretKeyPRF = builder.secretKeyPRF;
             if (tmpSecretKeyPRF != null)
             {
                 if (tmpSecretKeyPRF.length != n)
@@ -129,7 +125,7 @@ public final class XMSSPrivateKeyParameters
             {
                 secretKeyPRF = new byte[n];
             }
-            byte[] tmpPublicSeed = builder.publicSeed;
+            final byte[] tmpPublicSeed = builder.publicSeed;
             if (tmpPublicSeed != null)
             {
                 if (tmpPublicSeed.length != n)
@@ -142,7 +138,7 @@ public final class XMSSPrivateKeyParameters
             {
                 publicSeed = new byte[n];
             }
-            byte[] tmpRoot = builder.root;
+            final byte[] tmpRoot = builder.root;
             if (tmpRoot != null)
             {
                 if (tmpRoot.length != n)
@@ -155,22 +151,18 @@ public final class XMSSPrivateKeyParameters
             {
                 root = new byte[n];
             }
-            BDS tmpBDSState = builder.bdsState;
+            final BDS tmpBDSState = builder.bdsState;
             if (tmpBDSState != null)
             {
                 bdsState = tmpBDSState;
-            }
-            else
-            {
-                if (builder.index < ((1 << params.getHeight()) - 2) && tmpPublicSeed != null && tmpSecretKeySeed != null)
-                {
-                    bdsState = new BDS(params, tmpPublicSeed, tmpSecretKeySeed, (OTSHashAddress)new OTSHashAddress.Builder().build(), builder.index);
-                }
-                else
-                {
-                    bdsState = new BDS(params, (1 << params.getHeight()) - 1, builder.index);
-                }
-            }
+            } else if (builder.index < (1 << params.getHeight()) - 2 && tmpPublicSeed != null && tmpSecretKeySeed != null)
+			{
+			    bdsState = new BDS(params, tmpPublicSeed, tmpSecretKeySeed, (OTSHashAddress)new OTSHashAddress.Builder().build(), builder.index);
+			}
+			else
+			{
+			    bdsState = new BDS(params, (1 << params.getHeight()) - 1, builder.index);
+			}
             if (builder.maxIndex >= 0 && builder.maxIndex != bdsState.getMaxIndex())
             {
                 throw new IllegalArgumentException("maxIndex set but not reflected in state");
@@ -182,11 +174,12 @@ public final class XMSSPrivateKeyParameters
     {
         synchronized (this)
         {
-            return this.bdsState.getMaxIndex() - this.getIndex() + 1;
+            return bdsState.getMaxIndex() - this.getIndex() + 1;
         }
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         synchronized (this)
@@ -217,9 +210,7 @@ public final class XMSSPrivateKeyParameters
     {
         synchronized (this)
         {
-            XMSSPrivateKeyParameters keyParameters = this.extractKeyShard(1);
-
-            return keyParameters;
+            return this.extractKeyShard(1);
         }
     }
 
@@ -231,7 +222,7 @@ public final class XMSSPrivateKeyParameters
      * @param usageCount the number of usages the key should have.
      * @return a key based on the current key that can be used usageCount times.
      */
-    public XMSSPrivateKeyParameters extractKeyShard(int usageCount)
+    public XMSSPrivateKeyParameters extractKeyShard(final int usageCount)
     {
         if (usageCount < 1)
         {
@@ -242,7 +233,7 @@ public final class XMSSPrivateKeyParameters
             /* prepare authentication path for next leaf */
             if (usageCount <= this.getUsagesRemaining())
             {
-                XMSSPrivateKeyParameters keyParams = new XMSSPrivateKeyParameters.Builder(params)
+                final XMSSPrivateKeyParameters keyParams = new XMSSPrivateKeyParameters.Builder(params)
                     .withSecretKeySeed(secretKeySeed).withSecretKeyPRF(secretKeyPRF)
                     .withPublicSeed(publicSeed).withRoot(root)
                     .withIndex(getIndex())
@@ -251,15 +242,15 @@ public final class XMSSPrivateKeyParameters
 
                 if (usageCount == this.getUsagesRemaining())
                 {
-                    this.bdsState = new BDS(params, bdsState.getMaxIndex(), getIndex() + usageCount);   // we're finished.
+                    bdsState = new BDS(params, bdsState.getMaxIndex(), getIndex() + usageCount);   // we're finished.
                 }
                 else
                 {
                     // update the tree to the new index.
-                    OTSHashAddress hashAddress = (OTSHashAddress)new OTSHashAddress.Builder().build();
+                    final OTSHashAddress hashAddress = (OTSHashAddress)new OTSHashAddress.Builder().build();
                     for (int i = 0; i != usageCount; i++)
                     {
-                        this.bdsState = bdsState.getNextState(publicSeed, secretKeySeed, hashAddress);
+                        bdsState = bdsState.getNextState(publicSeed, secretKeySeed, hashAddress);
                     }
                 }
 
@@ -287,55 +278,54 @@ public final class XMSSPrivateKeyParameters
         private BDS bdsState = null;
         private byte[] privateKey = null;
 
-        public Builder(XMSSParameters params)
+        public Builder(final XMSSParameters params)
         {
-            super();
             this.params = params;
         }
 
-        public Builder withIndex(int val)
+        public Builder withIndex(final int val)
         {
             index = val;
             return this;
         }
 
-        public Builder withMaxIndex(int val)
+        public Builder withMaxIndex(final int val)
         {
             maxIndex = val;
             return this;
         }
 
-        public Builder withSecretKeySeed(byte[] val)
+        public Builder withSecretKeySeed(final byte[] val)
         {
             secretKeySeed = XMSSUtil.cloneArray(val);
             return this;
         }
 
-        public Builder withSecretKeyPRF(byte[] val)
+        public Builder withSecretKeyPRF(final byte[] val)
         {
             secretKeyPRF = XMSSUtil.cloneArray(val);
             return this;
         }
 
-        public Builder withPublicSeed(byte[] val)
+        public Builder withPublicSeed(final byte[] val)
         {
             publicSeed = XMSSUtil.cloneArray(val);
             return this;
         }
 
-        public Builder withRoot(byte[] val)
+        public Builder withRoot(final byte[] val)
         {
             root = XMSSUtil.cloneArray(val);
             return this;
         }
 
-        public Builder withBDSState(BDS valBDS)
+        public Builder withBDSState(final BDS valBDS)
         {
             bdsState = valBDS;
             return this;
         }
 
-        public Builder withPrivateKey(byte[] privateKeyVal)
+        public Builder withPrivateKey(final byte[] privateKeyVal)
         {
             privateKey = XMSSUtil.cloneArray(privateKeyVal);
             return this;
@@ -350,19 +340,21 @@ public final class XMSSPrivateKeyParameters
     /**
      * @deprecated use getEncoded() - this method will become private.
      */
-    public byte[] toByteArray()
+    @Override
+	@Deprecated
+	public byte[] toByteArray()
     {
         synchronized (this)
         {
             /* index || secretKeySeed || secretKeyPRF || publicSeed || root */
-            int n = params.getTreeDigestSize();
-            int indexSize = 4;
-            int secretKeySize = n;
-            int secretKeyPRFSize = n;
-            int publicSeedSize = n;
-            int rootSize = n;
-            int totalSize = indexSize + secretKeySize + secretKeyPRFSize + publicSeedSize + rootSize;
-            byte[] out = new byte[totalSize];
+            final int n = params.getTreeDigestSize();
+            final int indexSize = 4;
+            final int secretKeySize = n;
+            final int secretKeyPRFSize = n;
+            final int publicSeedSize = n;
+            final int rootSize = n;
+            final int totalSize = indexSize + secretKeySize + secretKeyPRFSize + publicSeedSize + rootSize;
+            final byte[] out = new byte[totalSize];
             int position = 0;
             /* copy index */
             Pack.intToBigEndian(bdsState.getIndex(), out, position);
@@ -384,7 +376,7 @@ public final class XMSSPrivateKeyParameters
             {
                 bdsStateOut = XMSSUtil.serialize(bdsState);
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new RuntimeException("error serializing bds state: " + e.getMessage());
             }

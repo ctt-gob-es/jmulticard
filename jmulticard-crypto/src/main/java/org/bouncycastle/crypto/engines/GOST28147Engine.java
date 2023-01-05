@@ -170,7 +170,8 @@ public class GOST28147Engine
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    public void init(
+    @Override
+	public void init(
         boolean           forEncryption,
         CipherParameters  params)
     {
@@ -208,17 +209,20 @@ public class GOST28147Engine
         }
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "GOST28147";
     }
 
-    public int getBlockSize()
+    @Override
+	public int getBlockSize()
     {
         return BLOCK_SIZE;
     }
 
-    public int processBlock(
+    @Override
+	public int processBlock(
         byte[] in,
         int inOff,
         byte[] out,
@@ -244,7 +248,8 @@ public class GOST28147Engine
         return BLOCK_SIZE;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
     }
 

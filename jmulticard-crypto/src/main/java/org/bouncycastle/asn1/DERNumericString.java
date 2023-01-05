@@ -22,7 +22,8 @@ public class DERNumericString
      * 
      * @deprecated Use {@link ASN1NumericString#getInstance(Object)} instead.
      */
-    public static DERNumericString getInstance(
+    @Deprecated
+	public static DERNumericString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERNumericString)
@@ -61,7 +62,8 @@ public class DERNumericString
      *             {@link ASN1NumericString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERNumericString getInstance(
+    @Deprecated
+	public static DERNumericString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

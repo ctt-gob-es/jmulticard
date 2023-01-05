@@ -4,11 +4,12 @@ import java.io.IOException;
 
 /**
  * A DER encoding version of an application specific object.
- * 
+ *
  * @deprecated Will be removed. See comments for
  *             {@link ASN1ApplicationSpecific}.
  */
-public class DERApplicationSpecific 
+@Deprecated
+public class DERApplicationSpecific
     extends ASN1ApplicationSpecific
 {
     /**
@@ -18,7 +19,7 @@ public class DERApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param contentsOctets the encoding of the object's body.
      */
-    public DERApplicationSpecific(int tagNo, byte[] contentsOctets)
+    public DERApplicationSpecific(final int tagNo, final byte[] contentsOctets)
     {
         super(new DERTaggedObject(false, BERTags.APPLICATION, tagNo, new DEROctetString(contentsOctets)));
     }
@@ -29,7 +30,7 @@ public class DERApplicationSpecific
      * @param tag the tag number for this object.
      * @param baseEncodable the object to be contained.
      */
-    public DERApplicationSpecific(int tag, ASN1Encodable baseEncodable) throws IOException
+    public DERApplicationSpecific(final int tag, final ASN1Encodable baseEncodable) throws IOException
     {
         this(true, tag, baseEncodable);
     }
@@ -41,7 +42,7 @@ public class DERApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
      */
-    public DERApplicationSpecific(boolean explicit, int tagNo, ASN1Encodable baseEncodable) throws IOException
+    public DERApplicationSpecific(final boolean explicit, final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {
         super(new DERTaggedObject(explicit, BERTags.APPLICATION, tagNo, baseEncodable));
     }
@@ -52,22 +53,24 @@ public class DERApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param contentsElements   the objects making up the application specific object.
      */
-    public DERApplicationSpecific(int tagNo, ASN1EncodableVector contentsElements)
+    public DERApplicationSpecific(final int tagNo, final ASN1EncodableVector contentsElements)
     {
         super(new DERTaggedObject(false, BERTags.APPLICATION, tagNo, DERFactory.createSequence(contentsElements)));
     }
 
-    DERApplicationSpecific(ASN1TaggedObject taggedObject)
+    DERApplicationSpecific(final ASN1TaggedObject taggedObject)
     {
         super(taggedObject);
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return this;
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

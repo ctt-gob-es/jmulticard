@@ -439,7 +439,8 @@ public class DefaultSignatureAlgorithmIdentifierFinder
             new ASN1Integer(1));
     }
 
-    public AlgorithmIdentifier find(String sigAlgName)
+    @Override
+	public AlgorithmIdentifier find(String sigAlgName)
     {
         return generate(sigAlgName);
     }

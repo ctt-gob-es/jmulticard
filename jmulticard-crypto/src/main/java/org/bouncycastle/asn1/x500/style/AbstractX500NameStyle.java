@@ -48,7 +48,8 @@ public abstract class AbstractX500NameStyle
         return value.hashCode();
     }
 
-    public int calculateHashCode(X500Name name)
+    @Override
+	public int calculateHashCode(X500Name name)
     {
         int hashCodeValue = 0;
         RDN[] rdns = name.getRDNs();
@@ -91,7 +92,8 @@ public abstract class AbstractX500NameStyle
      * @param oid the DN name of the value.
      * @param value the String representation of the value.
      */
-    public ASN1Encodable stringToValue(ASN1ObjectIdentifier oid, String value)
+    @Override
+	public ASN1Encodable stringToValue(ASN1ObjectIdentifier oid, String value)
     {
         if (value.length() != 0 && value.charAt(0) == '#')
         {
@@ -129,7 +131,8 @@ public abstract class AbstractX500NameStyle
         return new DERUTF8String(value);
     }
 
-    public boolean areEqual(X500Name name1, X500Name name2)
+    @Override
+	public boolean areEqual(X500Name name1, X500Name name2)
     {
         RDN[] rdns1 = name1.getRDNs();
         RDN[] rdns2 = name2.getRDNs();

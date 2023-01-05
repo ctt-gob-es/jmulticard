@@ -47,21 +47,21 @@ public class TBSCertList
         Extensions    crlEntryExtensions;
 
         private CRLEntry(
-            ASN1Sequence  seq)
+            final ASN1Sequence  seq)
         {
             if (seq.size() < 2 || seq.size() > 3)
             {
                 throw new IllegalArgumentException("Bad sequence size: " + seq.size());
             }
-            
+
             this.seq = seq;
         }
 
-        public static CRLEntry getInstance(Object o)
+        public static CRLEntry getInstance(final Object o)
         {
             if (o instanceof CRLEntry)
             {
-                return ((CRLEntry)o);
+                return (CRLEntry)o;
             }
             else if (o != null)
             {
@@ -87,11 +87,12 @@ public class TBSCertList
             {
                 crlEntryExtensions = Extensions.getInstance(seq.getObjectAt(2));
             }
-            
+
             return crlEntryExtensions;
         }
 
-        public ASN1Primitive toASN1Primitive()
+        @Override
+		public ASN1Primitive toASN1Primitive()
         {
             return seq;
         }
@@ -102,36 +103,40 @@ public class TBSCertList
         }
     }
 
-    private class RevokedCertificatesEnumeration
+    private static class RevokedCertificatesEnumeration
         implements Enumeration
     {
         private final Enumeration en;
 
-        RevokedCertificatesEnumeration(Enumeration en)
+        RevokedCertificatesEnumeration(final Enumeration en)
         {
             this.en = en;
         }
 
-        public boolean hasMoreElements()
+        @Override
+		public boolean hasMoreElements()
         {
             return en.hasMoreElements();
         }
 
-        public Object nextElement()
+        @Override
+		public Object nextElement()
         {
             return CRLEntry.getInstance(en.nextElement());
         }
     }
 
-    private class EmptyEnumeration
+    private static class EmptyEnumeration
         implements Enumeration
     {
-        public boolean hasMoreElements()
+        @Override
+		public boolean hasMoreElements()
         {
             return false;
         }
 
-        public Object nextElement()
+        @Override
+		public Object nextElement()
         {
             throw new NoSuchElementException("Empty Enumeration");
         }
@@ -146,14 +151,14 @@ public class TBSCertList
     Extensions              crlExtensions;
 
     public static TBSCertList getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static TBSCertList getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof TBSCertList)
         {
@@ -168,7 +173,7 @@ public class TBSCertList
     }
 
     public TBSCertList(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
         if (seq.size() < 3 || seq.size() > 7)
         {
@@ -252,13 +257,13 @@ public class TBSCertList
             return new CRLEntry[0];
         }
 
-        CRLEntry[] entries = new CRLEntry[revokedCertificates.size()];
+        final CRLEntry[] entries = new CRLEntry[revokedCertificates.size()];
 
         for (int i = 0; i < entries.length; i++)
         {
             entries[i] = CRLEntry.getInstance(revokedCertificates.getObjectAt(i));
         }
-        
+
         return entries;
     }
 
@@ -277,9 +282,10 @@ public class TBSCertList
         return crlExtensions;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(7);
+        final ASN1EncodableVector v = new ASN1EncodableVector(7);
 
         if (version != null)
         {

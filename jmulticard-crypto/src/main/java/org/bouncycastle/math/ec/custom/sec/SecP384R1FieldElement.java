@@ -14,7 +14,7 @@ public class SecP384R1FieldElement extends ECFieldElement.AbstractFp
 
     protected int[] x;
 
-    public SecP384R1FieldElement(BigInteger x)
+    public SecP384R1FieldElement(final BigInteger x)
     {
         if (x == null || x.signum() < 0 || x.compareTo(Q) >= 0)
         {
@@ -26,99 +26,113 @@ public class SecP384R1FieldElement extends ECFieldElement.AbstractFp
 
     public SecP384R1FieldElement()
     {
-        this.x = Nat.create(12);
+        x = Nat.create(12);
     }
 
-    protected SecP384R1FieldElement(int[] x)
+    protected SecP384R1FieldElement(final int[] x)
     {
         this.x = x;
     }
 
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         return Nat.isZero(12, x);
     }
 
-    public boolean isOne()
+    @Override
+	public boolean isOne()
     {
         return Nat.isOne(12, x);
     }
 
-    public boolean testBitZero()
+    @Override
+	public boolean testBitZero()
     {
         return Nat.getBit(x, 0) == 1;
     }
 
-    public BigInteger toBigInteger()
+    @Override
+	public BigInteger toBigInteger()
     {
         return Nat.toBigInteger(12, x);
     }
 
-    public String getFieldName()
+    @Override
+	public String getFieldName()
     {
         return "SecP384R1Field";
     }
 
-    public int getFieldSize()
+    @Override
+	public int getFieldSize()
     {
         return Q.bitLength();
     }
 
-    public ECFieldElement add(ECFieldElement b)
+    @Override
+	public ECFieldElement add(final ECFieldElement b)
     {
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.add(x, ((SecP384R1FieldElement)b).x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement addOne()
+    @Override
+	public ECFieldElement addOne()
     {
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.addOne(x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement subtract(ECFieldElement b)
+    @Override
+	public ECFieldElement subtract(final ECFieldElement b)
     {
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.subtract(x, ((SecP384R1FieldElement)b).x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement multiply(ECFieldElement b)
+    @Override
+	public ECFieldElement multiply(final ECFieldElement b)
     {
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.multiply(x, ((SecP384R1FieldElement)b).x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement divide(ECFieldElement b)
+    @Override
+	public ECFieldElement divide(final ECFieldElement b)
     {
 //        return multiply(b.invert());
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.inv(((SecP384R1FieldElement)b).x, z);
         SecP384R1Field.multiply(z, x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement negate()
+    @Override
+	public ECFieldElement negate()
     {
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.negate(x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement square()
+    @Override
+	public ECFieldElement square()
     {
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.square(x, z);
         return new SecP384R1FieldElement(z);
     }
 
-    public ECFieldElement invert()
+    @Override
+	public ECFieldElement invert()
     {
 //        return new SecP384R1FieldElement(toBigInteger().modInverse(Q));
-        int[] z = Nat.create(12);
+        final int[] z = Nat.create(12);
         SecP384R1Field.inv(x, z);
         return new SecP384R1FieldElement(z);
     }
@@ -127,21 +141,22 @@ public class SecP384R1FieldElement extends ECFieldElement.AbstractFp
      * return a sqrt root - the routine verifies that the calculation returns the right value - if
      * none exists it returns null.
      */
-    public ECFieldElement sqrt()
+    @Override
+	public ECFieldElement sqrt()
     {
         // Raise this element to the exponent 2^382 - 2^126 - 2^94 + 2^30
 
-        int[] x1 = this.x;
+        final int[] x1 = x;
         if (Nat.isZero(12, x1) || Nat.isOne(12, x1))
         {
             return this;
         }
 
-        int[] tt0 = Nat.create(24);
-        int[] t1 = Nat.create(12);
-        int[] t2 = Nat.create(12);
-        int[] t3 = Nat.create(12);
-        int[] t4 = Nat.create(12);
+        final int[] tt0 = Nat.create(24);
+        final int[] t1 = Nat.create(12);
+        final int[] t2 = Nat.create(12);
+        final int[] t3 = Nat.create(12);
+        final int[] t4 = Nat.create(12);
 
         SecP384R1Field.square(x1, t1, tt0);
         SecP384R1Field.multiply(t1, x1, t1, tt0);
@@ -170,7 +185,7 @@ public class SecP384R1FieldElement extends ECFieldElement.AbstractFp
         SecP384R1Field.squareN(t2, 60, t3, tt0);
         SecP384R1Field.multiply(t3, t2, t3, tt0);
 
-        int[] r = t2;
+        final int[] r = t2;
 
         SecP384R1Field.squareN(t3, 120, r, tt0);
         SecP384R1Field.multiply(r, t3, r, tt0);
@@ -190,7 +205,8 @@ public class SecP384R1FieldElement extends ECFieldElement.AbstractFp
         return Nat.eq(12, x1, t2) ? new SecP384R1FieldElement(t1) : null;
     }
 
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
         if (other == this)
         {
@@ -202,11 +218,12 @@ public class SecP384R1FieldElement extends ECFieldElement.AbstractFp
             return false;
         }
 
-        SecP384R1FieldElement o = (SecP384R1FieldElement)other;
+        final SecP384R1FieldElement o = (SecP384R1FieldElement)other;
         return Nat.eq(12, x, o.x);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Q.hashCode() ^ Arrays.hashCode(x, 0, 12);
     }

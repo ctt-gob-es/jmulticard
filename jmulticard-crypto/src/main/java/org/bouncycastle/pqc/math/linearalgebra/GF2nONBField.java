@@ -175,7 +175,8 @@ public class GF2nONBField
      * @return a random root of the polynomial
      * @see "P1363 A.5.6, p103f"
      */
-    protected GF2nElement getRandomRoot(GF2Polynomial polynomial)
+    @Override
+	protected GF2nElement getRandomRoot(GF2Polynomial polynomial)
     {
         // We are in B1!!!
         GF2nPolynomial c;
@@ -238,7 +239,8 @@ public class GF2nONBField
      * @param B1 the GF2nField to convert to
      * @see "P1363 A.7.3, p111ff"
      */
-    protected void computeCOBMatrix(GF2nField B1)
+    @Override
+	protected void computeCOBMatrix(GF2nField B1)
     {
         // we are in B0 here!
         if (mDegree != B1.mDegree)
@@ -295,7 +297,8 @@ public class GF2nONBField
      *
      * @see "P1363 A.7.2, p110f"
      */
-    protected void computeFieldPolynomial()
+    @Override
+	protected void computeFieldPolynomial()
     {
         if (mType == 1)
         {

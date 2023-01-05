@@ -41,7 +41,8 @@ public class CMCEPublicKey
         return Arrays.clone(T);
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector v = new ASN1EncodableVector();
         v.add(new DEROctetString(T));

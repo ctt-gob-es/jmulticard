@@ -7,6 +7,7 @@ import java.io.IOException;
  * 
  * @deprecated Will be made non-public. Test for and use only {@link ASN1TaggedObjectParser}.
  */
+@Deprecated
 public class BERTaggedObjectParser
     implements ASN1TaggedObjectParser
 {
@@ -21,22 +22,26 @@ public class BERTaggedObjectParser
         _parser = parser;
     }
 
-    public int getTagClass()
+    @Override
+	public int getTagClass()
     {
         return _tagClass;
     }
 
-    public int getTagNo()
+    @Override
+	public int getTagNo()
     {
         return _tagNo;
     }
 
-    public boolean hasContextTag(int tagNo)
+    @Override
+	public boolean hasContextTag(int tagNo)
     {
         return this._tagClass == BERTags.CONTEXT_SPECIFIC && this._tagNo == tagNo;
     }
 
-    public boolean hasTag(int tagClass, int tagNo)
+    @Override
+	public boolean hasTag(int tagClass, int tagNo)
     {
         return this._tagClass == tagClass && this._tagNo == tagNo;
     }
@@ -62,7 +67,9 @@ public class BERTaggedObjectParser
      *                     stream.
      * @deprecated See {@link ASN1TaggedObjectParser#getObjectParser(int, boolean)}.
      */
-    public ASN1Encodable getObjectParser(int tag, boolean isExplicit) throws IOException
+    @Deprecated
+	@Override
+	public ASN1Encodable getObjectParser(int tag, boolean isExplicit) throws IOException
     {
         if (BERTags.CONTEXT_SPECIFIC != getTagClass())
         {
@@ -78,13 +85,15 @@ public class BERTaggedObjectParser
      * @return an ASN1TaggedObject.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return _parser.loadTaggedIL(_tagClass, _tagNo);
     }
 
-    public ASN1Encodable parseBaseUniversal(boolean declaredExplicit, int baseTagNo) throws IOException
+    @Override
+	public ASN1Encodable parseBaseUniversal(boolean declaredExplicit, int baseTagNo) throws IOException
     {
         if (declaredExplicit)
         {
@@ -94,17 +103,20 @@ public class BERTaggedObjectParser
         return _parser.parseImplicitConstructedIL(baseTagNo);
     }
 
-    public ASN1Encodable parseExplicitBaseObject() throws IOException
+    @Override
+	public ASN1Encodable parseExplicitBaseObject() throws IOException
     {
         return _parser.readObject();
     }
 
-    public ASN1TaggedObjectParser parseExplicitBaseTagged() throws IOException
+    @Override
+	public ASN1TaggedObjectParser parseExplicitBaseTagged() throws IOException
     {
         return _parser.parseTaggedObject();
     }
 
-    public ASN1TaggedObjectParser parseImplicitBaseTagged(int baseTagClass, int baseTagNo) throws IOException
+    @Override
+	public ASN1TaggedObjectParser parseImplicitBaseTagged(int baseTagClass, int baseTagNo) throws IOException
     {
         // TODO[asn1] Special handling can be removed once ASN1ApplicationSpecificParser types removed.
         if (BERTags.APPLICATION == baseTagClass)
@@ -120,7 +132,8 @@ public class BERTaggedObjectParser
      *
      * @return an ASN1TaggedObject
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

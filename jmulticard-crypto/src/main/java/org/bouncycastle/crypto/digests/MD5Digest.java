@@ -66,17 +66,20 @@ public class MD5Digest
         xOff = t.xOff;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "MD5";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
-    protected void processWord(
+    @Override
+	protected void processWord(
         byte[]  in,
         int     inOff)
     {
@@ -89,7 +92,8 @@ public class MD5Digest
         }
     }
 
-    protected void processLength(
+    @Override
+	protected void processLength(
         long    bitLength)
     {
         if (xOff > 14)
@@ -112,7 +116,8 @@ public class MD5Digest
         out[outOff + 3] = (byte)(word >>> 24);
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[]  out,
         int     outOff)
     {
@@ -131,7 +136,8 @@ public class MD5Digest
     /**
      * reset the chaining variables to the IV values.
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -225,7 +231,8 @@ public class MD5Digest
         return v ^ (u | ~w);
     }
 
-    protected void processBlock()
+    @Override
+	protected void processBlock()
     {
         int a = H1;
         int b = H2;
@@ -327,19 +334,22 @@ public class MD5Digest
         }
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new MD5Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         MD5Digest d = (MD5Digest)other;
 
         copyIn(d);
     }
 
-    public byte[] getEncodedState()
+    @Override
+	public byte[] getEncodedState()
     {
         byte[] state = new byte[36 + xOff * 4];
 

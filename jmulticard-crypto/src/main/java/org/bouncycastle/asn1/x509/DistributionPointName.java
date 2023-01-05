@@ -29,14 +29,14 @@ public class DistributionPointName
     public static final int NAME_RELATIVE_TO_CRL_ISSUER = 1;
 
     public static DistributionPointName getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1TaggedObject.getInstance(obj, true));
     }
 
     public static DistributionPointName getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof DistributionPointName)
         {
@@ -51,63 +51,65 @@ public class DistributionPointName
     }
 
     public DistributionPointName(
-        int             type,
-        ASN1Encodable   name)
+        final int             type,
+        final ASN1Encodable   name)
     {
         this.type = type;
         this.name = name;
     }
 
     public DistributionPointName(
-        GeneralNames name)
+        final GeneralNames name)
     {
         this(FULL_NAME, name);
     }
 
     /**
      * Return the tag number applying to the underlying choice.
-     * 
+     *
      * @return the tag number for this point name.
      */
     public int getType()
     {
-        return this.type;
+        return type;
     }
-    
+
     /**
      * Return the tagged object inside the distribution point name.
-     * 
+     *
      * @return the underlying choice item.
      */
     public ASN1Encodable getName()
     {
-        return (ASN1Encodable)name;
+        return name;
     }
-    
+
     public DistributionPointName(
-        ASN1TaggedObject    obj)
+        final ASN1TaggedObject    obj)
     {
-        this.type = obj.getTagNo();
-        
+        type = obj.getTagNo();
+
         if (type == 0)
         {
-            this.name = GeneralNames.getInstance(obj, false);
+            name = GeneralNames.getInstance(obj, false);
         }
         else
         {
-            this.name = ASN1Set.getInstance(obj, false);
+            name = ASN1Set.getInstance(obj, false);
         }
     }
-    
-    public ASN1Primitive toASN1Primitive()
+
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return new DERTaggedObject(false, type, name);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
-        String       sep = Strings.lineSeparator();
-        StringBuffer buf = new StringBuffer();
+        final String       sep = Strings.lineSeparator();
+        final StringBuffer buf = new StringBuffer();
         buf.append("DistributionPointName: [");
         buf.append(sep);
         if (type == FULL_NAME)
@@ -123,9 +125,9 @@ public class DistributionPointName
         return buf.toString();
     }
 
-    private void appendObject(StringBuffer buf, String sep, String name, String value)
+    private void appendObject(final StringBuffer buf, final String sep, final String name, final String value)
     {
-        String       indent = "    ";
+        final String       indent = "    ";
 
         buf.append(indent);
         buf.append(name);

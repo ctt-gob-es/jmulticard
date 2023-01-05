@@ -87,7 +87,8 @@ public class DenseTernaryPolynomial
         return poly;
     }
 
-    public IntegerPolynomial mult(IntegerPolynomial poly2, int modulus)
+    @Override
+	public IntegerPolynomial mult(IntegerPolynomial poly2, int modulus)
     {
         // even on 32-bit systems, LongPolynomial5 multiplies faster than IntegerPolynomial
         if (modulus == 2048)
@@ -103,7 +104,8 @@ public class DenseTernaryPolynomial
         }
     }
 
-    public int[] getOnes()
+    @Override
+	public int[] getOnes()
     {
         int N = coeffs.length;
         int[] ones = new int[N];
@@ -119,7 +121,8 @@ public class DenseTernaryPolynomial
         return Arrays.copyOf(ones, onesIdx);
     }
 
-    public int[] getNegOnes()
+    @Override
+	public int[] getNegOnes()
     {
         int N = coeffs.length;
         int[] negOnes = new int[N];
@@ -135,7 +138,8 @@ public class DenseTernaryPolynomial
         return Arrays.copyOf(negOnes, negOnesIdx);
     }
 
-    public int size()
+    @Override
+	public int size()
     {
         return coeffs.length;
     }

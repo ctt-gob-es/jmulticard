@@ -40,7 +40,8 @@ public class ANSSINamedCurves
      */
     static X9ECParametersHolder FRP256v1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger p = fromHex("F1FD178C0B3AD58F10126DE8CE42435B3961ADBCABC8CA6DE8FCF353D86E9C03");
             BigInteger a = fromHex("F1FD178C0B3AD58F10126DE8CE42435B3961ADBCABC8CA6DE8FCF353D86E9C00");
@@ -51,7 +52,8 @@ public class ANSSINamedCurves
             return configureCurve(new ECCurve.Fp(p, a, b, n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = createCurve();

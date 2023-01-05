@@ -25,7 +25,8 @@ public class NHKeyPairGeneratorSpi
         super("NH");
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         int strength,
         SecureRandom random)
     {
@@ -37,7 +38,8 @@ public class NHKeyPairGeneratorSpi
         initialised = true;
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         AlgorithmParameterSpec params,
         SecureRandom random)
         throws InvalidAlgorithmParameterException
@@ -45,7 +47,8 @@ public class NHKeyPairGeneratorSpi
         throw new InvalidAlgorithmParameterException("parameter object not recognised");
     }
 
-    public KeyPair generateKeyPair()
+    @Override
+	public KeyPair generateKeyPair()
     {
         if (!initialised)
         {

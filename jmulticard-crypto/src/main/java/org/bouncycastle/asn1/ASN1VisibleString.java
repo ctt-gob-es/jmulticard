@@ -17,7 +17,8 @@ public abstract class ASN1VisibleString
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1VisibleString.class, BERTags.VISIBLE_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -87,12 +88,14 @@ public abstract class ASN1VisibleString
         this.contents = clone ? Arrays.clone(contents) : contents;
     }
 
-    public final String getString()
+    @Override
+	public final String getString()
     {
         return Strings.fromByteArray(contents);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getString();
     }
@@ -102,22 +105,26 @@ public abstract class ASN1VisibleString
         return Arrays.clone(contents);
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    final int encodedLength(boolean withTag)
+    @Override
+	final int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	final void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.VISIBLE_STRING, contents);
     }
 
-    final boolean asn1Equals(ASN1Primitive other)
+    @Override
+	final boolean asn1Equals(ASN1Primitive other)
     {
         if (!(other instanceof ASN1VisibleString))
         {
@@ -129,7 +136,8 @@ public abstract class ASN1VisibleString
         return Arrays.areEqual(this.contents, that.contents);
     }
 
-    public final int hashCode()
+    @Override
+	public final int hashCode()
     {
         return Arrays.hashCode(contents);
     }

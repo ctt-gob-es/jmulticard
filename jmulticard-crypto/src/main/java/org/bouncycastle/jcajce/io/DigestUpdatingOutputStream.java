@@ -7,26 +7,29 @@ import java.security.MessageDigest;
 class DigestUpdatingOutputStream
     extends OutputStream
 {
-    private MessageDigest digest;
+    private final MessageDigest digest;
 
-    DigestUpdatingOutputStream(MessageDigest digest)
+    DigestUpdatingOutputStream(final MessageDigest digest)
     {
         this.digest = digest;
     }
 
-    public void write(byte[] bytes, int off, int len)
+    @Override
+	public void write(final byte[] bytes, final int off, final int len)
         throws IOException
     {
         digest.update(bytes, off, len);
     }
 
-    public void write(byte[] bytes)
+    @Override
+	public void write(final byte[] bytes)
         throws IOException
     {
         digest.update(bytes);
     }
 
-    public void write(int b)
+    @Override
+	public void write(final int b)
         throws IOException
     {
         digest.update((byte)b);

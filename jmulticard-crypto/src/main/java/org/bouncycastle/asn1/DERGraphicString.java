@@ -12,7 +12,8 @@ public class DERGraphicString
      * 
      * @deprecated Use {@link ASN1GraphicString#getInstance(Object)} instead.
      */
-    public static DERGraphicString getInstance(
+    @Deprecated
+	public static DERGraphicString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERGraphicString)
@@ -51,7 +52,8 @@ public class DERGraphicString
      *             {@link ASN1GraphicString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERGraphicString getInstance(
+    @Deprecated
+	public static DERGraphicString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

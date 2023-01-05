@@ -116,7 +116,8 @@ public class BEROctetString
      * 
      * @deprecated Will be removed.
      */
-    public Enumeration getObjects()
+    @Deprecated
+	public Enumeration getObjects()
     {
         if (elements == null)
         {
@@ -124,12 +125,14 @@ public class BEROctetString
             {
                 int pos = 0;
 
-                public boolean hasMoreElements()
+                @Override
+				public boolean hasMoreElements()
                 {
                     return pos < string.length;
                 }
 
-                public Object nextElement()
+                @Override
+				public Object nextElement()
                 {
                     if (pos < string.length)
                     {
@@ -148,12 +151,14 @@ public class BEROctetString
         {
             int counter = 0;
 
-            public boolean hasMoreElements()
+            @Override
+			public boolean hasMoreElements()
             {
                 return counter < elements.length;
             }
 
-            public Object nextElement()
+            @Override
+			public Object nextElement()
             {
                 if (counter < elements.length)
                 {
@@ -164,12 +169,14 @@ public class BEROctetString
         };
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return null != elements || string.length > segmentLimit;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
         throws IOException
     {
         if (!encodeConstructed())
@@ -201,7 +208,8 @@ public class BEROctetString
         return totalLength;
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         if (!encodeConstructed())
         {

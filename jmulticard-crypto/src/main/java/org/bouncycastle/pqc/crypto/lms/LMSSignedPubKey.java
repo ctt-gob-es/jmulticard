@@ -56,7 +56,8 @@ class LMSSignedPubKey
         return result;
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return Composer.compose()

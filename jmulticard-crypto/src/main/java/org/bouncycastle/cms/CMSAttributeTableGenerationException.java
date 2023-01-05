@@ -20,12 +20,14 @@ public class CMSAttributeTableGenerationException
         this.e = e;
     }
 
-    public Exception getUnderlyingException()
+    @Override
+	public Exception getUnderlyingException()
     {
         return e;
     }
     
-    public Throwable getCause()
+    @Override
+	public Throwable getCause()
     {
         return e;
     }

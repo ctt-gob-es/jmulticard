@@ -30,70 +30,80 @@ public final class DigestFactory
     {
         cloneMap.put(createMD5().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new MD5Digest((MD5Digest)original);
             }
         });
         cloneMap.put(createSHA1().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new MD5Digest((MD5Digest)original);
             }
         });
         cloneMap.put(createSHA224().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA224Digest((SHA224Digest)original);
             }
         });
         cloneMap.put(createSHA256().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA256Digest((SHA256Digest)original);
             }
         });
         cloneMap.put(createSHA384().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA384Digest((SHA384Digest)original);
             }
         });
         cloneMap.put(createSHA512().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA512Digest((SHA512Digest)original);
             }
         });
         cloneMap.put(createSHA3_224().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA3Digest((SHA3Digest)original);
             }
         });
         cloneMap.put(createSHA3_256().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA3Digest((SHA3Digest)original);
             }
         });
         cloneMap.put(createSHA3_384().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA3Digest((SHA3Digest)original);
             }
         });
         cloneMap.put(createSHA3_512().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHA3Digest((SHA3Digest)original);
             }
@@ -101,7 +111,8 @@ public final class DigestFactory
 
         cloneMap.put(createSHAKE128().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHAKEDigest((SHAKEDigest)original);
             }
@@ -109,7 +120,8 @@ public final class DigestFactory
 
         cloneMap.put(createSHAKE256().getAlgorithmName(), new Cloner()
         {
-            public Digest createClone(Digest original)
+            @Override
+			public Digest createClone(Digest original)
             {
                 return new SHAKEDigest((SHAKEDigest)original);
             }

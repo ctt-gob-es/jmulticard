@@ -17,10 +17,11 @@ public class DERExternal
      * </ul>
      *
      * @throws IllegalArgumentException if input size is wrong, or input is not an acceptable format
-     * 
+     *
      * @deprecated Use {@link DERExternal#DERExternal(DERSequence)} instead.
      */
-    public DERExternal(ASN1EncodableVector vector)
+    @Deprecated
+	public DERExternal(final ASN1EncodableVector vector)
     {
         this(DERFactory.createSequence(vector));
     }
@@ -37,7 +38,7 @@ public class DERExternal
      *
      * @throws IllegalArgumentException if input size is wrong, or input is not an acceptable format
      */
-    public DERExternal(DERSequence sequence)
+    public DERExternal(final DERSequence sequence)
     {
         super(sequence);
     }
@@ -50,8 +51,8 @@ public class DERExternal
      * @param dataValueDescriptor The data value descriptor or <code>null</code> if not set.
      * @param externalData The external data in its encoded form.
      */
-    public DERExternal(ASN1ObjectIdentifier directReference, ASN1Integer indirectReference,
-        ASN1Primitive dataValueDescriptor, DERTaggedObject externalData)
+    public DERExternal(final ASN1ObjectIdentifier directReference, final ASN1Integer indirectReference,
+        final ASN1Primitive dataValueDescriptor, final DERTaggedObject externalData)
     {
         super(directReference, indirectReference, dataValueDescriptor, externalData);
     }
@@ -65,15 +66,16 @@ public class DERExternal
      * @param encoding The encoding to be used for the external data
      * @param externalData The external data
      */
-    public DERExternal(ASN1ObjectIdentifier directReference, ASN1Integer indirectReference,
-        ASN1Primitive dataValueDescriptor, int encoding, ASN1Primitive externalData)
+    public DERExternal(final ASN1ObjectIdentifier directReference, final ASN1Integer indirectReference,
+        final ASN1Primitive dataValueDescriptor, final int encoding, final ASN1Primitive externalData)
     {
         super(directReference, indirectReference, dataValueDescriptor, encoding, externalData);
     }
 
-    ASN1Sequence buildSequence()
+    @Override
+	ASN1Sequence buildSequence()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(4);
+        final ASN1EncodableVector v = new ASN1EncodableVector(4);
         if (directReference != null)
         {
             v.add(directReference);
@@ -92,12 +94,14 @@ public class DERExternal
         return new DERSequence(v);
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return this;
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

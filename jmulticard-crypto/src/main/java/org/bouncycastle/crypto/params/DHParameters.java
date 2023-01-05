@@ -159,7 +159,8 @@ public class DHParameters
         return validation;
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  obj)
     {
         if (!(obj instanceof DHParameters))
@@ -187,7 +188,8 @@ public class DHParameters
         return pm.getP().equals(p) && pm.getG().equals(g);
     }
     
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return getP().hashCode() ^ getG().hashCode() ^ (getQ() != null ? getQ().hashCode() : 0);
     }

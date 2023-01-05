@@ -114,7 +114,8 @@ public class GF2mMatrix
     /**
      * @return a byte array encoding of this matrix
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         int d = 8;
         int count = 1;
@@ -150,7 +151,8 @@ public class GF2mMatrix
      *
      * @return <tt>true</tt> if this is the zero matrix
      */
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         for (int i = 0; i < numRows; i++)
         {
@@ -170,7 +172,8 @@ public class GF2mMatrix
      *
      * @return the inverse of this matrix (newly created).
      */
-    public Matrix computeInverse()
+    @Override
+	public Matrix computeInverse()
     {
         if (numRows != numColumns)
         {
@@ -286,22 +289,26 @@ public class GF2mMatrix
         }
     }
 
-    public Matrix rightMultiply(Matrix a)
+    @Override
+	public Matrix rightMultiply(Matrix a)
     {
         throw new RuntimeException("Not implemented.");
     }
 
-    public Matrix rightMultiply(Permutation perm)
+    @Override
+	public Matrix rightMultiply(Permutation perm)
     {
         throw new RuntimeException("Not implemented.");
     }
 
-    public Vector leftMultiply(Vector vector)
+    @Override
+	public Vector leftMultiply(Vector vector)
     {
         throw new RuntimeException("Not implemented.");
     }
 
-    public Vector rightMultiply(Vector vector)
+    @Override
+	public Vector rightMultiply(Vector vector)
     {
         throw new RuntimeException("Not implemented.");
     }
@@ -313,7 +320,8 @@ public class GF2mMatrix
      * @param other object
      * @return true or false
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
 
         if (other == null || !(other instanceof GF2mMatrix))
@@ -344,7 +352,8 @@ public class GF2mMatrix
         return true;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = (this.field.hashCode() * 31 + numRows) * 31 + numColumns;
         for (int i = 0; i < this.numRows; i++)
@@ -357,7 +366,8 @@ public class GF2mMatrix
         return hash;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         String str = this.numRows + " x " + this.numColumns + " Matrix over "
             + this.field.toString() + ": \n";

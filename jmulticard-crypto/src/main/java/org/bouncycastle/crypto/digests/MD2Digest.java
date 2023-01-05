@@ -1,6 +1,6 @@
 package org.bouncycastle.crypto.digests;
 
-import org.bouncycastle.crypto.*;
+import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.util.Memoable;
 
 /**
@@ -13,13 +13,13 @@ public class MD2Digest
     private static final int DIGEST_LENGTH = 16;
 
     /* X buffer */
-    private byte[]   X = new byte[48];
+    private final byte[]   X = new byte[48];
     private int     xOff;
     /* M buffer */
-    private byte[]   M = new byte[16];
+    private final byte[]   M = new byte[16];
     private int     mOff;
     /* check sum */
-    private byte[]   C = new byte[16];
+    private final byte[]   C = new byte[16];
     private int COff;
 
     public MD2Digest()
@@ -27,12 +27,12 @@ public class MD2Digest
         reset();
     }
 
-    public MD2Digest(MD2Digest t)
+    public MD2Digest(final MD2Digest t)
     {
         copyIn(t);
     }
 
-    private void copyIn(MD2Digest t)
+    private void copyIn(final MD2Digest t)
     {
         System.arraycopy(t.X, 0, X, 0, t.X.length);
         xOff = t.xOff;
@@ -47,7 +47,8 @@ public class MD2Digest
      *
      * @return the algorithm name
      */
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "MD2";
     }
@@ -56,7 +57,8 @@ public class MD2Digest
      *
      * @return the size, in bytes, of the digest produced by this message digest.
      */
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
@@ -67,10 +69,11 @@ public class MD2Digest
      * @param out the array the digest is to be copied into.
      * @param outOff the offset into the out array the digest is to start at.
      */
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(final byte[] out, final int outOff)
     {
         // add padding
-        byte paddingByte = (byte)(M.length-mOff);
+        final byte paddingByte = (byte)(M.length-mOff);
         for (int i=mOff;i<M.length;i++)
         {
             M[i] = paddingByte;
@@ -91,7 +94,8 @@ public class MD2Digest
     /**
      * reset the digest back to it's initial state.
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         xOff = 0;
         for (int i = 0; i != X.length; i++)
@@ -114,7 +118,8 @@ public class MD2Digest
      *
      * @param in the input byte to be entered.
      */
-    public void update(byte in)
+    @Override
+	public void update(final byte in)
     {
         M[mOff++] = in;
 
@@ -133,12 +138,13 @@ public class MD2Digest
      * @param inOff the offset into the byte array where the data starts.
      * @param len the length of the data.
      */
-    public void update(byte[] in, int inOff, int len)
+    @Override
+	public void update(final byte[] in, int inOff, int len)
     {
         //
         // fill the current word
         //
-        while ((mOff != 0) && (len > 0))
+        while (mOff != 0 && len > 0)
         {
             update(in[inOff]);
             inOff++;
@@ -167,7 +173,7 @@ public class MD2Digest
             len--;
         }
     }
-    protected void processCheckSum(byte[] m)
+    protected void processCheckSum(final byte[] m)
     {
         int L = C[15];
         for (int i=0;i<16;i++)
@@ -176,7 +182,7 @@ public class MD2Digest
             L = C[i];
         }
     }
-    protected void processBlock(byte[] m)
+    protected void processBlock(final byte[] m)
     {
         for (int i=0;i<16;i++)
         {
@@ -237,19 +243,22 @@ public class MD2Digest
       (byte)159,(byte)17,(byte)131,(byte)20
     };
 
-   public int getByteLength()
+   @Override
+public int getByteLength()
    {
       return 16;
    }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new MD2Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(final Memoable other)
     {
-        MD2Digest d = (MD2Digest)other;
+        final MD2Digest d = (MD2Digest)other;
 
         copyIn(d);
     }

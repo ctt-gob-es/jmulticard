@@ -30,17 +30,20 @@ public class GOST3411_2012_512Digest
         reset(other);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "GOST3411-2012-512";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return 64;
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new GOST3411_2012_512Digest(this);
     }

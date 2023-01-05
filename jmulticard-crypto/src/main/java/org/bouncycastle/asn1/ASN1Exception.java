@@ -37,7 +37,8 @@ public class ASN1Exception
      *
      * @return the exception causing this one, null if there isn't one.
      */
-    public Throwable getCause()
+    @Override
+	public Throwable getCause()
     {
         return cause;
     }

@@ -18,12 +18,14 @@ public class SecT163R2Point extends AbstractF2m
         super(curve, x, y, zs);
     }
 
-    protected ECPoint detach()
+    @Override
+	protected ECPoint detach()
     {
         return new SecT163R2Point(null, getAffineXCoord(), getAffineYCoord());
     }
 
-    public ECFieldElement getYCoord()
+    @Override
+	public ECFieldElement getYCoord()
     {
         ECFieldElement X = x, L = y;
 
@@ -44,7 +46,8 @@ public class SecT163R2Point extends AbstractF2m
         return Y;
     }
 
-    protected boolean getCompressionYTilde()
+    @Override
+	protected boolean getCompressionYTilde()
     {
         ECFieldElement X = this.getRawXCoord();
         if (X.isZero())
@@ -58,7 +61,8 @@ public class SecT163R2Point extends AbstractF2m
         return Y.testBitZero() != X.testBitZero();
     }
 
-    public ECPoint add(ECPoint b)
+    @Override
+	public ECPoint add(ECPoint b)
     {
         if (this.isInfinity())
         {
@@ -168,7 +172,8 @@ public class SecT163R2Point extends AbstractF2m
         return new SecT163R2Point(curve, X3, L3, new ECFieldElement[]{ Z3 });
     }
 
-    public ECPoint twice()
+    @Override
+	public ECPoint twice()
     {
         if (this.isInfinity())
         {
@@ -204,7 +209,8 @@ public class SecT163R2Point extends AbstractF2m
         return new SecT163R2Point(curve, X3, L3, new ECFieldElement[]{ Z3 });
     }
 
-    public ECPoint twicePlus(ECPoint b)
+    @Override
+	public ECPoint twicePlus(ECPoint b)
     {
         if (this.isInfinity())
         {
@@ -265,7 +271,8 @@ public class SecT163R2Point extends AbstractF2m
         return new SecT163R2Point(curve, X3, L3, new ECFieldElement[]{ Z3 });
     }
 
-    public ECPoint negate()
+    @Override
+	public ECPoint negate()
     {
         if (this.isInfinity())
         {

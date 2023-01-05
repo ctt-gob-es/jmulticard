@@ -73,23 +73,27 @@ public class SM3Digest
         xOff = t.xOff;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SM3";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new SM3Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         SM3Digest d = (SM3Digest)other;
 
@@ -101,7 +105,8 @@ public class SM3Digest
     /**
      * reset the chaining variables
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -118,7 +123,8 @@ public class SM3Digest
     }
 
 
-    public int doFinal(byte[] out,
+    @Override
+	public int doFinal(byte[] out,
                        int outOff)
     {
         finish();
@@ -131,7 +137,8 @@ public class SM3Digest
     }
 
 
-    protected void processWord(byte[] in,
+    @Override
+	protected void processWord(byte[] in,
                                int inOff)
     {
         // Note: Inlined for performance
@@ -150,7 +157,8 @@ public class SM3Digest
         }
     }
 
-    protected void processLength(long bitLength)
+    @Override
+	protected void processLength(long bitLength)
     {
         if (this.xOff > (BLOCK_SIZE - 2))
         {
@@ -245,7 +253,8 @@ ROLL 23 :  ((x << 23) | (x >>> (32-23)))
     }
 
 
-    protected void processBlock()
+    @Override
+	protected void processBlock()
     {
         for (int j = 0; j < 16; ++j)
         {

@@ -270,7 +270,8 @@ public class IntegerPolynomial
     /**
      * Multiplies the polynomial with another, taking the values mod modulus and the indices mod N
      */
-    public IntegerPolynomial mult(IntegerPolynomial poly2, int modulus)
+    @Override
+	public IntegerPolynomial mult(IntegerPolynomial poly2, int modulus)
     {
         IntegerPolynomial c = mult(poly2);
         c.mod(modulus);
@@ -280,7 +281,8 @@ public class IntegerPolynomial
     /**
      * Multiplies the polynomial with another, taking the indices mod N
      */
-    public IntegerPolynomial mult(IntegerPolynomial poly2)
+    @Override
+	public IntegerPolynomial mult(IntegerPolynomial poly2)
     {
         int N = coeffs.length;
         if (poly2.coeffs.length != N)
@@ -301,7 +303,8 @@ public class IntegerPolynomial
         return c;
     }
 
-    public BigIntPolynomial mult(BigIntPolynomial poly2)
+    @Override
+	public BigIntPolynomial mult(BigIntPolynomial poly2)
     {
         return new BigIntPolynomial(this).mult(poly2);
     }
@@ -1295,17 +1298,20 @@ public class IntegerPolynomial
         }
     }
 
-    public IntegerPolynomial toIntegerPolynomial()
+    @Override
+	public IntegerPolynomial toIntegerPolynomial()
     {
         return (IntegerPolynomial)clone();
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new IntegerPolynomial(coeffs.clone());
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (obj instanceof IntegerPolynomial)
         {
@@ -1330,7 +1336,8 @@ public class IntegerPolynomial
             this.modulus = modulus;
         }
 
-        public ModularResultant call()
+        @Override
+		public ModularResultant call()
         {
             return resultant(modulus);
         }
@@ -1351,7 +1358,8 @@ public class IntegerPolynomial
             this.modRes2 = modRes2;
         }
 
-        public ModularResultant call()
+        @Override
+		public ModularResultant call()
         {
             return ModularResultant.combineRho(modRes1, modRes2);
         }

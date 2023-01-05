@@ -1,6 +1,5 @@
 package org.bouncycastle.crypto.digests;
 
-import java.util.Iterator;
 import java.util.Stack;
 
 import org.bouncycastle.crypto.ExtendedDigest;
@@ -284,20 +283,23 @@ public class Blake3Digest
         theDigestLen = pSource.theDigestLen;
 
         /* Initialise from source */
-        reset((Memoable)pSource);
+        reset(pSource);
     }
 
-    public int getByteLength()
+    @Override
+	public int getByteLength()
     {
         return BLOCKLEN;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "BLAKE3";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return theDigestLen;
     }
@@ -346,7 +348,8 @@ public class Blake3Digest
         }
     }
 
-    public void update(final byte b)
+    @Override
+	public void update(final byte b)
     {
         /* Check that we are not outputting */
         if (outputting)
@@ -372,7 +375,8 @@ public class Blake3Digest
         thePos++;
     }
 
-    public void update(final byte[] pMessage,
+    @Override
+	public void update(final byte[] pMessage,
                        final int pOffset,
                        final int pLen)
     {
@@ -430,13 +434,15 @@ public class Blake3Digest
         thePos += pOffset + len;
     }
 
-    public int doFinal(final byte[] pOutput,
+    @Override
+	public int doFinal(final byte[] pOutput,
                        final int pOutOffset)
     {
         return doFinal(pOutput, pOutOffset, getDigestSize());
     }
 
-    public int doFinal(final byte[] pOut,
+    @Override
+	public int doFinal(final byte[] pOut,
                        final int pOutOffset,
                        final int pOutLen)
     {
@@ -454,7 +460,8 @@ public class Blake3Digest
         return length;
     }
 
-    public int doOutput(final byte[] pOut,
+    @Override
+	public int doOutput(final byte[] pOut,
                         final int pOutOffset,
                         final int pOutLen)
     {
@@ -467,7 +474,7 @@ public class Blake3Digest
 
         /* Reject if there is insufficient Xof remaining */
         if (pOutLen < 0
-            || (outputAvailable >= 0 && pOutLen > outputAvailable))
+            || outputAvailable >= 0 && pOutLen > outputAvailable)
         {
             throw new IllegalArgumentException("Insufficient bytes remaining");
         }
@@ -510,7 +517,8 @@ public class Blake3Digest
         return pOutLen;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         resetBlockCount();
         thePos = 0;
@@ -518,7 +526,8 @@ public class Blake3Digest
         Arrays.fill(theBuffer, (byte)0);
     }
 
-    public void reset(final Memoable pSource)
+    @Override
+	public void reset(final Memoable pSource)
     {
         /* Access source */
         final Blake3Digest mySource = (Blake3Digest)pSource;
@@ -541,9 +550,8 @@ public class Blake3Digest
 
         /* Copy stack */
         theStack.clear();
-        for (Iterator it = mySource.theStack.iterator(); it.hasNext(); )
-        {
-            theStack.push(Arrays.clone((int[])it.next()));
+        for (final Object element : mySource.theStack) {
+            theStack.push(Arrays.clone((int[])element));
         }
 
         /* Copy buffer */
@@ -551,7 +559,8 @@ public class Blake3Digest
         thePos = mySource.thePos;
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new Blake3Digest(this);
     }

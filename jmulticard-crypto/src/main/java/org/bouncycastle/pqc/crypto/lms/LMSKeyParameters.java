@@ -14,6 +14,7 @@ public abstract class LMSKeyParameters
         super(isPrivateKey);
     }
 
-    abstract public byte[] getEncoded()
+    @Override
+	abstract public byte[] getEncoded()
         throws IOException;
 }

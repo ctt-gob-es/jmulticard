@@ -8,23 +8,25 @@ import org.bouncycastle.math.raw.Nat192;
 
 public class SecP192R1Point extends ECPoint.AbstractFp
 {
-    SecP192R1Point(ECCurve curve, ECFieldElement x, ECFieldElement y)
+    SecP192R1Point(final ECCurve curve, final ECFieldElement x, final ECFieldElement y)
     {
         super(curve, x, y);
     }
 
-    SecP192R1Point(ECCurve curve, ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
+    SecP192R1Point(final ECCurve curve, final ECFieldElement x, final ECFieldElement y, final ECFieldElement[] zs)
     {
         super(curve, x, y, zs);
     }
 
-    protected ECPoint detach()
+    @Override
+	protected ECPoint detach()
     {
         return new SecP192R1Point(null, getAffineXCoord(), getAffineYCoord());
     }
 
     // B.3 pg 62
-    public ECPoint add(ECPoint b)
+    @Override
+	public ECPoint add(final ECPoint b)
     {
         if (this.isInfinity())
         {
@@ -39,21 +41,21 @@ public class SecP192R1Point extends ECPoint.AbstractFp
             return twice();
         }
 
-        ECCurve curve = this.getCurve();
+        final ECCurve curve = this.getCurve();
 
-        SecP192R1FieldElement X1 = (SecP192R1FieldElement)this.x, Y1 = (SecP192R1FieldElement)this.y;
-        SecP192R1FieldElement X2 = (SecP192R1FieldElement)b.getXCoord(), Y2 = (SecP192R1FieldElement)b.getYCoord();
+        final SecP192R1FieldElement X1 = (SecP192R1FieldElement)x, Y1 = (SecP192R1FieldElement)y;
+        final SecP192R1FieldElement X2 = (SecP192R1FieldElement)b.getXCoord(), Y2 = (SecP192R1FieldElement)b.getYCoord();
 
-        SecP192R1FieldElement Z1 = (SecP192R1FieldElement)this.zs[0];
-        SecP192R1FieldElement Z2 = (SecP192R1FieldElement)b.getZCoord(0);
+        final SecP192R1FieldElement Z1 = (SecP192R1FieldElement)zs[0];
+        final SecP192R1FieldElement Z2 = (SecP192R1FieldElement)b.getZCoord(0);
 
         int c;
-        int[] tt1 = Nat192.createExt();
-        int[] t2 = Nat192.create();
-        int[] t3 = Nat192.create();
-        int[] t4 = Nat192.create();
+        final int[] tt1 = Nat192.createExt();
+        final int[] t2 = Nat192.create();
+        final int[] t3 = Nat192.create();
+        final int[] t4 = Nat192.create();
 
-        boolean Z1IsOne = Z1.isOne();
+        final boolean Z1IsOne = Z1.isOne();
         int[] U2, S2;
         if (Z1IsOne)
         {
@@ -72,7 +74,7 @@ public class SecP192R1Point extends ECPoint.AbstractFp
             SecP192R1Field.multiply(S2, Y2.x, S2);
         }
 
-        boolean Z2IsOne = Z2.isOne();
+        final boolean Z2IsOne = Z2.isOne();
         int[] U1, S1;
         if (Z2IsOne)
         {
@@ -91,10 +93,10 @@ public class SecP192R1Point extends ECPoint.AbstractFp
             SecP192R1Field.multiply(S1, Y1.x, S1);
         }
 
-        int[] H = Nat192.create();
+        final int[] H = Nat192.create();
         SecP192R1Field.subtract(U1, U2, H);
 
-        int[] R = t2;
+        final int[] R = t2;
         SecP192R1Field.subtract(S1, S2, R);
 
         // Check if b == this or b == -this
@@ -110,13 +112,13 @@ public class SecP192R1Point extends ECPoint.AbstractFp
             return curve.getInfinity();
         }
 
-        int[] HSquared = t3;
+        final int[] HSquared = t3;
         SecP192R1Field.square(H, HSquared);
 
-        int[] G = Nat192.create();
+        final int[] G = Nat192.create();
         SecP192R1Field.multiply(HSquared, H, G);
 
-        int[] V = t3;
+        final int[] V = t3;
         SecP192R1Field.multiply(HSquared, U1, V);
 
         SecP192R1Field.negate(G, G);
@@ -125,16 +127,16 @@ public class SecP192R1Point extends ECPoint.AbstractFp
         c = Nat192.addBothTo(V, V, G);
         SecP192R1Field.reduce32(c, G);
 
-        SecP192R1FieldElement X3 = new SecP192R1FieldElement(t4);
+        final SecP192R1FieldElement X3 = new SecP192R1FieldElement(t4);
         SecP192R1Field.square(R, X3.x);
         SecP192R1Field.subtract(X3.x, G, X3.x);
 
-        SecP192R1FieldElement Y3 = new SecP192R1FieldElement(G);
+        final SecP192R1FieldElement Y3 = new SecP192R1FieldElement(G);
         SecP192R1Field.subtract(V, X3.x, Y3.x);
         SecP192R1Field.multiplyAddToExt(Y3.x, R, tt1);
         SecP192R1Field.reduce(tt1, Y3.x);
 
-        SecP192R1FieldElement Z3 = new SecP192R1FieldElement(H);
+        final SecP192R1FieldElement Z3 = new SecP192R1FieldElement(H);
         if (!Z1IsOne)
         {
             SecP192R1Field.multiply(Z3.x, Z1.x, Z3.x);
@@ -144,40 +146,41 @@ public class SecP192R1Point extends ECPoint.AbstractFp
             SecP192R1Field.multiply(Z3.x, Z2.x, Z3.x);
         }
 
-        ECFieldElement[] zs = new ECFieldElement[]{ Z3 };
+        final ECFieldElement[] zs = { Z3 };
 
         return new SecP192R1Point(curve, X3, Y3, zs);
     }
 
     // B.3 pg 62
-    public ECPoint twice()
+    @Override
+	public ECPoint twice()
     {
         if (this.isInfinity())
         {
             return this;
         }
 
-        ECCurve curve = this.getCurve();
+        final ECCurve curve = this.getCurve();
 
-        SecP192R1FieldElement Y1 = (SecP192R1FieldElement)this.y;
+        final SecP192R1FieldElement Y1 = (SecP192R1FieldElement)y;
         if (Y1.isZero())
         {
             return curve.getInfinity();
         }
 
-        SecP192R1FieldElement X1 = (SecP192R1FieldElement)this.x, Z1 = (SecP192R1FieldElement)this.zs[0];
+        final SecP192R1FieldElement X1 = (SecP192R1FieldElement)x, Z1 = (SecP192R1FieldElement)zs[0];
 
         int c;
-        int[] t1 = Nat192.create();
-        int[] t2 = Nat192.create();
+        final int[] t1 = Nat192.create();
+        final int[] t2 = Nat192.create();
 
-        int[] Y1Squared = Nat192.create();
+        final int[] Y1Squared = Nat192.create();
         SecP192R1Field.square(Y1.x, Y1Squared);
 
-        int[] T = Nat192.create();
+        final int[] T = Nat192.create();
         SecP192R1Field.square(Y1Squared, T);
 
-        boolean Z1IsOne = Z1.isOne();
+        final boolean Z1IsOne = Z1.isOne();
 
         int[] Z1Squared = Z1.x;
         if (!Z1IsOne)
@@ -188,13 +191,13 @@ public class SecP192R1Point extends ECPoint.AbstractFp
 
         SecP192R1Field.subtract(X1.x, Z1Squared, t1);
 
-        int[] M = t2;
+        final int[] M = t2;
         SecP192R1Field.add(X1.x, Z1Squared, M);
         SecP192R1Field.multiply(M, t1, M);
         c = Nat192.addBothTo(M, M, M);
         SecP192R1Field.reduce32(c, M);
 
-        int[] S = Y1Squared;
+        final int[] S = Y1Squared;
         SecP192R1Field.multiply(Y1Squared, X1.x, S);
         c = Nat.shiftUpBits(6, S, 2, 0);
         SecP192R1Field.reduce32(c, S);
@@ -202,17 +205,17 @@ public class SecP192R1Point extends ECPoint.AbstractFp
         c = Nat.shiftUpBits(6, T, 3, 0, t1);
         SecP192R1Field.reduce32(c, t1);
 
-        SecP192R1FieldElement X3 = new SecP192R1FieldElement(T);
+        final SecP192R1FieldElement X3 = new SecP192R1FieldElement(T);
         SecP192R1Field.square(M, X3.x);
         SecP192R1Field.subtract(X3.x, S, X3.x);
         SecP192R1Field.subtract(X3.x, S, X3.x);
 
-        SecP192R1FieldElement Y3 = new SecP192R1FieldElement(S);
+        final SecP192R1FieldElement Y3 = new SecP192R1FieldElement(S);
         SecP192R1Field.subtract(S, X3.x, Y3.x);
         SecP192R1Field.multiply(Y3.x, M, Y3.x);
         SecP192R1Field.subtract(Y3.x, t1, Y3.x);
 
-        SecP192R1FieldElement Z3 = new SecP192R1FieldElement(M);
+        final SecP192R1FieldElement Z3 = new SecP192R1FieldElement(M);
         SecP192R1Field.twice(Y1.x, Z3.x);
         if (!Z1IsOne)
         {
@@ -222,7 +225,8 @@ public class SecP192R1Point extends ECPoint.AbstractFp
         return new SecP192R1Point(curve, X3, Y3, new ECFieldElement[]{ Z3 });
     }
 
-    public ECPoint twicePlus(ECPoint b)
+    @Override
+	public ECPoint twicePlus(final ECPoint b)
     {
         if (this == b)
         {
@@ -237,7 +241,7 @@ public class SecP192R1Point extends ECPoint.AbstractFp
             return twice();
         }
 
-        ECFieldElement Y1 = this.y;
+        final ECFieldElement Y1 = y;
         if (Y1.isZero())
         {
             return b;
@@ -246,9 +250,10 @@ public class SecP192R1Point extends ECPoint.AbstractFp
         return twice().add(b);
     }
 
-    public ECPoint threeTimes()
+    @Override
+	public ECPoint threeTimes()
     {
-        if (this.isInfinity() || this.y.isZero())
+        if (this.isInfinity() || y.isZero())
         {
             return this;
         }
@@ -257,13 +262,14 @@ public class SecP192R1Point extends ECPoint.AbstractFp
         return twice().add(this);
     }
 
-    public ECPoint negate()
+    @Override
+	public ECPoint negate()
     {
         if (this.isInfinity())
         {
             return this;
         }
 
-        return new SecP192R1Point(curve, this.x, this.y.negate(), this.zs);
+        return new SecP192R1Point(curve, x, y.negate(), zs);
     }
 }

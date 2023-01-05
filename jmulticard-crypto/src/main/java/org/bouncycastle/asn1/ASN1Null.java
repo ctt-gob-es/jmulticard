@@ -10,7 +10,8 @@ public abstract class ASN1Null
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1Null.class, BERTags.NULL)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -62,12 +63,14 @@ public abstract class ASN1Null
     {
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return -1;
     }
 
-    boolean asn1Equals(
+    @Override
+	boolean asn1Equals(
         ASN1Primitive o)
     {
         if (!(o instanceof ASN1Null))
@@ -78,7 +81,8 @@ public abstract class ASN1Null
         return true;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
          return "NULL";
     }

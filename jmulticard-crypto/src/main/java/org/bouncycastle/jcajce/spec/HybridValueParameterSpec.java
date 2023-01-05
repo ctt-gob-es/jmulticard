@@ -65,7 +65,8 @@ public class HybridValueParameterSpec
      *
      * @return true if destroyed, false otherwise.
      */
-    public boolean isDestroyed()
+    @Override
+	public boolean isDestroyed()
     {
         return this.hasBeenDestroyed.get();
     }
@@ -73,7 +74,8 @@ public class HybridValueParameterSpec
     /**
      * Destroy this parameter spec, explicitly erasing its contents.
      */
-    public void destroy()
+    @Override
+	public void destroy()
     {
         if (!hasBeenDestroyed.getAndSet(true))
         {

@@ -22,7 +22,8 @@ public class CertIOException
         super(msg);
     }
 
-    public Throwable getCause()
+    @Override
+	public Throwable getCause()
     {
         return cause;
     }

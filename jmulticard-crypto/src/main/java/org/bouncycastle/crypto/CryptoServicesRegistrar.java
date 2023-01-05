@@ -371,7 +371,8 @@ public final class CryptoServicesRegistrar
         {
             AccessController.doPrivileged(new PrivilegedAction<Object>()
             {
-                public Object run()
+                @Override
+				public Object run()
                 {
                     securityManager.checkPermission(permission);
 

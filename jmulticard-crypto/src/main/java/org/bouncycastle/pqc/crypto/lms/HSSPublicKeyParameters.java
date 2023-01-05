@@ -95,7 +95,8 @@ public class HSSPublicKeyParameters
         return result;
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return Composer.compose().u32str(l)
@@ -103,7 +104,8 @@ public class HSSPublicKeyParameters
             .build();
     }
 
-    public LMSContext generateLMSContext(byte[] sigEnc)
+    @Override
+	public LMSContext generateLMSContext(byte[] sigEnc)
     {
         HSSSignature signature;
         try
@@ -121,7 +123,8 @@ public class HSSPublicKeyParameters
         return key.generateOtsContext(signature.getSignature()).withSignedPublicKeys(signedPubKeys);
     }
 
-    public boolean verify(LMSContext context)
+    @Override
+	public boolean verify(LMSContext context)
     {
         boolean failed = false;
 

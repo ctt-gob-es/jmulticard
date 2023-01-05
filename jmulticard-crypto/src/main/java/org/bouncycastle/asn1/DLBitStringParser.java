@@ -18,28 +18,33 @@ public class DLBitStringParser
         this.stream = stream;
     }
 
-    public InputStream getBitStream() throws IOException
+    @Override
+	public InputStream getBitStream() throws IOException
     {
         return getBitStream(false);
     }
 
-    public InputStream getOctetStream() throws IOException
+    @Override
+	public InputStream getOctetStream() throws IOException
     {
         return getBitStream(true);
     }
 
-    public int getPadBits()
+    @Override
+	public int getPadBits()
     {
         return padBits;
     }
 
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return ASN1BitString.createPrimitive(stream.toByteArray());
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

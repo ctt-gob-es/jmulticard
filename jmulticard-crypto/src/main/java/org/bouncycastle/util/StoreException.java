@@ -20,7 +20,8 @@ public class StoreException
         _e = cause;
     }
 
-    public Throwable getCause()
+    @Override
+	public Throwable getCause()
     {
         return _e;
     }

@@ -219,7 +219,8 @@ public class TBSCertificate
         return extensions;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         if (Properties.getPropertyValue("org.bouncycastle.x509.allow_non-der_tbscert") != null)
         {

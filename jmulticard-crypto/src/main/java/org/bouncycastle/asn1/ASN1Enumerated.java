@@ -13,7 +13,8 @@ public class ASN1Enumerated
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1Enumerated.class, BERTags.ENUMERATED)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets(), false);
         }
@@ -154,22 +155,26 @@ public class ASN1Enumerated
         return ASN1Integer.intValue(contents, start, ASN1Integer.SIGN_EXT_SIGNED); 
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.ENUMERATED, contents);
     }
 
-    boolean asn1Equals(
+    @Override
+	boolean asn1Equals(
         ASN1Primitive  o)
     {
         if (!(o instanceof ASN1Enumerated))
@@ -182,7 +187,8 @@ public class ASN1Enumerated
         return Arrays.areEqual(this.contents, other.contents);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(contents);
     }

@@ -448,7 +448,8 @@ public class GF2Matrix
      *
      * @return the encoded matrix
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         int n = (numColumns + 7) >>> 3;
         n *= numRows;
@@ -530,7 +531,8 @@ public class GF2Matrix
      *
      * @return <tt>true</tt> if this is the zero matrix
      */
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         for (int i = 0; i < numRows; i++)
         {
@@ -729,7 +731,8 @@ public class GF2Matrix
      * @return the inverse of this matrix (newly created).
      * @throws ArithmeticException if this matrix is not invertible.
      */
-    public Matrix computeInverse()
+    @Override
+	public Matrix computeInverse()
     {
         if (numRows != numColumns)
         {
@@ -830,7 +833,8 @@ public class GF2Matrix
      * @param vec a vector over GF(2)
      * @return Vector product a*matrix
      */
-    public Vector leftMultiply(Vector vec)
+    @Override
+	public Vector leftMultiply(Vector vec)
     {
 
         if (!(vec instanceof GF2Vector))
@@ -970,7 +974,8 @@ public class GF2Matrix
      * @param mat a matrix A over GF(2)
      * @return matrix product <tt>this*matrixA</tt>
      */
-    public Matrix rightMultiply(Matrix mat)
+    @Override
+	public Matrix rightMultiply(Matrix mat)
     {
         if (!(mat instanceof GF2Matrix))
         {
@@ -1040,7 +1045,8 @@ public class GF2Matrix
      * @param p the permutation
      * @return {@link GF2Matrix} <tt>this*P</tt>
      */
-    public Matrix rightMultiply(Permutation p)
+    @Override
+	public Matrix rightMultiply(Permutation p)
     {
 
         int[] pVec = p.getVector();
@@ -1072,7 +1078,8 @@ public class GF2Matrix
      * @param vec the vector over GF(2)
      * @return <tt>this*vector</tt>
      */
-    public Vector rightMultiply(Vector vec)
+    @Override
+	public Vector rightMultiply(Vector vec)
     {
         if (!(vec instanceof GF2Vector))
         {
@@ -1197,7 +1204,8 @@ public class GF2Matrix
      * @param other another object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
 
         if (!(other instanceof GF2Matrix))
@@ -1227,7 +1235,8 @@ public class GF2Matrix
     /**
      * @return the hash code of this matrix
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = (numRows * 31 + numColumns) * 31 + length;
         for (int i = 0; i < numRows; i++)
@@ -1240,7 +1249,8 @@ public class GF2Matrix
     /**
      * @return a human readable form of the matrix
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         int rest = numColumns & 0x1f;
         int d;

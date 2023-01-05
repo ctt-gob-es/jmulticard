@@ -290,7 +290,8 @@ public class Layer
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (other == null || !(other instanceof Layer))
         {
@@ -307,7 +308,8 @@ public class Layer
                 && RainbowUtil.equals(coeff_eta, otherLayer.getCoeffEta());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = vi;
         hash = hash * 37 + viNext;

@@ -18,7 +18,7 @@ public final class DefaultXMSSMTOid
 
     static
     {
-        Map<String, DefaultXMSSMTOid> map = new HashMap<String, DefaultXMSSMTOid>();
+        final Map<String, DefaultXMSSMTOid> map = new HashMap<>();
         map.put(createKey("SHA-256", 32, 16, 67, 20, 2),
             new DefaultXMSSMTOid(0x00000001, "XMSSMT_SHA2_20/2_256"));
         map.put(createKey("SHA-256", 32, 16, 67, 20, 4),
@@ -101,9 +101,8 @@ public final class DefaultXMSSMTOid
      * @param oid                  OID.
      * @param stringRepresentation String representation of OID.
      */
-    private DefaultXMSSMTOid(int oid, String stringRepresentation)
+    private DefaultXMSSMTOid(final int oid, final String stringRepresentation)
     {
-        super();
         this.oid = oid;
         this.stringRepresentation = stringRepresentation;
     }
@@ -116,8 +115,8 @@ public final class DefaultXMSSMTOid
      * @param height              Binary tree height.
      * @return XMSS OID if parameters were found, null else.
      */
-    public static DefaultXMSSMTOid lookup(String algorithmName, int digestSize, int winternitzParameter, int len,
-                                          int height, int layers)
+    public static DefaultXMSSMTOid lookup(final String algorithmName, final int digestSize, final int winternitzParameter, final int len,
+                                          final int height, final int layers)
     {
         if (algorithmName == null)
         {
@@ -134,14 +133,14 @@ public final class DefaultXMSSMTOid
      * @param height              Binary tree height.
      * @return String representation of parameters for lookup table.
      */
-    private static String createKey(String algorithmName, int digestSize, int winternitzParameter, int len, int height,
-                                    int layers)
+    private static String createKey(final String algorithmName, final int digestSize, final int winternitzParameter, final int len, final int height,
+                                    final int layers)
     {
         if (algorithmName == null)
         {
             throw new NullPointerException("algorithmName == null");
         }
-        
+
         return algorithmName + "-" + digestSize + "-" + winternitzParameter + "-" + len + "-" + height + "-" + layers;
     }
 
@@ -150,12 +149,14 @@ public final class DefaultXMSSMTOid
      *
      * @return OID.
      */
-    public int getOid()
+    @Override
+	public int getOid()
     {
         return oid;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return stringRepresentation;
     }

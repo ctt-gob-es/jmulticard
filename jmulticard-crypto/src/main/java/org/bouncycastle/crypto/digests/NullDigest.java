@@ -9,40 +9,46 @@ import org.bouncycastle.util.Arrays;
 public class NullDigest
     implements Digest
 {
-    private OpenByteArrayOutputStream bOut = new OpenByteArrayOutputStream();
+    private final OpenByteArrayOutputStream bOut = new OpenByteArrayOutputStream();
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "NULL";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return bOut.size();
     }
 
-    public void update(byte in)
+    @Override
+	public void update(final byte in)
     {
         bOut.write(in);
     }
 
-    public void update(byte[] in, int inOff, int len)
+    @Override
+	public void update(final byte[] in, final int inOff, final int len)
     {
         bOut.write(in, inOff, len);
     }
 
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(final byte[] out, final int outOff)
     {
-        int size = bOut.size();
+        final int size = bOut.size();
 
         bOut.copy(out, outOff);
 
         reset();
-        
+
         return size;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         bOut.reset();
     }
@@ -50,14 +56,15 @@ public class NullDigest
     private static class OpenByteArrayOutputStream
         extends ByteArrayOutputStream
     {
-        public void reset()
+        @Override
+		public void reset()
         {
             super.reset();
 
             Arrays.clear(buf);
         }
 
-        void copy(byte[] out, int outOff)
+        void copy(final byte[] out, final int outOff)
         {
             System.arraycopy(buf, 0, out, outOff, this.size());
         }

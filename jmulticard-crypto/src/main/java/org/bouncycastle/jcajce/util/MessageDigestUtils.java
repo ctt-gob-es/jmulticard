@@ -18,8 +18,8 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 public class MessageDigestUtils
 {
-    private static Map<ASN1ObjectIdentifier, String> digestOidMap = new HashMap<ASN1ObjectIdentifier, String>();
-    private static Map<String, AlgorithmIdentifier> digestAlgIdMap = new HashMap<String, AlgorithmIdentifier>();
+    private static Map<ASN1ObjectIdentifier, String> digestOidMap = new HashMap<>();
+    private static Map<String, AlgorithmIdentifier> digestAlgIdMap = new HashMap<>();
 
     static
     {
@@ -68,11 +68,11 @@ public class MessageDigestUtils
      * @param digestName name of the digest algorithm of interest.
      * @return an algorithm identifier representing the digest.
      */
-    public static AlgorithmIdentifier getDigestAlgID(String digestName)
+    public static AlgorithmIdentifier getDigestAlgID(final String digestName)
     {
         if (digestAlgIdMap.containsKey(digestName))
         {
-            return (AlgorithmIdentifier)digestAlgIdMap.get(digestName);
+            return digestAlgIdMap.get(digestName);
         }
         throw new IllegalArgumentException("unknown digest: " + digestName);
     }
@@ -83,9 +83,9 @@ public class MessageDigestUtils
      * @param digestAlgOID the OID of the digest algorithm of interest.
      * @return a string representing the standard name - the OID as a string if none available.
      */
-    public static String getDigestName(ASN1ObjectIdentifier digestAlgOID)
+    public static String getDigestName(final ASN1ObjectIdentifier digestAlgOID)
     {
-        String name = (String)digestOidMap.get(digestAlgOID);  // for pre 1.5 JDK
+        final String name = digestOidMap.get(digestAlgOID);  // for pre 1.5 JDK
         if (name != null)
         {
             return name;

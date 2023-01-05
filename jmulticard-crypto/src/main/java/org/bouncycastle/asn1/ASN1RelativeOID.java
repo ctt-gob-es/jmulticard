@@ -11,7 +11,8 @@ public class ASN1RelativeOID
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1RelativeOID.class, BERTags.RELATIVE_OID)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets(), false);
         }
@@ -162,17 +163,20 @@ public class ASN1RelativeOID
         return identifier;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return identifier.hashCode();
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getId();
     }
 
-    boolean asn1Equals(ASN1Primitive other)
+    @Override
+	boolean asn1Equals(ASN1Primitive other)
     {
         if (this == other)
         {
@@ -188,17 +192,20 @@ public class ASN1RelativeOID
         return this.identifier.equals(that.identifier);
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, getContents().length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.RELATIVE_OID, getContents());
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }

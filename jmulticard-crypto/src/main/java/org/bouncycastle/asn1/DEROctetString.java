@@ -14,7 +14,7 @@ public class DEROctetString
      * @param string the octets making up the octet string.
      */
     public DEROctetString(
-        byte[]  string)
+        final byte[]  string)
     {
         super(string);
     }
@@ -25,43 +25,48 @@ public class DEROctetString
      * @param obj the object to be encoded.
      */
     public DEROctetString(
-        ASN1Encodable obj)
+        final ASN1Encodable obj)
         throws IOException
     {
         super(obj.toASN1Primitive().getEncoded(ASN1Encoding.DER));
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, string.length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.OCTET_STRING, string);
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return this;
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }
 
-    static void encode(ASN1OutputStream out, boolean withTag, byte[] buf, int off, int len) throws IOException
+    static void encode(final ASN1OutputStream out, final boolean withTag, final byte[] buf, final int off, final int len) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.OCTET_STRING, buf, off, len);
     }
 
-    static int encodedLength(boolean withTag, int contentsLength)
+    static int encodedLength(final boolean withTag, final int contentsLength)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contentsLength);
     }

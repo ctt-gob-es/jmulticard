@@ -24,39 +24,48 @@ public class ReasonFlags
     /**
      * @deprecated use lower case version
      */
-    public static final int UNUSED                  = (1 << 7);
+    @Deprecated
+	public static final int UNUSED                  = (1 << 7);
     /**
      * @deprecated use lower case version
      */
-    public static final int KEY_COMPROMISE          = (1 << 6);
+    @Deprecated
+	public static final int KEY_COMPROMISE          = (1 << 6);
     /**
      * @deprecated use lower case version
      */
-    public static final int CA_COMPROMISE           = (1 << 5);
+    @Deprecated
+	public static final int CA_COMPROMISE           = (1 << 5);
     /**
      * @deprecated use lower case version
      */
-    public static final int AFFILIATION_CHANGED     = (1 << 4);
+    @Deprecated
+	public static final int AFFILIATION_CHANGED     = (1 << 4);
     /**
      * @deprecated use lower case version
      */
-    public static final int SUPERSEDED              = (1 << 3);
+    @Deprecated
+	public static final int SUPERSEDED              = (1 << 3);
     /**
      * @deprecated use lower case version
      */
-    public static final int CESSATION_OF_OPERATION  = (1 << 2);
+    @Deprecated
+	public static final int CESSATION_OF_OPERATION  = (1 << 2);
     /**
      * @deprecated use lower case version
      */
-    public static final int CERTIFICATE_HOLD        = (1 << 1);
+    @Deprecated
+	public static final int CERTIFICATE_HOLD        = (1 << 1);
     /**
      * @deprecated use lower case version
      */
-    public static final int PRIVILEGE_WITHDRAWN     = (1 << 0);
+    @Deprecated
+	public static final int PRIVILEGE_WITHDRAWN     = (1 << 0);
     /**
      * @deprecated use lower case version
      */
-    public static final int AA_COMPROMISE           = (1 << 15);
+    @Deprecated
+	public static final int AA_COMPROMISE           = (1 << 15);
     
     public static final int unused                  = (1 << 7);
     public static final int keyCompromise           = (1 << 6);

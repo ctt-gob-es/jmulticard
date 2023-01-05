@@ -17,7 +17,8 @@ public abstract class ASN1IA5String
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1IA5String.class, BERTags.IA5_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -30,7 +31,7 @@ public abstract class ASN1IA5String
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return a ASN1IA5String instance, or null.
      */
-    public static ASN1IA5String getInstance(Object obj)
+    public static ASN1IA5String getInstance(final Object obj)
     {
         if (obj == null || obj instanceof ASN1IA5String)
         {
@@ -38,7 +39,7 @@ public abstract class ASN1IA5String
         }
         if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1IA5String)
             {
                 return (ASN1IA5String)primitive;
@@ -50,7 +51,7 @@ public abstract class ASN1IA5String
             {
                 return (ASN1IA5String)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -69,14 +70,14 @@ public abstract class ASN1IA5String
      *               be converted.
      * @return an ASN1IA5String instance, or null.
      */
-    public static ASN1IA5String getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1IA5String getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1IA5String)TYPE.getContextInstance(taggedObject, explicit);
     }
 
     final byte[] contents;
 
-    ASN1IA5String(String string, boolean validate)
+    ASN1IA5String(final String string, final boolean validate)
     {
         if (string == null)
         {
@@ -87,20 +88,22 @@ public abstract class ASN1IA5String
             throw new IllegalArgumentException("'string' contains illegal characters");
         }
 
-        this.contents = Strings.toByteArray(string);
+        contents = Strings.toByteArray(string);
     }
 
-    ASN1IA5String(byte[] contents, boolean clone)
+    ASN1IA5String(final byte[] contents, final boolean clone)
     {
         this.contents = clone ? Arrays.clone(contents) : contents;
     }
 
-    public final String getString()
+    @Override
+	public final String getString()
     {
         return Strings.fromByteArray(contents);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getString();
     }
@@ -110,34 +113,39 @@ public abstract class ASN1IA5String
         return Arrays.clone(contents);
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    final int encodedLength(boolean withTag)
+    @Override
+	final int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.IA5_STRING, contents);
     }
 
-    final boolean asn1Equals(ASN1Primitive other)
+    @Override
+	final boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1IA5String))
         {
             return false;
         }
 
-        ASN1IA5String that = (ASN1IA5String)other;
+        final ASN1IA5String that = (ASN1IA5String)other;
 
-        return Arrays.areEqual(this.contents, that.contents);
+        return Arrays.areEqual(contents, that.contents);
     }
 
-    public final int hashCode()
+    @Override
+	public final int hashCode()
     {
         return Arrays.hashCode(contents);
     }
@@ -149,11 +157,11 @@ public abstract class ASN1IA5String
      * @param str the string to check.
      * @return true if character set in IA5String set, false otherwise.
      */
-    public static boolean isIA5String(String str)
+    public static boolean isIA5String(final String str)
     {
         for (int i = str.length() - 1; i >= 0; i--)
         {
-            char ch = str.charAt(i);
+            final char ch = str.charAt(i);
             if (ch > 0x007f)
             {
                 return false;
@@ -163,7 +171,7 @@ public abstract class ASN1IA5String
         return true;
     }
 
-    static ASN1IA5String createPrimitive(byte[] contents)
+    static ASN1IA5String createPrimitive(final byte[] contents)
     {
         return new DERIA5String(contents, false);
     }

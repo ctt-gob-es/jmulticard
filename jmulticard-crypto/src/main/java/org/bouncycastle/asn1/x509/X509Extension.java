@@ -12,6 +12,7 @@ import org.bouncycastle.asn1.ASN1Primitive;
  * an object for the elements in the X.509 V3 extension block.
  * @deprecated use Extension
  */
+@Deprecated
 public class X509Extension
 {
     /**
@@ -203,7 +204,8 @@ public class X509Extension
         return convertValueToObject(this);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         if (this.isCritical())
         {
@@ -213,7 +215,8 @@ public class X509Extension
         return ~this.getValue().hashCode();
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  o)
     {
         if (!(o instanceof X509Extension))

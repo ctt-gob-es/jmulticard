@@ -1,8 +1,8 @@
 package org.bouncycastle.pqc.crypto.lms;
 
-import org.bouncycastle.crypto.Digest;
-
 import static org.bouncycastle.pqc.crypto.lms.LM_OTS.MAX_HASH;
+
+import org.bouncycastle.crypto.Digest;
 
 public class LMSContext
     implements Digest
@@ -17,26 +17,26 @@ public class LMSContext
     private LMSSignedPubKey[] signedPubKeys;
     private volatile Digest digest;
 
-    public LMSContext(LMOtsPrivateKey key, LMSigParameters sigParams, Digest digest, byte[] C, byte[][] path)
+    public LMSContext(final LMOtsPrivateKey key, final LMSigParameters sigParams, final Digest digest, final byte[] C, final byte[][] path)
     {
         this.key = key;
         this.sigParams = sigParams;
         this.digest = digest;
         this.C = C;
         this.path = path;
-        this.publicKey = null;
-        this.signature = null;
+        publicKey = null;
+        signature = null;
     }
 
-    public LMSContext(LMOtsPublicKey publicKey, Object signature, Digest digest)
+    public LMSContext(final LMOtsPublicKey publicKey, final Object signature, final Digest digest)
     {
         this.publicKey = publicKey;
         this.signature = signature;
         this.digest = digest;
-        this.C = null;
-        this.key = null;
-        this.sigParams = null;
-        this.path = null;
+        C = null;
+        key = null;
+        sigParams = null;
+        path = null;
     }
 
     byte[] getC()
@@ -46,10 +46,10 @@ public class LMSContext
 
     byte[] getQ()
     {
-        byte[] Q = new byte[MAX_HASH + 2];
+        final byte[] Q = new byte[MAX_HASH + 2];
 
         digest.doFinal(Q, 0);
-        
+
         digest = null;
 
         return Q;
@@ -85,39 +85,45 @@ public class LMSContext
         return signedPubKeys;
     }
 
-    LMSContext withSignedPublicKeys(LMSSignedPubKey[] signedPubKeys)
+    LMSContext withSignedPublicKeys(final LMSSignedPubKey[] signedPubKeys)
     {
         this.signedPubKeys = signedPubKeys;
 
         return this;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return digest.getAlgorithmName();
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return digest.getDigestSize();
     }
 
-    public void update(byte in)
+    @Override
+	public void update(final byte in)
     {
         digest.update(in);
     }
 
-    public void update(byte[] in, int inOff, int len)
+    @Override
+	public void update(final byte[] in, final int inOff, final int len)
     {
         digest.update(in, inOff, len);
     }
 
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(final byte[] out, final int outOff)
     {
         return digest.doFinal(out, outOff);
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         digest.reset();
     }

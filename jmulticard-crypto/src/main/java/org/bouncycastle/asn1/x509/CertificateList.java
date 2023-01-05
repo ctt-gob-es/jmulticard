@@ -117,7 +117,8 @@ public class CertificateList
         return tbsCertList.getNextUpdate();
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector v = new ASN1EncodableVector(3);
 
@@ -128,7 +129,8 @@ public class CertificateList
         return new DERSequence(v);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         if (!isHashCodeSet)
         {

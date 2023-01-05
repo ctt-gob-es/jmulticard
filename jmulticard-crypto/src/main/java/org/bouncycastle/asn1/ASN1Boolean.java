@@ -18,7 +18,8 @@ public class ASN1Boolean
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1Boolean.class, BERTags.BOOLEAN)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -40,7 +41,7 @@ public class ASN1Boolean
      * @return an ASN1Boolean instance.
      */
     public static ASN1Boolean getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof ASN1Boolean)
         {
@@ -49,12 +50,12 @@ public class ASN1Boolean
 
         if (obj instanceof byte[])
         {
-            byte[] enc = (byte[])obj;
+            final byte[] enc = (byte[])obj;
             try
             {
                 return (ASN1Boolean)TYPE.fromByteArray(enc);
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("failed to construct boolean from byte[]: " + e.getMessage());
             }
@@ -68,7 +69,7 @@ public class ASN1Boolean
      * @param value true or false depending on the ASN1Boolean wanted.
      * @return an ASN1Boolean instance.
      */
-    public static ASN1Boolean getInstance(boolean value)
+    public static ASN1Boolean getInstance(final boolean value)
     {
         return value ? TRUE : FALSE;
     }
@@ -78,7 +79,7 @@ public class ASN1Boolean
      * @param value non-zero (true) or zero (false) depending on the ASN1Boolean wanted.
      * @return an ASN1Boolean instance.
      */
-    public static ASN1Boolean getInstance(int value)
+    public static ASN1Boolean getInstance(final int value)
     {
         return value != 0 ? TRUE : FALSE;
     }
@@ -93,12 +94,12 @@ public class ASN1Boolean
      *               be converted.
      * @return an ASN1Boolean instance.
      */
-    public static ASN1Boolean getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1Boolean getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1Boolean)TYPE.getContextInstance(taggedObject, explicit);
     }
 
-    private ASN1Boolean(byte value)
+    private ASN1Boolean(final byte value)
     {
         this.value = value;
     }
@@ -108,56 +109,63 @@ public class ASN1Boolean
         return value != FALSE_VALUE;
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, 1);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.BOOLEAN, value);
     }
 
-    boolean asn1Equals(ASN1Primitive other)
+    @Override
+	boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1Boolean))
         {
             return false;
         }
 
-        ASN1Boolean that = (ASN1Boolean)other;
+        final ASN1Boolean that = (ASN1Boolean)other;
 
         return this.isTrue() == that.isTrue();
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return isTrue() ? 1 : 0;
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return isTrue() ? TRUE : FALSE;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       return isTrue() ? "TRUE" : "FALSE";
     }
 
-    static ASN1Boolean createPrimitive(byte[] contents)
+    static ASN1Boolean createPrimitive(final byte[] contents)
     {
         if (contents.length != 1)
         {
             throw new IllegalArgumentException("BOOLEAN value should have 1 byte in it");
         }
 
-        byte b = contents[0];
+        final byte b = contents[0];
         switch (b)
         {
         case FALSE_VALUE:   return FALSE;

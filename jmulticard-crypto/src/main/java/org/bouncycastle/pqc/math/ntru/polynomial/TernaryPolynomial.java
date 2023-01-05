@@ -10,7 +10,8 @@ public interface TernaryPolynomial
     /**
      * Multiplies the polynomial by an <code>IntegerPolynomial</code>, taking the indices mod N
      */
-    IntegerPolynomial mult(IntegerPolynomial poly2);
+    @Override
+	IntegerPolynomial mult(IntegerPolynomial poly2);
 
     int[] getOnes();
 

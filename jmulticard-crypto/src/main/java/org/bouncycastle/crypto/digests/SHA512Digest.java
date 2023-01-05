@@ -46,17 +46,20 @@ public class SHA512Digest
         restoreState(encodedState);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SHA-512";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[]  out,
         int     outOff)
     {
@@ -79,7 +82,8 @@ public class SHA512Digest
     /**
      * reset the chaining variables
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -97,19 +101,22 @@ public class SHA512Digest
         H8 = 0x5be0cd19137e2179L;
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new SHA512Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         SHA512Digest d = (SHA512Digest)other;
 
         copyIn(d);
     }
 
-    public byte[] getEncodedState()
+    @Override
+	public byte[] getEncodedState()
     {
         byte[] encoded = new byte[getEncodedStateSize()];
         super.populateState(encoded);

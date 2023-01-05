@@ -21,82 +21,83 @@ public class HMac
     private final static byte IPAD = (byte)0x36;
     private final static byte OPAD = (byte)0x5C;
 
-    private Digest digest;
-    private int digestSize;
-    private int blockLength;
+    private final Digest digest;
+    private final int digestSize;
+    private final int blockLength;
     private Memoable ipadState;
     private Memoable opadState;
 
-    private byte[] inputPad;
-    private byte[] outputBuf;
+    private final byte[] inputPad;
+    private final byte[] outputBuf;
 
     private static Hashtable blockLengths;
-    
+
     static
     {
         blockLengths = new Hashtable();
-        
+
         blockLengths.put("GOST3411", Integers.valueOf(32));
-        
+
         blockLengths.put("MD2", Integers.valueOf(16));
         blockLengths.put("MD4", Integers.valueOf(64));
         blockLengths.put("MD5", Integers.valueOf(64));
-        
+
         blockLengths.put("RIPEMD128", Integers.valueOf(64));
         blockLengths.put("RIPEMD160", Integers.valueOf(64));
-        
+
         blockLengths.put("SHA-1", Integers.valueOf(64));
         blockLengths.put("SHA-224", Integers.valueOf(64));
         blockLengths.put("SHA-256", Integers.valueOf(64));
         blockLengths.put("SHA-384", Integers.valueOf(128));
         blockLengths.put("SHA-512", Integers.valueOf(128));
-        
+
         blockLengths.put("Tiger", Integers.valueOf(64));
         blockLengths.put("Whirlpool", Integers.valueOf(64));
     }
-    
+
     private static int getByteLength(
-        Digest digest)
+        final Digest digest)
     {
         if (digest instanceof ExtendedDigest)
         {
             return ((ExtendedDigest)digest).getByteLength();
         }
-        
-        Integer  b = (Integer)blockLengths.get(digest.getAlgorithmName());
-        
+
+        final Integer  b = (Integer)blockLengths.get(digest.getAlgorithmName());
+
         if (b == null)
-        {       
+        {
             throw new IllegalArgumentException("unknown digest passed: " + digest.getAlgorithmName());
         }
-        
+
         return b.intValue();
     }
-    
+
     /**
-     * Base constructor for one of the standard digest algorithms that the 
+     * Base constructor for one of the standard digest algorithms that the
      * byteLength of the algorithm is know for.
-     * 
+     *
      * @param digest the digest.
      */
     public HMac(
-        Digest digest)
+        final Digest digest)
     {
         this(digest, getByteLength(digest));
     }
 
     private HMac(
-        Digest digest,
-        int    byteLength)
+        final Digest digest,
+        final int    byteLength)
     {
         this.digest = digest;
-        this.digestSize = digest.getDigestSize();
-        this.blockLength = byteLength;
-        this.inputPad = new byte[blockLength];
-        this.outputBuf = new byte[blockLength + digestSize];
+        digestSize = digest.getDigestSize();
+        blockLength = byteLength;
+        inputPad = new byte[blockLength];
+        outputBuf = new byte[blockLength + digestSize];
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return digest.getAlgorithmName() + "/HMAC";
     }
@@ -106,19 +107,20 @@ public class HMac
         return digest;
     }
 
-    public void init(
-        CipherParameters params)
+    @Override
+	public void init(
+        final CipherParameters params)
     {
         digest.reset();
 
-        byte[] key = ((KeyParameter)params).getKey();
+        final byte[] key = ((KeyParameter)params).getKey();
         int keyLength = key.length;
 
         if (keyLength > blockLength)
         {
             digest.update(key, 0, keyLength);
             digest.doFinal(inputPad, 0);
-            
+
             keyLength = digestSize;
         }
         else
@@ -151,28 +153,32 @@ public class HMac
         }
     }
 
-    public int getMacSize()
+    @Override
+	public int getMacSize()
     {
         return digestSize;
     }
 
-    public void update(
-        byte in)
+    @Override
+	public void update(
+        final byte in)
     {
         digest.update(in);
     }
 
-    public void update(
-        byte[] in,
-        int inOff,
-        int len)
+    @Override
+	public void update(
+        final byte[] in,
+        final int inOff,
+        final int len)
     {
         digest.update(in, inOff, len);
     }
 
-    public int doFinal(
-        byte[] out,
-        int outOff)
+    @Override
+	public int doFinal(
+        final byte[] out,
+        final int outOff)
     {
         digest.doFinal(outputBuf, blockLength);
 
@@ -186,7 +192,7 @@ public class HMac
             digest.update(outputBuf, 0, outputBuf.length);
         }
 
-        int len = digest.doFinal(out, outOff);
+        final int len = digest.doFinal(out, outOff);
 
         for (int i = blockLength; i < outputBuf.length; i++)
         {
@@ -208,7 +214,8 @@ public class HMac
     /**
      * Reset the mac generator.
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         /*
          * reset the underlying digest.
@@ -221,7 +228,7 @@ public class HMac
         digest.update(inputPad, 0, inputPad.length);
     }
 
-    private static void xorPad(byte[] pad, int len, byte n)
+    private static void xorPad(final byte[] pad, final int len, final byte n)
     {
         for (int i = 0; i < len; ++i)
         {

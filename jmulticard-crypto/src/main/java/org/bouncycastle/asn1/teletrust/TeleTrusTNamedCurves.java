@@ -38,7 +38,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP160r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("E95E4A5F737059DC60DF5991D45029409E60FC09");
             BigInteger h = BigInteger.valueOf(1);
@@ -50,7 +51,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -64,7 +66,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP160t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("E95E4A5F737059DC60DF5991D45029409E60FC09");
             BigInteger h = BigInteger.valueOf(1);
@@ -77,7 +80,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -91,7 +95,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP192r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("C302F41D932A36CDA7A3462F9E9E916B5BE8F1029AC4ACC1");
             BigInteger h = BigInteger.valueOf(1);
@@ -103,7 +108,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -117,7 +123,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP192t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("C302F41D932A36CDA7A3462F9E9E916B5BE8F1029AC4ACC1");
             BigInteger h = BigInteger.valueOf(1);
@@ -130,7 +137,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -144,7 +152,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP224r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("D7C134AA264366862A18302575D0FB98D116BC4B6DDEBCA3A5A7939F");
             BigInteger h = BigInteger.valueOf(1);
@@ -156,7 +165,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -170,7 +180,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP224t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("D7C134AA264366862A18302575D0FB98D116BC4B6DDEBCA3A5A7939F");
             BigInteger h = BigInteger.valueOf(1);
@@ -183,7 +194,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -197,7 +209,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP256r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7");
             BigInteger h = BigInteger.valueOf(1);
@@ -209,7 +222,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -223,7 +237,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP256t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("A9FB57DBA1EEA9BC3E660A909D838D718C397AA3B561A6F7901E0E82974856A7");
             BigInteger h = BigInteger.valueOf(1);
@@ -236,7 +251,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -250,7 +266,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP320r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("D35E472036BC4FB7E13C785ED201E065F98FCFA5B68F12A32D482EC7EE8658E98691555B44C59311");
             BigInteger h = BigInteger.valueOf(1);
@@ -262,7 +279,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -276,7 +294,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP320t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("D35E472036BC4FB7E13C785ED201E065F98FCFA5B68F12A32D482EC7EE8658E98691555B44C59311");
             BigInteger h = BigInteger.valueOf(1);
@@ -289,7 +308,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -303,7 +323,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP384r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("8CB91E82A3386D280F5D6F7E50E641DF152F7109ED5456B31F166E6CAC0425A7CF3AB6AF6B7FC3103B883202E9046565");
             BigInteger h = BigInteger.valueOf(1);
@@ -315,7 +336,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -329,7 +351,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP384t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("8CB91E82A3386D280F5D6F7E50E641DF152F7109ED5456B31F166E6CAC0425A7CF3AB6AF6B7FC3103B883202E9046565");
             BigInteger h = BigInteger.valueOf(1);
@@ -342,7 +365,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -356,7 +380,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP512r1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("AADD9DB8DBE9C48B3FD4E6AE33C9FC07CB308DB3B3C9D20ED6639CCA70330870553E5C414CA92619418661197FAC10471DB1D381085DDADDB58796829CA90069");
             BigInteger h = BigInteger.valueOf(1);
@@ -368,7 +393,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -382,7 +408,8 @@ public class TeleTrusTNamedCurves
 
     static X9ECParametersHolder brainpoolP512t1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger n = fromHex("AADD9DB8DBE9C48B3FD4E6AE33C9FC07CB308DB3B3C9D20ED6639CCA70330870553E5C414CA92619418661197FAC10471DB1D381085DDADDB58796829CA90069");
             BigInteger h = BigInteger.valueOf(1);
@@ -395,7 +422,8 @@ public class TeleTrusTNamedCurves
                 n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();

@@ -30,7 +30,8 @@ public abstract class EndoUtil
 
         EndoPreCompInfo precomp = (EndoPreCompInfo)c.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
-            public PreCompInfo precompute(PreCompInfo existing)
+            @Override
+			public PreCompInfo precompute(PreCompInfo existing)
             {
                 EndoPreCompInfo existingEndo = (existing instanceof EndoPreCompInfo) ? (EndoPreCompInfo)existing : null;
 

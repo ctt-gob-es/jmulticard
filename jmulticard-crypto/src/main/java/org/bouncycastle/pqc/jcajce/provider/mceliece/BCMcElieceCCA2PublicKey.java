@@ -44,7 +44,8 @@ public class BCMcElieceCCA2PublicKey
      *
      * @return "McEliece"
      */
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "McEliece-CCA2";
     }
@@ -84,7 +85,8 @@ public class BCMcElieceCCA2PublicKey
     /**
      * @return a human readable form of the key
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         String result = "McEliecePublicKey:\n";
         result += " length of the code         : " + params.getN() + "\n";
@@ -99,7 +101,8 @@ public class BCMcElieceCCA2PublicKey
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (other == null || !(other instanceof BCMcElieceCCA2PublicKey))
         {
@@ -114,7 +117,8 @@ public class BCMcElieceCCA2PublicKey
     /**
      * @return the hash code of this key
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return 37 * (params.getN() + 37 * params.getT()) + params.getG().hashCode();
     }
@@ -132,7 +136,8 @@ public class BCMcElieceCCA2PublicKey
      * </pre>
      * @return the keyData to encode in the SubjectPublicKeyInfo structure
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         McElieceCCA2PublicKey key = new McElieceCCA2PublicKey(params.getN(), params.getT(), params.getG(), MessageDigestUtils.getDigestAlgID(params.getDigest()));
         AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcElieceCca2);
@@ -150,7 +155,8 @@ public class BCMcElieceCCA2PublicKey
 
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }

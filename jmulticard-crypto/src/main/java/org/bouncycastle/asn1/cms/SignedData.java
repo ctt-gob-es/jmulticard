@@ -29,9 +29,9 @@ import org.bouncycastle.asn1.DLSequence;
  *     crls [1] IMPLICIT CertificateRevocationLists OPTIONAL,
  *     signerInfos SignerInfos
  *   }
- * 
+ *
  * DigestAlgorithmIdentifiers ::= SET OF DigestAlgorithmIdentifier
- * 
+ *
  * SignerInfos ::= SET OF SignerInfo
  * </pre>
  * <p>
@@ -91,7 +91,7 @@ public class SignedData
      * @throws IllegalArgumentException if the object cannot be converted.
      */
     public static SignedData getInstance(
-        Object  o)
+        final Object  o)
     {
         if (o instanceof SignedData)
         {
@@ -106,30 +106,30 @@ public class SignedData
     }
 
     public SignedData(
-        ASN1Set     digestAlgorithms,
-        ContentInfo contentInfo,
-        ASN1Set     certificates,
-        ASN1Set     crls,
-        ASN1Set     signerInfos)
+        final ASN1Set     digestAlgorithms,
+        final ContentInfo contentInfo,
+        final ASN1Set     certificates,
+        final ASN1Set     crls,
+        final ASN1Set     signerInfos)
     {
-        this.version = calculateVersion(contentInfo.getContentType(), certificates, crls, signerInfos);
+        version = calculateVersion(contentInfo.getContentType(), certificates, crls, signerInfos);
         this.digestAlgorithms = digestAlgorithms;
         this.contentInfo = contentInfo;
         this.certificates = certificates;
         this.crls = crls;
         this.signerInfos = signerInfos;
-        this.digsBer = digestAlgorithms instanceof BERSet;
-        this.crlsBer = crls instanceof BERSet;
-        this.certsBer = certificates instanceof BERSet;
-        this.sigsBer = signerInfos instanceof BERSet;
+        digsBer = digestAlgorithms instanceof BERSet;
+        crlsBer = crls instanceof BERSet;
+        certsBer = certificates instanceof BERSet;
+        sigsBer = signerInfos instanceof BERSet;
     }
 
 
     private ASN1Integer calculateVersion(
-        ASN1ObjectIdentifier contentOid,
-        ASN1Set certs,
-        ASN1Set crls,
-        ASN1Set signerInfs)
+        final ASN1ObjectIdentifier contentOid,
+        final ASN1Set certs,
+        final ASN1Set crls,
+        final ASN1Set signerInfs)
     {
         boolean otherCert = false;
         boolean otherCrl = false;
@@ -138,12 +138,10 @@ public class SignedData
 
         if (certs != null)
         {
-            for (Enumeration en = certs.getObjects(); en.hasMoreElements();)
-            {
-                Object obj = en.nextElement();
+            for (final Object obj : certs) {
                 if (obj instanceof ASN1TaggedObject)
                 {
-                    ASN1TaggedObject tagged = ASN1TaggedObject.getInstance(obj);
+                    final ASN1TaggedObject tagged = ASN1TaggedObject.getInstance(obj);
 
                     if (tagged.getTagNo() == 1)
                     {
@@ -168,9 +166,7 @@ public class SignedData
 
         if (crls != null)         // no need to check if otherCert is true
         {
-            for (Enumeration en = crls.getObjects(); en.hasMoreElements();)
-            {
-                Object obj = en.nextElement();
+            for (final Object obj : crls) {
                 if (obj instanceof ASN1TaggedObject)
                 {
                     otherCrl = true;
@@ -188,17 +184,7 @@ public class SignedData
             return VERSION_4;
         }
 
-        if (attrCertV1Found)
-        {
-            return VERSION_3;
-        }
-
-        if (checkForVersion3(signerInfs))
-        {
-            return VERSION_3;
-        }
-
-        if (!CMSObjectIdentifiers.data.equals(contentOid))
+        if (attrCertV1Found || checkForVersion3(signerInfs) || !CMSObjectIdentifiers.data.equals(contentOid))
         {
             return VERSION_3;
         }
@@ -206,11 +192,10 @@ public class SignedData
         return VERSION_1;
     }
 
-    private boolean checkForVersion3(ASN1Set signerInfs)
+    private boolean checkForVersion3(final ASN1Set signerInfs)
     {
-        for (Enumeration e = signerInfs.getObjects(); e.hasMoreElements();)
-        {
-            SignerInfo s = SignerInfo.getInstance(e.nextElement());
+        for (final Object signerInf : signerInfs) {
+            final SignerInfo s = SignerInfo.getInstance(signerInf);
 
             if (s.getVersion().hasValue(3))
             {
@@ -222,18 +207,18 @@ public class SignedData
     }
 
     private SignedData(
-        ASN1Sequence seq)
+        final ASN1Sequence seq)
     {
-        Enumeration     e = seq.getObjects();
+        final Enumeration     e = seq.getObjects();
 
         version = ASN1Integer.getInstance(e.nextElement());
-        digestAlgorithms = ((ASN1Set)e.nextElement());
+        digestAlgorithms = (ASN1Set)e.nextElement();
         contentInfo = ContentInfo.getInstance(e.nextElement());
 
         ASN1Set sigInfs = null;
         while (e.hasMoreElements())
         {
-            ASN1Primitive o = (ASN1Primitive)e.nextElement();
+            final ASN1Primitive o = (ASN1Primitive)e.nextElement();
 
             //
             // an interesting feature of SignedData is that there appear
@@ -242,7 +227,7 @@ public class SignedData
             //
             if (o instanceof ASN1TaggedObject)
             {
-                ASN1TaggedObject tagged = (ASN1TaggedObject)o;
+                final ASN1TaggedObject tagged = (ASN1TaggedObject)o;
 
                 switch (tagged.getTagNo())
                 {
@@ -311,9 +296,10 @@ public class SignedData
     /**
      * Produce an object suitable for an ASN1OutputStream.
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(6);
+        final ASN1EncodableVector v = new ASN1EncodableVector(6);
 
         v.add(version);
         v.add(digestAlgorithms);
@@ -344,7 +330,7 @@ public class SignedData
         }
 
         v.add(signerInfos);
-        
+
         if (!contentInfo.isDefiniteLength() || digsBer || sigsBer || crlsBer || certsBer)
         {
             return new BERSequence(v);

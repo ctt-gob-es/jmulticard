@@ -9,7 +9,7 @@ class XMSSNodeUtil
      * @param address   Address.
      * @return Compressed n-byte string of public key.
      */
-    static XMSSNode lTree(WOTSPlus wotsPlus, WOTSPlusPublicKeyParameters publicKey, LTreeAddress address)
+    static XMSSNode lTree(final WOTSPlus wotsPlus, final WOTSPlusPublicKeyParameters publicKey, LTreeAddress address)
     {
         if (publicKey == null)
         {
@@ -21,8 +21,8 @@ class XMSSNodeUtil
         }
         int len = wotsPlus.getParams().getLen();
             /* duplicate public key to XMSSNode Array */
-        byte[][] publicKeyBytes = publicKey.toByteArray();
-        XMSSNode[] publicKeyNodes = new XMSSNode[publicKeyBytes.length];
+        final byte[][] publicKeyBytes = publicKey.toByteArray();
+        final XMSSNode[] publicKeyNodes = new XMSSNode[publicKeyBytes.length];
         for (int i = 0; i < publicKeyBytes.length; i++)
         {
             publicKeyNodes[i] = new XMSSNode(0, publicKeyBytes[i]);
@@ -38,7 +38,7 @@ class XMSSNodeUtil
                     .withTreeAddress(address.getTreeAddress()).withLTreeAddress(address.getLTreeAddress())
                     .withTreeHeight(address.getTreeHeight()).withTreeIndex(i)
                     .withKeyAndMask(address.getKeyAndMask()).build();
-                publicKeyNodes[i] = randomizeHash(wotsPlus, publicKeyNodes[2 * i], publicKeyNodes[(2 * i) + 1], address);
+                publicKeyNodes[i] = randomizeHash(wotsPlus, publicKeyNodes[2 * i], publicKeyNodes[2 * i + 1], address);
             }
             if (len % 2 == 1)
             {
@@ -61,7 +61,7 @@ class XMSSNodeUtil
      * @param address Address.
      * @return Randomized hash of parent of left / right node.
      */
-    static XMSSNode randomizeHash(WOTSPlus wotsPlus, XMSSNode left, XMSSNode right, XMSSAddress address)
+    static XMSSNode randomizeHash(final WOTSPlus wotsPlus, final XMSSNode left, final XMSSNode right, XMSSAddress address)
     {
         if (left == null)
         {
@@ -79,63 +79,63 @@ class XMSSNodeUtil
         {
             throw new NullPointerException("address == null");
         }
-        byte[] publicSeed = wotsPlus.getPublicSeed();
+        final byte[] publicSeed = wotsPlus.getPublicSeed();
 
         if (address instanceof LTreeAddress)
         {
-            LTreeAddress tmpAddress = (LTreeAddress)address;
-            address = (LTreeAddress)new LTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
+            final LTreeAddress tmpAddress = (LTreeAddress)address;
+            address = new LTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
                 .withTreeAddress(tmpAddress.getTreeAddress()).withLTreeAddress(tmpAddress.getLTreeAddress())
                 .withTreeHeight(tmpAddress.getTreeHeight()).withTreeIndex(tmpAddress.getTreeIndex())
                 .withKeyAndMask(0).build();
         }
         else if (address instanceof HashTreeAddress)
         {
-            HashTreeAddress tmpAddress = (HashTreeAddress)address;
-            address = (HashTreeAddress)new HashTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
+            final HashTreeAddress tmpAddress = (HashTreeAddress)address;
+            address = new HashTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
                 .withTreeAddress(tmpAddress.getTreeAddress()).withTreeHeight(tmpAddress.getTreeHeight())
                 .withTreeIndex(tmpAddress.getTreeIndex()).withKeyAndMask(0).build();
         }
 
-        byte[] key = wotsPlus.getKhf().PRF(publicSeed, address.toByteArray());
+        final byte[] key = wotsPlus.getKhf().PRF(publicSeed, address.toByteArray());
 
         if (address instanceof LTreeAddress)
         {
-            LTreeAddress tmpAddress = (LTreeAddress)address;
-            address = (LTreeAddress)new LTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
+            final LTreeAddress tmpAddress = (LTreeAddress)address;
+            address = new LTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
                 .withTreeAddress(tmpAddress.getTreeAddress()).withLTreeAddress(tmpAddress.getLTreeAddress())
                 .withTreeHeight(tmpAddress.getTreeHeight()).withTreeIndex(tmpAddress.getTreeIndex())
                 .withKeyAndMask(1).build();
         }
         else if (address instanceof HashTreeAddress)
         {
-            HashTreeAddress tmpAddress = (HashTreeAddress)address;
-            address = (HashTreeAddress)new HashTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
+            final HashTreeAddress tmpAddress = (HashTreeAddress)address;
+            address = new HashTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
                 .withTreeAddress(tmpAddress.getTreeAddress()).withTreeHeight(tmpAddress.getTreeHeight())
                 .withTreeIndex(tmpAddress.getTreeIndex()).withKeyAndMask(1).build();
         }
 
-        byte[] bitmask0 = wotsPlus.getKhf().PRF(publicSeed, address.toByteArray());
+        final byte[] bitmask0 = wotsPlus.getKhf().PRF(publicSeed, address.toByteArray());
 
         if (address instanceof LTreeAddress)
         {
-            LTreeAddress tmpAddress = (LTreeAddress)address;
-            address = (LTreeAddress)new LTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
+            final LTreeAddress tmpAddress = (LTreeAddress)address;
+            address = new LTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
                 .withTreeAddress(tmpAddress.getTreeAddress()).withLTreeAddress(tmpAddress.getLTreeAddress())
                 .withTreeHeight(tmpAddress.getTreeHeight()).withTreeIndex(tmpAddress.getTreeIndex())
                 .withKeyAndMask(2).build();
         }
         else if (address instanceof HashTreeAddress)
         {
-            HashTreeAddress tmpAddress = (HashTreeAddress)address;
-            address = (HashTreeAddress)new HashTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
+            final HashTreeAddress tmpAddress = (HashTreeAddress)address;
+            address = new HashTreeAddress.Builder().withLayerAddress(tmpAddress.getLayerAddress())
                 .withTreeAddress(tmpAddress.getTreeAddress()).withTreeHeight(tmpAddress.getTreeHeight())
                 .withTreeIndex(tmpAddress.getTreeIndex()).withKeyAndMask(2).build();
         }
 
-        byte[] bitmask1 = wotsPlus.getKhf().PRF(publicSeed, address.toByteArray());
-        int n = wotsPlus.getParams().getTreeDigestSize();
-        byte[] tmpMask = new byte[2 * n];
+        final byte[] bitmask1 = wotsPlus.getKhf().PRF(publicSeed, address.toByteArray());
+        final int n = wotsPlus.getParams().getTreeDigestSize();
+        final byte[] tmpMask = new byte[2 * n];
         for (int i = 0; i < n; i++)
         {
             tmpMask[i] = (byte)(left.getValue()[i] ^ bitmask0[i]);
@@ -144,7 +144,7 @@ class XMSSNodeUtil
         {
             tmpMask[i + n] = (byte)(right.getValue()[i] ^ bitmask1[i]);
         }
-        byte[] out = wotsPlus.getKhf().H(key, tmpMask);
+        final byte[] out = wotsPlus.getKhf().H(key, tmpMask);
         return new XMSSNode(left.getHeight(), out);
     }
 }

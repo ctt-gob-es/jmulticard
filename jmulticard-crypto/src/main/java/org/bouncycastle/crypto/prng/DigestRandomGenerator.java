@@ -34,7 +34,8 @@ public class DigestRandomGenerator
         this.stateCounter = 1;
     }
 
-    public void addSeedMaterial(byte[] inSeed)
+    @Override
+	public void addSeedMaterial(byte[] inSeed)
     {
         synchronized (this)
         {
@@ -47,7 +48,8 @@ public class DigestRandomGenerator
         }
     }
 
-    public void addSeedMaterial(long rSeed)
+    @Override
+	public void addSeedMaterial(long rSeed)
     {
         synchronized (this)
         {
@@ -58,12 +60,14 @@ public class DigestRandomGenerator
         }
     }
 
-    public void nextBytes(byte[] bytes)
+    @Override
+	public void nextBytes(byte[] bytes)
     {
         nextBytes(bytes, 0, bytes.length);
     }
 
-    public void nextBytes(byte[] bytes, int start, int len)
+    @Override
+	public void nextBytes(byte[] bytes, int start, int len)
     {
         synchronized (this)
         {

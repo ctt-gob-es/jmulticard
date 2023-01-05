@@ -8,6 +8,7 @@ import java.io.IOException;
  * @deprecated Will be removed. See comments for
  *             {@link ASN1ApplicationSpecific}.
  */
+@Deprecated
 public class BERApplicationSpecific
     extends ASN1ApplicationSpecific
 {

@@ -85,12 +85,14 @@ final class WOTSPlusOid
      *
      * @return OID.
      */
-    public int getOid()
+    @Override
+	public int getOid()
     {
         return oid;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return stringRepresentation;
     }

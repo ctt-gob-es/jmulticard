@@ -54,17 +54,20 @@ public class RIPEMD256Digest
         xOff = t.xOff;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "RIPEMD256";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
-    protected void processWord(
+    @Override
+	protected void processWord(
         byte[] in,
         int inOff)
     {
@@ -77,7 +80,8 @@ public class RIPEMD256Digest
         }
     }
 
-    protected void processLength(
+    @Override
+	protected void processLength(
         long bitLength)
     {
         if (xOff > 14)
@@ -100,7 +104,8 @@ public class RIPEMD256Digest
         out[outOff + 3] = (byte)(word >>> 24);
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[] out,
         int outOff)
     {
@@ -123,7 +128,8 @@ public class RIPEMD256Digest
     /**
     * reset the chaining variables to the IV values.
     */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -290,7 +296,8 @@ public class RIPEMD256Digest
       return RL(a + f4(b, c, d) + x + 0x50a28be6, s);
     }
 
-    protected void processBlock()
+    @Override
+	protected void processBlock()
     {
         int a, aa;
         int b, bb;
@@ -483,12 +490,14 @@ public class RIPEMD256Digest
         }
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new RIPEMD256Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         RIPEMD256Digest d = (RIPEMD256Digest)other;
 

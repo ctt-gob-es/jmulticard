@@ -16,7 +16,8 @@ public class BERTaggedObject
      * 
      * @deprecated Will be removed.
      */
-    public BERTaggedObject(int tagNo)
+    @Deprecated
+	public BERTaggedObject(int tagNo)
     {
         super(false, tagNo, new BERSequence());
     }
@@ -55,12 +56,14 @@ public class BERTaggedObject
         super(explicitness, tagClass, tagNo, obj);
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return isExplicit() || obj.toASN1Primitive().encodeConstructed();
     }
 
-    int encodedLength(boolean withTag) throws IOException
+    @Override
+	int encodedLength(boolean withTag) throws IOException
     {
         ASN1Primitive primitive = obj.toASN1Primitive();
         boolean explicit = isExplicit();
@@ -77,7 +80,8 @@ public class BERTaggedObject
         return length;
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
 //        assert out.getClass().isAssignableFrom(ASN1OutputStream.class);
 
@@ -108,17 +112,20 @@ public class BERTaggedObject
         }
     }
 
-    String getASN1Encoding()
+    @Override
+	String getASN1Encoding()
     {
         return ASN1Encoding.BER;
     }
 
-    ASN1Sequence rebuildConstructed(ASN1Primitive primitive)
+    @Override
+	ASN1Sequence rebuildConstructed(ASN1Primitive primitive)
     {
         return new BERSequence(primitive);
     }
 
-    ASN1TaggedObject replaceTag(int tagClass, int tagNo)
+    @Override
+	ASN1TaggedObject replaceTag(int tagClass, int tagNo)
     {
         return new BERTaggedObject(explicitness, tagClass, tagNo, obj);
     }

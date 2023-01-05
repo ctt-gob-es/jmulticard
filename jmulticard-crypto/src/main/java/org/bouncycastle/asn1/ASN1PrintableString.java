@@ -37,7 +37,8 @@ public abstract class ASN1PrintableString
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1PrintableString.class, BERTags.PRINTABLE_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -50,7 +51,7 @@ public abstract class ASN1PrintableString
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return an ASN1PrintableString instance, or null.
      */
-    public static ASN1PrintableString getInstance(Object obj)
+    public static ASN1PrintableString getInstance(final Object obj)
     {
         if (obj == null || obj instanceof ASN1PrintableString)
         {
@@ -58,7 +59,7 @@ public abstract class ASN1PrintableString
         }
         if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1PrintableString)
             {
                 return (ASN1PrintableString)primitive;
@@ -70,7 +71,7 @@ public abstract class ASN1PrintableString
             {
                 return (ASN1PrintableString)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -89,7 +90,7 @@ public abstract class ASN1PrintableString
      *               be converted.
      * @return an ASN1PrintableString instance, or null.
      */
-    public static ASN1PrintableString getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1PrintableString getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1PrintableString)TYPE.getContextInstance(taggedObject, explicit);
     }
@@ -104,22 +105,23 @@ public abstract class ASN1PrintableString
      * @throws IllegalArgumentException if validate is true and the string
      * contains characters that should not be in a PrintableString.
      */
-    ASN1PrintableString(String string, boolean validate)
+    ASN1PrintableString(final String string, final boolean validate)
     {
         if (validate && !isPrintableString(string))
         {
             throw new IllegalArgumentException("string contains illegal characters");
         }
 
-        this.contents = Strings.toByteArray(string);
+        contents = Strings.toByteArray(string);
     }
 
-    ASN1PrintableString(byte[] contents, boolean clone)
+    ASN1PrintableString(final byte[] contents, final boolean clone)
     {
         this.contents = clone ? Arrays.clone(contents) : contents;
     }
 
-    public final String getString()
+    @Override
+	public final String getString()
     {
         return Strings.fromByteArray(contents);
     }
@@ -129,39 +131,45 @@ public abstract class ASN1PrintableString
         return Arrays.clone(contents);
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    final int encodedLength(boolean withTag)
+    @Override
+	final int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.PRINTABLE_STRING, contents);
     }
 
-    final boolean asn1Equals(ASN1Primitive other)
+    @Override
+	final boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1PrintableString))
         {
             return false;
         }
 
-        ASN1PrintableString that = (ASN1PrintableString)other;
+        final ASN1PrintableString that = (ASN1PrintableString)other;
 
-        return Arrays.areEqual(this.contents, that.contents);
+        return Arrays.areEqual(contents, that.contents);
     }
 
-    public final int hashCode()
+    @Override
+	public final int hashCode()
     {
         return Arrays.hashCode(contents);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getString();
     }
@@ -173,23 +181,18 @@ public abstract class ASN1PrintableString
      * @return true if in printable set, false otherwise.
      */
     public static boolean isPrintableString(
-        String  str)
+        final String  str)
     {
         for (int i = str.length() - 1; i >= 0; i--)
         {
-            char    ch = str.charAt(i);
+            final char    ch = str.charAt(i);
 
             if (ch > 0x007f)
             {
                 return false;
             }
 
-            if ('a' <= ch && ch <= 'z')
-            {
-                continue;
-            }
-
-            if ('A' <= ch && ch <= 'Z')
+            if (('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z'))
             {
                 continue;
             }
@@ -222,7 +225,7 @@ public abstract class ASN1PrintableString
         return true;
     }
 
-    static ASN1PrintableString createPrimitive(byte[] contents)
+    static ASN1PrintableString createPrimitive(final byte[] contents)
     {
         return new DERPrintableString(contents, false);
     }

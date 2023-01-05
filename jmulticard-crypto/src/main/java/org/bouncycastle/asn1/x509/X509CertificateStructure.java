@@ -21,6 +21,7 @@ import org.bouncycastle.asn1.x500.X500Name;
  * </pre>
  * @deprecated use org.bouncycastle.asn1.x509.Certificate
  */
+@Deprecated
 public class X509CertificateStructure
     extends ASN1Object
     implements X509ObjectIdentifiers, PKCSObjectIdentifiers
@@ -31,14 +32,14 @@ public class X509CertificateStructure
     ASN1BitString sig;
 
     public static X509CertificateStructure getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static X509CertificateStructure getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof X509CertificateStructure)
         {
@@ -53,7 +54,7 @@ public class X509CertificateStructure
     }
 
     public X509CertificateStructure(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
         this.seq = seq;
 
@@ -123,7 +124,8 @@ public class X509CertificateStructure
         return sig;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return seq;
     }

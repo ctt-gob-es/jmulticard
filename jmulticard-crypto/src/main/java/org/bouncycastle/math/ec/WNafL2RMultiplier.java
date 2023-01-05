@@ -17,7 +17,8 @@ public class WNafL2RMultiplier extends AbstractECMultiplier
      * @return A new <code>ECPoint</code> which equals <code>this</code>
      * multiplied by <code>k</code>.
      */
-    protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
+    @Override
+	protected ECPoint multiplyPositive(ECPoint p, BigInteger k)
     {
         int minWidth = WNafUtil.getWindowSize(k.bitLength());
 

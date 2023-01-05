@@ -9,7 +9,8 @@ public class ScaleXPointMap implements ECPointMap
         this.scale = scale;
     }
 
-    public ECPoint map(ECPoint p)
+    @Override
+	public ECPoint map(ECPoint p)
     {
         return p.scaleX(scale);
     }

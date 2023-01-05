@@ -30,7 +30,8 @@ public class KeyAgreementSpi
         super("NH", null);
     }
 
-    protected void engineInit(Key key, SecureRandom secureRandom)
+    @Override
+	protected void engineInit(Key key, SecureRandom secureRandom)
         throws InvalidKeyException
     {
         if (key != null)
@@ -45,13 +46,15 @@ public class KeyAgreementSpi
         }
     }
 
-    protected void doInitFromKey(Key key, AlgorithmParameterSpec algorithmParameterSpec, SecureRandom secureRandom)
+    @Override
+	protected void doInitFromKey(Key key, AlgorithmParameterSpec algorithmParameterSpec, SecureRandom secureRandom)
         throws InvalidKeyException, InvalidAlgorithmParameterException
     {
         throw new InvalidAlgorithmParameterException("NewHope does not require parameters");
     }
 
-    protected Key engineDoPhase(Key key, boolean lastPhase)
+    @Override
+	protected Key engineDoPhase(Key key, boolean lastPhase)
         throws InvalidKeyException, IllegalStateException
     {
         if (!lastPhase)
@@ -77,7 +80,8 @@ public class KeyAgreementSpi
         }
     }
 
-    protected byte[] engineGenerateSecret()
+    @Override
+	protected byte[] engineGenerateSecret()
         throws IllegalStateException
     {
         byte[] rv = Arrays.clone(shared);
@@ -87,7 +91,8 @@ public class KeyAgreementSpi
         return rv;
     }
 
-    protected int engineGenerateSecret(byte[] bytes, int offset)
+    @Override
+	protected int engineGenerateSecret(byte[] bytes, int offset)
         throws IllegalStateException, ShortBufferException
     {
         System.arraycopy(shared, 0, bytes, offset, shared.length);
@@ -97,7 +102,8 @@ public class KeyAgreementSpi
         return shared.length;
     }
 
-    protected byte[] doCalcSecret()
+    @Override
+	protected byte[] doCalcSecret()
     {
         return engineGenerateSecret();
     }

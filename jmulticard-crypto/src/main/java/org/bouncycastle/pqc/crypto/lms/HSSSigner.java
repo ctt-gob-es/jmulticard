@@ -11,37 +11,40 @@ public class HSSSigner
     private HSSPrivateKeyParameters privKey;
     private HSSPublicKeyParameters pubKey;
 
-    public void init(boolean forSigning, CipherParameters param)
+    @Override
+	public void init(final boolean forSigning, final CipherParameters param)
     {
          if (forSigning)
          {
-             this.privKey = (HSSPrivateKeyParameters)param;
+             privKey = (HSSPrivateKeyParameters)param;
          }
          else
          {
-             this.pubKey = (HSSPublicKeyParameters)param;
+             pubKey = (HSSPublicKeyParameters)param;
          }
     }
 
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(final byte[] message)
     {
         try
         {
             return HSS.generateSignature(privKey, message).getEncoded();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("unable to encode signature: " + e.getMessage());
         }
     }
 
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(final byte[] message, final byte[] signature)
     {
         try
         {
             return HSS.verifySignature(pubKey, HSSSignature.getInstance(signature, pubKey.getL()), message);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("unable to decode signature: " + e.getMessage());
         }

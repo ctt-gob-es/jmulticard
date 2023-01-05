@@ -181,7 +181,8 @@ class SimpleBigDecimal
         return scale;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         if (scale == 0)
         {
@@ -223,7 +224,8 @@ class SimpleBigDecimal
         return sb.toString();
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (this == o)
         {
@@ -239,7 +241,8 @@ class SimpleBigDecimal
         return ((bigInt.equals(other.bigInt)) && (scale == other.scale));
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return bigInt.hashCode() ^ scale;
     }

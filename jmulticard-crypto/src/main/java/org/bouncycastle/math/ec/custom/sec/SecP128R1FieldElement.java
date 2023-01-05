@@ -14,7 +14,7 @@ public class SecP128R1FieldElement extends ECFieldElement.AbstractFp
 
     protected int[] x;
 
-    public SecP128R1FieldElement(BigInteger x)
+    public SecP128R1FieldElement(final BigInteger x)
     {
         if (x == null || x.signum() < 0 || x.compareTo(Q) >= 0)
         {
@@ -26,99 +26,113 @@ public class SecP128R1FieldElement extends ECFieldElement.AbstractFp
 
     public SecP128R1FieldElement()
     {
-        this.x = Nat128.create();
+        x = Nat128.create();
     }
 
-    protected SecP128R1FieldElement(int[] x)
+    protected SecP128R1FieldElement(final int[] x)
     {
         this.x = x;
     }
 
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         return Nat128.isZero(x);
     }
 
-    public boolean isOne()
+    @Override
+	public boolean isOne()
     {
         return Nat128.isOne(x);
     }
 
-    public boolean testBitZero()
+    @Override
+	public boolean testBitZero()
     {
         return Nat128.getBit(x, 0) == 1;
     }
 
-    public BigInteger toBigInteger()
+    @Override
+	public BigInteger toBigInteger()
     {
         return Nat128.toBigInteger(x);
     }
 
-    public String getFieldName()
+    @Override
+	public String getFieldName()
     {
         return "SecP128R1Field";
     }
 
-    public int getFieldSize()
+    @Override
+	public int getFieldSize()
     {
         return Q.bitLength();
     }
 
-    public ECFieldElement add(ECFieldElement b)
+    @Override
+	public ECFieldElement add(final ECFieldElement b)
     {
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.add(x, ((SecP128R1FieldElement)b).x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement addOne()
+    @Override
+	public ECFieldElement addOne()
     {
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.addOne(x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement subtract(ECFieldElement b)
+    @Override
+	public ECFieldElement subtract(final ECFieldElement b)
     {
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.subtract(x, ((SecP128R1FieldElement)b).x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement multiply(ECFieldElement b)
+    @Override
+	public ECFieldElement multiply(final ECFieldElement b)
     {
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.multiply(x, ((SecP128R1FieldElement)b).x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement divide(ECFieldElement b)
+    @Override
+	public ECFieldElement divide(final ECFieldElement b)
     {
 //        return multiply(b.invert());
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.inv(((SecP128R1FieldElement)b).x, z);
         SecP128R1Field.multiply(z, x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement negate()
+    @Override
+	public ECFieldElement negate()
     {
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.negate(x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement square()
+    @Override
+	public ECFieldElement square()
     {
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.square(x, z);
         return new SecP128R1FieldElement(z);
     }
 
-    public ECFieldElement invert()
+    @Override
+	public ECFieldElement invert()
     {
 //        return new SecP128R1FieldElement(toBigInteger().modInverse(Q));
-        int[] z = Nat128.create();
+        final int[] z = Nat128.create();
         SecP128R1Field.inv(x, z);
         return new SecP128R1FieldElement(z);
     }
@@ -128,7 +142,8 @@ public class SecP128R1FieldElement extends ECFieldElement.AbstractFp
      * return a sqrt root - the routine verifies that the calculation returns the right value - if
      * none exists it returns null.
      */
-    public ECFieldElement sqrt()
+    @Override
+	public ECFieldElement sqrt()
     {
         /*
          * Raise this element to the exponent 2^126 - 2^95
@@ -140,44 +155,45 @@ public class SecP128R1FieldElement extends ECFieldElement.AbstractFp
          *     1, 2, 4, 8, 10, 20, 30, [31]
          */
 
-        int[] x1 = this.x;
+        final int[] x1 = x;
         if (Nat128.isZero(x1) || Nat128.isOne(x1))
         {
             return this;
         }
 
-        int[] x2 = Nat128.create();
+        final int[] x2 = Nat128.create();
         SecP128R1Field.square(x1, x2);
         SecP128R1Field.multiply(x2, x1, x2);
-        int[] x4 = Nat128.create();
+        final int[] x4 = Nat128.create();
         SecP128R1Field.squareN(x2, 2, x4);
         SecP128R1Field.multiply(x4, x2, x4);
-        int[] x8 = Nat128.create();
+        final int[] x8 = Nat128.create();
         SecP128R1Field.squareN(x4, 4, x8);
         SecP128R1Field.multiply(x8, x4, x8);
-        int[] x10 = x4;
+        final int[] x10 = x4;
         SecP128R1Field.squareN(x8, 2, x10);
         SecP128R1Field.multiply(x10, x2, x10);
-        int[] x20 = x2;
+        final int[] x20 = x2;
         SecP128R1Field.squareN(x10, 10, x20);
         SecP128R1Field.multiply(x20, x10, x20);
-        int[] x30 = x8;
+        final int[] x30 = x8;
         SecP128R1Field.squareN(x20, 10, x30);
         SecP128R1Field.multiply(x30, x10, x30);
-        int[] x31 = x10;
+        final int[] x31 = x10;
         SecP128R1Field.square(x30, x31);
         SecP128R1Field.multiply(x31, x1, x31);
 
-        int[] t1 = x31;
+        final int[] t1 = x31;
         SecP128R1Field.squareN(t1, 95, t1);
 
-        int[] t2 = x30;
+        final int[] t2 = x30;
         SecP128R1Field.square(t1, t2);
 
         return Nat128.eq(x1, t2) ? new SecP128R1FieldElement(t1) : null;
     }
 
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
         if (other == this)
         {
@@ -189,11 +205,12 @@ public class SecP128R1FieldElement extends ECFieldElement.AbstractFp
             return false;
         }
 
-        SecP128R1FieldElement o = (SecP128R1FieldElement)other;
+        final SecP128R1FieldElement o = (SecP128R1FieldElement)other;
         return Nat128.eq(x, o.x);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Q.hashCode() ^ Arrays.hashCode(x, 0, 4);
     }

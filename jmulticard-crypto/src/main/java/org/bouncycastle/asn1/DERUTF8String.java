@@ -16,7 +16,8 @@ public class DERUTF8String
      * 
      * @deprecated Use {@link ASN1UTF8String#getInstance(Object)} instead.
      */
-    public static DERUTF8String getInstance(Object obj)
+    @Deprecated
+	public static DERUTF8String getInstance(Object obj)
     {
         if (obj == null || obj instanceof DERUTF8String)
         {
@@ -54,7 +55,8 @@ public class DERUTF8String
      * @deprecated Use {@link ASN1UTF8String#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERUTF8String getInstance(
+    @Deprecated
+	public static DERUTF8String getInstance(
         ASN1TaggedObject obj,
         boolean explicit)
     {

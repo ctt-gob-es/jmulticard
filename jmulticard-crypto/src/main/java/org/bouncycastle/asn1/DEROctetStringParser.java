@@ -9,10 +9,10 @@ import java.io.InputStream;
 public class DEROctetStringParser
     implements ASN1OctetStringParser
 {
-    private DefiniteLengthInputStream stream;
+    private final DefiniteLengthInputStream stream;
 
     DEROctetStringParser(
-        DefiniteLengthInputStream stream)
+        final DefiniteLengthInputStream stream)
     {
         this.stream = stream;
     }
@@ -22,7 +22,8 @@ public class DEROctetStringParser
      *
      * @return an InputStream with its source as the OCTET STRING content.
      */
-    public InputStream getOctetStream()
+    @Override
+	public InputStream getOctetStream()
     {
         return stream;
     }
@@ -33,7 +34,8 @@ public class DEROctetStringParser
      * @return a DEROctetString.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return new DEROctetString(stream.toByteArray());
@@ -44,13 +46,14 @@ public class DEROctetStringParser
      *
      * @return an DEROctetString
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {
             return getLoadedObject();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new ASN1ParsingException("IOException converting stream to byte array: " + e.getMessage(), e);
         }

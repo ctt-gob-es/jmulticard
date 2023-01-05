@@ -23,7 +23,8 @@ public final class Strings
         {
             LINE_SEPARATOR = AccessController.doPrivileged(new PrivilegedAction<String>()
             {
-                public String run()
+                @Override
+				public String run()
                 {
                     // the easy way
                     return System.getProperty("line.separator");
@@ -31,24 +32,24 @@ public final class Strings
             });
 
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             try
             {
                 // the harder way
                 LINE_SEPARATOR = String.format("%n");
             }
-            catch (Exception ef)
+            catch (final Exception ef)
             {
                 LINE_SEPARATOR = "\n";   // we're desperate use this...
             }
         }
     }
 
-    public static String fromUTF8ByteArray(byte[] bytes)
+    public static String fromUTF8ByteArray(final byte[] bytes)
     {
-        char[] chars = new char[bytes.length];
-        int len = UTF8.transcodeToUTF16(bytes, chars);
+        final char[] chars = new char[bytes.length];
+        final int len = UTF8.transcodeToUTF16(bytes, chars);
         if (len < 0)
         {
             throw new IllegalArgumentException("Invalid UTF-8 input");
@@ -56,10 +57,10 @@ public final class Strings
         return new String(chars, 0, len);
     }
 
-    public static String fromUTF8ByteArray(byte[] bytes, int off, int length)
+    public static String fromUTF8ByteArray(final byte[] bytes, final int off, final int length)
     {
-        char[] chars = new char[length];
-        int len = UTF8.transcodeToUTF16(bytes, off, length, chars);
+        final char[] chars = new char[length];
+        final int len = UTF8.transcodeToUTF16(bytes, off, length, chars);
         if (len < 0)
         {
             throw new IllegalArgumentException("Invalid UTF-8 input");
@@ -67,20 +68,20 @@ public final class Strings
         return new String(chars, 0, len);
     }
 
-    public static byte[] toUTF8ByteArray(String string)
+    public static byte[] toUTF8ByteArray(final String string)
     {
         return toUTF8ByteArray(string.toCharArray());
     }
 
-    public static byte[] toUTF8ByteArray(char[] string)
+    public static byte[] toUTF8ByteArray(final char[] string)
     {
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
         try
         {
             toUTF8ByteArray(string, bOut);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("cannot encode string to byte array!");
         }
@@ -88,10 +89,10 @@ public final class Strings
         return bOut.toByteArray();
     }
 
-    public static void toUTF8ByteArray(char[] string, OutputStream sOut)
+    public static void toUTF8ByteArray(final char[] string, final OutputStream sOut)
         throws IOException
     {
-        char[] c = string;
+        final char[] c = string;
         int i = 0;
 
         while (i < c.length)
@@ -104,8 +105,8 @@ public final class Strings
             }
             else if (ch < 0x0800)
             {
-                sOut.write(0xc0 | (ch >> 6));
-                sOut.write(0x80 | (ch & 0x3f));
+                sOut.write(0xc0 | ch >> 6);
+                sOut.write(0x80 | ch & 0x3f);
             }
             // surrogate pair
             else if (ch >= 0xD800 && ch <= 0xDFFF)
@@ -116,26 +117,26 @@ public final class Strings
                 {
                     throw new IllegalStateException("invalid UTF-16 codepoint");
                 }
-                char W1 = ch;
+                final char W1 = ch;
                 ch = c[++i];
-                char W2 = ch;
+                final char W2 = ch;
                 // in error - can only happen, if the Java String class has a
                 // bug.
                 if (W1 > 0xDBFF)
                 {
                     throw new IllegalStateException("invalid UTF-16 codepoint");
                 }
-                int codePoint = (((W1 & 0x03FF) << 10) | (W2 & 0x03FF)) + 0x10000;
-                sOut.write(0xf0 | (codePoint >> 18));
-                sOut.write(0x80 | ((codePoint >> 12) & 0x3F));
-                sOut.write(0x80 | ((codePoint >> 6) & 0x3F));
-                sOut.write(0x80 | (codePoint & 0x3F));
+                final int codePoint = ((W1 & 0x03FF) << 10 | W2 & 0x03FF) + 0x10000;
+                sOut.write(0xf0 | codePoint >> 18);
+                sOut.write(0x80 | codePoint >> 12 & 0x3F);
+                sOut.write(0x80 | codePoint >> 6 & 0x3F);
+                sOut.write(0x80 | codePoint & 0x3F);
             }
             else
             {
-                sOut.write(0xe0 | (ch >> 12));
-                sOut.write(0x80 | ((ch >> 6) & 0x3F));
-                sOut.write(0x80 | (ch & 0x3F));
+                sOut.write(0xe0 | ch >> 12);
+                sOut.write(0x80 | ch >> 6 & 0x3F);
+                sOut.write(0x80 | ch & 0x3F);
             }
 
             i++;
@@ -148,14 +149,14 @@ public final class Strings
      * @param string input to be converted
      * @return a US Ascii uppercase version
      */
-    public static String toUpperCase(String string)
+    public static String toUpperCase(final String string)
     {
         boolean changed = false;
-        char[] chars = string.toCharArray();
+        final char[] chars = string.toCharArray();
 
         for (int i = 0; i != chars.length; i++)
         {
-            char ch = chars[i];
+            final char ch = chars[i];
             if ('a' <= ch && 'z' >= ch)
             {
                 changed = true;
@@ -177,14 +178,14 @@ public final class Strings
      * @param string input to be converted
      * @return a US ASCII lowercase version
      */
-    public static String toLowerCase(String string)
+    public static String toLowerCase(final String string)
     {
         boolean changed = false;
-        char[] chars = string.toCharArray();
+        final char[] chars = string.toCharArray();
 
         for (int i = 0; i != chars.length; i++)
         {
-            char ch = chars[i];
+            final char ch = chars[i];
             if ('A' <= ch && 'Z' >= ch)
             {
                 changed = true;
@@ -200,9 +201,9 @@ public final class Strings
         return string;
     }
 
-    public static byte[] toByteArray(char[] chars)
+    public static byte[] toByteArray(final char[] chars)
     {
-        byte[] bytes = new byte[chars.length];
+        final byte[] bytes = new byte[chars.length];
 
         for (int i = 0; i != bytes.length; i++)
         {
@@ -213,13 +214,13 @@ public final class Strings
     }
 
 
-    public static byte[] toByteArray(String string)
+    public static byte[] toByteArray(final String string)
     {
-        byte[] bytes = new byte[string.length()];
+        final byte[] bytes = new byte[string.length()];
 
         for (int i = 0; i != bytes.length; i++)
         {
-            char ch = string.charAt(i);
+            final char ch = string.charAt(i);
 
             bytes[i] = (byte)ch;
         }
@@ -227,12 +228,12 @@ public final class Strings
         return bytes;
     }
 
-    public static int toByteArray(String s, byte[] buf, int off)
+    public static int toByteArray(final String s, final byte[] buf, final int off)
     {
-        int count = s.length();
+        final int count = s.length();
         for (int i = 0; i < count; ++i)
         {
-            char c = s.charAt(i);
+            final char c = s.charAt(i);
             buf[off + i] = (byte)c;
         }
         return count;
@@ -246,14 +247,14 @@ public final class Strings
      *
      * @return true if a and b represent the same string, false otherwise.
      */
-    public static boolean constantTimeAreEqual(String a, String b)
+    public static boolean constantTimeAreEqual(final String a, final String b)
     {
         boolean isEqual = a.length() == b.length();
-        int     len = a.length();
+        final int     len = a.length();
 
         for (int i = 0; i != len; i++)
         {
-            isEqual &= (a.charAt(i) == b.charAt(i));
+            isEqual &= a.charAt(i) == b.charAt(i);
         }
 
         return isEqual;
@@ -265,7 +266,7 @@ public final class Strings
      * @param bytes 8 bit characters.
      * @return resulting String.
      */
-    public static String fromByteArray(byte[] bytes)
+    public static String fromByteArray(final byte[] bytes)
     {
         return new String(asCharArray(bytes));
     }
@@ -276,9 +277,9 @@ public final class Strings
      * @param bytes 8 bit characters.
      * @return resulting String.
      */
-    public static char[] asCharArray(byte[] bytes)
+    public static char[] asCharArray(final byte[] bytes)
     {
-        char[] chars = new char[bytes.length];
+        final char[] chars = new char[bytes.length];
 
         for (int i = 0; i != chars.length; i++)
         {
@@ -288,15 +289,15 @@ public final class Strings
         return chars;
     }
 
-    public static String[] split(String input, char delimiter)
+    public static String[] split(String input, final char delimiter)
     {
-        Vector v = new Vector();
+        final Vector v = new Vector();
         boolean moreTokens = true;
         String subString;
 
         while (moreTokens)
         {
-            int tokenLocation = input.indexOf(delimiter);
+            final int tokenLocation = input.indexOf(delimiter);
             if (tokenLocation > 0)
             {
                 subString = input.substring(0, tokenLocation);
@@ -310,7 +311,7 @@ public final class Strings
             }
         }
 
-        String[] res = new String[v.size()];
+        final String[] res = new String[v.size()];
 
         for (int i = 0; i != res.length; i++)
         {
@@ -333,24 +334,28 @@ public final class Strings
         extends ArrayList<String>
         implements StringList
     {
-        public boolean add(String s)
+        @Override
+		public boolean add(final String s)
         {
             return super.add(s);
         }
 
-        public String set(int index, String element)
+        @Override
+		public String set(final int index, final String element)
         {
             return super.set(index, element);
         }
 
-        public void add(int index, String element)
+        @Override
+		public void add(final int index, final String element)
         {
             super.add(index, element);
         }
 
-        public String[] toStringArray()
+        @Override
+		public String[] toStringArray()
         {
-            String[] strs = new String[this.size()];
+            final String[] strs = new String[this.size()];
 
             for (int i = 0; i != strs.length; i++)
             {
@@ -360,9 +365,10 @@ public final class Strings
             return strs;
         }
 
-        public String[] toStringArray(int from, int to)
+        @Override
+		public String[] toStringArray(final int from, final int to)
         {
-            String[] strs = new String[to - from];
+            final String[] strs = new String[to - from];
 
             for (int i = from; i != this.size() && i != to; i++)
             {

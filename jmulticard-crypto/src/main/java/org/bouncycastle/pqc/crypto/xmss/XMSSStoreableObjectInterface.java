@@ -5,6 +5,7 @@ package org.bouncycastle.pqc.crypto.xmss;
  *
  * @deprecated use Encodable
  */
+@Deprecated
 public interface XMSSStoreableObjectInterface
 {
 

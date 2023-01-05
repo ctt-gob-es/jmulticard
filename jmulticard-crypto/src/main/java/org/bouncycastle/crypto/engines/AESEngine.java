@@ -434,7 +434,8 @@ private static final int[] Tinv0 =
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    public void init(
+    @Override
+	public void init(
         boolean           forEncryption,
         CipherParameters  params)
     {
@@ -456,17 +457,20 @@ private static final int[] Tinv0 =
         throw new IllegalArgumentException("invalid parameter passed to AES init - " + params.getClass().getName());
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "AES";
     }
 
-    public int getBlockSize()
+    @Override
+	public int getBlockSize()
     {
         return BLOCK_SIZE;
     }
 
-    public int processBlock(byte[] in, int inOff, byte[] out, int outOff)
+    @Override
+	public int processBlock(byte[] in, int inOff, byte[] out, int outOff)
     {
         if (WorkingKey == null)
         {
@@ -495,7 +499,8 @@ private static final int[] Tinv0 =
         return BLOCK_SIZE;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
     }
 
@@ -583,7 +588,8 @@ private static final int[] Tinv0 =
         Pack.intToLittleEndian(C3, out, outOff + 12);
     }
 
-    public BlockCipher newInstance()
+    @Override
+	public BlockCipher newInstance()
     {
         return new AESEngine();
     }

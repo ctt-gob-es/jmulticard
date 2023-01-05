@@ -29,7 +29,8 @@ class DerUtil
         {
             throw new IllegalStateException("Cannot get encoding: " + e.getMessage())
             {
-                public Throwable getCause()
+                @Override
+				public Throwable getCause()
                 {
                     return e;
                 }

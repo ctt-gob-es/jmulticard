@@ -20,24 +20,24 @@ public class X9ECPoint
     private ECPoint p;
 
     public X9ECPoint(
-        ECPoint p,
-        boolean compressed)
+        final ECPoint p,
+        final boolean compressed)
     {
         this.p = p.normalize();
-        this.encoding = new DEROctetString(p.getEncoded(compressed));
+        encoding = new DEROctetString(p.getEncoded(compressed));
     }
 
     public X9ECPoint(
-        ECCurve          c,
-        byte[]           encoding)
+        final ECCurve          c,
+        final byte[]           encoding)
     {
         this.c = c;
         this.encoding = new DEROctetString(Arrays.clone(encoding));
     }
 
     public X9ECPoint(
-        ECCurve          c,
-        ASN1OctetString  s)
+        final ECCurve          c,
+        final ASN1OctetString  s)
     {
         this(c, s.getOctets());
     }
@@ -59,7 +59,7 @@ public class X9ECPoint
 
     public boolean isPointCompressed()
     {
-        byte[] octets = encoding.getOctets();
+        final byte[] octets = encoding.getOctets();
         return octets != null && octets.length > 0 && (octets[0] == 2 || octets[0] == 3);
     }
 
@@ -71,7 +71,8 @@ public class X9ECPoint
      * <p>
      * Octet string produced using ECPoint.getEncoded().
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return encoding;
     }

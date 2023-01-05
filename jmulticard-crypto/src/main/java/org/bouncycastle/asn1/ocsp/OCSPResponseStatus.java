@@ -88,7 +88,8 @@ public class OCSPResponseStatus
         return value.getValue();
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return value;
     }

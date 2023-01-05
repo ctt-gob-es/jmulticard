@@ -35,12 +35,14 @@ public class SecP192K1Curve extends ECCurve.AbstractFp
         this.coord = SECP192K1_DEFAULT_COORDS;
     }
 
-    protected ECCurve cloneCurve()
+    @Override
+	protected ECCurve cloneCurve()
     {
         return new SecP192K1Curve();
     }
 
-    public boolean supportsCoordinateSystem(int coord)
+    @Override
+	public boolean supportsCoordinateSystem(int coord)
     {
         switch (coord)
         {
@@ -56,32 +58,38 @@ public class SecP192K1Curve extends ECCurve.AbstractFp
         return q;
     }
 
-    public int getFieldSize()
+    @Override
+	public int getFieldSize()
     {
         return q.bitLength();
     }
 
-    public ECFieldElement fromBigInteger(BigInteger x)
+    @Override
+	public ECFieldElement fromBigInteger(BigInteger x)
     {
         return new SecP192K1FieldElement(x);
     }
 
-    protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y)
+    @Override
+	protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y)
     {
         return new SecP192K1Point(this, x, y);
     }
 
-    protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
+    @Override
+	protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
     {
         return new SecP192K1Point(this, x, y, zs);
     }
 
-    public ECPoint getInfinity()
+    @Override
+	public ECPoint getInfinity()
     {
         return infinity;
     }
 
-    public ECLookupTable createCacheSafeLookupTable(ECPoint[] points, int off, final int len)
+    @Override
+	public ECLookupTable createCacheSafeLookupTable(ECPoint[] points, int off, final int len)
     {
         final int FE_INTS = 6;
 
@@ -98,12 +106,14 @@ public class SecP192K1Curve extends ECCurve.AbstractFp
 
         return new AbstractECLookupTable()
         {
-            public int getSize()
+            @Override
+			public int getSize()
             {
                 return len;
             }
 
-            public ECPoint lookup(int index)
+            @Override
+			public ECPoint lookup(int index)
             {
                 int[] x = Nat192.create(), y = Nat192.create();
                 int pos = 0;
@@ -124,7 +134,8 @@ public class SecP192K1Curve extends ECCurve.AbstractFp
                 return createPoint(x, y);
             }
 
-            public ECPoint lookupVar(int index)
+            @Override
+			public ECPoint lookupVar(int index)
             {
                 int[] x = Nat192.create(), y = Nat192.create();
                 int pos = index * FE_INTS * 2;
@@ -145,14 +156,16 @@ public class SecP192K1Curve extends ECCurve.AbstractFp
         };
     }
 
-    public ECFieldElement randomFieldElement(SecureRandom r)
+    @Override
+	public ECFieldElement randomFieldElement(SecureRandom r)
     {
         int[] x = Nat192.create();
         SecP192K1Field.random(r, x);
         return new SecP192K1FieldElement(x);
     }
 
-    public ECFieldElement randomFieldElementMult(SecureRandom r)
+    @Override
+	public ECFieldElement randomFieldElementMult(SecureRandom r)
     {
         int[] x = Nat192.create();
         SecP192K1Field.randomMult(r, x);

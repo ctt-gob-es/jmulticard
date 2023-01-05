@@ -31,7 +31,8 @@ abstract class FrodoMatrixGenerator
             super(n, q);
         }
 
-        short[] genMatrix(byte[] seedA)
+        @Override
+		short[] genMatrix(byte[] seedA)
         {
             short[] A = new short[n*n];
             short i, j;
@@ -65,7 +66,8 @@ abstract class FrodoMatrixGenerator
 
         }
 
-        short[] genMatrix(byte[] seedA)
+        @Override
+		short[] genMatrix(byte[] seedA)
         {
             //        """Generate matrix A using AES-128 (FrodoKEM specification, Algorithm 7)"""
             //        A = [[None for j in range(self.n)] for i in range(self.n)]

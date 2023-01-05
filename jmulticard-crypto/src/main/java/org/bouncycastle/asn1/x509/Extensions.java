@@ -163,7 +163,8 @@ public class Extensions
      *        extnValue         OCTET STRING }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector vec = new ASN1EncodableVector(ordering.size());
 

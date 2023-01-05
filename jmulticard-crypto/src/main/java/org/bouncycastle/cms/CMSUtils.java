@@ -47,7 +47,7 @@ import org.bouncycastle.util.io.TeeOutputStream;
 
 class CMSUtils
 {
-    private static final Set<String> des = new HashSet<String>();
+    private static final Set<String> des = new HashSet<>();
     private static final Set mqvAlgs = new HashSet();
     private static final Set ecAlgs = new HashSet();
     private static final Set gostAlgs = new HashSet();
@@ -82,57 +82,52 @@ class CMSUtils
         gostAlgs.add(RosstandartObjectIdentifiers.id_tc26_agreement_gost_3410_12_512);
     }
 
-    static boolean isMQV(ASN1ObjectIdentifier algorithm)
+    static boolean isMQV(final ASN1ObjectIdentifier algorithm)
     {
         return mqvAlgs.contains(algorithm);
     }
 
-    static boolean isEC(ASN1ObjectIdentifier algorithm)
+    static boolean isEC(final ASN1ObjectIdentifier algorithm)
     {
         return ecAlgs.contains(algorithm);
     }
 
-    static boolean isGOST(ASN1ObjectIdentifier algorithm)
+    static boolean isGOST(final ASN1ObjectIdentifier algorithm)
     {
         return gostAlgs.contains(algorithm);
     }
 
-    static boolean isRFC2631(ASN1ObjectIdentifier algorithm)
+    static boolean isRFC2631(final ASN1ObjectIdentifier algorithm)
     {
         return algorithm.equals(PKCSObjectIdentifiers.id_alg_ESDH) || algorithm.equals(PKCSObjectIdentifiers.id_alg_SSDH);
     }
 
-    static boolean isDES(String algorithmID)
+    static boolean isDES(final String algorithmID)
     {
-        String name = Strings.toUpperCase(algorithmID);
+        final String name = Strings.toUpperCase(algorithmID);
 
         return des.contains(name);
     }
 
-    static boolean isEquivalent(AlgorithmIdentifier algId1, AlgorithmIdentifier algId2)
+    static boolean isEquivalent(final AlgorithmIdentifier algId1, final AlgorithmIdentifier algId2)
     {
-        if (algId1 == null || algId2 == null)
+        if (algId1 == null || algId2 == null || !algId1.getAlgorithm().equals(algId2.getAlgorithm()))
         {
             return false;
         }
 
-        if (!algId1.getAlgorithm().equals(algId2.getAlgorithm()))
-        {
-            return false;
-        }
-
-        ASN1Encodable params1 = algId1.getParameters();
-        ASN1Encodable params2 = algId2.getParameters();
+        final ASN1Encodable params1 = algId1.getParameters();
+        final ASN1Encodable params2 = algId2.getParameters();
         if (params1 != null)
         {
-            return params1.equals(params2) || (params1.equals(DERNull.INSTANCE) && params2 == null);
+            return params1.equals(params2) || params1.equals(DERNull.INSTANCE) && params2 == null;
         }
 
         return params2 == null || params2.equals(DERNull.INSTANCE);
     }
 
     static ContentInfo readContentInfo(
-        byte[] input)
+        final byte[] input)
         throws CMSException
     {
         // enforce limit checking as from a byte array
@@ -140,95 +135,90 @@ class CMSUtils
     }
 
     static ContentInfo readContentInfo(
-        InputStream input)
+        final InputStream input)
         throws CMSException
     {
         // enforce some limit checking
         return readContentInfo(new ASN1InputStream(input));
     }
 
-    static ASN1Set convertToDlSet(Set<AlgorithmIdentifier> digestAlgs)
+    static ASN1Set convertToDlSet(final Set<AlgorithmIdentifier> digestAlgs)
     {
-        return new DLSet((AlgorithmIdentifier[])digestAlgs.toArray(new AlgorithmIdentifier[digestAlgs.size()]));
+        return new DLSet(digestAlgs.toArray(new AlgorithmIdentifier[digestAlgs.size()]));
     }
 
-    static void addDigestAlgs(Set<AlgorithmIdentifier> digestAlgs, SignerInformation signer, DigestAlgorithmIdentifierFinder dgstAlgFinder)
+    static void addDigestAlgs(final Set<AlgorithmIdentifier> digestAlgs, final SignerInformation signer, final DigestAlgorithmIdentifierFinder dgstAlgFinder)
     {
         digestAlgs.add(CMSSignedHelper.INSTANCE.fixDigestAlgID(signer.getDigestAlgorithmID(), dgstAlgFinder));
-        SignerInformationStore counterSignaturesStore = signer.getCounterSignatures();
-        Iterator<SignerInformation> counterSignatureIt = counterSignaturesStore.iterator();
+        final SignerInformationStore counterSignaturesStore = signer.getCounterSignatures();
+        final Iterator<SignerInformation> counterSignatureIt = counterSignaturesStore.iterator();
         while (counterSignatureIt.hasNext())
         {
-            SignerInformation counterSigner = (SignerInformation)counterSignatureIt.next();
+            final SignerInformation counterSigner = counterSignatureIt.next();
             digestAlgs.add(CMSSignedHelper.INSTANCE.fixDigestAlgID(counterSigner.getDigestAlgorithmID(), dgstAlgFinder));
         }
     }
 
-    static List getCertificatesFromStore(Store certStore)
+    static List getCertificatesFromStore(final Store certStore)
         throws CMSException
     {
-        List certs = new ArrayList();
+        final List certs = new ArrayList();
 
         try
         {
-            for (Iterator it = certStore.getMatches(null).iterator(); it.hasNext(); )
-            {
-                X509CertificateHolder c = (X509CertificateHolder)it.next();
+            for (final Object element : certStore.getMatches(null)) {
+                final X509CertificateHolder c = (X509CertificateHolder)element;
 
                 certs.add(c.toASN1Structure());
             }
 
             return certs;
         }
-        catch (ClassCastException e)
+        catch (final ClassCastException e)
         {
             throw new CMSException("error processing certs", e);
         }
     }
 
-    static List getAttributeCertificatesFromStore(Store attrStore)
+    static List getAttributeCertificatesFromStore(final Store attrStore)
         throws CMSException
     {
-        List certs = new ArrayList();
+        final List certs = new ArrayList();
 
         try
         {
-            for (Iterator it = attrStore.getMatches(null).iterator(); it.hasNext(); )
-            {
-                X509AttributeCertificateHolder attrCert = (X509AttributeCertificateHolder)it.next();
+            for (final Object element : attrStore.getMatches(null)) {
+                final X509AttributeCertificateHolder attrCert = (X509AttributeCertificateHolder)element;
 
                 certs.add(new DERTaggedObject(false, 2, attrCert.toASN1Structure()));
             }
 
             return certs;
         }
-        catch (ClassCastException e)
+        catch (final ClassCastException e)
         {
             throw new CMSException("error processing certs", e);
         }
     }
 
 
-    static List getCRLsFromStore(Store crlStore)
+    static List getCRLsFromStore(final Store crlStore)
         throws CMSException
     {
-        List crls = new ArrayList();
+        final List crls = new ArrayList();
 
         try
         {
-            for (Iterator it = crlStore.getMatches(null).iterator(); it.hasNext(); )
-            {
-                Object rev = it.next();
-
+            for (final Object rev : crlStore.getMatches(null)) {
                 if (rev instanceof X509CRLHolder)
                 {
-                    X509CRLHolder c = (X509CRLHolder)rev;
+                    final X509CRLHolder c = (X509CRLHolder)rev;
 
                     crls.add(c.toASN1Structure());
                 }
                 else if (rev instanceof OtherRevocationInfoFormat)
                 {
-                    OtherRevocationInfoFormat infoFormat = OtherRevocationInfoFormat.getInstance(rev);
+                    final OtherRevocationInfoFormat infoFormat = OtherRevocationInfoFormat.getInstance(rev);
 
                     validateInfoFormat(infoFormat);
 
@@ -242,17 +232,17 @@ class CMSUtils
 
             return crls;
         }
-        catch (ClassCastException e)
+        catch (final ClassCastException e)
         {
             throw new CMSException("error processing certs", e);
         }
     }
 
-    private static void validateInfoFormat(OtherRevocationInfoFormat infoFormat)
+    private static void validateInfoFormat(final OtherRevocationInfoFormat infoFormat)
     {
         if (CMSObjectIdentifiers.id_ri_ocsp_response.equals(infoFormat.getInfoFormat()))
         {
-            OCSPResponse resp = OCSPResponse.getInstance(infoFormat.getInfo());
+            final OCSPResponse resp = OCSPResponse.getInstance(infoFormat.getInfo());
 
             if (OCSPResponseStatus.SUCCESSFUL != resp.getResponseStatus().getIntValue())
             {
@@ -261,14 +251,13 @@ class CMSUtils
         }
     }
 
-    static Collection getOthersFromStore(ASN1ObjectIdentifier otherRevocationInfoFormat, Store otherRevocationInfos)
+    static Collection getOthersFromStore(final ASN1ObjectIdentifier otherRevocationInfoFormat, final Store otherRevocationInfos)
     {
-        List others = new ArrayList();
+        final List others = new ArrayList();
 
-        for (Iterator it = otherRevocationInfos.getMatches(null).iterator(); it.hasNext(); )
-        {
-            ASN1Encodable info = (ASN1Encodable)it.next();
-            OtherRevocationInfoFormat infoFormat = new OtherRevocationInfoFormat(otherRevocationInfoFormat, info);
+        for (final Object element : otherRevocationInfos.getMatches(null)) {
+            final ASN1Encodable info = (ASN1Encodable)element;
+            final OtherRevocationInfoFormat infoFormat = new OtherRevocationInfoFormat(otherRevocationInfoFormat, info);
 
             validateInfoFormat(infoFormat);
 
@@ -278,47 +267,44 @@ class CMSUtils
         return others;
     }
 
-    static ASN1Set createBerSetFromList(List derObjects)
+    static ASN1Set createBerSetFromList(final List derObjects)
     {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        final ASN1EncodableVector v = new ASN1EncodableVector();
 
-        for (Iterator it = derObjects.iterator(); it.hasNext(); )
-        {
-            v.add((ASN1Encodable)it.next());
+        for (final Object derObject : derObjects) {
+            v.add((ASN1Encodable)derObject);
         }
 
         return new BERSet(v);
     }
 
-    static ASN1Set createDlSetFromList(List derObjects)
+    static ASN1Set createDlSetFromList(final List derObjects)
     {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        final ASN1EncodableVector v = new ASN1EncodableVector();
 
-        for (Iterator it = derObjects.iterator(); it.hasNext(); )
-        {
-            v.add((ASN1Encodable)it.next());
+        for (final Object derObject : derObjects) {
+            v.add((ASN1Encodable)derObject);
         }
 
         return new DLSet(v);
     }
 
-    static ASN1Set createDerSetFromList(List derObjects)
+    static ASN1Set createDerSetFromList(final List derObjects)
     {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        final ASN1EncodableVector v = new ASN1EncodableVector();
 
-        for (Iterator it = derObjects.iterator(); it.hasNext(); )
-        {
-            v.add((ASN1Encodable)it.next());
+        for (final Object derObject : derObjects) {
+            v.add((ASN1Encodable)derObject);
         }
 
         return new DERSet(v);
     }
 
-    static OutputStream createBEROctetOutputStream(OutputStream s,
-                                                   int tagNo, boolean isExplicit, int bufferSize)
+    static OutputStream createBEROctetOutputStream(final OutputStream s,
+                                                   final int tagNo, final boolean isExplicit, final int bufferSize)
         throws IOException
     {
-        BEROctetStringGenerator octGen = new BEROctetStringGenerator(s, tagNo, isExplicit);
+        final BEROctetStringGenerator octGen = new BEROctetStringGenerator(s, tagNo, isExplicit);
 
         if (bufferSize != 0)
         {
@@ -329,12 +315,12 @@ class CMSUtils
     }
 
     private static ContentInfo readContentInfo(
-        ASN1InputStream in)
+        final ASN1InputStream in)
         throws CMSException
     {
         try
         {
-            ContentInfo info = ContentInfo.getInstance(in.readObject());
+            final ContentInfo info = ContentInfo.getInstance(in.readObject());
             if (info == null)
             {
                 throw new CMSException("No content found.");
@@ -342,66 +328,62 @@ class CMSUtils
 
             return info;
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new CMSException("IOException reading content.", e);
         }
-        catch (ClassCastException e)
-        {
-            throw new CMSException("Malformed content.", e);
-        }
-        catch (IllegalArgumentException e)
+        catch (final ClassCastException | IllegalArgumentException e)
         {
             throw new CMSException("Malformed content.", e);
         }
     }
 
     public static byte[] streamToByteArray(
-        InputStream in)
+        final InputStream in)
         throws IOException
     {
         return Streams.readAll(in);
     }
 
     public static byte[] streamToByteArray(
-        InputStream in,
-        int limit)
+        final InputStream in,
+        final int limit)
         throws IOException
     {
         return Streams.readAllLimited(in, limit);
     }
 
-    static InputStream attachDigestsToInputStream(Collection digests, InputStream s)
+    static InputStream attachDigestsToInputStream(final Collection digests, final InputStream s)
     {
         InputStream result = s;
-        Iterator it = digests.iterator();
+        final Iterator it = digests.iterator();
         while (it.hasNext())
         {
-            DigestCalculator digest = (DigestCalculator)it.next();
+            final DigestCalculator digest = (DigestCalculator)it.next();
             result = new TeeInputStream(result, digest.getOutputStream());
         }
         return result;
     }
 
-    static OutputStream attachSignersToOutputStream(Collection signers, OutputStream s)
+    static OutputStream attachSignersToOutputStream(final Collection signers, final OutputStream s)
     {
         OutputStream result = s;
-        Iterator it = signers.iterator();
+        final Iterator it = signers.iterator();
         while (it.hasNext())
         {
-            SignerInfoGenerator signerGen = (SignerInfoGenerator)it.next();
+            final SignerInfoGenerator signerGen = (SignerInfoGenerator)it.next();
             result = getSafeTeeOutputStream(result, signerGen.getCalculatingOutputStream());
         }
         return result;
     }
 
-    static OutputStream getSafeOutputStream(OutputStream s)
+    static OutputStream getSafeOutputStream(final OutputStream s)
     {
         return s == null ? new NullOutputStream() : s;
     }
 
-    static OutputStream getSafeTeeOutputStream(OutputStream s1,
-                                               OutputStream s2)
+    static OutputStream getSafeTeeOutputStream(final OutputStream s1,
+                                               final OutputStream s2)
     {
         return s1 == null ? getSafeOutputStream(s2)
             : s2 == null ? getSafeOutputStream(s1) : new TeeOutputStream(

@@ -1,5 +1,7 @@
 package org.bouncycastle.crypto.digests;
 
+import java.util.Arrays;
+
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
@@ -12,7 +14,7 @@ public abstract class LongDigest
 {
     private static final int BYTE_LENGTH = 128;
 
-    private byte[] xBuf = new byte[8];
+    private final byte[] xBuf = new byte[8];
     private int     xBufOff;
 
     private long    byteCount1;
@@ -20,7 +22,7 @@ public abstract class LongDigest
 
     protected long    H1, H2, H3, H4, H5, H6, H7, H8;
 
-    private long[]  W = new long[80];
+    private final long[]  W = new long[80];
     private int     wOff;
 
     /**
@@ -38,12 +40,12 @@ public abstract class LongDigest
      * of the Object.clone() interface as this interface is not
      * supported by J2ME.
      */
-    protected LongDigest(LongDigest t)
+    protected LongDigest(final LongDigest t)
     {
         copyIn(t);
     }
 
-    protected void copyIn(LongDigest t)
+    protected void copyIn(final LongDigest t)
     {
         System.arraycopy(t.xBuf, 0, xBuf, 0, t.xBuf.length);
 
@@ -64,7 +66,7 @@ public abstract class LongDigest
         wOff = t.wOff;
     }
 
-    protected void populateState(byte[] state)
+    protected void populateState(final byte[] state)
     {
         System.arraycopy(xBuf, 0, state, 0, xBufOff);
         Pack.intToBigEndian(xBufOff, state, 8);
@@ -82,11 +84,11 @@ public abstract class LongDigest
         Pack.intToBigEndian(wOff, state, 92);
         for (int i = 0; i < wOff; i++)
         {
-            Pack.longToBigEndian(W[i], state, 96 + (i * 8));
+            Pack.longToBigEndian(W[i], state, 96 + i * 8);
         }
     }
 
-    protected void restoreState(byte[] encodedState)
+    protected void restoreState(final byte[] encodedState)
     {
         xBufOff = Pack.bigEndianToInt(encodedState, 8);
         System.arraycopy(encodedState, 0, xBuf, 0, xBufOff);
@@ -105,17 +107,18 @@ public abstract class LongDigest
         wOff = Pack.bigEndianToInt(encodedState, 92);
         for (int i = 0; i < wOff; i++)
         {
-            W[i] = Pack.bigEndianToLong(encodedState, 96 + (i * 8));
+            W[i] = Pack.bigEndianToLong(encodedState, 96 + i * 8);
         }
     }
 
     protected int getEncodedStateSize()
     {
-        return 96 + (wOff * 8);
+        return 96 + wOff * 8;
     }
 
-    public void update(
-        byte in)
+    @Override
+	public void update(
+        final byte in)
     {
         xBuf[xBufOff++] = in;
 
@@ -128,15 +131,16 @@ public abstract class LongDigest
         byteCount1++;
     }
 
-    public void update(
-        byte[]  in,
+    @Override
+	public void update(
+        final byte[]  in,
         int     inOff,
         int     len)
     {
         //
         // fill the current word
         //
-        while ((xBufOff != 0) && (len > 0))
+        while (xBufOff != 0 && len > 0)
         {
             update(in[inOff]);
 
@@ -172,8 +176,8 @@ public abstract class LongDigest
     {
         adjustByteCounts();
 
-        long    lowBitLength = byteCount1 << 3;
-        long    hiBitLength = byteCount2;
+        final long    lowBitLength = byteCount1 << 3;
+        final long    hiBitLength = byteCount2;
 
         //
         // add the pad bytes.
@@ -190,7 +194,8 @@ public abstract class LongDigest
         processBlock();
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         byteCount1 = 0;
         byteCount2 = 0;
@@ -202,20 +207,18 @@ public abstract class LongDigest
         }
 
         wOff = 0;
-        for (int i = 0; i != W.length; i++)
-        {
-            W[i] = 0;
-        }
+        Arrays.fill(W, 0);
     }
 
-    public int getByteLength()
+    @Override
+	public int getByteLength()
     {
         return BYTE_LENGTH;
     }
 
     protected void processWord(
-        byte[]  in,
-        int     inOff)
+        final byte[]  in,
+        final int     inOff)
     {
         W[wOff] = Pack.bigEndianToLong(in, inOff);
 
@@ -233,14 +236,14 @@ public abstract class LongDigest
     {
         if (byteCount1 > 0x1fffffffffffffffL)
         {
-            byteCount2 += (byteCount1 >>> 61);
+            byteCount2 += byteCount1 >>> 61;
             byteCount1 &= 0x1fffffffffffffffL;
         }
     }
 
     protected void processLength(
-        long    lowW,
-        long    hiW)
+        final long    lowW,
+        final long    hiW)
     {
         if (wOff > 14)
         {
@@ -340,43 +343,43 @@ public abstract class LongDigest
 
     /* SHA-384 and SHA-512 functions (as for SHA-256 but for longs) */
     private long Ch(
-        long    x,
-        long    y,
-        long    z)
+        final long    x,
+        final long    y,
+        final long    z)
     {
-        return ((x & y) ^ ((~x) & z));
+        return x & y ^ ~x & z;
     }
 
     private long Maj(
-        long    x,
-        long    y,
-        long    z)
+        final long    x,
+        final long    y,
+        final long    z)
     {
-        return ((x & y) ^ (x & z) ^ (y & z));
+        return x & y ^ x & z ^ y & z;
     }
 
     private long Sum0(
-        long    x)
+        final long    x)
     {
-        return ((x << 36)|(x >>> 28)) ^ ((x << 30)|(x >>> 34)) ^ ((x << 25)|(x >>> 39));
+        return (x << 36|x >>> 28) ^ (x << 30|x >>> 34) ^ (x << 25|x >>> 39);
     }
 
     private long Sum1(
-        long    x)
+        final long    x)
     {
-        return ((x << 50)|(x >>> 14)) ^ ((x << 46)|(x >>> 18)) ^ ((x << 23)|(x >>> 41));
+        return (x << 50|x >>> 14) ^ (x << 46|x >>> 18) ^ (x << 23|x >>> 41);
     }
 
     private long Sigma0(
-        long    x)
+        final long    x)
     {
-        return ((x << 63)|(x >>> 1)) ^ ((x << 56)|(x >>> 8)) ^ (x >>> 7);
+        return (x << 63|x >>> 1) ^ (x << 56|x >>> 8) ^ x >>> 7;
     }
 
     private long Sigma1(
-        long    x)
+        final long    x)
     {
-        return ((x << 45)|(x >>> 19)) ^ ((x << 3)|(x >>> 61)) ^ (x >>> 6);
+        return (x << 45|x >>> 19) ^ (x << 3|x >>> 61) ^ x >>> 6;
     }
 
     /* SHA-384 and SHA-512 Constants

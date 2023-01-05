@@ -36,7 +36,8 @@ public class ASN1UTCTime
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1UTCTime.class, BERTags.UTC_TIME)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -278,22 +279,26 @@ public class ASN1UTCTime
         return contents.length > pos && contents[pos] >= '0' && contents[pos] <= '9';
     }
 
-    final boolean encodeConstructed()
+    @Override
+	final boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.UTC_TIME, contents);
     }
 
-    boolean asn1Equals(
+    @Override
+	boolean asn1Equals(
         ASN1Primitive o)
     {
         if (!(o instanceof ASN1UTCTime))
@@ -304,12 +309,14 @@ public class ASN1UTCTime
         return Arrays.areEqual(contents, ((ASN1UTCTime)o).contents);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(contents);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
       return Strings.fromByteArray(contents);
     }
