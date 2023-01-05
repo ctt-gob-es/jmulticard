@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.BcCryptoHelper;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.Sod;
@@ -25,7 +25,6 @@ public final class TestIcao {
 	private static final String MRZ =
 			"P<ESPGARCIA<MERAS<CAPOTE<<TOMAS<<<<<<<<<<<<<" + //$NON-NLS-1$
 			"PAK1670410ESP7501045M2909233A1183096000<<<02"; //$NON-NLS-1$
-
 
 	/** Prueba de lectura de DG en Pasaporte con PACE.
 	 * @throws Exception En cualquier error. */
@@ -228,7 +227,5 @@ public final class TestIcao {
 		catch(final IOException e) {
 			System.out.println("Este MRTD no tiene ATR/INFO: " + e); //$NON-NLS-1$
 		}
-
-
 	}
 }

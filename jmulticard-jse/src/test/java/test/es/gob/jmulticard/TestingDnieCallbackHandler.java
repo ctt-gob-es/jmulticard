@@ -10,28 +10,31 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import es.gob.jmulticard.callback.CustomAuthorizeCallback;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 
-/** CallbackHandler que gestiona los Callbacks de petici&oacute;n de informaci&oacute;n al usuario.
+/** <code>CallbackHandler</code> que gestiona los <i>Callbacks</i> de petici&oacute;n de
+ * informaci&oacute;n al usuario.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Sergio Mart&iacute;nez Rico. */
 public final class TestingDnieCallbackHandler implements CallbackHandler {
 
 	private final String can;
 	private final char[] pin;
 
-	/** Construye un CallbackHandler de prueba.
-	 * @param c CAN
+	/** Construye un <code>CallbackHandler</code> de prueba.
+	 * @param c CAN.
 	 * @param p PIN. */
 	public TestingDnieCallbackHandler(final String c, final String p) {
-		this.can = c;
-		this.pin = p != null ? p.toCharArray() : null;
+		can = c;
+		pin = p != null ? p.toCharArray() : null;
 	}
 
-	/** Construye un CallbackHandler de prueba.
-	 * @param c CAN
+	/** Construye un <code>CallbackHandler</code> de prueba.
+	 * @param c CAN.
 	 * @param p PIN. */
 	public TestingDnieCallbackHandler(final String c, final char[] p) {
-		this.can = c;
-		this.pin = p != null ? p.clone() : null;
+		can = c;
+		pin = p != null ? p.clone() : null;
 	}
 
 	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
@@ -42,12 +45,11 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 			for (final Callback cb : callbacks) {
 				if (cb != null) {
 					if (
-						"es.gob.jmulticard.callback.CustomTextInputCallback".equals(cb.getClass().getName()) || //$NON-NLS-1$
 						"javax.security.auth.callback.TextInputCallback".equals(cb.getClass().getName()) //$NON-NLS-1$
 					) {
 						try {
 							final Method m = cb.getClass().getMethod("setText", String.class); //$NON-NLS-1$
-							m.invoke(cb, this.can);
+							m.invoke(cb, can);
 						}
 						catch (final NoSuchMethodException    |
 							         SecurityException        |
@@ -60,11 +62,14 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 							);
 						}
 					}
+					else if (cb instanceof CustomTextInputCallback) {
+						((CustomTextInputCallback)cb).setText(can);
+					}
 					else if (cb instanceof CustomAuthorizeCallback) {
 						((CustomAuthorizeCallback)cb).setAuthorized(true);
 					}
 					else if (cb instanceof PasswordCallback) {
-						((PasswordCallback)cb).setPassword(this.pin);
+						((PasswordCallback)cb).setPassword(pin);
 					}
 					else {
 						throw new UnsupportedCallbackException(cb);

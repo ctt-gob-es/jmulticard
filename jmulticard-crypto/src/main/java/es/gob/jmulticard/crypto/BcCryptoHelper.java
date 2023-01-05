@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
@@ -73,7 +74,6 @@ import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 
-import es.gob.jmulticard.CertificateUtils;
 import es.gob.jmulticard.CryptoHelper;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante BouncyCastle.
@@ -634,7 +634,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			).iterator();
 			final X509Certificate cert;
             try {
-				cert = CertificateUtils.generateCertificate(certIt.next().getEncoded());
+				cert = generateCertificate(certIt.next().getEncoded());
 			}
             catch (final IOException e1) {
             	throw new CertificateException(
@@ -684,7 +684,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 			if (sid == null) {
 				throw new IllegalArgumentException("El ID del firmante no puede ser nulo"); //$NON-NLS-1$
 			}
-			this.signerId = sid;
+			signerId = sid;
 		}
 
 		@Override
@@ -712,14 +712,34 @@ public final class BcCryptoHelper extends CryptoHelper {
 		return (byte[]) cmsSignedData.getSignedContent().getContent();
 	}
 
+	/** Genera un certificado a partir de su codificaci&oacute;n binaria.
+	 * @param encoded Codificaci&oacute;n binaria del certificado.
+	 * @return Certificado.
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
+	 *                              certificado. */
+	@Override
+	public X509Certificate generateCertificate(final byte[] encoded) throws CertificateException {
+		return generateCertificate(new ByteArrayInputStream(encoded));
+	}
+
+	/** Genera un certificado a partir de un flujo hacia su codificaci&oacute;n binaria.
+	 * @param is Flujo de lectura hacia la Codificaci&oacute;n binaria del certificado.
+	 * @return Certificado.
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
+	 *                              certificado o no se pudo leer del flujo de entrada. */
+	@Override
+	public X509Certificate generateCertificate(final InputStream is) throws CertificateException {
+		return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(is); //$NON-NLS-1$
+	}
+
 	@Override
 	public PaceChannelHelper getPaceChannelHelper() {
 		// Solo creamos el PaceChannelHelper si nos lo piden, asi
 		// evitamos crearlo en uso con contactos (PACE solo se usa con NFC).
-		if (this.paceChannelHelper == null) {
-			this.paceChannelHelper = new PaceChannelHelperBc(this);
+		if (paceChannelHelper == null) {
+			paceChannelHelper = new PaceChannelHelperBc(this);
 		}
-		return this.paceChannelHelper;
+		return paceChannelHelper;
 	}
 
 }
