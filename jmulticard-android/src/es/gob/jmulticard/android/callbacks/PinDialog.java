@@ -65,12 +65,17 @@ public class PinDialog extends DialogFragment {
 	 * @param ddc Instancia de la clase utilizada para utilizar wait() y notify() al esperar el PIN. */
 	public PinDialog(final boolean isCan, final Activity activity, final Callback cb, final DialogDoneChecker ddc) {
         this.isCan=isCan;
-        if(isCan) {
-        	this.title = "Introducci\u00f3n de CAN"; //$NON-NLS-1$
+        if (isCan) {
+        	if (cb instanceof CustomTextInputCallback) {
+        		this.title = ((CustomTextInputCallback) cb).getPrompt();
+        	}
+        	else {
+        		this.title = getString(R.string.can_intro);
+        	}
         }
         else {
 			// Muestra el numero de intentos restantes
-        	this.title = ((PasswordCallback)cb).getPrompt();
+        	this.title = ((PasswordCallback) cb).getPrompt();
         }
         this.activity = activity;
         callback = cb;
@@ -80,7 +85,7 @@ public class PinDialog extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		final Builder alertDialogBuilder = new AlertDialog.Builder(this.activity);
-		
+
 		final LayoutInflater layoutInflater = LayoutInflater.from(this.activity);
 		final View view;
 		if(this.isCan) {
@@ -95,9 +100,9 @@ public class PinDialog extends DialogFragment {
 			textV.setText(this.title);
 		}
 
-		
+
 		final EditText editTextPin = (EditText) view.findViewById(R.id.etPin);
-		
+
 		alertDialogBuilder.setView(view);
 		alertDialogBuilder.setNegativeButton(
 				this.activity.getString(R.string.cancel),

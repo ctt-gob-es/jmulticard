@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="app_name">JMultiCardAndroid</string>
+ 	<string name="dialog_pin">Enter PIN code to use your security key.\n</string>
+ 	<string name="dialog_can">Enter CAN code to read your certificates.\n</string>
+ 	<string name="security_code_hint">Security code. </string>
+ 	<string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+ 	<string name="pin_intro">Enter PIN</string>
+  	<string name="can_intro">Enter CAN</string>
+
+</resources>
