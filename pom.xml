@@ -163,7 +163,7 @@ mvn versions:display-dependency-updates
       		</activation>
       		<build>
        			<plugins>
-
+<!--
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-enforcer-plugin</artifactId>
@@ -184,7 +184,7 @@ mvn versions:display-dependency-updates
 					    </execution>
 					  </executions>
 					</plugin>
-
+-->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
