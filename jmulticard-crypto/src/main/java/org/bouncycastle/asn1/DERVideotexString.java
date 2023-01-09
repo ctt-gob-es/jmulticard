@@ -12,7 +12,8 @@ public class DERVideotexString
      * 
      * @deprecated Use {@link ASN1VideotexString#getInstance(Object)} instead.
      */
-    public static DERVideotexString getInstance(
+    @Deprecated
+	public static DERVideotexString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERVideotexString)
@@ -51,7 +52,8 @@ public class DERVideotexString
      *             {@link ASN1VideotexString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERVideotexString getInstance(
+    @Deprecated
+	public static DERVideotexString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

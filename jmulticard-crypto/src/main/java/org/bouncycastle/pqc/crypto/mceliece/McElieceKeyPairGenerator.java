@@ -134,12 +134,14 @@ public class McElieceKeyPairGenerator
         return new AsymmetricCipherKeyPair(pubKey, privKey);
     }
 
-    public void init(KeyGenerationParameters param)
+    @Override
+	public void init(KeyGenerationParameters param)
     {
         this.initialize(param);
     }
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         return genKeyPair();
     }

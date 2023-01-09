@@ -27,12 +27,14 @@ public interface GFElement
      * @param other the other object
      * @return the result of the comparison
      */
-    boolean equals(Object other);
+    @Override
+	boolean equals(Object other);
 
     /**
      * @return the hash code of this element
      */
-    int hashCode();
+    @Override
+	int hashCode();
 
     /**
      * Checks whether this element is zero.
@@ -137,7 +139,8 @@ public interface GFElement
      *
      * @return String representation of this element
      */
-    String toString();
+    @Override
+	String toString();
 
     /**
      * Return a String representation of this element. <tt>radix</tt>

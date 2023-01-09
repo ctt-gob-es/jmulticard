@@ -44,12 +44,14 @@ public class BCLMSPublicKey
     /**
      * @return name of the algorithm - "LMS"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "LMS";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -62,7 +64,8 @@ public class BCLMSPublicKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
@@ -72,7 +75,8 @@ public class BCLMSPublicKey
         return keyParams;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -96,7 +100,8 @@ public class BCLMSPublicKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         try
         {
@@ -109,7 +114,8 @@ public class BCLMSPublicKey
         }
     }
     
-    public int getLevels()
+    @Override
+	public int getLevels()
     {
         if (keyParams instanceof LMSPublicKeyParameters)
         {

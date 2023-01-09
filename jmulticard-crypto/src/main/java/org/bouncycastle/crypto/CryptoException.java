@@ -41,7 +41,8 @@ public class CryptoException
         this.cause = cause;
     }
 
-    public Throwable getCause()
+    @Override
+	public Throwable getCause()
     {
         return cause;
     }

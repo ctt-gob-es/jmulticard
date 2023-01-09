@@ -18,7 +18,8 @@ public class XMSSSigner
     private boolean initSign;
     private boolean hasGenerated;
 
-    public void init(boolean forSigning, CipherParameters param)
+    @Override
+	public void init(boolean forSigning, CipherParameters param)
     {
         if (forSigning)
         {
@@ -39,7 +40,8 @@ public class XMSSSigner
         khf = wotsPlus.getKhf();
     }
 
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(byte[] message)
     {
         if (message == null)
         {
@@ -101,7 +103,8 @@ public class XMSSSigner
         return privateKey.getUsagesRemaining();
     }
 
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(byte[] message, byte[] signature)
     {
         /* parse signature and public key */
         XMSSSignature sig = new XMSSSignature.Builder(params).withSignature(signature).build();
@@ -126,7 +129,8 @@ public class XMSSSigner
         return Arrays.constantTimeAreEqual(rootNodeFromSignature.getValue(), publicKey.getRoot());
     }
 
-    public AsymmetricKeyParameter getUpdatedPrivateKey()
+    @Override
+	public AsymmetricKeyParameter getUpdatedPrivateKey()
     {
         // if we've generated a signature return the last private key generated
         // if we've only initialised leave it in place and return the next one instead.

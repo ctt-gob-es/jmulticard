@@ -134,7 +134,8 @@ public class SignerInformationStore
     /**
      * Support method for Iterable where available.
      */
-    public Iterator<SignerInformation> iterator()
+    @Override
+	public Iterator<SignerInformation> iterator()
     {
         return getSigners().iterator();
     }

@@ -37,7 +37,8 @@ public class BCMcEliecePrivateKey
      *
      * @return "McEliece"
      */
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "McEliece";
     }
@@ -135,7 +136,8 @@ public class BCMcEliecePrivateKey
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (!(other instanceof BCMcEliecePrivateKey))
         {
@@ -153,7 +155,8 @@ public class BCMcEliecePrivateKey
     /**
      * @return the hash code of this key
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int code = params.getK();
 
@@ -187,7 +190,8 @@ public class BCMcEliecePrivateKey
      *
      * @return the key data to encode in the SubjectPublicKeyInfo structure
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         McEliecePrivateKey privateKey = new McEliecePrivateKey(params.getN(), params.getK(), params.getField(), params.getGoppaPoly(), params.getP1(), params.getP2(), params.getSInv());
         PrivateKeyInfo pki;
@@ -211,7 +215,8 @@ public class BCMcEliecePrivateKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }

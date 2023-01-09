@@ -40,7 +40,8 @@ public class GMNamedCurves
      */
     static X9ECParametersHolder sm2p256v1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger p = fromHex("FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF");
             BigInteger a = fromHex("FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC");
@@ -51,7 +52,8 @@ public class GMNamedCurves
             return configureCurve(new ECCurve.Fp(p, a, b, n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -65,7 +67,8 @@ public class GMNamedCurves
 
     static X9ECParametersHolder wapip192v1 = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger p = fromHex("BDB6F4FE3E8B1D9E0DA8C0D46F4C318CEFE4AFE3B6B8551F");
             BigInteger a = fromHex("BB8E5E8FBC115E139FE6A814FE48AAA6F0ADA1AA5DF91985");
@@ -76,7 +79,8 @@ public class GMNamedCurves
             return configureCurve(new ECCurve.Fp(p, a, b, n, h, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();

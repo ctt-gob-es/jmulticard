@@ -28,8 +28,8 @@ import org.bouncycastle.asn1.x509.X509Name;
 public class IssuerAndSerialNumber
     extends ASN1Object
 {
-    private X500Name    name;
-    private ASN1Integer  serialNumber;
+    private final X500Name    name;
+    private final ASN1Integer  serialNumber;
 
     /**
      * Return an IssuerAndSerialNumber object from the given object.
@@ -45,7 +45,7 @@ public class IssuerAndSerialNumber
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static IssuerAndSerialNumber getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof IssuerAndSerialNumber)
         {
@@ -62,33 +62,35 @@ public class IssuerAndSerialNumber
     /**
      * @deprecated  use getInstance() method.
      */
-    public IssuerAndSerialNumber(
-        ASN1Sequence    seq)
+    @Deprecated
+	public IssuerAndSerialNumber(
+        final ASN1Sequence    seq)
     {
-        this.name = X500Name.getInstance(seq.getObjectAt(0));
-        this.serialNumber = (ASN1Integer)seq.getObjectAt(1);
+        name = X500Name.getInstance(seq.getObjectAt(0));
+        serialNumber = (ASN1Integer)seq.getObjectAt(1);
     }
 
     public IssuerAndSerialNumber(
-        Certificate certificate)
+        final Certificate certificate)
     {
-        this.name = certificate.getIssuer();
-        this.serialNumber = certificate.getSerialNumber();
+        name = certificate.getIssuer();
+        serialNumber = certificate.getSerialNumber();
     }
 
     /**
      * @deprecated use constructor taking Certificate
      */
-    public IssuerAndSerialNumber(
-        X509CertificateStructure certificate)
+    @Deprecated
+	public IssuerAndSerialNumber(
+        final X509CertificateStructure certificate)
     {
-        this.name = certificate.getIssuer();
-        this.serialNumber = certificate.getSerialNumber();
+        name = certificate.getIssuer();
+        serialNumber = certificate.getSerialNumber();
     }
 
     public IssuerAndSerialNumber(
-        X500Name name,
-        BigInteger  serialNumber)
+        final X500Name name,
+        final BigInteger  serialNumber)
     {
         this.name = name;
         this.serialNumber = new ASN1Integer(serialNumber);
@@ -97,9 +99,10 @@ public class IssuerAndSerialNumber
     /**
      * @deprecated use X500Name constructor
      */
-    public IssuerAndSerialNumber(
-        X509Name    name,
-        BigInteger  serialNumber)
+    @Deprecated
+	public IssuerAndSerialNumber(
+        final X509Name    name,
+        final BigInteger  serialNumber)
     {
         this.name = X500Name.getInstance(name);
         this.serialNumber = new ASN1Integer(serialNumber);
@@ -108,9 +111,10 @@ public class IssuerAndSerialNumber
     /**
      * @deprecated use X500Name constructor
      */
-    public IssuerAndSerialNumber(
-        X509Name    name,
-        ASN1Integer  serialNumber)
+    @Deprecated
+	public IssuerAndSerialNumber(
+        final X509Name    name,
+        final ASN1Integer  serialNumber)
     {
         this.name = X500Name.getInstance(name);
         this.serialNumber = serialNumber;
@@ -121,14 +125,15 @@ public class IssuerAndSerialNumber
         return name;
     }
 
-    public ASN1Integer getSerialNumber()
+	public ASN1Integer getSerialNumber()
     {
         return serialNumber;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
         v.add(name);
         v.add(serialNumber);

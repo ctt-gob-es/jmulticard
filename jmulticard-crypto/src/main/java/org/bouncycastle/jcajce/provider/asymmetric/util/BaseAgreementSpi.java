@@ -37,24 +37,24 @@ import org.bouncycastle.util.Strings;
 public abstract class BaseAgreementSpi
     extends KeyAgreementSpi
 {
-    private static final Map<String, ASN1ObjectIdentifier> defaultOids = new HashMap<String, ASN1ObjectIdentifier>();
-    private static final Map<String, Integer> keySizes = new HashMap<String, Integer>();
-    private static final Map<String, String> nameTable = new HashMap<String, String>();
+    private static final Map<String, ASN1ObjectIdentifier> defaultOids = new HashMap<>();
+    private static final Map<String, Integer> keySizes = new HashMap<>();
+    private static final Map<String, String> nameTable = new HashMap<>();
 
     private static final Hashtable oids = new Hashtable();
     private static final Hashtable des = new Hashtable();
 
     static
     {
-        Integer i64 = Integers.valueOf(64);
-        Integer i128 = Integers.valueOf(128);
-        Integer i192 = Integers.valueOf(192);
-        Integer i256 = Integers.valueOf(256);
+        final Integer i64 = Integers.valueOf(64);
+        final Integer i128 = Integers.valueOf(128);
+        final Integer i192 = Integers.valueOf(192);
+        final Integer i256 = Integers.valueOf(256);
 
-        keySizes.put("DES", i64);
-        keySizes.put("DESEDE", i192);
-        keySizes.put("BLOWFISH", i128);
-        keySizes.put("AES", i256);
+        keySizes.put("DES", i64); //$NON-NLS-1$
+        keySizes.put("DESEDE", i192); //$NON-NLS-1$
+        keySizes.put("BLOWFISH", i128); //$NON-NLS-1$
+        keySizes.put("AES", i256); //$NON-NLS-1$
 
         keySizes.put(NISTObjectIdentifiers.id_aes128_ECB.getId(), i128);
         keySizes.put(NISTObjectIdentifiers.id_aes192_ECB.getId(), i192);
@@ -95,55 +95,55 @@ public abstract class BaseAgreementSpi
         keySizes.put(PKCSObjectIdentifiers.id_hmacWithSHA384.getId(), Integers.valueOf(384));
         keySizes.put(PKCSObjectIdentifiers.id_hmacWithSHA512.getId(), Integers.valueOf(512));
 
-        defaultOids.put("DESEDE", PKCSObjectIdentifiers.des_EDE3_CBC);
-        defaultOids.put("AES", NISTObjectIdentifiers.id_aes256_CBC);
-        defaultOids.put("CAMELLIA", NTTObjectIdentifiers.id_camellia256_cbc);
-        defaultOids.put("SEED", KISAObjectIdentifiers.id_seedCBC);
-        defaultOids.put("DES", OIWObjectIdentifiers.desCBC);
+        defaultOids.put("DESEDE", PKCSObjectIdentifiers.des_EDE3_CBC); //$NON-NLS-1$
+        defaultOids.put("AES", NISTObjectIdentifiers.id_aes256_CBC); //$NON-NLS-1$
+        defaultOids.put("CAMELLIA", NTTObjectIdentifiers.id_camellia256_cbc); //$NON-NLS-1$
+        defaultOids.put("SEED", KISAObjectIdentifiers.id_seedCBC); //$NON-NLS-1$
+        defaultOids.put("DES", OIWObjectIdentifiers.desCBC); //$NON-NLS-1$
 
-        nameTable.put(MiscObjectIdentifiers.cast5CBC.getId(), "CAST5");
-        nameTable.put(MiscObjectIdentifiers.as_sys_sec_alg_ideaCBC.getId(), "IDEA");
-        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_ECB.getId(), "Blowfish");
-        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CBC.getId(), "Blowfish");
-        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CFB.getId(), "Blowfish");
-        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_OFB.getId(), "Blowfish");
-        nameTable.put(OIWObjectIdentifiers.desECB.getId(), "DES");
-        nameTable.put(OIWObjectIdentifiers.desCBC.getId(), "DES");
-        nameTable.put(OIWObjectIdentifiers.desCFB.getId(), "DES");
-        nameTable.put(OIWObjectIdentifiers.desOFB.getId(), "DES");
-        nameTable.put(OIWObjectIdentifiers.desEDE.getId(), "DESede");
-        nameTable.put(PKCSObjectIdentifiers.des_EDE3_CBC.getId(), "DESede");
-        nameTable.put(PKCSObjectIdentifiers.id_alg_CMS3DESwrap.getId(), "DESede");
-        nameTable.put(PKCSObjectIdentifiers.id_alg_CMSRC2wrap.getId(), "RC2");
-        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA1.getId(), "HmacSHA1");
-        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA224.getId(), "HmacSHA224");
-        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA256.getId(), "HmacSHA256");
-        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA384.getId(), "HmacSHA384");
-        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA512.getId(), "HmacSHA512");
-        nameTable.put(NTTObjectIdentifiers.id_camellia128_cbc.getId(), "Camellia");
-        nameTable.put(NTTObjectIdentifiers.id_camellia192_cbc.getId(), "Camellia");
-        nameTable.put(NTTObjectIdentifiers.id_camellia256_cbc.getId(), "Camellia");
-        nameTable.put(NTTObjectIdentifiers.id_camellia128_wrap.getId(), "Camellia");
-        nameTable.put(NTTObjectIdentifiers.id_camellia192_wrap.getId(), "Camellia");
-        nameTable.put(NTTObjectIdentifiers.id_camellia256_wrap.getId(), "Camellia");
-        nameTable.put(KISAObjectIdentifiers.id_npki_app_cmsSeed_wrap.getId(), "SEED");
-        nameTable.put(KISAObjectIdentifiers.id_seedCBC.getId(), "SEED");
-        nameTable.put(KISAObjectIdentifiers.id_seedMAC.getId(), "SEED");
-        nameTable.put(CryptoProObjectIdentifiers.gostR28147_gcfb.getId(), "GOST28147");
+        nameTable.put(MiscObjectIdentifiers.cast5CBC.getId(), "CAST5"); //$NON-NLS-1$
+        nameTable.put(MiscObjectIdentifiers.as_sys_sec_alg_ideaCBC.getId(), "IDEA"); //$NON-NLS-1$
+        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_ECB.getId(), "Blowfish"); //$NON-NLS-1$
+        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CBC.getId(), "Blowfish"); //$NON-NLS-1$
+        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_CFB.getId(), "Blowfish"); //$NON-NLS-1$
+        nameTable.put(MiscObjectIdentifiers.cryptlib_algorithm_blowfish_OFB.getId(), "Blowfish"); //$NON-NLS-1$
+        nameTable.put(OIWObjectIdentifiers.desECB.getId(), "DES"); //$NON-NLS-1$
+        nameTable.put(OIWObjectIdentifiers.desCBC.getId(), "DES"); //$NON-NLS-1$
+        nameTable.put(OIWObjectIdentifiers.desCFB.getId(), "DES"); //$NON-NLS-1$
+        nameTable.put(OIWObjectIdentifiers.desOFB.getId(), "DES"); //$NON-NLS-1$
+        nameTable.put(OIWObjectIdentifiers.desEDE.getId(), "DESede"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.des_EDE3_CBC.getId(), "DESede"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_alg_CMS3DESwrap.getId(), "DESede"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_alg_CMSRC2wrap.getId(), "RC2"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA1.getId(), "HmacSHA1"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA224.getId(), "HmacSHA224"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA256.getId(), "HmacSHA256"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA384.getId(), "HmacSHA384"); //$NON-NLS-1$
+        nameTable.put(PKCSObjectIdentifiers.id_hmacWithSHA512.getId(), "HmacSHA512"); //$NON-NLS-1$
+        nameTable.put(NTTObjectIdentifiers.id_camellia128_cbc.getId(), "Camellia"); //$NON-NLS-1$
+        nameTable.put(NTTObjectIdentifiers.id_camellia192_cbc.getId(), "Camellia"); //$NON-NLS-1$
+        nameTable.put(NTTObjectIdentifiers.id_camellia256_cbc.getId(), "Camellia"); //$NON-NLS-1$
+        nameTable.put(NTTObjectIdentifiers.id_camellia128_wrap.getId(), "Camellia"); //$NON-NLS-1$
+        nameTable.put(NTTObjectIdentifiers.id_camellia192_wrap.getId(), "Camellia"); //$NON-NLS-1$
+        nameTable.put(NTTObjectIdentifiers.id_camellia256_wrap.getId(), "Camellia"); //$NON-NLS-1$
+        nameTable.put(KISAObjectIdentifiers.id_npki_app_cmsSeed_wrap.getId(), "SEED"); //$NON-NLS-1$
+        nameTable.put(KISAObjectIdentifiers.id_seedCBC.getId(), "SEED"); //$NON-NLS-1$
+        nameTable.put(KISAObjectIdentifiers.id_seedMAC.getId(), "SEED"); //$NON-NLS-1$
+        nameTable.put(CryptoProObjectIdentifiers.gostR28147_gcfb.getId(), "GOST28147"); //$NON-NLS-1$
 
-        nameTable.put(NISTObjectIdentifiers.id_aes128_wrap.getId(), "AES");
-        nameTable.put(NISTObjectIdentifiers.id_aes128_CCM.getId(), "AES");
-        nameTable.put(NISTObjectIdentifiers.id_aes128_CCM.getId(), "AES");
+        nameTable.put(NISTObjectIdentifiers.id_aes128_wrap.getId(), "AES"); //$NON-NLS-1$
+        nameTable.put(NISTObjectIdentifiers.id_aes128_CCM.getId(), "AES"); //$NON-NLS-1$
+        nameTable.put(NISTObjectIdentifiers.id_aes128_CCM.getId(), "AES"); //$NON-NLS-1$
 
-        oids.put("DESEDE", PKCSObjectIdentifiers.des_EDE3_CBC);
-        oids.put("AES", NISTObjectIdentifiers.id_aes256_CBC);
-        oids.put("DES", OIWObjectIdentifiers.desCBC);
+        oids.put("DESEDE", PKCSObjectIdentifiers.des_EDE3_CBC); //$NON-NLS-1$
+        oids.put("AES", NISTObjectIdentifiers.id_aes256_CBC); //$NON-NLS-1$
+        oids.put("DES", OIWObjectIdentifiers.desCBC); //$NON-NLS-1$
 
-        des.put("DES", "DES");
-        des.put("DESEDE", "DES");
-        des.put(OIWObjectIdentifiers.desCBC.getId(), "DES");
-        des.put(PKCSObjectIdentifiers.des_EDE3_CBC.getId(), "DES");
-        des.put(PKCSObjectIdentifiers.id_alg_CMS3DESwrap.getId(), "DES");
+        des.put("DES", "DES"); //$NON-NLS-1$ //$NON-NLS-2$
+        des.put("DESEDE", "DES"); //$NON-NLS-1$ //$NON-NLS-2$
+        des.put(OIWObjectIdentifiers.desCBC.getId(), "DES"); //$NON-NLS-1$
+        des.put(PKCSObjectIdentifiers.des_EDE3_CBC.getId(), "DES"); //$NON-NLS-1$
+        des.put(PKCSObjectIdentifiers.id_alg_CMS3DESwrap.getId(), "DES"); //$NON-NLS-1$
     }
 
     protected final String kaAlgorithm;
@@ -152,13 +152,13 @@ public abstract class BaseAgreementSpi
     protected byte[]     ukmParameters;
     private HybridValueParameterSpec hybridSpec;
 
-    public BaseAgreementSpi(String kaAlgorithm, DerivationFunction kdf)
+    public BaseAgreementSpi(final String kaAlgorithm, final DerivationFunction kdf)
     {
         this.kaAlgorithm = kaAlgorithm;
         this.kdf = kdf;
     }
 
-    protected static String getAlgorithm(String algDetails)
+    protected static String getAlgorithm(final String algDetails)
     {
         if (algDetails.indexOf('[') > 0)
         {
@@ -167,14 +167,14 @@ public abstract class BaseAgreementSpi
 
         if (algDetails.startsWith(NISTObjectIdentifiers.aes.getId()))
         {
-            return "AES";
+            return "AES"; //$NON-NLS-1$
         }
         if (algDetails.startsWith(GNUObjectIdentifiers.Serpent.getId()))
         {
-            return "Serpent";
+            return "Serpent"; //$NON-NLS-1$
         }
 
-        String name = (String)nameTable.get(Strings.toUpperCase(algDetails));
+        final String name = nameTable.get(Strings.toUpperCase(algDetails));
 
         if (name != null)
         {
@@ -184,23 +184,23 @@ public abstract class BaseAgreementSpi
         return algDetails;
     }
 
-    protected static int getKeySize(String algDetails)
+    protected static int getKeySize(final String algDetails)
     {
         if (algDetails.indexOf('[') > 0)
         {
             return Integer.parseInt(algDetails.substring(algDetails.indexOf('[') + 1, algDetails.indexOf(']')));
         }
 
-        String algKey = Strings.toUpperCase(algDetails);
+        final String algKey = Strings.toUpperCase(algDetails);
         if (!keySizes.containsKey(algKey))
         {
             return -1;
         }
 
-        return ((Integer)keySizes.get(algKey)).intValue();
+        return keySizes.get(algKey).intValue();
     }
 
-    protected static byte[] trimZeroes(byte[] secret)
+    protected static byte[] trimZeroes(final byte[] secret)
     {
         if (secret[0] != 0)
         {
@@ -214,7 +214,7 @@ public abstract class BaseAgreementSpi
                 ind++;
             }
 
-            byte[] rv = new byte[secret.length - ind];
+            final byte[] rv = new byte[secret.length - ind];
 
             System.arraycopy(secret, ind, rv, 0, rv.length);
 
@@ -222,51 +222,54 @@ public abstract class BaseAgreementSpi
         }
     }
 
-    protected void engineInit(
-        Key             key,
-        SecureRandom    random)
+    @Override
+	protected void engineInit(
+        final Key             key,
+        final SecureRandom    random)
         throws InvalidKeyException
     {
         try
         {
             doInitFromKey(key, null, random);
         }
-        catch (InvalidAlgorithmParameterException e)
+        catch (final InvalidAlgorithmParameterException e)
         {
             // this should never occur.
             throw new InvalidKeyException(e.getMessage());
         }
     }
 
-    protected void engineInit(
-        Key key,
-        AlgorithmParameterSpec params,
-        SecureRandom random)
+    @Override
+	protected void engineInit(
+        final Key key,
+        final AlgorithmParameterSpec params,
+        final SecureRandom random)
         throws InvalidKeyException, InvalidAlgorithmParameterException
     {
         if (params instanceof HybridValueParameterSpec)
         {
-            this.hybridSpec = (HybridValueParameterSpec)params;
+            hybridSpec = (HybridValueParameterSpec)params;
             doInitFromKey(key, hybridSpec.getBaseParameterSpec(), random);
         }
         else
         {
-            this.hybridSpec = null;
+            hybridSpec = null;
             doInitFromKey(key, params, random);
         }
     }
 
-    protected byte[] engineGenerateSecret()
+    @Override
+	protected byte[] engineGenerateSecret()
         throws IllegalStateException
     {
         if (kdf != null)
         {
-            byte[] secret = calcSecret();
+            final byte[] secret = calcSecret();
             try
             {
                 return getSharedSecretBytes(secret, null, secret.length * 8);
             }
-            catch (NoSuchAlgorithmException e)
+            catch (final NoSuchAlgorithmException e)
             {
                 throw new IllegalStateException(e.getMessage());
             }
@@ -275,16 +278,17 @@ public abstract class BaseAgreementSpi
         return calcSecret();
     }
 
-    protected int engineGenerateSecret(
-        byte[]  sharedSecret,
-        int     offset)
+    @Override
+	protected int engineGenerateSecret(
+        final byte[]  sharedSecret,
+        final int     offset)
         throws IllegalStateException, ShortBufferException
     {
-        byte[] secret = engineGenerateSecret();
+        final byte[] secret = engineGenerateSecret();
 
         if (sharedSecret.length - offset < secret.length)
         {
-            throw new ShortBufferException(kaAlgorithm + " key agreement: need " + secret.length + " bytes");
+            throw new ShortBufferException(kaAlgorithm + " key agreement: need " + secret.length + " bytes"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         System.arraycopy(secret, 0, sharedSecret, offset, secret.length);
@@ -292,11 +296,12 @@ public abstract class BaseAgreementSpi
         return secret.length;
     }
 
-    protected SecretKey engineGenerateSecret(
-        String algorithm)
+    @Override
+	protected SecretKey engineGenerateSecret(
+        final String algorithm)
         throws NoSuchAlgorithmException
     {
-        String algKey = Strings.toUpperCase(algorithm);
+        final String algKey = Strings.toUpperCase(algorithm);
         String oidAlgorithm = algorithm;
 
         if (oids.containsKey(algKey))
@@ -304,11 +309,11 @@ public abstract class BaseAgreementSpi
             oidAlgorithm = ((ASN1ObjectIdentifier)oids.get(algKey)).getId();
         }
 
-        int    keySize = getKeySize(oidAlgorithm);
+        final int    keySize = getKeySize(oidAlgorithm);
 
-        byte[] secret = getSharedSecretBytes(calcSecret(), oidAlgorithm, keySize);
+        final byte[] secret = getSharedSecretBytes(calcSecret(), oidAlgorithm, keySize);
 
-        String algName = getAlgorithm(algorithm);
+        final String algName = getAlgorithm(algorithm);
 
         if (des.containsKey(algName))
         {
@@ -318,39 +323,39 @@ public abstract class BaseAgreementSpi
         return new SecretKeySpec(secret, algName);
     }
 
-    private byte[] getSharedSecretBytes(byte[] secret, String oidAlgorithm, int keySize)
+    private byte[] getSharedSecretBytes(final byte[] secret, final String oidAlgorithm, final int keySize)
         throws NoSuchAlgorithmException
     {
         if (kdf != null)
         {
             if (keySize < 0)
             {
-                throw new NoSuchAlgorithmException("unknown algorithm encountered: " + oidAlgorithm);
+                throw new NoSuchAlgorithmException("unknown algorithm encountered: " + oidAlgorithm); //$NON-NLS-1$
             }
-            byte[] keyBytes = new byte[keySize / 8];
+            final byte[] keyBytes = new byte[keySize / 8];
 
             if (kdf instanceof DHKEKGenerator)
             {
                 if (oidAlgorithm == null)
                 {
-                    throw new NoSuchAlgorithmException("algorithm OID is null");
+                    throw new NoSuchAlgorithmException("algorithm OID is null"); //$NON-NLS-1$
                 }
                 ASN1ObjectIdentifier oid;
                 try
                 {
                     oid = new ASN1ObjectIdentifier(oidAlgorithm);
                 }
-                catch (IllegalArgumentException e)
+                catch (final IllegalArgumentException e)
                 {
-                    throw new NoSuchAlgorithmException("no OID for algorithm: " + oidAlgorithm);
+                    throw new NoSuchAlgorithmException("no OID for algorithm: " + oidAlgorithm); //$NON-NLS-1$
                 }
-                DHKDFParameters params = new DHKDFParameters(oid, keySize, secret, ukmParameters);
+                final DHKDFParameters params = new DHKDFParameters(oid, keySize, secret, ukmParameters);
 
                 kdf.init(params);
             }
             else
             {
-                KDFParameters params = new KDFParameters(secret, ukmParameters);
+                final KDFParameters params = new KDFParameters(secret, ukmParameters);
 
                 kdf.init(params);
             }
@@ -365,7 +370,7 @@ public abstract class BaseAgreementSpi
         {
             if (keySize > 0)
             {
-                byte[] keyBytes = new byte[keySize / 8];
+                final byte[] keyBytes = new byte[keySize / 8];
 
                 System.arraycopy(secret, 0, keyBytes, 0, keyBytes.length);
 
@@ -383,8 +388,8 @@ public abstract class BaseAgreementSpi
         if (hybridSpec != null)
         {
             // Set Z' to Z || T
-            byte[] s = doCalcSecret();
-            byte[] sec = Arrays.concatenate(s, hybridSpec.getT());
+            final byte[] s = doCalcSecret();
+            final byte[] sec = Arrays.concatenate(s, hybridSpec.getT());
 
             Arrays.clear(s);
 

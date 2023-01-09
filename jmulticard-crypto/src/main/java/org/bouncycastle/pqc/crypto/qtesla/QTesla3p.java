@@ -38,29 +38,29 @@ class QTesla3p
     private static final int RADIX32 = 32;
 
 
-    static final int CRYPTO_BYTES = ((PARAM_N * (PARAM_B_BITS + 1) + 7) / 8 + CRYPTO_C_BYTES);
+    static final int CRYPTO_BYTES = (PARAM_N * (PARAM_B_BITS + 1) + 7) / 8 + CRYPTO_C_BYTES;
     // Contains polynomial s and e, and seeds seed_a and seed_y
-    static final int CRYPTO_SECRETKEYBYTES = (1 * PARAM_N + 1 * PARAM_N * PARAM_K + 2 * CRYPTO_SEEDBYTES + HM_BYTES);
+    static final int CRYPTO_SECRETKEYBYTES = 1 * PARAM_N + 1 * PARAM_N * PARAM_K + 2 * CRYPTO_SEEDBYTES + HM_BYTES;
 
     // Contains seed_a and polynomials t
-    static final int CRYPTO_PUBLICKEYBYTES = ((PARAM_Q_LOG * PARAM_N * PARAM_K + 7) / 8 + CRYPTO_SEEDBYTES);
+    static final int CRYPTO_PUBLICKEYBYTES = (PARAM_Q_LOG * PARAM_N * PARAM_K + 7) / 8 + CRYPTO_SEEDBYTES;
 
-    static int generateKeyPair(byte[] publicKey, byte[] privateKey, SecureRandom secureRandom)
+    static int generateKeyPair(final byte[] publicKey, final byte[] privateKey, final SecureRandom secureRandom)
     {
         /* Initialize Domain Separator for Error Polynomial and Secret Polynomial */
         int nonce = 0;
 
-        byte[] randomness = new byte[CRYPTO_RANDOMBYTES];
+        final byte[] randomness = new byte[CRYPTO_RANDOMBYTES];
 
         /* Extend Random Bytes to Seed Generation of Error Polynomial and Secret Polynomial */
-        byte[] randomnessExtended = new byte[(PARAM_K + 3) * CRYPTO_SEEDBYTES];
+        final byte[] randomnessExtended = new byte[(PARAM_K + 3) * CRYPTO_SEEDBYTES];
 
-        long[] secretPolynomial = new long[PARAM_N];
-        long[] errorPolynomial = new long[PARAM_N * PARAM_K];
-        long[] A = new long[PARAM_N * PARAM_K];
-        long[] T = new long[PARAM_N * PARAM_K];
+        final long[] secretPolynomial = new long[PARAM_N];
+        final long[] errorPolynomial = new long[PARAM_N * PARAM_K];
+        final long[] A = new long[PARAM_N * PARAM_K];
+        final long[] T = new long[PARAM_N * PARAM_K];
 
-        long[] s_ntt = new long[PARAM_N];
+        final long[] s_ntt = new long[PARAM_N];
 
         /* Get randomnessExtended <- seedErrorPolynomial, seedSecretPolynomial, seedA, seedY */
         secureRandom.nextBytes(randomness);
@@ -112,24 +112,24 @@ class QTesla3p
     }
 
     static int generateSignature(
-        byte[] signature,
-        final byte[] message, int messageOffset, int messageLength,
-        final byte[] privateKey, SecureRandom secureRandom)
+        final byte[] signature,
+        final byte[] message, final int messageOffset, final int messageLength,
+        final byte[] privateKey, final SecureRandom secureRandom)
     {
-        byte[] c = new byte[CRYPTO_C_BYTES];
-        byte[] randomness = new byte[CRYPTO_SEEDBYTES];
-        byte[] randomness_input = new byte[CRYPTO_SEEDBYTES + CRYPTO_RANDOMBYTES + 2 * HM_BYTES];
-        int[] pos_list = new int[PARAM_H];
-        short[] sign_list = new short[PARAM_H];
-        long[] y = new long[PARAM_N];
+        final byte[] c = new byte[CRYPTO_C_BYTES];
+        final byte[] randomness = new byte[CRYPTO_SEEDBYTES];
+        final byte[] randomness_input = new byte[CRYPTO_SEEDBYTES + CRYPTO_RANDOMBYTES + 2 * HM_BYTES];
+        final int[] pos_list = new int[PARAM_H];
+        final short[] sign_list = new short[PARAM_H];
+        final long[] y = new long[PARAM_N];
 
-        long[] y_ntt = new long[PARAM_N];
-        long[] Sc = new long[PARAM_N];
-        long[] z = new long[PARAM_N];
+        final long[] y_ntt = new long[PARAM_N];
+        final long[] Sc = new long[PARAM_N];
+        final long[] z = new long[PARAM_N];
 
-        long[] v = new long[PARAM_N * PARAM_K];
-        long[] Ec = new long[PARAM_N * PARAM_K];
-        long[] a = new long[PARAM_N * PARAM_K];
+        final long[] v = new long[PARAM_N * PARAM_K];
+        final long[] Ec = new long[PARAM_N * PARAM_K];
+        final long[] a = new long[PARAM_N * PARAM_K];
 
         int k;
         int nonce = 0;  // Initialize domain separator for sampling y
@@ -138,7 +138,7 @@ class QTesla3p
         System.arraycopy(privateKey, CRYPTO_SECRETKEYBYTES - HM_BYTES - CRYPTO_SEEDBYTES, randomness_input, 0, CRYPTO_SEEDBYTES);
 
         {
-            byte[] tmp = new byte[CRYPTO_RANDOMBYTES];
+            final byte[] tmp = new byte[CRYPTO_RANDOMBYTES];
             secureRandom.nextBytes(tmp);
             System.arraycopy(tmp, 0, randomness_input, CRYPTO_SEEDBYTES, CRYPTO_RANDOMBYTES);
         }
@@ -179,7 +179,7 @@ class QTesla3p
 
             for (k = 0; k < PARAM_K; k++)
             {
-                QTesla3PPolynomial.sparse_mul8(Ec, k * PARAM_N, privateKey, (PARAM_N * (k + 1)), pos_list, sign_list);
+                QTesla3PPolynomial.sparse_mul8(Ec, k * PARAM_N, privateKey, PARAM_N * (k + 1), pos_list, sign_list);
                 QTesla3PPolynomial.poly_sub(v, k * PARAM_N, v, k * PARAM_N, Ec, k * PARAM_N);
                 rsp = test_correctness(v, k * PARAM_N);
                 if (rsp)
@@ -200,23 +200,23 @@ class QTesla3p
     }
 
     static int verifying(
-        byte[] message,
-        final byte[] signature, int signatureOffset, int signatureLength,
+        final byte[] message,
+        final byte[] signature, final int signatureOffset, final int signatureLength,
         final byte[] publicKey)
     {
-        byte[] c = new byte[CRYPTO_C_BYTES];
-        byte[] c_sig = new byte[CRYPTO_C_BYTES];
-        byte[] seed = new byte[CRYPTO_SEEDBYTES];
-        byte[] hm = new byte[2 * HM_BYTES];
-        int[] pos_list = new int[PARAM_H];
-        short[] sign_list = new short[PARAM_H];
-        int[] pk_t = new int[PARAM_N * PARAM_K];
-        long[] w = new long[PARAM_N * PARAM_K];
-        long[] a = new long[PARAM_N * PARAM_K];
-        long[] Tc = new long[PARAM_N * PARAM_K];
+        final byte[] c = new byte[CRYPTO_C_BYTES];
+        final byte[] c_sig = new byte[CRYPTO_C_BYTES];
+        final byte[] seed = new byte[CRYPTO_SEEDBYTES];
+        final byte[] hm = new byte[2 * HM_BYTES];
+        final int[] pos_list = new int[PARAM_H];
+        final short[] sign_list = new short[PARAM_H];
+        final int[] pk_t = new int[PARAM_N * PARAM_K];
+        final long[] w = new long[PARAM_N * PARAM_K];
+        final long[] a = new long[PARAM_N * PARAM_K];
+        final long[] Tc = new long[PARAM_N * PARAM_K];
 
-        long[] z = new long[PARAM_N];
-        long[] z_ntt = new long[PARAM_N];
+        final long[] z = new long[PARAM_N];
+        final long[] z_ntt = new long[PARAM_N];
 
         int k = 0;
 
@@ -246,7 +246,7 @@ class QTesla3p
 
         for (k = 0; k < PARAM_K; k++)
         {      // Compute w = az - tc
-            QTesla3PPolynomial.sparse_mul32(Tc, k * PARAM_N, pk_t, (k * PARAM_N), pos_list, sign_list);
+            QTesla3PPolynomial.sparse_mul32(Tc, k * PARAM_N, pk_t, k * PARAM_N, pos_list, sign_list);
             QTesla3PPolynomial.poly_mul(w, k * PARAM_N, a, k * PARAM_N, z_ntt);
             QTesla3PPolynomial.poly_sub(w, k * PARAM_N, w, k * PARAM_N, Tc, k * PARAM_N);
         }
@@ -261,8 +261,8 @@ class QTesla3p
         return 0;
     }
 
-    static void encodePrivateKey(byte[] privateKey, final long[] secretPolynomial, final long[] errorPolynomial,
-        final byte[] seed, int seedOffset, byte[] publicKey)
+    static void encodePrivateKey(final byte[] privateKey, final long[] secretPolynomial, final long[] errorPolynomial,
+        final byte[] seed, final int seedOffset, final byte[] publicKey)
     {
         int i, k = 0;
         int skPtr = 0;
@@ -277,7 +277,7 @@ class QTesla3p
         {
             for (i = 0; i < PARAM_N; i++)
             {
-                privateKey[skPtr + (k * PARAM_N + i)] = (byte)errorPolynomial[k * PARAM_N + i];
+                privateKey[skPtr + k * PARAM_N + i] = (byte)errorPolynomial[k * PARAM_N + i];
             }
         }
         skPtr += PARAM_K * PARAM_N;
@@ -294,27 +294,27 @@ class QTesla3p
 //        assert CRYPTO_SECRETKEYBYTES == skPtr;
     }
 
-    static void encodePublicKey(byte[] publicKey, final long[] T, final byte[] seedA, int seedAOffset)
+    static void encodePublicKey(final byte[] publicKey, final long[] T, final byte[] seedA, final int seedAOffset)
     {
         int j = 0;
 
-        for (int i = 0; i < (PARAM_N * PARAM_K * PARAM_Q_LOG / 32); i += 15)
+        for (int i = 0; i < PARAM_N * PARAM_K * PARAM_Q_LOG / 32; i += 15)
         {
-            at(publicKey, i, 0, (int)(T[j] | (T[j + 1] << 30)));
-            at(publicKey, i, 1, (int)((T[j + 1] >> 2) | (T[j + 2] << 28)));
-            at(publicKey, i, 2, (int)((T[j + 2] >> 4) | (T[j + 3] << 26)));
-            at(publicKey, i, 3, (int)((T[j + 3] >> 6) | (T[j + 4] << 24)));
-            at(publicKey, i, 4, (int)((T[j + 4] >> 8) | (T[j + 5] << 22)));
-            at(publicKey, i, 5, (int)((T[j + 5] >> 10) | (T[j + 6] << 20)));
-            at(publicKey, i, 6, (int)((T[j + 6] >> 12) | (T[j + 7] << 18)));
-            at(publicKey, i, 7, (int)((T[j + 7] >> 14) | (T[j + 8] << 16)));
-            at(publicKey, i, 8, (int)((T[j + 8] >> 16) | (T[j + 9] << 14)));
-            at(publicKey, i, 9, (int)((T[j + 9] >> 18) | (T[j + 10] << 12)));
-            at(publicKey, i, 10, (int)((T[j + 10] >> 20) | (T[j + 11] << 10)));
-            at(publicKey, i, 11, (int)((T[j + 11] >> 22) | (T[j + 12] << 8)));
-            at(publicKey, i, 12, (int)((T[j + 12] >> 24) | (T[j + 13] << 6)));
-            at(publicKey, i, 13, (int)((T[j + 13] >> 26) | (T[j + 14] << 4)));
-            at(publicKey, i, 14, (int)((T[j + 14] >> 28) | (T[j + 15] << 2)));
+            at(publicKey, i, 0, (int)(T[j] | T[j + 1] << 30));
+            at(publicKey, i, 1, (int)(T[j + 1] >> 2 | T[j + 2] << 28));
+            at(publicKey, i, 2, (int)(T[j + 2] >> 4 | T[j + 3] << 26));
+            at(publicKey, i, 3, (int)(T[j + 3] >> 6 | T[j + 4] << 24));
+            at(publicKey, i, 4, (int)(T[j + 4] >> 8 | T[j + 5] << 22));
+            at(publicKey, i, 5, (int)(T[j + 5] >> 10 | T[j + 6] << 20));
+            at(publicKey, i, 6, (int)(T[j + 6] >> 12 | T[j + 7] << 18));
+            at(publicKey, i, 7, (int)(T[j + 7] >> 14 | T[j + 8] << 16));
+            at(publicKey, i, 8, (int)(T[j + 8] >> 16 | T[j + 9] << 14));
+            at(publicKey, i, 9, (int)(T[j + 9] >> 18 | T[j + 10] << 12));
+            at(publicKey, i, 10, (int)(T[j + 10] >> 20 | T[j + 11] << 10));
+            at(publicKey, i, 11, (int)(T[j + 11] >> 22 | T[j + 12] << 8));
+            at(publicKey, i, 12, (int)(T[j + 12] >> 24 | T[j + 13] << 6));
+            at(publicKey, i, 13, (int)(T[j + 13] >> 26 | T[j + 14] << 4));
+            at(publicKey, i, 14, (int)(T[j + 14] >> 28 | T[j + 15] << 2));
             j += 16;
         }
 
@@ -323,32 +323,32 @@ class QTesla3p
     }
 
 
-    static void decodePublicKey(int[] publicKey, byte[] seedA, int seedAOffset, final byte[] publicKeyInput)
+    static void decodePublicKey(final int[] publicKey, final byte[] seedA, final int seedAOffset, final byte[] publicKeyInput)
     {
 
         int j = 0;
-        byte[] pt = publicKeyInput;
-        int maskq = (1 << PARAM_Q_LOG) - 1;
+        final byte[] pt = publicKeyInput;
+        final int maskq = (1 << PARAM_Q_LOG) - 1;
 
 
         for (int i = 0; i < PARAM_N * PARAM_K; i += 16)
         {
             publicKey[i] = at(pt, j, 0) & maskq;
-            publicKey[i + 1] = ((at(pt, j, 0) >>> 30) | (at(pt, j, 1) << 2)) & maskq;
-            publicKey[i + 2] = ((at(pt, j, 1) >>> 28) | (at(pt, j, 2) << 4)) & maskq;
-            publicKey[i + 3] = ((at(pt, j, 2) >>> 26) | (at(pt, j, 3) << 6)) & maskq;
-            publicKey[i + 4] = ((at(pt, j, 3) >>> 24) | (at(pt, j, 4) << 8)) & maskq;
-            publicKey[i + 5] = ((at(pt, j, 4) >>> 22) | (at(pt, j, 5) << 10)) & maskq;
-            publicKey[i + 6] = ((at(pt, j, 5) >>> 20) | (at(pt, j, 6) << 12)) & maskq;
-            publicKey[i + 7] = ((at(pt, j, 6) >>> 18) | (at(pt, j, 7) << 14)) & maskq;
-            publicKey[i + 8] = ((at(pt, j, 7) >>> 16) | (at(pt, j, 8) << 16)) & maskq;
-            publicKey[i + 9] = ((at(pt, j, 8) >>> 14) | (at(pt, j, 9) << 18)) & maskq;
-            publicKey[i + 10] = ((at(pt, j, 9) >>> 12) | (at(pt, j, 10) << 20)) & maskq;
-            publicKey[i + 11] = ((at(pt, j, 10) >>> 10) | (at(pt, j, 11) << 22)) & maskq;
-            publicKey[i + 12] = ((at(pt, j, 11) >>> 8) | (at(pt, j, 12) << 24)) & maskq;
-            publicKey[i + 13] = ((at(pt, j, 12) >>> 6) | (at(pt, j, 13) << 26)) & maskq;
-            publicKey[i + 14] = ((at(pt, j, 13) >>> 4) | (at(pt, j, 14) << 28)) & maskq;
-            publicKey[i + 15] = (at(pt, j, 14) >>> 2) & maskq;
+            publicKey[i + 1] = (at(pt, j, 0) >>> 30 | at(pt, j, 1) << 2) & maskq;
+            publicKey[i + 2] = (at(pt, j, 1) >>> 28 | at(pt, j, 2) << 4) & maskq;
+            publicKey[i + 3] = (at(pt, j, 2) >>> 26 | at(pt, j, 3) << 6) & maskq;
+            publicKey[i + 4] = (at(pt, j, 3) >>> 24 | at(pt, j, 4) << 8) & maskq;
+            publicKey[i + 5] = (at(pt, j, 4) >>> 22 | at(pt, j, 5) << 10) & maskq;
+            publicKey[i + 6] = (at(pt, j, 5) >>> 20 | at(pt, j, 6) << 12) & maskq;
+            publicKey[i + 7] = (at(pt, j, 6) >>> 18 | at(pt, j, 7) << 14) & maskq;
+            publicKey[i + 8] = (at(pt, j, 7) >>> 16 | at(pt, j, 8) << 16) & maskq;
+            publicKey[i + 9] = (at(pt, j, 8) >>> 14 | at(pt, j, 9) << 18) & maskq;
+            publicKey[i + 10] = (at(pt, j, 9) >>> 12 | at(pt, j, 10) << 20) & maskq;
+            publicKey[i + 11] = (at(pt, j, 10) >>> 10 | at(pt, j, 11) << 22) & maskq;
+            publicKey[i + 12] = (at(pt, j, 11) >>> 8 | at(pt, j, 12) << 24) & maskq;
+            publicKey[i + 13] = (at(pt, j, 12) >>> 6 | at(pt, j, 13) << 26) & maskq;
+            publicKey[i + 14] = (at(pt, j, 13) >>> 4 | at(pt, j, 14) << 28) & maskq;
+            publicKey[i + 15] = at(pt, j, 14) >>> 2 & maskq;
             j += 15;
         }
 
@@ -357,14 +357,14 @@ class QTesla3p
 
     }
 
-    private static boolean testZ(long[] Z)
+    private static boolean testZ(final long[] Z)
     {
         // Returns false if valid, otherwise outputs 1 if invalid (rejected)
 
         for (int i = 0; i < PARAM_N; i++)
         {
 
-            if ((Z[i] < -(PARAM_B - PARAM_S)) || (Z[i] > PARAM_B - PARAM_S))
+            if (Z[i] < -(PARAM_B - PARAM_S) || Z[i] > PARAM_B - PARAM_S)
             {
 
                 return true;
@@ -377,76 +377,76 @@ class QTesla3p
 
     }
 
-    private static final int maskb1 = ((1 << (PARAM_B_BITS + 1)) - 1);
+    private static final int maskb1 = (1 << PARAM_B_BITS + 1) - 1;
 
-    static void encodeSignature(byte[] signature, int signatureOffset, byte[] C, int cOffset, long[] Z)
+    static void encodeSignature(final byte[] signature, final int signatureOffset, final byte[] C, final int cOffset, final long[] Z)
     {
         int j = 0;
 
-        for (int i = 0; i < (PARAM_N * (PARAM_B_BITS + 1) / 32); i += 11)
+        for (int i = 0; i < PARAM_N * (PARAM_B_BITS + 1) / 32; i += 11)
         {
-            at(signature, i, 0, (int)((Z[j + 0] & ((1 << 22) - 1)) | (Z[j + 1] << 22)));
-            at(signature, i, 1, (int)(((Z[j + 1] >>> 10) & ((1 << 12) - 1)) | (Z[j + 2] << 12)));
-            at(signature, i, 2, (int)(((Z[j + 2] >>> 20) & ((1 << 2) - 1)) | ((Z[j + 3] & maskb1) << 2) | (Z[j + 4] << 24)));
-            at(signature, i, 3, (int)(((Z[j + 4] >>> 8) & ((1 << 14) - 1)) | (Z[j + 5] << 14)));
-            at(signature, i, 4, (int)(((Z[j + 5] >>> 18) & ((1 << 4) - 1)) | ((Z[j + 6] & maskb1) << 4) | (Z[j + 7] << 26)));
-            at(signature, i, 5, (int)(((Z[j + 7] >>> 6) & ((1 << 16) - 1)) | (Z[j + 8] << 16)));
-            at(signature, i, 6, (int)(((Z[j + 8] >>> 16) & ((1 << 6) - 1)) | ((Z[j + 9] & maskb1) << 6) | (Z[j + 10] << 28)));
-            at(signature, i, 7, (int)(((Z[j + 10] >>> 4) & ((1 << 18) - 1)) | (Z[j + 11] << 18)));
-            at(signature, i, 8, (int)(((Z[j + 11] >>> 14) & ((1 << 8) - 1)) | ((Z[j + 12] & maskb1) << 8) | (Z[j + 13] << 30)));
-            at(signature, i, 9, (int)(((Z[j + 13] >>> 2) & ((1 << 20) - 1)) | (Z[j + 14] << 20)));
-            at(signature, i, 10, (int)(((Z[j + 14] >>> 12) & ((1 << 10) - 1)) | (Z[j + 15] << 10)));
+            at(signature, i, 0, (int)(Z[j + 0] & (1 << 22) - 1 | Z[j + 1] << 22));
+            at(signature, i, 1, (int)(Z[j + 1] >>> 10 & (1 << 12) - 1 | Z[j + 2] << 12));
+            at(signature, i, 2, (int)(Z[j + 2] >>> 20 & (1 << 2) - 1 | (Z[j + 3] & maskb1) << 2 | Z[j + 4] << 24));
+            at(signature, i, 3, (int)(Z[j + 4] >>> 8 & (1 << 14) - 1 | Z[j + 5] << 14));
+            at(signature, i, 4, (int)(Z[j + 5] >>> 18 & (1 << 4) - 1 | (Z[j + 6] & maskb1) << 4 | Z[j + 7] << 26));
+            at(signature, i, 5, (int)(Z[j + 7] >>> 6 & (1 << 16) - 1 | Z[j + 8] << 16));
+            at(signature, i, 6, (int)(Z[j + 8] >>> 16 & (1 << 6) - 1 | (Z[j + 9] & maskb1) << 6 | Z[j + 10] << 28));
+            at(signature, i, 7, (int)(Z[j + 10] >>> 4 & (1 << 18) - 1 | Z[j + 11] << 18));
+            at(signature, i, 8, (int)(Z[j + 11] >>> 14 & (1 << 8) - 1 | (Z[j + 12] & maskb1) << 8 | Z[j + 13] << 30));
+            at(signature, i, 9, (int)(Z[j + 13] >>> 2 & (1 << 20) - 1 | Z[j + 14] << 20));
+            at(signature, i, 10, (int)(Z[j + 14] >>> 12 & (1 << 10) - 1 | Z[j + 15] << 10));
             j += 16;
         }
 
         System.arraycopy(C, cOffset, signature, signatureOffset + PARAM_N * (PARAM_B_BITS + 1) / 8, CRYPTO_C_BYTES);
     }
 
-    static void decodeSignature(byte[] C, long[] Z, final byte[] signature, int signatureOffset)
+    static void decodeSignature(final byte[] C, final long[] Z, final byte[] signature, final int signatureOffset)
     {
         int j = 0;
         for (int i = 0; i < PARAM_N; i += 16)
         {
-            int s0 = at(signature, j, 0);
-            int s1 = at(signature, j, 1);
-            int s2 = at(signature, j, 2);
-            int s3 = at(signature, j, 3);
-            int s4 = at(signature, j, 4);
-            int s5 = at(signature, j, 5);
-            int s6 = at(signature, j, 6);
-            int s7 = at(signature, j, 7);
-            int s8 = at(signature, j, 8);
-            int s9 = at(signature, j, 9);
-            int s10 = at(signature, j, 10);
+            final int s0 = at(signature, j, 0);
+            final int s1 = at(signature, j, 1);
+            final int s2 = at(signature, j, 2);
+            final int s3 = at(signature, j, 3);
+            final int s4 = at(signature, j, 4);
+            final int s5 = at(signature, j, 5);
+            final int s6 = at(signature, j, 6);
+            final int s7 = at(signature, j, 7);
+            final int s8 = at(signature, j, 8);
+            final int s9 = at(signature, j, 9);
+            final int s10 = at(signature, j, 10);
 
-            Z[i] = (s0 << 10) >> 10;
-            Z[i + 1] = (s0 >>> 22) | ((s1 << 20) >> 10);
-            Z[i + 2] = (s1 >>> 12) | ((s2 << 30) >> 10);
-            Z[i + 3] = ((s2 << 8) >> 10);
-            Z[i + 4] = (s2 >>> 24) | ((s3 << 18) >> 10);
-            Z[i + 5] = (s3 >>> 14) | ((s4 << 28) >> 10);
-            Z[i + 6] = ((s4 << 6) >> 10);
-            Z[i + 7] = (s4 >>> 26) | ((s5 << 16) >> 10);
-            Z[i + 8] = (s5 >>> 16) | ((s6 << 26) >> 10);
-            Z[i + 9] = ((s6 << 4) >> 10);
-            Z[i + 10] = (s6 >>> 28) | ((s7 << 14) >> 10);
-            Z[i + 11] = (s7 >>> 18) | ((s8 << 24) >> 10);
-            Z[i + 12] = ((s8 << 2) >> 10);
-            Z[i + 13] = (s8 >>> 30) | ((s9 << 12) >> 10);
-            Z[i + 14] = (s9 >>> 20) | ((s10 << 22) >> 10);
-            Z[i + 15] = (s10 >> 10);
+            Z[i] = s0 << 10 >> 10;
+            Z[i + 1] = s0 >>> 22 | s1 << 20 >> 10;
+            Z[i + 2] = s1 >>> 12 | s2 << 30 >> 10;
+            Z[i + 3] = s2 << 8 >> 10;
+            Z[i + 4] = s2 >>> 24 | s3 << 18 >> 10;
+            Z[i + 5] = s3 >>> 14 | s4 << 28 >> 10;
+            Z[i + 6] = s4 << 6 >> 10;
+            Z[i + 7] = s4 >>> 26 | s5 << 16 >> 10;
+            Z[i + 8] = s5 >>> 16 | s6 << 26 >> 10;
+            Z[i + 9] = s6 << 4 >> 10;
+            Z[i + 10] = s6 >>> 28 | s7 << 14 >> 10;
+            Z[i + 11] = s7 >>> 18 | s8 << 24 >> 10;
+            Z[i + 12] = s8 << 2 >> 10;
+            Z[i + 13] = s8 >>> 30 | s9 << 12 >> 10;
+            Z[i + 14] = s9 >>> 20 | s10 << 22 >> 10;
+            Z[i + 15] = s10 >> 10;
             j += 11;
         }
         System.arraycopy(signature, signatureOffset + PARAM_N * (PARAM_B_BITS + 1) / 8, C, 0, CRYPTO_C_BYTES);
     }
 
-    static void encodeC(int[] positionList, short[] signList, byte[] output, int outputOffset)
+    static void encodeC(final int[] positionList, final short[] signList, final byte[] output, final int outputOffset)
     {
         int count = 0;
         int position;
         short domainSeparator = 0;
-        short[] C = new short[PARAM_N];
-        byte[] randomness = new byte[HashUtils.SECURE_HASH_ALGORITHM_KECCAK_128_RATE];
+        final short[] C = new short[PARAM_N];
+        final byte[] randomness = new byte[HashUtils.SECURE_HASH_ALGORITHM_KECCAK_128_RATE];
 
         // Enc: the XOF is instantiated with cSHAKE128 (see Algorithm 14).
         HashUtils.customizableSecureHashAlgorithmKECCAK128Simple(
@@ -475,8 +475,8 @@ class QTesla3p
                 count = 0;
             }
 
-            position = (randomness[count] << 8) | (randomness[count + 1] & 0xFF);
-            position &= (PARAM_N - 1);
+            position = randomness[count] << 8 | randomness[count + 1] & 0xFF;
+            position &= PARAM_N - 1;
 
             /* Position is between [0, n - 1] and Has not Been Set Yet
              * Determine Signature
@@ -501,11 +501,11 @@ class QTesla3p
         }
     }
 
-    private static void hashFunction(byte[] output, int outputOff, long[] v, byte[] hm, int hmOff)
+    private static void hashFunction(final byte[] output, final int outputOff, final long[] v, final byte[] hm, final int hmOff)
     {
         int mask, cL;
 
-        byte[] T = new byte[PARAM_K * PARAM_N + 2 * HM_BYTES];
+        final byte[] T = new byte[PARAM_K * PARAM_N + 2 * HM_BYTES];
 
         for (int k = 0; k < PARAM_K; k++)
         {
@@ -514,14 +514,14 @@ class QTesla3p
             {
                 int temp = (int)v[index];
                 // If v[i] > PARAM_Q/2 then v[i] -= PARAM_Q
-                mask = (PARAM_Q / 2 - temp) >> (RADIX32 - 1);
-                temp = ((temp - PARAM_Q) & mask) | (temp & ~mask);
+                mask = PARAM_Q / 2 - temp >> RADIX32 - 1;
+                temp = temp - PARAM_Q & mask | temp & ~mask;
 
-                cL = temp & ((1 << PARAM_D) - 1);
+                cL = temp & (1 << PARAM_D) - 1;
                 // If cL > 2^(d-1) then cL -= 2^d
-                mask = ((1 << (PARAM_D - 1)) - cL) >> (RADIX32 - 1);
-                cL = ((cL - (1 << PARAM_D)) & mask) | (cL & ~mask);
-                T[index++] = (byte)((temp - cL) >> PARAM_D);
+                mask = (1 << PARAM_D - 1) - cL >> RADIX32 - 1;
+                cL = cL - (1 << PARAM_D) & mask | cL & ~mask;
+                T[index++] = (byte)(temp - cL >> PARAM_D);
             }
         }
         System.arraycopy(hm, hmOff, T, PARAM_K * PARAM_N, 2 * HM_BYTES);
@@ -531,7 +531,7 @@ class QTesla3p
             T, 0, T.length);
     }
 
-    static int lE24BitToInt(byte[] bs, int off)
+    static int lE24BitToInt(final byte[] bs, int off)
     {
         int n = bs[off] & 0xff;
         n |= (bs[++off] & 0xff) << 8;
@@ -540,15 +540,15 @@ class QTesla3p
     }
 
 
-    private static int NBLOCKS_SHAKE = HashUtils.SECURE_HASH_ALGORITHM_KECCAK_128_RATE / (((PARAM_B_BITS + 1) + 7) / 8);
-    private static int BPLUS1BYTES = ((PARAM_B_BITS + 1) + 7) / 8;
+    private static int NBLOCKS_SHAKE = HashUtils.SECURE_HASH_ALGORITHM_KECCAK_128_RATE / ((PARAM_B_BITS + 1 + 7) / 8);
+    private static int BPLUS1BYTES = (PARAM_B_BITS + 1 + 7) / 8;
 
 
-    static void sample_y(long[] y, byte[] seed, int seedOffset, int nonce)
+    static void sample_y(final long[] y, final byte[] seed, final int seedOffset, final int nonce)
     { // Sample polynomial y, such that each coefficient is in the range [-B,B]
         int i = 0, pos = 0, nblocks = PARAM_N;
-        byte buf[] = new byte[PARAM_N * BPLUS1BYTES + 1];
-        int nbytes = BPLUS1BYTES;
+        final byte buf[] = new byte[PARAM_N * BPLUS1BYTES + 1];
+        final int nbytes = BPLUS1BYTES;
         short dmsp = (short)(nonce << 8);
 
         HashUtils.customizableSecureHashAlgorithmKECCAK256Simple(
@@ -566,9 +566,9 @@ class QTesla3p
                 );
                 pos = 0;
             }
-            y[i] = lE24BitToInt(buf, pos) & ((1 << (PARAM_B_BITS + 1)) - 1);
+            y[i] = lE24BitToInt(buf, pos) & (1 << PARAM_B_BITS + 1) - 1;
             y[i] -= PARAM_B;
-            if (y[i] != (1 << PARAM_B_BITS))
+            if (y[i] != 1 << PARAM_B_BITS)
             {
                 i++;
             }
@@ -577,14 +577,14 @@ class QTesla3p
     }
 
 
-    private static void at(byte[] bs, int base, int index, int value)
+    private static void at(final byte[] bs, final int base, final int index, final int value)
     {
-        Pack.intToLittleEndian(value, bs, (base * 4) + (index * 4));
+        Pack.intToLittleEndian(value, bs, base * 4 + index * 4);
     }
 
-    private static int at(byte[] bs, int base, int index)
+    private static int at(final byte[] bs, final int base, final int index)
     {
-        int off = (base * 4) + (index * 4);
+        int off = base * 4 + index * 4;
 
         int n = bs[off] & 0xff;
         n |= (bs[++off] & 0xff) << 8;
@@ -594,7 +594,7 @@ class QTesla3p
     }
 
 
-    static boolean test_correctness(long[] v, int vpos)
+    static boolean test_correctness(final long[] v, final int vpos)
     { // Check bounds for w = v - ec during signature verification. Returns 0 if valid, otherwise outputs 1 if invalid (rejected).
         // This function leaks the position of the coefficient that fails the test (but this is independent of the secret data).
         // It does not leak the sign of the coefficients.
@@ -604,16 +604,16 @@ class QTesla3p
         for (int i = 0; i < PARAM_N; i++)
         {
             // If v[i] > PARAM_Q/2 then v[i] -= PARAM_Q
-            mask = (int)(PARAM_Q / 2 - v[vpos + i]) >> (RADIX32 - 1);
-            val = (int)(((v[vpos + i] - PARAM_Q) & mask) | (v[vpos + i] & ~mask));
+            mask = (int)(PARAM_Q / 2 - v[vpos + i]) >> RADIX32 - 1;
+            val = (int)(v[vpos + i] - PARAM_Q & mask | v[vpos + i] & ~mask);
             // If (Abs(val) < PARAM_Q/2 - PARAM_E) then t0 = 0, else t0 = 1
-            t0 = (int)(~(absolute(val) - (PARAM_Q / 2 - PARAM_E))) >>> (RADIX32 - 1);
+            t0 = ~(absolute(val) - (PARAM_Q / 2 - PARAM_E)) >>> RADIX32 - 1;
 
             left = val;
-            val = (val + (1 << (PARAM_D - 1)) - 1) >> PARAM_D;
+            val = val + (1 << PARAM_D - 1) - 1 >> PARAM_D;
             val = left - (val << PARAM_D);
             // If (Abs(val) < (1<<(PARAM_D-1))-PARAM_E) then t1 = 0, else t1 = 1
-            t1 = (int)(~(absolute(val) - ((1 << (PARAM_D - 1)) - PARAM_E))) >>> (RADIX32 - 1);
+            t1 = ~(absolute(val) - ((1 << PARAM_D - 1) - PARAM_E)) >>> RADIX32 - 1;
 
             if ((t0 | t1) == 1)  // Returns 1 if any of the two tests failed
             {
@@ -624,42 +624,42 @@ class QTesla3p
     }
 
 
-    private static boolean testRejection(long[] Z) //, int n, int b, int u)
+    private static boolean testRejection(final long[] Z) //, int n, int b, int u)
     {
 
         int valid = 0;
 
         for (int i = 0; i < PARAM_N; i++)
         {
-            valid |= (PARAM_B - PARAM_S) - absolute(Z[i]);
+            valid |= PARAM_B - PARAM_S - absolute(Z[i]);
 
         }
 
-        return (valid >>> 31) > 0;
+        return valid >>> 31 > 0;
 
     }
 
-    private static int absolute(int value)
+    private static int absolute(final int value)
     {
 
-        return ((value >> 31) ^ value) - (value >> 31);
+        return (value >> 31 ^ value) - (value >> 31);
 
     }
 
-    private static long absolute(long value)
+    private static long absolute(final long value)
     {
 
-        return ((value >> 63) ^ value) - (value >> 63);
+        return (value >> 63 ^ value) - (value >> 63);
 
     }
 
 
-    private static boolean checkPolynomial(long[] polynomial, int polyOffset, int bound)
+    private static boolean checkPolynomial(final long[] polynomial, final int polyOffset, final int bound)
     {
 
         int i, j, sum = 0, limit = PARAM_N;
         long temp, mask;
-        long[] list = new long[PARAM_N];
+        final long[] list = new long[PARAM_N];
 
         for (j = 0; j < PARAM_N; j++)
         {
@@ -671,16 +671,16 @@ class QTesla3p
             for (i = 0; i < limit - 1; i++)
             {
                 // If list[i+1] > list[i] then exchange contents
-                mask = (list[i + 1] - list[i]) >> (RADIX32 - 1);
-                temp = (list[i + 1] & mask) | (list[i] & ~mask);
-                list[i + 1] = (list[i] & mask) | (list[i + 1] & ~mask);
+                mask = list[i + 1] - list[i] >> RADIX32 - 1;
+                temp = list[i + 1] & mask | list[i] & ~mask;
+                list[i + 1] = list[i] & mask | list[i + 1] & ~mask;
                 list[i] = temp;
             }
             sum += (int)list[limit - 1];
             limit -= 1;
         }
 
-        return (sum > bound);
+        return sum > bound;
     }
 
 
@@ -693,7 +693,7 @@ class QTesla3p
         private static final int CDT_COLS = 4;
         private static final int CHUNK_SIZE = 512;
 
-        private static final long[] cdt_v = new long[]{
+        private static final long[] cdt_v = {
             0x00000000L, 0x00000000L, 0x00000000L, 0x00000000L, // 0
             0x0601F22AL, 0x280663D4L, 0x2E1B038CL, 0x1E75FCA7L, // 1
             0x11F09FFAL, 0x162FE23DL, 0x403739B4L, 0x3F2AA531L, // 2
@@ -808,14 +808,14 @@ class QTesla3p
         };
 
 
-        static void sample_gauss_poly(int nonce, byte[] seed, int seedOffset, long[] poly, int polyOffset)
+        static void sample_gauss_poly(final int nonce, final byte[] seed, final int seedOffset, final long[] poly, final int polyOffset)
         {
             int dmsp = nonce << 8;
 
-            byte samp[] = new byte[CHUNK_SIZE * CDT_COLS * 4]; // This is int32_t in C, we will treat it as byte[] in java
-            int c[] = new int[CDT_COLS];
+            final byte samp[] = new byte[CHUNK_SIZE * CDT_COLS * 4]; // This is int32_t in C, we will treat it as byte[] in java
+            final int c[] = new int[CDT_COLS];
             int borrow, sign;
-            int mask = (-1) >>> 1;
+            final int mask = -1 >>> 1;
 
             for (int chunk = 0; chunk < PARAM_N; chunk += CHUNK_SIZE)
             {
@@ -832,12 +832,12 @@ class QTesla3p
                         for (int k = CDT_COLS - 1; k >= 0; k--)
                         {
                             c[k] = (int)((at(samp, 0, i * CDT_COLS + k) & mask) - (cdt_v[j * CDT_COLS + k] + borrow));
-                            borrow = c[k] >> (RADIX32 - 1);
+                            borrow = c[k] >> RADIX32 - 1;
                         }
                         poly[polyOffset + chunk + i] += ~borrow & 1;
                     }
-                    sign = at(samp, 0, i * CDT_COLS) >> (RADIX32 - 1);
-                    poly[polyOffset + chunk + i] = (sign & -poly[polyOffset + chunk + i]) | (~sign & poly[polyOffset + chunk + i]);
+                    sign = at(samp, 0, i * CDT_COLS) >> RADIX32 - 1;
+                    poly[polyOffset + chunk + i] = sign & -poly[polyOffset + chunk + i] | ~sign & poly[polyOffset + chunk + i];
                 }
 
             }
@@ -845,10 +845,10 @@ class QTesla3p
         }
     }
 
-    static boolean memoryEqual(byte[] left, int leftOffset, byte[] right, int rightOffset, int length)
+    static boolean memoryEqual(final byte[] left, final int leftOffset, final byte[] right, final int rightOffset, final int length)
     {
 
-        if ((leftOffset + length <= left.length) && (rightOffset + length <= right.length))
+        if (leftOffset + length <= left.length && rightOffset + length <= right.length)
         {
 
             for (int i = 0; i < length; i++)
@@ -880,7 +880,7 @@ class QTesla3p
     {
 
 
-        private static final long[] zeta = new long[]{
+        private static final long[] zeta = {
             147314272, 762289503, 284789571, 461457674, 723990704, 123382358, 685457283, 458774590, 644795450, 723622678, 441493948, 676062368, 648739792, 214990524, 261899220, 138474554,
             205277234, 788000393, 541334956, 769530525, 786231394, 812002793, 251385069, 152717354, 674883688, 458756880, 323745289, 823881240, 686340396, 716163820, 107735873, 144028791,
             586327243, 71257244, 739303131, 487030542, 313626215, 396596783, 664640087, 728258996, 854656117, 567834989, 2315110, 210792230, 795895843, 433034260, 432732757, 480454055,
@@ -1011,7 +1011,7 @@ class QTesla3p
             85190759, 264953709, 238854238, 395048514, 612738126, 27417876, 652695826, 188238483, 324168828, 736238139, 789061724, 529275445, 382304068, 176318391, 709989466, 14237691,
         };
 
-        private static final long[] zetainv = new long[]{
+        private static final long[] zetainv = {
             146156455, 679827530, 473841853, 326870476, 67084197, 119907782, 531977093, 667907438, 203450095, 828728045, 243407795, 461097407, 617291683, 591192212, 770955162, 782275882,
             456205664, 219451191, 399702956, 489037900, 604426252, 343538860, 244449885, 5797924, 349607213, 81212809, 174645651, 831585230, 569764039, 72931129, 259606353, 208991915,
             824939168, 99739527, 445645034, 826150211, 551334669, 359873198, 770281256, 231420726, 190766007, 706298276, 72423403, 645013051, 641484901, 458254656, 550121683, 730045860,
@@ -1143,12 +1143,14 @@ class QTesla3p
         };
 
 
-        static void poly_uniform(long[] a, byte[] seed, int seedOffset)
+        static void poly_uniform(final long[] a, final byte[] seed, final int seedOffset)
         {
-            int pos = 0, i = 0, nbytes = (PARAM_Q_LOG + 7) / 8;
+            int pos = 0, i = 0;
+			final int nbytes = (PARAM_Q_LOG + 7) / 8;
             int nblocks = PARAM_GEN_A;
-            int val1, val2, val3, val4, mask = (1 << PARAM_Q_LOG) - 1;
-            byte[] buf = new byte[HashUtils.SECURE_HASH_ALGORITHM_KECCAK_128_RATE * PARAM_GEN_A];
+            int val1, val2, val3, val4;
+			final int mask = (1 << PARAM_Q_LOG) - 1;
+            final byte[] buf = new byte[HashUtils.SECURE_HASH_ALGORITHM_KECCAK_128_RATE * PARAM_GEN_A];
             short dmsp = 0;
 
             // GenA: the XOF is instantiated with cSHAKE128 (see Algorithm 10).
@@ -1206,14 +1208,14 @@ class QTesla3p
         { // Montgomery reduction
             long u;
 
-            u = (a * (long)PARAM_QINV) & 0xFFFFFFFFL;
+            u = a * PARAM_QINV & 0xFFFFFFFFL;
             u *= PARAM_Q;
             a += u;
             return a >> 32;
         }
 
 
-        static void ntt(long[] a, long[] w)
+        static void ntt(final long[] a, final long[] w)
         { // Forward NTT transform
             int NumoProblems = PARAM_N >> 1, jTwiddle = 0;
 
@@ -1222,11 +1224,11 @@ class QTesla3p
                 int jFirst, j = 0;
                 for (jFirst = 0; jFirst < PARAM_N; jFirst = j + NumoProblems)
                 {
-                    int W = (int)w[jTwiddle++];
+                    final int W = (int)w[jTwiddle++];
                     for (j = jFirst; j < jFirst + NumoProblems; j++)
                     {
-                        long temp = barr_reduce(reduce(W * a[j + NumoProblems]));
-                        a[j + NumoProblems] = barr_reduce(a[j] + (2L * PARAM_Q - temp));
+                        final long temp = barr_reduce(reduce(W * a[j + NumoProblems]));
+                        a[j + NumoProblems] = barr_reduce(a[j] + 2L * PARAM_Q - temp);
                         a[j] = barr_reduce(temp + a[j]);
                     }
                 }
@@ -1234,14 +1236,14 @@ class QTesla3p
         }
 
 
-        static long barr_reduce(long a)
+        static long barr_reduce(final long a)
         { // Barrett reduction
-            long u = (((long)a * PARAM_BARR_MULT) >> PARAM_BARR_DIV); // TODO u may need to be cast back to int.
+            final long u = a * PARAM_BARR_MULT >> PARAM_BARR_DIV; // TODO u may need to be cast back to int.
             return a - u * PARAM_Q;
         }
 
 
-        static void nttinv(long[] a, long[] w)
+        static void nttinv(final long[] a, final long[] w)
         { // Inverse NTT transform
             int NumoProblems = 1, jTwiddle = 0;
             for (NumoProblems = 1; NumoProblems < PARAM_N; NumoProblems *= 2)
@@ -1249,19 +1251,19 @@ class QTesla3p
                 int jFirst, j = 0;
                 for (jFirst = 0; jFirst < PARAM_N; jFirst = j + NumoProblems)
                 {
-                    int W = (int)w[jTwiddle++];
+                    final int W = (int)w[jTwiddle++];
                     for (j = jFirst; j < jFirst + NumoProblems; j++)
                     {
-                        long temp = a[j];
+                        final long temp = a[j];
 
-                        a[j] = barr_reduce((temp + a[j + NumoProblems]));
-                        a[j + NumoProblems] = barr_reduce(reduce(W * (temp + (2L * PARAM_Q - a[j + NumoProblems]))));
+                        a[j] = barr_reduce(temp + a[j + NumoProblems]);
+                        a[j + NumoProblems] = barr_reduce(reduce(W * (temp + 2L * PARAM_Q - a[j + NumoProblems])));
                     }
                 }
             }
         }
 
-        static void nttinv(long[] a, int aPos, long[] w)
+        static void nttinv(final long[] a, final int aPos, final long[] w)
         { // Inverse NTT transform
             int NumoProblems = 1, jTwiddle = 0;
             for (NumoProblems = 1; NumoProblems < PARAM_N; NumoProblems *= 2)
@@ -1269,12 +1271,12 @@ class QTesla3p
                 int jFirst, j = 0;
                 for (jFirst = 0; jFirst < PARAM_N; jFirst = j + NumoProblems)
                 {
-                    int W = (int)w[jTwiddle++];
+                    final int W = (int)w[jTwiddle++];
                     for (j = jFirst; j < jFirst + NumoProblems; j++)
                     {
-                        long temp = a[aPos + j];
-                        a[aPos + j] = barr_reduce((temp + a[aPos + j + NumoProblems]));
-                        a[aPos + j + NumoProblems] = barr_reduce(reduce((long)W * (temp + (2L * PARAM_Q - a[aPos + j + NumoProblems]))));
+                        final long temp = a[aPos + j];
+                        a[aPos + j] = barr_reduce(temp + a[aPos + j + NumoProblems]);
+                        a[aPos + j + NumoProblems] = barr_reduce(reduce(W * (temp + 2L * PARAM_Q - a[aPos + j + NumoProblems])));
                     }
                 }
 
@@ -1282,7 +1284,7 @@ class QTesla3p
         }
 
 
-        static void poly_ntt(long[] x_ntt, long[] x)
+        static void poly_ntt(final long[] x_ntt, final long[] x)
         { // Call to NTT function. Avoids input destruction
 
             for (int i = 0; i < PARAM_N; i++)
@@ -1293,26 +1295,26 @@ class QTesla3p
         }
 
 
-        static void poly_pointwise(long[] result, long[] x, long[] y)
+        static void poly_pointwise(final long[] result, final long[] x, final long[] y)
         { // Pointwise polynomial multiplication result = x.y
 
             for (int i = 0; i < PARAM_N; i++)
             {
-                result[i] = reduce((long)x[i] * y[i]);
+                result[i] = reduce(x[i] * y[i]);
             }
         }
 
-        static void poly_pointwise(long[] result, int rpos, long[] x, int xpos, long[] y)
+        static void poly_pointwise(final long[] result, final int rpos, final long[] x, final int xpos, final long[] y)
         { // Pointwise polynomial multiplication result = x.y
 
             for (int i = 0; i < PARAM_N; i++)
             {
-                result[i + rpos] = reduce((long)x[i + xpos] * y[i]);
+                result[i + rpos] = reduce(x[i + xpos] * y[i]);
             }
         }
 
 
-        static void poly_mul(long[] result, long[] x, long[] y)
+        static void poly_mul(final long[] result, final long[] x, final long[] y)
         { // Polynomial multiplication result = x*y, with in place reduction for (X^N+1)
             // The input x is assumed to be in NTT form
 //            long[] y_ntt = new long[PARAM_N];
@@ -1328,7 +1330,7 @@ class QTesla3p
         }
 
 
-        static void poly_mul(long[] result, int rpos, long[] x, int xpos, long[] y)
+        static void poly_mul(final long[] result, final int rpos, final long[] x, final int xpos, final long[] y)
         { // Polynomial multiplication result = x*y, with in place reduction for (X^N+1)
 
             poly_pointwise(result, rpos, x, xpos, y);
@@ -1336,7 +1338,7 @@ class QTesla3p
         }
 
 
-        static void poly_add(long[] result, long[] x, long[] y)
+        static void poly_add(final long[] result, final long[] x, final long[] y)
         { // Polynomial addition result = x+y
 
             for (int i = 0; i < PARAM_N; i++)
@@ -1345,7 +1347,7 @@ class QTesla3p
             }
         }
 
-        static void poly_sub(long[] result, int rpos, long[] x, int xpos, long[] y, int ypos)
+        static void poly_sub(final long[] result, final int rpos, final long[] x, final int xpos, final long[] y, final int ypos)
         { // Polynomial subtraction result = x-y
 
             for (int i = 0; i < PARAM_N; i++)
@@ -1355,30 +1357,30 @@ class QTesla3p
         }
 
 
-        static void poly_add_correct(long[] result, int rpos, long[] x, int xpos, long[] y, int ypos)
+        static void poly_add_correct(final long[] result, final int rpos, final long[] x, final int xpos, final long[] y, final int ypos)
         { // Polynomial addition result = x+y with correction
 
             for (int i = 0; i < PARAM_N; i++)
             {
                 result[rpos + i] = x[xpos + i] + y[ypos + i];
                 result[rpos + i] -= PARAM_Q;
-                result[rpos + i] += (result[rpos + i] >> (RADIX32 - 1)) & PARAM_Q;   // If result[i] >= q then subtract q
+                result[rpos + i] += result[rpos + i] >> RADIX32 - 1 & PARAM_Q;   // If result[i] >= q then subtract q
             }
         }
 
 
-        static void poly_sub_correct(int[] result, int[] x, int[] y)
+        static void poly_sub_correct(final int[] result, final int[] x, final int[] y)
         { // Polynomial subtraction result = x-y with correction
 
             for (int i = 0; i < PARAM_N; i++)
             {
                 result[i] = x[i] - y[i];
-                result[i] += (result[i] >> (RADIX32 - 1)) & PARAM_Q;    // If result[i] < 0 then add q
+                result[i] += result[i] >> RADIX32 - 1 & PARAM_Q;    // If result[i] < 0 then add q
             }
         }
 
 
-        static void sparse_mul8(long[] prod, int ppos, byte[] s, int spos, int[] pos_list, short[] sign_list)
+        static void sparse_mul8(final long[] prod, final int ppos, final byte[] s, final int spos, final int[] pos_list, final short[] sign_list)
         {
             int i, j, pos;
 
@@ -1402,10 +1404,10 @@ class QTesla3p
         }
 
 
-        static void sparse_mul8(long[] prod, byte[] s, int[] pos_list, short[] sign_list)
+        static void sparse_mul8(final long[] prod, final byte[] s, final int[] pos_list, final short[] sign_list)
         {
             int i, j, pos;
-            byte t[] = s;
+            final byte t[] = s;
 
             for (i = 0; i < PARAM_N; i++)
             {
@@ -1427,7 +1429,7 @@ class QTesla3p
         }
 
 
-        static void sparse_mul16(int[] prod, int s[], int pos_list[], short sign_list[])
+        static void sparse_mul16(final int[] prod, final int s[], final int pos_list[], final short sign_list[])
         {
             int i, j, pos;
 //            short[] t = s;
@@ -1452,7 +1454,7 @@ class QTesla3p
         }
 
 
-        static void sparse_mul32(int[] prod, int[] pk, int[] pos_list, short[] sign_list)
+        static void sparse_mul32(final int[] prod, final int[] pk, final int[] pos_list, final short[] sign_list)
         {
             int i, j, pos;
 
@@ -1475,7 +1477,7 @@ class QTesla3p
             }
         }
 
-        static void sparse_mul32(long[] prod, int ppos, int[] pk, int pkPos, int[] pos_list, short[] sign_list)
+        static void sparse_mul32(final long[] prod, final int ppos, final int[] pk, final int pkPos, final int[] pos_list, final short[] sign_list)
         {
             int i, j, pos;
 

@@ -12,57 +12,64 @@ import org.bouncycastle.operator.OperatorCreationException;
 public class BcDigestCalculatorProvider
     implements DigestCalculatorProvider
 {
-    private BcDigestProvider digestProvider = BcDefaultDigestProvider.INSTANCE;
+    private final BcDigestProvider digestProvider = BcDefaultDigestProvider.INSTANCE;
 
-    public DigestCalculator get(final AlgorithmIdentifier algorithm)
+    @Override
+	public DigestCalculator get(final AlgorithmIdentifier algorithm)
         throws OperatorCreationException
     {
-        Digest dig = digestProvider.get(algorithm);
+        final Digest dig = digestProvider.get(algorithm);
 
         final DigestOutputStream stream = new DigestOutputStream(dig);
 
         return new DigestCalculator()
         {
-            public AlgorithmIdentifier getAlgorithmIdentifier()
+            @Override
+			public AlgorithmIdentifier getAlgorithmIdentifier()
             {
                 return algorithm;
             }
 
-            public OutputStream getOutputStream()
+            @Override
+			public OutputStream getOutputStream()
             {
                 return stream;
             }
 
-            public byte[] getDigest()
+            @Override
+			public byte[] getDigest()
             {
                 return stream.getDigest();
             }
         };
     }
 
-    private class DigestOutputStream
+    private static class DigestOutputStream
         extends OutputStream
     {
-        private Digest dig;
+        private final Digest dig;
 
-        DigestOutputStream(Digest dig)
+        DigestOutputStream(final Digest dig)
         {
             this.dig = dig;
         }
 
-        public void write(byte[] bytes, int off, int len)
+        @Override
+		public void write(final byte[] bytes, final int off, final int len)
             throws IOException
         {
             dig.update(bytes, off, len);
         }
 
-        public void write(byte[] bytes)
+        @Override
+		public void write(final byte[] bytes)
             throws IOException
         {
             dig.update(bytes, 0, bytes.length);
         }
 
-        public void write(int b)
+        @Override
+		public void write(final int b)
             throws IOException
         {
             dig.update((byte)b);
@@ -70,7 +77,7 @@ public class BcDigestCalculatorProvider
 
         byte[] getDigest()
         {
-            byte[] d = new byte[dig.getDigestSize()];
+            final byte[] d = new byte[dig.getDigestSize()];
 
             dig.doFinal(d, 0);
 

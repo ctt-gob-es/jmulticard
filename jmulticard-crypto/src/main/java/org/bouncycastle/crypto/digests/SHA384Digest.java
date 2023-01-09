@@ -46,17 +46,20 @@ public class SHA384Digest
         restoreState(encodedState);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SHA-384";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[]  out,
         int     outOff)
     {
@@ -77,7 +80,8 @@ public class SHA384Digest
     /**
      * reset the chaining variables
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -95,19 +99,22 @@ public class SHA384Digest
         H8 = 0x47b5481dbefa4fa4l;
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new SHA384Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         SHA384Digest d = (SHA384Digest)other;
 
         super.copyIn(d);
     }
 
-    public byte[] getEncodedState()
+    @Override
+	public byte[] getEncodedState()
     {
         byte[] encoded = new byte[getEncodedStateSize()];
         super.populateState(encoded);

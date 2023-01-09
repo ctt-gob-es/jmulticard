@@ -21,28 +21,33 @@ public class BERBitStringParser
         _parser = parser;
     }
 
-    public InputStream getOctetStream() throws IOException
+    @Override
+	public InputStream getOctetStream() throws IOException
     {
         return _bitStream = new ConstructedBitStream(_parser, true);
     }
 
-    public InputStream getBitStream() throws IOException
+    @Override
+	public InputStream getBitStream() throws IOException
     {
         return _bitStream = new ConstructedBitStream(_parser, false);
     }
 
-    public int getPadBits()
+    @Override
+	public int getPadBits()
     {
         return _bitStream.getPadBits();
     }
 
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return parse(_parser);
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

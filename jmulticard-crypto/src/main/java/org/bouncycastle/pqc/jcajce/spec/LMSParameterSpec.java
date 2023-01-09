@@ -9,6 +9,7 @@ import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
  * ParameterSpec for the Leighton-Micali Hash-Based Signature (LMS) scheme.
  * @deprecated use LMSKeyGenParameterSpec
  */
+@Deprecated
 public class LMSParameterSpec
     implements AlgorithmParameterSpec
 {

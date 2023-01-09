@@ -173,7 +173,8 @@ class BENES13
 
     /* input: condition bits c */
     /* output: support s */
-    public void support_gen(short[] s, byte[] c)
+    @Override
+	public void support_gen(short[] s, byte[] c)
     {
         short a;
         int i, j;

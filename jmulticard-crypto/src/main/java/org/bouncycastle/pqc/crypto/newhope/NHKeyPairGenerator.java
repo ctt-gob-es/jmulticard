@@ -11,12 +11,14 @@ public class NHKeyPairGenerator
 {
     private SecureRandom random;
 
-    public void init(KeyGenerationParameters param)
+    @Override
+	public void init(KeyGenerationParameters param)
     {
         this.random = param.getRandom();
     }
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         byte[] pubData = new byte[NewHope.SENDA_BYTES];
         short[] secData = new short[NewHope.POLY_SIZE];

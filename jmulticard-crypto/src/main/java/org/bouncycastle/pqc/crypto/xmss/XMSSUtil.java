@@ -409,7 +409,8 @@ public class XMSSUtil
             this.mainClass = mainClass;
         }
 
-        protected Class<?> resolveClass(ObjectStreamClass desc)
+        @Override
+		protected Class<?> resolveClass(ObjectStreamClass desc)
             throws IOException,
             ClassNotFoundException
         {

@@ -44,7 +44,8 @@ public interface ASN1TaggedObjectParser
      *             the expected tag class (e.g.
      *             {@link ASN1Util#tryParseContextBaseUniversal(ASN1TaggedObjectParser, int, boolean, int)}.
      */
-    ASN1Encodable getObjectParser(int tag, boolean isExplicit)
+    @Deprecated
+	ASN1Encodable getObjectParser(int tag, boolean isExplicit)
         throws IOException;
 
     ASN1Encodable parseBaseUniversal(boolean declaredExplicit, int baseTagNo) throws IOException;

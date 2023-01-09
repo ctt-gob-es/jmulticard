@@ -157,7 +157,8 @@ public class BCRainbowPrivateKey
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (other == null || !(other instanceof BCRainbowPrivateKey))
         {
@@ -183,7 +184,8 @@ public class BCRainbowPrivateKey
         return eq;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = layers.length;
 
@@ -205,12 +207,14 @@ public class BCRainbowPrivateKey
     /**
      * @return name of the algorithm - "Rainbow"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "Rainbow";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         RainbowPrivateKey privateKey = new RainbowPrivateKey(A1inv, b1, A2inv, b2, vi, layers);
 
@@ -235,7 +239,8 @@ public class BCRainbowPrivateKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }

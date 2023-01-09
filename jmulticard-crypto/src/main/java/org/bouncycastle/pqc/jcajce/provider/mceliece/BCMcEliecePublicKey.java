@@ -21,9 +21,9 @@ public class BCMcEliecePublicKey
 {
     private static final long serialVersionUID = 1L;
 
-    private McEliecePublicKeyParameters params;
+    private final McEliecePublicKeyParameters params;
 
-    public BCMcEliecePublicKey(McEliecePublicKeyParameters params)
+    public BCMcEliecePublicKey(final McEliecePublicKeyParameters params)
     {
         this.params = params;
     }
@@ -33,7 +33,8 @@ public class BCMcEliecePublicKey
      *
      * @return "McEliece"
      */
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "McEliece";
     }
@@ -73,13 +74,14 @@ public class BCMcEliecePublicKey
     /**
      * @return a human readable form of the key
      */
-    public String toString()
+    @Override
+	public String toString()
     {
-        String result = "McEliecePublicKey:\n";
-        result += " length of the code         : " + params.getN() + "\n";
-        result += " error correction capability: " + params.getT() + "\n";
-        result += " generator matrix           : " + params.getG();
-        return result;
+        StringBuilder result = new StringBuilder("McEliecePublicKey:\n");
+        result.append(" length of the code         : ").append(params.getN()).append("\n");
+        result.append(" error correction capability: ").append(params.getT()).append("\n");
+        result.append(" generator matrix           : ").append(params.getG());
+        return result.toString();
     }
 
     /**
@@ -88,13 +90,14 @@ public class BCMcEliecePublicKey
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
         if (other instanceof BCMcEliecePublicKey)
         {
-            BCMcEliecePublicKey otherKey = (BCMcEliecePublicKey)other;
+            final BCMcEliecePublicKey otherKey = (BCMcEliecePublicKey)other;
 
-            return (params.getN() == otherKey.getN()) && (params.getT() == otherKey.getT()) && (params.getG().equals(otherKey.getG()));
+            return params.getN() == otherKey.getN() && params.getT() == otherKey.getT() && params.getG().equals(otherKey.getG());
         }
 
         return false;
@@ -103,7 +106,8 @@ public class BCMcEliecePublicKey
     /**
      * @return the hash code of this key
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return 37 * (params.getN() + 37 * params.getT()) + params.getG().hashCode();
     }
@@ -122,24 +126,26 @@ public class BCMcEliecePublicKey
      * </pre>
      * @return the keyData to encode in the SubjectPublicKeyInfo structure
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
-        McEliecePublicKey key = new McEliecePublicKey(params.getN(), params.getT(), params.getG());
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece);
+        final McEliecePublicKey key = new McEliecePublicKey(params.getN(), params.getT(), params.getG());
+        final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.mcEliece);
 
         try
         {
-            SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(algorithmIdentifier, key);
+            final SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(algorithmIdentifier, key);
 
             return subjectPublicKeyInfo.getEncoded();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             return null;
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }

@@ -27,7 +27,8 @@ public abstract class WNafUtil
 
         c.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
-            public PreCompInfo precompute(PreCompInfo existing)
+            @Override
+			public PreCompInfo precompute(PreCompInfo existing)
             {
                 WNafPreCompInfo existingWNaf = (existing instanceof WNafPreCompInfo) ? (WNafPreCompInfo)existing : null;
 
@@ -413,7 +414,8 @@ public abstract class WNafUtil
 
         return (WNafPreCompInfo)c.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
-            public PreCompInfo precompute(PreCompInfo existing)
+            @Override
+			public PreCompInfo precompute(PreCompInfo existing)
             {
                 WNafPreCompInfo existingWNaf = (existing instanceof WNafPreCompInfo) ? (WNafPreCompInfo)existing : null;
 
@@ -593,7 +595,8 @@ public abstract class WNafUtil
 
         return (WNafPreCompInfo)c.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
-            public PreCompInfo precompute(PreCompInfo existing)
+            @Override
+			public PreCompInfo precompute(PreCompInfo existing)
             {
                 WNafPreCompInfo existingWNaf = (existing instanceof WNafPreCompInfo) ? (WNafPreCompInfo)existing : null;
 

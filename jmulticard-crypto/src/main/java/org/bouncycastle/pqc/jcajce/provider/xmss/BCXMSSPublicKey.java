@@ -46,12 +46,14 @@ public class BCXMSSPublicKey
     /**
      * @return name of the algorithm - "XMSS"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "XMSS";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -64,7 +66,8 @@ public class BCXMSSPublicKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
@@ -74,7 +77,8 @@ public class BCXMSSPublicKey
         return keyParams;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -98,7 +102,8 @@ public class BCXMSSPublicKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         try
         {
@@ -111,12 +116,14 @@ public class BCXMSSPublicKey
         }
     }
 
-    public int getHeight()
+    @Override
+	public int getHeight()
     {
         return keyParams.getParameters().getHeight();
     }
 
-    public String getTreeDigest()
+    @Override
+	public String getTreeDigest()
     {
         return DigestUtil.getXMSSDigestName(treeDigest);
     }

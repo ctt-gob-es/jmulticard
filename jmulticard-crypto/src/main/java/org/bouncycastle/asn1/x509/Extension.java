@@ -303,7 +303,8 @@ public class Extension
         return convertValueToObject(this);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         if (this.isCritical())
         {
@@ -313,7 +314,8 @@ public class Extension
         return ~(this.getExtnValue().hashCode() ^ this.getExtnId().hashCode());
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  o)
     {
         if (!(o instanceof Extension))
@@ -328,7 +330,8 @@ public class Extension
             && (other.isCritical() == this.isCritical());
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector v = new ASN1EncodableVector(3);
 

@@ -41,7 +41,8 @@ public class BCXMSSMTPublicKey
         this.treeDigest =  DigestUtil.getDigestOID(this.keyParams.getTreeDigest());
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -58,7 +59,8 @@ public class BCXMSSMTPublicKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return treeDigest.hashCode() + 37 * Arrays.hashCode(keyParams.toByteArray());
     }
@@ -66,12 +68,14 @@ public class BCXMSSMTPublicKey
     /**
      * @return name of the algorithm - "XMSSMT"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "XMSSMT";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -85,7 +89,8 @@ public class BCXMSSMTPublicKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
@@ -95,17 +100,20 @@ public class BCXMSSMTPublicKey
         return keyParams;
     }
 
-    public int getHeight()
+    @Override
+	public int getHeight()
     {
         return keyParams.getParameters().getHeight();
     }
 
-    public int getLayers()
+    @Override
+	public int getLayers()
     {
         return keyParams.getParameters().getLayers();
     }
 
-    public String getTreeDigest()
+    @Override
+	public String getTreeDigest()
     {
         return DigestUtil.getXMSSDigestName(treeDigest);
     }

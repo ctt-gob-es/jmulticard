@@ -9,12 +9,14 @@ public class HSSKeyPairGenerator
 {
     HSSKeyGenerationParameters param;
 
-    public void init(KeyGenerationParameters param)
+    @Override
+	public void init(KeyGenerationParameters param)
     {
         this.param = (HSSKeyGenerationParameters)param;
     }
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         HSSPrivateKeyParameters privKey = HSS.generateHSSKeyPair(param);
 

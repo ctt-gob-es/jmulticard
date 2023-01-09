@@ -22,7 +22,8 @@ class DLTaggedObjectParser
      *
      * @return true if constructed, false otherwise.
      */
-    public boolean isConstructed()
+    @Override
+	public boolean isConstructed()
     {
         return _constructed;
     }
@@ -33,13 +34,15 @@ class DLTaggedObjectParser
      * @return an ASN1TaggedObject.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return _parser.loadTaggedDL(_tagClass, _tagNo, _constructed);
     }
 
-    public ASN1Encodable parseBaseUniversal(boolean declaredExplicit, int baseTagNo) throws IOException
+    @Override
+	public ASN1Encodable parseBaseUniversal(boolean declaredExplicit, int baseTagNo) throws IOException
     {
         if (declaredExplicit)
         {
@@ -56,7 +59,8 @@ class DLTaggedObjectParser
             :  _parser.parseImplicitPrimitive(baseTagNo);
     }
 
-    public ASN1Encodable parseExplicitBaseObject() throws IOException
+    @Override
+	public ASN1Encodable parseExplicitBaseObject() throws IOException
     {
         if (!_constructed)
         {
@@ -66,7 +70,8 @@ class DLTaggedObjectParser
         return _parser.readObject();
     }
 
-    public ASN1TaggedObjectParser parseExplicitBaseTagged() throws IOException
+    @Override
+	public ASN1TaggedObjectParser parseExplicitBaseTagged() throws IOException
     {
         if (!_constructed)
         {
@@ -76,7 +81,8 @@ class DLTaggedObjectParser
         return _parser.parseTaggedObject();
     }
 
-    public ASN1TaggedObjectParser parseImplicitBaseTagged(int baseTagClass, int baseTagNo) throws IOException
+    @Override
+	public ASN1TaggedObjectParser parseImplicitBaseTagged(int baseTagClass, int baseTagNo) throws IOException
     {
         // TODO[asn1] Special handling can be removed once ASN1ApplicationSpecific types removed.
         if (BERTags.APPLICATION == baseTagClass)

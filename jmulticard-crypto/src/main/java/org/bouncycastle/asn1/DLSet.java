@@ -65,7 +65,7 @@ public class DLSet
     /**
      * @param element - a single object that makes up the set.
      */
-    public DLSet(ASN1Encodable element)
+    public DLSet(final ASN1Encodable element)
     {
         super(element);
     }
@@ -73,7 +73,7 @@ public class DLSet
     /**
      * @param elementVector - a vector of objects making up the set.
      */
-    public DLSet(ASN1EncodableVector elementVector)
+    public DLSet(final ASN1EncodableVector elementVector)
     {
         super(elementVector, false);
     }
@@ -81,12 +81,12 @@ public class DLSet
     /**
      * create a set from an array of objects.
      */
-    public DLSet(ASN1Encodable[] elements)
+    public DLSet(final ASN1Encodable[] elements)
     {
         super(elements, false);
     }
 
-    DLSet(boolean isSorted, ASN1Encodable[] elements)
+    DLSet(final boolean isSorted, final ASN1Encodable[] elements)
     {
         super(isSorted, elements);
     }
@@ -95,22 +95,23 @@ public class DLSet
     {
         if (contentsLength < 0)
         {
-            int count = elements.length;
+            final int count = elements.length;
             int totalLength = 0;
 
             for (int i = 0; i < count; ++i)
             {
-                ASN1Primitive dlObject = elements[i].toASN1Primitive().toDLObject();
+                final ASN1Primitive dlObject = elements[i].toASN1Primitive().toDLObject();
                 totalLength += dlObject.encodedLength(true);
             }
 
-            this.contentsLength = totalLength;
+            contentsLength = totalLength;
         }
 
         return contentsLength;
     }
 
-    int encodedLength(boolean withTag) throws IOException
+    @Override
+	int encodedLength(final boolean withTag) throws IOException
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, getContentsLength());
     }
@@ -123,13 +124,14 @@ public class DLSet
      * ASN.1 descriptions given. Rather than just outputting SET,
      * we also have to specify CONSTRUCTED, and the objects length.
      */
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeIdentifier(withTag, BERTags.CONSTRUCTED | BERTags.SET);
 
-        ASN1OutputStream dlOut = out.getDLSubStream();
+        final ASN1OutputStream dlOut = out.getDLSubStream();
 
-        int count = elements.length;
+        final int count = elements.length;
         if (contentsLength >= 0 || count > 16)
         {
             out.writeDL(getContentsLength());
@@ -143,15 +145,15 @@ public class DLSet
         {
             int totalLength = 0;
 
-            ASN1Primitive[] dlObjects = new ASN1Primitive[count];
+            final ASN1Primitive[] dlObjects = new ASN1Primitive[count];
             for (int i = 0; i < count; ++i)
             {
-                ASN1Primitive dlObject = elements[i].toASN1Primitive().toDLObject();
+                final ASN1Primitive dlObject = elements[i].toASN1Primitive().toDLObject();
                 dlObjects[i] = dlObject;
                 totalLength += dlObject.encodedLength(true);
             }
 
-            this.contentsLength = totalLength;
+            contentsLength = totalLength;
             out.writeDL(totalLength);
 
             for (int i = 0; i < count; ++i)
@@ -161,7 +163,8 @@ public class DLSet
         }
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

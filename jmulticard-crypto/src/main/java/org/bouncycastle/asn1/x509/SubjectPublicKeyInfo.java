@@ -22,18 +22,18 @@ import org.bouncycastle.asn1.DERSequence;
 public class SubjectPublicKeyInfo
     extends ASN1Object
 {
-    private AlgorithmIdentifier     algId;
-    private ASN1BitString           keyData;
+    private final AlgorithmIdentifier     algId;
+    private final ASN1BitString           keyData;
 
     public static SubjectPublicKeyInfo getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static SubjectPublicKeyInfo getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof SubjectPublicKeyInfo)
         {
@@ -48,27 +48,28 @@ public class SubjectPublicKeyInfo
     }
 
     public SubjectPublicKeyInfo(
-        AlgorithmIdentifier algId,
-        ASN1Encodable       publicKey)
+        final AlgorithmIdentifier algId,
+        final ASN1Encodable       publicKey)
         throws IOException
     {
-        this.keyData = new DERBitString(publicKey);
+        keyData = new DERBitString(publicKey);
         this.algId = algId;
     }
 
     public SubjectPublicKeyInfo(
-        AlgorithmIdentifier algId,
-        byte[]              publicKey)
+        final AlgorithmIdentifier algId,
+        final byte[]              publicKey)
     {
-        this.keyData = new DERBitString(publicKey);
+        keyData = new DERBitString(publicKey);
         this.algId = algId;
     }
 
     /**
      @deprecated use SubjectPublicKeyInfo.getInstance()
      */
-    public SubjectPublicKeyInfo(
-        ASN1Sequence  seq)
+    @Deprecated
+	public SubjectPublicKeyInfo(
+        final ASN1Sequence  seq)
     {
         if (seq.size() != 2)
         {
@@ -76,10 +77,10 @@ public class SubjectPublicKeyInfo
                     + seq.size());
         }
 
-        Enumeration         e = seq.getObjects();
+        final Enumeration         e = seq.getObjects();
 
-        this.algId = AlgorithmIdentifier.getInstance(e.nextElement());
-        this.keyData = DERBitString.getInstance(e.nextElement());
+        algId = AlgorithmIdentifier.getInstance(e.nextElement());
+        keyData = DERBitString.getInstance(e.nextElement());
     }
 
     public AlgorithmIdentifier getAlgorithm()
@@ -91,7 +92,8 @@ public class SubjectPublicKeyInfo
      * @deprecated use getAlgorithm()
      * @return    alg ID.
      */
-    public AlgorithmIdentifier getAlgorithmId()
+    @Deprecated
+	public AlgorithmIdentifier getAlgorithmId()
     {
         return algId;
     }
@@ -119,7 +121,8 @@ public class SubjectPublicKeyInfo
      * @deprecated use parsePublicKey
      * @return the public key as an ASN.1 primitive.
      */
-    public ASN1Primitive getPublicKey()
+    @Deprecated
+	public ASN1Primitive getPublicKey()
         throws IOException
     {
         return ASN1Primitive.fromByteArray(keyData.getOctets());
@@ -143,9 +146,10 @@ public class SubjectPublicKeyInfo
      *                          publicKey BIT STRING }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
         v.add(algId);
         v.add(keyData);

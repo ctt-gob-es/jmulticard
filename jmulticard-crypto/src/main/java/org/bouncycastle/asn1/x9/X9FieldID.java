@@ -18,18 +18,18 @@ public class X9FieldID
     extends ASN1Object
     implements X9ObjectIdentifiers
 {
-    private ASN1ObjectIdentifier     id;
-    private ASN1Primitive parameters;
+    private final ASN1ObjectIdentifier     id;
+    private final ASN1Primitive parameters;
 
     /**
      * Constructor for elliptic curves over prime fields
      * <code>F<sub>2</sub></code>.
      * @param primeP The prime <code>p</code> defining the prime field.
      */
-    public X9FieldID(BigInteger primeP)
+    public X9FieldID(final BigInteger primeP)
     {
-        this.id = prime_field;
-        this.parameters = new ASN1Integer(primeP);
+        id = prime_field;
+        parameters = new ASN1Integer(primeP);
     }
 
     /**
@@ -41,7 +41,7 @@ public class X9FieldID
      * x<sup>k1</sup> + 1</code>
      * represents the reduction polynomial <code>f(z)</code>.
      */
-    public X9FieldID(int m, int k1)
+    public X9FieldID(final int m, final int k1)
     {
         this(m, k1, 0, 0);
     }
@@ -61,13 +61,13 @@ public class X9FieldID
      * x<sup>k3</sup> + x<sup>k2</sup> + x<sup>k1</sup> + 1</code>
      * represents the reduction polynomial <code>f(z)</code>..
      */
-    public X9FieldID(int m, int k1, int k2, int k3)
+    public X9FieldID(final int m, final int k1, final int k2, final int k3)
     {
-        this.id = characteristic_two_field;
-        ASN1EncodableVector fieldIdParams = new ASN1EncodableVector(3);
+        id = characteristic_two_field;
+        final ASN1EncodableVector fieldIdParams = new ASN1EncodableVector(3);
         fieldIdParams.add(new ASN1Integer(m));
-        
-        if (k2 == 0) 
+
+        if (k2 == 0)
         {
             if (k3 != 0)
             {
@@ -76,8 +76,8 @@ public class X9FieldID
 
             fieldIdParams.add(tpBasis);
             fieldIdParams.add(new ASN1Integer(k1));
-        } 
-        else 
+        }
+        else
         {
             if (k2 <= k1 || k3 <= k2)
             {
@@ -85,24 +85,24 @@ public class X9FieldID
             }
 
             fieldIdParams.add(ppBasis);
-            ASN1EncodableVector pentanomialParams = new ASN1EncodableVector(3);
+            final ASN1EncodableVector pentanomialParams = new ASN1EncodableVector(3);
             pentanomialParams.add(new ASN1Integer(k1));
             pentanomialParams.add(new ASN1Integer(k2));
             pentanomialParams.add(new ASN1Integer(k3));
             fieldIdParams.add(new DERSequence(pentanomialParams));
         }
-        
-        this.parameters = new DERSequence(fieldIdParams);
+
+        parameters = new DERSequence(fieldIdParams);
     }
 
     private X9FieldID(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
-        this.id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
-        this.parameters = seq.getObjectAt(1).toASN1Primitive();
+        id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+        parameters = seq.getObjectAt(1).toASN1Primitive();
     }
 
-    public static X9FieldID getInstance(Object obj)
+    public static X9FieldID getInstance(final Object obj)
     {
         if (obj instanceof X9FieldID)
         {
@@ -136,12 +136,13 @@ public class X9FieldID
      *  }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
-        v.add(this.id);
-        v.add(this.parameters);
+        v.add(id);
+        v.add(parameters);
 
         return new DERSequence(v);
     }

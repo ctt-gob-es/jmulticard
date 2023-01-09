@@ -54,7 +54,8 @@ public class DSAParameters
         return validation;
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  obj)
     {
         if (!(obj instanceof DSAParameters))
@@ -67,7 +68,8 @@ public class DSAParameters
         return (pm.getP().equals(p) && pm.getQ().equals(q) && pm.getG().equals(g));
     }
     
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return getP().hashCode() ^ getQ().hashCode() ^ getG().hashCode();
     }

@@ -23,7 +23,8 @@ public class DLSequenceParser
      * @return next object in SEQUENCE.
      * @throws IOException if there is an issue loading the object.
      */
-    public ASN1Encodable readObject()
+    @Override
+	public ASN1Encodable readObject()
         throws IOException
     {
         return _parser.readObject();
@@ -35,7 +36,8 @@ public class DLSequenceParser
      * @return a DLSequence.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
          return DLFactory.createSequence(_parser.readVector());
@@ -46,7 +48,8 @@ public class DLSequenceParser
      *
      * @return a DLSequence.
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

@@ -352,12 +352,14 @@ public class BigIntPolynomial
     /**
      * Makes a copy of the polynomial that is independent of the original.
      */
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new BigIntPolynomial(coeffs.clone());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int prime = 31;
         int result = 1;
@@ -365,7 +367,8 @@ public class BigIntPolynomial
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {

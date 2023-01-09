@@ -8,31 +8,31 @@ import org.bouncycastle.util.Arrays;
 
 class CMCEEngine
 {
-    private int SYS_N;       // = 3488;
-    private int SYS_T;       // = 64;
-    private int GFBITS;      // = 12;
+    private final int SYS_N;       // = 3488;
+    private final int SYS_T;       // = 64;
+    private final int GFBITS;      // = 12;
 
-    private int IRR_BYTES;   // = SYS_T * 2;
-    private int COND_BYTES;  // = (1 << (GFBITS-4))*(2*GFBITS - 1);
+    private final int IRR_BYTES;   // = SYS_T * 2;
+    private final int COND_BYTES;  // = (1 << (GFBITS-4))*(2*GFBITS - 1);
 
 
-    private int PK_NROWS;    // = SYS_T*GFBITS;
-    private int PK_NCOLS;    // = SYS_N - PK_NROWS;
-    private int PK_ROW_BYTES;// = (PK_NCOLS + 7)/8;
+    private final int PK_NROWS;    // = SYS_T*GFBITS;
+    private final int PK_NCOLS;    // = SYS_N - PK_NROWS;
+    private final int PK_ROW_BYTES;// = (PK_NCOLS + 7)/8;
 
-    private int SYND_BYTES;// = (PK_NROWS + 7)/8;
+    private final int SYND_BYTES;// = (PK_NROWS + 7)/8;
 
-    private int GFMASK;    // = (1 << GFBITS) - 1;
+    private final int GFMASK;    // = (1 << GFBITS) - 1;
 
-    private int[] poly; // only needed for key pair gen
+    private final int[] poly; // only needed for key pair gen
     private final int defaultKeySize;
 
     private GF gf;
     private BENES benes;
 
-    private boolean usePadding;
-    private boolean countErrorIndices;
-    private boolean usePivots; // used for compression
+    private final boolean usePadding;
+    private final boolean countErrorIndices;
+    private final boolean usePivots; // used for compression
 
     public int getIrrBytes()
     {
@@ -53,7 +53,7 @@ class CMCEEngine
     {
         if (usePadding)
         {
-            return PK_NROWS * ((SYS_N / 8 - ((PK_NROWS - 1) / 8)));
+            return PK_NROWS * (SYS_N / 8 - (PK_NROWS - 1) / 8);
         }
         return PK_NROWS * PK_NCOLS / 8;
     }
@@ -64,17 +64,17 @@ class CMCEEngine
         return SYND_BYTES + 32;
     }
 
-    public CMCEEngine(int m, int n, int t, int[] p, boolean usePivots, int defaultKeySize)
+    public CMCEEngine(final int m, final int n, final int t, final int[] p, final boolean usePivots, final int defaultKeySize)
     {
         this.usePivots = usePivots;
-        this.SYS_N = n;
-        this.SYS_T = t;
-        this.GFBITS = m;
-        this.poly = p;
+        SYS_N = n;
+        SYS_T = t;
+        GFBITS = m;
+        poly = p;
         this.defaultKeySize = defaultKeySize;
 
         IRR_BYTES = SYS_T * 2; // t * ceil(m/8)
-        COND_BYTES = (1 << (GFBITS - 4)) * (2 * GFBITS - 1);
+        COND_BYTES = (1 << GFBITS - 4) * (2 * GFBITS - 1);
 
         PK_NROWS = SYS_T * GFBITS;
         PK_NCOLS = SYS_N - PK_NROWS;
@@ -96,18 +96,18 @@ class CMCEEngine
 
         }
         usePadding = SYS_T % 8 != 0;
-        countErrorIndices = (1 << GFBITS) > SYS_N;
+        countErrorIndices = 1 << GFBITS > SYS_N;
     }
-    public byte[] generate_public_key_from_private_key(byte[] sk)
+    public byte[] generate_public_key_from_private_key(final byte[] sk)
     {
-        byte[] pk = new byte[getPublicKeySize()];
-        short[] pi = new short[1 << GFBITS];
-        long[] pivots = {0};
+        final byte[] pk = new byte[getPublicKeySize()];
+        final short[] pi = new short[1 << GFBITS];
+        final long[] pivots = {0};
 
         // generating the perm used to generate the private key
-        int[] perm = new int[1 << GFBITS];
-        byte[] hash = new byte[(SYS_N / 8) + ((1 << GFBITS) * 4)];
-        int hash_idx = hash.length - 32 - IRR_BYTES - ((1 << GFBITS) * 4);
+        final int[] perm = new int[1 << GFBITS];
+        final byte[] hash = new byte[SYS_N / 8 + (1 << GFBITS) * 4];
+        final int hash_idx = hash.length - 32 - IRR_BYTES - (1 << GFBITS) * 4;
 
         Xof digest;
         digest = new SHAKEDigest(256);
@@ -115,7 +115,7 @@ class CMCEEngine
         digest.update(sk, 0, 32);
         digest.doFinal(hash, 0, hash.length);
 
-        for (int i = 0; i < (1 << GFBITS); i++)
+        for (int i = 0; i < 1 << GFBITS; i++)
         {
             perm[i] = Utils.load4(hash, hash_idx + i * 4);
         }
@@ -124,9 +124,9 @@ class CMCEEngine
     }
 
     // generates the rest of the private key given the first 40 bytes
-    public byte[] decompress_private_key(byte[] sk)
+    public byte[] decompress_private_key(final byte[] sk)
     {
-        byte[] reg_sk = new byte[getPrivateKeySize()];
+        final byte[] reg_sk = new byte[getPrivateKeySize()];
         System.arraycopy(sk, 0, reg_sk, 0, sk.length);
 
         // s: n/8 (random string)
@@ -134,7 +134,7 @@ class CMCEEngine
         // g: IRR_BYTES (polynomial) (t * 2)
 
         // generate hash using the seed given in the sk (64 || first 32 bytes)
-        byte[] hash = new byte[(SYS_N / 8) + ((1 << GFBITS) * 4) + IRR_BYTES + 32];
+        final byte[] hash = new byte[SYS_N / 8 + (1 << GFBITS) * 4 + IRR_BYTES + 32];
 
         int hash_idx = 0;
         Xof digest;
@@ -147,9 +147,9 @@ class CMCEEngine
         // generate g
         if (sk.length <= 40)
         {
-            short[] field = new short[SYS_T];
+            final short[] field = new short[SYS_T];
 
-            byte[] reg_g = new byte[IRR_BYTES];
+            final byte[] reg_g = new byte[IRR_BYTES];
             hash_idx = hash.length - 32 - IRR_BYTES;
             for (int i = 0; i < SYS_T; i++)
             {
@@ -167,24 +167,24 @@ class CMCEEngine
         // generate a
         if (sk.length <= 40 + IRR_BYTES)
         {
-            int[] perm = new int[1 << GFBITS];
-            short[] pi = new short[1 << GFBITS];
+            final int[] perm = new int[1 << GFBITS];
+            final short[] pi = new short[1 << GFBITS];
 
-            hash_idx = hash.length - 32 - IRR_BYTES - ((1 << GFBITS) * 4);
-            for (int i = 0; i < (1 << GFBITS); i++)
+            hash_idx = hash.length - 32 - IRR_BYTES - (1 << GFBITS) * 4;
+            for (int i = 0; i < 1 << GFBITS; i++)
             {
                 perm[i] = Utils.load4(hash, hash_idx + i * 4);
             }
 
             if (usePivots)
             {
-                long[] pivots = {0};
+                final long[] pivots = {0};
                 pk_gen(null, reg_sk, perm, pi, pivots);
             }
             else
             {
-                long[] buf = new long[1 << GFBITS];
-                for (int i = 0; i < (1 << GFBITS); i++)
+                final long[] buf = new long[1 << GFBITS];
+                for (int i = 0; i < 1 << GFBITS; i++)
                 {
                     buf[i] = perm[i];
                     buf[i] <<= 31;
@@ -192,14 +192,14 @@ class CMCEEngine
                     buf[i] &= 0x7fffffffffffffffL; // getting rid of signed longs
                 }
                 sort64(buf, 0, buf.length);
-                for (int i = 0; i < (1 << GFBITS); i++)
+                for (int i = 0; i < 1 << GFBITS; i++)
                 {
                     pi[i] = (short)(buf[i] & GFMASK);
                 }
             }
 
 
-            byte[] out = new byte[COND_BYTES];
+            final byte[] out = new byte[COND_BYTES];
             controlbitsfrompermutation(out, pi, GFBITS, 1 << GFBITS);
             //copy the controlbits from the permutation to the private key
             System.arraycopy(out, 0, reg_sk, IRR_BYTES + 40, out.length);
@@ -210,23 +210,23 @@ class CMCEEngine
         return reg_sk;
     }
 
-    public void kem_keypair(byte[] pk, byte[] sk, SecureRandom random)
+    public void kem_keypair(final byte[] pk, final byte[] sk, final SecureRandom random)
     {
 
         // 1. Generate a uniform random l-bit string δ. (This is called a seed.)
-        byte[] seed_a = new byte[1];
+        final byte[] seed_a = new byte[1];
         byte[] seed_b = new byte[32];
         seed_a[0] = 64;
         random.nextBytes(seed_b);
 
         //2. Output SeededKeyGen(δ).
         // SeededKeyGen
-        byte[] E = new byte[(SYS_N / 8) + ((1 << GFBITS) * 4) + (SYS_T * 2) + 32];
+        final byte[] E = new byte[SYS_N / 8 + (1 << GFBITS) * 4 + SYS_T * 2 + 32];
         int seedIndex, skIndex = 0;
         byte[] prev_sk = seed_b;
-        long[] pivots = {0};
+        final long[] pivots = {0};
 
-        Xof digest = new SHAKEDigest(256);
+        final Xof digest = new SHAKEDigest(256);
         while (true)
         {
             // SeededKeyGen - 1. Compute E = G(δ), a string of n + σ2q + σ1t + l bits. (3488 + 32*4096 + 16*64 + 256)
@@ -252,8 +252,8 @@ class CMCEEngine
             // Create Field which is an element in gf2^mt
 
             // 2.4.1 Irreducible-polynomial generation
-            short[] field = new short[SYS_T];
-            int sigma1_t = E.length - 32 - (2 * SYS_T);
+            final short[] field = new short[SYS_T];
+            final int sigma1_t = E.length - 32 - 2 * SYS_T;
             seedIndex = sigma1_t;
 
 
@@ -281,19 +281,19 @@ class CMCEEngine
             // If this fails, set δ ←δ′ and restart the algorithm.
 
             // Generate permutation
-            int[] perm = new int[(1 << GFBITS)];
+            final int[] perm = new int[1 << GFBITS];
             seedIndex -= (1 << GFBITS) * 4;
 
             // FieldOrdering 2.4.2 - 1. Take the first σ2 input bits b0,b1,...,bσ2−1 as a σ2-bit integer a0 =
             // b0 + 2b1 + ··· + 2σ2−1bσ2−1, take the next σ2 bits as a σ2-bit integer a1, and so on through aq−1.
 
 
-            for (int i = 0; i < (1 << GFBITS); i++)
+            for (int i = 0; i < 1 << GFBITS; i++)
             {
                 perm[i] = Utils.load4(E, seedIndex + i * 4);
             }
             // generating public key
-            short[] pi = new short[1 << GFBITS];
+            final short[] pi = new short[1 << GFBITS];
 
 
             //8. Write Γ′ as (g,α′1,α′2,...,α′n)
@@ -306,7 +306,7 @@ class CMCEEngine
             // computing c using Nassimi-Sahni algorithm which is a
             // parallel algorithms to set up the Benes permutation network
 
-            byte[] out = new byte[COND_BYTES];
+            final byte[] out = new byte[COND_BYTES];
             controlbitsfrompermutation(out, pi, GFBITS, 1 << GFBITS);
 
             //copy the controlbits from the permutation to the private key
@@ -333,17 +333,17 @@ class CMCEEngine
     }
 
     // 2.2.3 Encoding subroutine
-    private void syndrome(byte[] cipher_text, byte[] pk, byte[] error_vector)
+    private void syndrome(final byte[] cipher_text, final byte[] pk, final byte[] error_vector)
     {
         /*
         2.2.3 Encoding subroutine
         1. Define H = (In−k |T)
         2. Compute and return C0 = He ∈Fn−k2 .
          */
-        short[] row = new short[SYS_N / 8];
+        final short[] row = new short[SYS_N / 8];
         int i, j, pk_ptr = 0;
         byte b;
-        int tail = PK_NROWS % 8;
+        final int tail = PK_NROWS % 8;
 
         for (i = 0; i < SYND_BYTES; i++)
         {
@@ -365,13 +365,13 @@ class CMCEEngine
             {
                 for (j = SYS_N / 8 - 1; j >= SYS_N / 8 - PK_ROW_BYTES; j--)
                 {
-                    row[j] = (short)((((row[j] & 0xff) << tail) | ((row[j - 1] & 0xff) >>> (8 - tail))) & 0xff);
+                    row[j] = (short)(((row[j] & 0xff) << tail | (row[j - 1] & 0xff) >>> 8 - tail) & 0xff);
 //                    System.out.printf("%04x ", row[j]);
                 }
             }
 
 
-            row[i / 8] |= 1 << (i % 8);
+            row[i / 8] |= 1 << i % 8;
 
             b = 0;
             for (j = 0; j < SYS_N / 8; j++)
@@ -384,19 +384,19 @@ class CMCEEngine
             b ^= b >>> 1;
             b &= 1;
 
-            cipher_text[i / 8] |= (b << (i % 8));
+            cipher_text[i / 8] |= b << i % 8;
 
             pk_ptr += PK_ROW_BYTES;
         }
     }
 
     // 2.4.4 Fixed-weight-vector generation
-    private void generate_error_vector(byte[] error_vector, SecureRandom random)
+    private void generate_error_vector(final byte[] error_vector, final SecureRandom random)
     {
         byte[] buf_bytes;
-        short[] buf_nums = new short[SYS_T * 2];
-        short[] ind = new short[SYS_T];
-        byte[] val = new byte[SYS_T];
+        final short[] buf_nums = new short[SYS_T * 2];
+        final short[] ind = new short[SYS_T];
+        final byte[] val = new byte[SYS_T];
 
         /*
         2.4.4 Fixed-weight-vector generation
@@ -508,7 +508,7 @@ class CMCEEngine
         }
     }
 
-    private void encrypt(byte[] cipher_text, byte[] pk, byte[] error_vector, SecureRandom random)
+    private void encrypt(final byte[] cipher_text, final byte[] pk, final byte[] error_vector, final SecureRandom random)
     {
         /*
         2.4.5 Encapsulation
@@ -526,9 +526,9 @@ class CMCEEngine
     }
 
     // 2.4.5 Encapsulation
-    public int kem_enc(byte[] cipher_text, byte[] key, byte[] pk, SecureRandom random)
+    public int kem_enc(final byte[] cipher_text, final byte[] key, final byte[] pk, final SecureRandom random)
     {
-        byte[] error_vector = new byte[SYS_N / 8];
+        final byte[] error_vector = new byte[SYS_N / 8];
         byte mask;
         int i, padding_ok = 0;
         if (usePadding)
@@ -551,7 +551,7 @@ class CMCEEngine
 
         // C1 = 0x2 || error_vector
         // C = C0 || SHAKE256(C1, 32)
-        Xof digest = new SHAKEDigest(256);
+        final Xof digest = new SHAKEDigest(256);
         digest.update((byte)0x02);
         digest.update(error_vector, 0, error_vector.length); // input
         digest.doFinal(cipher_text, SYND_BYTES, 32);     // output
@@ -590,10 +590,10 @@ class CMCEEngine
     }
 
     // 2.3.3 Decapsulation
-    public int kem_dec(byte[] key, byte[] cipher_text, byte[] sk)
+    public int kem_dec(final byte[] key, final byte[] cipher_text, final byte[] sk)
     {
-        byte[] conf = new byte[32];
-        byte[] error_vector = new byte[SYS_N / 8];
+        final byte[] conf = new byte[32];
+        final byte[] error_vector = new byte[SYS_N / 8];
 
         int i, padding_ok = 0;
         byte mask;
@@ -608,7 +608,7 @@ class CMCEEngine
          */
 
         // Decrypt
-        byte ret_decrypt = (byte)decrypt(error_vector, sk, cipher_text);
+        final byte ret_decrypt = (byte)decrypt(error_vector, sk, cipher_text);
 
 
         /*
@@ -638,7 +638,7 @@ class CMCEEngine
         m >>= 8;
         m &= 0xff;
 
-        byte[] preimage = new byte[1 + SYS_N / 8 + (SYND_BYTES + 32)];
+        final byte[] preimage = new byte[1 + SYS_N / 8 + SYND_BYTES + 32];
 
         /*
         2.3.3 Decapsulation
@@ -647,7 +647,7 @@ class CMCEEngine
         preimage[0] = (byte)(m & 1);
         for (i = 0; i < SYS_N / 8; i++)
         {
-            preimage[1 + i] = (byte)((~m & sk[i + 40 + IRR_BYTES + COND_BYTES]) | (m & error_vector[i]));
+            preimage[1 + i] = (byte)(~m & sk[i + 40 + IRR_BYTES + COND_BYTES] | m & error_vector[i]);
         }
         for (i = 0; i < SYND_BYTES + 32; i++)
         {
@@ -682,20 +682,20 @@ class CMCEEngine
 
     // 2.2.4 Decoding subroutine
     // Niederreiter decryption with the Berlekamp decoder
-    private int decrypt(byte[] error_vector, byte[] sk, byte[] cipher_text)
+    private int decrypt(final byte[] error_vector, final byte[] sk, final byte[] cipher_text)
     {
 
-        short[] g = new short[SYS_T + 1];
-        short[] L = new short[SYS_N];
+        final short[] g = new short[SYS_T + 1];
+        final short[] L = new short[SYS_N];
 
-        short[] s = new short[SYS_T * 2];
-        short[] s_cmp = new short[SYS_T * 2];
-        short[] locator = new short[SYS_T + 1];
-        short[] images = new short[SYS_N];
+        final short[] s = new short[SYS_T * 2];
+        final short[] s_cmp = new short[SYS_T * 2];
+        final short[] locator = new short[SYS_T + 1];
+        final short[] images = new short[SYS_N];
 
         short t;
 
-        byte[] r = new byte[SYS_N / 8];
+        final byte[] r = new byte[SYS_N / 8];
 
         /*
         2.2.4 Decoding subroutine
@@ -750,7 +750,7 @@ class CMCEEngine
         {
             t = (short)(gf.gf_iszero(images[i]) & 1);
 
-            error_vector[i / 8] |= t << (i % 8);
+            error_vector[i / 8] |= t << i % 8;
             w += t;
         }
 
@@ -780,7 +780,7 @@ class CMCEEngine
         return check ^ 1;
     }
 
-    private static int min(short a, int b)
+    private static int min(final short a, final int b)
     {
         if (a < b)
         {
@@ -792,7 +792,7 @@ class CMCEEngine
     /* the Berlekamp-Massey algorithm */
     /* input: s, sequence of field elements */
     /* output: out, minimal polynomial of s */
-    private void bm(short[] out, short[] s)
+    private void bm(final short[] out, final short[] s)
     {
         int i;
 
@@ -801,9 +801,9 @@ class CMCEEngine
         short mle;
         short mne;
 
-        short[] T = new short[SYS_T + 1];
-        short[] C = new short[SYS_T + 1];
-        short[] B = new short[SYS_T + 1];
+        final short[] T = new short[SYS_T + 1];
+        final short[] C = new short[SYS_T + 1];
+        final short[] B = new short[SYS_T + 1];
 
         short b = 1, d, f;
         //
@@ -849,14 +849,14 @@ class CMCEEngine
             {
                 C[i] ^= gf.gf_mul(f, B[i]) & mne;
             }
-            L = (short)((L & ~mle) | ((N + 1 - L) & mle));
+            L = (short)(L & ~mle | N + 1 - L & mle);
 
             for (i = 0; i <= SYS_T; i++)
             {
-                B[i] = (short)((B[i] & ~mle) | (T[i] & mle));
+                B[i] = (short)(B[i] & ~mle | T[i] & mle);
             }
 
-            b = (short)((b & ~mle) | (d & mle));
+            b = (short)(b & ~mle | d & mle);
 
             for (i = SYS_T; i >= 1; i--)
             {
@@ -874,7 +874,7 @@ class CMCEEngine
 
     /* input: Goppa polynomial f, support L, received word r */
     /* output: out, the syndrome of length 2t */
-    private void synd(short[] out, short[] f, short[] L, byte[] r)
+    private void synd(final short[] out, final short[] f, final short[] L, final byte[] r)
     {
         int i, j;
         short e, e_inv, c;
@@ -886,7 +886,7 @@ class CMCEEngine
 
         for (i = 0; i < SYS_N; i++)
         {
-            c = (short)((r[i / 8] >> (i % 8)) & 1);
+            c = (short)(r[i / 8] >> i % 8 & 1);
 
             e = eval(f, L[i]);
             e_inv = gf.gf_inv(gf.gf_mul(e, e));
@@ -899,14 +899,15 @@ class CMCEEngine
         }
     }
 
-    private int mov_columns(byte[][] mat, short[] pi, long[] pivots)
+    private int mov_columns(final byte[][] mat, final short[] pi, final long[] pivots)
     {
         int i, j, k, s, block_idx, row, tail;
-        long[] buf = new long[64],
+        final long[] buf = new long[64],
             ctz_list = new long[32];
-        long t, d, mask, one = 1;
+        long t, d, mask;
+		final long one = 1;
 
-        byte[] tmp = new byte[9]; // Used for padding
+        final byte[] tmp = new byte[9]; // Used for padding
 
         row = PK_NROWS - 32;
         block_idx = row / 8;
@@ -923,7 +924,7 @@ class CMCEEngine
                 }
                 for (j = 0; j < 8; j++)
                 {
-                    tmp[j] = (byte)(((tmp[j] & 0xff) >> tail) | (tmp[j + 1] << (8 - tail)));
+                    tmp[j] = (byte)((tmp[j] & 0xff) >> tail | tmp[j + 1] << 8 - tail);
                 }
 
                 buf[i] = Utils.load8(tmp, 0);
@@ -961,13 +962,13 @@ class CMCEEngine
 
             for (j = i + 1; j < 32; j++)
             {
-                mask = (buf[i] >> s) & 1;
+                mask = buf[i] >> s & 1;
                 mask -= 1;
                 buf[i] ^= buf[j] & mask;
             }
             for (j = i + 1; j < 32; j++)
             {
-                mask = (buf[j] >> s) & 1;
+                mask = buf[j] >> s & 1;
                 mask = -mask;
                 buf[j] ^= buf[i] & mask;
             }
@@ -998,7 +999,7 @@ class CMCEEngine
                 }
                 for (k = 0; k < 8; k++)
                 {
-                    tmp[k] = (byte)(((tmp[k] & 0xff) >> tail) | (tmp[k + 1] << (8 - tail)));
+                    tmp[k] = (byte)((tmp[k] & 0xff) >> tail | tmp[k + 1] << 8 - tail);
                 }
                 t = Utils.load8(tmp, 0);
             }
@@ -1020,12 +1021,12 @@ class CMCEEngine
             {
                 Utils.store8(tmp, 0, t);
 
-                mat[i][block_idx + 8] = (byte)(((mat[i][block_idx + 8] & 0xff) >>> tail << tail) | ((tmp[7] & 0xff) >>> (8 - tail)));
-                mat[i][block_idx + 0] = (byte)(((tmp[0] & 0xff) << tail) | ((mat[i][block_idx] & 0xff) << (8 - tail) >>> (8 - tail)));
+                mat[i][block_idx + 8] = (byte)((mat[i][block_idx + 8] & 0xff) >>> tail << tail | (tmp[7] & 0xff) >>> 8 - tail);
+                mat[i][block_idx + 0] = (byte)((tmp[0] & 0xff) << tail | (mat[i][block_idx] & 0xff) << 8 - tail >>> 8 - tail);
 
                 for (k = 7; k >= 1; k--)
                 {
-                    mat[i][block_idx + k] = (byte)(((tmp[k] & 0xff) << tail) | ((tmp[k - 1] & 0xff) >>> (8 - tail)));
+                    mat[i][block_idx + k] = (byte)((tmp[k] & 0xff) << tail | (tmp[k - 1] & 0xff) >>> 8 - tail);
                 }
             }
             else
@@ -1038,13 +1039,13 @@ class CMCEEngine
     }
 
     /* return number of trailing zeros of the non-zero input in */
-    private static int ctz(long in)
+    private static int ctz(final long in)
     {
         int i, b, m = 0, r = 0;
 
         for (i = 0; i < 64; i++)
         {
-            b = (int)((in >> i) & 1);
+            b = (int)(in >> i & 1);
             m |= b;
             r += (m ^ 1) & (b ^ 1);
         }
@@ -1053,20 +1054,18 @@ class CMCEEngine
     }
 
     /* Used in mov columns*/
-    static private long same_mask64(short x, short y)
+    static private long same_mask64(final short x, final short y)
     {
         long mask;
 
         mask = x ^ y;
         mask -= 1;
         mask >>>= 63;
-        mask = -mask;
-
-        return mask;
+        return -mask;
     }
 
     /* Used in error vector generation*/
-    private static byte same_mask32(short x, short y)
+    private static byte same_mask32(final short x, final short y)
     {
         int mask;
 
@@ -1077,10 +1076,10 @@ class CMCEEngine
         return (byte)(mask & 0xFF);
     }
 
-    private static void layer(short[] p, byte[] out, int ptrIndex, int s, int n)
+    private static void layer(final short[] p, final byte[] out, final int ptrIndex, final int s, final int n)
     {
         int i, j;
-        int stride = 1 << s;
+        final int stride = 1 << s;
         int index = 0;
         int d, m;
 
@@ -1089,7 +1088,7 @@ class CMCEEngine
             for (j = 0; j < stride; j++)
             {
                 d = p[i + j] ^ p[i + j + stride];
-                m = (out[ptrIndex + (index >> 3)] >> (index & 7)) & 1;
+                m = out[ptrIndex + (index >> 3)] >> (index & 7) & 1;
                 m = -m;
                 d &= m;
                 p[i + j] ^= d;
@@ -1099,16 +1098,16 @@ class CMCEEngine
         }
     }
 
-    private static void controlbitsfrompermutation(byte[] out, short[] pi, long w, long n)
+    private static void controlbitsfrompermutation(final byte[] out, final short[] pi, final long w, final long n)
     {
-        int[] temp = new int[(int)(2 * n)];
-        short[] pi_test = new short[(int)n];
+        final int[] temp = new int[(int)(2 * n)];
+        final short[] pi_test = new short[(int)n];
         short diff;
         int i;
         int ptrIndex;
         while (true)
         {
-            for (i = 0; i < (((2 * w - 1) * n / 2) + 7) / 8; i++)
+            for (i = 0; i < ((2 * w - 1) * n / 2 + 7) / 8; i++)
             {
                 out[i] = 0;
             }
@@ -1146,9 +1145,9 @@ class CMCEEngine
         }
     }
 
-    static short get_q_short(int[] temp, int q_index)
+    static short get_q_short(final int[] temp, final int q_index)
     {
-        int temp_index = q_index / 2;
+        final int temp_index = q_index / 2;
         if (q_index % 2 == 0)
         {
             return (short)temp[temp_index];
@@ -1159,7 +1158,7 @@ class CMCEEngine
         }
     }
 
-    static void cbrecursion(byte[] out, long pos, long step, short[] pi, int qIndex, long w, long n, int[] temp)
+    static void cbrecursion(final byte[] out, long pos, final long step, final short[] pi, final int qIndex, final long w, final long n, final int[] temp)
     {
         long x, i, j, k;
 
@@ -1173,33 +1172,33 @@ class CMCEEngine
         {
             for (x = 0; x < n; ++x)
             {
-                temp[(int)x] = ((pi[(int)x] ^ 1) << 16) | pi[(int)(x ^ 1)];
+                temp[(int)x] = (pi[(int)x] ^ 1) << 16 | pi[(int)(x ^ 1)];
             }
         }
         else
         {
             for (x = 0; x < n; ++x)
             {
-                temp[(int)x] = ((get_q_short(temp, (int)(qIndex + x)) ^ 1) << 16) | get_q_short(temp, (int)((qIndex) + (x ^ 1)));
+                temp[(int)x] = (get_q_short(temp, (int)(qIndex + x)) ^ 1) << 16 | get_q_short(temp, (int)(qIndex + (x ^ 1)));
             }
         }
         sort32(temp, 0, (int)n); /* A = (id<<16)+pibar */
 
         for (x = 0; x < n; ++x)
         {
-            int Ax = temp[(int)x];
-            int px = Ax & 0xffff;
+            final int Ax = temp[(int)x];
+            final int px = Ax & 0xffff;
             int cx = px;
             if (x < cx)
             {
                 cx = (int)x;
             }
-            temp[(int)(n + x)] = (px << 16) | cx;
+            temp[(int)(n + x)] = px << 16 | cx;
         }
 
         for (x = 0; x < n; ++x)
         {
-            temp[(int)x] = (int)((temp[(int)x] << 16) | x); /* A = (pibar<<16)+id */
+            temp[(int)x] = (int)(temp[(int)x] << 16 | x); /* A = (pibar<<16)+id */
         }
         sort32(temp, 0, (int)n); /* A = (id<<16)+pibar^-1 */
 
@@ -1213,7 +1212,7 @@ class CMCEEngine
         {
             for (x = 0; x < n; ++x)
             {
-                temp[(int)(n + x)] = ((temp[(int)x] & 0xffff) << 10) | (temp[(int)(n + x)] & 0x3ff);
+                temp[(int)(n + x)] = (temp[(int)x] & 0xffff) << 10 | temp[(int)(n + x)] & 0x3ff;
             }
 
             for (i = 1; i < w - 1; ++i)
@@ -1222,20 +1221,20 @@ class CMCEEngine
 
                 for (x = 0; x < n; ++x)
                 {
-                    temp[(int)x] = (int)(((temp[(int)(n + x)] & ~0x3ff) << 6) | x); /* A = (p<<16)+id */
+                    temp[(int)x] = (int)((temp[(int)(n + x)] & ~0x3ff) << 6 | x); /* A = (p<<16)+id */
                 }
                 sort32(temp, 0, (int)n); /* A = (id<<16)+p^{-1} */
 
                 for (x = 0; x < n; ++x)
                 {
-                    temp[(int)x] = (temp[(int)x] << 20) | temp[(int)(n + x)]; /* A = (p^{-1}<<20)+(p<<10)+c */
+                    temp[(int)x] = temp[(int)x] << 20 | temp[(int)(n + x)]; /* A = (p^{-1}<<20)+(p<<10)+c */
                 }
                 sort32(temp, 0, (int)n); /* A = (id<<20)+(pp<<10)+cp */
 
                 for (x = 0; x < n; ++x)
                 {
-                    int ppcpx = temp[(int)x] & 0xfffff;
-                    int ppcx = (temp[(int)x] & 0xffc00) | (temp[(int)(n + x)] & 0x3ff);
+                    final int ppcpx = temp[(int)x] & 0xfffff;
+                    int ppcx = temp[(int)x] & 0xffc00 | temp[(int)(n + x)] & 0x3ff;
                     if (ppcpx < ppcx)
                     {
                         ppcx = ppcpx;
@@ -1252,19 +1251,19 @@ class CMCEEngine
         {
             for (x = 0; x < n; ++x)
             {
-                temp[(int)(n + x)] = (temp[(int)x] << 16) | (temp[(int)(n + x)] & 0xffff);
+                temp[(int)(n + x)] = temp[(int)x] << 16 | temp[(int)(n + x)] & 0xffff;
             }
             for (i = 1; i < w - 1; ++i)
             {
                 /* B = (p<<16)+c */
                 for (x = 0; x < n; ++x)
                 {
-                    temp[(int)x] = (int)((temp[(int)(n + x)] & ~0xffff) | x);
+                    temp[(int)x] = (int)(temp[(int)(n + x)] & ~0xffff | x);
                 }
                 sort32(temp, 0, (int)n); /* A = (id<<16)+p^(-1) */
                 for (x = 0; x < n; ++x)
                 {
-                    temp[(int)x] = (temp[(int)x] << 16) | (temp[(int)(n + x)] & 0xffff);
+                    temp[(int)x] = temp[(int)x] << 16 | temp[(int)(n + x)] & 0xffff;
                 }
 
                 /* A = p^(-1)<<16+c */
@@ -1273,14 +1272,14 @@ class CMCEEngine
                     //if loop 1 B
                     for (x = 0; x < n; ++x)
                     {
-                        temp[(int)(n + x)] = (temp[(int)x] & ~0xffff) | (temp[(int)(n + x)] >> 16);
+                        temp[(int)(n + x)] = temp[(int)x] & ~0xffff | temp[(int)(n + x)] >> 16;
                     }
                     /* B = (p^(-1)<<16)+p */
 
                     sort32(temp, (int)n, (int)(n * 2)); /* B = (id<<16)+p^(-2) */
                     for (x = 0; x < n; ++x)
                     {
-                        temp[(int)(n + x)] = (temp[(int)(n + x)] << 16) | (temp[(int)x] & 0xffff);
+                        temp[(int)(n + x)] = temp[(int)(n + x)] << 16 | temp[(int)x] & 0xffff;
                     }
                     /* B = (p^(-2)<<16)+c */
                 }
@@ -1290,7 +1289,7 @@ class CMCEEngine
                 /* A = id<<16+cp */
                 for (x = 0; x < n; ++x)
                 {
-                    int cpx = (temp[(int)(n + x)] & ~0xffff) | (temp[(int)x] & 0xffff);
+                    final int cpx = temp[(int)(n + x)] & ~0xffff | temp[(int)x] & 0xffff;
                     if (cpx < temp[(int)(n + x)])
                     {
                         temp[(int)(n + x)] = cpx;
@@ -1306,14 +1305,14 @@ class CMCEEngine
         {
             for (x = 0; x < n; ++x)
             {
-                temp[(int)x] = (int)((((int)pi[(int)x]) << 16) + x);
+                temp[(int)x] = (int)((pi[(int)x] << 16) + x);
             }
         }
         else
         {
             for (x = 0; x < n; ++x)
             {
-                temp[(int)x] = (int)(((get_q_short(temp, (int)(qIndex + x))) << 16) + x);
+                temp[(int)x] = (int)((get_q_short(temp, (int)(qIndex + x)) << 16) + x);
             }
         }
 
@@ -1321,16 +1320,16 @@ class CMCEEngine
 
         for (j = 0; j < n / 2; ++j)
         {
-            long _x = 2 * j;
-            int fj = temp[(int)(n + _x)] & 1; /* f[j] */
-            int Fx = (int)(_x + fj); /* F[x] */
-            int Fx1 = Fx ^ 1; /* F[x+1] */
+            final long _x = 2 * j;
+            final int fj = temp[(int)(n + _x)] & 1; /* f[j] */
+            final int Fx = (int)(_x + fj); /* F[x] */
+            final int Fx1 = Fx ^ 1; /* F[x+1] */
 
             out[(int)(pos >> 3)] ^= fj << (pos & 7);
             pos += step;
 
-            temp[(int)(n + _x)] = (temp[(int)_x] << 16) | Fx;
-            temp[(int)(n + _x + 1)] = (temp[(int)(_x + 1)] << 16) | Fx1;
+            temp[(int)(n + _x)] = temp[(int)_x] << 16 | Fx;
+            temp[(int)(n + _x + 1)] = temp[(int)(_x + 1)] << 16 | Fx1;
         }
         /* B = (pi^(-1)<<16)+F */
 
@@ -1340,16 +1339,16 @@ class CMCEEngine
 
         for (k = 0; k < n / 2; ++k)
         {
-            long y = 2 * k;
-            int lk = temp[(int)(n + y)] & 1; /* l[k] */
-            int Ly = (int)(y + lk); /* L[y] */
-            int Ly1 = Ly ^ 1; /* L[y+1] */
+            final long y = 2 * k;
+            final int lk = temp[(int)(n + y)] & 1; /* l[k] */
+            final int Ly = (int)(y + lk); /* L[y] */
+            final int Ly1 = Ly ^ 1; /* L[y+1] */
 
             out[(int)(pos >> 3)] ^= lk << (pos & 7);
             pos += step;
 
-            temp[(int)y] = (Ly << 16) | (temp[(int)(n + y)] & 0xffff);
-            temp[(int)(y + 1)] = (Ly1 << 16) | (temp[(int)(n + y + 1)] & 0xffff);
+            temp[(int)y] = Ly << 16 | temp[(int)(n + y)] & 0xffff;
+            temp[(int)(y + 1)] = Ly1 << 16 | temp[(int)(n + y + 1)] & 0xffff;
         }
         /* A = (L<<16)+F(pi) */
 
@@ -1357,7 +1356,7 @@ class CMCEEngine
 
         pos -= (2 * w - 2) * step * (n / 2);
 
-        short[] q = new short[(int)n * 4];
+        final short[] q = new short[(int)n * 4];
         for (i = 0/*n + n/4*/; i < n * 2; i++)
         {
             q[(int)(i * 2 + 0)] = (short)temp[(int)i];
@@ -1370,15 +1369,15 @@ class CMCEEngine
         }
         for (i = 0; i < n / 2; i++)
         {
-            temp[(int)(n + n / 4 + i)] = (((int)q[(int)(i * 2 + 1)]) << 16) | ((int)q[(int)(i * 2)]);
+            temp[(int)(n + n / 4 + i)] = q[(int)(i * 2 + 1)] << 16 | q[(int)(i * 2)];
         }
         cbrecursion(out, pos, step * 2, null, (int)(n + n / 4) * 2, w - 1, n / 2, temp);
         cbrecursion(out, pos + step, step * 2, null, (int)((n + n / 4) * 2 + n / 2), w - 1, n / 2, temp);
     }
 
-    private int pk_gen(byte[] pk, byte[] sk, int[] perm, short[] pi, long[] pivots)
+    private int pk_gen(final byte[] pk, final byte[] sk, final int[] perm, final short[] pi, final long[] pivots)
     {
-        short[] g = new short[SYS_T + 1]; // Goppa polynomial
+        final short[] g = new short[SYS_T + 1]; // Goppa polynomial
         int i, j, k;
         g[SYS_T] = 1;
 
@@ -1388,8 +1387,8 @@ class CMCEEngine
         }
 
         // Create buffer
-        long[] buf = new long[1 << GFBITS];
-        for (i = 0; i < (1 << GFBITS); i++)
+        final long[] buf = new long[1 << GFBITS];
+        for (i = 0; i < 1 << GFBITS; i++)
         {
             buf[i] = perm[i];
             buf[i] <<= 31;
@@ -1403,9 +1402,9 @@ class CMCEEngine
         sort64(buf, 0, buf.length);
 
         // FieldOrdering 2.4.2 - 2. If a0,a1,...,aq−1 are not distinct, return ⊥.
-        for (i = 1; i < (1 << GFBITS); i++)
+        for (i = 1; i < 1 << GFBITS; i++)
         {
-            if ((buf[i - 1] >> 31) == (buf[i] >> 31))
+            if (buf[i - 1] >> 31 == buf[i] >> 31)
             {
 //                System.out.println("FAIL 1");
                 return -1;
@@ -1413,8 +1412,8 @@ class CMCEEngine
         }
 
         // FieldOrdering 2.4.2 - 4.
-        short[] L = new short[SYS_N];
-        for (i = 0; i < (1 << GFBITS); i++)
+        final short[] L = new short[SYS_N];
+        for (i = 0; i < 1 << GFBITS; i++)
         {
             pi[i] = (short)(buf[i] & GFMASK);
         }
@@ -1424,7 +1423,7 @@ class CMCEEngine
         }
 
         // filling matrix
-        short[] inv = new short[SYS_N];
+        final short[] inv = new short[SYS_N];
 
         root(inv, g, L);
 
@@ -1432,7 +1431,7 @@ class CMCEEngine
         {
             inv[i] = gf.gf_inv(inv[i]);
         }
-        byte[][] mat = new byte[PK_NROWS][(SYS_N / 8)];
+        final byte[][] mat = new byte[PK_NROWS][SYS_N / 8];
         byte b;
         for (i = 0; i < PK_NROWS; i++)
         {
@@ -1448,21 +1447,21 @@ class CMCEEngine
             {
                 for (k = 0; k < GFBITS; k++)
                 {
-                    b = (byte)((inv[j + 7] >>> k) & 1);
+                    b = (byte)(inv[j + 7] >>> k & 1);
                     b <<= 1;
-                    b |= (inv[j + 6] >>> k) & 1;
+                    b |= inv[j + 6] >>> k & 1;
                     b <<= 1;
-                    b |= (inv[j + 5] >>> k) & 1;
+                    b |= inv[j + 5] >>> k & 1;
                     b <<= 1;
-                    b |= (inv[j + 4] >>> k) & 1;
+                    b |= inv[j + 4] >>> k & 1;
                     b <<= 1;
-                    b |= (inv[j + 3] >>> k) & 1;
+                    b |= inv[j + 3] >>> k & 1;
                     b <<= 1;
-                    b |= (inv[j + 2] >>> k) & 1;
+                    b |= inv[j + 2] >>> k & 1;
                     b <<= 1;
-                    b |= (inv[j + 1] >>> k) & 1;
+                    b |= inv[j + 1] >>> k & 1;
                     b <<= 1;
-                    b |= (inv[j + 0] >>> k) & 1;
+                    b |= inv[j + 0] >>> k & 1;
 
                     mat[i * GFBITS + k][j / 8] = b;
                 }
@@ -1488,17 +1487,14 @@ class CMCEEngine
                     break;
                 }
 
-                if (usePivots)
-                {
-                    if (row == PK_NROWS - 32)
-                    {
-                        if (mov_columns(mat, pi, pivots) != 0)
-                        {
+                if (usePivots && row == PK_NROWS - 32)
+				{
+				    if (mov_columns(mat, pi, pivots) != 0)
+				    {
 //                            System.out.println("failed mov column!");
-                            return -1;
-                        }
-                    }
-                }
+				        return -1;
+				    }
+				}
 
                 for (k = row + 1; k < PK_NROWS; k++)
                 {
@@ -1514,7 +1510,7 @@ class CMCEEngine
                 }
                 // 7. Compute (T,cn−k−μ+1,...,cn−k,Γ′) ← MatGen(Γ). If this fails, set δ ← δ′ and
                 // restart the algorithm.
-                if (((mat[row][i] >> j) & 1) == 0) // return if not systematic
+                if ((mat[row][i] >> j & 1) == 0) // return if not systematic
                 {
 //                    System.out.println("FAIL 2\n");
                     return -1;
@@ -1549,7 +1545,7 @@ class CMCEEngine
                 {
                     for (j = (PK_NROWS - 1) / 8; j < SYS_N / 8 - 1; j++)
                     {
-                        pk[pk_index++] = (byte)(((mat[i][j] & 0xff) >>> tail) | (mat[i][j + 1] << (8 - tail)));
+                        pk[pk_index++] = (byte)((mat[i][j] & 0xff) >>> tail | mat[i][j + 1] << 8 - tail);
                     }
                     pk[pk_index++] = (byte)((mat[i][j] & 0xff) >>> tail);
                 }
@@ -1559,9 +1555,9 @@ class CMCEEngine
                 for (i = 0; i < PK_NROWS; i++)
                 {
                     k = 0;
-                    for (j = 0; j < (((SYS_N - PK_NROWS) + 7) / 8); j++)
+                    for (j = 0; j < (SYS_N - PK_NROWS + 7) / 8; j++)
                     {
-                        pk[i * (((SYS_N - PK_NROWS) + 7) / 8) + k] = mat[i][j + PK_NROWS / 8];
+                        pk[i * ((SYS_N - PK_NROWS + 7) / 8) + k] = mat[i][j + PK_NROWS / 8];
                         k++;
                     }
                 }
@@ -1571,7 +1567,7 @@ class CMCEEngine
     }
 
 
-    private short eval(short[] f, short a)
+    private short eval(final short[] f, final short a)
     {
         short r;
 
@@ -1586,7 +1582,7 @@ class CMCEEngine
         return r;
     }
 
-    private void root(short[] out, short[] f, short[] L)
+    private void root(final short[] out, final short[] f, final short[] L)
     {
         for (int i = 0; i < SYS_N; i++)
         {
@@ -1594,12 +1590,12 @@ class CMCEEngine
         }
     }
 
-    private int generate_irr_poly(short[] field)
+    private int generate_irr_poly(final short[] field)
     {
 
         // Irreducible 2.4.1 - 2. Define β = β0 + β1y + ···+ βt−1yt−1 ∈Fq[y]/F(y).
         // generating poly
-        short[][] m = new short[SYS_T + 1][SYS_T];
+        final short[][] m = new short[SYS_T + 1][SYS_T];
 
         // filling matrix
         m[0][0] = 1;
@@ -1626,10 +1622,10 @@ class CMCEEngine
         {
             for (int k = j + 1; k < SYS_T; k++)
             {
-                short mask = gf.gf_iszero(m[j][j]);
+                final short mask = gf.gf_iszero(m[j][j]);
                 for (int c = j; c < SYS_T + 1; c++)
                 {
-                    short temp = (short)(m[c][j] ^ m[c][k] & mask);
+                    final short temp = (short)(m[c][j] ^ m[c][k] & mask);
                     m[c][j] = temp;
                 }
             }
@@ -1642,7 +1638,7 @@ class CMCEEngine
 
             }
 
-            short inv = gf.gf_inv(m[j][j]);
+            final short inv = gf.gf_inv(m[j][j]);
 
             for (int c = j; c < SYS_T + 1; c++)
             {
@@ -1653,7 +1649,7 @@ class CMCEEngine
             {
                 if (k != j)
                 {
-                    short t = m[j][k];
+                    final short t = m[j][k];
 
                     for (int c = j; c < SYS_T + 1; c++)
                     {
@@ -1669,10 +1665,10 @@ class CMCEEngine
         return 0;
     }
 
-    private void GF_mul(short[] out, short[] left, short[] right)
+    private void GF_mul(final short[] out, final short[] left, final short[] right)
     {
 
-        short[] prod = new short[SYS_T * 2 - 1];
+        final short[] prod = new short[SYS_T * 2 - 1];
         for (int i = 0; i < SYS_T * 2 - 1; i++)
         {
             prod[i] = 0;
@@ -1681,19 +1677,18 @@ class CMCEEngine
         {
             for (int j = 0; j < SYS_T; j++)
             {
-                short temp = gf.gf_mul(left[i], right[j]);
+                final short temp = gf.gf_mul(left[i], right[j]);
                 prod[i + j] ^= temp;
             }
         }
 
         for (int i = (SYS_T - 1) * 2; i >= SYS_T; i--)
         {
-            for (int j = 0; j != poly.length; j++)
-            {
-                int polyIndex = poly[j];
+            for (final int element : poly) {
+                final int polyIndex = element;
                 if (polyIndex == 0 && GFBITS == 12)
                 {
-                    prod[i - SYS_T] ^= (gf.gf_mul(prod[i], (short)2));
+                    prod[i - SYS_T] ^= gf.gf_mul(prod[i], (short)2);
                 }
                 else
                 {
@@ -1710,7 +1705,7 @@ class CMCEEngine
     }
 
     /* check if the padding bits of pk are all zero */
-    int check_pk_padding(byte[] pk)
+    int check_pk_padding(final byte[] pk)
     {
         byte b;
         int i, ret;
@@ -1721,7 +1716,7 @@ class CMCEEngine
             b |= pk[i * PK_ROW_BYTES + PK_ROW_BYTES - 1];
         }
 
-        b = (byte)((b & 0xff) >>> (PK_NCOLS % 8));
+        b = (byte)((b & 0xff) >>> PK_NCOLS % 8);
         b -= 1;
         b = (byte)((b & 0xff) >>> 7);
         ret = b;
@@ -1730,12 +1725,12 @@ class CMCEEngine
     }
 
     /* check if the padding bits of c are all zero */
-    int check_c_padding(byte[] c)
+    int check_c_padding(final byte[] c)
     {
         byte b;
         int ret;
 
-        b = (byte)((c[SYND_BYTES - 1] & 0xff) >>> (PK_NROWS % 8));
+        b = (byte)((c[SYND_BYTES - 1] & 0xff) >>> PK_NROWS % 8);
         b -= 1;
         b = (byte)((b & 0xff) >>> 7);
         ret = b;
@@ -1748,14 +1743,18 @@ class CMCEEngine
         return defaultKeySize;
     }
 
-    private static void sort32(int[] temp, int from, int to)
+    private static void sort32(final int[] temp, final int from, final int to)
     {
         int top,p,q,r,i;
-        int n = to - from;
+        final int n = to - from;
 
-        if (n < 2) return;
+        if (n < 2) {
+			return;
+		}
         top = 1;
-        while (top < n - top) top += top;
+        while (top < n - top) {
+			top += top;
+		}
 
         for (p = top;p > 0;p >>>= 1)
         {
@@ -1763,7 +1762,7 @@ class CMCEEngine
             {
                 if ((i & p) == 0)
                 {
-                    int ab = temp[from + i + p] ^ temp[from + i];
+                    final int ab = temp[from + i + p] ^ temp[from + i];
                     int c = temp[from + i + p] - temp[from + i];
                     c ^= ab & (c ^ temp[from + i + p]);
                     c >>= 31;
@@ -1782,7 +1781,7 @@ class CMCEEngine
                         int a = temp[from + i + p];
                         for (r = q;r > p;r >>>= 1)
                         {
-                            int ab = temp[from + i + r] ^ a;
+                            final int ab = temp[from + i + r] ^ a;
                             int c = temp[from + i + r] - a;
                             c ^= ab & (c ^ temp[from + i + r]);
                             c >>= 31;
@@ -1797,14 +1796,18 @@ class CMCEEngine
         }
     }
 
-    private static void sort64(long[] temp, int from, int to)
+    private static void sort64(final long[] temp, final int from, final int to)
     {
         int top,p,q,r,i;
-        int n = to - from;
+        final int n = to - from;
 
-        if (n < 2) return;
+        if (n < 2) {
+			return;
+		}
         top = 1;
-        while (top < n - top) top += top;
+        while (top < n - top) {
+			top += top;
+		}
 
         for (p = top;p > 0;p >>>= 1)
         {

@@ -183,7 +183,8 @@ public class Properties
     {
         String val = (String)AccessController.doPrivileged(new PrivilegedAction()
         {
-            public Object run()
+            @Override
+			public Object run()
             {
                 return Security.getProperty(propertyName);
             }
@@ -205,7 +206,8 @@ public class Properties
 
         return (String)AccessController.doPrivileged(new PrivilegedAction()
         {
-            public Object run()
+            @Override
+			public Object run()
             {
                 return System.getProperty(propertyName);
             }

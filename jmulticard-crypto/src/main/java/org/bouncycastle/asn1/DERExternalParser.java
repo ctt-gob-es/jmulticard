@@ -20,7 +20,8 @@ public class DERExternalParser
         this._parser = parser;
     }
 
-    public ASN1Encodable readObject()
+    @Override
+	public ASN1Encodable readObject()
         throws IOException
     {
         return _parser.readObject();
@@ -32,7 +33,8 @@ public class DERExternalParser
      * @return a DERExternal.
      * @throws IOException if there is an issue loading the data.
      */
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
         throws IOException
     {
         return parse(_parser);
@@ -43,7 +45,8 @@ public class DERExternalParser
      *
      * @return an DERExternal
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         try
         {

@@ -985,7 +985,8 @@ public class PolynomialGF2mSmallM
      * @param other object
      * @return true or false
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
 
         if (other == null || !(other instanceof PolynomialGF2mSmallM))
@@ -1033,7 +1034,8 @@ public class PolynomialGF2mSmallM
     /**
      * @return the hash code of this polynomial
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = field.hashCode();
         for (int j = 0; j < coefficients.length; j++)
@@ -1048,7 +1050,8 @@ public class PolynomialGF2mSmallM
      *
      * @return a human readable form of the polynomial.
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         String str = " Polynomial over " + field.toString() + ": \n";
 

@@ -16,7 +16,7 @@ public class BEROctetStringGenerator
      * @param out target stream
      * @throws IOException if the target stream cannot be written to.
      */
-    public BEROctetStringGenerator(OutputStream out) 
+    public BEROctetStringGenerator(final OutputStream out)
         throws IOException
     {
         super(out);
@@ -34,9 +34,9 @@ public class BEROctetStringGenerator
      * @throws IOException if the target stream cannot be written to.
      */
     public BEROctetStringGenerator(
-        OutputStream out,
-        int tagNo,
-        boolean isExplicit) 
+        final OutputStream out,
+        final int tagNo,
+        final boolean isExplicit)
         throws IOException
     {
         super(out, tagNo, isExplicit);
@@ -61,7 +61,7 @@ public class BEROctetStringGenerator
      * @return an OutputStream which chunks data in blocks of buf length.
      */
     public OutputStream getOctetOutputStream(
-        byte[] buf)
+        final byte[] buf)
     {
         return new BufferedBEROctetStream(buf);
     }
@@ -69,20 +69,21 @@ public class BEROctetStringGenerator
     private class BufferedBEROctetStream
         extends OutputStream
     {
-        private byte[] _buf;
+        private final byte[] _buf;
         private int    _off;
-        private DEROutputStream _derOut;
+        private final DEROutputStream _derOut;
 
         BufferedBEROctetStream(
-            byte[] buf)
+            final byte[] buf)
         {
             _buf = buf;
             _off = 0;
             _derOut = new DEROutputStream(_out);
         }
 
-        public void write(
-            int b)
+        @Override
+		public void write(
+            final int b)
             throws IOException
         {
             _buf[_off++] = (byte)b;
@@ -94,10 +95,11 @@ public class BEROctetStringGenerator
             }
         }
 
-        public void write(byte[] b, int off, int len) throws IOException
+        @Override
+		public void write(final byte[] b, final int off, final int len) throws IOException
         {
-            int bufLen = _buf.length;
-            int available = bufLen - _off;
+            final int bufLen = _buf.length;
+            final int available = bufLen - _off;
             if (len < available)
             {
                 System.arraycopy(b, off, _buf, _off, len);
@@ -114,17 +116,18 @@ public class BEROctetStringGenerator
             }
 
             int remaining;
-            while ((remaining = (len - count)) >= bufLen)
+            while ((remaining = len - count) >= bufLen)
             {
                 DEROctetString.encode(_derOut, true, b, off + count, bufLen);
                 count += bufLen;
             }
 
             System.arraycopy(b, off + count, _buf, 0, remaining);
-            this._off = remaining;
+            _off = remaining;
         }
 
-        public void close()
+        @Override
+		public void close()
             throws IOException
         {
             if (_off != 0)

@@ -108,12 +108,14 @@ public class BERBitString
         this.segmentLimit = DEFAULT_SEGMENT_LIMIT;
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return null != elements || contents.length > segmentLimit;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
         throws IOException
     {
         if (!encodeConstructed())
@@ -146,7 +148,8 @@ public class BERBitString
         return totalLength;
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         if (!encodeConstructed())
         {

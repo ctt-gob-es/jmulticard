@@ -18,13 +18,15 @@ public class SecP256K1Point extends ECPoint.AbstractFp
         super(curve, x, y, zs);
     }
 
-    protected ECPoint detach()
+    @Override
+	protected ECPoint detach()
     {
         return new SecP256K1Point(null, getAffineXCoord(), getAffineYCoord());
     }
 
     // B.3 pg 62
-    public ECPoint add(ECPoint b)
+    @Override
+	public ECPoint add(ECPoint b)
     {
         if (this.isInfinity())
         {
@@ -151,7 +153,8 @@ public class SecP256K1Point extends ECPoint.AbstractFp
     }
 
     // B.3 pg 62
-    public ECPoint twice()
+    @Override
+	public ECPoint twice()
     {
         if (this.isInfinity())
         {
@@ -211,7 +214,8 @@ public class SecP256K1Point extends ECPoint.AbstractFp
         return new SecP256K1Point(curve, X3, Y3, new ECFieldElement[] { Z3 });
     }
 
-    public ECPoint twicePlus(ECPoint b)
+    @Override
+	public ECPoint twicePlus(ECPoint b)
     {
         if (this == b)
         {
@@ -235,7 +239,8 @@ public class SecP256K1Point extends ECPoint.AbstractFp
         return twice().add(b);
     }
 
-    public ECPoint threeTimes()
+    @Override
+	public ECPoint threeTimes()
     {
         if (this.isInfinity() || this.y.isZero())
         {
@@ -246,7 +251,8 @@ public class SecP256K1Point extends ECPoint.AbstractFp
         return twice().add(this);
     }
 
-    public ECPoint negate()
+    @Override
+	public ECPoint negate()
     {
         if (this.isInfinity())
         {

@@ -1090,12 +1090,14 @@ public final class Arrays
             this.dataArray = dataArray;
         }
 
-        public boolean hasNext()
+        @Override
+		public boolean hasNext()
         {
             return position < dataArray.length;
         }
 
-        public T next()
+        @Override
+		public T next()
         {
             if (position == dataArray.length)
             {
@@ -1105,7 +1107,8 @@ public final class Arrays
             return dataArray[position++];
         }
 
-        public void remove()
+        @Override
+		public void remove()
         {
             throw new UnsupportedOperationException("Cannot remove element from an Array.");
         }

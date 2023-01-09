@@ -228,7 +228,8 @@ public class BCECPrivateKey
         }
     }
 
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return algorithm;
     }
@@ -238,7 +239,8 @@ public class BCECPrivateKey
      *
      * @return the string "PKCS#8"
      */
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
@@ -249,7 +251,8 @@ public class BCECPrivateKey
      *
      * @return a PKCS8 representation of the key.
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         if (encoding == null)
         {
@@ -292,12 +295,14 @@ public class BCECPrivateKey
         return Arrays.clone(encoding);
     }
 
-    public ECParameterSpec getParams()
+    @Override
+	public ECParameterSpec getParams()
     {
         return ecSpec;
     }
 
-    public org.bouncycastle.jce.spec.ECParameterSpec getParameters()
+    @Override
+	public org.bouncycastle.jce.spec.ECParameterSpec getParameters()
     {
         if (ecSpec == null)
         {
@@ -317,40 +322,47 @@ public class BCECPrivateKey
         return configuration.getEcImplicitlyCa();
     }
 
-    public BigInteger getS()
+    @Override
+	public BigInteger getS()
     {
         return d;
     }
 
-    public BigInteger getD()
+    @Override
+	public BigInteger getD()
     {
         return d;
     }
     
-    public void setBagAttribute(
+    @Override
+	public void setBagAttribute(
         ASN1ObjectIdentifier oid,
         ASN1Encodable        attribute)
     {
         attrCarrier.setBagAttribute(oid, attribute);
     }
 
-    public ASN1Encodable getBagAttribute(
+    @Override
+	public ASN1Encodable getBagAttribute(
         ASN1ObjectIdentifier oid)
     {
         return attrCarrier.getBagAttribute(oid);
     }
 
-    public Enumeration getBagAttributeKeys()
+    @Override
+	public Enumeration getBagAttributeKeys()
     {
         return attrCarrier.getBagAttributeKeys();
     }
 
-    public void setPointFormat(String style)
+    @Override
+	public void setPointFormat(String style)
     {
        withCompression = !("UNCOMPRESSED".equalsIgnoreCase(style));
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o instanceof ECPrivateKey)
         {
@@ -362,12 +374,14 @@ public class BCECPrivateKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return getD().hashCode() ^ engineGetSpec().hashCode();
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return ECUtil.privateKeyToString("EC", d, engineGetSpec());
     }

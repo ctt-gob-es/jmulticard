@@ -42,7 +42,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder gostR3410_2001_CryptoPro_A = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD97");
             BigInteger mod_q = fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF6C611070995AD10045841B09B761B893");
@@ -54,7 +55,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.ONE, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -72,7 +74,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder gostR3410_2001_CryptoPro_B = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("8000000000000000000000000000000000000000000000000000000000000C99");
             BigInteger mod_q = fromHex("800000000000000000000000000000015F700CFFF1A624E5E497161BCC8A198F");
@@ -84,7 +87,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.ONE, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -102,7 +106,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder gostR3410_2001_CryptoPro_C = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("9B9F605F5A858107AB1EC85E6B41C8AACF846E86789051D37998F7B9022D759B");
             BigInteger mod_q = fromHex("9B9F605F5A858107AB1EC85E6B41C8AA582CA3511EDDFB74F02F3A6598980BB9");
@@ -114,7 +119,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.ONE, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -132,7 +138,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder gostR3410_2001_CryptoPro_XchB = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("9B9F605F5A858107AB1EC85E6B41C8AACF846E86789051D37998F7B9022D759B");
             BigInteger mod_q = fromHex("9B9F605F5A858107AB1EC85E6B41C8AA582CA3511EDDFB74F02F3A6598980BB9");
@@ -144,7 +151,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.ONE, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -162,7 +170,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder id_tc26_gost_3410_12_256_paramSetA = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFD97");
             BigInteger mod_q = fromHex("400000000000000000000000000000000FD8CDDFC87B6635C115AF556C360C67");
@@ -174,7 +183,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.FOUR, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -192,7 +202,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder id_tc26_gost_3410_12_512_paramSetA = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDC7");
             BigInteger mod_q = fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF27E69532F48D89116FF22B8D4E0560609B4B38ABFAD2B85DCACDB1411F10B275");
@@ -204,7 +215,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.ONE, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -222,7 +234,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder id_tc26_gost_3410_12_512_paramSetB = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006F");
             BigInteger mod_q = fromHex("800000000000000000000000000000000000000000000000000000000000000149A1EC142565A545ACFDB77BD9D40CFA8B996712101BEA0EC6346C54374F25BD");
@@ -234,7 +247,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.ONE, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();
@@ -252,7 +266,8 @@ public class ECGOST3410NamedCurves
      */
     static X9ECParametersHolder id_tc26_gost_3410_12_512_paramSetC = new X9ECParametersHolder()
     {
-        protected ECCurve createCurve()
+        @Override
+		protected ECCurve createCurve()
         {
             BigInteger mod_p = fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDC7");
             BigInteger mod_q = fromHex("3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC98CDBA46506AB004C33A9FF5147502CC8EDA9E7A769A12694623CEF47F023ED");
@@ -264,7 +279,8 @@ public class ECGOST3410NamedCurves
                 mod_q, ECConstants.FOUR, true));
         }
 
-        protected X9ECParameters createParameters()
+        @Override
+		protected X9ECParameters createParameters()
         {
             byte[] S = null;
             ECCurve curve = getCurve();

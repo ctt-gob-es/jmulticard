@@ -207,7 +207,8 @@ public class Holder
         return objectDigestInfo;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         if (version == V2_CERTIFICATE_HOLDER)
         {

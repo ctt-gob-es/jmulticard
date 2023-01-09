@@ -21,7 +21,8 @@ public class XMSSMTSigner
     private boolean hasGenerated;
     private boolean initSign;
 
-    public void init(boolean forSigning, CipherParameters param)
+    @Override
+	public void init(final boolean forSigning, final CipherParameters param)
     {
         if (forSigning)
         {
@@ -30,7 +31,6 @@ public class XMSSMTSigner
             privateKey = (XMSSMTPrivateKeyParameters)param;
 
             params = privateKey.getParameters();
-            xmssParams = params.getXMSSParameters();
         }
         else
         {
@@ -38,13 +38,14 @@ public class XMSSMTSigner
             publicKey = (XMSSMTPublicKeyParameters)param;
 
             params = publicKey.getParameters();
-            xmssParams = params.getXMSSParameters();
         }
-        
+		xmssParams = params.getXMSSParameters();
+
         wotsPlus = params.getWOTSPlus();
     }
 
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(final byte[] message)
     {
         if (message == null)
         {
@@ -77,7 +78,7 @@ public class XMSSMTSigner
             try
             {
 
-                BDSStateMap bdsState = privateKey.getBDSState();
+                final BDSStateMap bdsState = privateKey.getBDSState();
 
                 // privateKey.increaseIndex(this);
                 final long globalIndex = privateKey.getIndex();
@@ -89,14 +90,14 @@ public class XMSSMTSigner
                 }
 
                 /* compress message */
-                byte[] random = wotsPlus.getKhf().PRF(privateKey.getSecretKeyPRF(), XMSSUtil.toBytesBigEndian(globalIndex, 32));
-                byte[] concatenated = Arrays.concatenate(random, privateKey.getRoot(),
+                final byte[] random = wotsPlus.getKhf().PRF(privateKey.getSecretKeyPRF(), XMSSUtil.toBytesBigEndian(globalIndex, 32));
+                final byte[] concatenated = Arrays.concatenate(random, privateKey.getRoot(),
                     XMSSUtil.toBytesBigEndian(globalIndex, params.getTreeDigestSize()));
-                byte[] messageDigest = wotsPlus.getKhf().HMsg(concatenated, message);
+                final byte[] messageDigest = wotsPlus.getKhf().HMsg(concatenated, message);
 
                 hasGenerated = true;
 
-                XMSSMTSignature signature = new XMSSMTSignature.Builder(params).withIndex(globalIndex).withRandom(random).build();
+                final XMSSMTSignature signature = new XMSSMTSignature.Builder(params).withIndex(globalIndex).withRandom(random).build();
 
 
                 /* layer 0 */
@@ -129,7 +130,7 @@ public class XMSSMTSigner
                 for (int layer = 1; layer < params.getLayers(); layer++)
                 {
                     /* get root of layer - 1 */
-                    XMSSNode root = bdsState.get(layer - 1).getRoot();
+                    final XMSSNode root = bdsState.get(layer - 1).getRoot();
 
                     indexLeaf = XMSSUtil.getLeafIndex(indexTree, xmssHeight);
                     indexTree = XMSSUtil.getTreeIndex(indexTree, xmssHeight);
@@ -152,7 +153,7 @@ public class XMSSMTSigner
 
                     signature.getReducedSignatures().add(reducedSignature);
                 }
-             
+
                 return signature.toByteArray();
             }
             finally
@@ -162,7 +163,8 @@ public class XMSSMTSigner
         }
     }
 
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(final byte[] message, final byte[] signature)
     {
         if (message == null)
         {
@@ -177,20 +179,20 @@ public class XMSSMTSigner
             throw new NullPointerException("publicKey == null");
         }
         /* (re)create compressed message */
-        XMSSMTSignature sig = new XMSSMTSignature.Builder(params).withSignature(signature).build();
+        final XMSSMTSignature sig = new XMSSMTSignature.Builder(params).withSignature(signature).build();
 
-        byte[] concatenated = Arrays.concatenate(sig.getRandom(), publicKey.getRoot(),
+        final byte[] concatenated = Arrays.concatenate(sig.getRandom(), publicKey.getRoot(),
                                          XMSSUtil.toBytesBigEndian(sig.getIndex(), params.getTreeDigestSize()));
-        byte[] messageDigest = wotsPlus.getKhf().HMsg(concatenated, message);
+        final byte[] messageDigest = wotsPlus.getKhf().HMsg(concatenated, message);
 
-        long globalIndex = sig.getIndex();
-        int xmssHeight = xmssParams.getHeight();
+        final long globalIndex = sig.getIndex();
+        final int xmssHeight = xmssParams.getHeight();
         long indexTree = XMSSUtil.getTreeIndex(globalIndex, xmssHeight);
         int indexLeaf = XMSSUtil.getLeafIndex(globalIndex, xmssHeight);
 
         /* adjust xmss */
         wotsPlus.importKeys(new byte[params.getTreeDigestSize()], publicKey.getPublicSeed());
-        
+
         /* prepare addresses */
         OTSHashAddress otsHashAddress = (OTSHashAddress)new OTSHashAddress.Builder().withTreeAddress(indexTree)
             .withOTSAddress(indexLeaf).build();
@@ -216,7 +218,7 @@ public class XMSSMTSigner
         return Arrays.constantTimeAreEqual(rootNode.getValue(), publicKey.getRoot());
     }
 
-    private WOTSPlusSignature wotsSign(byte[] messageDigest, OTSHashAddress otsHashAddress)
+    private WOTSPlusSignature wotsSign(final byte[] messageDigest, final OTSHashAddress otsHashAddress)
     {
         if (messageDigest.length != params.getTreeDigestSize())
         {
@@ -237,13 +239,14 @@ public class XMSSMTSigner
         return privateKey.getUsagesRemaining();
     }
 
-    public AsymmetricKeyParameter getUpdatedPrivateKey()
+    @Override
+	public AsymmetricKeyParameter getUpdatedPrivateKey()
     {
         // if we've generated a signature return the last private key generated
         // if we've only initialised leave it in place and return the next one instead.
         if (hasGenerated)
         {
-            XMSSMTPrivateKeyParameters privKey = privateKey;
+            final XMSSMTPrivateKeyParameters privKey = privateKey;
 
             privateKey = null;
 
@@ -251,7 +254,7 @@ public class XMSSMTSigner
         }
         else
         {
-            XMSSMTPrivateKeyParameters privKey = privateKey;
+            final XMSSMTPrivateKeyParameters privKey = privateKey;
 
             if (privKey != null)
             {

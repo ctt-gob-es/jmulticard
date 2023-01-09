@@ -53,8 +53,8 @@ public class GF2nPolynomialField
         mDegree = deg;
         computeFieldPolynomial();
         computeSquaringMatrix();
-        fields = new Vector();
-        matrices = new Vector();
+        fields = new Vector<GF2nField>();
+        matrices = new Vector<GF2Polynomial[]>();
     }
 
     /**
@@ -85,8 +85,8 @@ public class GF2nPolynomialField
             computeFieldPolynomial2();
         }
         computeSquaringMatrix();
-        fields = new Vector();
-        matrices = new Vector();
+        fields = new Vector<GF2nField>();
+        matrices = new Vector<GF2Polynomial[]>();
     }
 
     /**
@@ -143,8 +143,8 @@ public class GF2nPolynomialField
         {
             isPentanomial = true;
         }
-        fields = new Vector();
-        matrices = new Vector();
+        fields = new Vector<GF2nField>();
+        matrices = new Vector<GF2Polynomial[]>();
     }
 
     /**
@@ -221,7 +221,8 @@ public class GF2nPolynomialField
      * @param polynomial the polynomial
      * @return a random root of <tt>polynomial</tt>
      */
-    protected GF2nElement getRandomRoot(GF2Polynomial polynomial)
+    @Override
+	protected GF2nElement getRandomRoot(GF2Polynomial polynomial)
     {
         // We are in B1!!!
         GF2nPolynomial c;
@@ -284,7 +285,8 @@ public class GF2nPolynomialField
      * @param B1 the GF2nField to convert to
      * @see "P1363 A.7.3, p111ff"
      */
-    protected void computeCOBMatrix(GF2nField B1)
+    @Override
+	protected void computeCOBMatrix(GF2nField B1)
     {
         // we are in B0 here!
         if (mDegree != B1.mDegree)
@@ -412,7 +414,8 @@ public class GF2nPolynomialField
     /**
      * Computes the field polynomial. This can take a long time for big degrees.
      */
-    protected void computeFieldPolynomial()
+    @Override
+	protected void computeFieldPolynomial()
     {
         if (testTrinomials())
         {

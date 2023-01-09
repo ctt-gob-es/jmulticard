@@ -150,7 +150,8 @@ public class AttributeCertificateInfo
      *  AttCertVersion ::= INTEGER { v2(1) }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector v = new ASN1EncodableVector(9);
 

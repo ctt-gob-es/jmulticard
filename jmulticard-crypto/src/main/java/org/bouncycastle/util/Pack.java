@@ -5,23 +5,23 @@ package org.bouncycastle.util;
  */
 public abstract class Pack
 {
-    public static short bigEndianToShort(byte[] bs, int off)
+    public static short bigEndianToShort(final byte[] bs, int off)
     {
         int n = (bs[off] & 0xff) << 8;
-        n |= (bs[++off] & 0xff);
+        n |= bs[++off] & 0xff;
         return (short)n;
     }
 
-    public static int bigEndianToInt(byte[] bs, int off)
+    public static int bigEndianToInt(final byte[] bs, int off)
     {
         int n = bs[off] << 24;
         n |= (bs[++off] & 0xff) << 16;
         n |= (bs[++off] & 0xff) << 8;
-        n |= (bs[++off] & 0xff);
+        n |= bs[++off] & 0xff;
         return n;
     }
 
-    public static void bigEndianToInt(byte[] bs, int off, int[] ns)
+    public static void bigEndianToInt(final byte[] bs, int off, final int[] ns)
     {
         for (int i = 0; i < ns.length; ++i)
         {
@@ -30,7 +30,7 @@ public abstract class Pack
         }
     }
 
-    public static void bigEndianToInt(byte[] bs, int off, int[] ns, int nsOff, int nsLen)
+    public static void bigEndianToInt(final byte[] bs, int off, final int[] ns, final int nsOff, final int nsLen)
     {
         for (int i = 0; i < nsLen; ++i)
         {
@@ -39,38 +39,37 @@ public abstract class Pack
         }
     }
 
-    public static byte[] intToBigEndian(int n)
+    public static byte[] intToBigEndian(final int n)
     {
-        byte[] bs = new byte[4];
+        final byte[] bs = new byte[4];
         intToBigEndian(n, bs, 0);
         return bs;
     }
 
-    public static void intToBigEndian(int n, byte[] bs, int off)
+    public static void intToBigEndian(final int n, final byte[] bs, int off)
     {
         bs[off] = (byte)(n >>> 24);
         bs[++off] = (byte)(n >>> 16);
         bs[++off] = (byte)(n >>> 8);
-        bs[++off] = (byte)(n);
+        bs[++off] = (byte)n;
     }
 
-    public static byte[] intToBigEndian(int[] ns)
+    public static byte[] intToBigEndian(final int[] ns)
     {
-        byte[] bs = new byte[4 * ns.length];
+        final byte[] bs = new byte[4 * ns.length];
         intToBigEndian(ns, bs, 0);
         return bs;
     }
 
-    public static void intToBigEndian(int[] ns, byte[] bs, int off)
+    public static void intToBigEndian(final int[] ns, final byte[] bs, int off)
     {
-        for (int i = 0; i < ns.length; ++i)
-        {
-            intToBigEndian(ns[i], bs, off);
+        for (final int element : ns) {
+            intToBigEndian(element, bs, off);
             off += 4;
         }
     }
 
-    public static void intToBigEndian(int[] ns, int nsOff, int nsLen, byte[] bs, int bsOff)
+    public static void intToBigEndian(final int[] ns, final int nsOff, final int nsLen, final byte[] bs, int bsOff)
     {
         for (int i = 0; i < nsLen; ++i)
         {
@@ -79,14 +78,14 @@ public abstract class Pack
         }
     }
 
-    public static long bigEndianToLong(byte[] bs, int off)
+    public static long bigEndianToLong(final byte[] bs, final int off)
     {
-        int hi = bigEndianToInt(bs, off);
-        int lo = bigEndianToInt(bs, off + 4);
-        return ((long)(hi & 0xffffffffL) << 32) | (long)(lo & 0xffffffffL);
+        final int hi = bigEndianToInt(bs, off);
+        final int lo = bigEndianToInt(bs, off + 4);
+        return (hi & 0xffffffffL) << 32 | lo & 0xffffffffL;
     }
 
-    public static void bigEndianToLong(byte[] bs, int off, long[] ns)
+    public static void bigEndianToLong(final byte[] bs, int off, final long[] ns)
     {
         for (int i = 0; i < ns.length; ++i)
         {
@@ -95,7 +94,7 @@ public abstract class Pack
         }
     }
 
-    public static void bigEndianToLong(byte[] bs, int bsOff, long[] ns, int nsOff, int nsLen)
+    public static void bigEndianToLong(final byte[] bs, int bsOff, final long[] ns, final int nsOff, final int nsLen)
     {
         for (int i = 0; i < nsLen; ++i)
         {
@@ -104,36 +103,35 @@ public abstract class Pack
         }
     }
 
-    public static byte[] longToBigEndian(long n)
+    public static byte[] longToBigEndian(final long n)
     {
-        byte[] bs = new byte[8];
+        final byte[] bs = new byte[8];
         longToBigEndian(n, bs, 0);
         return bs;
     }
 
-    public static void longToBigEndian(long n, byte[] bs, int off)
+    public static void longToBigEndian(final long n, final byte[] bs, final int off)
     {
         intToBigEndian((int)(n >>> 32), bs, off);
         intToBigEndian((int)(n & 0xffffffffL), bs, off + 4);
     }
 
-    public static byte[] longToBigEndian(long[] ns)
+    public static byte[] longToBigEndian(final long[] ns)
     {
-        byte[] bs = new byte[8 * ns.length];
+        final byte[] bs = new byte[8 * ns.length];
         longToBigEndian(ns, bs, 0);
         return bs;
     }
 
-    public static void longToBigEndian(long[] ns, byte[] bs, int off)
+    public static void longToBigEndian(final long[] ns, final byte[] bs, int off)
     {
-        for (int i = 0; i < ns.length; ++i)
-        {
-            longToBigEndian(ns[i], bs, off);
+        for (final long element : ns) {
+            longToBigEndian(element, bs, off);
             off += 8;
         }
     }
 
-    public static void longToBigEndian(long[] ns, int nsOff, int nsLen, byte[] bs, int bsOff)
+    public static void longToBigEndian(final long[] ns, final int nsOff, final int nsLen, final byte[] bs, int bsOff)
     {
         for (int i = 0; i < nsLen; ++i)
         {
@@ -147,10 +145,11 @@ public abstract class Pack
      * @param bs    The target.
      * @param off   Position in target to start.
      * @param bytes number of bytes to write.
-     * 
+     *
      * @deprecated Will be removed
      */
-    public static void longToBigEndian(long value, byte[] bs, int off, int bytes)
+    @Deprecated
+	public static void longToBigEndian(long value, final byte[] bs, final int off, final int bytes)
     {
         for (int i = bytes - 1; i >= 0; i--)
         {
@@ -159,14 +158,14 @@ public abstract class Pack
         }
     }
 
-    public static short littleEndianToShort(byte[] bs, int off)
+    public static short littleEndianToShort(final byte[] bs, int off)
     {
         int n = bs[off] & 0xff;
         n |= (bs[++off] & 0xff) << 8;
         return (short)n;
     }
 
-    public static int littleEndianToInt(byte[] bs, int off)
+    public static int littleEndianToInt(final byte[] bs, int off)
     {
         int n = bs[off] & 0xff;
         n |= (bs[++off] & 0xff) << 8;
@@ -175,7 +174,7 @@ public abstract class Pack
         return n;
     }
 
-    public static void littleEndianToInt(byte[] bs, int off, int[] ns)
+    public static void littleEndianToInt(final byte[] bs, int off, final int[] ns)
     {
         for (int i = 0; i < ns.length; ++i)
         {
@@ -184,7 +183,7 @@ public abstract class Pack
         }
     }
 
-    public static void littleEndianToInt(byte[] bs, int bOff, int[] ns, int nOff, int count)
+    public static void littleEndianToInt(final byte[] bs, int bOff, final int[] ns, final int nOff, final int count)
     {
         for (int i = 0; i < count; ++i)
         {
@@ -193,9 +192,9 @@ public abstract class Pack
         }
     }
 
-    public static int[] littleEndianToInt(byte[] bs, int off, int count)
+    public static int[] littleEndianToInt(final byte[] bs, int off, final int count)
     {
-        int[] ns = new int[count];
+        final int[] ns = new int[count];
         for (int i = 0; i < ns.length; ++i)
         {
             ns[i] = littleEndianToInt(bs, off);
@@ -204,66 +203,65 @@ public abstract class Pack
         return ns;
     }
 
-    public static byte[] shortToLittleEndian(short n)
+    public static byte[] shortToLittleEndian(final short n)
     {
-        byte[] bs = new byte[2];
+        final byte[] bs = new byte[2];
         shortToLittleEndian(n, bs, 0);
         return bs;
     }
 
-    public static void shortToLittleEndian(short n, byte[] bs, int off)
+    public static void shortToLittleEndian(final short n, final byte[] bs, int off)
     {
-        bs[off] = (byte)(n);
+        bs[off] = (byte)n;
         bs[++off] = (byte)(n >>> 8);
     }
 
 
-    public static byte[] shortToBigEndian(short n)
+    public static byte[] shortToBigEndian(final short n)
     {
-        byte[] r = new byte[2];
+        final byte[] r = new byte[2];
         shortToBigEndian(n, r, 0);
         return r;
     }
 
-    public static void shortToBigEndian(short n, byte[] bs, int off)
+    public static void shortToBigEndian(final short n, final byte[] bs, int off)
     {
         bs[off] = (byte)(n >>> 8);
-        bs[++off] = (byte)(n);
+        bs[++off] = (byte)n;
     }
 
 
-    public static byte[] intToLittleEndian(int n)
+    public static byte[] intToLittleEndian(final int n)
     {
-        byte[] bs = new byte[4];
+        final byte[] bs = new byte[4];
         intToLittleEndian(n, bs, 0);
         return bs;
     }
 
-    public static void intToLittleEndian(int n, byte[] bs, int off)
+    public static void intToLittleEndian(final int n, final byte[] bs, int off)
     {
-        bs[off] = (byte)(n);
+        bs[off] = (byte)n;
         bs[++off] = (byte)(n >>> 8);
         bs[++off] = (byte)(n >>> 16);
         bs[++off] = (byte)(n >>> 24);
     }
 
-    public static byte[] intToLittleEndian(int[] ns)
+    public static byte[] intToLittleEndian(final int[] ns)
     {
-        byte[] bs = new byte[4 * ns.length];
+        final byte[] bs = new byte[4 * ns.length];
         intToLittleEndian(ns, bs, 0);
         return bs;
     }
 
-    public static void intToLittleEndian(int[] ns, byte[] bs, int off)
+    public static void intToLittleEndian(final int[] ns, final byte[] bs, int off)
     {
-        for (int i = 0; i < ns.length; ++i)
-        {
-            intToLittleEndian(ns[i], bs, off);
+        for (final int element : ns) {
+            intToLittleEndian(element, bs, off);
             off += 4;
         }
     }
 
-    public static void intToLittleEndian(int[] ns, int nsOff, int nsLen, byte[] bs, int bsOff)
+    public static void intToLittleEndian(final int[] ns, final int nsOff, final int nsLen, final byte[] bs, int bsOff)
     {
         for (int i = 0; i < nsLen; ++i)
         {
@@ -272,14 +270,14 @@ public abstract class Pack
         }
     }
 
-    public static long littleEndianToLong(byte[] bs, int off)
+    public static long littleEndianToLong(final byte[] bs, final int off)
     {
-        int lo = littleEndianToInt(bs, off);
-        int hi = littleEndianToInt(bs, off + 4);
-        return ((long)(hi & 0xffffffffL) << 32) | (long)(lo & 0xffffffffL);
+        final int lo = littleEndianToInt(bs, off);
+        final int hi = littleEndianToInt(bs, off + 4);
+        return (hi & 0xffffffffL) << 32 | lo & 0xffffffffL;
     }
 
-    public static void littleEndianToLong(byte[] bs, int off, long[] ns)
+    public static void littleEndianToLong(final byte[] bs, int off, final long[] ns)
     {
         for (int i = 0; i < ns.length; ++i)
         {
@@ -288,7 +286,7 @@ public abstract class Pack
         }
     }
 
-    public static void littleEndianToLong(byte[] bs, int bsOff, long[] ns, int nsOff, int nsLen)
+    public static void littleEndianToLong(final byte[] bs, int bsOff, final long[] ns, final int nsOff, final int nsLen)
     {
         for (int i = 0; i < nsLen; ++i)
         {
@@ -297,36 +295,35 @@ public abstract class Pack
         }
     }
 
-    public static byte[] longToLittleEndian(long n)
+    public static byte[] longToLittleEndian(final long n)
     {
-        byte[] bs = new byte[8];
+        final byte[] bs = new byte[8];
         longToLittleEndian(n, bs, 0);
         return bs;
     }
 
-    public static void longToLittleEndian(long n, byte[] bs, int off)
+    public static void longToLittleEndian(final long n, final byte[] bs, final int off)
     {
         intToLittleEndian((int)(n & 0xffffffffL), bs, off);
         intToLittleEndian((int)(n >>> 32), bs, off + 4);
     }
 
-    public static byte[] longToLittleEndian(long[] ns)
+    public static byte[] longToLittleEndian(final long[] ns)
     {
-        byte[] bs = new byte[8 * ns.length];
+        final byte[] bs = new byte[8 * ns.length];
         longToLittleEndian(ns, bs, 0);
         return bs;
     }
 
-    public static void longToLittleEndian(long[] ns, byte[] bs, int off)
+    public static void longToLittleEndian(final long[] ns, final byte[] bs, int off)
     {
-        for (int i = 0; i < ns.length; ++i)
-        {
-            longToLittleEndian(ns[i], bs, off);
+        for (final long element : ns) {
+            longToLittleEndian(element, bs, off);
             off += 8;
         }
     }
 
-    public static void longToLittleEndian(long[] ns, int nsOff, int nsLen, byte[] bs, int bsOff)
+    public static void longToLittleEndian(final long[] ns, final int nsOff, final int nsLen, final byte[] bs, int bsOff)
     {
         for (int i = 0; i < nsLen; ++i)
         {

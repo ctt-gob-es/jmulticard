@@ -31,7 +31,8 @@ public class AsymmetricCipherKeyPair
      * @param privateParam the corresponding private key parameters.
      * @deprecated use AsymmetricKeyParameter
      */
-    public AsymmetricCipherKeyPair(
+    @Deprecated
+	public AsymmetricCipherKeyPair(
         CipherParameters    publicParam,
         CipherParameters    privateParam)
     {

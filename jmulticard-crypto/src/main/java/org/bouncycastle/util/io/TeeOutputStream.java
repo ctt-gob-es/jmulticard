@@ -10,8 +10,8 @@ import java.io.OutputStream;
 public class TeeOutputStream
     extends OutputStream
 {
-    private OutputStream output1;
-    private OutputStream output2;
+    private final OutputStream output1;
+    private final OutputStream output2;
 
     /**
      * Base constructor.
@@ -19,44 +19,49 @@ public class TeeOutputStream
      * @param output1 the output stream that is wrapped.
      * @param output2 a secondary stream that anything written to output1 is also written to.
      */
-    public TeeOutputStream(OutputStream output1, OutputStream output2)
+    public TeeOutputStream(final OutputStream output1, final OutputStream output2)
     {
         this.output1 = output1;
         this.output2 = output2;
     }
 
-    public void write(byte[] buf)
+    @Override
+	public void write(final byte[] buf)
         throws IOException
     {
-        this.output1.write(buf);
-        this.output2.write(buf);
+        output1.write(buf);
+        output2.write(buf);
     }
 
-    public void write(byte[] buf, int off, int len)
+    @Override
+	public void write(final byte[] buf, final int off, final int len)
         throws IOException
     {
-        this.output1.write(buf, off, len);
-        this.output2.write(buf, off, len);
+        output1.write(buf, off, len);
+        output2.write(buf, off, len);
     }
 
-    public void write(int b)
+    @Override
+	public void write(final int b)
         throws IOException
     {
-        this.output1.write(b);
-        this.output2.write(b);
+        output1.write(b);
+        output2.write(b);
     }
 
-    public void flush()
+    @Override
+	public void flush()
         throws IOException
     {
-        this.output1.flush();
-        this.output2.flush();
+        output1.flush();
+        output2.flush();
     }
 
-    public void close()
+    @Override
+	public void close()
         throws IOException
     {
-        this.output1.close();
-        this.output2.close();
+        output1.close();
+        output2.close();
     }
 }

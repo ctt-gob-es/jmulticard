@@ -32,14 +32,15 @@ public class SPHINCSPlusSigner
     {
     }
 
-    public void init(boolean forSigning, CipherParameters param)
+    @Override
+	public void init(final boolean forSigning, final CipherParameters param)
     {
         if (forSigning)
         {
             if (param instanceof ParametersWithRandom)
             {
-                privKey = ((SPHINCSPlusPrivateKeyParameters)((ParametersWithRandom)param).getParameters());
-                this.random = ((ParametersWithRandom)param).getRandom();
+                privKey = (SPHINCSPlusPrivateKeyParameters)((ParametersWithRandom)param).getParameters();
+                random = ((ParametersWithRandom)param).getRandom();
             }
             else
             {
@@ -52,16 +53,17 @@ public class SPHINCSPlusSigner
         }
     }
 
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(final byte[] message)
     {
 //        # Input: Message M, private key SK = (SK.seed, SK.prf, PK.seed, PK.root)
 //        # Output: SPHINCS+ signature SIG
         // init
 
-        SPHINCSPlusEngine engine = privKey.getParameters().getEngine();
+        final SPHINCSPlusEngine engine = privKey.getParameters().getEngine();
 
         // generate randomizer
-        byte[] optRand = new byte[engine.N];
+        final byte[] optRand = new byte[engine.N];
         if (random != null)
         {
             random.nextBytes(optRand);
@@ -71,29 +73,29 @@ public class SPHINCSPlusSigner
             System.arraycopy(privKey.pk.seed, 0, optRand, 0, optRand.length);
         }
 
-        Fors fors = new Fors(engine); 
-        byte[] R = engine.PRF_msg(privKey.sk.prf, optRand, message);
+        final Fors fors = new Fors(engine);
+        final byte[] R = engine.PRF_msg(privKey.sk.prf, optRand, message);
         // compute message digest and index
-        IndexedDigest idxDigest = engine.H_msg(R, privKey.pk.seed, privKey.pk.root, message);
-        byte[] mHash = idxDigest.digest;
-        long idx_tree = idxDigest.idx_tree;
-        int idx_leaf = idxDigest.idx_leaf;
+        final IndexedDigest idxDigest = engine.H_msg(R, privKey.pk.seed, privKey.pk.root, message);
+        final byte[] mHash = idxDigest.digest;
+        final long idx_tree = idxDigest.idx_tree;
+        final int idx_leaf = idxDigest.idx_leaf;
         // FORS sign
-        ADRS adrs = new ADRS();
+        final ADRS adrs = new ADRS();
         adrs.setType(ADRS.FORS_TREE);
         adrs.setTreeAddress(idx_tree);
         adrs.setKeyPairAddress(idx_leaf);
-        SIG_FORS[] sig_fors = fors.sign(mHash, privKey.sk.seed, privKey.pk.seed, adrs);
+        final SIG_FORS[] sig_fors = fors.sign(mHash, privKey.sk.seed, privKey.pk.seed, adrs);
         // get FORS public key - spec shows M?
-        byte[] PK_FORS = fors.pkFromSig(sig_fors, mHash, privKey.pk.seed, adrs);
+        final byte[] PK_FORS = fors.pkFromSig(sig_fors, mHash, privKey.pk.seed, adrs);
 
         // sign FORS public key with HT
-        ADRS treeAdrs = new ADRS();
+        final ADRS treeAdrs = new ADRS();
         treeAdrs.setType(ADRS.TREE);
 
-        HT ht = new HT(engine, privKey.getSeed(), privKey.getPublicSeed());
-        byte[] SIG_HT = ht.sign(PK_FORS, idx_tree, idx_leaf);
-        byte[][] sigComponents = new byte[sig_fors.length + 2][];
+        final HT ht = new HT(engine, privKey.getSeed(), privKey.getPublicSeed());
+        final byte[] SIG_HT = ht.sign(PK_FORS, idx_tree, idx_leaf);
+        final byte[][] sigComponents = new byte[sig_fors.length + 2][];
         sigComponents[0] = R;
 
         for (int i = 0; i != sig_fors.length; i++)
@@ -105,36 +107,37 @@ public class SPHINCSPlusSigner
         return Arrays.concatenate(sigComponents);
     }
 
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(final byte[] message, final byte[] signature)
     {
         //# Input: Message M, signature SIG, public key PK
         //# Output: Boolean
 
         // init
-        SPHINCSPlusEngine engine = pubKey.getParameters().getEngine();
+        final SPHINCSPlusEngine engine = pubKey.getParameters().getEngine();
 
-        ADRS adrs = new ADRS();
-        SIG sig = new SIG(engine.N, engine.K, engine.A, engine.D, engine.H_PRIME, engine.WOTS_LEN, signature);
+        final ADRS adrs = new ADRS();
+        final SIG sig = new SIG(engine.N, engine.K, engine.A, engine.D, engine.H_PRIME, engine.WOTS_LEN, signature);
 
-        byte[] R = sig.getR();
-        SIG_FORS[] sig_fors = sig.getSIG_FORS();
-        SIG_XMSS[] SIG_HT = sig.getSIG_HT();
+        final byte[] R = sig.getR();
+        final SIG_FORS[] sig_fors = sig.getSIG_FORS();
+        final SIG_XMSS[] SIG_HT = sig.getSIG_HT();
 
         // compute message digest and index
-        IndexedDigest idxDigest = engine.H_msg(R, pubKey.getSeed(), pubKey.getRoot(), message);
-        byte[] mHash = idxDigest.digest;
-        long idx_tree = idxDigest.idx_tree;
-        int idx_leaf = idxDigest.idx_leaf;
+        final IndexedDigest idxDigest = engine.H_msg(R, pubKey.getSeed(), pubKey.getRoot(), message);
+        final byte[] mHash = idxDigest.digest;
+        final long idx_tree = idxDigest.idx_tree;
+        final int idx_leaf = idxDigest.idx_leaf;
 
         // compute FORS public key
         adrs.setLayerAddress(0);
         adrs.setTreeAddress(idx_tree);
         adrs.setType(ADRS.FORS_TREE);
         adrs.setKeyPairAddress(idx_leaf);
-        byte[] PK_FORS = new Fors(engine).pkFromSig(sig_fors, mHash, pubKey.getSeed(), adrs);
+        final byte[] PK_FORS = new Fors(engine).pkFromSig(sig_fors, mHash, pubKey.getSeed(), adrs);
         // verify HT signature
         adrs.setType(ADRS.TREE);
-        HT ht = new HT(engine, null, pubKey.getSeed());
+        final HT ht = new HT(engine, null, pubKey.getSeed());
         return ht.verify(PK_FORS, SIG_HT, pubKey.getSeed(), idx_tree, idx_leaf, pubKey.getRoot());
     }
 }

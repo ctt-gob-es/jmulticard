@@ -220,7 +220,7 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 	 * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
     public int selectFileByName(final String name) throws ApduConnectionException,
-                                                           Iso7816FourCardException {
+                                                          Iso7816FourCardException {
     	return selectFileByName(name.getBytes());
     }
 
@@ -231,8 +231,8 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
      * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
     public int selectFileByName(final byte[] name) throws ApduConnectionException,
-                                                           FileNotFoundException,
-                                                           Iso7816FourCardException {
+                                                          FileNotFoundException,
+                                                          Iso7816FourCardException {
     	final CommandApdu selectCommand = new SelectDfByNameApduCommand(getCla(), name);
     	final ResponseApdu response = sendArbitraryApdu(selectCommand);
     	if (response.isOk()) {
@@ -354,7 +354,9 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
         if (res.isOk()) {
         	return res.getData();
         }
-        throw new ApduConnectionException("Respuesta invalida en la obtencion de desafio con el codigo: " + res.getStatusWord()); //$NON-NLS-1$
+        throw new ApduConnectionException(
+    		"Respuesta invalida en la obtencion de desafio con el codigo: " + res.getStatusWord() //$NON-NLS-1$
+		);
     }
 
     /** Verifica el PIN de la tarjeta. El m&eacute;todo reintenta hasta que se introduce el PIN correctamente,

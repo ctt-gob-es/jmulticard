@@ -17,14 +17,14 @@ public class X962Parameters
     private ASN1Primitive           params = null;
 
     public static X962Parameters getInstance(
-        Object obj)
+        final Object obj)
     {
-        if (obj == null || obj instanceof X962Parameters) 
+        if (obj == null || obj instanceof X962Parameters)
         {
             return (X962Parameters)obj;
         }
-        
-        if (obj instanceof ASN1Primitive) 
+
+        if (obj instanceof ASN1Primitive)
         {
             return new X962Parameters((ASN1Primitive)obj);
         }
@@ -35,7 +35,7 @@ public class X962Parameters
             {
                 return new X962Parameters(ASN1Primitive.fromByteArray((byte[])obj));
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("unable to parse encoded data: " + e.getMessage());
             }
@@ -43,45 +43,45 @@ public class X962Parameters
 
         throw new IllegalArgumentException("unknown object in getInstance()");
     }
-    
+
     public static X962Parameters getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(obj.getObject()); // must be explicitly tagged
     }
-    
+
     public X962Parameters(
-        X9ECParameters      ecParameters)
+        final X9ECParameters      ecParameters)
     {
-        this.params = ecParameters.toASN1Primitive();
+        params = ecParameters.toASN1Primitive();
     }
 
     public X962Parameters(
-        ASN1ObjectIdentifier  namedCurve)
+        final ASN1ObjectIdentifier  namedCurve)
     {
-        this.params = namedCurve;
+        params = namedCurve;
     }
 
     public X962Parameters(
-        ASN1Null           obj)
+        final ASN1Null           obj)
     {
-        this.params = obj;
+        params = obj;
     }
 
-    private X962Parameters(ASN1Primitive obj)
+    private X962Parameters(final ASN1Primitive obj)
     {
-        this.params = obj;
+        params = obj;
     }
 
     public boolean isNamedCurve()
     {
-        return (params instanceof ASN1ObjectIdentifier);
+        return params instanceof ASN1ObjectIdentifier;
     }
 
     public boolean isImplicitlyCA()
     {
-        return (params instanceof ASN1Null);
+        return params instanceof ASN1Null;
     }
 
     public ASN1Primitive getParameters()
@@ -99,7 +99,8 @@ public class X962Parameters
      * }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return params;
     }

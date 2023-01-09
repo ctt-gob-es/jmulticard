@@ -197,7 +197,8 @@ public interface PKCSObjectIdentifiers
 
     /** PKCS#9: 1.2.840.113549.1.9.22.1
      * @deprecated use x509Certificate instead */
-    ASN1ObjectIdentifier    x509certType            = pkcs_9.branch("22.1");
+    @Deprecated
+	ASN1ObjectIdentifier    x509certType            = pkcs_9.branch("22.1");
 
     /** PKCS#9: 1.2.840.113549.1.9.22 */
     ASN1ObjectIdentifier    certTypes               = pkcs_9.branch("22");
@@ -403,13 +404,17 @@ public interface PKCSObjectIdentifiers
     ASN1ObjectIdentifier id_aa_communityIdentifiers = id_aa.branch("40");
 
     /** @deprecated use id_aa_ets_sigPolicyId instead */
-    ASN1ObjectIdentifier id_aa_sigPolicyId    = id_aa_ets_sigPolicyId;
+    @Deprecated
+	ASN1ObjectIdentifier id_aa_sigPolicyId    = id_aa_ets_sigPolicyId;
     /** @deprecated use id_aa_ets_commitmentType instead */
-    ASN1ObjectIdentifier id_aa_commitmentType = id_aa_ets_commitmentType;
+    @Deprecated
+	ASN1ObjectIdentifier id_aa_commitmentType = id_aa_ets_commitmentType;
     /** @deprecated use id_aa_ets_signerLocation instead */
-    ASN1ObjectIdentifier id_aa_signerLocation = id_aa_ets_signerLocation;
+    @Deprecated
+	ASN1ObjectIdentifier id_aa_signerLocation = id_aa_ets_signerLocation;
     /** @deprecated use id_aa_ets_otherSigCert instead */
-    ASN1ObjectIdentifier id_aa_otherSigCert   = id_aa_ets_otherSigCert;
+    @Deprecated
+	ASN1ObjectIdentifier id_aa_otherSigCert   = id_aa_ets_otherSigCert;
     
     /**
      * id-spq OBJECT IDENTIFIER ::= {iso(1) member-body(2) usa(840)
@@ -465,7 +470,8 @@ public interface PKCSObjectIdentifiers
      * PKCS#12: 1.2.840.113549.1.12.1.6
      * @deprecated use pbeWithSHAAnd40BitRC2_CBC
      */
-    ASN1ObjectIdentifier    pbewithSHAAnd40BitRC2_CBC = pkcs_12PbeIds.branch("6");
+    @Deprecated
+	ASN1ObjectIdentifier    pbewithSHAAnd40BitRC2_CBC = pkcs_12PbeIds.branch("6");
 
     /** PKCS#9: 1.2.840.113549.1.9.16.3.6 */
     ASN1ObjectIdentifier    id_alg_CMS3DESwrap = new ASN1ObjectIdentifier("1.2.840.113549.1.9.16.3.6");

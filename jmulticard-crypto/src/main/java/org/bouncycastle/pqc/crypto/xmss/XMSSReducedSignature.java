@@ -14,30 +14,29 @@ public class XMSSReducedSignature
     private final WOTSPlusSignature wotsPlusSignature;
     private final List<XMSSNode> authPath;
 
-    protected XMSSReducedSignature(Builder builder)
+    protected XMSSReducedSignature(final Builder builder)
     {
-        super();
         params = builder.params;
         if (params == null)
         {
             throw new NullPointerException("params == null");
         }
-        int n = params.getTreeDigestSize();
-        int len = params.getWOTSPlus().getParams().getLen();
-        int height = params.getHeight();
-        byte[] reducedSignature = builder.reducedSignature;
+        final int n = params.getTreeDigestSize();
+        final int len = params.getWOTSPlus().getParams().getLen();
+        final int height = params.getHeight();
+        final byte[] reducedSignature = builder.reducedSignature;
         if (reducedSignature != null)
         {
             /* import */
-            int signatureSize = len * n;
-            int authPathSize = height * n;
-            int totalSize = signatureSize + authPathSize;
+            final int signatureSize = len * n;
+            final int authPathSize = height * n;
+            final int totalSize = signatureSize + authPathSize;
             if (reducedSignature.length != totalSize)
             {
                 throw new IllegalArgumentException("signature has wrong size");
             }
             int position = 0;
-            byte[][] wotsPlusSignature = new byte[len][];
+            final byte[][] wotsPlusSignature = new byte[len][];
             for (int i = 0; i < wotsPlusSignature.length; i++)
             {
                 wotsPlusSignature[i] = XMSSUtil.extractBytesAtOffset(reducedSignature, position, n);
@@ -45,7 +44,7 @@ public class XMSSReducedSignature
             }
             this.wotsPlusSignature = new WOTSPlusSignature(params.getWOTSPlus().getParams(), wotsPlusSignature);
 
-            List<XMSSNode> nodeList = new ArrayList<XMSSNode>();
+            final List<XMSSNode> nodeList = new ArrayList<>();
             for (int i = 0; i < height; i++)
             {
                 nodeList.add(new XMSSNode(i, XMSSUtil.extractBytesAtOffset(reducedSignature, position, n)));
@@ -56,7 +55,7 @@ public class XMSSReducedSignature
         else
         {
             /* set */
-            WOTSPlusSignature tmpSignature = builder.wotsPlusSignature;
+            final WOTSPlusSignature tmpSignature = builder.wotsPlusSignature;
             if (tmpSignature != null)
             {
                 wotsPlusSignature = tmpSignature;
@@ -65,7 +64,7 @@ public class XMSSReducedSignature
             {
                 wotsPlusSignature = new WOTSPlusSignature(params.getWOTSPlus().getParams(), new byte[len][n]);
             }
-            List<XMSSNode> tmpAuthPath = builder.authPath;
+            final List<XMSSNode> tmpAuthPath = builder.authPath;
             if (tmpAuthPath != null)
             {
                 if (tmpAuthPath.size() != height)
@@ -76,7 +75,7 @@ public class XMSSReducedSignature
             }
             else
             {
-                authPath = new ArrayList<XMSSNode>();
+                authPath = new ArrayList<>();
             }
         }
     }
@@ -91,25 +90,24 @@ public class XMSSReducedSignature
         private List<XMSSNode> authPath = null;
         private byte[] reducedSignature = null;
 
-        public Builder(XMSSParameters params)
+        public Builder(final XMSSParameters params)
         {
-            super();
             this.params = params;
         }
 
-        public Builder withWOTSPlusSignature(WOTSPlusSignature val)
+        public Builder withWOTSPlusSignature(final WOTSPlusSignature val)
         {
             wotsPlusSignature = val;
             return this;
         }
 
-        public Builder withAuthPath(List<XMSSNode> val)
+        public Builder withAuthPath(final List<XMSSNode> val)
         {
             authPath = val;
             return this;
         }
 
-        public Builder withReducedSignature(byte[] val)
+        public Builder withReducedSignature(final byte[] val)
         {
             reducedSignature = XMSSUtil.cloneArray(val);
             return this;
@@ -121,26 +119,25 @@ public class XMSSReducedSignature
         }
     }
 
-    public byte[] toByteArray()
+    @Override
+	public byte[] toByteArray()
     {
         /* signature || authentication path */
-        int n = params.getTreeDigestSize();
-        int signatureSize = params.getWOTSPlus().getParams().getLen() * n;
-        int authPathSize = params.getHeight() * n;
-        int totalSize = signatureSize + authPathSize;
-        byte[] out = new byte[totalSize];
+        final int n = params.getTreeDigestSize();
+        final int signatureSize = params.getWOTSPlus().getParams().getLen() * n;
+        final int authPathSize = params.getHeight() * n;
+        final int totalSize = signatureSize + authPathSize;
+        final byte[] out = new byte[totalSize];
         int position = 0;
         /* copy signature */
-        byte[][] signature = this.wotsPlusSignature.toByteArray();
-        for (int i = 0; i < signature.length; i++)
-        {
-            XMSSUtil.copyBytesAtOffset(out, signature[i], position);
+        final byte[][] signature = wotsPlusSignature.toByteArray();
+        for (final byte[] element : signature) {
+            XMSSUtil.copyBytesAtOffset(out, element, position);
             position += n;
         }
         /* copy authentication path */
-        for (int i = 0; i < authPath.size(); i++)
-        {
-            byte[] value = authPath.get(i).getValue();
+        for (final XMSSNode element : authPath) {
+            final byte[] value = element.getValue();
             XMSSUtil.copyBytesAtOffset(out, value, position);
             position += n;
         }

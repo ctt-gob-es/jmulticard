@@ -139,7 +139,8 @@ public class HSSSignature
         return result;
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         Composer composer = Composer.compose();

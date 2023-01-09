@@ -23,7 +23,8 @@ public class ECKeyPairGenerator
     ECDomainParameters  params;
     SecureRandom        random;
 
-    public void init(
+    @Override
+	public void init(
         KeyGenerationParameters param)
     {
         ECKeyGenerationParameters  ecP = (ECKeyGenerationParameters)param;
@@ -36,7 +37,8 @@ public class ECKeyPairGenerator
      * Given the domain parameters this routine generates an EC key
      * pair in accordance with X9.62 section 5.2.1 pages 26, 27.
      */
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         BigInteger n = params.getN();
         int nBitLength = n.bitLength();

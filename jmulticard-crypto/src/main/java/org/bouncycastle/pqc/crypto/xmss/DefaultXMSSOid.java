@@ -97,7 +97,8 @@ public final class DefaultXMSSOid
      *
      * @return OID.
      */
-    public int getOid()
+    @Override
+	public int getOid()
     {
         return oid;
     }

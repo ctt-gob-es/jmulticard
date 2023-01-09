@@ -51,7 +51,8 @@ public class ECPrivateKey
     /**
      * @deprecated use constructor which takes orderBitLength to guarantee correct encoding.
      */
-    public ECPrivateKey(
+    @Deprecated
+	public ECPrivateKey(
         BigInteger key)
     {
         this(key.bitLength(), key);
@@ -80,7 +81,8 @@ public class ECPrivateKey
     /**
      * @deprecated use constructor which takes orderBitLength to guarantee correct encoding.
      */
-    public ECPrivateKey(
+    @Deprecated
+	public ECPrivateKey(
         BigInteger key,
         ASN1Encodable parameters)
     {
@@ -90,7 +92,8 @@ public class ECPrivateKey
     /**
      * @deprecated use constructor which takes orderBitLength to guarantee correct encoding.
      */
-    public ECPrivateKey(
+    @Deprecated
+	public ECPrivateKey(
         BigInteger key,
         ASN1BitString publicKey,
         ASN1Encodable parameters)
@@ -148,7 +151,8 @@ public class ECPrivateKey
      * @deprecated Use {@link #getParametersObject()} instead and getInstance
      *             methods or similar to get the object at the desired type.
      */
-    public ASN1Primitive getParameters()
+    @Deprecated
+	public ASN1Primitive getParameters()
     {
         return getParametersObject().toASN1Primitive();
     }
@@ -187,7 +191,8 @@ public class ECPrivateKey
      *     parameters [0] Parameters OPTIONAL,
      *     publicKey [1] BIT STRING OPTIONAL }
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return seq;
     }

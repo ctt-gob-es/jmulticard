@@ -118,7 +118,8 @@ public class GF2mVector
     /**
      * @return a byte array encoding of this vector
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         int d = 8;
         int count = 1;
@@ -144,7 +145,8 @@ public class GF2mVector
     /**
      * @return whether this is the zero vector (i.e., all elements are zero)
      */
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         for (int i = vector.length - 1; i >= 0; i--)
         {
@@ -166,7 +168,8 @@ public class GF2mVector
      * <p>
      * TODO: implement this method
      */
-    public Vector add(Vector addend)
+    @Override
+	public Vector add(Vector addend)
     {
         throw new RuntimeException("not implemented");
     }
@@ -177,7 +180,8 @@ public class GF2mVector
      * @param p the permutation
      * @return <tt>this*p = p*this</tt>
      */
-    public Vector multiply(Permutation p)
+    @Override
+	public Vector multiply(Permutation p)
     {
         int[] pVec = p.getVector();
         if (length != pVec.length)
@@ -201,7 +205,8 @@ public class GF2mVector
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
 
         if (!(other instanceof GF2mVector))
@@ -221,7 +226,8 @@ public class GF2mVector
     /**
      * @return the hash code of this vector
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = this.field.hashCode();
         hash = hash * 31 + Arrays.hashCode(vector);
@@ -231,7 +237,8 @@ public class GF2mVector
     /**
      * @return a human readable form of this vector
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < vector.length; i++)

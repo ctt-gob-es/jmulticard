@@ -41,14 +41,16 @@ public class LMSKeyPairGeneratorSpi
         super("LMS");
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         int strength,
         SecureRandom random)
     {
         throw new IllegalArgumentException("use AlgorithmParameterSpec");
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         AlgorithmParameterSpec params,
         SecureRandom random)
         throws InvalidAlgorithmParameterException
@@ -105,7 +107,8 @@ public class LMSKeyPairGeneratorSpi
         initialised = true;
     }
 
-    public KeyPair generateKeyPair()
+    @Override
+	public KeyPair generateKeyPair()
     {
         if (!initialised)
         {

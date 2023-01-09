@@ -146,7 +146,8 @@ abstract class SPHINCSPlusEngine
 
         }
 
-        public byte[] F(byte[] pkSeed, ADRS adrs, byte[] m1)
+        @Override
+		public byte[] F(byte[] pkSeed, ADRS adrs, byte[] m1)
         {
             byte[] compressedADRS = compressedADRS(adrs);
 
@@ -164,7 +165,8 @@ abstract class SPHINCSPlusEngine
             return Arrays.copyOfRange(digestBuf, 0, N);
         }
 
-        public byte[] H(byte[] pkSeed, ADRS adrs, byte[] m1, byte[] m2)
+        @Override
+		public byte[] H(byte[] pkSeed, ADRS adrs, byte[] m1, byte[] m2)
         {
             byte[] m1m2 = Arrays.concatenate(m1, m2);
             byte[] compressedADRS = compressedADRS(adrs);
@@ -183,7 +185,8 @@ abstract class SPHINCSPlusEngine
             return Arrays.copyOfRange(digestBuf, 0, N);
         }
 
-        IndexedDigest H_msg(byte[] prf, byte[] pkSeed, byte[] pkRoot, byte[] message)
+        @Override
+		IndexedDigest H_msg(byte[] prf, byte[] pkSeed, byte[] pkRoot, byte[] message)
         {
             int forsMsgBytes = ((A * K) + 7) / 8;
             int leafBits = H / D;
@@ -219,7 +222,8 @@ abstract class SPHINCSPlusEngine
             return new IndexedDigest(treeIndex, leafIndex, Arrays.copyOfRange(out, 0, forsMsgBytes));
         }
 
-        public byte[] T_l(byte[] pkSeed, ADRS adrs, byte[] m)
+        @Override
+		public byte[] T_l(byte[] pkSeed, ADRS adrs, byte[] m)
         {
             byte[] compressedADRS = compressedADRS(adrs);
             if (robust)
@@ -236,7 +240,8 @@ abstract class SPHINCSPlusEngine
             return Arrays.copyOfRange(digestBuf, 0, N);
         }
 
-        byte[] PRF(byte[] pkSeed, byte[] skSeed, ADRS adrs)
+        @Override
+		byte[] PRF(byte[] pkSeed, byte[] skSeed, ADRS adrs)
         {
             int n = skSeed.length;
 
@@ -253,7 +258,8 @@ abstract class SPHINCSPlusEngine
             return Arrays.copyOfRange(digestBuf, 0, n);
         }
 
-        public byte[] PRF_msg(byte[] prf, byte[] randomiser, byte[] message)
+        @Override
+		public byte[] PRF_msg(byte[] prf, byte[] randomiser, byte[] message)
         {
             treeHMac.init(new KeyParameter(prf));
             treeHMac.update(randomiser, 0, randomiser.length);
@@ -321,7 +327,8 @@ abstract class SPHINCSPlusEngine
             this.treeDigest = new SHAKEDigest(256);
         }
 
-        byte[] F(byte[] pkSeed, ADRS adrs, byte[] m1)
+        @Override
+		byte[] F(byte[] pkSeed, ADRS adrs, byte[] m1)
         {
             byte[] mTheta = m1;
             if (robust)
@@ -339,7 +346,8 @@ abstract class SPHINCSPlusEngine
             return rv;
         }
 
-        byte[] H(byte[] pkSeed, ADRS adrs, byte[] m1, byte[] m2)
+        @Override
+		byte[] H(byte[] pkSeed, ADRS adrs, byte[] m1, byte[] m2)
         {
             byte[] m1m2 = Arrays.concatenate(m1, m2);
 
@@ -359,7 +367,8 @@ abstract class SPHINCSPlusEngine
             return rv;
         }
 
-        IndexedDigest H_msg(byte[] R, byte[] pkSeed, byte[] pkRoot, byte[] message)
+        @Override
+		IndexedDigest H_msg(byte[] R, byte[] pkSeed, byte[] pkRoot, byte[] message)
         {
             int forsMsgBytes = ((A * K) + 7) / 8;
             int leafBits = H / D;
@@ -393,7 +402,8 @@ abstract class SPHINCSPlusEngine
             return new IndexedDigest(treeIndex, leafIndex, Arrays.copyOfRange(out, 0, forsMsgBytes));
         }
 
-        byte[] T_l(byte[] pkSeed, ADRS adrs, byte[] m)
+        @Override
+		byte[] T_l(byte[] pkSeed, ADRS adrs, byte[] m)
         {
             byte[] mTheta = m;
             if (robust)
@@ -411,7 +421,8 @@ abstract class SPHINCSPlusEngine
             return rv;
         }
 
-        byte[] PRF(byte[] pkSeed, byte[] skSeed, ADRS adrs)
+        @Override
+		byte[] PRF(byte[] pkSeed, byte[] skSeed, ADRS adrs)
         {
             // TODO: #UPDATE final submission update announced 17/1/2022
             //treeDigest.update(pkSeed, 0, pkSeed.length);
@@ -422,7 +433,8 @@ abstract class SPHINCSPlusEngine
             return prf;
         }
 
-        public byte[] PRF_msg(byte[] prf, byte[] randomiser, byte[] message)
+        @Override
+		public byte[] PRF_msg(byte[] prf, byte[] randomiser, byte[] message)
         {
             treeDigest.update(prf, 0, prf.length);
             treeDigest.update(randomiser, 0, randomiser.length);

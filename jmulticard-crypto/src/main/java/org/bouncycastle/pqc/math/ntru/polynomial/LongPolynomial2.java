@@ -234,14 +234,16 @@ public class LongPolynomial2
         }
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         LongPolynomial2 p = new LongPolynomial2(coeffs.clone());
         p.numCoeffs = numCoeffs;
         return p;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (obj instanceof LongPolynomial2)
         {

@@ -23,7 +23,7 @@ public class RainbowSigner
     implements MessageSigner
 {
     private static final int MAXITS = 65536;
-    
+
     // Source of randomness
     private SecureRandom random;
 
@@ -33,36 +33,37 @@ public class RainbowSigner
     // Container for the oil and vinegar variables of all the layers
     private short[] x;
 
-    private ComputeInField cf = new ComputeInField();
+    private final ComputeInField cf = new ComputeInField();
 
     RainbowKeyParameters key;
 
-    public void init(boolean forSigning,
-                     CipherParameters param)
+    @Override
+	public void init(final boolean forSigning,
+                     final CipherParameters param)
     {
         if (forSigning)
         {
             if (param instanceof ParametersWithRandom)
             {
-                ParametersWithRandom rParam = (ParametersWithRandom)param;
+                final ParametersWithRandom rParam = (ParametersWithRandom)param;
 
-                this.random = rParam.getRandom();
-                this.key = (RainbowPrivateKeyParameters)rParam.getParameters();
+                random = rParam.getRandom();
+                key = (RainbowPrivateKeyParameters)rParam.getParameters();
 
             }
             else
             {
 
-                this.random = CryptoServicesRegistrar.getSecureRandom();
-                this.key = (RainbowPrivateKeyParameters)param;
+                random = CryptoServicesRegistrar.getSecureRandom();
+                key = (RainbowPrivateKeyParameters)param;
             }
         }
         else
         {
-            this.key = (RainbowPublicKeyParameters)param;
+            key = (RainbowPublicKeyParameters)param;
         }
 
-        this.signableDocumentLength = this.key.getDocLength();
+        signableDocumentLength = key.getDocLength();
     }
 
 
@@ -74,17 +75,17 @@ public class RainbowSigner
      * @return Y_ the modified document needed for solving LES, (Y_ =
      * A1^{-1}*(Y-b1)) linear map L1 = A1 x + b1.
      */
-    private short[] initSign(Layer[] layer, short[] msg)
+    private short[] initSign(final Layer[] layer, final short[] msg)
     {
 
         /* preparation: Modifies the document with the inverse of L1 */
         // tmp = Y - b1:
         short[] tmpVec = new short[msg.length];
 
-        tmpVec = cf.addVect(((RainbowPrivateKeyParameters)this.key).getB1(), msg);
+        tmpVec = cf.addVect(((RainbowPrivateKeyParameters)key).getB1(), msg);
 
         // Y_ = A1^{-1} * (Y - b1) :
-        short[] Y_ = cf.multiplyMatrix(((RainbowPrivateKeyParameters)this.key).getInvA1(), tmpVec);
+        final short[] Y_ = cf.multiplyMatrix(((RainbowPrivateKeyParameters)key).getInvA1(), tmpVec);
 
         /* generates the vinegar vars of the first layer at random */
         for (int i = 0; i < layer[0].getVi(); i++)
@@ -108,12 +109,13 @@ public class RainbowSigner
      * @param message the message
      * @return the signature of the message.
      */
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(final byte[] message)
     {
-        Layer[] layer = ((RainbowPrivateKeyParameters)this.key).getLayers();
-        int numberOfLayers = layer.length;
+        final Layer[] layer = ((RainbowPrivateKeyParameters)key).getLayers();
+        final int numberOfLayers = layer.length;
 
-        x = new short[((RainbowPrivateKeyParameters)this.key).getInvA2().length]; // all variables
+        x = new short[((RainbowPrivateKeyParameters)key).getInvA2().length]; // all variables
 
         short[] Y_; // modified document
         short[] y_i; // part of Y_ each polynomial
@@ -125,9 +127,9 @@ public class RainbowSigner
         // the signature as an array of shorts:
         short[] signature;
         // the signature as a byte-array:
-        byte[] S = new byte[layer[numberOfLayers - 1].getViNext()];
+        final byte[] S = new byte[layer[numberOfLayers - 1].getViNext()];
 
-        short[] msgHashVals = makeMessageRepresentative(message);
+        final short[] msgHashVals = makeMessageRepresentative(message);
         int itCount = 0;
 
         // shows if an exception is caught
@@ -172,16 +174,16 @@ public class RainbowSigner
                 }
 
                 /* apply the inverse of L2: (signature = A2^{-1}*(b2+x)) */
-                tmpVec = cf.addVect(((RainbowPrivateKeyParameters)this.key).getB2(), x);
-                signature = cf.multiplyMatrix(((RainbowPrivateKeyParameters)this.key).getInvA2(), tmpVec);
+                tmpVec = cf.addVect(((RainbowPrivateKeyParameters)key).getB2(), x);
+                signature = cf.multiplyMatrix(((RainbowPrivateKeyParameters)key).getInvA2(), tmpVec);
 
                 /* cast signature from short[] to byte[] */
                 for (int i = 0; i < S.length; i++)
                 {
-                    S[i] = ((byte)signature[i]);
+                    S[i] = (byte)signature[i];
                 }
             }
-            catch (Exception se)
+            catch (final Exception se)
             {
                 // if one of the LESs was not solveable - sign again
                 ok = false;
@@ -206,22 +208,23 @@ public class RainbowSigner
      * @param signature the signature of the message
      * @return true if the signature has been verified, false otherwise.
      */
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(final byte[] message, final byte[] signature)
     {
-        short[] sigInt = new short[signature.length];
+        final short[] sigInt = new short[signature.length];
         short tmp;
 
         for (int i = 0; i < signature.length; i++)
         {
-            tmp = (short)signature[i];
+            tmp = signature[i];
             tmp &= (short)0xff;
             sigInt[i] = tmp;
         }
 
-        short[] msgHashVal = makeMessageRepresentative(message);
+        final short[] msgHashVal = makeMessageRepresentative(message);
 
         // verify
-        short[] verificationResult = verifySignatureIntern(sigInt);
+        final short[] verificationResult = verifySignatureIntern(sigInt);
 
         // compare
         boolean verified = true;
@@ -243,15 +246,15 @@ public class RainbowSigner
      * @param signature vector of dimension n
      * @return document hash of length n - v1
      */
-    private short[] verifySignatureIntern(short[] signature)
+    private short[] verifySignatureIntern(final short[] signature)
     {
 
-        short[][] coeff_quadratic = ((RainbowPublicKeyParameters)this.key).getCoeffQuadratic();
-        short[][] coeff_singular = ((RainbowPublicKeyParameters)this.key).getCoeffSingular();
-        short[] coeff_scalar = ((RainbowPublicKeyParameters)this.key).getCoeffScalar();
+        final short[][] coeff_quadratic = ((RainbowPublicKeyParameters)key).getCoeffQuadratic();
+        final short[][] coeff_singular = ((RainbowPublicKeyParameters)key).getCoeffSingular();
+        final short[] coeff_scalar = ((RainbowPublicKeyParameters)key).getCoeffScalar();
 
-        short[] rslt = new short[coeff_quadratic.length];// n - v1
-        int n = coeff_singular[0].length;
+        final short[] rslt = new short[coeff_quadratic.length];// n - v1
+        final int n = coeff_singular[0].length;
         int offset = 0; // array position
         short tmp = 0; // for scalar
 
@@ -286,10 +289,10 @@ public class RainbowSigner
      * @param message the message
      * @return message representative
      */
-    private short[] makeMessageRepresentative(byte[] message)
+    private short[] makeMessageRepresentative(final byte[] message)
     {
         // the message representative
-        short[] output = new short[this.signableDocumentLength];
+        final short[] output = new short[signableDocumentLength];
 
         int h = 0;
         int i = 0;
@@ -299,7 +302,7 @@ public class RainbowSigner
             {
                 break;
             }
-            output[i] = (short)message[h];
+            output[i] = message[h];
             output[i] &= (short)0xff;
             h++;
             i++;

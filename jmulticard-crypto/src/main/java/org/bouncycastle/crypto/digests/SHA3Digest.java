@@ -38,12 +38,14 @@ public class SHA3Digest
         super(source);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SHA3-" + fixedOutputLength;
     }
 
-    public int doFinal(byte[] out, int outOff)
+    @Override
+	public int doFinal(byte[] out, int outOff)
     {
         absorbBits(0x02, 2);
         
@@ -53,7 +55,8 @@ public class SHA3Digest
     /*
      * TODO Possible API change to support partial-byte suffixes.
      */
-    protected int doFinal(byte[] out, int outOff, byte partialByte, int partialBits)
+    @Override
+	protected int doFinal(byte[] out, int outOff, byte partialByte, int partialBits)
     {
         if (partialBits < 0 || partialBits > 7)
         {

@@ -4,7 +4,8 @@ import java.math.BigInteger;
 
 public abstract class AbstractECMultiplier implements ECMultiplier
 {
-    public ECPoint multiply(ECPoint p, BigInteger k)
+    @Override
+	public ECPoint multiply(ECPoint p, BigInteger k)
     {
         int sign = k.signum();
         if (sign == 0 || p.isInfinity())

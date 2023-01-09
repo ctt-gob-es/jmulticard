@@ -25,17 +25,17 @@ import org.bouncycastle.util.Strings;
 public class DERGeneralizedTime
     extends ASN1GeneralizedTime
 {
-    public DERGeneralizedTime(byte[] time)
+    public DERGeneralizedTime(final byte[] time)
     {
         super(time);
     }
 
-    public DERGeneralizedTime(Date time)
+    public DERGeneralizedTime(final Date time)
     {
         super(time);
     }
 
-    public DERGeneralizedTime(String time)
+    public DERGeneralizedTime(final String time)
     {
         super(time);
     }
@@ -46,7 +46,7 @@ public class DERGeneralizedTime
         {
             if (!hasMinutes())
             {
-                byte[] derTime = new byte[contents.length + 4];
+                final byte[] derTime = new byte[contents.length + 4];
 
                 System.arraycopy(contents, 0, derTime, 0, contents.length - 1);
                 System.arraycopy(Strings.toByteArray("0000Z"), 0, derTime, contents.length - 1, 5);
@@ -55,7 +55,7 @@ public class DERGeneralizedTime
             }
             else if (!hasSeconds())
             {
-                byte[] derTime = new byte[contents.length + 2];
+                final byte[] derTime = new byte[contents.length + 2];
 
                 System.arraycopy(contents, 0, derTime, 0, contents.length - 1);
                 System.arraycopy(Strings.toByteArray("00Z"), 0, derTime, contents.length - 1, 3);
@@ -72,7 +72,7 @@ public class DERGeneralizedTime
 
                 if (contents[ind] == '.')
                 {
-                    byte[] derTime = new byte[ind + 1];
+                    final byte[] derTime = new byte[ind + 1];
 
                     System.arraycopy(contents, 0, derTime, 0, ind);
                     derTime[ind] = (byte)'Z';
@@ -81,7 +81,7 @@ public class DERGeneralizedTime
                 }
                 else
                 {
-                    byte[] derTime = new byte[ind + 2];
+                    final byte[] derTime = new byte[ind + 2];
 
                     System.arraycopy(contents, 0, derTime, 0, ind + 1);
                     derTime[ind + 1] = (byte)'Z';
@@ -100,22 +100,26 @@ public class DERGeneralizedTime
         }
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, getDERTime().length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.GENERALIZED_TIME, getDERTime());
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return this;
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

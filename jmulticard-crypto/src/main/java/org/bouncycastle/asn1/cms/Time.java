@@ -38,14 +38,14 @@ public class Time
     ASN1Primitive time;
 
     public static Time getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(obj.getObject());
     }
 
     private Time(
-        ASN1Primitive   time)
+        final ASN1Primitive   time)
     {
         if (!(time instanceof ASN1UTCTime)
             && !(time instanceof ASN1GeneralizedTime))
@@ -53,7 +53,7 @@ public class Time
             throw new IllegalArgumentException("unknown object passed to Time");
         }
 
-        this.time = time; 
+        this.time = time;
     }
 
     /**
@@ -64,15 +64,15 @@ public class Time
      * @param time a date object representing the time of interest.
      */
     public Time(
-        Date    time)
+        final Date    time)
     {
-        SimpleTimeZone      tz = new SimpleTimeZone(0, "Z");
-        SimpleDateFormat    dateF = new SimpleDateFormat("yyyyMMddHHmmss");
+        final SimpleTimeZone      tz = new SimpleTimeZone(0, "Z");
+        final SimpleDateFormat    dateF = new SimpleDateFormat("yyyyMMddHHmmss");
 
         dateF.setTimeZone(tz);
 
-        String  d = dateF.format(time) + "Z";
-        int     year = Integer.parseInt(d.substring(0, 4));
+        final String  d = dateF.format(time) + "Z";
+        final int     year = Integer.parseInt(d.substring(0, 4));
 
         if (year < 1950 || year > 2049)
         {
@@ -94,16 +94,16 @@ public class Time
      * @param locale an appropriate Locale for producing an ASN.1 GeneralizedTime value.
      */
     public Time(
-        Date    time,
-        Locale locale)
+        final Date    time,
+        final Locale locale)
     {
-        SimpleTimeZone      tz = new SimpleTimeZone(0, "Z");
-        SimpleDateFormat    dateF = new SimpleDateFormat("yyyyMMddHHmmss", locale);
+        final SimpleTimeZone      tz = new SimpleTimeZone(0, "Z");
+        final SimpleDateFormat    dateF = new SimpleDateFormat("yyyyMMddHHmmss", locale);
 
         dateF.setTimeZone(tz);
 
-        String  d = dateF.format(time) + "Z";
-        int     year = Integer.parseInt(d.substring(0, 4));
+        final String  d = dateF.format(time) + "Z";
+        final int     year = Integer.parseInt(d.substring(0, 4));
 
         if (year < 1950 || year > 2049)
         {
@@ -130,7 +130,7 @@ public class Time
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static Time getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof Time)
         {
@@ -179,7 +179,7 @@ public class Time
                 return ((ASN1GeneralizedTime)time).getDate();
             }
         }
-        catch (ParseException e)
+        catch (final ParseException e)
         {         // this should never happen
             throw new IllegalStateException("invalid date string: " + e.getMessage());
         }
@@ -188,7 +188,8 @@ public class Time
     /**
      * Produce an object suitable for an ASN1OutputStream.
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return time;
     }

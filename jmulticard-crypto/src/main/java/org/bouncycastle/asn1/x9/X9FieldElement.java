@@ -12,10 +12,10 @@ public class X9FieldElement
     extends ASN1Object
 {
     protected ECFieldElement  f;
-    
+
     private static X9IntegerConverter converter = new X9IntegerConverter();
 
-    public X9FieldElement(ECFieldElement f)
+    public X9FieldElement(final ECFieldElement f)
     {
         this.f = f;
     }
@@ -24,7 +24,7 @@ public class X9FieldElement
     {
         return f;
     }
-    
+
     /**
      * Produce an object suitable for an ASN1OutputStream.
      * <pre>
@@ -41,10 +41,11 @@ public class X9FieldElement
      * </li>
      * </ol>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        int byteCount = converter.getByteLength(f);
-        byte[] paddedBigInteger = converter.integerToBytes(f.toBigInteger(), byteCount);
+        final int byteCount = converter.getByteLength(f);
+        final byte[] paddedBigInteger = converter.integerToBytes(f.toBigInteger(), byteCount);
 
         return new DEROctetString(paddedBigInteger);
     }

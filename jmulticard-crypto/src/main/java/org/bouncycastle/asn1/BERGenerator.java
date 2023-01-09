@@ -28,7 +28,8 @@ public abstract class BERGenerator
         _tagNo = tagNo;
     }
 
-    public OutputStream getRawOutputStream()
+    @Override
+	public OutputStream getRawOutputStream()
     {
         return _out;
     }

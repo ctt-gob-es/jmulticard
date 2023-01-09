@@ -48,7 +48,8 @@ public class BCXMSSPrivateKey
         this.keyParams = (XMSSPrivateKeyParameters)PrivateKeyFactory.createKey(keyInfo);
     }
 
-    public long getIndex()
+    @Override
+	public long getIndex()
     {
         if (getUsagesRemaining() == 0)
         {
@@ -57,27 +58,32 @@ public class BCXMSSPrivateKey
         return keyParams.getIndex();
     }
 
-    public long getUsagesRemaining()
+    @Override
+	public long getUsagesRemaining()
     {
         return keyParams.getUsagesRemaining();
     }
 
-    public XMSSPrivateKey extractKeyShard(int usageCount)
+    @Override
+	public XMSSPrivateKey extractKeyShard(int usageCount)
     {
         return new BCXMSSPrivateKey(this.treeDigest, keyParams.extractKeyShard(usageCount));
     }
 
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "XMSS";
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -91,7 +97,8 @@ public class BCXMSSPrivateKey
         }
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -108,7 +115,8 @@ public class BCXMSSPrivateKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return treeDigest.hashCode() + 37 * Arrays.hashCode(keyParams.toByteArray());
     }
@@ -123,12 +131,14 @@ public class BCXMSSPrivateKey
         return treeDigest;
     }
 
-    public int getHeight()
+    @Override
+	public int getHeight()
     {
         return keyParams.getParameters().getHeight();
     }
 
-    public String getTreeDigest()
+    @Override
+	public String getTreeDigest()
     {
         return DigestUtil.getXMSSDigestName(treeDigest);
     }

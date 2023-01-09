@@ -54,16 +54,19 @@ public abstract class Vector
      * @param other vector
      * @return the result of the comparison
      */
-    public abstract boolean equals(Object other);
+    @Override
+	public abstract boolean equals(Object other);
 
     /**
      * @return the hash code of this vector
      */
-    public abstract int hashCode();
+    @Override
+	public abstract int hashCode();
 
     /**
      * @return a human readable form of this vector
      */
-    public abstract String toString();
+    @Override
+	public abstract String toString();
 
 }

@@ -25,7 +25,8 @@ public class SignatureSpi
         this.signer = signer;
     }
 
-    protected void engineInitVerify(PublicKey publicKey)
+    @Override
+	protected void engineInitVerify(PublicKey publicKey)
         throws InvalidKeyException
     {
         if (publicKey instanceof BCSPHINCSPlusPublicKey)
@@ -42,14 +43,16 @@ public class SignatureSpi
         }
     }
 
-    protected void engineInitSign(PrivateKey privateKey, SecureRandom random)
+    @Override
+	protected void engineInitSign(PrivateKey privateKey, SecureRandom random)
         throws InvalidKeyException
     {
         this.appRandom = random;
         engineInitSign(privateKey);
     }
 
-    protected void engineInitSign(PrivateKey privateKey)
+    @Override
+	protected void engineInitSign(PrivateKey privateKey)
         throws InvalidKeyException
     {
         if (privateKey instanceof BCSPHINCSPlusPrivateKey)
@@ -73,19 +76,22 @@ public class SignatureSpi
         }
     }
 
-    protected void engineUpdate(byte b)
+    @Override
+	protected void engineUpdate(byte b)
         throws SignatureException
     {
         digest.update(b);
     }
 
-    protected void engineUpdate(byte[] b, int off, int len)
+    @Override
+	protected void engineUpdate(byte[] b, int off, int len)
         throws SignatureException
     {
         digest.update(b, off, len);
     }
 
-    protected byte[] engineSign()
+    @Override
+	protected byte[] engineSign()
         throws SignatureException
     {
         byte[] hash = new byte[digest.getDigestSize()];
@@ -102,7 +108,8 @@ public class SignatureSpi
         }
     }
 
-    protected boolean engineVerify(byte[] sigBytes)
+    @Override
+	protected boolean engineVerify(byte[] sigBytes)
         throws SignatureException
     {
         byte[] hash = new byte[digest.getDigestSize()];
@@ -111,7 +118,8 @@ public class SignatureSpi
         return signer.verifySignature(hash, sigBytes);
     }
 
-    protected void engineSetParameter(AlgorithmParameterSpec params)
+    @Override
+	protected void engineSetParameter(AlgorithmParameterSpec params)
     {
         // TODO
         throw new UnsupportedOperationException("engineSetParameter unsupported");
@@ -120,7 +128,9 @@ public class SignatureSpi
     /**
      * @deprecated replaced with #engineSetParameter(java.security.spec.AlgorithmParameterSpec)
      */
-    protected void engineSetParameter(String param, Object value)
+    @Deprecated
+	@Override
+	protected void engineSetParameter(String param, Object value)
     {
         throw new UnsupportedOperationException("engineSetParameter unsupported");
     }
@@ -128,7 +138,9 @@ public class SignatureSpi
     /**
      * @deprecated
      */
-    protected Object engineGetParameter(String param)
+    @Deprecated
+	@Override
+	protected Object engineGetParameter(String param)
     {
         throw new UnsupportedOperationException("engineSetParameter unsupported");
     }

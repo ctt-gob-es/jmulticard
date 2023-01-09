@@ -69,12 +69,14 @@ public class SignerId
         return baseSelector.getSubjectKeyIdentifier();
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return baseSelector.hashCode();
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  o)
     {
         if (!(o instanceof SignerId))
@@ -87,7 +89,8 @@ public class SignerId
         return this.baseSelector.equals(id.baseSelector);
     }
 
-    public boolean match(Object obj)
+    @Override
+	public boolean match(Object obj)
     {
         if (obj instanceof SignerInformation)
         {
@@ -97,7 +100,8 @@ public class SignerId
         return baseSelector.match(obj);
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new SignerId(this.baseSelector);
     }

@@ -34,7 +34,8 @@ public class DESedeEngine
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    public void init(
+    @Override
+	public void init(
         boolean           encrypting,
         CipherParameters  params)
     {
@@ -72,17 +73,20 @@ public class DESedeEngine
         }
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "DESede";
     }
 
-    public int getBlockSize()
+    @Override
+	public int getBlockSize()
     {
         return BLOCK_SIZE;
     }
 
-    public int processBlock(
+    @Override
+	public int processBlock(
         byte[] in,
         int inOff,
         byte[] out,
@@ -121,7 +125,8 @@ public class DESedeEngine
         return BLOCK_SIZE;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
     }
 }

@@ -87,7 +87,8 @@ public class X509CertificateHolder
     /**
      * @deprecated use getVersionNumber
      */
-    public int getVersion()
+    @Deprecated
+	public int getVersion()
     {
         return x509Certificate.getVersionNumber();
     }
@@ -298,7 +299,8 @@ public class X509CertificateHolder
         return verifier.verify(this.getSignature());
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object o)
     {
         if (o == this)
@@ -316,7 +318,8 @@ public class X509CertificateHolder
         return this.x509Certificate.equals(other.x509Certificate);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.x509Certificate.hashCode();
     }
@@ -327,7 +330,8 @@ public class X509CertificateHolder
      * @return a DER encoded byte array.
      * @throws IOException if an encoding cannot be generated.
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return x509Certificate.getEncoded();

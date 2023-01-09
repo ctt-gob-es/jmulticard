@@ -34,7 +34,8 @@ public class DHKEKGenerator
         this.digest = digest;
     }
 
-    public void init(DerivationParameters param)
+    @Override
+	public void init(DerivationParameters param)
     {
         DHKDFParameters params = (DHKDFParameters)param;
 
@@ -49,7 +50,8 @@ public class DHKEKGenerator
         return digest;
     }
 
-    public int generateBytes(byte[] out, int outOff, int len)
+    @Override
+	public int generateBytes(byte[] out, int outOff, int len)
         throws DataLengthException, IllegalArgumentException
     {
         if ((out.length - len) < outOff)

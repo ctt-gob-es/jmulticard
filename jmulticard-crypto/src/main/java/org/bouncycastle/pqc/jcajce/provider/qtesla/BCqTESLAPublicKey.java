@@ -43,12 +43,14 @@ public class BCqTESLAPublicKey
     /**
      * @return name of the algorithm
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return QTESLASecurityCategory.getName(keyParams.getSecurityCategory());
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -62,12 +64,14 @@ public class BCqTESLAPublicKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
 
-    public QTESLAParameterSpec getParams()
+    @Override
+	public QTESLAParameterSpec getParams()
     {
         return new QTESLAParameterSpec(getAlgorithm());
     }
@@ -77,7 +81,8 @@ public class BCqTESLAPublicKey
         return keyParams;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -95,7 +100,8 @@ public class BCqTESLAPublicKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return keyParams.getSecurityCategory() + 37 * Arrays.hashCode(keyParams.getPublicData());
     }

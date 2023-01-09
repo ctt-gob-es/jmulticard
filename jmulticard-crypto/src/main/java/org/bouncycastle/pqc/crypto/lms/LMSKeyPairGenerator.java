@@ -11,12 +11,14 @@ public class LMSKeyPairGenerator
 {
     LMSKeyGenerationParameters param;
 
-    public void init(KeyGenerationParameters param)
+    @Override
+	public void init(KeyGenerationParameters param)
     {
         this.param = (LMSKeyGenerationParameters)param;
     }
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         SecureRandom source = param.getRandom();
 

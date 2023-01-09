@@ -64,7 +64,8 @@ public class RainbowKeyFactorySpi
      * @return the Rainbow private key
      * @throws InvalidKeySpecException if the KeySpec is not supported.
      */
-    public PrivateKey engineGeneratePrivate(KeySpec keySpec)
+    @Override
+	public PrivateKey engineGeneratePrivate(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof RainbowPrivateKeySpec)
@@ -110,7 +111,8 @@ public class RainbowKeyFactorySpi
      * @return the Rainbow public key
      * @throws InvalidKeySpecException if the KeySpec is not supported.
      */
-    public PublicKey engineGeneratePublic(KeySpec keySpec)
+    @Override
+	public PublicKey engineGeneratePublic(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof RainbowPublicKeySpec)
@@ -149,7 +151,8 @@ public class RainbowKeyFactorySpi
      * @return the specification of the CMSS key
      * @throws InvalidKeySpecException if the key type or key specification is not supported.
      */
-    public final KeySpec engineGetKeySpec(Key key, Class keySpec)
+    @Override
+	public final KeySpec engineGetKeySpec(Key key, Class keySpec)
         throws InvalidKeySpecException
     {
         if (key instanceof BCRainbowPrivateKey)
@@ -198,7 +201,8 @@ public class RainbowKeyFactorySpi
      * @return a key of a known key type
      * @throws InvalidKeyException if the key is not supported.
      */
-    public final Key engineTranslateKey(Key key)
+    @Override
+	public final Key engineTranslateKey(Key key)
         throws InvalidKeyException
     {
         if (key instanceof BCRainbowPrivateKey || key instanceof BCRainbowPublicKey)
@@ -209,7 +213,8 @@ public class RainbowKeyFactorySpi
         throw new InvalidKeyException("Unsupported key type");
     }
 
-    public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
+    @Override
+	public PrivateKey generatePrivate(PrivateKeyInfo keyInfo)
         throws IOException
     {
         RainbowPrivateKey pKey = RainbowPrivateKey.getInstance(keyInfo.parsePrivateKey());
@@ -217,7 +222,8 @@ public class RainbowKeyFactorySpi
         return new BCRainbowPrivateKey(pKey.getInvA1(), pKey.getB1(), pKey.getInvA2(), pKey.getB2(), pKey.getVi(), pKey.getLayers());
     }
 
-    public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
+    @Override
+	public PublicKey generatePublic(SubjectPublicKeyInfo keyInfo)
         throws IOException
     {
         RainbowPublicKey pKey = RainbowPublicKey.getInstance(keyInfo.parsePublicKey());

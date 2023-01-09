@@ -20,7 +20,8 @@ public class DERBMPString
      * 
      * @deprecated Use {@link ASN1BMPString#getInstance(Object)} instead.
      */
-    public static DERBMPString getInstance(
+    @Deprecated
+	public static DERBMPString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERBMPString)
@@ -58,7 +59,8 @@ public class DERBMPString
      * @deprecated Use {@link ASN1BMPString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERBMPString getInstance(
+    @Deprecated
+	public static DERBMPString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

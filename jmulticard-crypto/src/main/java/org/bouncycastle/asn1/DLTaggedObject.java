@@ -40,12 +40,14 @@ public class DLTaggedObject
         super(explicitness, tagClass, tagNo, obj);
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return isExplicit() || obj.toASN1Primitive().toDLObject().encodeConstructed();
     }
 
-    int encodedLength(boolean withTag) throws IOException
+    @Override
+	int encodedLength(boolean withTag) throws IOException
     {
         ASN1Primitive primitive = obj.toASN1Primitive().toDLObject();
         boolean explicit = isExplicit();
@@ -62,7 +64,8 @@ public class DLTaggedObject
         return length;
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
 //        assert out.getClass().isAssignableFrom(DLOutputStream.class);
 
@@ -88,22 +91,26 @@ public class DLTaggedObject
         primitive.encode(out.getDLSubStream(), explicit);
     }
 
-    String getASN1Encoding()
+    @Override
+	String getASN1Encoding()
     {
         return ASN1Encoding.DL;
     }
 
-    ASN1Sequence rebuildConstructed(ASN1Primitive primitive)
+    @Override
+	ASN1Sequence rebuildConstructed(ASN1Primitive primitive)
     {
         return new DLSequence(primitive);
     }
 
-    ASN1TaggedObject replaceTag(int tagClass, int tagNo)
+    @Override
+	ASN1TaggedObject replaceTag(int tagClass, int tagNo)
     {
         return new DLTaggedObject(explicitness, tagClass, tagNo, obj);
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

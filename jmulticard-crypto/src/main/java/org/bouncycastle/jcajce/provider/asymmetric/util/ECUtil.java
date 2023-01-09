@@ -427,7 +427,8 @@ public class ECUtil
     {
         return (String)AccessController.doPrivileged(new PrivilegedAction()
         {
-            public Object run()
+            @Override
+			public Object run()
             {
                 try
                 {

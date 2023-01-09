@@ -20,7 +20,8 @@ public class DLExternal
      * 
      * @deprecated Use {@link DLExternal#DLExternal(DLSequence)} instead.
      */
-    public DLExternal(ASN1EncodableVector vector)
+    @Deprecated
+	public DLExternal(ASN1EncodableVector vector)
     {
         this(DLFactory.createSequence(vector));
     }
@@ -71,7 +72,8 @@ public class DLExternal
         super(directReference, indirectReference, dataValueDescriptor, encoding, externalData);
     }
 
-    ASN1Sequence buildSequence()
+    @Override
+	ASN1Sequence buildSequence()
     {
         ASN1EncodableVector v = new ASN1EncodableVector(4);
         if (directReference != null)
@@ -92,7 +94,8 @@ public class DLExternal
         return new DLSequence(v);
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

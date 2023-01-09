@@ -48,7 +48,8 @@ public class BCMcElieceCCA2PrivateKey
      *
      * @return "McEliece-CCA2"
      */
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "McEliece-CCA2";
     }
@@ -136,7 +137,8 @@ public class BCMcElieceCCA2PrivateKey
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (other == null || !(other instanceof BCMcElieceCCA2PrivateKey))
         {
@@ -154,7 +156,8 @@ public class BCMcElieceCCA2PrivateKey
     /**
      * @return the hash code of this key
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int code = params.getK();
 
@@ -183,7 +186,8 @@ public class BCMcElieceCCA2PrivateKey
      * </pre>
      * @return the keyData to encode in the SubjectPublicKeyInfo structure
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         PrivateKeyInfo pki;
         try
@@ -201,7 +205,8 @@ public class BCMcElieceCCA2PrivateKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }

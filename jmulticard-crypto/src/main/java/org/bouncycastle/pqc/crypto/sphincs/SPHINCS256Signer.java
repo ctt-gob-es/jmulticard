@@ -31,7 +31,7 @@ public class SPHINCS256Signer
      * @param nDigest    the "n-digest" must produce 32 bytes of output - used for tree construction.
      * @param twoNDigest the "2n-digest" must produce 64 bytes of output - used for initial message/key/seed hashing.
      */
-    public SPHINCS256Signer(Digest nDigest, Digest twoNDigest)
+    public SPHINCS256Signer(final Digest nDigest, final Digest twoNDigest)
     {
         if (nDigest.getDigestSize() != 32)
         {
@@ -42,10 +42,11 @@ public class SPHINCS256Signer
             throw new IllegalArgumentException("2n-digest needs to produce 64 bytes of output");
         }
 
-        this.hashFunctions = new HashFunctions(nDigest, twoNDigest);
+        hashFunctions = new HashFunctions(nDigest, twoNDigest);
     }
 
-    public void init(boolean forSigning, CipherParameters param)
+    @Override
+	public void init(final boolean forSigning, final CipherParameters param)
     {
         if (forSigning)
         {
@@ -65,20 +66,22 @@ public class SPHINCS256Signer
         }
     }
 
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(final byte[] message)
     {
         return crypto_sign(hashFunctions, message, keyData);
     }
 
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(final byte[] message, final byte[] signature)
     {
         return verify(hashFunctions, message, signature, keyData);
     }
 
-    static void validate_authpath(HashFunctions hs, byte[] root, byte[] leaf, int leafidx, byte[] authpath, int auOff, byte[] masks, int height)
+    static void validate_authpath(final HashFunctions hs, final byte[] root, final byte[] leaf, int leafidx, final byte[] authpath, final int auOff, final byte[] masks, final int height)
     {
         int i, j;
-        byte[] buffer = new byte[2 * SPHINCS256Config.HASH_BYTES];
+        final byte[] buffer = new byte[2 * SPHINCS256Config.HASH_BYTES];
 
         if ((leafidx & 1) != 0)
         {
@@ -129,29 +132,29 @@ public class SPHINCS256Signer
     }
 
 
-    static void compute_authpath_wots(HashFunctions hs, byte[] root, byte[] authpath, int authOff, Tree.leafaddr a, byte[] sk, byte[] masks, int height)
+    static void compute_authpath_wots(final HashFunctions hs, final byte[] root, final byte[] authpath, final int authOff, final Tree.leafaddr a, final byte[] sk, final byte[] masks, final int height)
     {
         int i, idx, j;
-        Tree.leafaddr ta = new Tree.leafaddr(a);
+        final Tree.leafaddr ta = new Tree.leafaddr(a);
 
-        byte[] tree = new byte[2 * (1 << SPHINCS256Config.SUBTREE_HEIGHT) * SPHINCS256Config.HASH_BYTES];
-        byte[] seed = new byte[(1 << SPHINCS256Config.SUBTREE_HEIGHT) * SPHINCS256Config.SEED_BYTES];
-        byte[] pk = new byte[(1 << SPHINCS256Config.SUBTREE_HEIGHT) * Wots.WOTS_L * SPHINCS256Config.HASH_BYTES];
+        final byte[] tree = new byte[2 * (1 << SPHINCS256Config.SUBTREE_HEIGHT) * SPHINCS256Config.HASH_BYTES];
+        final byte[] seed = new byte[(1 << SPHINCS256Config.SUBTREE_HEIGHT) * SPHINCS256Config.SEED_BYTES];
+        final byte[] pk = new byte[(1 << SPHINCS256Config.SUBTREE_HEIGHT) * Wots.WOTS_L * SPHINCS256Config.HASH_BYTES];
 
         // level 0
-        for (ta.subleaf = 0; ta.subleaf < (1 << SPHINCS256Config.SUBTREE_HEIGHT); ta.subleaf++)
+        for (ta.subleaf = 0; ta.subleaf < 1 << SPHINCS256Config.SUBTREE_HEIGHT; ta.subleaf++)
         {
             Seed.get_seed(hs, seed, (int)(ta.subleaf * SPHINCS256Config.SEED_BYTES), sk, ta);
         }
 
-        Wots w = new Wots();
+        final Wots w = new Wots();
 
-        for (ta.subleaf = 0; ta.subleaf < (1 << SPHINCS256Config.SUBTREE_HEIGHT); ta.subleaf++)
+        for (ta.subleaf = 0; ta.subleaf < 1 << SPHINCS256Config.SUBTREE_HEIGHT; ta.subleaf++)
         {
             w.wots_pkgen(hs, pk, (int)(ta.subleaf * Wots.WOTS_L * SPHINCS256Config.HASH_BYTES), seed, (int)(ta.subleaf * SPHINCS256Config.SEED_BYTES), masks, 0);
         }
 
-        for (ta.subleaf = 0; ta.subleaf < (1 << SPHINCS256Config.SUBTREE_HEIGHT); ta.subleaf++)
+        for (ta.subleaf = 0; ta.subleaf < 1 << SPHINCS256Config.SUBTREE_HEIGHT; ta.subleaf++)
         {
             Tree.l_tree(hs, tree, (int)((1 << SPHINCS256Config.SUBTREE_HEIGHT) * SPHINCS256Config.HASH_BYTES + ta.subleaf * SPHINCS256Config.HASH_BYTES),
                 pk, (int)(ta.subleaf * Wots.WOTS_L * SPHINCS256Config.HASH_BYTES), masks, 0);
@@ -160,7 +163,7 @@ public class SPHINCS256Signer
         int level = 0;
 
         // tree
-        for (i = (1 << SPHINCS256Config.SUBTREE_HEIGHT); i > 0; i >>>= 1)
+        for (i = 1 << SPHINCS256Config.SUBTREE_HEIGHT; i > 0; i >>>= 1)
         {
             for (j = 0; j < i; j += 2)
             {
@@ -178,28 +181,28 @@ public class SPHINCS256Signer
         // copy authpath
         for (i = 0; i < height; i++)
         {
-            System.arraycopy(tree, ((1 << SPHINCS256Config.SUBTREE_HEIGHT) >>> i) * SPHINCS256Config.HASH_BYTES + ((idx >>> i) ^ 1) * SPHINCS256Config.HASH_BYTES, authpath, authOff + i * SPHINCS256Config.HASH_BYTES, SPHINCS256Config.HASH_BYTES);
+            System.arraycopy(tree, (1 << SPHINCS256Config.SUBTREE_HEIGHT >>> i) * SPHINCS256Config.HASH_BYTES + (idx >>> i ^ 1) * SPHINCS256Config.HASH_BYTES, authpath, authOff + i * SPHINCS256Config.HASH_BYTES, SPHINCS256Config.HASH_BYTES);
         }
 
         // copy root
         System.arraycopy(tree, SPHINCS256Config.HASH_BYTES, root, 0, SPHINCS256Config.HASH_BYTES);
     }
 
-    byte[] crypto_sign(HashFunctions hs, byte[] m, byte[] sk)
+    byte[] crypto_sign(final HashFunctions hs, final byte[] m, final byte[] sk)
     {
-        byte[] sm = new byte[SPHINCS256Config.CRYPTO_BYTES];
+        final byte[] sm = new byte[SPHINCS256Config.CRYPTO_BYTES];
 
         int i;
         long leafidx;
-        byte[] R = new byte[SPHINCS256Config.MESSAGE_HASH_SEED_BYTES];
-        byte[] m_h = new byte[SPHINCS256Config.MSGHASH_BYTES];
-        long[] rnd = new long[8];
+        final byte[] R = new byte[SPHINCS256Config.MESSAGE_HASH_SEED_BYTES];
+        final byte[] m_h = new byte[SPHINCS256Config.MSGHASH_BYTES];
+        final long[] rnd = new long[8];
 
-        byte[] root = new byte[SPHINCS256Config.HASH_BYTES];
-        byte[] seed = new byte[SPHINCS256Config.SEED_BYTES];
-        byte[] masks = new byte[Horst.N_MASKS * SPHINCS256Config.HASH_BYTES];
+        final byte[] root = new byte[SPHINCS256Config.HASH_BYTES];
+        final byte[] seed = new byte[SPHINCS256Config.SEED_BYTES];
+        final byte[] masks = new byte[Horst.N_MASKS * SPHINCS256Config.HASH_BYTES];
         int pk;
-        byte[] tsk = new byte[SPHINCS256Config.CRYPTO_SECRETKEYBYTES];
+        final byte[] tsk = new byte[SPHINCS256Config.CRYPTO_SECRETKEYBYTES];
 
         for (i = 0; i < SPHINCS256Config.CRYPTO_SECRETKEYBYTES; i++)
         {
@@ -215,7 +218,7 @@ public class SPHINCS256Signer
             System.arraycopy(tsk, SPHINCS256Config.CRYPTO_SECRETKEYBYTES - SPHINCS256Config.SK_RAND_SEED_BYTES, sm, scratch, SPHINCS256Config.SK_RAND_SEED_BYTES);
 
             Digest d = hs.getMessageHash();
-            byte[] bRnd = new byte[d.getDigestSize()];
+            final byte[] bRnd = new byte[d.getDigestSize()];
 
             d.update(sm, scratch, SPHINCS256Config.SK_RAND_SEED_BYTES);
 
@@ -241,7 +244,7 @@ public class SPHINCS256Signer
             System.arraycopy(R, 0, sm, scratch, SPHINCS256Config.MESSAGE_HASH_SEED_BYTES);
 
             // construct and cpy pk
-            Tree.leafaddr b = new Tree.leafaddr();
+            final Tree.leafaddr b = new Tree.leafaddr();
             b.level = SPHINCS256Config.N_LEVELS - 1;
             b.subtree = 0;
             b.subleaf = 0;
@@ -250,7 +253,7 @@ public class SPHINCS256Signer
 
             System.arraycopy(tsk, SPHINCS256Config.SEED_BYTES, sm, pk, Horst.N_MASKS * SPHINCS256Config.HASH_BYTES);
 
-            Tree.treehash(hs, sm, pk + (Horst.N_MASKS * SPHINCS256Config.HASH_BYTES), SPHINCS256Config.SUBTREE_HEIGHT, tsk, b, sm, pk);
+            Tree.treehash(hs, sm, pk + Horst.N_MASKS * SPHINCS256Config.HASH_BYTES, SPHINCS256Config.SUBTREE_HEIGHT, tsk, b, sm, pk);
 
             d = hs.getMessageHash();
 
@@ -259,10 +262,10 @@ public class SPHINCS256Signer
             d.doFinal(m_h, 0);
         }
 
-        Tree.leafaddr a = new Tree.leafaddr();
+        final Tree.leafaddr a = new Tree.leafaddr();
 
         a.level = SPHINCS256Config.N_LEVELS; // Use unique value $d$ for HORST address.
-        a.subleaf = (int)(leafidx & ((1 << SPHINCS256Config.SUBTREE_HEIGHT) - 1));
+        a.subleaf = (int)(leafidx & (1 << SPHINCS256Config.SUBTREE_HEIGHT) - 1);
         a.subtree = leafidx >>> SPHINCS256Config.SUBTREE_HEIGHT;
 
         for (i = 0; i < SPHINCS256Config.MESSAGE_HASH_SEED_BYTES; i++)
@@ -275,19 +278,19 @@ public class SPHINCS256Signer
         System.arraycopy(tsk, SPHINCS256Config.SEED_BYTES, masks, 0, Horst.N_MASKS * SPHINCS256Config.HASH_BYTES);
         for (i = 0; i < (SPHINCS256Config.TOTALTREE_HEIGHT + 7) / 8; i++)
         {
-            sm[smOff + i] = (byte)((leafidx >>> 8 * i) & 0xff);
+            sm[smOff + i] = (byte)(leafidx >>> 8 * i & 0xff);
         }
 
         smOff += (SPHINCS256Config.TOTALTREE_HEIGHT + 7) / 8;
 
         Seed.get_seed(hs, seed, 0, tsk, a);
-        Horst ht = new Horst();
+        final Horst ht = new Horst();
 
-        int horst_sigbytes = ht.horst_sign(hs, sm, smOff, root, seed, masks, m_h);
+        final int horst_sigbytes = ht.horst_sign(hs, sm, smOff, root, seed, masks, m_h);
 
         smOff += horst_sigbytes;
 
-        Wots w = new Wots();
+        final Wots w = new Wots();
 
         for (i = 0; i < SPHINCS256Config.N_LEVELS; i++)
         {
@@ -302,7 +305,7 @@ public class SPHINCS256Signer
             compute_authpath_wots(hs, root, sm, smOff, a, tsk, masks, SPHINCS256Config.SUBTREE_HEIGHT);
             smOff += SPHINCS256Config.SUBTREE_HEIGHT * SPHINCS256Config.HASH_BYTES;
 
-            a.subleaf = (int)(a.subtree & ((1 << SPHINCS256Config.SUBTREE_HEIGHT) - 1));
+            a.subleaf = (int)(a.subtree & (1 << SPHINCS256Config.SUBTREE_HEIGHT) - 1);
             a.subtree >>>= SPHINCS256Config.SUBTREE_HEIGHT;
         }
 
@@ -311,7 +314,7 @@ public class SPHINCS256Signer
         return sm;
     }
 
-    private void zerobytes(byte[] tsk, int off, int cryptoSecretkeybytes)
+    private void zerobytes(final byte[] tsk, final int off, final int cryptoSecretkeybytes)
     {
         for (int i = 0; i != cryptoSecretkeybytes; i++)
         {
@@ -319,24 +322,24 @@ public class SPHINCS256Signer
         }
     }
 
-    boolean verify(HashFunctions hs, byte[] m, byte[] sm, byte[] pk)
+    boolean verify(final HashFunctions hs, final byte[] m, final byte[] sm, final byte[] pk)
     {
         int i;
         int smlen = sm.length;
         long leafidx = 0;
-        byte[] wots_pk = new byte[Wots.WOTS_L * SPHINCS256Config.HASH_BYTES];
-        byte[] pkhash = new byte[SPHINCS256Config.HASH_BYTES];
-        byte[] root = new byte[SPHINCS256Config.HASH_BYTES];
-        byte[] sig = new byte[SPHINCS256Config.CRYPTO_BYTES];
+        final byte[] wots_pk = new byte[Wots.WOTS_L * SPHINCS256Config.HASH_BYTES];
+        final byte[] pkhash = new byte[SPHINCS256Config.HASH_BYTES];
+        final byte[] root = new byte[SPHINCS256Config.HASH_BYTES];
+        final byte[] sig = new byte[SPHINCS256Config.CRYPTO_BYTES];
         int sigp;
-        byte[] tpk = new byte[SPHINCS256Config.CRYPTO_PUBLICKEYBYTES];
+        final byte[] tpk = new byte[SPHINCS256Config.CRYPTO_PUBLICKEYBYTES];
 
         if (smlen != SPHINCS256Config.CRYPTO_BYTES)
         {
             throw new IllegalArgumentException("signature wrong size");
         }
 
-        byte[] m_h = new byte[SPHINCS256Config.MSGHASH_BYTES];
+        final byte[] m_h = new byte[SPHINCS256Config.MSGHASH_BYTES];
 
         for (i = 0; i < SPHINCS256Config.CRYPTO_PUBLICKEYBYTES; i++)
         {
@@ -345,7 +348,7 @@ public class SPHINCS256Signer
 
         // construct message hash
         {
-            byte[] R = new byte[SPHINCS256Config.MESSAGE_HASH_SEED_BYTES];
+            final byte[] R = new byte[SPHINCS256Config.MESSAGE_HASH_SEED_BYTES];
 
             for (i = 0; i < SPHINCS256Config.MESSAGE_HASH_SEED_BYTES; i++)
             {
@@ -354,7 +357,7 @@ public class SPHINCS256Signer
 
             System.arraycopy(sm, 0, sig, 0, SPHINCS256Config.CRYPTO_BYTES);
 
-            Digest mHash = hs.getMessageHash();
+            final Digest mHash = hs.getMessageHash();
 
             // input R
             mHash.update(R, 0, SPHINCS256Config.MESSAGE_HASH_SEED_BYTES);
@@ -376,7 +379,7 @@ public class SPHINCS256Signer
 
         for (i = 0; i < (SPHINCS256Config.TOTALTREE_HEIGHT + 7) / 8; i++)
         {
-            leafidx ^= ((long)(sig[sigp + i] & 0xff) << (8 * i));
+            leafidx ^= (long)(sig[sigp + i] & 0xff) << 8 * i;
         }
 
 
@@ -389,7 +392,7 @@ public class SPHINCS256Signer
         sigp += Horst.HORST_SIGBYTES;
         smlen -= Horst.HORST_SIGBYTES;
 
-        Wots w = new Wots();
+        final Wots w = new Wots();
 
         for (i = 0; i < SPHINCS256Config.N_LEVELS; i++)
         {

@@ -19,7 +19,8 @@ public class WTauNafMultiplier extends AbstractECMultiplier
      * @param k The integer by which to multiply <code>k</code>.
      * @return <code>p</code> multiplied by <code>k</code>.
      */
-    protected ECPoint multiplyPositive(ECPoint point, BigInteger k)
+    @Override
+	protected ECPoint multiplyPositive(ECPoint point, BigInteger k)
     {
         if (!(point instanceof ECPoint.AbstractF2m))
         {
@@ -77,7 +78,8 @@ public class WTauNafMultiplier extends AbstractECMultiplier
 
         WTauNafPreCompInfo preCompInfo = (WTauNafPreCompInfo)curve.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
-            public PreCompInfo precompute(PreCompInfo existing)
+            @Override
+			public PreCompInfo precompute(PreCompInfo existing)
             {
                 if (existing instanceof WTauNafPreCompInfo)
                 {

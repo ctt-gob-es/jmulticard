@@ -16,7 +16,8 @@ public class DERT61String
      * 
      * @deprecated Use {@link ASN1T61String#getInstance(Object)} instead.
      */
-    public static DERT61String getInstance(
+    @Deprecated
+	public static DERT61String getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERT61String)
@@ -54,7 +55,8 @@ public class DERT61String
      * @deprecated Use {@link ASN1T61String#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERT61String getInstance(
+    @Deprecated
+	public static DERT61String getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

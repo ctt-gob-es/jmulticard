@@ -18,7 +18,8 @@ public class DERVisibleString
      * 
      * @deprecated Use {@link ASN1VisibleString#getInstance(Object)} instead.
      */
-    public static DERVisibleString getInstance(
+    @Deprecated
+	public static DERVisibleString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERVisibleString)
@@ -57,7 +58,8 @@ public class DERVisibleString
      *             {@link ASN1VisibleString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERVisibleString getInstance(
+    @Deprecated
+	public static DERVisibleString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

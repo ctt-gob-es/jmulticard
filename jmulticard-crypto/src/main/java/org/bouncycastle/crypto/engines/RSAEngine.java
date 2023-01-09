@@ -18,7 +18,8 @@ public class RSAEngine
      * @param forEncryption true if we are encrypting, false otherwise.
      * @param param the necessary RSA key parameters.
      */
-    public void init(
+    @Override
+	public void init(
         boolean             forEncryption,
         CipherParameters    param)
     {
@@ -37,7 +38,8 @@ public class RSAEngine
      *
      * @return maximum size for an input block.
      */
-    public int getInputBlockSize()
+    @Override
+	public int getInputBlockSize()
     {
         return core.getInputBlockSize();
     }
@@ -49,7 +51,8 @@ public class RSAEngine
      *
      * @return maximum size for an output block.
      */
-    public int getOutputBlockSize()
+    @Override
+	public int getOutputBlockSize()
     {
         return core.getOutputBlockSize();
     }
@@ -63,7 +66,8 @@ public class RSAEngine
      * @return the result of the RSA process.
      * @exception DataLengthException the input block is too large.
      */
-    public byte[] processBlock(
+    @Override
+	public byte[] processBlock(
         byte[]  in,
         int     inOff,
         int     inLen)

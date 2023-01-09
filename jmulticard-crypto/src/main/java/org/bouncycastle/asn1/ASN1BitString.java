@@ -15,18 +15,20 @@ public abstract class ASN1BitString
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1BitString.class, BERTags.BIT_STRING)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
 
-        ASN1Primitive fromImplicitConstructed(ASN1Sequence sequence)
+        @Override
+		ASN1Primitive fromImplicitConstructed(final ASN1Sequence sequence)
         {
             return sequence.toASN1BitString();
         }
     };
 
-    public static ASN1BitString getInstance(Object obj)
+    public static ASN1BitString getInstance(final Object obj)
     {
         if (obj == null || obj instanceof ASN1BitString)
         {
@@ -35,7 +37,7 @@ public abstract class ASN1BitString
 //      else if (obj instanceof ASN1BitStringParser)
         else if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1BitString)
             {
                 return (ASN1BitString)primitive;
@@ -47,7 +49,7 @@ public abstract class ASN1BitString
             {
                 return (ASN1BitString)TYPE.fromByteArray((byte[])obj);
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("failed to construct BIT STRING from byte[]: " + e.getMessage());
             }
@@ -56,7 +58,7 @@ public abstract class ASN1BitString
         throw new IllegalArgumentException("illegal object in getInstance: " + obj.getClass().getName());
     }
 
-    public static ASN1BitString getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1BitString getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1BitString)TYPE.getContextInstance(taggedObject, explicit);
     }
@@ -69,7 +71,7 @@ public abstract class ASN1BitString
      * a 32 bit constant
      */
     static protected int getPadBits(
-        int bitString)
+        final int bitString)
     {
         int val = 0;
         for (int i = 3; i >= 0; i--)
@@ -80,20 +82,16 @@ public abstract class ASN1BitString
             //
             if (i != 0)
             {
-                if ((bitString >> (i * 8)) != 0)
+                if (bitString >> i * 8 != 0)
                 {
-                    val = (bitString >> (i * 8)) & 0xFF;
+                    val = bitString >> i * 8 & 0xFF;
                     break;
                 }
-            }
-            else
-            {
-                if (bitString != 0)
-                {
-                    val = bitString & 0xFF;
-                    break;
-                }
-            }
+            } else if (bitString != 0)
+			{
+			    val = bitString & 0xFF;
+			    break;
+			}
         }
 
         if (val == 0)
@@ -117,7 +115,7 @@ public abstract class ASN1BitString
      * @return the correct number of bytes for a bit string defined in
      * a 32 bit constant
      */
-    static protected byte[] getBytes(int bitString)
+    static protected byte[] getBytes(final int bitString)
     {
         if (bitString == 0)
         {
@@ -127,17 +125,17 @@ public abstract class ASN1BitString
         int bytes = 4;
         for (int i = 3; i >= 1; i--)
         {
-            if ((bitString & (0xFF << (i * 8))) != 0)
+            if ((bitString & 0xFF << i * 8) != 0)
             {
                 break;
             }
             bytes--;
         }
 
-        byte[] result = new byte[bytes];
+        final byte[] result = new byte[bytes];
         for (int i = 0; i < bytes; i++)
         {
-            result[i] = (byte) ((bitString >> (i * 8)) & 0xFF);
+            result[i] = (byte) (bitString >> i * 8 & 0xFF);
         }
 
         return result;
@@ -145,14 +143,14 @@ public abstract class ASN1BitString
 
     final byte[] contents;
 
-    ASN1BitString(byte data, int padBits)
+    ASN1BitString(final byte data, final int padBits)
     {
         if (padBits > 7 || padBits < 0)
         {
             throw new IllegalArgumentException("pad bits cannot be greater than 7 or less than 0");
         }
 
-        this.contents = new byte[]{ (byte)padBits, data };
+        contents = new byte[]{ (byte)padBits, data };
     }
 
     /**
@@ -161,7 +159,7 @@ public abstract class ASN1BitString
      * @param data the octets making up the bit string.
      * @param padBits the number of extra bits at the end of the string.
      */
-    ASN1BitString(byte[] data, int padBits)
+    ASN1BitString(final byte[] data, final int padBits)
     {
         if (data == null)
         {
@@ -176,10 +174,10 @@ public abstract class ASN1BitString
             throw new IllegalArgumentException("pad bits cannot be greater than 7 or less than 0");
         }
 
-        this.contents = Arrays.prepend(data, (byte)padBits);
+        contents = Arrays.prepend(data, (byte)padBits);
     }
 
-    ASN1BitString(byte[] contents, boolean check)
+    ASN1BitString(final byte[] contents, final boolean check)
     {
         if (check)
         {
@@ -192,7 +190,7 @@ public abstract class ASN1BitString
                 throw new IllegalArgumentException("'contents' cannot be empty");
             }
 
-            int padBits = contents[0] & 0xFF;
+            final int padBits = contents[0] & 0xFF;
             if (padBits > 0)
             {
                 if (contents.length < 2)
@@ -209,14 +207,16 @@ public abstract class ASN1BitString
         this.contents = contents;
     }
 
-    public InputStream getBitStream() throws IOException
+    @Override
+	public InputStream getBitStream() throws IOException
     {
         return new ByteArrayInputStream(contents, 1, contents.length - 1);
     }
 
-    public InputStream getOctetStream() throws IOException
+    @Override
+	public InputStream getOctetStream() throws IOException
     {
-        int padBits = contents[0] & 0xFF;
+        final int padBits = contents[0] & 0xFF;
         if (0 != padBits)
         {
             throw new IOException("expected octet-aligned bitstring, but found padBits: " + padBits);
@@ -235,25 +235,24 @@ public abstract class ASN1BitString
      *
      * @return a String representation.
      */
-    public String getString()
+    @Override
+	public String getString()
     {
         byte[] string;
         try
         {
             string = getEncoded();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new ASN1ParsingException("Internal error encoding BitString: " + e.getMessage(), e);
         }
 
-        StringBuffer buf = new StringBuffer(1 + string.length * 2);
+        final StringBuilder buf = new StringBuilder(1 + string.length * 2);
         buf.append('#');
 
-        for (int i = 0; i != string.length; i++)
-        {
-            byte b = string[i];
-            buf.append(table[(b >>> 4) & 0xf]);
+        for (final byte b : string) {
+            buf.append(table[b >>> 4 & 0xf]);
             buf.append(table[b & 0xf]);
         }
 
@@ -266,16 +265,16 @@ public abstract class ASN1BitString
     public int intValue()
     {
         int value = 0;
-        int end = Math.min(5, contents.length - 1);
+        final int end = Math.min(5, contents.length - 1);
         for (int i = 1; i < end; ++i)
         {
-            value |= (contents[i] & 0xFF) << (8 * (i - 1));
+            value |= (contents[i] & 0xFF) << 8 * (i - 1);
         }
         if (1 <= end && end < 5)
         {
-            int padBits = contents[0] & 0xFF;
-            byte der = (byte)(contents[end] & (0xFF << padBits));
-            value |= (der & 0xFF) << (8 * (end - 1));
+            final int padBits = contents[0] & 0xFF;
+            final byte der = (byte)(contents[end] & 0xFF << padBits);
+            value |= (der & 0xFF) << 8 * (end - 1);
         }
         return value;
     }
@@ -304,34 +303,37 @@ public abstract class ASN1BitString
             return ASN1OctetString.EMPTY_OCTETS;
         }
 
-        int padBits = contents[0] & 0xFF;
-        byte[] rv = Arrays.copyOfRange(contents, 1, contents.length);
+        final int padBits = contents[0] & 0xFF;
+        final byte[] rv = Arrays.copyOfRange(contents, 1, contents.length);
         // DER requires pad bits be zero
         rv[rv.length - 1] &= (byte)(0xFF << padBits);
         return rv;
     }
 
-    public int getPadBits()
+    @Override
+	public int getPadBits()
     {
         return contents[0] & 0xFF;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getString();
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         if (contents.length < 2)
         {
             return 1;
         }
 
-        int padBits = contents[0] & 0xFF;
-        int last = contents.length - 1;
+        final int padBits = contents[0] & 0xFF;
+        final int last = contents.length - 1;
 
-        byte lastOctetDER = (byte)(contents[last] & (0xFF << padBits));
+        final byte lastOctetDER = (byte)(contents[last] & 0xFF << padBits);
 
         int hc = Arrays.hashCode(contents, 0, last);
         hc *= 257;
@@ -339,17 +341,18 @@ public abstract class ASN1BitString
         return hc;
     }
 
-    boolean asn1Equals(ASN1Primitive other)
+    @Override
+	boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1BitString))
         {
             return false;
         }
 
-        ASN1BitString that = (ASN1BitString)other;
-        byte[] thisContents = this.contents, thatContents = that.contents;
+        final ASN1BitString that = (ASN1BitString)other;
+        final byte[] thisContents = contents, thatContents = that.contents;
 
-        int length = thisContents.length;
+        final int length = thisContents.length;
         if (thatContents.length != length)
         {
             return false;
@@ -359,7 +362,7 @@ public abstract class ASN1BitString
             return true;
         }
 
-        int last = length - 1;
+        final int last = length - 1;
         for (int i = 0; i < last; ++i)
         {
             if (thisContents[i] != thatContents[i])
@@ -368,37 +371,40 @@ public abstract class ASN1BitString
             }
         }
 
-        int padBits = thisContents[0] & 0xFF;
-        byte thisLastOctetDER = (byte)(thisContents[last] & (0xFF << padBits));
-        byte thatLastOctetDER = (byte)(thatContents[last] & (0xFF << padBits));
+        final int padBits = thisContents[0] & 0xFF;
+        final byte thisLastOctetDER = (byte)(thisContents[last] & 0xFF << padBits);
+        final byte thatLastOctetDER = (byte)(thatContents[last] & 0xFF << padBits);
 
         return thisLastOctetDER == thatLastOctetDER;
     }
 
-    public ASN1Primitive getLoadedObject()
+    @Override
+	public ASN1Primitive getLoadedObject()
     {
         return this.toASN1Primitive();
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return new DERBitString(contents, false);
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return new DLBitString(contents, false);
     }
 
-    static ASN1BitString createPrimitive(byte[] contents)
+    static ASN1BitString createPrimitive(final byte[] contents)
     {
-        int length = contents.length;
+        final int length = contents.length;
         if (length < 1)
         {
             throw new IllegalArgumentException("truncated BIT STRING detected");
         }
 
-        int padBits = contents[0] & 0xFF;
+        final int padBits = contents[0] & 0xFF;
         if (padBits > 0)
         {
             if (padBits > 7 || length < 2)
@@ -406,8 +412,8 @@ public abstract class ASN1BitString
                 throw new IllegalArgumentException("invalid pad bits detected");
             }
 
-            byte finalOctet = contents[length - 1];
-            if (finalOctet != (byte)(finalOctet & (0xFF << padBits)))
+            final byte finalOctet = contents[length - 1];
+            if (finalOctet != (byte)(finalOctet & 0xFF << padBits))
             {
                 return new DLBitString(contents, false);
             }

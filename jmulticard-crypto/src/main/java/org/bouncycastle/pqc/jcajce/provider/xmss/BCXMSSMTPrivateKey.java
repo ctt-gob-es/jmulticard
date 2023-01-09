@@ -48,7 +48,8 @@ public class BCXMSSMTPrivateKey
         this.keyParams = (XMSSMTPrivateKeyParameters)PrivateKeyFactory.createKey(keyInfo);
     }
 
-    public long getIndex()
+    @Override
+	public long getIndex()
     {
         if (getUsagesRemaining() == 0)
         {
@@ -58,27 +59,32 @@ public class BCXMSSMTPrivateKey
         return keyParams.getIndex();
     }
 
-    public long getUsagesRemaining()
+    @Override
+	public long getUsagesRemaining()
     {
         return keyParams.getUsagesRemaining();
     }
 
-    public XMSSMTPrivateKey extractKeyShard(int usageCount)
+    @Override
+	public XMSSMTPrivateKey extractKeyShard(int usageCount)
     {
         return new BCXMSSMTPrivateKey(this.treeDigest, keyParams.extractKeyShard(usageCount));
     }
 
-    public String getAlgorithm()
+    @Override
+	public String getAlgorithm()
     {
         return "XMSSMT";
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "PKCS#8";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -97,7 +103,8 @@ public class BCXMSSMTPrivateKey
         return keyParams;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -114,7 +121,8 @@ public class BCXMSSMTPrivateKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return treeDigest.hashCode() + 37 * Arrays.hashCode(keyParams.toByteArray());
     }
@@ -124,17 +132,20 @@ public class BCXMSSMTPrivateKey
         return treeDigest;
     }
 
-    public int getHeight()
+    @Override
+	public int getHeight()
     {
         return keyParams.getParameters().getHeight();
     }
 
-    public int getLayers()
+    @Override
+	public int getLayers()
     {
         return keyParams.getParameters().getLayers();
     }
 
-    public String getTreeDigest()
+    @Override
+	public String getTreeDigest()
     {
         return DigestUtil.getXMSSDigestName(treeDigest);
     }

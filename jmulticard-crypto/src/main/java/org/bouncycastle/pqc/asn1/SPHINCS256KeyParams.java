@@ -14,19 +14,19 @@ public class SPHINCS256KeyParams
     private final ASN1Integer version;
     private final AlgorithmIdentifier treeDigest;
 
-    public SPHINCS256KeyParams(AlgorithmIdentifier treeDigest)
+    public SPHINCS256KeyParams(final AlgorithmIdentifier treeDigest)
     {
-        this.version = new ASN1Integer(0);
+        version = new ASN1Integer(0);
         this.treeDigest = treeDigest;
     }
 
-    private SPHINCS256KeyParams(ASN1Sequence sequence)
+    private SPHINCS256KeyParams(final ASN1Sequence sequence)
     {
-        this.version = ASN1Integer.getInstance(sequence.getObjectAt(0));
-        this.treeDigest = AlgorithmIdentifier.getInstance(sequence.getObjectAt(1));
+        version = ASN1Integer.getInstance(sequence.getObjectAt(0));
+        treeDigest = AlgorithmIdentifier.getInstance(sequence.getObjectAt(1));
     }
 
-    public static final SPHINCS256KeyParams getInstance(Object o)
+    public static final SPHINCS256KeyParams getInstance(final Object o)
     {
         if (o instanceof SPHINCS256KeyParams)
         {
@@ -45,9 +45,10 @@ public class SPHINCS256KeyParams
         return  treeDigest;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+        final ASN1EncodableVector v = new ASN1EncodableVector();
 
         v.add(version);
         v.add(treeDigest);

@@ -98,12 +98,14 @@ public class DefaultSignatureNameFinder
         digests.put(TeleTrusTObjectIdentifiers.ripemd256, "RIPEMD256");
     }
 
-    public boolean hasAlgorithmName(ASN1ObjectIdentifier objectIdentifier)
+    @Override
+	public boolean hasAlgorithmName(ASN1ObjectIdentifier objectIdentifier)
     {
         return oids.containsKey(objectIdentifier);
     }
 
-    public String getAlgorithmName(ASN1ObjectIdentifier objectIdentifier)
+    @Override
+	public String getAlgorithmName(ASN1ObjectIdentifier objectIdentifier)
     {
         String name = (String)oids.get(objectIdentifier);
         if (name != null)
@@ -120,7 +122,8 @@ public class DefaultSignatureNameFinder
      * @param algorithmIdentifier the AlgorithmIdentifier of interest.
      * @return a string representation of the name.
      */
-    public String getAlgorithmName(AlgorithmIdentifier algorithmIdentifier)
+    @Override
+	public String getAlgorithmName(AlgorithmIdentifier algorithmIdentifier)
     {
         ASN1Encodable params = algorithmIdentifier.getParameters();
         if (params != null && !DERNull.INSTANCE.equals(params))

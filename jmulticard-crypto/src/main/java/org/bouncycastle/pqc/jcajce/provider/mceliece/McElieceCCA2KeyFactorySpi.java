@@ -48,7 +48,8 @@ public class McElieceCCA2KeyFactorySpi
      * @return the McEliece CCA2 public key
      * @throws InvalidKeySpecException if the key specification is not supported.
      */
-    protected PublicKey engineGeneratePublic(KeySpec keySpec)
+    @Override
+	protected PublicKey engineGeneratePublic(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof X509EncodedKeySpec)
@@ -103,7 +104,8 @@ public class McElieceCCA2KeyFactorySpi
      * @return the McEliece CCA2 private key
      * @throws InvalidKeySpecException if the KeySpec is not supported.
      */
-    protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
+    @Override
+	protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof PKCS8EncodedKeySpec)
@@ -206,7 +208,8 @@ public class McElieceCCA2KeyFactorySpi
 
     }
 
-    public PublicKey generatePublic(SubjectPublicKeyInfo pki)
+    @Override
+	public PublicKey generatePublic(SubjectPublicKeyInfo pki)
         throws IOException
     {
         // get the inner type inside the BIT STRING
@@ -215,7 +218,8 @@ public class McElieceCCA2KeyFactorySpi
         return new BCMcElieceCCA2PublicKey(new McElieceCCA2PublicKeyParameters(key.getN(), key.getT(), key.getG(), Utils.getDigest(key.getDigest()).getAlgorithmName()));
     }
 
-    public PrivateKey generatePrivate(PrivateKeyInfo pki)
+    @Override
+	public PrivateKey generatePrivate(PrivateKeyInfo pki)
         throws IOException
     {
         // get the inner type inside the BIT STRING
@@ -224,14 +228,16 @@ public class McElieceCCA2KeyFactorySpi
         return new BCMcElieceCCA2PrivateKey(new McElieceCCA2PrivateKeyParameters(key.getN(), key.getK(), key.getField(), key.getGoppaPoly(), key.getP(), null));
     }
 
-    protected KeySpec engineGetKeySpec(Key key, Class tClass)
+    @Override
+	protected KeySpec engineGetKeySpec(Key key, Class tClass)
         throws InvalidKeySpecException
     {
         // TODO:
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    protected Key engineTranslateKey(Key key)
+    @Override
+	protected Key engineTranslateKey(Key key)
         throws InvalidKeyException
     {
         // TODO:

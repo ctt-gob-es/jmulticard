@@ -38,7 +38,8 @@ public abstract class GF2nElement
     /**
      * @return a copy of this GF2nElement
      */
-    public abstract Object clone();
+    @Override
+	public abstract Object clone();
 
     // /////////////////////////////////////////////////////////////////////
     // assignments
@@ -106,7 +107,8 @@ public abstract class GF2nElement
      * @param minuend the minuend
      * @return <tt>this - minuend</tt> (newly created)
      */
-    public final GFElement subtract(GFElement minuend)
+    @Override
+	public final GFElement subtract(GFElement minuend)
     {
         return add(minuend);
     }
@@ -117,7 +119,8 @@ public abstract class GF2nElement
      *
      * @param minuend the minuend
      */
-    public final void subtractFromThis(GFElement minuend)
+    @Override
+	public final void subtractFromThis(GFElement minuend)
     {
         addToThis(minuend);
     }

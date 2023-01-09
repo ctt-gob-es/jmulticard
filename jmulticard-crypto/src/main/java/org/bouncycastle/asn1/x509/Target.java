@@ -9,7 +9,7 @@ import org.bouncycastle.asn1.DERTaggedObject;
 /**
  * Target structure used in target information extension for attribute
  * certificates from RFC 3281.
- * 
+ *
  * <pre>
  *     Target  ::= CHOICE {
  *       targetName          [0] GeneralName,
@@ -17,7 +17,7 @@ import org.bouncycastle.asn1.DERTaggedObject;
  *       targetCert          [2] TargetCert
  *     }
  * </pre>
- * 
+ *
  * <p>
  * The targetCert field is currently not supported and must not be used
  * according to RFC 3281.
@@ -36,13 +36,13 @@ public class Target
      * Creates an instance of a Target from the given object.
      * <p>
      * <code>obj</code> can be a Target or a {@link ASN1TaggedObject}
-     * 
+     *
      * @param obj The object.
      * @return A Target instance.
      * @throws IllegalArgumentException if the given object cannot be
      *             interpreted as Target.
      */
-    public static Target getInstance(Object obj)
+    public static Target getInstance(final Object obj)
     {
         if (obj == null || obj instanceof Target)
         {
@@ -59,11 +59,11 @@ public class Target
 
     /**
      * Constructor from ASN1TaggedObject.
-     * 
+     *
      * @param tagObj The tagged object.
      * @throws IllegalArgumentException if the encoding is wrong.
      */
-    private Target(ASN1TaggedObject tagObj)
+    private Target(final ASN1TaggedObject tagObj)
     {
         switch (tagObj.getTagNo())
         {
@@ -87,7 +87,7 @@ public class Target
      * @param name the general name.
      * @throws IllegalArgumentException if type is invalid.
      */
-    public Target(int type, GeneralName name)
+    public Target(final int type, final GeneralName name)
     {
         this(new DERTaggedObject(type, name));
     }
@@ -110,9 +110,9 @@ public class Target
 
     /**
      * Produce an object suitable for an ASN1OutputStream.
-     * 
+     *
      * Returns:
-     * 
+     *
      * <pre>
      *     Target  ::= CHOICE {
      *       targetName          [0] GeneralName,
@@ -120,10 +120,11 @@ public class Target
      *       targetCert          [2] TargetCert
      *     }
      * </pre>
-     * 
+     *
      * @return a ASN1Primitive
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         // GeneralName is a choice already so most be explicitly tagged
         if (targName != null)

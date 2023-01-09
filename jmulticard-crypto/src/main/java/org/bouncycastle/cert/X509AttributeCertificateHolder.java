@@ -89,7 +89,8 @@ public class X509AttributeCertificateHolder
      * @return a DER encoded byte array.
      * @throws IOException if an encoding cannot be generated.
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return attrCert.getEncoded();
@@ -349,7 +350,8 @@ public class X509AttributeCertificateHolder
         return verifier.verify(this.getSignature());
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object o)
     {
         if (o == this)
@@ -367,7 +369,8 @@ public class X509AttributeCertificateHolder
         return this.attrCert.equals(other.attrCert);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.attrCert.hashCode();
     }

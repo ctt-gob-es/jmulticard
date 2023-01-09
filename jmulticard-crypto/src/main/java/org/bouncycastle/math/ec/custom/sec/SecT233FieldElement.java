@@ -10,7 +10,7 @@ public class SecT233FieldElement extends ECFieldElement.AbstractF2m
 {
     protected long[] x;
 
-    public SecT233FieldElement(BigInteger x)
+    public SecT233FieldElement(final BigInteger x)
     {
         if (x == null || x.signum() < 0 || x.bitLength() > 233)
         {
@@ -22,10 +22,10 @@ public class SecT233FieldElement extends ECFieldElement.AbstractF2m
 
     public SecT233FieldElement()
     {
-        this.x = Nat256.create64();
+        x = Nat256.create64();
     }
 
-    protected SecT233FieldElement(long[] x)
+    protected SecT233FieldElement(final long[] x)
     {
         this.x = x;
     }
@@ -35,157 +35,180 @@ public class SecT233FieldElement extends ECFieldElement.AbstractF2m
 //        return x.degree();
 //    }
 
-    public boolean isOne()
+    @Override
+	public boolean isOne()
     {
         return Nat256.isOne64(x);
     }
 
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         return Nat256.isZero64(x);
     }
 
-    public boolean testBitZero()
+    @Override
+	public boolean testBitZero()
     {
         return (x[0] & 1L) != 0L;
     }
 
-    public BigInteger toBigInteger()
+    @Override
+	public BigInteger toBigInteger()
     {
         return Nat256.toBigInteger64(x);
     }
 
-    public String getFieldName()
+    @Override
+	public String getFieldName()
     {
         return "SecT233Field";
     }
 
-    public int getFieldSize()
+    @Override
+	public int getFieldSize()
     {
         return 233;
     }
 
-    public ECFieldElement add(ECFieldElement b)
+    @Override
+	public ECFieldElement add(final ECFieldElement b)
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.add(x, ((SecT233FieldElement)b).x, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement addOne()
+    @Override
+	public ECFieldElement addOne()
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.addOne(x, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement subtract(ECFieldElement b)
+    @Override
+	public ECFieldElement subtract(final ECFieldElement b)
     {
         // Addition and subtraction are the same in F2m
         return add(b);
     }
 
-    public ECFieldElement multiply(ECFieldElement b)
+    @Override
+	public ECFieldElement multiply(final ECFieldElement b)
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.multiply(x, ((SecT233FieldElement)b).x, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement multiplyMinusProduct(ECFieldElement b, ECFieldElement x, ECFieldElement y)
+    @Override
+	public ECFieldElement multiplyMinusProduct(final ECFieldElement b, final ECFieldElement x, final ECFieldElement y)
     {
         return multiplyPlusProduct(b, x, y);
     }
 
-    public ECFieldElement multiplyPlusProduct(ECFieldElement b, ECFieldElement x, ECFieldElement y)
+    @Override
+	public ECFieldElement multiplyPlusProduct(final ECFieldElement b, final ECFieldElement x, final ECFieldElement y)
     {
-        long[] ax = this.x, bx = ((SecT233FieldElement)b).x;
-        long[] xx = ((SecT233FieldElement)x).x, yx = ((SecT233FieldElement)y).x;
+        final long[] ax = this.x, bx = ((SecT233FieldElement)b).x;
+        final long[] xx = ((SecT233FieldElement)x).x, yx = ((SecT233FieldElement)y).x;
 
-        long[] tt = Nat256.createExt64();
+        final long[] tt = Nat256.createExt64();
         SecT233Field.multiplyAddToExt(ax, bx, tt);
         SecT233Field.multiplyAddToExt(xx, yx, tt);
 
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.reduce(tt, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement divide(ECFieldElement b)
+    @Override
+	public ECFieldElement divide(final ECFieldElement b)
     {
         return multiply(b.invert());
     }
 
-    public ECFieldElement negate()
+    @Override
+	public ECFieldElement negate()
     {
         return this;
     }
 
-    public ECFieldElement square()
+    @Override
+	public ECFieldElement square()
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.square(x, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement squareMinusProduct(ECFieldElement x, ECFieldElement y)
+    @Override
+	public ECFieldElement squareMinusProduct(final ECFieldElement x, final ECFieldElement y)
     {
         return squarePlusProduct(x, y);
     }
 
-    public ECFieldElement squarePlusProduct(ECFieldElement x, ECFieldElement y)
+    @Override
+	public ECFieldElement squarePlusProduct(final ECFieldElement x, final ECFieldElement y)
     {
-        long[] ax = this.x;
-        long[] xx = ((SecT233FieldElement)x).x, yx = ((SecT233FieldElement)y).x;
+        final long[] ax = this.x;
+        final long[] xx = ((SecT233FieldElement)x).x, yx = ((SecT233FieldElement)y).x;
 
-        long[] tt = Nat256.createExt64();
+        final long[] tt = Nat256.createExt64();
         SecT233Field.squareAddToExt(ax, tt);
         SecT233Field.multiplyAddToExt(xx, yx, tt);
 
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.reduce(tt, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement squarePow(int pow)
+    @Override
+	public ECFieldElement squarePow(final int pow)
     {
         if (pow < 1)
         {
             return this;
         }
 
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.squareN(x, pow, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement halfTrace()
+    @Override
+	public ECFieldElement halfTrace()
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.halfTrace(x, z);
-        return new SecT233FieldElement(z); 
+        return new SecT233FieldElement(z);
     }
 
-    public boolean hasFastTrace()
+    @Override
+	public boolean hasFastTrace()
     {
         return true;
     }
 
-    public int trace()
+    @Override
+	public int trace()
     {
         return SecT233Field.trace(x);
     }
 
-    public ECFieldElement invert()
+    @Override
+	public ECFieldElement invert()
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.invert(x, z);
         return new SecT233FieldElement(z);
     }
 
-    public ECFieldElement sqrt()
+    @Override
+	public ECFieldElement sqrt()
     {
-        long[] z = Nat256.create64();
+        final long[] z = Nat256.create64();
         SecT233Field.sqrt(x, z);
         return new SecT233FieldElement(z);
     }
@@ -215,7 +238,8 @@ public class SecT233FieldElement extends ECFieldElement.AbstractF2m
         return 0;
     }
 
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
         if (other == this)
         {
@@ -227,11 +251,12 @@ public class SecT233FieldElement extends ECFieldElement.AbstractF2m
             return false;
         }
 
-        SecT233FieldElement o = (SecT233FieldElement)other;
+        final SecT233FieldElement o = (SecT233FieldElement)other;
         return Nat256.eq64(x, o.x);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return 2330074 ^ Arrays.hashCode(x, 0, 4);
     }

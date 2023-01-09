@@ -52,17 +52,20 @@ public class MD4Digest
         xOff = t.xOff;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "MD4";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
-    protected void processWord(
+    @Override
+	protected void processWord(
         byte[]  in,
         int     inOff)
     {
@@ -75,7 +78,8 @@ public class MD4Digest
         }
     }
 
-    protected void processLength(
+    @Override
+	protected void processLength(
         long    bitLength)
     {
         if (xOff > 14)
@@ -98,7 +102,8 @@ public class MD4Digest
         out[outOff + 3] = (byte)(word >>> 24);
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[]  out,
         int     outOff)
     {
@@ -117,7 +122,8 @@ public class MD4Digest
     /**
      * reset the chaining variables to the IV values.
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -195,7 +201,8 @@ public class MD4Digest
         return u ^ v ^ w;
     }
 
-    protected void processBlock()
+    @Override
+	protected void processBlock()
     {
         int a = H1;
         int b = H2;
@@ -277,12 +284,14 @@ public class MD4Digest
         }
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new MD4Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         MD4Digest d = (MD4Digest)other;
 

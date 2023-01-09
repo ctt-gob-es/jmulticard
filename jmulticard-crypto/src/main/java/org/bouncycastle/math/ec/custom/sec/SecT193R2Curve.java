@@ -33,12 +33,14 @@ public class SecT193R2Curve extends AbstractF2m
         this.coord = SECT193R2_DEFAULT_COORDS;
     }
 
-    protected ECCurve cloneCurve()
+    @Override
+	protected ECCurve cloneCurve()
     {
         return new SecT193R2Curve();
     }
 
-    public boolean supportsCoordinateSystem(int coord)
+    @Override
+	public boolean supportsCoordinateSystem(int coord)
     {
         switch (coord)
         {
@@ -49,32 +51,38 @@ public class SecT193R2Curve extends AbstractF2m
         }
     }
 
-    public int getFieldSize()
+    @Override
+	public int getFieldSize()
     {
         return 193;
     }
 
-    public ECFieldElement fromBigInteger(BigInteger x)
+    @Override
+	public ECFieldElement fromBigInteger(BigInteger x)
     {
         return new SecT193FieldElement(x);
     }
 
-    protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y)
+    @Override
+	protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y)
     {
         return new SecT193R2Point(this, x, y);
     }
 
-    protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
+    @Override
+	protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
     {
         return new SecT193R2Point(this, x, y, zs);
     }
 
-    public ECPoint getInfinity()
+    @Override
+	public ECPoint getInfinity()
     {
         return infinity;
     }
 
-    public boolean isKoblitz()
+    @Override
+	public boolean isKoblitz()
     {
         return false;
     }
@@ -104,7 +112,8 @@ public class SecT193R2Curve extends AbstractF2m
         return 0;
     }
 
-    public ECLookupTable createCacheSafeLookupTable(ECPoint[] points, int off, final int len)
+    @Override
+	public ECLookupTable createCacheSafeLookupTable(ECPoint[] points, int off, final int len)
     {
         final int FE_LONGS = 4;
 
@@ -121,12 +130,14 @@ public class SecT193R2Curve extends AbstractF2m
 
         return new AbstractECLookupTable()
         {
-            public int getSize()
+            @Override
+			public int getSize()
             {
                 return len;
             }
 
-            public ECPoint lookup(int index)
+            @Override
+			public ECPoint lookup(int index)
             {
                 long[] x = Nat256.create64(), y = Nat256.create64();
                 int pos = 0;
@@ -147,7 +158,8 @@ public class SecT193R2Curve extends AbstractF2m
                 return createPoint(x, y);
             }
 
-            public ECPoint lookupVar(int index)
+            @Override
+			public ECPoint lookupVar(int index)
             {
                 long[] x = Nat256.create64(), y = Nat256.create64();
                 int pos = index * FE_LONGS * 2;

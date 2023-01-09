@@ -25,7 +25,8 @@ public final class XMSSMTKeyPairGenerator
     {
     }
 
-    public void init(
+    @Override
+	public void init(
         KeyGenerationParameters param)
     {
         XMSSMTKeyGenerationParameters parameters = (XMSSMTKeyGenerationParameters)param;
@@ -38,7 +39,8 @@ public final class XMSSMTKeyPairGenerator
     /**
      * Generate a new XMSSMT private key / public key pair.
      */
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         XMSSMTPrivateKeyParameters privateKey;
         XMSSMTPublicKeyParameters publicKey;

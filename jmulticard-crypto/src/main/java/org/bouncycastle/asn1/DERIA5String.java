@@ -18,7 +18,8 @@ public class DERIA5String
      * 
      * @deprecated Use {@link ASN1IA5String#getInstance(Object)} instead.
      */
-    public static DERIA5String getInstance(
+    @Deprecated
+	public static DERIA5String getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERIA5String)
@@ -56,7 +57,8 @@ public class DERIA5String
      * @deprecated Use {@link ASN1IA5String#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERIA5String getInstance(
+    @Deprecated
+	public static DERIA5String getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

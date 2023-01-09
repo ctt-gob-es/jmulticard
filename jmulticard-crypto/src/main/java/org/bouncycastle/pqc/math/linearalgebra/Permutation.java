@@ -188,7 +188,8 @@ public class Permutation
      *              permutation
      * @return true or false
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
 
         if (!(other instanceof Permutation))
@@ -203,7 +204,8 @@ public class Permutation
     /**
      * @return a human readable form of the permutation
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         String result = "[" + perm[0];
         for (int i = 1; i < perm.length; i++)
@@ -217,7 +219,8 @@ public class Permutation
     /**
      * @return the hash code of this permutation
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(perm);
     }

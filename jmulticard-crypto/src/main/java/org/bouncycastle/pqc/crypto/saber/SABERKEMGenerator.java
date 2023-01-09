@@ -18,7 +18,8 @@ public class SABERKEMGenerator
         this.sr = random;
     }
 
-    public SecretWithEncapsulation generateEncapsulated(AsymmetricKeyParameter recipientKey)
+    @Override
+	public SecretWithEncapsulation generateEncapsulated(AsymmetricKeyParameter recipientKey)
     {
         SABERPublicKeyParameters key = (SABERPublicKeyParameters)recipientKey;
         SABEREngine engine = key.getParameters().getEngine();

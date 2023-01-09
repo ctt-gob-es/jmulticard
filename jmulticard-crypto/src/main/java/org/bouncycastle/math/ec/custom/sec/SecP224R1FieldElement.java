@@ -16,7 +16,7 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
 
     protected int[] x;
 
-    public SecP224R1FieldElement(BigInteger x)
+    public SecP224R1FieldElement(final BigInteger x)
     {
         if (x == null || x.signum() < 0 || x.compareTo(Q) >= 0)
         {
@@ -28,99 +28,113 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
 
     public SecP224R1FieldElement()
     {
-        this.x = Nat224.create();
+        x = Nat224.create();
     }
 
-    protected SecP224R1FieldElement(int[] x)
+    protected SecP224R1FieldElement(final int[] x)
     {
         this.x = x;
     }
 
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         return Nat224.isZero(x);
     }
 
-    public boolean isOne()
+    @Override
+	public boolean isOne()
     {
         return Nat224.isOne(x);
     }
 
-    public boolean testBitZero()
+    @Override
+	public boolean testBitZero()
     {
         return Nat224.getBit(x, 0) == 1;
     }
 
-    public BigInteger toBigInteger()
+    @Override
+	public BigInteger toBigInteger()
     {
         return Nat224.toBigInteger(x);
     }
 
-    public String getFieldName()
+    @Override
+	public String getFieldName()
     {
         return "SecP224R1Field";
     }
 
-    public int getFieldSize()
+    @Override
+	public int getFieldSize()
     {
         return Q.bitLength();
     }
 
-    public ECFieldElement add(ECFieldElement b)
+    @Override
+	public ECFieldElement add(final ECFieldElement b)
     {
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.add(x, ((SecP224R1FieldElement)b).x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement addOne()
+    @Override
+	public ECFieldElement addOne()
     {
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.addOne(x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement subtract(ECFieldElement b)
+    @Override
+	public ECFieldElement subtract(final ECFieldElement b)
     {
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.subtract(x, ((SecP224R1FieldElement)b).x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement multiply(ECFieldElement b)
+    @Override
+	public ECFieldElement multiply(final ECFieldElement b)
     {
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.multiply(x, ((SecP224R1FieldElement)b).x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement divide(ECFieldElement b)
+    @Override
+	public ECFieldElement divide(final ECFieldElement b)
     {
 //        return multiply(b.invert());
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.inv(((SecP224R1FieldElement)b).x, z);
         SecP224R1Field.multiply(z, x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement negate()
+    @Override
+	public ECFieldElement negate()
     {
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.negate(x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement square()
+    @Override
+	public ECFieldElement square()
     {
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.square(x, z);
         return new SecP224R1FieldElement(z);
     }
 
-    public ECFieldElement invert()
+    @Override
+	public ECFieldElement invert()
     {
 //        return new SecP224R1FieldElement(toBigInteger().modInverse(Q));
-        int[] z = Nat224.create();
+        final int[] z = Nat224.create();
         SecP224R1Field.inv(x, z);
         return new SecP224R1FieldElement(z);
     }
@@ -129,19 +143,20 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
      * return a sqrt root - the routine verifies that the calculation returns the right value - if
      * none exists it returns null.
      */
-    public ECFieldElement sqrt()
+    @Override
+	public ECFieldElement sqrt()
     {
-        int[] c = this.x;
+        final int[] c = x;
         if (Nat224.isZero(c) || Nat224.isOne(c))
         {
             return this;
         }
 
-        int[] nc = Nat224.create();
+        final int[] nc = Nat224.create();
         SecP224R1Field.negate(c, nc);
 
-        int[] r = Mod.random(SecP224R1Field.P);
-        int[] t = Nat224.create();
+        final int[] r = Mod.random(SecP224R1Field.P);
+        final int[] t = Nat224.create();
 
         if (!isSquare(c))
         {
@@ -158,7 +173,8 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
         return Nat224.eq(c, r) ? new SecP224R1FieldElement(t) : null;
     }
 
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
         if (other == this)
         {
@@ -170,19 +186,20 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
             return false;
         }
 
-        SecP224R1FieldElement o = (SecP224R1FieldElement)other;
+        final SecP224R1FieldElement o = (SecP224R1FieldElement)other;
         return Nat224.eq(x, o.x);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Q.hashCode() ^ Arrays.hashCode(x, 0, 7);
     }
 
-    private static boolean isSquare(int[] x)
+    private static boolean isSquare(final int[] x)
     {
-        int[] t1 = Nat224.create();
-        int[] t2 = Nat224.create();
+        final int[] t1 = Nat224.create();
+        final int[] t2 = Nat224.create();
         Nat224.copy(x, t1);
 
         for (int i = 0; i < 7; ++i)
@@ -196,7 +213,7 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
         return Nat224.isOne(t1);
     }
 
-    private static void RM(int[] nc, int[] d0, int[] e0, int[] d1, int[] e1, int[] f1, int[] t)
+    private static void RM(final int[] nc, final int[] d0, final int[] e0, final int[] d1, final int[] e1, final int[] f1, final int[] t)
     {
         SecP224R1Field.multiply(e1, e0, t);
         SecP224R1Field.multiply(t, nc, t);
@@ -210,12 +227,12 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
         SecP224R1Field.multiply(f1, nc, f1);
     }
 
-    private static void RP(int[] nc, int[] d1, int[] e1, int[] f1, int[] t)
+    private static void RP(final int[] nc, final int[] d1, final int[] e1, final int[] f1, final int[] t)
     {
         Nat224.copy(nc, f1);
 
-        int[] d0 = Nat224.create();
-        int[] e0 = Nat224.create();
+        final int[] d0 = Nat224.create();
+        final int[] e0 = Nat224.create();
 
         for (int i = 0; i < 7; ++i)
         {
@@ -232,28 +249,28 @@ public class SecP224R1FieldElement extends ECFieldElement.AbstractFp
         }
     }
 
-    private static void RS(int[] d, int[] e, int[] f, int[] t)
+    private static void RS(final int[] d, final int[] e, final int[] f, final int[] t)
     {
         SecP224R1Field.multiply(e, d, e);
         SecP224R1Field.twice(e, e);
         SecP224R1Field.square(d, t);
         SecP224R1Field.add(f, t, d);
         SecP224R1Field.multiply(f, t, f);
-        int c = Nat.shiftUpBits(7, f, 2, 0);
+        final int c = Nat.shiftUpBits(7, f, 2, 0);
         SecP224R1Field.reduce32(c, f);
     }
 
-    private static boolean trySqrt(int[] nc, int[] r, int[] t)
+    private static boolean trySqrt(final int[] nc, final int[] r, final int[] t)
     {
-        int[] d1 = Nat224.create();
+        final int[] d1 = Nat224.create();
         Nat224.copy(r, d1);
-        int[] e1 = Nat224.create();
+        final int[] e1 = Nat224.create();
         e1[0] = 1;
-        int[] f1 = Nat224.create();
+        final int[] f1 = Nat224.create();
         RP(nc, d1, e1, f1, t);
 
-        int[] d0 = Nat224.create();
-        int[] e0 = Nat224.create();
+        final int[] d0 = Nat224.create();
+        final int[] e0 = Nat224.create();
 
         for (int k = 1; k < 96; ++k)
         {

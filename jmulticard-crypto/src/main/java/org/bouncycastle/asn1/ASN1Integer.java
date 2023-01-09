@@ -14,7 +14,8 @@ public class ASN1Integer
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1Integer.class, BERTags.INTEGER)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -34,7 +35,7 @@ public class ASN1Integer
      * @throws IllegalArgumentException if the object cannot be converted.
      */
     public static ASN1Integer getInstance(
-        Object obj)
+        final Object obj)
     {
         if (obj == null || obj instanceof ASN1Integer)
         {
@@ -47,7 +48,7 @@ public class ASN1Integer
             {
                 return (ASN1Integer)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -66,7 +67,7 @@ public class ASN1Integer
      * @throws IllegalArgumentException if the tagged object cannot
      * be converted.
      */
-    public static ASN1Integer getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1Integer getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1Integer)TYPE.getContextInstance(taggedObject, explicit);
     }
@@ -76,10 +77,10 @@ public class ASN1Integer
      *
      * @param value the long representing the value desired.
      */
-    public ASN1Integer(long value)
+    public ASN1Integer(final long value)
     {
-        this.bytes = BigInteger.valueOf(value).toByteArray();
-        this.start = 0;
+        bytes = BigInteger.valueOf(value).toByteArray();
+        start = 0;
     }
 
     /**
@@ -87,10 +88,10 @@ public class ASN1Integer
      *
      * @param value the BigInteger representing the value desired.
      */
-    public ASN1Integer(BigInteger value)
+    public ASN1Integer(final BigInteger value)
     {
-        this.bytes = value.toByteArray();
-        this.start = 0;
+        bytes = value.toByteArray();
+        start = 0;
     }
 
     /**
@@ -115,20 +116,20 @@ public class ASN1Integer
      *
      * @param bytes the byte array representing a 2's complement encoding of a BigInteger.
      */
-    public ASN1Integer(byte[] bytes)
+    public ASN1Integer(final byte[] bytes)
     {
         this(bytes, true);
     }
 
-    ASN1Integer(byte[] bytes, boolean clone)
+    ASN1Integer(final byte[] bytes, final boolean clone)
     {
         if (isMalformed(bytes))
-        {                           
+        {
             throw new IllegalArgumentException("malformed integer");
         }
 
         this.bytes = clone ? Arrays.clone(bytes) : bytes;
-        this.start = signBytesToSkip(bytes); 
+        start = signBytesToSkip(bytes);
     }
 
     /**
@@ -147,19 +148,19 @@ public class ASN1Integer
         return new BigInteger(bytes);
     }
 
-    public boolean hasValue(int x)
+    public boolean hasValue(final int x)
     {
-        return (bytes.length - start) <= 4
+        return bytes.length - start <= 4
             && intValue(bytes, start, SIGN_EXT_SIGNED) == x;
     }
 
-    public boolean hasValue(long x)
+    public boolean hasValue(final long x)
     {
-        return (bytes.length - start) <= 8
+        return bytes.length - start <= 8
             && longValue(bytes, start, SIGN_EXT_SIGNED) == x;
     }
 
-    public boolean hasValue(BigInteger x)
+    public boolean hasValue(final BigInteger x)
     {
         return null != x
             // Fast check to avoid allocation
@@ -169,8 +170,8 @@ public class ASN1Integer
 
     public int intPositiveValueExact()
     {
-        int count = bytes.length - start;
-        if (count > 4 || (count == 4 && 0 != (bytes[start] & 0x80)))
+        final int count = bytes.length - start;
+        if (count > 4 || count == 4 && 0 != (bytes[start] & 0x80))
         {
             throw new ArithmeticException("ASN.1 Integer out of positive int range");
         }
@@ -180,18 +181,18 @@ public class ASN1Integer
 
     public int intValueExact()
     {
-        int count = bytes.length - start;
+        final int count = bytes.length - start;
         if (count > 4)
         {
             throw new ArithmeticException("ASN.1 Integer out of int range");
         }
 
-        return intValue(bytes, start, SIGN_EXT_SIGNED); 
+        return intValue(bytes, start, SIGN_EXT_SIGNED);
     }
 
     public long longValueExact()
     {
-        int count = bytes.length - start;
+        final int count = bytes.length - start;
         if (count > 8)
         {
             throw new ArithmeticException("ASN.1 Integer out of long range");
@@ -200,70 +201,76 @@ public class ASN1Integer
         return longValue(bytes, start, SIGN_EXT_SIGNED);
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(final boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, bytes.length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.INTEGER, bytes);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(bytes);
     }
 
-    boolean asn1Equals(ASN1Primitive o)
+    @Override
+	boolean asn1Equals(final ASN1Primitive o)
     {
         if (!(o instanceof ASN1Integer))
         {
             return false;
         }
 
-        ASN1Integer other = (ASN1Integer)o;
+        final ASN1Integer other = (ASN1Integer)o;
 
-        return Arrays.areEqual(this.bytes, other.bytes);
+        return Arrays.areEqual(bytes, other.bytes);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getValue().toString();
     }
 
-    static ASN1Integer createPrimitive(byte[] contents)
+    static ASN1Integer createPrimitive(final byte[] contents)
     {
         return new ASN1Integer(contents, false);
     }
 
-    static int intValue(byte[] bytes, int start, int signExt)
+    static int intValue(final byte[] bytes, final int start, final int signExt)
     {
-        int length = bytes.length;
+        final int length = bytes.length;
         int pos = Math.max(start, length - 4);
 
         int val = bytes[pos] & signExt;
         while (++pos < length)
         {
-            val = (val << 8) | (bytes[pos] & SIGN_EXT_UNSIGNED);
+            val = val << 8 | bytes[pos] & SIGN_EXT_UNSIGNED;
         }
         return val;
     }
 
-    static long longValue(byte[] bytes, int start, int signExt)
+    static long longValue(final byte[] bytes, final int start, final int signExt)
     {
-        int length = bytes.length;
+        final int length = bytes.length;
         int pos = Math.max(start, length - 8);
 
         long val = bytes[pos] & signExt;
         while (++pos < length)
         {
-            val = (val << 8) | (bytes[pos] & SIGN_EXT_UNSIGNED);
+            val = val << 8 | bytes[pos] & SIGN_EXT_UNSIGNED;
         }
         return val;
     }
@@ -274,7 +281,7 @@ public class ASN1Integer
      * @param bytes The raw encoding of the integer.
      * @return true if the (in)put fails this validation.
      */
-    static boolean isMalformed(byte[] bytes)
+    static boolean isMalformed(final byte[] bytes)
     {
         switch (bytes.length)
         {
@@ -283,17 +290,18 @@ public class ASN1Integer
         case 1:
             return false;
         default:
-            return bytes[0] == (bytes[1] >> 7)
+            return bytes[0] == bytes[1] >> 7
                 // Apply loose validation, see note in public constructor ASN1Integer(byte[])
                 && !Properties.isOverrideSet("org.bouncycastle.asn1.allow_unsafe_integer");
         }
     }
 
-    static int signBytesToSkip(byte[] bytes)
+    static int signBytesToSkip(final byte[] bytes)
     {
-        int pos = 0, last = bytes.length - 1;
+        int pos = 0;
+		final int last = bytes.length - 1;
         while (pos < last
-            && bytes[pos] == (bytes[pos + 1] >> 7))
+            && bytes[pos] == bytes[pos + 1] >> 7)
         {
             ++pos;
         }

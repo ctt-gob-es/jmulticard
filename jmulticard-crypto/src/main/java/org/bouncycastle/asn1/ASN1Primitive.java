@@ -13,14 +13,16 @@ public abstract class ASN1Primitive
     {
     }
 
-    public void encodeTo(OutputStream output) throws IOException
+    @Override
+	public void encodeTo(OutputStream output) throws IOException
     {
         ASN1OutputStream asn1Out = ASN1OutputStream.create(output); 
         asn1Out.writePrimitive(this, true);
         asn1Out.flushInternal();
     }
 
-    public void encodeTo(OutputStream output, String encoding) throws IOException
+    @Override
+	public void encodeTo(OutputStream output, String encoding) throws IOException
     {
         ASN1OutputStream asn1Out = ASN1OutputStream.create(output, encoding); 
         asn1Out.writePrimitive(this, true);
@@ -56,7 +58,8 @@ public abstract class ASN1Primitive
         }
     }
 
-    public final boolean equals(Object o)
+    @Override
+	public final boolean equals(Object o)
     {
         if (this == o)
         {
@@ -76,7 +79,8 @@ public abstract class ASN1Primitive
         return this == other || asn1Equals(other);
     }
 
-    public final ASN1Primitive toASN1Primitive()
+    @Override
+	public final ASN1Primitive toASN1Primitive()
     {
         return this;
     }
@@ -101,7 +105,8 @@ public abstract class ASN1Primitive
         return this;
     }
 
-    public abstract int hashCode();
+    @Override
+	public abstract int hashCode();
 
     /**
      * Return true if this objected is a CONSTRUCTED one, false otherwise.

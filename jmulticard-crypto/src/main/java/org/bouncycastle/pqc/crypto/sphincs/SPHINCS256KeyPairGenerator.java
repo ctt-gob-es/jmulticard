@@ -13,13 +13,15 @@ public class SPHINCS256KeyPairGenerator
     private SecureRandom random;
     private Digest treeDigest;
 
-    public void init(KeyGenerationParameters param)
+    @Override
+	public void init(KeyGenerationParameters param)
     {
         random = param.getRandom();
         treeDigest = ((SPHINCS256KeyGenerationParameters)param).getTreeDigest();
     }
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         Tree.leafaddr a = new Tree.leafaddr();
 

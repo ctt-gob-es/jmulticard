@@ -39,7 +39,7 @@ import org.bouncycastle.util.IPAddress;
  * EDIPartyName ::= SEQUENCE {
  *      nameAssigner            [0]     DirectoryString OPTIONAL,
  *      partyName               [1]     DirectoryString }
- * 
+ *
  * Name ::= CHOICE { RDNSequence }
  * </pre>
  */
@@ -58,24 +58,25 @@ public class GeneralName
     public static final int registeredID                  = 8;
 
     private ASN1Encodable obj;
-    private int           tag;
+    private final int           tag;
 
     /**
      * @deprecated use X500Name constructor.
      * @param dirName
      */
-        public GeneralName(
-        X509Name  dirName)
+        @Deprecated
+		public GeneralName(
+        final X509Name  dirName)
     {
-        this.obj = X500Name.getInstance(dirName);
-        this.tag = 4;
+        obj = X500Name.getInstance(dirName);
+        tag = 4;
     }
 
     public GeneralName(
-        X500Name  dirName)
+        final X500Name  dirName)
     {
-        this.obj = dirName;
-        this.tag = 4;
+        obj = dirName;
+        tag = 4;
     }
 
     /**
@@ -106,13 +107,13 @@ public class GeneralName
      * 1883].
      */
     public GeneralName(
-        int           tag,
-        ASN1Encodable name)
+        final int           tag,
+        final ASN1Encodable name)
     {
-        this.obj = name;
+        obj = name;
         this.tag = tag;
     }
-    
+
     /**
      * Create a GeneralName for the given tag from the passed in String.
      * <p>
@@ -137,29 +138,29 @@ public class GeneralName
      * @throws IllegalArgumentException if the string encoding is not correct or     *             not supported.
      */
     public GeneralName(
-        int       tag,
-        String    name)
+        final int       tag,
+        final String    name)
     {
         this.tag = tag;
 
         if (tag == rfc822Name || tag == dNSName || tag == uniformResourceIdentifier)
         {
-            this.obj = new DERIA5String(name);
+            obj = new DERIA5String(name);
         }
         else if (tag == registeredID)
         {
-            this.obj = new ASN1ObjectIdentifier(name);
+            obj = new ASN1ObjectIdentifier(name);
         }
         else if (tag == directoryName)
         {
-            this.obj = new X500Name(name);
+            obj = new X500Name(name);
         }
         else if (tag == iPAddress)
         {
-            byte[] enc = toGeneralNameEncoding(name);
+            final byte[] enc = toGeneralNameEncoding(name);
             if (enc != null)
             {
-                this.obj = new DEROctetString(enc);
+                obj = new DEROctetString(enc);
             }
             else
             {
@@ -171,9 +172,9 @@ public class GeneralName
             throw new IllegalArgumentException("can't process String for tag: " + tag);
         }
     }
-    
+
     public static GeneralName getInstance(
-        Object obj)
+        final Object obj)
     {
         if (obj == null || obj instanceof GeneralName)
         {
@@ -182,8 +183,8 @@ public class GeneralName
 
         if (obj instanceof ASN1TaggedObject)
         {
-            ASN1TaggedObject    tagObj = (ASN1TaggedObject)obj;
-            int                 tag = tagObj.getTagNo();
+            final ASN1TaggedObject    tagObj = (ASN1TaggedObject)obj;
+            final int                 tag = tagObj.getTagNo();
 
             switch (tag)
             {
@@ -215,7 +216,7 @@ public class GeneralName
             {
                 return getInstance(ASN1Primitive.fromByteArray((byte[])obj));
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("unable to parse encoded general name");
             }
@@ -225,8 +226,8 @@ public class GeneralName
     }
 
     public static GeneralName getInstance(
-        ASN1TaggedObject tagObj,
-        boolean          explicit)
+        final ASN1TaggedObject tagObj,
+        final boolean          explicit)
     {
         return GeneralName.getInstance(ASN1TaggedObject.getInstance(tagObj, true));
     }
@@ -241,9 +242,10 @@ public class GeneralName
         return obj;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
-        StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
 
         buf.append(tag);
         buf.append(": ");
@@ -263,26 +265,26 @@ public class GeneralName
         return buf.toString();
     }
 
-    private byte[] toGeneralNameEncoding(String ip)
+    private byte[] toGeneralNameEncoding(final String ip)
     {
         if (IPAddress.isValidIPv6WithNetmask(ip) || IPAddress.isValidIPv6(ip))
         {
-            int    slashIndex = ip.indexOf('/');
+            final int    slashIndex = ip.indexOf('/');
 
             if (slashIndex < 0)
             {
-                byte[] addr = new byte[16];
-                int[]  parsedIp = parseIPv6(ip);
+                final byte[] addr = new byte[16];
+                final int[]  parsedIp = parseIPv6(ip);
                 copyInts(parsedIp, addr, 0);
 
                 return addr;
             }
             else
             {
-                byte[] addr = new byte[32];
+                final byte[] addr = new byte[32];
                 int[]  parsedIp = parseIPv6(ip.substring(0, slashIndex));
                 copyInts(parsedIp, addr, 0);
-                String mask = ip.substring(slashIndex + 1);
+                final String mask = ip.substring(slashIndex + 1);
                 if (mask.indexOf(':') > 0)
                 {
                     parsedIp = parseIPv6(mask);
@@ -298,11 +300,11 @@ public class GeneralName
         }
         else if (IPAddress.isValidIPv4WithNetmask(ip) || IPAddress.isValidIPv4(ip))
         {
-            int    slashIndex = ip.indexOf('/');
+            final int    slashIndex = ip.indexOf('/');
 
             if (slashIndex < 0)
             {
-                byte[] addr = new byte[4];
+                final byte[] addr = new byte[4];
 
                 parseIPv4(ip, addr, 0);
 
@@ -310,11 +312,11 @@ public class GeneralName
             }
             else
             {
-                byte[] addr = new byte[8];
+                final byte[] addr = new byte[8];
 
                 parseIPv4(ip.substring(0, slashIndex), addr, 0);
 
-                String mask = ip.substring(slashIndex + 1);
+                final String mask = ip.substring(slashIndex + 1);
                 if (mask.indexOf('.') > 0)
                 {
                     parseIPv4(mask, addr, 4);
@@ -331,19 +333,19 @@ public class GeneralName
         return null;
     }
 
-    private void parseIPv4Mask(String mask, byte[] addr, int offset)
+    private void parseIPv4Mask(final String mask, final byte[] addr, final int offset)
     {
-        int   maskVal = Integer.parseInt(mask);
+        final int   maskVal = Integer.parseInt(mask);
 
         for (int i = 0; i != maskVal; i++)
         {
-            addr[(i / 8) + offset] |= 1 << (7 - (i % 8));
+            addr[i / 8 + offset] |= 1 << 7 - i % 8;
         }
     }
 
-    private void parseIPv4(String ip, byte[] addr, int offset)
+    private void parseIPv4(final String ip, final byte[] addr, final int offset)
     {
-        StringTokenizer sTok = new StringTokenizer(ip, "./");
+        final StringTokenizer sTok = new StringTokenizer(ip, "./");
         int    index = 0;
 
         while (sTok.hasMoreTokens())
@@ -352,32 +354,32 @@ public class GeneralName
         }
     }
 
-    private int[] parseMask(String mask)
+    private int[] parseMask(final String mask)
     {
-        int[] res = new int[8];
-        int   maskVal = Integer.parseInt(mask);
+        final int[] res = new int[8];
+        final int   maskVal = Integer.parseInt(mask);
 
         for (int i = 0; i != maskVal; i++)
         {
-            res[i / 16] |= 1 << (15 - (i % 16));
+            res[i / 16] |= 1 << 15 - i % 16;
         }
         return res;
     }
 
-    private void copyInts(int[] parsedIp, byte[] addr, int offSet)
+    private void copyInts(final int[] parsedIp, final byte[] addr, final int offSet)
     {
         for (int i = 0; i != parsedIp.length; i++)
         {
-            addr[(i * 2) + offSet] = (byte)(parsedIp[i] >> 8);
-            addr[(i * 2 + 1) + offSet] = (byte)parsedIp[i];
+            addr[i * 2 + offSet] = (byte)(parsedIp[i] >> 8);
+            addr[i * 2 + 1 + offSet] = (byte)parsedIp[i];
         }
     }
 
-    private int[] parseIPv6(String ip)
+    private int[] parseIPv6(final String ip)
     {
-        StringTokenizer sTok = new StringTokenizer(ip, ":", true);
+        final StringTokenizer sTok = new StringTokenizer(ip, ":", true);
         int index = 0;
-        int[] val = new int[8];
+        final int[] val = new int[8];
 
         if (ip.charAt(0) == ':' && ip.charAt(1) == ':')
         {
@@ -388,31 +390,27 @@ public class GeneralName
 
         while (sTok.hasMoreTokens())
         {
-            String e = sTok.nextToken();
+            final String e = sTok.nextToken();
 
-            if (e.equals(":"))
+            if (":".equals(e))
             {
                 doubleColon = index;
                 val[index++] = 0;
-            }
-            else
-            {
-                if (e.indexOf('.') < 0)
-                {
-                    val[index++] = Integer.parseInt(e, 16);
-                    if (sTok.hasMoreTokens())
-                    {
-                        sTok.nextToken();
-                    }
-                }
-                else
-                {
-                    StringTokenizer eTok = new StringTokenizer(e, ".");
+            } else if (e.indexOf('.') < 0)
+			{
+			    val[index++] = Integer.parseInt(e, 16);
+			    if (sTok.hasMoreTokens())
+			    {
+			        sTok.nextToken();
+			    }
+			}
+			else
+			{
+			    final StringTokenizer eTok = new StringTokenizer(e, ".");
 
-                    val[index++] = (Integer.parseInt(eTok.nextToken()) << 8) | Integer.parseInt(eTok.nextToken());
-                    val[index++] = (Integer.parseInt(eTok.nextToken()) << 8) | Integer.parseInt(eTok.nextToken());
-                }
-            }
+			    val[index++] = Integer.parseInt(eTok.nextToken()) << 8 | Integer.parseInt(eTok.nextToken());
+			    val[index++] = Integer.parseInt(eTok.nextToken()) << 8 | Integer.parseInt(eTok.nextToken());
+			}
         }
 
         if (index != val.length)
@@ -427,10 +425,11 @@ public class GeneralName
         return val;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         // directoryName is explicitly tagged as it is a CHOICE
-        boolean explicit = (tag == directoryName);
+        final boolean explicit = tag == directoryName;
 
         return new DERTaggedObject(explicit, tag, obj);
     }

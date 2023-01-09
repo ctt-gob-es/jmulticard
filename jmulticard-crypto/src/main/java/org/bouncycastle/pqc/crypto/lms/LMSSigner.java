@@ -11,7 +11,8 @@ public class LMSSigner
     private LMSPrivateKeyParameters privKey;
     private LMSPublicKeyParameters pubKey;
 
-    public void init(boolean forSigning, CipherParameters param)
+    @Override
+	public void init(final boolean forSigning, final CipherParameters param)
     {
          if (forSigning)
          {
@@ -23,25 +24,27 @@ public class LMSSigner
          }
     }
 
-    public byte[] generateSignature(byte[] message)
+    @Override
+	public byte[] generateSignature(final byte[] message)
     {
         try
         {
             return LMS.generateSign(privKey, message).getEncoded();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("unable to encode signature: " + e.getMessage());
         }
     }
 
-    public boolean verifySignature(byte[] message, byte[] signature)
+    @Override
+	public boolean verifySignature(final byte[] message, final byte[] signature)
     {
         try
         {
             return LMS.verifySignature(pubKey, LMSSignature.getInstance(signature), message);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("unable to decode signature: " + e.getMessage());
         }

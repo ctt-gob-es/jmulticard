@@ -27,7 +27,8 @@ public class MGF1BytesGenerator
         this.hLen = digest.getDigestSize();
     }
 
-    public void init(
+    @Override
+	public void init(
         DerivationParameters    param)
     {
         if (!(param instanceof MGFParameters))
@@ -67,7 +68,8 @@ public class MGF1BytesGenerator
      *
      * @throws DataLengthException if the out buffer is too small.
      */
-    public int generateBytes(
+    @Override
+	public int generateBytes(
         byte[]  out,
         int     outOff,
         int     len)

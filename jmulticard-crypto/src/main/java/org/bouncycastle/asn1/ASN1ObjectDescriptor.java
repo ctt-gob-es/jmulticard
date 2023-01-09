@@ -7,13 +7,15 @@ public final class ASN1ObjectDescriptor
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1ObjectDescriptor.class, BERTags.OBJECT_DESCRIPTOR)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return new ASN1ObjectDescriptor(
                 (ASN1GraphicString)ASN1GraphicString.TYPE.fromImplicitPrimitive(octetString));
         }
 
-        ASN1Primitive fromImplicitConstructed(ASN1Sequence sequence)
+        @Override
+		ASN1Primitive fromImplicitConstructed(final ASN1Sequence sequence)
         {
             return new ASN1ObjectDescriptor(
                 (ASN1GraphicString)ASN1GraphicString.TYPE.fromImplicitConstructed(sequence));
@@ -27,7 +29,7 @@ public final class ASN1ObjectDescriptor
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return an ASN1ObjectDescriptor instance, or null.
      */
-    public static ASN1ObjectDescriptor getInstance(Object obj)
+    public static ASN1ObjectDescriptor getInstance(final Object obj)
     {
         if (obj == null || obj instanceof ASN1ObjectDescriptor)
         {
@@ -35,7 +37,7 @@ public final class ASN1ObjectDescriptor
         }
         else if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1ObjectDescriptor)
             {
                 return (ASN1ObjectDescriptor)primitive;
@@ -47,7 +49,7 @@ public final class ASN1ObjectDescriptor
             {
                 return (ASN1ObjectDescriptor)TYPE.fromByteArray((byte[])obj);
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("failed to construct object descriptor from byte[]: " + e.getMessage());
             }
@@ -65,14 +67,14 @@ public final class ASN1ObjectDescriptor
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return an ASN1ObjectDescriptor instance, or null.
      */
-    public static ASN1ObjectDescriptor getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1ObjectDescriptor getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1ObjectDescriptor)TYPE.getContextInstance(taggedObject, explicit);
     }
 
     private final ASN1GraphicString baseGraphicString;
 
-    public ASN1ObjectDescriptor(ASN1GraphicString baseGraphicString)
+    public ASN1ObjectDescriptor(final ASN1GraphicString baseGraphicString)
     {
         if (null == baseGraphicString)
         {
@@ -87,54 +89,61 @@ public final class ASN1ObjectDescriptor
         return baseGraphicString;
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(final boolean withTag)
     {
         return baseGraphicString.encodedLength(withTag);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeIdentifier(withTag, BERTags.OBJECT_DESCRIPTOR);
         baseGraphicString.encode(out, false);
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
-        ASN1GraphicString der = (ASN1GraphicString)baseGraphicString.toDERObject();
+        final ASN1GraphicString der = (ASN1GraphicString)baseGraphicString.toDERObject();
 
         return der == baseGraphicString ? this : new ASN1ObjectDescriptor(der);
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
-        ASN1GraphicString dl = (ASN1GraphicString)baseGraphicString.toDLObject();
+        final ASN1GraphicString dl = (ASN1GraphicString)baseGraphicString.toDLObject();
 
         return dl == baseGraphicString ? this : new ASN1ObjectDescriptor(dl);
     }
 
-    boolean asn1Equals(ASN1Primitive other)
+    @Override
+	boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1ObjectDescriptor))
         {
             return false;
         }
 
-        ASN1ObjectDescriptor that = (ASN1ObjectDescriptor)other;
+        final ASN1ObjectDescriptor that = (ASN1ObjectDescriptor)other;
 
-        return this.baseGraphicString.asn1Equals(that.baseGraphicString);
+        return baseGraphicString.asn1Equals(that.baseGraphicString);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return ~baseGraphicString.hashCode();
     }
 
-    static ASN1ObjectDescriptor createPrimitive(byte[] contents)
+    static ASN1ObjectDescriptor createPrimitive(final byte[] contents)
     {
         return new ASN1ObjectDescriptor(ASN1GraphicString.createPrimitive(contents));
     }

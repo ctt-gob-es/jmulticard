@@ -14,53 +14,54 @@ import org.bouncycastle.util.Arrays;
 public class ProductFormPolynomial
     implements Polynomial
 {
-    private SparseTernaryPolynomial f1, f2, f3;
+    private final SparseTernaryPolynomial f1, f2, f3;
 
-    public ProductFormPolynomial(SparseTernaryPolynomial f1, SparseTernaryPolynomial f2, SparseTernaryPolynomial f3)
+    public ProductFormPolynomial(final SparseTernaryPolynomial f1, final SparseTernaryPolynomial f2, final SparseTernaryPolynomial f3)
     {
         this.f1 = f1;
         this.f2 = f2;
         this.f3 = f3;
     }
 
-    public static ProductFormPolynomial generateRandom(int N, int df1, int df2, int df3Ones, int df3NegOnes, SecureRandom random)
+    public static ProductFormPolynomial generateRandom(final int N, final int df1, final int df2, final int df3Ones, final int df3NegOnes, final SecureRandom random)
     {
-        SparseTernaryPolynomial f1 = SparseTernaryPolynomial.generateRandom(N, df1, df1, random);
-        SparseTernaryPolynomial f2 = SparseTernaryPolynomial.generateRandom(N, df2, df2, random);
-        SparseTernaryPolynomial f3 = SparseTernaryPolynomial.generateRandom(N, df3Ones, df3NegOnes, random);
+        final SparseTernaryPolynomial f1 = SparseTernaryPolynomial.generateRandom(N, df1, df1, random);
+        final SparseTernaryPolynomial f2 = SparseTernaryPolynomial.generateRandom(N, df2, df2, random);
+        final SparseTernaryPolynomial f3 = SparseTernaryPolynomial.generateRandom(N, df3Ones, df3NegOnes, random);
         return new ProductFormPolynomial(f1, f2, f3);
     }
 
-    public static ProductFormPolynomial fromBinary(byte[] data, int N, int df1, int df2, int df3Ones, int df3NegOnes)
+    public static ProductFormPolynomial fromBinary(final byte[] data, final int N, final int df1, final int df2, final int df3Ones, final int df3NegOnes)
         throws IOException
     {
         return fromBinary(new ByteArrayInputStream(data), N, df1, df2, df3Ones, df3NegOnes);
     }
 
-    public static ProductFormPolynomial fromBinary(InputStream is, int N, int df1, int df2, int df3Ones, int df3NegOnes)
+    public static ProductFormPolynomial fromBinary(final InputStream is, final int N, final int df1, final int df2, final int df3Ones, final int df3NegOnes)
         throws IOException
     {
         SparseTernaryPolynomial f1;
 
         f1 = SparseTernaryPolynomial.fromBinary(is, N, df1, df1);
-        SparseTernaryPolynomial f2 = SparseTernaryPolynomial.fromBinary(is, N, df2, df2);
-        SparseTernaryPolynomial f3 = SparseTernaryPolynomial.fromBinary(is, N, df3Ones, df3NegOnes);
+        final SparseTernaryPolynomial f2 = SparseTernaryPolynomial.fromBinary(is, N, df2, df2);
+        final SparseTernaryPolynomial f3 = SparseTernaryPolynomial.fromBinary(is, N, df3Ones, df3NegOnes);
         return new ProductFormPolynomial(f1, f2, f3);
     }
 
     public byte[] toBinary()
     {
-        byte[] f1Bin = f1.toBinary();
-        byte[] f2Bin = f2.toBinary();
-        byte[] f3Bin = f3.toBinary();
+        final byte[] f1Bin = f1.toBinary();
+        final byte[] f2Bin = f2.toBinary();
+        final byte[] f3Bin = f3.toBinary();
 
-        byte[] all = Arrays.copyOf(f1Bin, f1Bin.length + f2Bin.length + f3Bin.length);
+        final byte[] all = Arrays.copyOf(f1Bin, f1Bin.length + f2Bin.length + f3Bin.length);
         System.arraycopy(f2Bin, 0, all, f1Bin.length, f2Bin.length);
         System.arraycopy(f3Bin, 0, all, f1Bin.length + f2Bin.length, f3Bin.length);
         return all;
     }
 
-    public IntegerPolynomial mult(IntegerPolynomial b)
+    @Override
+	public IntegerPolynomial mult(final IntegerPolynomial b)
     {
         IntegerPolynomial c = f1.mult(b);
         c = f2.mult(c);
@@ -68,7 +69,8 @@ public class ProductFormPolynomial
         return c;
     }
 
-    public BigIntPolynomial mult(BigIntPolynomial b)
+    @Override
+	public BigIntPolynomial mult(final BigIntPolynomial b)
     {
         BigIntPolynomial c = f1.mult(b);
         c = f2.mult(c);
@@ -76,45 +78,44 @@ public class ProductFormPolynomial
         return c;
     }
 
-    public IntegerPolynomial toIntegerPolynomial()
+    @Override
+	public IntegerPolynomial toIntegerPolynomial()
     {
-        IntegerPolynomial i = f1.mult(f2.toIntegerPolynomial());
+        final IntegerPolynomial i = f1.mult(f2.toIntegerPolynomial());
         i.add(f3.toIntegerPolynomial());
         return i;
     }
 
-    public IntegerPolynomial mult(IntegerPolynomial poly2, int modulus)
+    @Override
+	public IntegerPolynomial mult(final IntegerPolynomial poly2, final int modulus)
     {
-        IntegerPolynomial c = mult(poly2);
+        final IntegerPolynomial c = mult(poly2);
         c.mod(modulus);
         return c;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((f1 == null) ? 0 : f1.hashCode());
-        result = prime * result + ((f2 == null) ? 0 : f2.hashCode());
-        result = prime * result + ((f3 == null) ? 0 : f3.hashCode());
-        return result;
+        result = prime * result + (f1 == null ? 0 : f1.hashCode());
+        result = prime * result + (f2 == null ? 0 : f2.hashCode());
+        return prime * result + (f3 == null ? 0 : f3.hashCode());
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(final Object obj)
     {
         if (this == obj)
         {
             return true;
         }
-        if (obj == null)
+        if ((obj == null) || (getClass() != obj.getClass()))
         {
             return false;
         }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        ProductFormPolynomial other = (ProductFormPolynomial)obj;
+        final ProductFormPolynomial other = (ProductFormPolynomial)obj;
         if (f1 == null)
         {
             if (other.f1 != null)

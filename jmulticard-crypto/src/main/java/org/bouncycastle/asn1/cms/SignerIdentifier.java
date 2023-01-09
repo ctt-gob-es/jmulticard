@@ -17,7 +17,7 @@ import org.bouncycastle.asn1.DERTaggedObject;
  * <pre>
  * SignerIdentifier ::= CHOICE {
  *     issuerAndSerialNumber IssuerAndSerialNumber,
- *     subjectKeyIdentifier [0] SubjectKeyIdentifier 
+ *     subjectKeyIdentifier [0] SubjectKeyIdentifier
  * }
  *
  * SubjectKeyIdentifier ::= OCTET STRING
@@ -27,26 +27,26 @@ public class SignerIdentifier
     extends ASN1Object
     implements ASN1Choice
 {
-    private ASN1Encodable id;
-    
+    private final ASN1Encodable id;
+
     public SignerIdentifier(
-        IssuerAndSerialNumber id)
+        final IssuerAndSerialNumber id)
     {
         this.id = id;
     }
-    
+
     public SignerIdentifier(
-        ASN1OctetString id)
+        final ASN1OctetString id)
     {
         this.id = new DERTaggedObject(false, 0, id);
     }
-    
+
     public SignerIdentifier(
-        ASN1Primitive id)
+        final ASN1Primitive id)
     {
         this.id = id;
     }
-    
+
     /**
      * Return a SignerIdentifier object from the given object.
      * <p>
@@ -63,35 +63,35 @@ public class SignerIdentifier
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static SignerIdentifier getInstance(
-        Object o)
+        final Object o)
     {
         if (o == null || o instanceof SignerIdentifier)
         {
             return (SignerIdentifier)o;
         }
-        
+
         if (o instanceof IssuerAndSerialNumber)
         {
             return new SignerIdentifier((IssuerAndSerialNumber)o);
         }
-        
+
         if (o instanceof ASN1OctetString)
         {
             return new SignerIdentifier((ASN1OctetString)o);
         }
-        
+
         if (o instanceof ASN1Primitive)
         {
             return new SignerIdentifier((ASN1Primitive)o);
         }
-        
+
         throw new IllegalArgumentException(
              "Illegal object in SignerIdentifier: " + o.getClass().getName());
-    } 
+    }
 
     public boolean isTagged()
     {
-        return (id instanceof ASN1TaggedObject);
+        return id instanceof ASN1TaggedObject;
     }
 
     public ASN1Encodable getId()
@@ -104,10 +104,11 @@ public class SignerIdentifier
         return id;
     }
 
-    /** 
+    /**
      * Produce an object suitable for an ASN1OutputStream.
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return id.toASN1Primitive();
     }

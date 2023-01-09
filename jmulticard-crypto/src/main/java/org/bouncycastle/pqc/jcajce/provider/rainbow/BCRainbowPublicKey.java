@@ -123,7 +123,8 @@ public class BCRainbowPublicKey
      * @param other the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (other == null || !(other instanceof BCRainbowPublicKey))
         {
@@ -137,7 +138,8 @@ public class BCRainbowPublicKey
             && RainbowUtil.equals(coeffscalar, otherKey.getCoeffScalar());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hash = docLength;
 
@@ -151,17 +153,20 @@ public class BCRainbowPublicKey
     /**
      * @return name of the algorithm - "Rainbow"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "Rainbow";
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         RainbowPublicKey key = new RainbowPublicKey(docLength, coeffquadratic, coeffsingular, coeffscalar);
         AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);

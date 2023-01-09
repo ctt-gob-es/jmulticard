@@ -23,7 +23,8 @@ public class DERBitString
      * @deprecated Use {@link ASN1BitString#getInstance(Object)} and
      *             {@link #convert(ASN1BitString)} instead.
      */
-    public static DERBitString getInstance(
+    @Deprecated
+	public static DERBitString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERBitString)
@@ -61,7 +62,8 @@ public class DERBitString
      * @deprecated Use {@link ASN1BitString#getInstance(ASN1TaggedObject, boolean)}
      *             and {@link #convert(ASN1BitString)} instead.
      */
-    public static DERBitString getInstance(
+    @Deprecated
+	public static DERBitString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {
@@ -109,17 +111,20 @@ public class DERBitString
         super(contents, check);
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         int padBits = contents[0] & 0xFF;
         int length = contents.length;
@@ -138,12 +143,14 @@ public class DERBitString
         }
     }
 
-    ASN1Primitive toDERObject()
+    @Override
+	ASN1Primitive toDERObject()
     {
         return this;
     }
 
-    ASN1Primitive toDLObject()
+    @Override
+	ASN1Primitive toDLObject()
     {
         return this;
     }

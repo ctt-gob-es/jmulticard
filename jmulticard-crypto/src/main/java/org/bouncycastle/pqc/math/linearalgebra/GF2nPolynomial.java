@@ -248,7 +248,8 @@ public class GF2nPolynomial
         return true;
     }
 
-    public final boolean equals(Object other)
+    @Override
+	public final boolean equals(Object other)
     {
         if (other == null || !(other instanceof GF2nPolynomial))
         {
@@ -275,7 +276,8 @@ public class GF2nPolynomial
     /**
      * @return the hash code of this polynomial
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return getDegree() + coeff.hashCode();
     }

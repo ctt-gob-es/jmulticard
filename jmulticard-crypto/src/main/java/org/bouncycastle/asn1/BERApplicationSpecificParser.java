@@ -9,6 +9,7 @@ import java.io.IOException;
  *             {@link ASN1TaggedObjectParser#getTagClass() tag class} of
  *             {@link BERTags#APPLICATION} instead.
  */
+@Deprecated
 public class BERApplicationSpecificParser
     extends BERTaggedObjectParser
     implements ASN1ApplicationSpecificParser
@@ -23,7 +24,8 @@ public class BERApplicationSpecificParser
      * @return the contained object.
      * @throws IOException if the underlying stream cannot be read, or does not contain an ASN.1 encoding.
      */
-    public ASN1Encodable readObject()
+    @Override
+	public ASN1Encodable readObject()
         throws IOException
     {
         // NOTE: No way to say you're looking for an implicitly-tagged object via ASN1ApplicationSpecificParser

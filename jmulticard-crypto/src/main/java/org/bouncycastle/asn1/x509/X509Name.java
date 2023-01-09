@@ -35,6 +35,7 @@ import org.bouncycastle.util.encoders.Hex;
  * </pre>
  * @deprecated use org.bouncycastle.asn1.x500.X500Name.
  */
+@Deprecated
 public class X509Name
     extends ASN1Object
 {
@@ -42,31 +43,36 @@ public class X509Name
      * country code - StringType(SIZE(2))
      * @deprecated use a X500NameStyle
      */
-    public static final ASN1ObjectIdentifier C = new ASN1ObjectIdentifier("2.5.4.6");
+    @Deprecated
+	public static final ASN1ObjectIdentifier C = new ASN1ObjectIdentifier("2.5.4.6");
 
     /**
      * organization - StringType(SIZE(1..64))
      * @deprecated use a X500NameStyle
      */
-    public static final ASN1ObjectIdentifier O = new ASN1ObjectIdentifier("2.5.4.10");
+    @Deprecated
+	public static final ASN1ObjectIdentifier O = new ASN1ObjectIdentifier("2.5.4.10");
 
     /**
      * organizational unit name - StringType(SIZE(1..64))
      * @deprecated use a X500NameStyle
      */
-    public static final ASN1ObjectIdentifier OU = new ASN1ObjectIdentifier("2.5.4.11");
+    @Deprecated
+	public static final ASN1ObjectIdentifier OU = new ASN1ObjectIdentifier("2.5.4.11");
 
     /**
      * Title
      * @deprecated use a X500NameStyle
      */
-    public static final ASN1ObjectIdentifier T = new ASN1ObjectIdentifier("2.5.4.12");
+    @Deprecated
+	public static final ASN1ObjectIdentifier T = new ASN1ObjectIdentifier("2.5.4.12");
 
     /**
      * common name - StringType(SIZE(1..64))
      * @deprecated use a X500NameStyle
      */
-    public static final ASN1ObjectIdentifier CN = new ASN1ObjectIdentifier("2.5.4.3");
+    @Deprecated
+	public static final ASN1ObjectIdentifier CN = new ASN1ObjectIdentifier("2.5.4.3");
 
     /**
      * device serial number name - StringType(SIZE(1..64))
@@ -77,7 +83,7 @@ public class X509Name
      * street - StringType(SIZE(1..64))
      */
     public static final ASN1ObjectIdentifier STREET = new ASN1ObjectIdentifier("2.5.4.9");
-    
+
     /**
      * device serial number name - StringType(SIZE(1..64))
      */
@@ -113,7 +119,7 @@ public class X509Name
      */
     public static final ASN1ObjectIdentifier POSTAL_CODE = new ASN1ObjectIdentifier(
                     "2.5.4.17");
-    
+
     /**
      * dnQualifier - DirectoryString(SIZE(1..64)
      */
@@ -191,19 +197,20 @@ public class X509Name
      * <p>Note: if you're trying to be ultra orthodox, don't use this! It shouldn't be in here.
      * @deprecated use a X500NameStyle
      */
-    public static final ASN1ObjectIdentifier EmailAddress = PKCSObjectIdentifiers.pkcs_9_at_emailAddress;
-    
+    @Deprecated
+	public static final ASN1ObjectIdentifier EmailAddress = PKCSObjectIdentifiers.pkcs_9_at_emailAddress;
+
     /**
      * more from PKCS#9
      */
     public static final ASN1ObjectIdentifier UnstructuredName = PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
     public static final ASN1ObjectIdentifier UnstructuredAddress = PKCSObjectIdentifiers.pkcs_9_at_unstructuredAddress;
-    
+
     /**
      * email address in Verisign certificates
      */
     public static final ASN1ObjectIdentifier E = EmailAddress;
-    
+
     /*
      * others...
      */
@@ -228,13 +235,13 @@ public class X509Name
 
     /**
      * look up table translating OID values into their common symbols following the convention in RFC 2253
-     * 
+     *
      */
     public static final Hashtable RFC2253Symbols = new Hashtable();
 
     /**
      * look up table translating OID values into their common symbols following the convention in RFC 1779
-     * 
+     *
      */
     public static final Hashtable RFC1779Symbols = new Hashtable();
 
@@ -247,16 +254,18 @@ public class X509Name
      * look up table translating OID values into their common symbols
      * @deprecated use DefaultSymbols
      */
-    public static final Hashtable OIDLookUp = DefaultSymbols;
+    @Deprecated
+	public static final Hashtable OIDLookUp = DefaultSymbols;
 
     /**
      * look up table translating string values into their OIDS -
      * @deprecated use DefaultLookUp
      */
-    public static final Hashtable SymbolLookUp = DefaultLookUp;
+    @Deprecated
+	public static final Hashtable SymbolLookUp = DefaultLookUp;
 
-    private static final Boolean TRUE = new Boolean(true); // for J2ME compatibility
-    private static final Boolean FALSE = new Boolean(false);
+    private static final Boolean TRUE = Boolean.valueOf(true); // for J2ME compatibility
+    private static final Boolean FALSE = Boolean.valueOf(false);
 
     static
     {
@@ -359,20 +368,20 @@ public class X509Name
 
     /**
      * Return a X509Name based on the passed in tagged object.
-     * 
+     *
      * @param obj tag object holding name.
      * @param explicit true if explicitly tagged false otherwise.
      * @return the X509Name
      */
     public static X509Name getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static X509Name getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof X509Name)
         {
@@ -400,20 +409,21 @@ public class X509Name
      * the principal will be a list of constructed sets, each containing an (OID, String) pair.
      * @deprecated use X500Name.getInstance()
      */
-    public X509Name(
-        ASN1Sequence  seq)
+    @Deprecated
+	public X509Name(
+        final ASN1Sequence  seq)
     {
         this.seq = seq;
 
-        Enumeration e = seq.getObjects();
+        final Enumeration e = seq.getObjects();
 
         while (e.hasMoreElements())
         {
-            ASN1Set         set = ASN1Set.getInstance(((ASN1Encodable)e.nextElement()).toASN1Primitive());
+            final ASN1Set         set = ASN1Set.getInstance(((ASN1Encodable)e.nextElement()).toASN1Primitive());
 
-            for (int i = 0; i < set.size(); i++) 
+            for (int i = 0; i < set.size(); i++)
             {
-                   ASN1Sequence s = ASN1Sequence.getInstance(set.getObjectAt(i).toASN1Primitive());
+                   final ASN1Sequence s = ASN1Sequence.getInstance(set.getObjectAt(i).toASN1Primitive());
 
                    if (s.size() != 2)
                    {
@@ -421,11 +431,11 @@ public class X509Name
                    }
 
                    ordering.addElement(ASN1ObjectIdentifier.getInstance(s.getObjectAt(0)));
-                   
-                   ASN1Encodable value = s.getObjectAt(1);
+
+                   final ASN1Encodable value = s.getObjectAt(1);
                    if (value instanceof ASN1String && !(value instanceof ASN1UniversalString))
                    {
-                       String v = ((ASN1String)value).getString();
+                       final String v = ((ASN1String)value).getString();
                        if (v.length() > 0 && v.charAt(0) == '#')
                        {
                            values.addElement("\\" + v);
@@ -441,12 +451,12 @@ public class X509Name
                        {
                            values.addElement("#" + bytesToString(Hex.encode(value.toASN1Primitive().getEncoded(ASN1Encoding.DER))));
                        }
-                       catch (IOException e1)
+                       catch (final IOException e1)
                        {
                            throw new IllegalArgumentException("cannot encode value");
                        }
                    }
-                   added.addElement((i != 0) ? TRUE : FALSE);  // to allow earlier JDK compatibility
+                   added.addElement(i != 0 ? TRUE : FALSE);  // to allow earlier JDK compatibility
             }
         }
     }
@@ -463,8 +473,9 @@ public class X509Name
      * with the ordering specified below.
      * @deprecated use an ordered constructor! The hashtable ordering is rarely correct
      */
-    public X509Name(
-        Hashtable  attributes)
+    @Deprecated
+	public X509Name(
+        final Hashtable  attributes)
     {
         this(null, attributes);
     }
@@ -478,8 +489,8 @@ public class X509Name
      * in the order they are meant to be encoded or printed in toString.
      */
     public X509Name(
-        Vector      ordering,
-        Hashtable   attributes)
+        final Vector      ordering,
+        final Hashtable   attributes)
     {
         this(ordering, attributes, new X509DefaultEntryConverter());
     }
@@ -496,10 +507,11 @@ public class X509Name
      * ASN.1 counterparts.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        Vector                   ordering,
-        Hashtable                attributes,
-        X509NameEntryConverter   converter)
+    @Deprecated
+	public X509Name(
+        final Vector                   ordering,
+        final Hashtable                attributes,
+        final X509NameEntryConverter   converter)
     {
         this.converter = converter;
 
@@ -508,30 +520,30 @@ public class X509Name
             for (int i = 0; i != ordering.size(); i++)
             {
                 this.ordering.addElement(ordering.elementAt(i));
-                this.added.addElement(FALSE);
+                added.addElement(FALSE);
             }
         }
         else
         {
-            Enumeration     e = attributes.keys();
+            final Enumeration     e = attributes.keys();
 
             while (e.hasMoreElements())
             {
                 this.ordering.addElement(e.nextElement());
-                this.added.addElement(FALSE);
+                added.addElement(FALSE);
             }
         }
 
         for (int i = 0; i != this.ordering.size(); i++)
         {
-            ASN1ObjectIdentifier     oid = (ASN1ObjectIdentifier)this.ordering.elementAt(i);
+            final ASN1ObjectIdentifier     oid = (ASN1ObjectIdentifier)this.ordering.elementAt(i);
 
             if (attributes.get(oid) == null)
             {
                 throw new IllegalArgumentException("No attribute for object id - " + oid.getId() + " - passed to distinguished name");
             }
 
-            this.values.addElement(attributes.get(oid)); // copy the hash table
+            values.addElement(attributes.get(oid)); // copy the hash table
         }
     }
 
@@ -539,9 +551,10 @@ public class X509Name
      * Takes two vectors one of the oids and the other of the values.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        Vector  oids,
-        Vector  values)
+    @Deprecated
+	public X509Name(
+        final Vector  oids,
+        final Vector  values)
     {
         this(oids, values, new X509DefaultEntryConverter());
     }
@@ -553,10 +566,11 @@ public class X509Name
      * ASN.1 counterparts.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        Vector                  oids,
-        Vector                  values,
-        X509NameEntryConverter  converter)
+    @Deprecated
+	public X509Name(
+        final Vector                  oids,
+        final Vector                  values,
+        final X509NameEntryConverter  converter)
     {
         this.converter = converter;
 
@@ -567,9 +581,9 @@ public class X509Name
 
         for (int i = 0; i < oids.size(); i++)
         {
-            this.ordering.addElement(oids.elementAt(i));
+            ordering.addElement(oids.elementAt(i));
             this.values.addElement(values.elementAt(i));
-            this.added.addElement(FALSE);
+            added.addElement(FALSE);
         }
     }
 
@@ -588,8 +602,9 @@ public class X509Name
      * some such, converting it into an ordered set of name attributes.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        String  dirName)
+    @Deprecated
+	public X509Name(
+        final String  dirName)
     {
         this(DefaultReverse, DefaultLookUp, dirName);
     }
@@ -601,9 +616,10 @@ public class X509Name
      * in converter.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        String                  dirName,
-        X509NameEntryConverter  converter)
+    @Deprecated
+	public X509Name(
+        final String                  dirName,
+        final X509NameEntryConverter  converter)
     {
         this(DefaultReverse, DefaultLookUp, dirName, converter);
     }
@@ -615,9 +631,10 @@ public class X509Name
      * last element in the string.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        boolean reverse,
-        String  dirName)
+    @Deprecated
+	public X509Name(
+        final boolean reverse,
+        final String  dirName)
     {
         this(reverse, DefaultLookUp, dirName);
     }
@@ -630,10 +647,11 @@ public class X509Name
      * be built by starting at the end of the string, rather than the start.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        boolean                 reverse,
-        String                  dirName,
-        X509NameEntryConverter  converter)
+    @Deprecated
+	public X509Name(
+        final boolean                 reverse,
+        final String                  dirName,
+        final X509NameEntryConverter  converter)
     {
         this(reverse, DefaultLookUp, dirName, converter);
     }
@@ -652,17 +670,18 @@ public class X509Name
      * @param dirName the X.500 string to be parsed.
      * @deprecated use X500Name, X500NameBuilder
      */
-    public X509Name(
-        boolean     reverse,
-        Hashtable   lookUp,
-        String      dirName)
+    @Deprecated
+	public X509Name(
+        final boolean     reverse,
+        final Hashtable   lookUp,
+        final String      dirName)
     {
         this(reverse, lookUp, dirName, new X509DefaultEntryConverter());
     }
 
     private ASN1ObjectIdentifier decodeOID(
         String      name,
-        Hashtable   lookUp)
+        final Hashtable   lookUp)
     {
         name = name.trim();
         if (Strings.toUpperCase(name).startsWith("OID."))
@@ -674,7 +693,7 @@ public class X509Name
             return new ASN1ObjectIdentifier(name);
         }
 
-        ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)lookUp.get(Strings.toLowerCase(name));
+        final ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)lookUp.get(Strings.toLowerCase(name));
         if (oid == null)
         {
             throw new IllegalArgumentException("Unknown object id - " + name + " - passed to distinguished name");
@@ -683,36 +702,33 @@ public class X509Name
         return oid;
     }
 
-    private String unescape(String elt)
+    private String unescape(final String elt)
     {
-        if (elt.length() == 0 || (elt.indexOf('\\') < 0 && elt.indexOf('"') < 0))
+        if (elt.length() == 0 || elt.indexOf('\\') < 0 && elt.indexOf('"') < 0)
         {
             return elt.trim();
         }
 
-        char[] elts = elt.toCharArray();
+        final char[] elts = elt.toCharArray();
         boolean escaped = false;
         boolean quoted = false;
-        StringBuffer buf = new StringBuffer(elt.length());
+        final StringBuilder buf = new StringBuilder(elt.length());
         int start = 0;
 
         // if it's an escaped hash string and not an actual encoding in string form
         // we need to leave it escaped.
-        if (elts[0] == '\\')
-        {
-            if (elts[1] == '#')
-            {
-                start = 2;
-                buf.append("\\#");
-            }
-        }
+        if (elts[0] == '\\' && elts[1] == '#')
+		{
+		    start = 2;
+		    buf.append("\\#");
+		}
 
         boolean nonWhiteSpaceEncountered = false;
         int     lastEscaped = 0;
 
         for (int i = start; i != elts.length; i++)
         {
-            char c = elts[i];
+            final char c = elts[i];
 
             if (c != ' ')
             {
@@ -731,7 +747,7 @@ public class X509Name
                 }
                 escaped = false;
             }
-            else if (c == '\\' && !(escaped || quoted))
+            else if (c == '\\' && (!escaped && !quoted))
             {
                 escaped = true;
                 lastEscaped = buf.length();
@@ -749,7 +765,7 @@ public class X509Name
 
         if (buf.length() > 0)
         {
-            while (buf.charAt(buf.length() - 1) == ' ' && lastEscaped != (buf.length() - 1))
+            while (buf.charAt(buf.length() - 1) == ' ' && lastEscaped != buf.length() - 1)
             {
                 buf.setLength(buf.length() - 1);
             }
@@ -772,21 +788,21 @@ public class X509Name
      * @param converter the converter to convert string values into their ASN.1 equivalents
      */
     public X509Name(
-        boolean                 reverse,
-        Hashtable               lookUp,
-        String                  dirName,
-        X509NameEntryConverter  converter)
+        final boolean                 reverse,
+        final Hashtable               lookUp,
+        final String                  dirName,
+        final X509NameEntryConverter  converter)
     {
         this.converter = converter;
-        X509NameTokenizer   nTok = new X509NameTokenizer(dirName);
+        final X509NameTokenizer   nTok = new X509NameTokenizer(dirName);
 
         while (nTok.hasMoreTokens())
         {
-            String  token = nTok.nextToken();
+            final String  token = nTok.nextToken();
 
             if (token.indexOf('+') > 0)
             {
-                X509NameTokenizer   pTok = new X509NameTokenizer(token, '+');
+                final X509NameTokenizer   pTok = new X509NameTokenizer(token, '+');
 
                 addEntry(lookUp, pTok.nextToken(), FALSE);
 
@@ -803,37 +819,37 @@ public class X509Name
 
         if (reverse)
         {
-            Vector  o = new Vector();
-            Vector  v = new Vector();
-            Vector  a = new Vector();
+            final Vector  o = new Vector();
+            final Vector  v = new Vector();
+            final Vector  a = new Vector();
 
             int count = 1;
 
-            for (int i = 0; i < this.ordering.size(); i++)
+            for (int i = 0; i < ordering.size(); i++)
             {
-                if (((Boolean)this.added.elementAt(i)).booleanValue())
+                if (((Boolean)added.elementAt(i)).booleanValue())
                 {
-                    o.insertElementAt(this.ordering.elementAt(i), count);
-                    v.insertElementAt(this.values.elementAt(i), count);
-                    a.insertElementAt(this.added.elementAt(i), count);
+                    o.insertElementAt(ordering.elementAt(i), count);
+                    v.insertElementAt(values.elementAt(i), count);
+                    a.insertElementAt(added.elementAt(i), count);
                     count++;
                 }
                 else
                 {
-                    o.insertElementAt(this.ordering.elementAt(i), 0);
-                    v.insertElementAt(this.values.elementAt(i), 0);
-                    a.insertElementAt(this.added.elementAt(i), 0);
+                    o.insertElementAt(ordering.elementAt(i), 0);
+                    v.insertElementAt(values.elementAt(i), 0);
+                    a.insertElementAt(added.elementAt(i), 0);
                     count = 1;
                 }
             }
 
-            this.ordering = o;
-            this.values = v;
-            this.added = a;
+            ordering = o;
+            values = v;
+            added = a;
         }
     }
 
-    private void addEntry(Hashtable lookUp, String token, Boolean isAdded)
+    private void addEntry(final Hashtable lookUp, final String token, final Boolean isAdded)
     {
         X509NameTokenizer vTok;
         String name;
@@ -851,9 +867,9 @@ public class X509Name
 
         oid = decodeOID(name, lookUp);
 
-        this.ordering.addElement(oid);
-        this.values.addElement(unescape(value));
-        this.added.addElement(isAdded);
+        ordering.addElement(oid);
+        values.addElement(unescape(value));
+        added.addElement(isAdded);
     }
 
     /**
@@ -861,7 +877,7 @@ public class X509Name
      */
     public Vector getOIDs()
     {
-        Vector  v = new Vector();
+        final Vector  v = new Vector();
 
         for (int i = 0; i != ordering.size(); i++)
         {
@@ -877,7 +893,7 @@ public class X509Name
      */
     public Vector getValues()
     {
-        Vector  v = new Vector();
+        final Vector  v = new Vector();
 
         for (int i = 0; i != values.size(); i++)
         {
@@ -892,15 +908,15 @@ public class X509Name
      * were found, with the DN label corresponding to passed in oid.
      */
     public Vector getValues(
-        ASN1ObjectIdentifier oid)
+        final ASN1ObjectIdentifier oid)
     {
-        Vector  v = new Vector();
+        final Vector  v = new Vector();
 
         for (int i = 0; i != values.size(); i++)
         {
             if (ordering.elementAt(i).equals(oid))
             {
-                String val = (String)values.elementAt(i);
+                final String val = (String)values.elementAt(i);
 
                 if (val.length() > 2 && val.charAt(0) == '\\' && val.charAt(1) == '#')
                 {
@@ -916,43 +932,43 @@ public class X509Name
         return v;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         if (seq == null)
         {
-            ASN1EncodableVector  vec = new ASN1EncodableVector();
+            final ASN1EncodableVector  vec = new ASN1EncodableVector();
             ASN1EncodableVector  sVec = new ASN1EncodableVector();
             ASN1ObjectIdentifier  lstOid = null;
-            
+
             for (int i = 0; i != ordering.size(); i++)
             {
-                ASN1EncodableVector     v = new ASN1EncodableVector(2);
-                ASN1ObjectIdentifier     oid = (ASN1ObjectIdentifier)ordering.elementAt(i);
+                final ASN1EncodableVector     v = new ASN1EncodableVector(2);
+                final ASN1ObjectIdentifier     oid = (ASN1ObjectIdentifier)ordering.elementAt(i);
 
                 v.add(oid);
 
-                String  str = (String)values.elementAt(i);
+                final String  str = (String)values.elementAt(i);
 
                 v.add(converter.getConvertedValue(oid, str));
- 
-                if (lstOid == null 
-                    || ((Boolean)this.added.elementAt(i)).booleanValue())
+
+                if (lstOid == null
+                    || ((Boolean)added.elementAt(i)).booleanValue())
                 {
-                    sVec.add(new DERSequence(v));
                 }
                 else
                 {
                     vec.add(new DERSet(sVec));
 
                     sVec = new ASN1EncodableVector();
-                    sVec.add(new DERSequence(v));
                 }
-                
+				sVec.add(new DERSequence(v));
+
                 lstOid = oid;
             }
-            
+
             vec.add(new DERSet(sVec));
-            
+
             seq = new DERSequence(vec);
         }
 
@@ -963,7 +979,7 @@ public class X509Name
      * @param inOrder if true the order of both X509 names must be the same,
      * as well as the values associated with each element.
      */
-    public boolean equals(Object obj, boolean inOrder)
+    public boolean equals(final Object obj, final boolean inOrder)
     {
         if (!inOrder)
         {
@@ -975,12 +991,12 @@ public class X509Name
             return true;
         }
 
-        if (!(obj instanceof X509Name || obj instanceof ASN1Sequence))
+        if ((!(obj instanceof X509Name) && !(obj instanceof ASN1Sequence)))
         {
             return false;
         }
 
-        ASN1Primitive derO = ((ASN1Encodable)obj).toASN1Primitive();
+        final ASN1Primitive derO = ((ASN1Encodable)obj).toASN1Primitive();
 
         if (this.toASN1Primitive().equals(derO))
         {
@@ -993,12 +1009,12 @@ public class X509Name
         {
             other = X509Name.getInstance(obj);
         }
-        catch (IllegalArgumentException e)
+        catch (final IllegalArgumentException e)
         {
             return false;
         }
 
-        int      orderingSize = ordering.size();
+        final int      orderingSize = ordering.size();
 
         if (orderingSize != other.ordering.size())
         {
@@ -1007,13 +1023,13 @@ public class X509Name
 
         for (int i = 0; i < orderingSize; i++)
         {
-            ASN1ObjectIdentifier  oid = (ASN1ObjectIdentifier)ordering.elementAt(i);
-            ASN1ObjectIdentifier  oOid = (ASN1ObjectIdentifier)other.ordering.elementAt(i);
+            final ASN1ObjectIdentifier  oid = (ASN1ObjectIdentifier)ordering.elementAt(i);
+            final ASN1ObjectIdentifier  oOid = (ASN1ObjectIdentifier)other.ordering.elementAt(i);
 
             if (oid.equals(oOid))
             {
-                String value = (String)values.elementAt(i);
-                String oValue = (String)other.values.elementAt(i);
+                final String value = (String)values.elementAt(i);
+                final String oValue = (String)other.values.elementAt(i);
 
                 if (!equivalentStrings(value, oValue))
                 {
@@ -1029,7 +1045,8 @@ public class X509Name
         return true;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         if (isHashCodeCalculated)
         {
@@ -1056,20 +1073,21 @@ public class X509Name
     /**
      * test for equality - note: case is ignored.
      */
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(final Object obj)
     {
         if (obj == this)
         {
             return true;
         }
 
-        if (!(obj instanceof X509Name || obj instanceof ASN1Sequence))
+        if ((!(obj instanceof X509Name) && !(obj instanceof ASN1Sequence)))
         {
             return false;
         }
-        
-        ASN1Primitive derO = ((ASN1Encodable)obj).toASN1Primitive();
-        
+
+        final ASN1Primitive derO = ((ASN1Encodable)obj).toASN1Primitive();
+
         if (this.toASN1Primitive().equals(derO))
         {
             return true;
@@ -1081,19 +1099,19 @@ public class X509Name
         {
             other = X509Name.getInstance(obj);
         }
-        catch (IllegalArgumentException e)
-        { 
+        catch (final IllegalArgumentException e)
+        {
             return false;
         }
 
-        int      orderingSize = ordering.size();
+        final int      orderingSize = ordering.size();
 
         if (orderingSize != other.ordering.size())
         {
             return false;
         }
-        
-        boolean[] indexes = new boolean[orderingSize];
+
+        final boolean[] indexes = new boolean[orderingSize];
         int       start, end, delta;
 
         if (ordering.elementAt(0).equals(other.ordering.elementAt(0)))   // guess forward
@@ -1112,8 +1130,8 @@ public class X509Name
         for (int i = start; i != end; i += delta)
         {
             boolean              found = false;
-            ASN1ObjectIdentifier  oid = (ASN1ObjectIdentifier)ordering.elementAt(i);
-            String               value = (String)values.elementAt(i);
+            final ASN1ObjectIdentifier  oid = (ASN1ObjectIdentifier)ordering.elementAt(i);
+            final String               value = (String)values.elementAt(i);
 
             for (int j = 0; j < orderingSize; j++)
             {
@@ -1122,11 +1140,11 @@ public class X509Name
                     continue;
                 }
 
-                ASN1ObjectIdentifier oOid = (ASN1ObjectIdentifier)other.ordering.elementAt(j);
+                final ASN1ObjectIdentifier oOid = (ASN1ObjectIdentifier)other.ordering.elementAt(j);
 
                 if (oid.equals(oOid))
                 {
-                    String oValue = (String)other.values.elementAt(j);
+                    final String oValue = (String)other.values.elementAt(j);
 
                     if (equivalentStrings(value, oValue))
                     {
@@ -1142,15 +1160,15 @@ public class X509Name
                 return false;
             }
         }
-        
+
         return true;
     }
 
-    private boolean equivalentStrings(String s1, String s2)
+    private boolean equivalentStrings(final String s1, final String s2)
     {
         String value = canonicalize(s1);
         String oValue = canonicalize(s2);
-        
+
         if (!value.equals(oValue))
         {
             value = stripInternalSpaces(value);
@@ -1165,13 +1183,13 @@ public class X509Name
         return true;
     }
 
-    private String canonicalize(String s)
+    private String canonicalize(final String s)
     {
         String value = Strings.toLowerCase(s.trim());
-        
+
         if (value.length() > 0 && value.charAt(0) == '#')
         {
-            ASN1Primitive obj = decodeObject(value);
+            final ASN1Primitive obj = decodeObject(value);
 
             if (obj instanceof ASN1String)
             {
@@ -1182,22 +1200,22 @@ public class X509Name
         return value;
     }
 
-    private ASN1Primitive decodeObject(String oValue)
+    private ASN1Primitive decodeObject(final String oValue)
     {
         try
         {
             return ASN1Primitive.fromByteArray(Hex.decodeStrict(oValue, 1, oValue.length() - 1));
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("unknown encoding in name: " + e);
         }
     }
 
     private String stripInternalSpaces(
-        String str)
+        final String str)
     {
-        StringBuffer res = new StringBuffer();
+        final StringBuilder res = new StringBuilder();
 
         if (str.length() != 0)
         {
@@ -1207,8 +1225,8 @@ public class X509Name
 
             for (int k = 1; k < str.length(); k++)
             {
-                char    c2 = str.charAt(k);
-                if (!(c1 == ' ' && c2 == ' '))
+                final char    c2 = str.charAt(k);
+                if (((c1 != ' ') || (c2 != ' ')))
                 {
                     res.append(c2);
                 }
@@ -1220,12 +1238,12 @@ public class X509Name
     }
 
     private void appendValue(
-        StringBuffer        buf,
-        Hashtable           oidSymbols,
-        ASN1ObjectIdentifier oid,
-        String              value)
+        final StringBuffer        buf,
+        final Hashtable           oidSymbols,
+        final ASN1ObjectIdentifier oid,
+        final String              value)
     {
-        String  sym = (String)oidSymbols.get(oid);
+        final String  sym = (String)oidSymbols.get(oid);
 
         if (sym != null)
         {
@@ -1295,11 +1313,11 @@ public class X509Name
      * @param oidSymbols look up table strings for oids.
      */
     public String toString(
-        boolean     reverse,
-        Hashtable   oidSymbols)
+        final boolean     reverse,
+        final Hashtable   oidSymbols)
     {
-        StringBuffer            buf = new StringBuffer();
-        Vector                  components = new Vector();
+        final StringBuffer            buf = new StringBuffer();
+        final Vector                  components = new Vector();
         boolean                 first = true;
 
         StringBuffer ava = null;
@@ -1360,9 +1378,9 @@ public class X509Name
     }
 
     private String bytesToString(
-        byte[] data)
+        final byte[] data)
     {
-        char[]  cs = new char[data.length];
+        final char[]  cs = new char[data.length];
 
         for (int i = 0; i != cs.length; i++)
         {
@@ -1371,8 +1389,9 @@ public class X509Name
 
         return new String(cs);
     }
-    
-    public String toString()
+
+    @Override
+	public String toString()
     {
         return toString(DefaultReverse, DefaultSymbols);
     }

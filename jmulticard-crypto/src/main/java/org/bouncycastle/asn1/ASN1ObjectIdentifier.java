@@ -16,7 +16,8 @@ public class ASN1ObjectIdentifier
 {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1ObjectIdentifier.class, BERTags.OBJECT_IDENTIFIER)
     {
-        ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+        @Override
+		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets(), false);
         }
@@ -288,27 +289,32 @@ public class ASN1ObjectIdentifier
         return contents;
     }
 
-    boolean encodeConstructed()
+    @Override
+	boolean encodeConstructed()
     {
         return false;
     }
 
-    int encodedLength(boolean withTag)
+    @Override
+	int encodedLength(boolean withTag)
     {
         return ASN1OutputStream.getLengthOfEncodingDL(withTag, getContents().length);
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingDL(withTag, BERTags.OBJECT_IDENTIFIER, getContents());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return identifier.hashCode();
     }
 
-    boolean asn1Equals(
+    @Override
+	boolean asn1Equals(
         ASN1Primitive o)
     {
         if (o == this)
@@ -324,7 +330,8 @@ public class ASN1ObjectIdentifier
         return identifier.equals(((ASN1ObjectIdentifier)o).identifier);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getId();
     }
@@ -382,12 +389,14 @@ public class ASN1ObjectIdentifier
             this.contents = contents;
         }
 
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             return key;
         }
 
-        public boolean equals(Object o)
+        @Override
+		public boolean equals(Object o)
         {
             if (o instanceof OidHandle)
             {

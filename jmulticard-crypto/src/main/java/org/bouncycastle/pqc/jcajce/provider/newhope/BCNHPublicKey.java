@@ -43,7 +43,8 @@ public class BCNHPublicKey
      * @param o the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == null || !(o instanceof BCNHPublicKey))
         {
@@ -54,7 +55,8 @@ public class BCNHPublicKey
         return Arrays.areEqual(params.getPubData(), otherKey.params.getPubData());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(params.getPubData());
     }
@@ -62,12 +64,14 @@ public class BCNHPublicKey
     /**
      * @return name of the algorithm - "NH"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "NH";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -81,12 +85,14 @@ public class BCNHPublicKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
 
-    public byte[] getPublicData()
+    @Override
+	public byte[] getPublicData()
     {
         return params.getPubData();
     }

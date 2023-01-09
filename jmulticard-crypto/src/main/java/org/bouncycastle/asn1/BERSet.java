@@ -59,7 +59,8 @@ public class BERSet
         super(isSorted, elements);
     }
 
-    int encodedLength(boolean withTag) throws IOException
+    @Override
+	int encodedLength(boolean withTag) throws IOException
     {
         int totalLength = withTag ? 4 : 3;
 
@@ -72,7 +73,8 @@ public class BERSet
         return totalLength;
     }
 
-    void encode(ASN1OutputStream out, boolean withTag) throws IOException
+    @Override
+	void encode(ASN1OutputStream out, boolean withTag) throws IOException
     {
         out.writeEncodingIL(withTag, BERTags.CONSTRUCTED | BERTags.SET, elements);
     }

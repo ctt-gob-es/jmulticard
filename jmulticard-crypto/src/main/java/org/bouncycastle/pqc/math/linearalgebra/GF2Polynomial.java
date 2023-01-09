@@ -334,7 +334,8 @@ public class GF2Polynomial
     /**
      * @return a copy of this GF2Polynomial
      */
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new GF2Polynomial(this);
     }
@@ -546,7 +547,8 @@ public class GF2Polynomial
      * @return true if this GF2Polynomial equals <i>b</i> (<i>this</i> ==
      *         <i>b</i>)
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if (other == null || !(other instanceof GF2Polynomial))
         {
@@ -572,7 +574,8 @@ public class GF2Polynomial
     /**
      * @return the hash code of this polynomial
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return len + Arrays.hashCode(value);
     }

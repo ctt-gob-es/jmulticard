@@ -73,12 +73,14 @@ public class CSHAKEDigest
         return Arrays.concatenate(XofUtils.leftEncode(str.length * 8L), str);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "CSHAKE" + fixedOutputLength;
     }
 
-    public int doOutput(byte[] out, int outOff, int outLen)
+    @Override
+	public int doOutput(byte[] out, int outOff, int outLen)
     {
         if (diff != null)
         {
@@ -97,7 +99,8 @@ public class CSHAKEDigest
         }
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 

@@ -30,7 +30,8 @@ public class CollectionStore<T>
      * @param selector the selector to match against.
      * @return a possibly empty collection of matching objects.
      */
-    public Collection<T> getMatches(Selector<T> selector)
+    @Override
+	public Collection<T> getMatches(Selector<T> selector)
     {
         if (selector == null)
         {
@@ -55,7 +56,8 @@ public class CollectionStore<T>
         }
     }
 
-    public Iterator<T> iterator()
+    @Override
+	public Iterator<T> iterator()
     {
         return getMatches(null).iterator();
     }

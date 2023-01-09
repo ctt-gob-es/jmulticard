@@ -19,21 +19,21 @@ public class GF2Vector
     /**
      * holds the elements of this vector
      */
-    private int[] v;
+    private final int[] v;
 
     /**
      * Construct the zero vector of the given length.
      *
      * @param length the length of the vector
      */
-    public GF2Vector(int length)
+    public GF2Vector(final int length)
     {
         if (length < 0)
         {
             throw new ArithmeticException("Negative length.");
         }
         this.length = length;
-        v = new int[(length + 31) >> 5];
+        v = new int[length + 31 >> 5];
     }
 
     /**
@@ -42,11 +42,11 @@ public class GF2Vector
      * @param length the length of the vector
      * @param sr     the source of randomness
      */
-    public GF2Vector(int length, SecureRandom sr)
+    public GF2Vector(final int length, final SecureRandom sr)
     {
         this.length = length;
 
-        int size = (length + 31) >> 5;
+        final int size = length + 31 >> 5;
         v = new int[size];
 
         // generate random elements
@@ -56,7 +56,7 @@ public class GF2Vector
         }
 
         // erase unused bits
-        int r = length & 0x1f;
+        final int r = length & 0x1f;
         if (r != 0)
         {
             // erase unused bits
@@ -72,7 +72,7 @@ public class GF2Vector
      * @param t      the number of non-zero coefficients
      * @param sr     the source of randomness
      */
-    public GF2Vector(int length, int t, SecureRandom sr)
+    public GF2Vector(final int length, final int t, final SecureRandom sr)
     {
         if (t > length)
         {
@@ -81,10 +81,10 @@ public class GF2Vector
         }
         this.length = length;
 
-        int size = (length + 31) >> 5;
+        final int size = length + 31 >> 5;
         v = new int[size];
 
-        int[] help = new int[length];
+        final int[] help = new int[length];
         for (int i = 0; i < length; i++)
         {
             help[i] = i;
@@ -93,7 +93,7 @@ public class GF2Vector
         int m = length;
         for (int i = 0; i < t; i++)
         {
-            int j = RandUtils.nextInt(sr, m);
+            final int j = RandUtils.nextInt(sr, m);
             setBit(help[j]);
             m--;
             help[j] = help[m];
@@ -107,7 +107,7 @@ public class GF2Vector
      * @param length the length of the vector
      * @param v      the element array
      */
-    public GF2Vector(int length, int[] v)
+    public GF2Vector(final int length, final int[] v)
     {
         if (length < 0)
         {
@@ -115,7 +115,7 @@ public class GF2Vector
         }
         this.length = length;
 
-        int size = (length + 31) >> 5;
+        final int size = length + 31 >> 5;
 
         if (v.length != size)
         {
@@ -124,7 +124,7 @@ public class GF2Vector
 
         this.v = IntUtils.clone(v);
 
-        int r = length & 0x1f;
+        final int r = length & 0x1f;
         if (r != 0)
         {
             // erase unused bits
@@ -137,10 +137,10 @@ public class GF2Vector
      *
      * @param other another {@link GF2Vector}
      */
-    public GF2Vector(GF2Vector other)
+    public GF2Vector(final GF2Vector other)
     {
-        this.length = other.length;
-        this.v = IntUtils.clone(other.v);
+        length = other.length;
+        v = IntUtils.clone(other.v);
     }
 
     /**
@@ -151,7 +151,7 @@ public class GF2Vector
      * @param v      the element array
      * @param length the length of the vector
      */
-    protected GF2Vector(int[] v, int length)
+    protected GF2Vector(final int[] v, final int length)
     {
         this.v = v;
         this.length = length;
@@ -165,14 +165,14 @@ public class GF2Vector
      * @param encVec the encoded vector
      * @return the decoded vector
      */
-    public static GF2Vector OS2VP(int length, byte[] encVec)
+    public static GF2Vector OS2VP(final int length, final byte[] encVec)
     {
         if (length < 0)
         {
             throw new ArithmeticException("negative length");
         }
 
-        int byteLen = (length + 7) >> 3;
+        final int byteLen = length + 7 >> 3;
 
         if (encVec.length > byteLen)
         {
@@ -187,9 +187,10 @@ public class GF2Vector
      *
      * @return the encoded vector
      */
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
-        int byteLen = (length + 7) >> 3;
+        final int byteLen = length + 7 >> 3;
         return LittleEndianConversions.toByteArray(v, byteLen);
     }
 
@@ -210,12 +211,11 @@ public class GF2Vector
     public int getHammingWeight()
     {
         int weight = 0;
-        for (int i = 0; i < v.length; i++)
-        {
-            int e = v[i];
+        for (final int element : v) {
+            int e = element;
             for (int j = 0; j < 32; j++)
             {
-                int b = e & 1;
+                final int b = e & 1;
                 if (b != 0)
                 {
                     weight++;
@@ -229,7 +229,8 @@ public class GF2Vector
     /**
      * @return whether this is the zero vector (i.e., all elements are zero)
      */
-    public boolean isZero()
+    @Override
+	public boolean isZero()
     {
         for (int i = v.length - 1; i >= 0; i--)
         {
@@ -247,15 +248,15 @@ public class GF2Vector
      * @param index the index
      * @return the value of the bit (0 or 1)
      */
-    public int getBit(int index)
+    public int getBit(final int index)
     {
         if (index >= length)
         {
             throw new IndexOutOfBoundsException();
         }
-        int q = index >> 5;
-        int r = index & 0x1f;
-        return (v[q] & (1 << r)) >>> r;
+        final int q = index >> 5;
+        final int r = index & 0x1f;
+        return (v[q] & 1 << r) >>> r;
     }
 
     /**
@@ -264,7 +265,7 @@ public class GF2Vector
      *
      * @param index the index of the coefficient to set
      */
-    public void setBit(int index)
+    public void setBit(final int index)
     {
         if (index >= length)
         {
@@ -281,20 +282,21 @@ public class GF2Vector
      * @throws ArithmeticException if the other vector is not a GF2Vector or has another
      * length.
      */
-    public Vector add(Vector other)
+    @Override
+	public Vector add(final Vector other)
     {
         if (!(other instanceof GF2Vector))
         {
             throw new ArithmeticException("vector is not defined over GF(2)");
         }
 
-        GF2Vector otherVec = (GF2Vector)other;
+        final GF2Vector otherVec = (GF2Vector)other;
         if (length != otherVec.length)
         {
             throw new ArithmeticException("length mismatch");
         }
 
-        int[] vec = IntUtils.clone(((GF2Vector)other).v);
+        final int[] vec = IntUtils.clone(((GF2Vector)other).v);
 
         for (int i = vec.length - 1; i >= 0; i--)
         {
@@ -310,19 +312,20 @@ public class GF2Vector
      * @param p the permutation
      * @return <tt>this*p = p*this</tt>
      */
-    public Vector multiply(Permutation p)
+    @Override
+	public Vector multiply(final Permutation p)
     {
-        int[] pVec = p.getVector();
+        final int[] pVec = p.getVector();
         if (length != pVec.length)
         {
             throw new ArithmeticException("length mismatch");
         }
 
-        GF2Vector result = new GF2Vector(length);
+        final GF2Vector result = new GF2Vector(length);
 
         for (int i = 0; i < pVec.length; i++)
         {
-            int e = v[pVec[i] >> 5] & (1 << (pVec[i] & 0x1f));
+            final int e = v[pVec[i] >> 5] & 1 << (pVec[i] & 0x1f);
             if (e != 0)
             {
                 result.v[i >> 5] |= 1 << (i & 0x1f);
@@ -340,19 +343,19 @@ public class GF2Vector
      * @return the new {@link GF2Vector}
      *         <tt>[this_setJ[0], this_setJ[1], ..., this_setJ[#setJ-1]]</tt>
      */
-    public GF2Vector extractVector(int[] setJ)
+    public GF2Vector extractVector(final int[] setJ)
     {
-        int k = setJ.length;
+        final int k = setJ.length;
         if (setJ[k - 1] > length)
         {
             throw new ArithmeticException("invalid index set");
         }
 
-        GF2Vector result = new GF2Vector(k);
+        final GF2Vector result = new GF2Vector(k);
 
         for (int i = 0; i < k; i++)
         {
-            int e = v[setJ[i] >> 5] & (1 << (setJ[i] & 0x1f));
+            final int e = v[setJ[i] >> 5] & 1 << (setJ[i] & 0x1f);
             if (e != 0)
             {
                 result.v[i >> 5] |= 1 << (i & 0x1f);
@@ -370,7 +373,7 @@ public class GF2Vector
      * @return a new {@link GF2Vector} consisting of the first <tt>k</tt>
      *         elements of this vector
      */
-    public GF2Vector extractLeftVector(int k)
+    public GF2Vector extractLeftVector(final int k)
     {
         if (k > length)
         {
@@ -382,15 +385,15 @@ public class GF2Vector
             return new GF2Vector(this);
         }
 
-        GF2Vector result = new GF2Vector(k);
+        final GF2Vector result = new GF2Vector(k);
 
-        int q = k >> 5;
-        int r = k & 0x1f;
+        final int q = k >> 5;
+        final int r = k & 0x1f;
 
         System.arraycopy(v, 0, result.v, 0, q);
         if (r != 0)
         {
-            result.v[q] = v[q] & ((1 << r) - 1);
+            result.v[q] = v[q] & (1 << r) - 1;
         }
 
         return result;
@@ -404,7 +407,7 @@ public class GF2Vector
      * @return a new {@link GF2Vector} consisting of the last <tt>k</tt>
      *         elements of this vector
      */
-    public GF2Vector extractRightVector(int k)
+    public GF2Vector extractRightVector(final int k)
     {
         if (k > length)
         {
@@ -416,11 +419,11 @@ public class GF2Vector
             return new GF2Vector(this);
         }
 
-        GF2Vector result = new GF2Vector(k);
+        final GF2Vector result = new GF2Vector(k);
 
-        int q = (length - k) >> 5;
-        int r = (length - k) & 0x1f;
-        int length = (k + 31) >> 5;
+        final int q = length - k >> 5;
+        final int r = length - k & 0x1f;
+        final int length = k + 31 >> 5;
 
         int ind = q;
         // if words have to be shifted
@@ -429,13 +432,13 @@ public class GF2Vector
             // process all but last word
             for (int i = 0; i < length - 1; i++)
             {
-                result.v[i] = (v[ind++] >>> r) | (v[ind] << (32 - r));
+                result.v[i] = v[ind++] >>> r | v[ind] << 32 - r;
             }
             // process last word
             result.v[length - 1] = v[ind++] >>> r;
             if (ind < v.length)
             {
-                result.v[length - 1] |= v[ind] << (32 - r);
+                result.v[length - 1] |= v[ind] << 32 - r;
             }
         }
         else
@@ -454,25 +457,25 @@ public class GF2Vector
      * @param field the finite field <tt>GF(2<sup>m</sup>)</tt>
      * @return the converted vector over <tt>GF(2<sup>m</sup>)</tt>
      */
-    public GF2mVector toExtensionFieldVector(GF2mField field)
+    public GF2mVector toExtensionFieldVector(final GF2mField field)
     {
-        int m = field.getDegree();
-        if ((length % m) != 0)
+        final int m = field.getDegree();
+        if (length % m != 0)
         {
             throw new ArithmeticException("conversion is impossible");
         }
 
-        int t = length / m;
-        int[] result = new int[t];
+        final int t = length / m;
+        final int[] result = new int[t];
         int count = 0;
         for (int i = t - 1; i >= 0; i--)
         {
             for (int j = field.getDegree() - 1; j >= 0; j--)
             {
-                int q = count >>> 5;
-                int r = count & 0x1f;
+                final int q = count >>> 5;
+                final int r = count & 0x1f;
 
-                int e = (v[q] >>> r) & 1;
+                final int e = v[q] >>> r & 1;
                 if (e == 1)
                 {
                     result[i] ^= 1 << j;
@@ -489,43 +492,45 @@ public class GF2Vector
      * @param other vector
      * @return the result of the comparison
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(final Object other)
     {
 
         if (!(other instanceof GF2Vector))
         {
             return false;
         }
-        GF2Vector otherVec = (GF2Vector)other;
+        final GF2Vector otherVec = (GF2Vector)other;
 
-        return (length == otherVec.length) && IntUtils.equals(v, otherVec.v);
+        return length == otherVec.length && IntUtils.equals(v, otherVec.v);
     }
 
     /**
      * @return the hash code of this vector
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
-        int hash = length;
-        hash = hash * 31 + Arrays.hashCode(v);
-        return hash;
+        final int hash = length;
+        return hash * 31 + Arrays.hashCode(v);
     }
 
     /**
      * @return a human readable form of this vector
      */
-    public String toString()
+    @Override
+	public String toString()
     {
-        StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         for (int i = 0; i < length; i++)
         {
-            if ((i != 0) && ((i & 0x1f) == 0))
+            if (i != 0 && (i & 0x1f) == 0)
             {
                 buf.append(' ');
             }
-            int q = i >> 5;
-            int r = i & 0x1f;
-            int bit = v[q] & (1 << r);
+            final int q = i >> 5;
+            final int r = i & 0x1f;
+            final int bit = v[q] & 1 << r;
             if (bit == 0)
             {
                 buf.append('0');

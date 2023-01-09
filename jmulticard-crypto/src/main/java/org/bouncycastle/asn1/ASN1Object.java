@@ -28,7 +28,8 @@ public abstract class ASN1Object
      * @return BER/DER byte encoded object.
      * @throws java.io.IOException on encoding error.
      */
-    public byte[] getEncoded() throws IOException
+    @Override
+	public byte[] getEncoded() throws IOException
     {
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         toASN1Primitive().encodeTo(bOut);
@@ -49,12 +50,14 @@ public abstract class ASN1Object
         return bOut.toByteArray();
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.toASN1Primitive().hashCode();
     }
 
-    public boolean equals(
+    @Override
+	public boolean equals(
         Object  o)
     {
         if (this == o)
@@ -88,5 +91,6 @@ public abstract class ASN1Object
      * Method providing a primitive representation of this object suitable for encoding.
      * @return a primitive representation of this object.
      */
-    public abstract ASN1Primitive toASN1Primitive();
+    @Override
+	public abstract ASN1Primitive toASN1Primitive();
 }

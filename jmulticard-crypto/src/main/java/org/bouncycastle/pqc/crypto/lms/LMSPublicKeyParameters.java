@@ -17,7 +17,7 @@ public class LMSPublicKeyParameters
     private final byte[] I;
     private final byte[] T1;
 
-    public LMSPublicKeyParameters(LMSigParameters parameterSet, LMOtsParameters lmOtsType, byte[] T1, byte[] I)
+    public LMSPublicKeyParameters(final LMSigParameters parameterSet, final LMOtsParameters lmOtsType, final byte[] T1, final byte[] I)
     {
         super(false);
 
@@ -27,7 +27,7 @@ public class LMSPublicKeyParameters
         this.T1 = Arrays.clone(T1);
     }
 
-    public static LMSPublicKeyParameters getInstance(Object src)
+    public static LMSPublicKeyParameters getInstance(final Object src)
         throws IOException
     {
         if (src instanceof LMSPublicKeyParameters)
@@ -36,32 +36,23 @@ public class LMSPublicKeyParameters
         }
         else if (src instanceof DataInputStream)
         {
-            int pubType = ((DataInputStream)src).readInt();
-            LMSigParameters lmsParameter = LMSigParameters.getParametersForType(pubType);
-            LMOtsParameters ostTypeCode = LMOtsParameters.getParametersForType(((DataInputStream)src).readInt());
+            final int pubType = ((DataInputStream)src).readInt();
+            final LMSigParameters lmsParameter = LMSigParameters.getParametersForType(pubType);
+            final LMOtsParameters ostTypeCode = LMOtsParameters.getParametersForType(((DataInputStream)src).readInt());
 
-            byte[] I = new byte[16];
+            final byte[] I = new byte[16];
             ((DataInputStream)src).readFully(I);
 
-            byte[] T1 = new byte[lmsParameter.getM()];
+            final byte[] T1 = new byte[lmsParameter.getM()];
             ((DataInputStream)src).readFully(T1);
             return new LMSPublicKeyParameters(lmsParameter, ostTypeCode, T1, I);
         }
         else if (src instanceof byte[])
         {
 
-            InputStream in = null;
-            try // 1.5 / 1.6 compatibility
+            try (InputStream in = new DataInputStream(new ByteArrayInputStream((byte[])src))) // 1.5 / 1.6 compatibility
             {
-                in = new DataInputStream(new ByteArrayInputStream((byte[])src));
                 return getInstance(in);
-            }
-            finally
-            {
-                if (in != null)
-                {
-                    in.close();
-                }
             }
         }
         else if (src instanceof InputStream)
@@ -72,7 +63,8 @@ public class LMSPublicKeyParameters
         throw new IllegalArgumentException("cannot parse " + src);
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
         throws IOException
     {
         return this.toByteArray();
@@ -98,7 +90,7 @@ public class LMSPublicKeyParameters
         return Arrays.clone(T1);
     }
 
-    boolean matchesT1(byte[] sig)
+    boolean matchesT1(final byte[] sig)
     {
         return Arrays.constantTimeAreEqual(T1, sig);
     }
@@ -114,7 +106,7 @@ public class LMSPublicKeyParameters
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(final Object o)
     {
         if (this == o)
         {
@@ -125,17 +117,9 @@ public class LMSPublicKeyParameters
             return false;
         }
 
-        LMSPublicKeyParameters publicKey = (LMSPublicKeyParameters)o;
+        final LMSPublicKeyParameters publicKey = (LMSPublicKeyParameters)o;
 
-        if (!parameterSet.equals(publicKey.parameterSet))
-        {
-            return false;
-        }
-        if (!lmOtsType.equals(publicKey.lmOtsType))
-        {
-            return false;
-        }
-        if (!Arrays.areEqual(I, publicKey.I))
+        if (!parameterSet.equals(publicKey.parameterSet) || !lmOtsType.equals(publicKey.lmOtsType) || !Arrays.areEqual(I, publicKey.I))
         {
             return false;
         }
@@ -148,8 +132,7 @@ public class LMSPublicKeyParameters
         int result = parameterSet.hashCode();
         result = 31 * result + lmOtsType.hashCode();
         result = 31 * result + Arrays.hashCode(I);
-        result = 31 * result + Arrays.hashCode(T1);
-        return result;
+        return 31 * result + Arrays.hashCode(T1);
     }
 
     byte[] toByteArray()
@@ -162,21 +145,22 @@ public class LMSPublicKeyParameters
             .build();
     }
 
-    public LMSContext generateLMSContext(byte[] signature)
+    @Override
+	public LMSContext generateLMSContext(final byte[] signature)
     {
         try
         {
             return generateOtsContext(LMSSignature.getInstance(signature));
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("cannot parse signature: " + e.getMessage());
         }
     }
 
-    LMSContext generateOtsContext(LMSSignature S)
+    LMSContext generateOtsContext(final LMSSignature S)
     {
-        int ots_typecode = getOtsParameters().getType();
+        final int ots_typecode = getOtsParameters().getType();
         if (S.getOtsSignature().getType().getType() != ots_typecode)
         {
             throw new IllegalArgumentException("ots type from lsm signature does not match ots" +
@@ -186,7 +170,8 @@ public class LMSPublicKeyParameters
         return new LMOtsPublicKey(LMOtsParameters.getParametersForType(ots_typecode), I,  S.getQ(), null).createOtsContext(S);
     }
 
-    public boolean verify(LMSContext context)
+    @Override
+	public boolean verify(final LMSContext context)
     {
         return LMS.verifySignature(this, context);
     }

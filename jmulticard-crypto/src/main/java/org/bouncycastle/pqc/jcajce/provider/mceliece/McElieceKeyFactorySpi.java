@@ -47,7 +47,8 @@ public class McElieceKeyFactorySpi
      * @return the McEliece public key
      * @throws InvalidKeySpecException if the key specification is not supported.
      */
-    protected PublicKey engineGeneratePublic(KeySpec keySpec)
+    @Override
+	protected PublicKey engineGeneratePublic(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof X509EncodedKeySpec)
@@ -99,7 +100,8 @@ public class McElieceKeyFactorySpi
      * @return the McEliece private key
      * @throws InvalidKeySpecException if the KeySpec is not supported.
      */
-    protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
+    @Override
+	protected PrivateKey engineGeneratePrivate(KeySpec keySpec)
         throws InvalidKeySpecException
     {
         if (keySpec instanceof PKCS8EncodedKeySpec)
@@ -203,7 +205,8 @@ public class McElieceKeyFactorySpi
 
     }
 
-    public PublicKey generatePublic(SubjectPublicKeyInfo pki)
+    @Override
+	public PublicKey generatePublic(SubjectPublicKeyInfo pki)
         throws IOException
     {
         // get the inner type inside the BIT STRING
@@ -212,7 +215,8 @@ public class McElieceKeyFactorySpi
         return new BCMcEliecePublicKey(new McEliecePublicKeyParameters(key.getN(), key.getT(), key.getG()));
     }
 
-    public PrivateKey generatePrivate(PrivateKeyInfo pki)
+    @Override
+	public PrivateKey generatePrivate(PrivateKeyInfo pki)
         throws IOException
     {
         // get the inner type inside the BIT STRING
@@ -221,14 +225,16 @@ public class McElieceKeyFactorySpi
         return new BCMcEliecePrivateKey(new McEliecePrivateKeyParameters(key.getN(), key.getK(), key.getField(), key.getGoppaPoly(), key.getP1(), key.getP2(), key.getSInv()));
     }
 
-    protected KeySpec engineGetKeySpec(Key key, Class tClass)
+    @Override
+	protected KeySpec engineGetKeySpec(Key key, Class tClass)
         throws InvalidKeySpecException
     {
         // TODO:
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    protected Key engineTranslateKey(Key key)
+    @Override
+	protected Key engineTranslateKey(Key key)
         throws InvalidKeyException
     {
         // TODO:

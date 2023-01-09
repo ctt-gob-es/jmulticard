@@ -214,12 +214,14 @@ public class IssuingDistributionPoint
         return onlySomeReasons;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return seq;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         String       sep = Strings.lineSeparator();
         StringBuffer buf = new StringBuffer();

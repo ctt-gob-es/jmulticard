@@ -65,17 +65,20 @@ public class SHA512tDigest
         return Pack.bigEndianToInt(encodedState, encodedState.length - 4);
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SHA-512/" + Integer.toString(digestLength * 8);
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return digestLength;
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[]  out,
         int     outOff)
     {
@@ -98,7 +101,8 @@ public class SHA512tDigest
     /**
      * reset the chaining variables
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -189,12 +193,14 @@ public class SHA512tDigest
         }
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new SHA512tDigest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         SHA512tDigest t = (SHA512tDigest)other;
 
@@ -215,7 +221,8 @@ public class SHA512tDigest
         this.H8t = t.H8t;
     }
 
-    public byte[] getEncodedState()
+    @Override
+	public byte[] getEncodedState()
     {
         final int baseSize = getEncodedStateSize();
         byte[] encoded = new byte[baseSize + 4];

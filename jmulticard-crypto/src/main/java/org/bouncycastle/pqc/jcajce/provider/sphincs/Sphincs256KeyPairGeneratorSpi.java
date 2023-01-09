@@ -33,14 +33,16 @@ public class Sphincs256KeyPairGeneratorSpi
         super("SPHINCS256");
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         int strength,
         SecureRandom random)
     {
         throw new IllegalArgumentException("use AlgorithmParameterSpec");
     }
 
-    public void initialize(
+    @Override
+	public void initialize(
         AlgorithmParameterSpec params,
         SecureRandom random)
         throws InvalidAlgorithmParameterException
@@ -67,7 +69,8 @@ public class Sphincs256KeyPairGeneratorSpi
         initialised = true;
     }
 
-    public KeyPair generateKeyPair()
+    @Override
+	public KeyPair generateKeyPair()
     {
         if (!initialised)
         {

@@ -15,32 +15,38 @@ class GenericPolynomialExtensionField implements PolynomialExtensionField
         this.minimalPolynomial = polynomial;
     }
 
-    public BigInteger getCharacteristic()
+    @Override
+	public BigInteger getCharacteristic()
     {
         return subfield.getCharacteristic();
     }
 
-    public int getDimension()
+    @Override
+	public int getDimension()
     {
         return subfield.getDimension() * minimalPolynomial.getDegree();
     }
 
-    public FiniteField getSubfield()
+    @Override
+	public FiniteField getSubfield()
     {
         return subfield;
     }
 
-    public int getDegree()
+    @Override
+	public int getDegree()
     {
         return minimalPolynomial.getDegree();
     }
 
-    public Polynomial getMinimalPolynomial()
+    @Override
+	public Polynomial getMinimalPolynomial()
     {
         return minimalPolynomial;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -54,7 +60,8 @@ class GenericPolynomialExtensionField implements PolynomialExtensionField
         return subfield.equals(other.subfield) && minimalPolynomial.equals(other.minimalPolynomial);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return subfield.hashCode()
             ^ Integers.rotateLeft(minimalPolynomial.hashCode(), 16);

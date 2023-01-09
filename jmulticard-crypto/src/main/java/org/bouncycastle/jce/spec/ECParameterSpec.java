@@ -102,7 +102,8 @@ public class ECParameterSpec
         return seed;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (!(o instanceof ECParameterSpec))
         {
@@ -114,7 +115,8 @@ public class ECParameterSpec
         return this.getCurve().equals(other.getCurve()) && this.getG().equals(other.getG());
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return this.getCurve().hashCode() ^ this.getG().hashCode();
     }

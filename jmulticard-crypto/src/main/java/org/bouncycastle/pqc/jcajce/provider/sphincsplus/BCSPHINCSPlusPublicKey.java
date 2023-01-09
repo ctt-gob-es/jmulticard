@@ -45,7 +45,8 @@ public class BCSPHINCSPlusPublicKey
      * @param o the other object
      * @return the result of the comparison
      */
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this)
         {
@@ -62,7 +63,8 @@ public class BCSPHINCSPlusPublicKey
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return Arrays.hashCode(params.getEncoded());
     }
@@ -70,12 +72,14 @@ public class BCSPHINCSPlusPublicKey
     /**
      * @return name of the algorithm - "SPHINCS+"
      */
-    public final String getAlgorithm()
+    @Override
+	public final String getAlgorithm()
     {
         return "SPHINCS+";
     }
 
-    public byte[] getEncoded()
+    @Override
+	public byte[] getEncoded()
     {
         try
         {
@@ -89,12 +93,14 @@ public class BCSPHINCSPlusPublicKey
         }
     }
 
-    public String getFormat()
+    @Override
+	public String getFormat()
     {
         return "X.509";
     }
 
-    public SPHINCSPlusParameterSpec getParameterSpec()
+    @Override
+	public SPHINCSPlusParameterSpec getParameterSpec()
     {
         return SPHINCSPlusParameterSpec.fromName(params.getParameters().getName());
     }

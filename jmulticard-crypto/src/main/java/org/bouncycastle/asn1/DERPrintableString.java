@@ -38,7 +38,8 @@ public class DERPrintableString
      * 
      * @deprecated Use {@link ASN1PrintableString#getInstance(Object)} instead.
      */
-    public static DERPrintableString getInstance(
+    @Deprecated
+	public static DERPrintableString getInstance(
         Object  obj)
     {
         if (obj == null || obj instanceof DERPrintableString)
@@ -77,7 +78,8 @@ public class DERPrintableString
      *             {@link ASN1PrintableString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
-    public static DERPrintableString getInstance(
+    @Deprecated
+	public static DERPrintableString getInstance(
         ASN1TaggedObject obj,
         boolean          explicit)
     {

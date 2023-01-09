@@ -303,7 +303,8 @@ public class GF2mField
      * @param other object
      * @return true or false
      */
-    public boolean equals(Object other)
+    @Override
+	public boolean equals(Object other)
     {
         if ((other == null) || !(other instanceof GF2mField))
         {
@@ -321,7 +322,8 @@ public class GF2mField
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return polynomial;
     }
@@ -331,7 +333,8 @@ public class GF2mField
      *
      * @return a human readable form of this field.
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         String str = "Finite Field GF(2^" + degree + ") = " + "GF(2)[X]/<"
             + polyToString(polynomial) + "> ";

@@ -58,7 +58,8 @@ public class McElieceCCA2KeyPairGenerator
     }
 
     // TODO
-    public void init(
+    @Override
+	public void init(
         KeyGenerationParameters param)
     {
         this.mcElieceCCA2Params = (McElieceCCA2KeyGenerationParameters)param;
@@ -74,7 +75,8 @@ public class McElieceCCA2KeyPairGenerator
     }
 
 
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
 
         if (!initialized)

@@ -84,7 +84,8 @@ public class AttCertIssuer
      *  }
      * </pre>
      */
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         return choiceObj;
     }

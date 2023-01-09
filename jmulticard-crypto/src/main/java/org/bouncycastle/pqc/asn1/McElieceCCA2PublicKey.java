@@ -60,7 +60,8 @@ public class McElieceCCA2PublicKey
         return digest;
     }
 
-    public ASN1Primitive toASN1Primitive()
+    @Override
+	public ASN1Primitive toASN1Primitive()
     {
         ASN1EncodableVector v = new ASN1EncodableVector();
 

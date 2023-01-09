@@ -22,7 +22,8 @@ public final class XMSSKeyPairGenerator
     {
     }
 
-    public void init(
+    @Override
+	public void init(
         KeyGenerationParameters param)
     {
         XMSSKeyGenerationParameters parameters = (XMSSKeyGenerationParameters)param;
@@ -34,7 +35,8 @@ public final class XMSSKeyPairGenerator
     /**
      * Generate a new XMSS private key / public key pair.
      */
-    public AsymmetricCipherKeyPair generateKeyPair()
+    @Override
+	public AsymmetricCipherKeyPair generateKeyPair()
     {
         /* generate private key */
         XMSSPrivateKeyParameters privateKey = generatePrivateKey(params, prng);

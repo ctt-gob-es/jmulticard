@@ -127,7 +127,8 @@ class BENES12
     }
 
     // from benes network
-    public void support_gen(short[] s, byte[] c)
+    @Override
+	public void support_gen(short[] s, byte[] c)
     {
         short a;
         byte[][] L = new byte[GFBITS][(1 << GFBITS)/8];

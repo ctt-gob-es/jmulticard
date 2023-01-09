@@ -222,7 +222,8 @@ public class BigDecimalPolynomial
     /**
      * Makes a copy of the polynomial that is independent of the original.
      */
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new BigDecimalPolynomial(coeffs.clone());
     }

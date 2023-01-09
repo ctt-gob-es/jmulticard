@@ -2133,7 +2133,8 @@ class LongArray implements Cloneable
         }
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (!(o instanceof LongArray))
         {
@@ -2155,7 +2156,8 @@ class LongArray implements Cloneable
         return true;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int usedLen = getUsedLength();
         int hash = 1;
@@ -2170,12 +2172,14 @@ class LongArray implements Cloneable
         return hash;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new LongArray(Arrays.clone(m_ints));
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         int i = getUsedLength();
         if (i == 0)

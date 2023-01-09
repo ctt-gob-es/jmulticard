@@ -73,17 +73,20 @@ public class SHA1Digest
         xOff = t.xOff;
     }
 
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
         return "SHA-1";
     }
 
-    public int getDigestSize()
+    @Override
+	public int getDigestSize()
     {
         return DIGEST_LENGTH;
     }
 
-    protected void processWord(
+    @Override
+	protected void processWord(
         byte[]  in,
         int     inOff)
     {
@@ -101,7 +104,8 @@ public class SHA1Digest
         }        
     }
 
-    protected void processLength(
+    @Override
+	protected void processLength(
         long    bitLength)
     {
         if (xOff > 14)
@@ -113,7 +117,8 @@ public class SHA1Digest
         X[15] = (int)bitLength;
     }
 
-    public int doFinal(
+    @Override
+	public int doFinal(
         byte[]  out,
         int     outOff)
     {
@@ -133,7 +138,8 @@ public class SHA1Digest
     /**
      * reset the chaining variables
      */
-    public void reset()
+    @Override
+	public void reset()
     {
         super.reset();
 
@@ -182,7 +188,8 @@ public class SHA1Digest
         return ((u & v) | (u & w) | (v & w));
     }
 
-    protected void processBlock()
+    @Override
+	protected void processBlock()
     {
         //
         // expand 16 word block into 80 word block.
@@ -313,12 +320,14 @@ public class SHA1Digest
         }
     }
 
-    public Memoable copy()
+    @Override
+	public Memoable copy()
     {
         return new SHA1Digest(this);
     }
 
-    public void reset(Memoable other)
+    @Override
+	public void reset(Memoable other)
     {
         SHA1Digest d = (SHA1Digest)other;
 
@@ -326,7 +335,8 @@ public class SHA1Digest
         copyIn(d);
     }
 
-    public byte[] getEncodedState()
+    @Override
+	public byte[] getEncodedState()
     {
         byte[] state = new byte[40 + xOff * 4];
 
