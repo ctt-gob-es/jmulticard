@@ -39,11 +39,18 @@ public class DnieNfc extends Dnie3 {
 	private static PacePasswordType paceInitType;
 	private static String paceInitValue;
 
-	DnieNfc(final ApduConnection conn,
-			final PasswordCallback pwc,
-			final CryptoHelper cryptoHlpr,
-			final CallbackHandler ch) throws IcaoException,
-	                                         ApduConnectionException {
+	/** Crea un DNIe 3 o 4 accedido mediante PACE por NFC.
+	 * @param conn Conexi&oacute;n (debe ser NFC).
+	 * @param pwc <i>PasswordCallback</i>.
+	 * @param cryptoHlpr Utilidad de funciones criptogr&aacute;ficas.
+	 * @param ch <i>CallbackHandler</i>.
+	 * @throws IcaoException Si hay erorres relacionados con ICAO 9303.
+	 * @throws ApduConnectionException Si hay errores en la transmisi&oacute;n de APDU. */
+	public DnieNfc(final ApduConnection conn,
+			       final PasswordCallback pwc,
+			       final CryptoHelper cryptoHlpr,
+			       final CallbackHandler ch) throws IcaoException,
+	                                                ApduConnectionException {
 		this(
 			getPaceConnection(conn, ch, cryptoHlpr),
 			pwc,
@@ -221,7 +228,7 @@ public class DnieNfc extends Dnie3 {
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
-				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, this.cryptoHelper);
+				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, cryptoHelper);
 				break;
 			case CAN:
 				paceInitializer = new WirelessInitializerCan(paceInitValue);
@@ -241,7 +248,7 @@ public class DnieNfc extends Dnie3 {
         // Establecemos el canal PACE
     	return new PaceConnection(
     		con,
-    		this.cryptoHelper,
+    		cryptoHelper,
     		sm
 		);
 
@@ -253,9 +260,9 @@ public class DnieNfc extends Dnie3 {
 
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
-				this.rawConnection = getPaceConnection(
+				rawConnection = getPaceConnection(
 					getConnection(),
-					this.cryptoHelper.getPaceChannelHelper()
+					cryptoHelper.getPaceChannelHelper()
 				);
 			}
 			catch (final ApduConnectionException e) {
@@ -270,7 +277,7 @@ public class DnieNfc extends Dnie3 {
 			}
 
 			try {
-				setConnection(this.rawConnection);
+				setConnection(rawConnection);
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(

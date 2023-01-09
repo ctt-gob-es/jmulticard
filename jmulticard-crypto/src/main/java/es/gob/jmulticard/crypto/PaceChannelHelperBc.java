@@ -64,7 +64,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 				"Es necesario proporcionar un inicializador para abrir canal PACE" //$NON-NLS-1$
 			);
 		}
-		if (this.cryptoHelper == null) {
+		if (cryptoHelper == null) {
 			throw new IllegalArgumentException(
 				"El CryptoHelper no puede ser nulo" //$NON-NLS-1$
 			);
@@ -130,7 +130,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] sk = new byte[16];
 		try {
 			System.arraycopy(
-				this.cryptoHelper.digest(
+				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						pi.getBytes(),
@@ -153,7 +153,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		final byte[] secretNonce;
 		try {
-			secretNonce = this.cryptoHelper.aesDecrypt(
+			secretNonce = cryptoHelper.aesDecrypt(
 				nonce,
 				new byte[0],
 				sk,
@@ -221,13 +221,13 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 			);
 		}
 
-		// calcular blinding point H = PrkIFDDH1 * PukICCDH1
+		// Calcular blinding point H = PrkIFDDH1 * PukICCDH1
 		final ECPoint y1FromG = byteArrayToECPoint(pukIccDh1, curve);
 
-		//Calculamos el punto H secreto
+		// Calculamos el punto H secreto
 		final ECPoint sharedSecretH = y1FromG.multiply(prkIFDDH1);
 
-		//Se calcula el nuevo punto G' = nonce*G + H
+		// Se calcula el nuevo punto G' = nonce*G + H
 		final BigInteger ms = new BigInteger(1, secretNonce);
 		final ECPoint gTemp = pointG.multiply(ms);
 		final ECPoint newPointG = gTemp.add(sharedSecretH);
@@ -235,7 +235,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		// 1.3.5 Tercer comando General Authenticate
 
-		//Se calcula la coordenada X de G' y generamos con la tarjeta un nuevo acuerdo de claves
+		// Se calcula la coordenada X de G' y generamos con la tarjeta un nuevo acuerdo de claves
 		// La privada del terminal se genera aleatoriamente (PrkIFDDH2)
 		// La publica de la tarjeta sera devuelta por ella misma al enviar nuesra publica (pukIFDDH2)
 		final byte[] x2 = new byte[curve.getFieldSize()/8];
@@ -289,7 +289,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] kenc = new byte[16];
 		try {
 			System.arraycopy(
-				this.cryptoHelper.digest(
+				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						secretK,
@@ -312,7 +312,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] kmac = new byte[16];
 		try {
 			System.arraycopy(
-				this.cryptoHelper.digest(
+				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						secretK,
@@ -349,7 +349,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		final byte[] mac8bytes;
 		try {
-			mac8bytes = this.cryptoHelper.doAesCmac(
+			mac8bytes = cryptoHelper.doAesCmac(
 				data,
 				kmac
 			);
@@ -403,7 +403,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 			kenc,
 			kmac,
 			new byte[BLOCK_SIZE], // El tamano de bloque AES es el SSC inicial
-			this.cryptoHelper
+			cryptoHelper
 		);
 	}
 
