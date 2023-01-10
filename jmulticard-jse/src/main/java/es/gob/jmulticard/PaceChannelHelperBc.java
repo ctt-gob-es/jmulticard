@@ -41,7 +41,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 	/** Tama&ntilde;o de bloque de cifrado AES. */
 	public static final int BLOCK_SIZE = 16;
 
-	/** Constructor
+	/** Constructor.
 	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
 	public PaceChannelHelperBc(final CryptoHelper ch) {
 		super(ch);
@@ -62,7 +62,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 				"Es necesario proporcionar un inicializador para abrir canal PACE" //$NON-NLS-1$
 			);
 		}
-		if (this.cryptoHelper == null) {
+		if (cryptoHelper == null) {
 			throw new IllegalArgumentException(
 				"El CryptoHelper no puede ser nulo" //$NON-NLS-1$
 			);
@@ -128,7 +128,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] sk = new byte[16];
 		try {
 			System.arraycopy(
-				this.cryptoHelper.digest(
+				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						pi.getBytes(),
@@ -151,7 +151,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		final byte[] secretNonce;
 		try {
-			secretNonce = this.cryptoHelper.aesDecrypt(
+			secretNonce = cryptoHelper.aesDecrypt(
 				nonce,
 				new byte[0],
 				sk,
@@ -287,7 +287,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] kenc = new byte[16];
 		try {
 			System.arraycopy(
-				this.cryptoHelper.digest(
+				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						secretK,
@@ -310,7 +310,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		final byte[] kmac = new byte[16];
 		try {
 			System.arraycopy(
-				this.cryptoHelper.digest(
+				cryptoHelper.digest(
 					CryptoHelper.DigestAlgorithm.SHA1,
 					HexUtils.concatenateByteArrays(
 						secretK,
@@ -347,7 +347,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 
 		final byte[] mac8bytes;
 		try {
-			mac8bytes = this.cryptoHelper.doAesCmac(
+			mac8bytes = cryptoHelper.doAesCmac(
 				data,
 				kmac
 			);
@@ -401,7 +401,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 			kenc,
 			kmac,
 			new byte[BLOCK_SIZE], // El tamano de bloque AES es el SSC inicial
-			this.cryptoHelper
+			cryptoHelper
 		);
 	}
 

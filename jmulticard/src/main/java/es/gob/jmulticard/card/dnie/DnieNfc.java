@@ -13,6 +13,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
+import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.CardMessages;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
@@ -109,20 +110,7 @@ public class DnieNfc extends Dnie3 {
 			LOGGER.info(
 				"No se ha encontrado la clase 'javax.security.auth.callback.TextInputCallback', se usara 'es.gob.jmulticard.callback.CustomTextInputCallback': " + e //$NON-NLS-1$
 			);
-			try {
-				textInputCallback = (Callback) Class.forName("es.gob.jmulticard.callback.CustomTextInputCallback").getConstructor(String.class).newInstance(prompt); //$NON-NLS-1$
-			}
-			catch (InstantiationException    |
-				   IllegalAccessException    |
-				   IllegalArgumentException  |
-				   InvocationTargetException |
-				   NoSuchMethodException     |
-				   SecurityException         |
-				   ClassNotFoundException e1) {
-				throw new IllegalStateException(
-					"No se ha encontrado ni la clase 'javax.security.auth.callback.TextInputCallback' ni 'es.gob.jmulticard.callback.CustomTextInputCallback'", e1 //$NON-NLS-1$
-				);
-			}
+			textInputCallback = new CustomTextInputCallback(prompt);
 		}
 
 		int counter = 0;
