@@ -44,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.smartcardio.Card;
 import javax.smartcardio.CardChannel;
+import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.TerminalFactory;
@@ -60,11 +62,9 @@ import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
-import es.gob.jmulticard.card.Card;
-import es.gob.jmulticard.card.CardException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
- * JSR-268 AbstractSmartCard I/O.
+ * JSR-268 SmartCard I/O.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
