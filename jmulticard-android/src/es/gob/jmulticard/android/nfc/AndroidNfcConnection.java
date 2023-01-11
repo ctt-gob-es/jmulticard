@@ -1,9 +1,10 @@
-package com.fnmt.certrequest.crypto.jmulticard;
+package es.gob.jmulticard.android.nfc;
+
+import java.io.IOException;
 
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
-
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
@@ -11,8 +12,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.apdu.connection.CardConnectionListener;
-
-import java.io.IOException;
+import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre NFC para Android.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -22,6 +22,9 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
     private static final String TAG = AndroidNfcConnection.class.getSimpleName();
 
     private static final int ISODEP_TIMEOUT = 3000;
+
+    /** Version code de Android P. */
+    private static final int ANDROID_P = 28;
 
     private final IsoDep mIsoDep;
 
@@ -38,17 +41,17 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
         this.mIsoDep.setTimeout(ISODEP_TIMEOUT);
 
         // Retenemos la conexion hasta nuestro siguiente envio
-	  // Solo en la versiones de Android afectadas por el error https://issuetracker.google.com/issues/36977343
+        // Solo en la versiones de Android afectadas por el error https://issuetracker.google.com/issues/36977343
         if (
-		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
-		android.os.Build.VERSION.SDK_INT <  android.os.Build.VERSION_CODES.P
-	  ) {
+        		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
+        		android.os.Build.VERSION.SDK_INT <  ANDROID_P
+        ) {
             NFCWatchdogRefresher.holdConnection(this.mIsoDep);
         }
     }
 
     @Override
-    public ResponseApdu internalTransmit(byte[] apdu) throws ApduConnectionException {
+    public ResponseApdu internalTransmit(final byte[] apdu) throws ApduConnectionException {
         if (this.mIsoDep == null) {
             throw new ApduConnectionException(
                 "No se puede transmitir sobre una conexion NFC cerrada"
@@ -64,9 +67,9 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
         // Liberamos la conexion para transmitir.
 	  // Solo en la versiones de Android afectadas por el error https://issuetracker.google.com/issues/36977343
         if (
-		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
-		android.os.Build.VERSION.SDK_INT <  android.os.Build.VERSION_CODES.P
-	  ) {
+        		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
+        		android.os.Build.VERSION.SDK_INT <  ANDROID_P
+        ) {
             NFCWatchdogRefresher.stopHoldingConnection();
         }
 
@@ -83,11 +86,11 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
         }
         finally {
             // Retenemos la conexion hasta nuestro siguiente envio
-		// Solo en la versiones de Android afectadas por el error https://issuetracker.google.com/issues/36977343
+        	// Solo en la versiones de Android afectadas por el error https://issuetracker.google.com/issues/36977343
             if (
-			android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
-			android.os.Build.VERSION.SDK_INT <  android.os.Build.VERSION_CODES.P
-	  	) {
+            		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
+            		android.os.Build.VERSION.SDK_INT <  ANDROID_P
+            ) {
                 NFCWatchdogRefresher.holdConnection(this.mIsoDep);
             }
         }
@@ -119,9 +122,9 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
     public void close() throws ApduConnectionException {
         // Liberamos la conexion
         if (
-		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
-		android.os.Build.VERSION.SDK_INT <  android.os.Build.VERSION_CODES.P
-	  ) {
+        		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
+        		android.os.Build.VERSION.SDK_INT <  ANDROID_P
+        ) {
             NFCWatchdogRefresher.stopHoldingConnection();
         }
         try {
