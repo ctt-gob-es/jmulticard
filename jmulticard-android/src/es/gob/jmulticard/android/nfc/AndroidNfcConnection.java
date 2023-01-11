@@ -4,13 +4,13 @@ import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
 
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.HexUtils;
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.apdu.ResponseApdu;
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.apdu.connection.ApduConnection;
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import com.fnmt.certrequest.crypto.jmulticard.src.main.java.es.gob.jmulticard.apdu.connection.CardConnectionListener;
+import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.apdu.ResponseApdu;
+import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
+import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 
 import java.io.IOException;
 
