@@ -12,6 +12,8 @@ import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.apdu.connection.pace.PaceConnection;
+import es.gob.jmulticard.apdu.connection.pace.PaceException;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.CardMessages;
@@ -23,8 +25,6 @@ import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.card.icao.WirelessInitializerCan;
 import es.gob.jmulticard.card.icao.WirelessInitializerMrz;
-import es.gob.jmulticard.card.icao.pace.PaceConnection;
-import es.gob.jmulticard.card.icao.pace.PaceException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** DNIe 3 accedido mediante PACE por NFC.

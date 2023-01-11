@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.icao.pace;
+package es.gob.jmulticard.apdu.connection.pace;
 
 import java.util.logging.Logger;
 
@@ -11,6 +11,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksumException;
+import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
@@ -36,8 +37,8 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			              final CryptoHelper cryptoHlpr,
 			              final SecureMessaging secMsg) {
 		super(connection, cryptoHlpr);
-		this.sm = secMsg;
-		this.subConnection = connection;
+		sm = secMsg;
+		subConnection = connection;
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 	 * a la apertura del canal. */
 	@Override
 	public void open() {
-		this.openState = true;
+		openState = true;
 	}
 
 	@Override
@@ -66,16 +67,19 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			command.getLe()
 		);
 
+		final boolean isChv = finalCommand.getIns() == VerifyApduCommand.INS_VERIFY;
+
 		if (AbstractSmartCard.DEBUG) {
 			Logger.getLogger("es.gob.jmulticard").info( //$NON-NLS-1$
-				"APDU de comando en claro: " + HexUtils.hexify(finalCommand.getBytes(), true) //$NON-NLS-1$
+				"APDU de comando en claro: " + //$NON-NLS-1$
+					(isChv ? "Verificacion de PIN" : HexUtils.hexify(finalCommand.getBytes(), true)) //$NON-NLS-1$
 			);
 		}
 
 		// Encriptacion de la APDU para su envio por el canal seguro
 		final CommandApdu protectedApdu;
 		try {
-			protectedApdu = this.sm.wrap(finalCommand);
+			protectedApdu = sm.wrap(finalCommand);
 		}
 		catch (final SecureMessagingException e) {
 			throw new ApduConnectionException(
@@ -83,7 +87,7 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 			);
 		}
 
-		final ResponseApdu responseApdu = this.subConnection.transmit(protectedApdu);
+		final ResponseApdu responseApdu = subConnection.transmit(protectedApdu);
 
 		// Ignoramos los errores 62-82 (lectura fuera de limites) por ser comunes y estar tratados especificamente
 		if (!responseApdu.getStatusWord().isOk() && !new StatusWord((byte) 0x62, (byte) 0x82).equals(responseApdu.getStatusWord())) {
@@ -91,14 +95,14 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 				"Error transmitiendo la APDU cifrada:\n" +            //$NON-NLS-1$
 					"Error: " + responseApdu.getStatusWord() + '\n' + //$NON-NLS-1$
 					"Respuesta:\n" + responseApdu + '\n' +            //$NON-NLS-1$
-					"Comando cifrado:\n" + protectedApdu + '\n' +     //$NON-NLS-1$
-					"Comando en claro:\n" + finalCommand + '\n'       //$NON-NLS-1$
+					"Comando cifrado:\n" + (isChv ? "Verificacion de PIN" : protectedApdu) + '\n' + //$NON-NLS-1$ //$NON-NLS-2$
+					"Comando en claro:\n" + (isChv ? "Verificacion de PIN" : finalCommand) + '\n'   //$NON-NLS-1$ //$NON-NLS-2$
 			);
 		}
 
 		final ResponseApdu decipherApdu;
 		try {
-			decipherApdu = this.sm.unwrap(responseApdu);
+			decipherApdu = sm.unwrap(responseApdu);
 		}
 		catch (final SecureMessagingException e1) {
 			throw new ApduConnectionException(

@@ -1,4 +1,4 @@
-package es.gob.jmulticard.card.icao.pace;
+package es.gob.jmulticard.apdu.connection.pace;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

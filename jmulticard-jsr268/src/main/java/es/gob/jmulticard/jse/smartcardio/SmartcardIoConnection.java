@@ -62,6 +62,7 @@ import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.apdu.connection.CardNotPresentException;
 import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
+import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
  * JSR-268 SmartCard I/O.
@@ -367,21 +368,21 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             );
         }
 
+    	final CommandAPDU commandApdu = new CommandAPDU(command);
+    	// Miramos si es un CHV para que nunca aparezca el PIN en ningun log
+    	final boolean isChv = commandApdu.getINS() == VerifyApduCommand.INS_VERIFY;
+
         if (DEBUG) {
         	LOGGER.info(
-    			"Se va a enviar la APDU:\n" + //$NON-NLS-1$
-				HexUtils.hexify(
-					command,
-					command.length > 32 // En APDU mayores de 32 octetos separamos lineas y octetos
-				)
+    			"Se va a enviar la APDU" + //$NON-NLS-1$
+					(isChv ? " de verificacion de PIN" : //$NON-NLS-1$
+						":\n" + HexUtils.hexify(command, command.length > 32)) // En APDU mayores de 32 octetos separamos lineas y octetos //$NON-NLS-1$
 			);
         }
 
         try {
         	final ResponseApdu response = new ResponseApdu(
-				canal.transmit(
-					new CommandAPDU(command)
-				).getBytes()
+				canal.transmit(commandApdu).getBytes()
 			);
             if (DEBUG) {
             	LOGGER.info(
@@ -397,22 +398,24 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
                 throw new LostChannelException(t.getMessage(), t);
             }
             throw new ApduConnectionException(
-                "Error de comunicacion con la tarjeta tratando de transmitir la APDU\n" + //$NON-NLS-1$
-            		HexUtils.hexify(command, command.length > 32) +
+                "Error de comunicacion con la tarjeta tratando de transmitir la APDU" +  //$NON-NLS-1$
+                	(isChv ? " de verificacion de PIN" : //$NON-NLS-1$
+            		"\n" + HexUtils.hexify(command, command.length > 32) + //$NON-NLS-1$
             			"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
             				" en modo EXCLUSIVE=" + //$NON-NLS-1$
             					Boolean.toString(exclusive) +
-            						" con el protocolo " + protocol.toString(), e //$NON-NLS-1$
+            						" con el protocolo " + protocol.toString()), e //$NON-NLS-1$
             );
         }
         catch (final Exception e) {
-        	e.printStackTrace();
             throw new ApduConnectionException(
-                "Error tratando de transmitir la APDU\n" + HexUtils.hexify(command, command.length > 32) + //$NON-NLS-1$
-            		"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
-            			" en modo EXCLUSIVE=" + //$NON-NLS-1$
-            				Boolean.toString(exclusive) +
-            					" con el protocolo " + protocol.toString(), e //$NON-NLS-1$
+                    "Error de comunicacion con la tarjeta tratando de transmitir la APDU" +  //$NON-NLS-1$
+                        	(isChv ? " de verificacion de PIN" : //$NON-NLS-1$
+                    		"\n" + HexUtils.hexify(command, command.length > 32) + //$NON-NLS-1$
+                    			"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
+                    				" en modo EXCLUSIVE=" + //$NON-NLS-1$
+                    					Boolean.toString(exclusive) +
+                    						" con el protocolo " + protocol.toString()), e //$NON-NLS-1$
             );
         }
     }

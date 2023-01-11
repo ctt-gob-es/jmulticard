@@ -50,7 +50,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 public final class VerifyApduCommand extends CommandApdu {
 
 	/** C&oacute;digo de instrucci&oacute;n de la APDU. */
-    private static final byte INS_VERIFY = (byte) 0x20;
+    public static final byte INS_VERIFY = (byte) 0x20;
 
     private transient final PasswordCallback pwc;
 
@@ -71,12 +71,12 @@ public final class VerifyApduCommand extends CommandApdu {
     			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
         	);
         }
-        this.pwc = pinPc;
+        pwc = pinPc;
     }
 
     @Override
     public byte[] getData() {
-        final char[] pass = this.pwc.getPassword();
+        final char[] pass = pwc.getPassword();
         final byte[] k = new byte[pass.length];
         for (int i=0; i<k.length;i++) {
             k[i] = (byte) pass[i];
