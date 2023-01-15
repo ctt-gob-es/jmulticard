@@ -24,5 +24,4 @@ public final class ReadRecordApduCommand extends CommandApdu {
 			Integer.valueOf(234) // 0xEA, tamano seguro de lectura
 		);
 	}
-
 }

@@ -42,7 +42,7 @@ package es.gob.jmulticard.apdu;
 import java.io.ByteArrayOutputStream;
 
 /** Comando APDU para comunicaci&oacute;n con tarjeta inteligente.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class CommandApdu extends Apdu {
 
 	private final byte cla;
@@ -114,28 +114,28 @@ public class CommandApdu extends Apdu {
 			           final Integer ne) {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		this.cla = apduCla;
+		cla = apduCla;
 		baos.write(apduCla);
 
-		this.ins = apduIns;
+		ins = apduIns;
 		baos.write(apduIns);
 
-		this.p1 = param1;
+		p1 = param1;
 		baos.write(param1);
 
-		this.p2 = param2;
+		p2 = param2;
 		baos.write(param2);
 
 		if (data == null) {
-			this.body = null;
+			body = null;
 		}
 		else {
-			this.body = new byte[data.length];
-			System.arraycopy(data, 0, this.body, 0, data.length);
+			body = new byte[data.length];
+			System.arraycopy(data, 0, body, 0, data.length);
 
 			// Caso 4s: |CLA|INS|P1 |P2 |LC |...BODY...|LE |              len = 7..261
 			if (data.length <= 255) {
-				baos.write(Integer.valueOf(String.valueOf(this.body.length)).byteValue());
+				baos.write(Integer.valueOf(String.valueOf(body.length)).byteValue());
 			}
 			// Caso 3e: |CLA|INS|P1 |P2 |00 |LC1|LC2|...BODY...|          len = 8..65542
 			else {
@@ -144,9 +144,9 @@ public class CommandApdu extends Apdu {
 				baos.write((byte) (data.length & 0xff)); // LC2
 			}
 
-			if (this.body.length > 0) {
+			if (body.length > 0) {
 				try {
-					baos.write(this.body);
+					baos.write(body);
 				}
 				catch (final Exception e) {
 					throw new IllegalArgumentException(
@@ -156,7 +156,7 @@ public class CommandApdu extends Apdu {
 			}
 		}
 
-		this.le = ne;
+		le = ne;
 		if (ne != null) {
 			if (ne.intValue() <= 0xff) {
 				baos.write(ne.byteValue());
@@ -173,17 +173,17 @@ public class CommandApdu extends Apdu {
 	/** Devuelve la clase (CLA) de APDU.
 	 * @return Clase (CLA) de APDU. */
 	public byte getCla() {
-		return this.cla;
+		return cla;
 	}
 
 	/** Obtiene el cuerpo de la APDU.
 	 * @return Cuerpo de la APDU, o <code>null</code> si no est&aacute; establecido. */
 	public byte[] getData() {
-		if (this.body == null) {
+		if (body == null) {
 			return null;
 		}
-		final byte[] out = new byte[this.body.length];
-		System.arraycopy(this.body, 0, out, 0, this.body.length);
+		final byte[] out = new byte[body.length];
+		System.arraycopy(body, 0, out, 0, body.length);
 		return out;
 	}
 
@@ -191,41 +191,40 @@ public class CommandApdu extends Apdu {
 	 * APDU representa.
 	 * @return Identificador de instrucci&oacute;n. */
 	public byte getIns() {
-		return this.ins;
+		return ins;
 	}
 
-	/** Obtiene el n&uacute;mero m&aacute;ximo de octetos esperados en la APDU de
-	 * respuesta.
+	/** Obtiene el n&uacute;mero m&aacute;ximo de octetos esperados en la APDU de respuesta.
 	 * @return N&uacute;mero m&aacute;ximo de octetos esperados en la APDU de
 	 *         respuesta, o <code>null</code> si no est&aacute; establecido. */
 	public Integer getLe() {
-		return this.le;
+		return le;
 	}
 
 	/** Devuelve el primer par&aacute;metro (P1) de la APDU.
 	 * @return Primer par&aacute;metro (P1) de la APDU. */
 	public byte getP1() {
-		return this.p1;
+		return p1;
 	}
 
 	/** Devuelve el segundo par&aacute;metro (P2) de la APDU.
 	 * @return Segundo par&aacute;metro (P2) de la APDU. */
 	public byte getP2() {
-		return this.p2;
+		return p2;
 	}
 
 	/** Establece el n&uacute;mero de octetos esperados en la APDU de respuesta.
 	 * @param apduLe N&uacute;mero esperado de octetos. */
 	public void setLe(final int apduLe) {
-		this.le = Integer.valueOf(String.valueOf(apduLe));
+		le = Integer.valueOf(String.valueOf(apduLe));
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(this.cla);
-		baos.write(this.ins);
-		baos.write(this.p1);
-		baos.write(this.p2);
-		if (this.body != null && this.body.length > 0) {
+		baos.write(cla);
+		baos.write(ins);
+		baos.write(p1);
+		baos.write(p2);
+		if (body != null && body.length > 0) {
 			try {
-				baos.write(this.body);
+				baos.write(body);
 			}
 			catch (final Exception e) {
 				throw new IllegalArgumentException(

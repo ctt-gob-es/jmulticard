@@ -58,7 +58,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DigestInfo extends Sequence {
 
-    private static final String SHA1WITHRSA_NORMALIZED_ALGO_NAME = "SHA1withRSA"; //$NON-NLS-1$
+    private static final String SHA1WITHRSA_NORMALIZED_ALGO_NAME   = "SHA1withRSA"; //$NON-NLS-1$
     private static final String SHA256WITHRSA_NORMALIZED_ALGO_NAME = "SHA256withRSA"; //$NON-NLS-1$
     private static final String SHA384WITHRSA_NORMALIZED_ALGO_NAME = "SHA384withRSA"; //$NON-NLS-1$
     private static final String SHA512WITHRSA_NORMALIZED_ALGO_NAME = "SHA512withRSA"; //$NON-NLS-1$
@@ -141,7 +141,7 @@ public final class DigestInfo extends Sequence {
      * @param signingAlgorithm Algoritmo de huella digital o de firma electr&oacute;nica.
      * @param data Datos de los que obtener la estructura.
      * @param cryptoHelper Manejador de operaciones criptogr&aacute;ficas.
-     * @return Estructura DigestInfo.
+     * @return Estructura <code>DigestInfo</code>.
      * @throws IOException Cuando se produce algun error en la estrucura de la estructura. */
     public static byte[] encode(final String signingAlgorithm,
     		                    final byte[] data,
@@ -208,8 +208,8 @@ public final class DigestInfo extends Sequence {
         return algorithm;
     }
 
-    /** Selecciona una plantilla con la cabecera del DigestInfo para
-     * un algoritmo concreto.
+    /** Selecciona una plantilla con la cabecera del
+     * <code>DigestInfo</code> para un algoritmo concreto.
      * @param algorithm Algoritmo del que obtener la plantilla de cabecera.
      * @return Cabecera. */
     private static byte[] selectHeaderTemplate(final DigestAlgorithm algorithm) {
@@ -229,8 +229,8 @@ public final class DigestInfo extends Sequence {
     	}
     }
 
-    /** Obtiene el algoritmo de huella digital correspondiente a un algoritmo de firma
-     * concreto.
+    /** Obtiene el algoritmo de huella digital correspondiente a
+     * un algoritmo de firma concreto.
      * @param signatureAlgorithm Algoritmo de firma.
      * @return Algoritmo de huella digital o la propia entrada si no se identific&oacute;. */
     private static DigestAlgorithm getDigestAlgorithm(final String signatureAlgorithm) {

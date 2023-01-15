@@ -68,13 +68,13 @@ import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Object;
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class PrivateKeyObjectCeres extends Pkcs15Object {
+public final class CeresScPrivateKeyObject extends Pkcs15Object {
 
     /** Construye un tipo PrivateKeyObject ASN&#46;1.
      * @param classAttributes Tipo de los Atributos espec&iacute;ficos de la clase general del objeto
      * @param subclassAttributes Tipo de los Atributos espec&iacute;ficos de la subclase general del objeto
      * @param typeAttributes Tipo de los Atributos espec&iacute;ficos del tipo concreto del objeto */
-	public PrivateKeyObjectCeres(final Class<? extends DecoderObject> classAttributes,
+	public CeresScPrivateKeyObject(final Class<? extends DecoderObject> classAttributes,
 			                     final Class<? extends ContextSpecific> subclassAttributes,
 			                     final Class<? extends ContextSpecific> typeAttributes) {
         super(classAttributes, subclassAttributes, typeAttributes);
@@ -82,12 +82,12 @@ public final class PrivateKeyObjectCeres extends Pkcs15Object {
 
 
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> */
-	public PrivateKeyObjectCeres() {
+	public CeresScPrivateKeyObject() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
 			CommonKeyAttributes.class,                            // classAttributes
-			CommonPrivateKeyAttributesCeresContextSpecific.class, // subclassAttributes
-			PrivateRsaKeyAttributesCeresContextSpecific.class     // typeAttributes
+			CeresScCommonPrivateKeyAttributesContextSpecific.class, // subclassAttributes
+			CeresScPrivateRsaKeyAttributesContextSpecific.class     // typeAttributes
 		);
 	}
 
@@ -106,13 +106,13 @@ public final class PrivateKeyObjectCeres extends Pkcs15Object {
 	/** Obtiene la ruta hacia la clave privada.
 	 * @return Ruta hacia la clave privada. */
 	public String getKeyPath() {
-		return ((PrivateRsaKeyAttributesCeresContextSpecific)getTypeAttributes()).getPath();
+		return ((CeresScPrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getPath();
 	}
 
 	/** Obtiene la longitud de la clave privada.
 	 * @return Longitud de la clave privada. */
 	int getKeyLength() {
-		return ((PrivateRsaKeyAttributesCeresContextSpecific)getTypeAttributes()).getKeyLength();
+		return ((CeresScPrivateRsaKeyAttributesContextSpecific)getTypeAttributes()).getKeyLength();
 	}
 
 	/** Obtiene el <code>Principal</code> X&#46;509 de la clave privada.
@@ -138,5 +138,4 @@ public final class PrivateKeyObjectCeres extends Pkcs15Object {
 	public byte getKeyReference() {
 		return ((CommonKeyAttributes)getClassAttributes()).getReference().getIntegerValue().byteValue();
 	}
-
 }

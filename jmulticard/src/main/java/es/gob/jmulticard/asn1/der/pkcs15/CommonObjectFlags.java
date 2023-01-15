@@ -48,7 +48,8 @@ import es.gob.jmulticard.asn1.der.BitString;
  *    modifiable (1)
  *  }
  * </pre>
- * @author Gonzalo Henr&iacute;quez Manzano */
+ * @author Gonzalo Henr&iacute;quez Manzano
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CommonObjectFlags extends BitString {
     // Sin distincion respecto a BitString
 }

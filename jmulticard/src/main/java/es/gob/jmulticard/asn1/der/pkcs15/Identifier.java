@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.der.OctectString;
  * <pre>
  *  PKCS15Identifier ::= OCTET STRING (SIZE (1..pkcs15-ub-identifier))
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Identifier extends OctectString {
 	// Sin cambios respecto a OctectString
 }

@@ -45,7 +45,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class SelectFileByIdApduCommand extends CommandApdu {
 
-    /** Byte de instrucci&oacute;n de la APDU. */
+    /** Octeto de instrucci&oacute;n de la APDU. */
     private static final byte INS_SELECT_FILE = (byte) 0xA4;
 
     /** Selecci&oacute;n por ID. */
@@ -55,13 +55,13 @@ public final class SelectFileByIdApduCommand extends CommandApdu {
     private static final byte SEARCH_FIRST = 0x00;
 
     /** Crea una APDU ISO 7816-4 de selecci&oacute;n de fichero por Identificador.
-     * @param cla Clase (CLA) de la APDU
-     * @param fileId Identificador del fichero a seleccionar. Debe estar situado en el DF actual */
+     * @param cla Clase (CLA) de la APDU.
+     * @param fileId Identificador del fichero a seleccionar. Debe estar situado en el DF actual. */
     public SelectFileByIdApduCommand(final byte cla, final byte[] fileId) {
         super(
     		cla,				// CLA
-    		INS_SELECT_FILE, 	// INS
-    		SELECT_BY_ID, 		// P1
+    		INS_SELECT_FILE,	// INS
+    		SELECT_BY_ID,		// P1
     		SEARCH_FIRST,		// P2
     		fileId,				// Data
     		null				// Le

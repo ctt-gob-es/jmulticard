@@ -79,5 +79,4 @@ public final class CommonCertificateAttributes extends Sequence {
     public String toString() {
     	return HexUtils.hexify(getId(), false);
     }
-
 }

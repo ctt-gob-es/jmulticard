@@ -50,7 +50,7 @@ public class ResponseApdu extends Apdu {
      * @param fullBytes Representaci&oacute;n binaria directa de la APDU. */
     public ResponseApdu(final byte[] fullBytes) {
         setBytes(fullBytes);
-        this.encryptedByes = null;
+        encryptedByes = null;
     }
 
     /** Construye una APDU de respuesta a partir de su representaci&oacute;n
@@ -59,7 +59,7 @@ public class ResponseApdu extends Apdu {
      * @param encrypted Codificaci&oacute;n encriptada de la APDU. */
     public ResponseApdu(final byte[] fullBytes, final byte[] encrypted) {
         setBytes(fullBytes);
-        this.encryptedByes = encrypted != null ? encrypted.clone() : null;
+        encryptedByes = encrypted != null ? encrypted.clone() : null;
     }
 
     /** Obtiene el campo de datos de la APDU.
@@ -78,7 +78,7 @@ public class ResponseApdu extends Apdu {
 
     /** Indica si la APDU es una respuesta correcta o no a un comando.
      * @return <code>true</code> si el comando termin&oacute; con &eacute;xito
-     *         (termina en 9000), <code>false</code> en caso contrario. */
+     *         (termina en 90-00), <code>false</code> en caso contrario. */
     public boolean isOk() {
         if (getBytes() == null || getBytes().length < 2) {
             return false;
@@ -90,7 +90,6 @@ public class ResponseApdu extends Apdu {
 	 * @return Codificaci&oacute;n encriptada de la APDU si existe, la
 	 *         codificaci&oacute;n en claro si es la &uacute;nica disponible. */
 	public byte[] getEncryptedByes() {
-		return this.encryptedByes != null ? this.encryptedByes : getBytes();
+		return encryptedByes != null ? encryptedByes : getBytes();
 	}
-
 }

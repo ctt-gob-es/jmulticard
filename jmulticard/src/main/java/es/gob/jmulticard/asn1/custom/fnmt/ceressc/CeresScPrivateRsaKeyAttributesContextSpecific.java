@@ -39,38 +39,37 @@
  */
 package es.gob.jmulticard.asn1.custom.fnmt.ceressc;
 
-import javax.security.auth.x500.X500Principal;
-
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
-import es.gob.jmulticard.asn1.der.pkcs15.CommonPrivateKeyAttributes;
+import es.gob.jmulticard.asn1.der.pkcs15.PrivateRsaKeyAttributes;
 
-/** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributesEmpty</i>.
- * <pre>
- *  CommonPrivateKeyAttributesEmpty ::= SEQUENCE {
- *    name Name OPTIONAL,
- *    keyIdentifiers [0] SEQUENCE OF CredentialIdentifier {{KeyIdentifiers}} OPTIONAL,
- *    generalName [1] GeneralNames OPTIONAL,
- *    ... -- For future extensions
- *  }
- * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class CommonPrivateKeyAttributesCeresContextSpecific extends ContextSpecific {
+/** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>.
+ * <PRE>
+ *   PrivateRSAKeyAttributes ::= SEQUENCE {
+ *     value          ObjectValue {RSAPrivateKeyObject},
+ *     modulusLength  INTEGER, -- modulus length in bits, e.g. 1024
+ *     keyInfo        KeyInfo {NULL, PublicKeyOperations} OPTIONAL,
+ *     ... -- For future extensions
+ *   }
+ * </PRE>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+public final class CeresScPrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 
-	private static final byte TAG = (byte) 0xA0;
+	private static final byte TAG = (byte) 0xA1;
 
-	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributesEmpty</i>. */
-	public CommonPrivateKeyAttributesCeresContextSpecific() {
-		super(CommonPrivateKeyAttributesEmpty.class);
+	/** Construye un objeto ASN&#46;1 de contexto espec&iacute;fico del <i>PrivateRsaKeyAttributes</i>. */
+	public CeresScPrivateRsaKeyAttributesContextSpecific() {
+		super(PrivateRsaKeyAttributes.class);
 	}
 
 	@Override
     public void checkTag(final byte tag) throws Asn1Exception {
 		if (TAG != tag) {
 			throw new Asn1Exception(
-				"CommonPrivateKeyAttributesContextSpecific esperaba una etiqueta especifica de contexto " + HexUtils.hexify(new byte[] { TAG }, false) + //$NON-NLS-1$
-					" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
+				"PrivateRsaKeyAttributesCeresContextSpecific esperaba una etiqueta especifica de contexto " + //$NON-NLS-1$
+					HexUtils.hexify(new byte[] { TAG }, false) +
+						" pero ha encontrado " + HexUtils.hexify(new byte[] { tag }, false) //$NON-NLS-1$
 			);
 		}
 	}
@@ -80,10 +79,11 @@ public final class CommonPrivateKeyAttributesCeresContextSpecific extends Contex
 		return getObject().toString();
 	}
 
-	/** Obtiene el <code>Principal</code> X&#46;509 de la clave privada.
-	 * @return <code>Principal</code> X&#46;509 de la clave privada. */
-	public X500Principal getKeyPrincipal() {
-		return ((CommonPrivateKeyAttributes)getObject()).getKeyPrincipal();
+	String getPath() {
+		return ((PrivateRsaKeyAttributes)getObject()).getPath();
 	}
 
+	int getKeyLength() {
+		return ((PrivateRsaKeyAttributes)getObject()).getKeyLength();
+	}
 }

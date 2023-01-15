@@ -23,7 +23,7 @@ import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
-import es.gob.jmulticard.asn1.custom.fnmt.ceressc.PrKdfCeres;
+import es.gob.jmulticard.asn1.custom.fnmt.ceressc.CeresScPrKdf;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
@@ -235,7 +235,7 @@ public final class CeresSc extends Dnie {
 			LOGGER.warning(
 				"Detectado posible PrKDF con CommonPrivateKeyAttributes vacio, se prueba con estructura alternativa: " + e //$NON-NLS-1$
 			);
-			prkdf = new PrKdfCeres();
+			prkdf = new CeresScPrKdf();
 			prkdf.setDerValue(prkdfValue);
 		}
 

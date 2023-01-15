@@ -68,5 +68,4 @@ public final class AlgorithmIdentifer extends Sequence {
 	public String toString() {
 		return getElementAt(0).toString();
 	}
-
 }

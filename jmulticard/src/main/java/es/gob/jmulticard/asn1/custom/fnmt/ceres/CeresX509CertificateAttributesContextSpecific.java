@@ -75,5 +75,4 @@ public final class CeresX509CertificateAttributesContextSpecific extends Context
     String getPath() {
     	return new String(((Path)getObject()).getPathBytes());
     }
-
 }

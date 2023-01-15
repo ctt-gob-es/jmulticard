@@ -43,5 +43,4 @@ public final class CommonPrivateKeyAttributes extends Sequence {
 		}
 		return null;
 	}
-
 }

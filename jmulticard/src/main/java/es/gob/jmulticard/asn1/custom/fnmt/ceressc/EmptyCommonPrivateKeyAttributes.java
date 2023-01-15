@@ -14,7 +14,7 @@ import es.gob.jmulticard.asn1.TlvException;
  *  }
  * </pre>
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class CommonPrivateKeyAttributesEmpty extends DecoderObject {
+public final class EmptyCommonPrivateKeyAttributes extends DecoderObject {
 
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
@@ -25,5 +25,4 @@ public final class CommonPrivateKeyAttributesEmpty extends DecoderObject {
 	protected byte getDefaultTag() {
 		return (byte) 0xff;
 	}
-
 }

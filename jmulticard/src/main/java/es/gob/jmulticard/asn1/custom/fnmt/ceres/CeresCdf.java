@@ -45,17 +45,19 @@ import es.gob.jmulticard.asn1.der.Record;
 import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 
-/** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1 (<i>EF.CD</i> en ISO 7816-15).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+/** Objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1
+ * (<i>EF.CD</i> en ISO 7816-15) espec&iacute;fico para ciertas tarjetas FNMT CERES.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresCdf extends Record implements Pkcs15Cdf {
 
     private static final int BUFFER_SIZE = 150;
 
-    /** Construye un objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1. */
+    /** Construye un objeto PKCS#15 CDF (<i>Certificate Description File</i>) ASN&#46;1
+     * espec&iacute;fico para ciertas tarjetas FNMT CERES. */
 	public CeresCdf() {
         super(
     		new OptionalDecoderObjectElement[] {
-				// Maximo 10 certificados
+				// Maximo 10 certificados por tarjeta
 
     			// Estructura antigua, que incumple PKCS#15
 				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
@@ -107,7 +109,7 @@ public final class CeresCdf extends Record implements Pkcs15Cdf {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer(BUFFER_SIZE);
+        final StringBuilder sb = new StringBuilder(BUFFER_SIZE);
         sb.append("Fichero de Descripcion de Certificados CERES:\n"); //$NON-NLS-1$
         for (int index = 0; index < getCertificateCount(); index++) {
             sb.append(" Certificado "); //$NON-NLS-1$

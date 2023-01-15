@@ -198,7 +198,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     	privConsts = cwaPrivConsts;
     }
 
-
 	/** Abre el canal seguro con la tarjeta.
 	 * La conexi&oacute;n se reiniciar&aacute; previamente a la apertura del canal. */
     @Override

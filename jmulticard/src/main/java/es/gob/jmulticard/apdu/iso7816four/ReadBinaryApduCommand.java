@@ -49,12 +49,12 @@ public final class ReadBinaryApduCommand extends CommandApdu {
     private static final byte INS_READ_BINARY = (byte) 0xB0;
 
     /** Crea una APDU ISO 7816-4 de lectura de binario.
-     * @param cla Clase (CLA) de la APDU
+     * @param cla Clase (CLA) de la APDU.
      * @param msbOffset Octeto m&aacute;s significativo del desplazamiento (<i>offset</i>) hasta
-     *                  la posici&oacute;n de inicio de la lectura
+     *                  la posici&oacute;n de inicio de la lectura.
      * @param lsbOffset Octeto menos significativo del desplazamiento (<i>offset</i>) hasta la
-     *                  posici&oacute;n de inicio de la lectura
-     * @param readLength Longitud de los datos a leer. <code>0</code> indica 256 bytes */
+     *                  posici&oacute;n de inicio de la lectura.
+     * @param readLength Longitud de los datos a leer. <code>0</code> indica 256 octetos. */
     public ReadBinaryApduCommand(final byte cla,
     		                     final byte msbOffset,
     		                     final byte lsbOffset,

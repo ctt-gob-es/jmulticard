@@ -340,7 +340,7 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 		);
     	if (!res.isOk()) {
     		throw new SecureChannelException(
-				"Error estableciendo la clave publica para verificacion, con respuesta : " + //$NON-NLS-1$
+				"Error estableciendo la clave publica para verificacion, con respuesta: " + //$NON-NLS-1$
 					res.getStatusWord()
 			);
     	}

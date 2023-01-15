@@ -55,5 +55,4 @@ public final class CertificateIssuerContextSpecific extends ContextSpecific {
     public String toString() {
 		return getObject().toString();
 	}
-
 }

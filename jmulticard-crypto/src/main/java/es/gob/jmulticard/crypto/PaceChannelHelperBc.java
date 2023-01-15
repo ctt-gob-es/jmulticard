@@ -24,6 +24,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.apdu.connection.pace.PaceException;
 import es.gob.jmulticard.apdu.iso7816four.GeneralAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
@@ -32,7 +33,6 @@ import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
-import es.gob.jmulticard.card.icao.pace.PaceException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
@@ -91,7 +91,7 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 			throw new PaceException(
 				res.getStatusWord(),
 				comm,
-				"Error estableciendo el algoritmo del protocolo PACE (fallo en el MSE Set)" //$NON-NLS-1$
+				"Error estableciendo los algoritmos del protocolo PACE (fallo en el MSE Set)" //$NON-NLS-1$
 			);
 		}
 

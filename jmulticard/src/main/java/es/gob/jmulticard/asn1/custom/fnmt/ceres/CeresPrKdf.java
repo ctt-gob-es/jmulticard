@@ -47,7 +47,8 @@ import es.gob.jmulticard.asn1.der.Record;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
-/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
+/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1
+ * espec&iacute;fico para ciertas tarjetas FNMT CERES.
  * El PrKDF es una secuencia de estructuras <code>PKCS15PrivateKey</code>:
  * <pre>
  * PKCS15PrivateKey ::= CHOICE {
@@ -70,11 +71,12 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
 public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
 
-    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
+    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>)
+     * ASN&#46;1 espec&iacute;fico para ciertas tarjetas FNMT CERES. */
 	public CeresPrKdf() {
 		super(
 			new OptionalDecoderObjectElement[] {
-				// Maximo 10 certificados
+				// Maximo 10 certificados por tarjeta
 
 				// Estructura antigua, que incumple PKCS#15
 				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
@@ -146,5 +148,4 @@ public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
 	public X500Principal getKeyPrincipal(final int index) {
 		return null;
 	}
-
 }

@@ -109,5 +109,4 @@ public final class CommonKeyAttributes extends Sequence {
 		}
 		return null;
 	}
-
 }

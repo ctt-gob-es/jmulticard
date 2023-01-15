@@ -44,26 +44,27 @@ import javax.security.auth.x500.X500Principal;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 
-/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1 para tarjetas CERES, donde pueden encontrarse
- * ligeras diferencias respecto a la normativa general.
+/** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1 para tarjetas CERES,
+ * donde pueden encontrarse ligeras diferencias respecto a la normativa general.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class PrKdfCeres extends PrKdf {
+public final class CeresScPrKdf extends PrKdf {
 
-    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
-	public PrKdfCeres() {
+    /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1
+     * espec&iacute;fico para ciertas tarjetas FNMT CERES. */
+	public CeresScPrKdf() {
 		super(
 			new OptionalDecoderObjectElement[] {
 				// Maximo 10 certificados
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, false),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObjectCeres.class, true)
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, false),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true)
 			}
 		);
 	}
@@ -80,7 +81,7 @@ public final class PrKdfCeres extends PrKdf {
 	 * @return Identificador de la clave */
 	@Override
 	public byte[] getKeyIdentifier(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyIdentifier();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
 
 	/** Obtiene el nombre de la clave indicada
@@ -88,7 +89,7 @@ public final class PrKdfCeres extends PrKdf {
 	 * @return Nombre de la clave */
 	@Override
 	public String getKeyName(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyName();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyName();
 	}
 
 	/** Obtiene la ruta PKCS#15 hacia la clave indicada.
@@ -96,7 +97,7 @@ public final class PrKdfCeres extends PrKdf {
 	 * @return Ruta PKCS#15 hacia la clave indicada */
 	@Override
 	public String getKeyPath(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyPath();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyPath();
 	}
 
 	/** Obtiene la longitud de la clave indicada.
@@ -104,7 +105,7 @@ public final class PrKdfCeres extends PrKdf {
 	 * @return Longitud de la clave indicada */
 	@Override
 	public int getKeyLength(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyLength();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyLength();
 	}
 
 	@Override
@@ -136,7 +137,7 @@ public final class PrKdfCeres extends PrKdf {
 	 * @return Referencia de la clave indicada. */
 	@Override
 	public byte getKeyReference(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyReference();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyReference();
 	}
 
 	/** Obtiene el identificador de la clave indicada.
@@ -144,12 +145,12 @@ public final class PrKdfCeres extends PrKdf {
 	 * @return Identificador de la clave indicada. */
 	@Override
 	public byte[] getKeyId(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyIdentifier();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyIdentifier();
 	}
 
 	@Override
 	public X500Principal getKeyPrincipal(final int index) {
-		return ((PrivateKeyObjectCeres) getElementAt(index)).getKeyPrincipal();
+		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyPrincipal();
 	}
 
 }

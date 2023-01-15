@@ -64,5 +64,4 @@ public final class GeneralAuthenticateApduCommand extends CommandApdu {
 			null                      // Le
 		);
 	}
-
 }
