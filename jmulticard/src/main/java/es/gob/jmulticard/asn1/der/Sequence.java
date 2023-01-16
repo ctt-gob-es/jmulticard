@@ -49,7 +49,7 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo ASN&#46;1 <i>Sequence</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Sequence extends DecoderObject {
 
     /** Tipo ASN&#46;1 <i>Sequence</i>. */
@@ -62,7 +62,7 @@ public abstract class Sequence extends DecoderObject {
     /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
      * @return N&uacute;mero de elementos que contiene la secuencia. */
     protected int getElementCount() {
-    	return this.elements.size();
+    	return elements.size();
     }
 
     /** Construye un tipo ASN&#46;1 <i>Sequence</i>.
@@ -72,8 +72,8 @@ public abstract class Sequence extends DecoderObject {
         if (types == null) {
             throw new IllegalArgumentException();
         }
-        this.elementsTypes = new OptionalDecoderObjectElement[types.length];
-        System.arraycopy(types, 0, this.elementsTypes, 0, types.length);
+        elementsTypes = new OptionalDecoderObjectElement[types.length];
+        System.arraycopy(types, 0, elementsTypes, 0, types.length);
     }
 
     @Override
@@ -85,29 +85,29 @@ public abstract class Sequence extends DecoderObject {
         byte[] remainingBytes;
         DecoderObject tmpDo;
         final byte[] rawValue = mainTlv.getValue();
-        for (int i = 0; i < this.elementsTypes.length; i++) {
+        for (int i = 0; i < elementsTypes.length; i++) {
             remainingBytes = new byte[rawValue.length - offset];
             System.arraycopy(rawValue, offset, remainingBytes, 0, remainingBytes.length);
             try {
             	tlv = new Tlv(remainingBytes);
-            	tmpDo = this.elementsTypes[i].getElementType().getConstructor().newInstance();
+            	tmpDo = elementsTypes[i].getElementType().getConstructor().newInstance();
             	tmpDo.checkTag(tlv.getTag());
                 tmpDo.setDerValue(
             		tlv.getBytes()
         		);
             }
             catch(final Exception e) {
-            	if (this.elementsTypes[i].isOptional()) {
+            	if (elementsTypes[i].isOptional()) {
                 	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
             		continue;
             	}
             	throw new Asn1Exception(
-        			"Error en el elemento " + i + " (" + this.elementsTypes[i].getElementType().getName() + ") de la secuencia ASN.1", e //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        			"Error en el elemento " + i + " (" + elementsTypes[i].getElementType().getName() + ") de la secuencia ASN.1", e //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     			);
             }
             // El offset se avanza antes del continue de la opcionalidad
             offset = offset + tlv.getBytes().length;
-            this.elements.add(tmpDo);
+            elements.add(tmpDo);
         }
     }
 
@@ -121,6 +121,6 @@ public abstract class Sequence extends DecoderObject {
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
      * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia. */
     protected DecoderObject getElementAt(final int index) {
-        return this.elements.get(index);
+        return elements.get(index);
     }
 }

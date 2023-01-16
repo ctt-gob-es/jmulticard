@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.Null;
 
 /** Objeto ASN&#46;1 de contexto espec&iacute;fico del <i>CommonPrivateKeyAttributes</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresCommonPrivateKeyAttributesContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA0;

@@ -43,7 +43,8 @@ import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro
  * con la tarjeta.
- * @author Carlos Gamuci Mill&aacute;n */
+ * @author Carlos Gamuci Mill&aacute;n
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SecureChannelException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

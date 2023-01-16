@@ -3,7 +3,7 @@ package es.gob.jmulticard.asn1.der;
 import es.gob.jmulticard.asn1.DecoderObject;
 
 /** Tipo nulo.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Null extends DecoderObject {
 
 	@Override

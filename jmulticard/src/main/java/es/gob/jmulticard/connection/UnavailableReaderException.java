@@ -1,6 +1,7 @@
 package es.gob.jmulticard.connection;
 
 /** Excepci&oacute;n lanzada cuando se intenta acceder a un lector que ya no est&aacute; disponible.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Jose Luis Escanciano. */
 public final class UnavailableReaderException extends ApduConnectionException {
 

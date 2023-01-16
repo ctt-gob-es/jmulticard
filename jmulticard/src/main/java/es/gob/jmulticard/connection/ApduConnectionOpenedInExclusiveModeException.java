@@ -41,7 +41,8 @@ package es.gob.jmulticard.connection;
 
 /** Excepci&oacute;n relativa a un error de conexi&oacute;n con un lector de
  * tarjetas o con una tarjeta inteligente en modo exlusivo.
- * @author borillo */
+ * @author Ricardo Borillo
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class ApduConnectionOpenedInExclusiveModeException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

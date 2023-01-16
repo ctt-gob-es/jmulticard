@@ -4,7 +4,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 para la obtenci&oacute;n del n&uacute;mero de intentos restantes de
  * verificaci&oacute;n de PIN (CHV, <i>Card Holder Verification</i>).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CheckVerifyRetriesLeftApduCommand extends CommandApdu {
 
 	/** C&oacute;digo de instrucci&oacute;n de la APDU. */

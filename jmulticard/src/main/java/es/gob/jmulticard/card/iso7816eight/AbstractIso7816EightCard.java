@@ -48,7 +48,8 @@ import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
 
-/** Tarjeta compatible ISO-7816-8. */
+/** Tarjeta compatible ISO-7816-8.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
 
     /** Construye una tarjeta compatible ISO 7816-8.

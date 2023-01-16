@@ -41,6 +41,7 @@ package es.gob.jmulticard.apdu.iso7816four;
 
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad orientada a
  * establecer una clave p&uacute;blica para autenticaci&oacute;n interna y externa.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Carlos Gamuci Mill&aacute;n. */
 public final class MseSetAuthenticationKeyApduCommand extends MseSetAuthenticationTemplateApduCommand {
 

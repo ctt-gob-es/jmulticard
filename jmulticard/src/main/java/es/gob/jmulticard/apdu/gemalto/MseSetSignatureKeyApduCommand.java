@@ -43,7 +43,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad orientada a
  * establecer una clave privada para firma.
- * @author Carlos Gamuci Mill&aacute;n */
+ * @author Carlos Gamuci Mill&aacute;n
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class MseSetSignatureKeyApduCommand extends CommandApdu {
 
     /** Octeto de instrucci&oacute;n de la APDU. */

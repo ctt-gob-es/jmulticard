@@ -42,7 +42,7 @@ package es.gob.jmulticard.card;
 import java.security.cert.X509Certificate;
 
 /** Operaciones comunes a todas las tarjetas criptogr&aacute;ficas.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface CryptoCard {
 
     /** Obtiene los alias de los certificados de la tarjeta.

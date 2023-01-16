@@ -34,7 +34,7 @@ import es.gob.jmulticard.connection.CardNotPresentException;
 import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Tarjeta Gemalto TUI R5 MPCOS.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
 
     private static final byte[] ATR_MASK = {

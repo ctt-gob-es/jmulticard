@@ -43,6 +43,7 @@ import es.gob.jmulticard.asn1.Tlv;
 
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad orientada a
  * establecer una clave p&uacute;blica para verificaci&oacute;n.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Carlos Gamuci Mill&aacute;n. */
 public final class MseSetVerificationKeyApduCommand extends MseSetApduCommand {
 

@@ -41,7 +41,7 @@ package es.gob.jmulticard.connection.cwa14890;
 
 /** Excepci&oacute;n relacionada con la recepci&oacute;n de un <i>Status Word</i> <code>6688</code>,
  * indicativo de que el <i>checksum</i> criptogr&aacute;fico es inv&aacute;lido.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class InvalidCryptographicChecksumException extends SecurityException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

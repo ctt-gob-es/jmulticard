@@ -45,7 +45,7 @@ import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Tarjeta inteligente gen&eacute;rica.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class AbstractSmartCard implements Card {
 
 	/** Establece el modo de depuraci&oacute;n para todo el proyecto. */
@@ -102,5 +102,4 @@ public abstract class AbstractSmartCard implements Card {
     /** Obtiene el nombre de la tarjeta.
      * @return Nombre de la tarjeta */
     public abstract String getCardName();
-
 }

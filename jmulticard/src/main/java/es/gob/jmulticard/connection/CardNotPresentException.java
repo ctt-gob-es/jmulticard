@@ -41,7 +41,7 @@ package es.gob.jmulticard.connection;
 
 /** Excepci&oacute;n relativa a un intento de conexi&oacute;n en un lector de
  * tarjetas que no tiene una tarjeta inteligente insertada.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CardNotPresentException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

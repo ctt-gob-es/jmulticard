@@ -43,7 +43,7 @@ import java.io.IOException;
 
 /** Excepci&oacute;n relativa a un error de conexi&oacute;n con un lector de
  * tarjetas o con una tarjeta inteligente.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class ApduConnectionException extends IOException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

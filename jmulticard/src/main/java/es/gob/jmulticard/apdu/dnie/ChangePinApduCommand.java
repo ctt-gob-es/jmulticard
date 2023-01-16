@@ -3,7 +3,8 @@ package es.gob.jmulticard.apdu.dnie;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU para el cambio de PIN
- * @author Sergio Mart&iacute;nez Rico. */
+ * @author Sergio Mart&iacute;nez Rico
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote. */
 public class ChangePinApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;

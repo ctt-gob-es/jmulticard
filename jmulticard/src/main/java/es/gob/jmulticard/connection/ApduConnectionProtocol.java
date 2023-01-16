@@ -1,7 +1,7 @@
 package es.gob.jmulticard.connection;
 
 /** Protocolo de conexi&oacute;n con la tarjeta.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public enum ApduConnectionProtocol {
 
     /** T=0. */

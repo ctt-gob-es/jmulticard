@@ -51,7 +51,7 @@ import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.asn1.Tlv;
 
 /** Cifrador de APDU seg&uacute;n CWA-14890.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 	public abstract class AbstractApduEncrypter {
 
     /** Tag del TLV de datos de una APDU protegida. */

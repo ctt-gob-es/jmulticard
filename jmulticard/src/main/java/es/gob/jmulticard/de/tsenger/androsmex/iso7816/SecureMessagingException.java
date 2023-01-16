@@ -19,7 +19,7 @@
 package es.gob.jmulticard.de.tsenger.androsmex.iso7816;
 
 /** Error en un mensaje seguro de canal inal&aacute;mbrico.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class SecureMessagingException extends Exception {
 

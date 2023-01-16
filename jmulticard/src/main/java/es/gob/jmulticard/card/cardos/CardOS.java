@@ -32,7 +32,7 @@ import es.gob.jmulticard.connection.CardNotPresentException;
 import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Tarjeta Atos / Siemens CardOS.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CardOS extends AbstractIso7816FourCard implements CryptoCard {
 
     private static final byte[] ATR_MASK = {

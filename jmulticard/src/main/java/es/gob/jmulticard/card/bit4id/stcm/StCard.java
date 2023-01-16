@@ -19,7 +19,7 @@ import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Tajeta de <a href="http://www.bit4id.com/">Bit4Id</a> con chip <a href="http://www.st.com/">ST</a>
  *  distribuida por <a href="http://www.camerfirma.com/">CamerFirma</a>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class StCard extends AbstractIso7816FourCard implements CryptoCard {
 
 	private static final byte CLA = (byte) 0x00;

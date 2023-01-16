@@ -44,7 +44,7 @@ import es.gob.jmulticard.connection.cwa14890.Cwa14890Connection;
 import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
 
 /** Tarjeta FNMT CERES con canal seguro.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresSc extends Dnie {
 
 	private static final byte[] ATR_MASK_TC = {

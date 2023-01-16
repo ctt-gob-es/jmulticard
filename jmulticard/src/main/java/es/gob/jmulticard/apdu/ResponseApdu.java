@@ -40,7 +40,7 @@
 package es.gob.jmulticard.apdu;
 
 /** APDU de respuesta para comunicaci&oacute;n con tarjeta inteligente.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class ResponseApdu extends Apdu {
 
 	private final byte[] encryptedByes;

@@ -44,7 +44,7 @@ import java.io.Serializable;
 import es.gob.jmulticard.HexUtils;
 
 /** Respuesta al reset (ATR, <i>Answer To Reset</i>) de una tarjeta.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Atr implements Serializable {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

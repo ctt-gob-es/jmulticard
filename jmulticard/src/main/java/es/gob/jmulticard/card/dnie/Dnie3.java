@@ -76,7 +76,7 @@ import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3&#46;0.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Dnie3 extends Dnie implements MrtdLds1 {
 
     private transient String idesp = null;

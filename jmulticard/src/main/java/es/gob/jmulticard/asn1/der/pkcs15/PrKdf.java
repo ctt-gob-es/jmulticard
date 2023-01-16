@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 import es.gob.jmulticard.asn1.der.Record;
 
 /** Objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class PrKdf extends Record implements Pkcs15PrKdf {
 
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */

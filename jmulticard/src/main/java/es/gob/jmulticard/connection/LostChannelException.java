@@ -40,7 +40,7 @@
 package es.gob.jmulticard.connection;
 
 /** Excepci&oacute;n de p&eacute;rdida del canal de comunicaci&oacute;n con la tarjeta.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class LostChannelException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

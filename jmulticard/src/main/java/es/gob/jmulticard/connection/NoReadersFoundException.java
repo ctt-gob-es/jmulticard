@@ -40,7 +40,7 @@
 package es.gob.jmulticard.connection;
 
 /** Excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class NoReadersFoundException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

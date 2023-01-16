@@ -43,7 +43,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.x509.RdnSequence;
 
 /** Tipo emisor de certificado espec&iacute;fico de contexto.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CertificateIssuerContextSpecific extends ContextSpecific {
 
 	/** Construye un objeto emisor de certificado espec&iacute;fico de contexto. */

@@ -51,7 +51,7 @@ import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
 
 /** Cifrador de APDU seg&uacute;n CWA-14890 mediante 3DES y MAC de 4 octetos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Carlos Gamuci Mill&aacute;n */
+ * @author Carlos Gamuci Mill&aacute;n. */
 public class ApduEncrypterDes extends AbstractApduEncrypter {
 
 	/** Constructor de la clase para operaciones de cifrado cifrado DES. */

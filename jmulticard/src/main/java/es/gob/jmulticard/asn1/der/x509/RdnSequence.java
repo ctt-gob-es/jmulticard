@@ -44,7 +44,7 @@ import javax.security.auth.x500.X500Principal;
 import es.gob.jmulticard.asn1.der.SequenceOf;
 
 /** Tipo ASN&#46;1 X&#46;509 <i>RdnSequence</i> (secuencia de <i>RelativeDistinguishedName</i>).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class RdnSequence extends SequenceOf {
 
 	/** Construye un objeto ASN&#46;1 X&#46;509 <i>RdnSequence</i> (secuencia de <i>RelativeDistinguishedName</i>). */
