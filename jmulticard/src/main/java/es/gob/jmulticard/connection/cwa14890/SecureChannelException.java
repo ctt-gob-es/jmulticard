@@ -37,25 +37,28 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.apdu.connection;
+package es.gob.jmulticard.connection.cwa14890;
 
-/** Excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class NoReadersFoundException extends ApduConnectionException {
+import es.gob.jmulticard.connection.ApduConnectionException;
+
+/** Excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro
+ * con la tarjeta.
+ * @author Carlos Gamuci Mill&aacute;n */
+public final class SecureChannelException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
-	private static final long serialVersionUID = -7828305035163301527L;
+	private static final long serialVersionUID = 3618976402641614649L;
 
-    /** Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes. */
-    public NoReadersFoundException() {
-        super("No se detectaron lectores de tarjetas en el sistema"); //$NON-NLS-1$
-    }
-
-    /** Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
+    /** Crea una excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro.
      * @param msg Mensaje de la excepci&oacute;n.
-     * @param e Excepci&oacute;n de origen. */
-    public NoReadersFoundException(final String msg, final Throwable e) {
-    	super(msg, e);
+     * @param cause Causa de la excepci&oacute;n. */
+    public SecureChannelException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
 
+    /** Crea una excepci&oacute;n relacionada con problemas en el establecimiento del canal seguro.
+     * @param msg Mensaje de la excepci&oacute;n. */
+    public SecureChannelException(final String msg) {
+        super(msg);
+    }
 }

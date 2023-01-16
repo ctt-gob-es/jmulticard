@@ -37,7 +37,7 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.apdu.connection.cwa14890;
+package es.gob.jmulticard.connection.cwa14890;
 
 import java.io.ByteArrayOutputStream;
 
@@ -55,14 +55,14 @@ public final class Cwa14890CipheredApdu extends CommandApdu {
 	private transient final byte[] data;
 
     byte[] getMac() {
-        final byte[] out = new byte[this.mac.length];
-        System.arraycopy(this.mac, 0, out, 0, this.mac.length);
+        final byte[] out = new byte[mac.length];
+        System.arraycopy(mac, 0, out, 0, mac.length);
         return out;
     }
 
     byte[] getCryptogramData() {
-        final byte[] out = new byte[this.data.length];
-        System.arraycopy(this.data, 0, out, 0, this.data.length);
+        final byte[] out = new byte[data.length];
+        System.arraycopy(data, 0, out, 0, data.length);
         return out;
     }
 
@@ -87,10 +87,10 @@ public final class Cwa14890CipheredApdu extends CommandApdu {
     		buildData(apduData, apduMac), // Data
     		null					      // Le
 		);
-        this.mac = new byte[apduMac.length];
-        System.arraycopy(apduMac, 0, this.mac, 0, apduMac.length);
-        this.data = new byte[apduData.length];
-        System.arraycopy(apduData, 0, this.data, 0, apduData.length);
+        mac = new byte[apduMac.length];
+        System.arraycopy(apduMac, 0, mac, 0, apduMac.length);
+        data = new byte[apduData.length];
+        System.arraycopy(apduData, 0, data, 0, apduData.length);
     }
 
     private static byte[] buildData(final byte[] data, final byte[] mac) {

@@ -1,4 +1,4 @@
-package es.gob.jmulticard.apdu.connection;
+package es.gob.jmulticard.connection;
 
 import java.util.Arrays;
 

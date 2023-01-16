@@ -1,4 +1,4 @@
-package es.gob.jmulticard.apdu.connection.pace;
+package es.gob.jmulticard.connection.pace;
 
 import java.util.logging.Logger;
 
@@ -7,12 +7,12 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.InvalidCryptographicChecksumException;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.card.AbstractSmartCard;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
+import es.gob.jmulticard.connection.cwa14890.InvalidCryptographicChecksumException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessagingException;
 

@@ -57,13 +57,6 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.LostChannelException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
-import es.gob.jmulticard.apdu.connection.pace.PaceConnection;
 import es.gob.jmulticard.apdu.dnie.ChangePinApduCommand;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.LoadDataApduCommand;
@@ -96,6 +89,13 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.iso7816eight.AbstractIso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.LostChannelException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV1Connection;
+import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
+import es.gob.jmulticard.connection.pace.PaceConnection;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

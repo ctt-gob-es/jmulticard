@@ -1,4 +1,4 @@
-package es.gob.jmulticard.apdu.connection.pace;
+package es.gob.jmulticard.connection.pace;
 
 import es.gob.jmulticard.apdu.Apdu;
 import es.gob.jmulticard.apdu.StatusWord;

@@ -12,18 +12,18 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 
+import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.AbstractApduEncrypter;
-import es.gob.jmulticard.apdu.connection.ApduEncrypterAes;
-import es.gob.jmulticard.apdu.connection.ApduEncrypterDes;
-import es.gob.jmulticard.apdu.connection.CipheredApdu;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
+import es.gob.jmulticard.connection.AbstractApduEncrypter;
+import es.gob.jmulticard.connection.ApduEncrypterAes;
+import es.gob.jmulticard.connection.ApduEncrypterDes;
+import es.gob.jmulticard.connection.CipheredApdu;
 
 /** Pruebas del cifrado de APDU seg&uacute;n CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -89,7 +89,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	@Ignore // Necesita el proveedor BC/SC firmado
 	public void testEncryptionAes() throws Exception {
 
-		this.paddingLength = 16;
+		paddingLength = 16;
 
 		final CommandApdu apdu = new CommandApdu(
 			(byte)0x00,
@@ -139,7 +139,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	@Test
 	public void testPartialEncryptionAes() throws Exception {
 
-		this.paddingLength = 16;
+		paddingLength = 16;
 
 		final CommandApdu apdu = new CommandApdu(
 			(byte)0x00,
@@ -156,7 +156,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			"00a404000b4d61737465722e46696c65", //$NON-NLS-1$
 			HexUtils.hexify(apdu.getBytes(), false).toLowerCase()
 		);
-		final byte[] paddedData = addPadding7816(apdu.getData(), this.paddingLength);
+		final byte[] paddedData = addPadding7816(apdu.getData(), paddingLength);
 		Assert.assertEquals(
 			"4d61737465722e46696c658000000000", //$NON-NLS-1$
 			HexUtils.hexify(paddedData, false).toLowerCase()

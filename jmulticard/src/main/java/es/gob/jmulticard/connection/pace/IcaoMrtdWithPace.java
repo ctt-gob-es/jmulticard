@@ -1,4 +1,4 @@
-package es.gob.jmulticard.apdu.connection.pace;
+package es.gob.jmulticard.connection.pace;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,8 +6,6 @@ import java.io.IOException;
 import javax.security.auth.callback.CallbackHandler;
 
 import es.gob.jmulticard.CryptoHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PrivateKeyReference;
@@ -15,6 +13,8 @@ import es.gob.jmulticard.card.dnie.DnieNfc;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Pasaporte accedido de forma inal&aacute;mbrica mediante PACE.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

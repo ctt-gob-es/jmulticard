@@ -53,16 +53,16 @@ import javax.smartcardio.TerminalFactory;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionOpenedInExclusiveModeException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.CardConnectionListener;
-import es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import es.gob.jmulticard.apdu.connection.LostChannelException;
-import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
+import es.gob.jmulticard.connection.AbstractApduConnectionIso7816;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionOpenedInExclusiveModeException;
+import es.gob.jmulticard.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.connection.CardConnectionListener;
+import es.gob.jmulticard.connection.CardNotPresentException;
+import es.gob.jmulticard.connection.LostChannelException;
+import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
  * JSR-268 SmartCard I/O.

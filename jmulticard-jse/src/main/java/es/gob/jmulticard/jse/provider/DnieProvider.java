@@ -42,9 +42,9 @@ package es.gob.jmulticard.jse.provider;
 import java.security.Provider;
 import java.security.ProviderException;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Proveedor criptogr&aacute;fico JCA para DNIe.
  * Crea dos servicios:

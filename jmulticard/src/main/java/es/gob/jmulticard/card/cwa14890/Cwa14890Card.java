@@ -44,7 +44,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Tarjetas acordes a la especificaci&oacute;n CWA-14890.
  * @author Carlos Gamuci

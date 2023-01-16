@@ -6,14 +6,14 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.InvalidCardException;
 import es.gob.jmulticard.card.dnie.tif.Tif;
 import es.gob.jmulticard.card.icao.IcaoException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.CardNotPresentException;
+import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Factor&iacute;a para la obtenci&oacute;n de DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

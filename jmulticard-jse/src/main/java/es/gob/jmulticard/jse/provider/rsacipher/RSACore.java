@@ -35,10 +35,10 @@ import java.util.WeakHashMap;
 
 import javax.crypto.BadPaddingException;
 
-import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.connection.LostChannelException;
 import es.gob.jmulticard.jse.provider.DniePrivateKey;
 
 /** Operaciones con claves privadas RSA.

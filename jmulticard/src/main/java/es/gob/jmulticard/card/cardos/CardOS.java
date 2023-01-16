@@ -13,11 +13,6 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
@@ -30,6 +25,11 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.connection.CardNotPresentException;
+import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Tarjeta Atos / Siemens CardOS.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */

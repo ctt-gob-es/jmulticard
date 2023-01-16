@@ -37,20 +37,25 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.apdu.connection;
+package es.gob.jmulticard.connection;
 
-/** Excepci&oacute;n de p&eacute;rdida del canal de comunicaci&oacute;n con la tarjeta.
+/** Excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class LostChannelException extends ApduConnectionException {
+public class NoReadersFoundException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
-	private static final long serialVersionUID = -4881940145750512085L;
+	private static final long serialVersionUID = -7828305035163301527L;
 
-    /** Construye una excepci&oacute;n de p&eacute;rdida del canal de comunicaci&oacute;n con la tarjeta.
-     * @param message Mensaje de causa de la p&eacute;rdida del canal.
-     * @param cause Causa de la excepci&oacute;n. */
-    public LostChannelException(final String message, final Throwable cause) {
-        super(message, cause);
+    /** Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes. */
+    public NoReadersFoundException() {
+        super("No se detectaron lectores de tarjetas en el sistema"); //$NON-NLS-1$
+    }
+
+    /** Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
+     * @param msg Mensaje de la excepci&oacute;n.
+     * @param e Excepci&oacute;n de origen. */
+    public NoReadersFoundException(final String msg, final Throwable e) {
+    	super(msg, e);
     }
 
 }

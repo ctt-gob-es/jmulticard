@@ -20,8 +20,6 @@ import org.junit.Test;
 import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
@@ -32,11 +30,15 @@ import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.Dnie3;
 import es.gob.jmulticard.card.dnie.Dnie3Cwa14890Constants;
 import es.gob.jmulticard.card.dnie.DnieFactory;
+import es.gob.jmulticard.card.dnie.DnieNfc;
 import es.gob.jmulticard.card.dnie.DnieSubjectPrincipalParser;
 import es.gob.jmulticard.card.dnie.OptionalDetailsDnie3;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.card.icao.bac.IcaoMrtdWithBac;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
+import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Pruebas de operaciones en DNIe sin PIN.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -53,7 +55,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
  	public void testDnieFactory() throws Exception {
 
 //		TS2 - 3B-7F-38-00-00-00-6A-44-4E-49-65-10-02-4C-34-01-13-03-90-00
@@ -75,7 +77,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
  	public void testDnieReadSubject() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -95,14 +97,14 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
 			null,
 			CH,
 			new TestingDnieCallbackHandler(CAN, PIN),
-			true
+			false
 		);
 		System.out.println(dnie);
 		dnie.openSecureChannelIfNotAlreadyOpened(false);
@@ -113,11 +115,33 @@ public final class TestDnieLow {
 		System.out.println(certChain[0].getSubjectX500Principal());
 	}
 
+	/** Prueba simple de firma de DNIe 3 o 4 por NFC.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	//@Ignore
+	public void testDnie3Nfc() throws Exception {
+		final Dnie3 dni = new DnieNfc(
+			new SmartcardIoConnection(), // Conexion, debe ser NFC
+			null,
+			new BcCryptoHelper(),
+			new TestingDnieCallbackHandler(CAN, PIN)
+		);
+		final PrivateKeyReference pke = dni.getPrivateKey(Dnie.CERT_ALIAS_SIGN);
+		final byte[] datosFirmados = dni.sign(
+			"hola mundo".getBytes(), //$NON-NLS-1$
+			"SHA256withRSA", //$NON-NLS-1$ // Probar con SHA512withRSA
+			pke
+		);
+		System.out.println(new String(datosFirmados));
+
+	}
+
 	/** Prueba directa de firma.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -131,7 +155,7 @@ public final class TestDnieLow {
 		System.out.println(dnie);
 		System.out.println();
 		if (!(dnie instanceof Dnie3)) {
-			System.out.println("No es un DNIe v3.0"); //$NON-NLS-1$
+			System.out.println("No es un DNIe 3.0 o 4.0"); //$NON-NLS-1$
 			return;
 		}
 		final String[] aliases = dnie.getAliases();
@@ -139,7 +163,9 @@ public final class TestDnieLow {
 			System.out.println(a);
 		}
 
-		final PrivateKeyReference pkr = dnie.getPrivateKey(Dnie.CERT_ALIAS_SIGN);
+		final PrivateKeyReference pkr = dnie.getPrivateKey(Dnie.CERT_ALIAS_AUTH);
+
+		Assert.assertNotNull(pkr); // Si es un DNIe de menores puede no tener clave de firma
 
 		System.out.println();
 		System.out.println(pkr);
@@ -216,7 +242,7 @@ public final class TestDnieLow {
 
 		// Obtenemos el SOD
 		final Sod sod = dnie.getSod();
-//		System.out.println(sod);
+		System.out.println(sod);
 
 		// Obtenemos los datos del DNI
 

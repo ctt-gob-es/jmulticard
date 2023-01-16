@@ -54,12 +54,12 @@ import java.security.interfaces.RSAKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.logging.Logger;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre

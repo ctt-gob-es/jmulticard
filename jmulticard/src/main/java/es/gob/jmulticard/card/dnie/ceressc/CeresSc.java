@@ -14,11 +14,6 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.LostChannelException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -42,6 +37,11 @@ import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieCardException;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.LostChannelException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
 
 /** Tarjeta FNMT CERES con canal seguro.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */

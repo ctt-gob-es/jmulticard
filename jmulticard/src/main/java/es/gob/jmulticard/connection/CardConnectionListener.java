@@ -37,41 +37,22 @@
  * SIN NINGUNA GARANTIA; incluso sin la garantia implicita de comercializacion
  * o idoneidad para un proposito particular.
  */
-package es.gob.jmulticard.card.iso7816eight;
+package es.gob.jmulticard.connection;
 
-import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.apdu.CommandApdu;
-import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.iso7816eight.PsoVerifyCertificateApduCommand;
-import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
-import es.gob.jmulticard.connection.ApduConnection;
-import es.gob.jmulticard.connection.ApduConnectionException;
-import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
+/** Define los requerimientos de clases que escuchan eventos de inserci&oacute;n y
+ * extracci&oacute;n de tarjetas en un lector de tarjeta.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote
+ * @version 1.0 */
+public interface CardConnectionListener {
 
-/** Tarjeta compatible ISO-7816-8. */
-public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
+    /** Indica que se ha insertado una tarjeta en el lector. La comunicaci&oacute;n con
+     * la tarjeta se reanudar&aacute; si anteriormente ya estaba abierta.
+     * @param cce Evento de conexi&oacute;n con la tarjeta inteligente. */
+    void cardInserted(CardConnectionEvent cce);
 
-    /** Construye una tarjeta compatible ISO 7816-8.
-     * @param c Clase (CLA) de la APDU.
-     * @param conn Connexi&oacute;n con la tarjeta. */
-    public AbstractIso7816EightCard(final byte c, final ApduConnection conn) {
-        super(c, conn);
-    }
+    /** Indica que se ha extra&iacute;do una tarjeta en el lector.
+     * La comunicaci&oacute;n con la tarjeta se suspender&aacute; temporalmente.
+     * @param cce Evento de conexi&oacute;n con la tarjeta inteligente. */
+    void cardRemoved(CardConnectionEvent cce);
 
-    /** Verifica un certificado en base a una clave p&uacute;blica cargada anteriormente
-     * y que deber&aacute; ser la del certificado a partir del cual se gener&oacute; el
-     * certificado que ahora se valida.
-     * @param cert Certificado que se desea comprobar.
-     * @throws SecureChannelException Cuando el certificado no es correcto u ocurre alg&uacute;n error en la validaci&oacute;n.
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
-    public void verifyCertificate(final byte[] cert) throws ApduConnectionException {
-        final CommandApdu apdu = new PsoVerifyCertificateApduCommand((byte) 0x00, cert);
-        final ResponseApdu res = getConnection().transmit(apdu);
-        if (!res.isOk()) {
-            throw new SecureChannelException(
-        		"Error en la verificacion del certificado. Se obtuvo el error: " + //$NON-NLS-1$
-                HexUtils.hexify(res.getBytes(), true)
-            );
-        }
-    }
 }

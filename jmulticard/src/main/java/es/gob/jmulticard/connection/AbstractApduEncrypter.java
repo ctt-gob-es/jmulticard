@@ -38,7 +38,7 @@
  * o idoneidad para un proposito particular.
  */
 
-package es.gob.jmulticard.apdu.connection;
+package es.gob.jmulticard.connection;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -95,7 +95,7 @@ import es.gob.jmulticard.asn1.Tlv;
         final Integer le = unprotectedApdu.getLe();
 
         final byte[] tlvDataBytes = getDataTlv(
-    		data, keyCipher, sendSequenceCounter, cryptoHelper, this.paddingLength
+    		data, keyCipher, sendSequenceCounter, cryptoHelper, paddingLength
 		);
         final byte[] completeDataBytes = getCompleteDataBytes(le, tlvDataBytes);
 
@@ -109,11 +109,11 @@ import es.gob.jmulticard.asn1.Tlv;
 				new byte[] {
 					cla, ins, p1, p2
 				},
-				this.paddingLength
+				paddingLength
 			)
 		);
         baos.write(completeDataBytes);
-        final byte[] encryptedDataPadded = addPadding7816(baos.toByteArray(), this.paddingLength);
+        final byte[] encryptedDataPadded = addPadding7816(baos.toByteArray(), paddingLength);
 
         // Calculamos el valor MAC para la autenticacion de los datos
         final byte[] mac = generateMac(

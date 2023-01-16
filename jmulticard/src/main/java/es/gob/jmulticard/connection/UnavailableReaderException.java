@@ -1,4 +1,4 @@
-package es.gob.jmulticard.apdu.connection;
+package es.gob.jmulticard.connection;
 
 /** Excepci&oacute;n lanzada cuando se intenta acceder a un lector que ya no est&aacute; disponible.
  * @author Jose Luis Escanciano. */

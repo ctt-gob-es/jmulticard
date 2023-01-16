@@ -41,8 +41,8 @@ package es.gob.jmulticard.card;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Tarjeta inteligente gen&eacute;rica.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
