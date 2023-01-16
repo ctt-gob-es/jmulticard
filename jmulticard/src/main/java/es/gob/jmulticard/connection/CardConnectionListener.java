@@ -41,8 +41,7 @@ package es.gob.jmulticard.connection;
 
 /** Define los requerimientos de clases que escuchan eventos de inserci&oacute;n y
  * extracci&oacute;n de tarjetas en un lector de tarjeta.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote
- * @version 1.0 */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote. */
 public interface CardConnectionListener {
 
     /** Indica que se ha insertado una tarjeta en el lector. La comunicaci&oacute;n con
@@ -54,5 +53,4 @@ public interface CardConnectionListener {
      * La comunicaci&oacute;n con la tarjeta se suspender&aacute; temporalmente.
      * @param cce Evento de conexi&oacute;n con la tarjeta inteligente. */
     void cardRemoved(CardConnectionEvent cce);
-
 }
