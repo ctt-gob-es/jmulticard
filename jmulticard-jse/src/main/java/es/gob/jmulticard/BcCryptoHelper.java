@@ -726,7 +726,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	@Override
 	public X509Certificate generateCertificate(final InputStream is) throws CertificateException {
-		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509");
+		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
 		return (X509Certificate) cf.generateCertificate(is);
 	}
 

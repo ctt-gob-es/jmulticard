@@ -374,12 +374,6 @@ public abstract class CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	public abstract X509Certificate generateCertificate(final InputStream is) throws CertificateException;
 
-//	/** Obtiene la clase con la reimplementaci&oacute;n de funcionalidades que con su codificaci&oacute;n
-//     * normal no traducen adecuadamente con <i>J2Obc</i>.
-//	 * @return Reimplementaci&oacute;n de funcionalidades que con su codificaci&oacute;n
-//     *         normal no traducen adecuadamente con <i>J2Obc</i>. */
-//	public abstract TranslationHelper getTranslationHelper();
-
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).
 	 * @return Utilidades para el establecimiento de un canal PACE */

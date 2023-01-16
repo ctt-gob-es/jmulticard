@@ -49,7 +49,7 @@ import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 public abstract class AbstractSmartCard implements Card {
 
 	/** Establece el modo de depuraci&oacute;n para todo el proyecto. */
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 
 	/** Clase por defecto de APDU de la tarjeta. */
     private final byte cla;
@@ -60,7 +60,7 @@ public abstract class AbstractSmartCard implements Card {
     /** Obtiene la conexi&oacute;n de la tarjeta.
      * @return Conexi&oacute;n de la tarjeta. */
     protected ApduConnection getConnection() {
-        return this.connection;
+        return connection;
     }
 
     /** Env&iacute;a una APDU a la tarjeta.
@@ -68,7 +68,7 @@ public abstract class AbstractSmartCard implements Card {
      * @return APDU de respuesta.
      * @throws ApduConnectionException En cualquier error. */
     protected ResponseApdu sendArbitraryApdu(final CommandApdu apdu) throws ApduConnectionException {
-    	return this.connection.transmit(apdu);
+    	return connection.transmit(apdu);
     }
 
     /** Establece una nueva conexi&oacute;n con la tarjeta.
@@ -79,13 +79,13 @@ public abstract class AbstractSmartCard implements Card {
         if (!conn.isOpen()) {
             conn.open();
         }
-        this.connection = conn;
+        connection = conn;
     }
 
     /** Obtiene la clase de APDU por defecto de la tarjeta.
      * @return Clase de APDU por defecto de la tarjeta. */
     protected byte getCla() {
-        return this.cla;
+        return cla;
     }
 
     /** Construye una tarjeta inteligente gen&eacute;rica.
@@ -95,8 +95,8 @@ public abstract class AbstractSmartCard implements Card {
         if (conn == null) {
             throw new IllegalArgumentException("La conexion con la tarjeta no puede ser nula"); //$NON-NLS-1$
         }
-        this.cla = c;
-        this.connection = conn;
+        cla = c;
+        connection = conn;
     }
 
     /** Obtiene el nombre de la tarjeta.
