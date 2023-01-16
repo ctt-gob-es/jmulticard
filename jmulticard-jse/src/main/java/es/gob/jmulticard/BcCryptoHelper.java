@@ -61,7 +61,6 @@ import org.spongycastle.crypto.params.RSAKeyParameters;
 import org.spongycastle.crypto.prng.DigestRandomGenerator;
 import org.spongycastle.crypto.prng.RandomGenerator;
 import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
-import org.spongycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.spongycastle.jce.ECNamedCurveTable;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
@@ -727,7 +726,8 @@ public final class BcCryptoHelper extends CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	@Override
 	public X509Certificate generateCertificate(final InputStream is) throws CertificateException {
-		return (X509Certificate) new CertificateFactory().engineGenerateCertificate(is);
+		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509");
+		return (X509Certificate) cf.generateCertificate(is);
 	}
 
 	@Override

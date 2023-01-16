@@ -38,14 +38,14 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class PaceChannelHelperBc extends PaceChannelHelper {
+public final class BcPaceChannelHelper extends PaceChannelHelper {
 
 	/** Tama&ntilde;o de bloque de cifrado AES. */
 	public static final int BLOCK_SIZE = 16;
 
 	/** Constructor
 	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
-	public PaceChannelHelperBc(final CryptoHelper ch) {
+	public BcPaceChannelHelper(final CryptoHelper ch) {
 		super(ch);
 	}
 

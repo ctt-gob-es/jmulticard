@@ -61,7 +61,6 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.prng.DigestRandomGenerator;
 import org.bouncycastle.crypto.prng.RandomGenerator;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
-import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
@@ -729,7 +728,8 @@ public final class BcCryptoHelper extends CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	@Override
 	public X509Certificate generateCertificate(final InputStream is) throws CertificateException {
-		return (X509Certificate) new CertificateFactory().engineGenerateCertificate(is);
+		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509");
+		return (X509Certificate) cf.generateCertificate(is);
 	}
 
 	@Override
@@ -737,7 +737,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 		// Solo creamos el PaceChannelHelper si nos lo piden, asi
 		// evitamos crearlo en uso con contactos (PACE solo se usa con NFC).
 		if (paceChannelHelper == null) {
-			paceChannelHelper = new PaceChannelHelperBc(this);
+			paceChannelHelper = new BcPaceChannelHelper(this);
 		}
 		return paceChannelHelper;
 	}
