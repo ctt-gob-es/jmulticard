@@ -169,7 +169,5 @@ public final class DnieProvider extends Provider {
 	        // Claves soportadas para cifrado
 	        put("Cipher.RSA/ECB/PKCS1Padding SupportedKeyClasses", DnieProvider.DNIE_PRIVATE_KEY); //$NON-NLS-1$
         }
-
     }
-
 }

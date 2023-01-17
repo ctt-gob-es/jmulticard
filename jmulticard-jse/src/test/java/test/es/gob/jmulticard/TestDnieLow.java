@@ -1,6 +1,9 @@
 package test.es.gob.jmulticard;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 
@@ -55,7 +58,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
  	public void testDnieFactory() throws Exception {
 
 //		TS2 - 3B-7F-38-00-00-00-6A-44-4E-49-65-10-02-4C-34-01-13-03-90-00
@@ -77,7 +80,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
  	public void testDnieReadSubject() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -97,7 +100,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -119,7 +122,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnie3Nfc() throws Exception {
 		final Dnie3 dni = new DnieNfc(
 			new SmartcardIoConnection(), // Conexion, debe ser NFC
@@ -141,7 +144,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -156,7 +159,7 @@ public final class TestDnieLow {
 		System.out.println();
 		if (!(dnie instanceof Dnie3)) {
 			System.out.println("No es un DNIe 3.0 o 4.0"); //$NON-NLS-1$
-			return;
+//			return;
 		}
 		final String[] aliases = dnie.getAliases();
 		for (final String a : aliases) {
@@ -196,15 +199,26 @@ public final class TestDnieLow {
 			new TestingDnieCallbackHandler(CAN, (String)null), // No usamos el PIN
 			false // No cargamos certificados ni nada
 		);
+
 		final X509Certificate iccCert = dnie.getIccCert();
-//		try (
-//			final OutputStream fos = new FileOutputStream(File.createTempFile("CERT_COMPO_DNI_", ".cer")) //$NON-NLS-1$ //$NON-NLS-2$
-//		) {
-//			fos.write(iccCert.getEncoded());
-//		}
-//		System.out.println(
-//			"Certificado de componente: " + iccCert.getSubjectX500Principal() //$NON-NLS-1$
-//		);
+		try (
+			OutputStream fos = new FileOutputStream(File.createTempFile("CERT_COMPO_DNI_", ".cer")) //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(iccCert.getEncoded());
+		}
+		System.out.println(
+			"Certificado de componente: " + iccCert.getSubjectX500Principal() //$NON-NLS-1$
+		);
+
+		final X509Certificate iccIntCert = dnie.getCertificate(Dnie.CERT_ALIAS_INTERMEDIATE_CA);
+		try (
+			OutputStream fos = new FileOutputStream(File.createTempFile("CERT_INTER_DNI_", ".cer")) //$NON-NLS-1$ //$NON-NLS-2$
+		) {
+			fos.write(iccIntCert.getEncoded());
+		}
+		System.out.println(
+			"Certificado intermedio: " + iccIntCert.getSubjectX500Principal() //$NON-NLS-1$
+		);
 
         final byte[] randomIfd = cryptoHelper.generateRandomBytes(8);
 
@@ -213,7 +227,7 @@ public final class TestDnieLow {
         // Nos validamos contra la tarjeta como controlador
         dnie.verifyIfdCertificateChain(constants);
 
-		// Ahora hacemos una autenticación interna con un aleatorio generado externamente
+		// Ahora hacemos una autenticacion interna con un aleatorio generado externamente
 		final byte[] sigMinCiphered = Cwa14890OneV1Connection.internalAuthGetInternalAuthenticateMessage(
 			dnie,
 			constants,
@@ -255,12 +269,20 @@ public final class TestDnieLow {
 		System.out.println();
 
 		final byte[] dg2 = dnie.getDg2().getBytes(); // Foto del rostro
+		try (OutputStream fos = new FileOutputStream(File.createTempFile("MRTD_ROSTRO_", ".jp2"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			fos.write(dg2);
+		}
 
 		//final ResponseApdu res = dnie.sendArbitraryApdu(null);
 
 		// 3 no hay permisos
+
 		// 4, 5, 6 no presentes en el DNI
 		final byte[] dg7 = dnie.getDg7().getBytes(); // Imagen de la firma manuscrita
+		try (OutputStream fos = new FileOutputStream(File.createTempFile("MRTD_FIRMA_", ".jp2"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			fos.write(dg7);
+		}
+
 		// 8, 9 y 10 no presente en el DNI
 		final byte[] dg11 = dnie.getDg11(); // Detalles personales adicionales
 		System.out.println("DG11: " + HexUtils.hexify(dg11, false)); //$NON-NLS-1$
@@ -455,4 +477,23 @@ public final class TestDnieLow {
 		System.out.println();
 	}
 
+	/** Prueba de carga de certificados.
+	 * @throws Exception En cualquier error. */
+	@SuppressWarnings("static-method")
+	@Test
+	@Ignore
+	public void testReadCerts() throws Exception {
+		final Dnie dnie = DnieFactory.getDnie(
+			ProviderUtil.getDefaultConnection(),
+			null, // PasswordCallback
+			new BcCryptoHelper(),
+			null, // CallbackHandler
+			false
+		);
+		final String[] aliases = dnie.getAliases();
+		for (final String alias : aliases) {
+			System.out.println(alias + ": " + dnie.getCertificate(alias).getSubjectX500Principal()); //$NON-NLS-1$
+		}
+		System.out.println(Dnie.CERT_ALIAS_INTERMEDIATE_CA + ": " + dnie.getCertificate(Dnie.CERT_ALIAS_INTERMEDIATE_CA).getSubjectX500Principal()); //$NON-NLS-1$
+	}
 }

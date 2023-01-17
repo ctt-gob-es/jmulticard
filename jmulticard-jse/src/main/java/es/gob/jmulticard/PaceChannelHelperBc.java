@@ -385,22 +385,21 @@ public final class PaceChannelHelperBc extends PaceChannelHelper {
 		}
 
 		// Se inicializa el contador de secuencia a ceros
-		final byte[] ssc = new byte[16];
+		final byte[] ssc = new byte[BLOCK_SIZE]; // El tamano de bloque AES es el tamano del SSC
 		Arrays.fill(ssc, (byte)0);
 
 		if (AbstractSmartCard.DEBUG) {
 			LOGGER.info("Canal Pace abierto"); //$NON-NLS-1$
 			LOGGER.info(
 				"\nKenc: " + HexUtils.hexify(kenc, true) + //$NON-NLS-1$
-				"\nKmac: " + HexUtils.hexify(kmac, true) + //$NON-NLS-1$
-				"\nSsc: " + HexUtils.hexify(ssc, true) //$NON-NLS-1$
+				"\nKmac: " + HexUtils.hexify(kmac, true) //$NON-NLS-1$
 			);
 		}
 
 		return new SecureMessaging(
 			kenc,
 			kmac,
-			new byte[BLOCK_SIZE], // El tamano de bloque AES es el SSC inicial
+			ssc,
 			cryptoHelper
 		);
 	}

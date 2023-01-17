@@ -215,7 +215,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // ---------------
 
         try {
-            card.verifyCaIntermediateIcc();
             card.verifyIcc();
         }
         catch (final SecurityException e) {

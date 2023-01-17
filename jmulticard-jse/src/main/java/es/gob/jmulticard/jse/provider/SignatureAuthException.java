@@ -3,7 +3,8 @@ package es.gob.jmulticard.jse.provider;
 import java.security.SignatureException;
 
 /** Excepci&oacute;n para la notificaci&oacute;n de un error al autenticar al usuario durante la
- * operaci&oacute;n de firma. */
+ * operaci&oacute;n de firma.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SignatureAuthException extends SignatureException {
 
 	/** Serial ID. */

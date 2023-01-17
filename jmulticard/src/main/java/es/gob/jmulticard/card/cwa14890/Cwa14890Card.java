@@ -51,14 +51,6 @@ import es.gob.jmulticard.connection.ApduConnectionException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Cwa14890Card {
 
-    /** Verifica la CA intermedia del certificado de componente de la tarjeta.
-     * @throws CertificateException Cuando ocurre alg&uacute;n problema en la
-     *         validaci&oacute;n del certificado.
-     * @throws IOException Cuando ocurre alg&uacute;n problema en la selecci&oacute;n
-     *                     y lectura del certificado.
-     * @throws SecurityException Si falla la validaci&oacute;n de la CA. */
-    void verifyCaIntermediateIcc() throws CertificateException, IOException;
-
     /** Verifica el certificado de componente de la tarjeta.
      * @throws CertificateException Cuando ocurre alg&uacute;n problema en la
      *         validaci&oacute;n del certificado.

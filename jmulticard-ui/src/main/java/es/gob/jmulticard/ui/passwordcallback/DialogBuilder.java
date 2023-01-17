@@ -49,11 +49,10 @@ import es.gob.jmulticard.callback.CustomAuthorizeCallback;
 import es.gob.jmulticard.ui.passwordcallback.gui.ConfirmSmartcardDialog;
 
 /** Gestor de di&aacute;logos gr&aacute;ficos.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DialogBuilder {
 
 	private static boolean headless = false;
-
     static {
         setHeadLess(Boolean.getBoolean("java.awt.headless")); //$NON-NLS-1$
     }

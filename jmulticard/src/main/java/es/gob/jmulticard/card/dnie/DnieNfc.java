@@ -272,12 +272,10 @@ public class DnieNfc extends Dnie3 {
 	        		"Error al abrir el canal PACE", e //$NON-NLS-1$
 	    		);
 			}
-
 		}
 
 		super.openSecureChannelIfNotAlreadyOpened();
 	}
-
 
     @Override
     public byte[] sign(final byte[] data,

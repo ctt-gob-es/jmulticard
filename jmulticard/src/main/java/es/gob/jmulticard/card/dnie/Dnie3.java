@@ -310,6 +310,12 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     	return getConnection();
     }
 
+	@Override
+	protected boolean needsPinForLoadingCerts() {
+		// "true" en DNIe 1.0, "false" en cualquier otro.
+		return false;
+	}
+
 
 	//*************************************************************************
 	//*************** METODOS HEREDADOS DE ICAO MRTD LDS1 *********************
