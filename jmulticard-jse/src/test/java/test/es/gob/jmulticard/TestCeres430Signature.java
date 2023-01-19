@@ -6,9 +6,9 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
 
+import org.bouncycastle.util.encoders.Base64;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.spongycastle.util.encoders.Base64;
 
 import es.gob.jmulticard.jse.provider.ceres.Ceres430Provider;
 
@@ -18,7 +18,8 @@ public final class TestCeres430Signature {
 	private static final String PROVIDER_NAME = "CERES430"; //$NON-NLS-1$
 	private static final String ALGORITHM = "SHA256withRSA"; //$NON-NLS-1$
 	private static final byte[] DATA = "Datos a firmar".getBytes(StandardCharsets.UTF_8); //$NON-NLS-1$
-	private static final char[] PASSWORD = "eJh3Rhbf".toCharArray(); //$NON-NLS-1$
+	//private static final char[] PASSWORD = "eJh3Rhbf".toCharArray(); //$NON-NLS-1$
+	private static final char[] PASSWORD = "CRYPTOKIFNMT".toCharArray(); //$NON-NLS-1$
 
 	/** Prueba de firmas consecutivas.
 	 * @throws Exception En cualquier error. */

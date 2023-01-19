@@ -6,9 +6,9 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.Signature;
 
+import org.bouncycastle.util.encoders.Base64;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.spongycastle.util.encoders.Base64;
 
 import es.gob.jmulticard.jse.provider.DnieProvider;
 

@@ -224,6 +224,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     private static byte[] doRsa(final byte[] data,
     		                    final RSAKey key,
     		                    final boolean forEncryption) throws IOException {
+
     	final boolean isPrivateKey = key instanceof RSAPrivateKey;
 
     	final AsymmetricKeyParameter akp = new RSAKeyParameters(
@@ -233,7 +234,9 @@ public final class BcCryptoHelper extends CryptoHelper {
 				((RSAPrivateKey)key).getPrivateExponent() :
 					((RSAPublicKey)key).getPublicExponent()
 		);
+
     	final AsymmetricBlockCipher cipher = new RSAEngine();
+
     	cipher.init(forEncryption, akp);
 
     	try {
@@ -250,8 +253,20 @@ public final class BcCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException {
-        return doRsa(data, key, true);
+    public byte[] rsaEncrypt(final byte[] data, final RSAPublicKey key) throws IOException {
+    	final AsymmetricKeyParameter akp = new RSAKeyParameters(
+			false,
+			key.getModulus(),
+			key.getPublicExponent()
+		);
+    	final AsymmetricBlockCipher cipher = new RSAEngine();
+    	cipher.init(true, akp);
+    	try {
+			return cipher.processBlock(data, 0, data.length);
+		}
+    	catch (final InvalidCipherTextException e) {
+			throw new IOException("Error en el cifrado/descifrado RSA", e); //$NON-NLS-1$
+		}
     }
 
     @Override

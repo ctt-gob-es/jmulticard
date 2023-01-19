@@ -656,7 +656,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     }
 
     @Override
-    public byte[] getInternalAuthenticateMessage(final byte[] randomIfd, final byte[] chrCCvIfd) throws ApduConnectionException {
+    public byte[] getInternalAuthenticateMessage(final byte[] randomIfd,
+    		                                     final byte[] chrCCvIfd) throws ApduConnectionException {
         final CommandApdu apdu = new InternalAuthenticateApduCommand((byte) 0x00, randomIfd, chrCCvIfd);
         final ResponseApdu res = getConnection().transmit(apdu);
         if (res.isOk()) {

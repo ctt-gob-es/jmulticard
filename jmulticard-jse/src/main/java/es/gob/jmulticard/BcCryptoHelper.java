@@ -28,50 +28,50 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSException;
-import org.spongycastle.cms.CMSSignedData;
-import org.spongycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
-import org.spongycastle.cms.SignerId;
-import org.spongycastle.cms.SignerInformation;
-import org.spongycastle.cms.SignerInformationVerifier;
-import org.spongycastle.crypto.AsymmetricBlockCipher;
-import org.spongycastle.crypto.BlockCipher;
-import org.spongycastle.crypto.BufferedBlockCipher;
-import org.spongycastle.crypto.DataLengthException;
-import org.spongycastle.crypto.InvalidCipherTextException;
-import org.spongycastle.crypto.Mac;
-import org.spongycastle.crypto.digests.SHA1Digest;
-import org.spongycastle.crypto.digests.SHA256Digest;
-import org.spongycastle.crypto.digests.SHA384Digest;
-import org.spongycastle.crypto.digests.SHA512Digest;
-import org.spongycastle.crypto.engines.AESEngine;
-import org.spongycastle.crypto.engines.DESEngine;
-import org.spongycastle.crypto.engines.DESedeEngine;
-import org.spongycastle.crypto.engines.RSAEngine;
-import org.spongycastle.crypto.macs.CMac;
-import org.spongycastle.crypto.modes.CBCBlockCipher;
-import org.spongycastle.crypto.paddings.BlockCipherPadding;
-import org.spongycastle.crypto.paddings.ISO7816d4Padding;
-import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.spongycastle.crypto.params.AsymmetricKeyParameter;
-import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.crypto.params.ParametersWithIV;
-import org.spongycastle.crypto.params.RSAKeyParameters;
-import org.spongycastle.crypto.prng.DigestRandomGenerator;
-import org.spongycastle.crypto.prng.RandomGenerator;
-import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
-import org.spongycastle.jce.ECNamedCurveTable;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
-import org.spongycastle.math.ec.ECCurve;
-import org.spongycastle.math.ec.ECFieldElement;
-import org.spongycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
-import org.spongycastle.operator.OperatorCreationException;
-import org.spongycastle.operator.bc.BcDigestCalculatorProvider;
-import org.spongycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.spongycastle.util.Selector;
-import org.spongycastle.util.Store;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
+import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA384Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.engines.DESEngine;
+import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.engines.RSAEngine;
+import org.bouncycastle.crypto.macs.CMac;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.BlockCipherPadding;
+import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.prng.DigestRandomGenerator;
+import org.bouncycastle.crypto.prng.RandomGenerator;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
+import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.math.ec.ECFieldElement;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad implementadas mediante BouncyCastle.
  * Contiene c&oacute;digo basado en el trabajo del <i>JMRTD team</i>, bajo licencia
@@ -248,7 +248,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException {
+    public byte[] rsaEncrypt(final byte[] data, final RSAPublicKey key) throws IOException {
         return doRsa(data, key, true);
     }
 
@@ -583,13 +583,13 @@ public final class BcCryptoHelper extends CryptoHelper {
 	private static ECPoint multiply(final BigInteger s,
 			                        final ECPoint point,
 			                        final ECParameterSpec params) {
-		final org.spongycastle.math.ec.ECPoint bcPoint = toSpongyCastleECPoint(point, params);
-		final org.spongycastle.math.ec.ECPoint bcProd = bcPoint.multiply(s);
+		final org.bouncycastle.math.ec.ECPoint bcPoint = toSpongyCastleECPoint(point, params);
+		final org.bouncycastle.math.ec.ECPoint bcProd = bcPoint.multiply(s);
 		return fromSpongyCastleECPoint(bcProd);
 	}
 
-	private static ECPoint fromSpongyCastleECPoint(final org.spongycastle.math.ec.ECPoint point) {
-		final org.spongycastle.math.ec.ECPoint newPoint = point.normalize();
+	private static ECPoint fromSpongyCastleECPoint(final org.bouncycastle.math.ec.ECPoint point) {
+		final org.bouncycastle.math.ec.ECPoint newPoint = point.normalize();
 		if (!newPoint.isValid()) {
 			LOGGER.warning("Se ha proporcionado un punto invalido"); //$NON-NLS-1$
 		}
@@ -600,15 +600,15 @@ public final class BcCryptoHelper extends CryptoHelper {
 	}
 
 	private static ECPoint add(final ECPoint x, final ECPoint y, final ECParameterSpec params) {
-		final org.spongycastle.math.ec.ECPoint bcX = toSpongyCastleECPoint(x, params);
-		final org.spongycastle.math.ec.ECPoint bcY = toSpongyCastleECPoint(y, params);
-		final org.spongycastle.math.ec.ECPoint bcSum = bcX.add(bcY);
+		final org.bouncycastle.math.ec.ECPoint bcX = toSpongyCastleECPoint(x, params);
+		final org.bouncycastle.math.ec.ECPoint bcY = toSpongyCastleECPoint(y, params);
+		final org.bouncycastle.math.ec.ECPoint bcSum = bcX.add(bcY);
 		return fromSpongyCastleECPoint(bcSum);
 	}
 
-	private static org.spongycastle.math.ec.ECPoint toSpongyCastleECPoint(final ECPoint point,
+	private static org.bouncycastle.math.ec.ECPoint toSpongyCastleECPoint(final ECPoint point,
 			                                                              final ECParameterSpec params) {
-		final org.spongycastle.math.ec.ECCurve bcCurve = toSpongyCastleECCurve(params);
+		final org.bouncycastle.math.ec.ECCurve bcCurve = toSpongyCastleECCurve(params);
 		return bcCurve.createPoint(point.getAffineX(), point.getAffineY());
 	}
 

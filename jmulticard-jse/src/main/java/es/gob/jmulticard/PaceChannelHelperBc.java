@@ -7,13 +7,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import org.spongycastle.asn1.teletrust.TeleTrusTNamedCurves;
-import org.spongycastle.asn1.x9.X9ECParameters;
-import org.spongycastle.math.ec.ECCurve;
-import org.spongycastle.math.ec.ECCurve.Fp;
-import org.spongycastle.math.ec.ECFieldElement;
-import org.spongycastle.math.ec.ECPoint;
-import org.spongycastle.util.Arrays;
+import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.math.ec.ECCurve;
+import org.bouncycastle.math.ec.ECCurve.Fp;
+import org.bouncycastle.math.ec.ECFieldElement;
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.Arrays;
 
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;

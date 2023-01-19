@@ -589,8 +589,8 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // Iniciamos la autenticacion interna de la clave privada del certificado de componente
         final byte[] sigMinCiphered = internalAuthGetInternalAuthenticateMessage(card, pubConsts, randomIfd);
 
-        // Validamos el mensaje obtenido por la tarjeta y obtenemos la semilla de KICC generada por la tarjeta
-        // para la derivacion de claves del canal seguro.
+        // Validamos el mensaje obtenido por la tarjeta y obtenemos la semilla de KICC
+        // generada por la tarjeta para la derivacion de claves del canal seguro.
         return internalAuthValidateInternalAuthenticateMessage(
     		card.getChrCCvIfd(pubConsts),
     		sigMinCiphered,
@@ -700,11 +700,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         return kifd;
     }
 
-    /** Obtiene el n&uacute;mero de serie de la tarjeta en un array de 8 octetos, completando
-     * con ceros a la izquierda si es necesario.
+    /** Obtiene el n&uacute;mero de serie de la tarjeta en un array de 8 octetos,
+     * completando con ceros a la izquierda si es necesario.
      * @return N&uacute;mero de serie en formato de 8 bytes.
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
-     *         la tarjeta. */
+     * @throws ApduConnectionException Cuando ocurre un error en la
+     *                                 comunicaci&oacute;n con la tarjeta. */
     private byte[] getPaddedSerial() throws ApduConnectionException {
         // Completamos el numero de serie (SN.ICC) para que tenga 8 bytes
         final byte[] serial = card.getSerialNumber();
@@ -886,5 +886,4 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 	public byte[] getSsc() {
 		return ssc;
 	}
-
 }
