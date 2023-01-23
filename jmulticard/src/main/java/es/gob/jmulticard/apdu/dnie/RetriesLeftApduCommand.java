@@ -56,7 +56,7 @@ public final class RetriesLeftApduCommand extends CommandApdu {
         super(
     		new byte[] {
 	    		(byte)0x00,							// CLA
-	    		RetriesLeftApduCommand.INS_VERIFY, 	// INS
+	    		RetriesLeftApduCommand.INS_VERIFY,	// INS
 	    		(byte)0x00, 						// P1
 	    		(byte)0x00,							// P2
 	    		(byte)0x00							// Le

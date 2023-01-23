@@ -61,7 +61,8 @@ import es.gob.jmulticard.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.connection.ApduEncrypterDes;
 import es.gob.jmulticard.connection.CardConnectionListener;
 
-/** Utilidad para el establecimiento y control del canal seguro con tarjeta inteligente.
+/** Utilidad para el establecimiento y control del canal seguro CWA-14890
+ * con cifrado DES y MAC de cuatro octetos.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Cwa14890OneV1Connection implements Cwa14890Connection {
@@ -486,10 +487,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // Comprobamos que empiece por 0x6a [ISO_9796_2_PADDING_START] y termine con 0xbc [ISO_9796_2_PADDING_END]
         if (desMsg[0] != ISO_9796_2_PADDING_START || desMsg[desMsg.length - 1] != ISO_9796_2_PADDING_END) {
 
-            // Calculamos N.ICC-SIG
-            final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(sigMin)).toByteArray();
+            // Calculamos N.ICC - SIG
+            final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(sig)).toByteArray();
             final byte[] niccMinusSig = new byte[ifdKeyLength];
-            // Ignoramos los ceros de la izquierda
+            System.out.println(HexUtils.hexify(niccMinusSig, false));
+
+            // Ignoramos el cero de la izquierda si un arrayy es mas grande que el otro y empieza por cero
             if (sub.length > ifdKeyLength && sub[0] == (byte) 0x00) {
                 System.arraycopy(sub, 1, niccMinusSig, 0, sub.length - 1);
             }
@@ -497,7 +500,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
                 System.arraycopy(sub, 0, niccMinusSig, 0, sub.length);
             }
 
-            // Desciframos el mensaje con N.ICC-SIG
+            // Desciframos el mensaje con N.ICC - SIG
             desMsg = cryptoHelper.rsaDecrypt(niccMinusSig, iccPublicKey);
 
             // Si en esta ocasion no empieza por 0x6a [ISO_9796_2_PADDING_START] y termina con 0xbc [ISO_9796_2_PADDING_END],

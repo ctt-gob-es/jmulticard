@@ -43,11 +43,14 @@ public final class PaceConnection extends Cwa14890OneV2Connection {
 
 	@Override
 	public String toString() {
-    	return "Conexion de tipo PACE sobre " + getSubConnection(); //$NON-NLS-1$
+    	return "Conexion de tipo PACE " + //$NON-NLS-1$
+			(isOpen()
+				? "abierta sobre " + getSubConnection() //$NON-NLS-1$
+					: "cerrada"); //$NON-NLS-1$
     }
 
-	/** Abre el canal seguro con la tarjeta. La conexi&oacute;n se reiniciar&aacute; previamente
-	 * a la apertura del canal. */
+	/** Abre el canal seguro con la tarjeta.
+	 * La conexi&oacute;n se reiniciar&aacute; previamente a la apertura del canal. */
 	@Override
 	public void open() {
 		openState = true;

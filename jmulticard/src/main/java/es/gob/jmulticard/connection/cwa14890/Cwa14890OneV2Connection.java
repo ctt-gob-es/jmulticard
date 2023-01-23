@@ -47,8 +47,8 @@ import es.gob.jmulticard.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduEncrypterDesMac8;
 
-/** Clase para el establecimiento y control del canal seguro con tarjeta
- * inteligente y MAC de 8 octetos.
+/** Clase para el establecimiento y control del canal seguro CWA-14890
+ * con cifrado DES y MAC de ocho octetos.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 
