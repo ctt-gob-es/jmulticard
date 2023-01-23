@@ -151,7 +151,6 @@ public final class TestDnieLow {
 			null,
 			CH,
 			new TestingDnieCallbackHandler(CAN, PIN),
-			//new SmartcardCallbackHandler(),
 			true
 		);
 		System.out.println();
@@ -159,7 +158,6 @@ public final class TestDnieLow {
 		System.out.println();
 		if (!(dnie instanceof Dnie3)) {
 			System.out.println("No es un DNIe 3.0 o 4.0"); //$NON-NLS-1$
-//			return;
 		}
 		final String[] aliases = dnie.getAliases();
 		for (final String a : aliases) {

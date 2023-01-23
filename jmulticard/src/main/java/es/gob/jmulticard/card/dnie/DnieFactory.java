@@ -8,6 +8,7 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.InvalidCardException;
+import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.card.dnie.tif.Tif;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.connection.ApduConnection;
@@ -155,6 +156,12 @@ public final class DnieFactory {
 				// Las tarjetas TIF siempre se instancian con precarga de claves y certificados
 				// (no se aplica el parametro 'loadCertsAndKeys')
 				return new Tif(conn, pwc, cryptoHelper, ch);
+			}
+
+			// La factoria tambien soporta las tarjetas FNMT CERES 4.30 y superior
+			if (CeresSc.ATR_TC.equals(actualAtr)) {
+				LOGGER.info("Detectada tarjeta FNMT CERES 4.30 o superior"); //$NON-NLS-1$
+				return new CeresSc(conn, pwc, cryptoHelper, ch, loadCertsAndKeys);
 			}
 
 			// La tarjeta encontrada no es un DNIe

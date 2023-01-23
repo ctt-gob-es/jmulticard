@@ -270,7 +270,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         if (loadCertsAndKeys) {
 
 	        // Cargamos la localizacion de los certificados y el certificado
-	        // de CA intermedia de los certificados de firma, autenticacion y, si existe, cifrado
+	        // de CA intermedia de los certificados de firma, autenticacion y,
+        	// si existe, cifrado
 	        loadCertificatesPaths();
 
 	        // Cargamos la informacion publica con la referencia a las claves
