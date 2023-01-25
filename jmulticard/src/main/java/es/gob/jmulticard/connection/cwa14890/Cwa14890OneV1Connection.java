@@ -488,11 +488,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         if (desMsg[0] != ISO_9796_2_PADDING_START || desMsg[desMsg.length - 1] != ISO_9796_2_PADDING_END) {
 
             // Calculamos N.ICC - SIG
-            final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(sig)).toByteArray();
+            final byte[] sub = iccPublicKey.getModulus().subtract(new BigInteger(1, sig)).toByteArray();
             final byte[] niccMinusSig = new byte[ifdKeyLength];
             System.out.println(HexUtils.hexify(niccMinusSig, false));
 
-            // Ignoramos el cero de la izquierda si un arrayy es mas grande que el otro y empieza por cero
+            // Ignoramos el cero de la izquierda si un array es mas grande que el otro y empieza por cero
             if (sub.length > ifdKeyLength && sub[0] == (byte) 0x00) {
                 System.arraycopy(sub, 1, niccMinusSig, 0, sub.length - 1);
             }

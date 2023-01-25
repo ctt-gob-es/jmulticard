@@ -222,6 +222,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     private static byte[] doRsa(final byte[] data,
     		                    final RSAKey key,
     		                    final boolean forEncryption) throws IOException {
+
     	final boolean isPrivateKey = key instanceof RSAPrivateKey;
 
     	final AsymmetricKeyParameter akp = new RSAKeyParameters(

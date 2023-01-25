@@ -959,7 +959,10 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         }
     }
 
-    private int getPinRetriesLeft() throws PinException {
+    /** Devuelve los intentos restantes de comprobaci&oacute;n de PIN del DNIe.
+     * @return Intentos restantes de comprobaci&oacute;n de PIN del DNIe.
+     * @throws PinException Si hay cualquier problema durante el proceso. */
+    public int getPinRetriesLeft() throws PinException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
     	final ResponseApdu verifyResponse;
 		try {
