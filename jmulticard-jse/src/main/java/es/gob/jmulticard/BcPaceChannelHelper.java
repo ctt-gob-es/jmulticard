@@ -7,13 +7,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.math.ec.ECCurve;
-import org.bouncycastle.math.ec.ECCurve.Fp;
-import org.bouncycastle.math.ec.ECFieldElement;
-import org.bouncycastle.math.ec.ECPoint;
-import org.bouncycastle.util.Arrays;
+import org.spongycastle.asn1.teletrust.TeleTrusTNamedCurves;
+import org.spongycastle.asn1.x9.X9ECParameters;
+import org.spongycastle.math.ec.ECCurve;
+import org.spongycastle.math.ec.ECCurve.Fp;
+import org.spongycastle.math.ec.ECFieldElement;
+import org.spongycastle.math.ec.ECPoint;
+import org.spongycastle.util.Arrays;
 
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
@@ -36,14 +36,14 @@ import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 /** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
  * (Password Authenticated Connection Establishment).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class PaceChannelHelperBc extends PaceChannelHelper {
+public final class BcPaceChannelHelper extends PaceChannelHelper {
 
 	/** Tama&ntilde;o de bloque de cifrado AES. */
 	public static final int BLOCK_SIZE = 16;
 
 	/** Constructor.
 	 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
-	public PaceChannelHelperBc(final CryptoHelper ch) {
+	public BcPaceChannelHelper(final CryptoHelper ch) {
 		super(ch);
 	}
 

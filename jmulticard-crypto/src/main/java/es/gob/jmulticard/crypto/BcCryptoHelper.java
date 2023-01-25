@@ -61,6 +61,7 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.prng.DigestRandomGenerator;
 import org.bouncycastle.crypto.prng.RandomGenerator;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
+import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
@@ -234,9 +235,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 				((RSAPrivateKey)key).getPrivateExponent() :
 					((RSAPublicKey)key).getPublicExponent()
 		);
-
     	final AsymmetricBlockCipher cipher = new RSAEngine();
-
     	cipher.init(forEncryption, akp);
 
     	try {
@@ -254,19 +253,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 
     @Override
     public byte[] rsaEncrypt(final byte[] data, final RSAPublicKey key) throws IOException {
-    	final AsymmetricKeyParameter akp = new RSAKeyParameters(
-			false,
-			key.getModulus(),
-			key.getPublicExponent()
-		);
-    	final AsymmetricBlockCipher cipher = new RSAEngine();
-    	cipher.init(true, akp);
-    	try {
-			return cipher.processBlock(data, 0, data.length);
-		}
-    	catch (final InvalidCipherTextException e) {
-			throw new IOException("Error en el cifrado/descifrado RSA", e); //$NON-NLS-1$
-		}
+        return doRsa(data, key, true);
     }
 
     @Override
@@ -743,8 +730,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	@Override
 	public X509Certificate generateCertificate(final InputStream is) throws CertificateException {
-		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509");
-		return (X509Certificate) cf.generateCertificate(is);
+		return (X509Certificate) new CertificateFactory().engineGenerateCertificate(is);
 	}
 
 	@Override
