@@ -42,7 +42,7 @@ package es.gob.jmulticard.apdu.iso7816four;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 para la obtenci&oacute;n de una cadena de octetos
- * aleator&iacute;a de desaf&iacute;o.
+ * aleatoria de desaf&iacute;o.
  * @author Alberto Mart&iacute;nez Cerquero
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class GetChallengeApduCommand extends CommandApdu {

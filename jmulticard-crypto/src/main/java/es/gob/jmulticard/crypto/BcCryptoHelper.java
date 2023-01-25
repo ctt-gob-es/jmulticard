@@ -252,7 +252,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     }
 
     @Override
-    public byte[] rsaEncrypt(final byte[] data, final RSAPublicKey key) throws IOException {
+    public byte[] rsaEncrypt(final byte[] data, final RSAKey key) throws IOException {
         return doRsa(data, key, true);
     }
 
