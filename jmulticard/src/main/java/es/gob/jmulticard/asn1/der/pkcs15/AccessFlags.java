@@ -50,7 +50,7 @@ import es.gob.jmulticard.asn1.der.BitString;
  *       neverExtractable(3)
  * }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class AccessFlags extends BitString {
 	// Sin diferencias respecto a bitString
 }

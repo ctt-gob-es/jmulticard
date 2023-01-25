@@ -42,8 +42,8 @@ package es.gob.jmulticard.card.dnie;
 import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
 
-/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a de certificados) para
- * el establecimiento de canal seguro de PIN CWA-14890.
+/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a
+ * de certificados) para el establecimiento de canal seguro de PIN CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
@@ -132,7 +132,7 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
         public BigInteger getModulus() {
-            return this.ifdModulus;
+            return ifdModulus;
         }
 
         @Override
@@ -152,7 +152,7 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return this.ifdPrivateExponent;
+            return ifdPrivateExponent;
         }
     };
 

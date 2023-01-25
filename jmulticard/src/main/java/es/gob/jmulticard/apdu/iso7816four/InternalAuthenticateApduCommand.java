@@ -41,9 +41,10 @@ package es.gob.jmulticard.apdu.iso7816four;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-/** APDU ISO 7816-4 mediante la que se pide a la tarjeta que demuestre que posee la
- * clave privada de su certificado de componente. *
- * @author Carlos Gamuci Mill&aacute;n */
+/** APDU ISO 7816-4 mediante la que se pide a la tarjeta que demuestre
+ * que posee la clave privada de su certificado de componente.
+ * @author Carlos Gamuci Mill&aacute;n
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class InternalAuthenticateApduCommand extends CommandApdu {
 
 	/** Byte de instrucci&oacute;n de la APDU. */
@@ -56,7 +57,9 @@ public final class InternalAuthenticateApduCommand extends CommandApdu {
 	 * @param cla Clase (CLA) de la APDU.
 	 * @param randomBytes Array de 8 octetos aleatorios para la autenticaci&oacute;n.
 	 * @param privateKeyRef Referencia a la clave privada del certificado a autenticar. */
-	public InternalAuthenticateApduCommand(final byte cla, final byte[] randomBytes, final byte[] privateKeyRef) {
+	public InternalAuthenticateApduCommand(final byte cla,
+			                               final byte[] randomBytes,
+			                               final byte[] privateKeyRef) {
 		super(
 			cla,									// CLA
 			INS_INTERNAL_AUTHENTICATE,				// INS

@@ -42,7 +42,7 @@ package es.gob.jmulticard.asn1.der;
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 
 /** Tipo ASN&#46;1 <i>Set</i> (de cero a N elementos, el orden no es relevante).
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Set extends Sequence {
 
     /** Construye el <i>Set</i> ASN&#46;1.

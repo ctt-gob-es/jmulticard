@@ -45,7 +45,7 @@ import es.gob.jmulticard.HexUtils;
 
 /** Palabra de estado (<cite>Status Word</cite>) de una APDU.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote
- * @author Gonzalo Henr&iacute;quez Manzano." */
+ * @author Gonzalo Henr&iacute;quez Manzano. */
 public final class StatusWord implements Serializable {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
@@ -79,8 +79,8 @@ public final class StatusWord implements Serializable {
         return lsb;
     }
 
-    /** Obtiene los octetos que conforman el StatusWord.
-     * @return Array de octetos que conforman el <i>StatusWord</i>. */
+    /** Obtiene los octetos que conforman la palabra de estado.
+     * @return Array de octetos que conforman la palabra de estado. */
     public byte[] getBytes() {
     	return new byte[] { msb, lsb };
     }

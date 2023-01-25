@@ -45,7 +45,8 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo ASN&#46;1 BitString. */
+/** Tipo ASN&#46;1 BitString.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class BitString extends DecoderObject {
 
     /** Tipo ASN&#46;1 "BIT STRING". */
@@ -55,12 +56,12 @@ public abstract class BitString extends DecoderObject {
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-        this.tlv = new Tlv(getRawDerValue());
-        if (TAG_BITSTRING != this.tlv.getTag()) {
+        tlv = new Tlv(getRawDerValue());
+        if (TAG_BITSTRING != tlv.getTag()) {
             throw new Asn1Exception(
         		"Se esperaba un TLV de tipo BitString pero se ha encontrado uno de tipo " + //$NON-NLS-1$
                 HexUtils.hexify(new byte[] {
-                	this.tlv.getTag()
+                	tlv.getTag()
                 }, false)
             );
         }
@@ -74,7 +75,7 @@ public abstract class BitString extends DecoderObject {
     /** Obtiene el valor binario del campo de datos del <i>BitString</i>.
      * @return Valor binario del campo de datos del <i>BitString</i>. */
     public byte[] getValue() {
-    	return this.tlv != null ? this.tlv.getValue() : null;
+    	return tlv != null ? tlv.getValue() : null;
     }
 
 }

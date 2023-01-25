@@ -48,7 +48,7 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo ASN&#46;1 espec&iacute;fico del contexto.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class ContextSpecific extends DecoderObject {
 
     private transient DecoderObject object = null;
@@ -56,10 +56,10 @@ public abstract class ContextSpecific extends DecoderObject {
     /** Obtiene el objeto ASN&#46;1.
      * @return Objeto ASN&#46;1. */
     protected DecoderObject getObject() {
-        if (this.object == null) {
+        if (object == null) {
             throw new IllegalStateException();
         }
-        return this.object;
+        return object;
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class ContextSpecific extends DecoderObject {
 
         final DecoderObject tmpDo;
         try {
-            tmpDo = this.elementType.getConstructor().newInstance();
+            tmpDo = elementType.getConstructor().newInstance();
         }
         catch (final IllegalAccessException    |
         		     InstantiationException    |
@@ -76,12 +76,12 @@ public abstract class ContextSpecific extends DecoderObject {
         		     NoSuchMethodException     |
         		     SecurityException e) {
             throw new Asn1Exception(
-        		"No se ha podido instanciar un " + this.elementType.getName() + " en el contexto especifico", e //$NON-NLS-1$ //$NON-NLS-2$
+        		"No se ha podido instanciar un " + elementType.getName() + " en el contexto especifico", e //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
         final Tlv tlv = new Tlv(getRawDerValue());
         tmpDo.setDerValue(tlv.getValue());
-        this.object = tmpDo;
+        object = tmpDo;
     }
 
     private transient final Class<? extends DecoderObject> elementType;
@@ -94,7 +94,7 @@ public abstract class ContextSpecific extends DecoderObject {
         		"El tipo contenido dentro de ContextSpecific no puede ser nulo" //$NON-NLS-1$
     		);
         }
-        this.elementType = type;
+        elementType = type;
     }
 
     @Override

@@ -43,7 +43,8 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-8 para la realizaci&oacute;n de una operaci&oacute;n de seguridad, m&aacute;s
  * concretamente la verificaci&oacute;n de un certificado.
- * @author Carlos Gamuci Mill&aacute;n */
+ * @author Carlos Gamuci Mill&aacute;n
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PsoVerifyCertificateApduCommand extends CommandApdu {
 
 	/** Octeto de instrucci&oacute;n de la APDU. */

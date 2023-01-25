@@ -35,7 +35,7 @@ import es.gob.jmulticard.asn1.der.Record;
  *   direct-protected   [2] EnvelopedData   {SEQUENCE OF ObjectType},
  * }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Odf extends Record {
 
 	/** Construye un objeto PKCS#15 ODF (<i>Object Description File</i>) ASN&#46;1. */
@@ -99,5 +99,4 @@ public final class Odf extends Record {
 				" Ruta hacia el PuKDF: " + getPuKdfPath() //$NON-NLS-1$
 		;
 	}
-
 }

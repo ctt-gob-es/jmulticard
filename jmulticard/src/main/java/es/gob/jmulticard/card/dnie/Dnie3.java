@@ -51,9 +51,6 @@ import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.asn1.icao.Com;
@@ -74,9 +71,12 @@ import es.gob.jmulticard.card.icao.MrtdLds1;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3&#46;0.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Dnie3 extends Dnie implements MrtdLds1 {
 
     private transient String idesp = null;
@@ -309,6 +309,12 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
         }
     	return getConnection();
     }
+
+	@Override
+	protected boolean needsPinForLoadingCerts() {
+		// "true" en DNIe 1.0, "false" en cualquier otro.
+		return false;
+	}
 
 
 	//*************************************************************************

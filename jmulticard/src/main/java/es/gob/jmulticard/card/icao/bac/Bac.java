@@ -15,11 +15,11 @@ import es.gob.jmulticard.CryptoHelper.DigestAlgorithm;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.apdu.iso7816four.ExternalAuthenticateApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.GetChallengeApduCommand;
 import es.gob.jmulticard.card.icao.MrzInfo;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
 
 /** Implementaci&oacute;n del protocolo BAC (<i>basic Access Control</i>).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

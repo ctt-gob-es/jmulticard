@@ -53,27 +53,27 @@ import javax.smartcardio.TerminalFactory;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionOpenedInExclusiveModeException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.CardConnectionListener;
-import es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import es.gob.jmulticard.apdu.connection.LostChannelException;
-import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
+import es.gob.jmulticard.connection.AbstractApduConnectionIso7816;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionOpenedInExclusiveModeException;
+import es.gob.jmulticard.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.connection.CardConnectionListener;
+import es.gob.jmulticard.connection.CardNotPresentException;
+import es.gob.jmulticard.connection.LostChannelException;
+import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre
  * JSR-268 SmartCard I/O.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
 	private static final boolean DEBUG = false;
 
 	/** Tama&ntilde;o m&aacute;ximo de las APDU.
-	 * Por encima de este tama&ntilde;o, se hace autom&aacute;ticamente una envoltura en
-	 * varias APDU. */
+	 * Por encima de este tama&ntilde;o, se hace autom&aacute;ticamente
+	 * una envoltura en varias APDU. */
 	private static final int MAX_APDU_SIZE = 0xFF;
 
     /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
@@ -345,7 +345,8 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             }
             catch (final ApduConnectionException e) {
                 LOGGER.warning(
-                    "Error intentando cerrar la conexion con el lector: " + e); //$NON-NLS-1$
+                    "Error intentando cerrar la conexion con el lector: " + e //$NON-NLS-1$
+        		);
             }
         }
         terminalNumber = terminalN;
@@ -387,7 +388,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             if (DEBUG) {
             	LOGGER.info(
         			"Respuesta:\n" + //$NON-NLS-1$
-						HexUtils.hexify(response.getBytes(), true)
+						HexUtils.hexify(response.getBytes(), command.length > 32) // En APDU mayores de 32 octetos separamos lineas y octetos
 				);
             }
             return response;

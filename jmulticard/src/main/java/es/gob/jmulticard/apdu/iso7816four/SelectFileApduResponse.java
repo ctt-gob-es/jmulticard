@@ -44,7 +44,7 @@ import es.gob.jmulticard.apdu.Apdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
 /** APDU respuesta al comando APDU ISO 7816-4 de selecci&oacute;n de fichero.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SelectFileApduResponse extends ResponseApdu {
 
 	/** Nombre del DF que contiene el EF. */
@@ -106,7 +106,7 @@ public final class SelectFileApduResponse extends ResponseApdu {
     }
 
     /** Obtiene el nombre del DF.
-     * @return Nombre del DF */
+     * @return Nombre del DF. */
     byte[] getDfName() {
     	if (dfName != null) {
 	        final byte[] out = new byte[dfName.length];
@@ -117,7 +117,7 @@ public final class SelectFileApduResponse extends ResponseApdu {
     }
 
     /** Devuelve el identificador del fichero seleccionado.
-     * @return Identificador del fichero */
+     * @return Identificador del fichero. */
     byte[] getFileId() {
     	if (fileId != null) {
 	        final byte[] out = new byte[fileId.length];
@@ -128,7 +128,7 @@ public final class SelectFileApduResponse extends ResponseApdu {
     }
 
     /** Devuelve la longitud del fichero seleccionado.
-     * @return Longitud del fichero */
+     * @return Longitud del fichero. */
     public int getFileLength() {
     	if (fileLength != null) {
     		return (fileLength[0] & 0xFF) << 8 | fileLength[1] & 0xFF;
@@ -159,5 +159,4 @@ public final class SelectFileApduResponse extends ResponseApdu {
     	sb.append(" Longitud del fichero: " + getFileLength()); //$NON-NLS-1$
     	return sb.toString();
     }
-
 }

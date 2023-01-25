@@ -13,10 +13,6 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.CardNotPresentException;
-import es.gob.jmulticard.apdu.connection.NoReadersFoundException;
 import es.gob.jmulticard.apdu.gemalto.GemaltoVerifyApduCommand;
 import es.gob.jmulticard.apdu.gemalto.MseSetSignatureKeyApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -32,9 +28,13 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.CardNotPresentException;
+import es.gob.jmulticard.connection.NoReadersFoundException;
 
 /** Tarjeta Gemalto TUI R5 MPCOS.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TuiR5 extends AbstractIso7816FourCard implements CryptoCard {
 
     private static final byte[] ATR_MASK = {

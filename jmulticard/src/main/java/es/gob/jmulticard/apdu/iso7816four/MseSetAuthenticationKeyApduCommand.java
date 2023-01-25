@@ -41,13 +41,15 @@ package es.gob.jmulticard.apdu.iso7816four;
 
 /** APDU ISO 7816-4 de gesti&oacute;n de entorno de seguridad orientada a
  * establecer una clave p&uacute;blica para autenticaci&oacute;n interna y externa.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Carlos Gamuci Mill&aacute;n. */
 public final class MseSetAuthenticationKeyApduCommand extends MseSetAuthenticationTemplateApduCommand {
 
     /** Crea un objeto para la gesti&oacute;n del entorno de seguridad.
      * @param cla Clase (CLA) de la APDU.
-     * @param publicKeyFileId Identificador de campo de clave p&uacute;blica (CHR). Se utilizan los 12 octetos,
-     *        rellenando con ceros por la izquierda desde los 8 m&iacute;nimos si es necesario
+     * @param publicKeyFileId Identificador de campo de clave p&uacute;blica (CHR).
+     *                        Se utilizan los 12 octetos, rellenando con ceros por la
+     *                        izquierda desde los 8 m&iacute;nimos si es necesario
      * @param privateKeyRef Referencia a clave privada. */
     public MseSetAuthenticationKeyApduCommand(final byte cla,
     		                                  final byte[] publicKeyFileId,

@@ -49,7 +49,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * <b>Importante</b>: La implementaci&oacute;n actual est&aacute; ligada a Gemalto en el sentido
  * de que siempre se usa una longitud de 16 (0x10h) caracteres para el PIN, completando con
  * 0x00h el valor real del PIN.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class GemaltoVerifyApduCommand extends CommandApdu {
 
 	/** C&oacute;digo de instrucci&oacute;n de la APDU. */

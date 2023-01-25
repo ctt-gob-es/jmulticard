@@ -42,7 +42,7 @@ package es.gob.jmulticard.card;
 import es.gob.jmulticard.HexUtils;
 
 /** Indica que se esperaba un tipo de tarjeta pero se ha encontrado otro no compatible.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class InvalidCardException extends CardException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
@@ -61,9 +61,9 @@ public final class InvalidCardException extends CardException {
      * @param desc Descripci&oacute;n de la raz&oacute;n de invalidez de la tarjeta */
     public InvalidCardException(final String desc) {
     	super(desc);
-    	this.name = null;
-    	this.badAtr = null;
-    	this.atr = null;
+    	name = null;
+    	badAtr = null;
+    	atr = null;
     }
 
     /** Construye una excepci&oacute;n de tarjeta inv&aacute;lida.
@@ -76,37 +76,37 @@ public final class InvalidCardException extends CardException {
               + "' pero se encontro otra con ATR=" + //$NON-NLS-1$
               (foundAtr == null ? "NULO" : HexUtils.hexify(foundAtr, false)) //$NON-NLS-1$
         );
-        this.atr = expectedAtr;
-        this.name = expectedCardName;
+        atr = expectedAtr;
+        name = expectedCardName;
         if (foundAtr != null) {
-            this.badAtr = new byte[foundAtr.length];
-            System.arraycopy(foundAtr, 0, this.badAtr, 0, this.badAtr.length);
+            badAtr = new byte[foundAtr.length];
+            System.arraycopy(foundAtr, 0, badAtr, 0, badAtr.length);
         }
         else {
-            this.badAtr = null;
+            badAtr = null;
         }
     }
 
     /** Obtiene el ATR de la tarjeta que se esperaba.
      * @return ATR de la tarjeta que se esperaba */
     public Atr getExpectedAtr() {
-        return this.atr;
+        return atr;
     }
 
     /** Obtiene el nombre de la tarjeta que se esperaba.
      * @return nombre de la tarjeta que se esperaba */
     public String getExpectedCardName() {
-        return this.name;
+        return name;
     }
 
     /** Obtiene el ATR (binario) de la tarjeta encontrada.
      * @return ATR (binario) de la tarjeta encontrada */
     public byte[] getFoundAtr() {
-        if (this.badAtr == null) {
+        if (badAtr == null) {
             return null;
         }
-        final byte[] tmpAtr = new byte[this.badAtr.length];
-        System.arraycopy(this.badAtr, 0, tmpAtr, 0, this.badAtr.length);
+        final byte[] tmpAtr = new byte[badAtr.length];
+        System.arraycopy(badAtr, 0, tmpAtr, 0, badAtr.length);
         return tmpAtr;
     }
 }

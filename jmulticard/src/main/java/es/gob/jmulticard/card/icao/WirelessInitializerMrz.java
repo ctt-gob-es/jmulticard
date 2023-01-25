@@ -19,17 +19,17 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 		if (mrz == null) {
 			throw new IllegalArgumentException("La MRZ no puede ser nula"); //$NON-NLS-1$
 		}
-		this.k = mrz;
+		k = mrz;
 	}
 
 	@Override
 	public String toString() {
-		return new String(this.k);
+		return new String(k);
 	}
 
 	@Override
 	public byte[] getBytes() {
-		return this.k;
+		return k;
 	}
 
 	@Override
@@ -42,7 +42,8 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 	 * @param cryptoHelper Clase para la realizaci&oacute;n de operaciones criptogr&aacute;ficas.
 	 * @return Inicializador necesario para la clave.
 	 * @throws MalformedMrzException Si la MRZ est&aacute; mal formada. */
-	public static WirelessInitializerMrz deriveMrz(final String mrz, final CryptoHelper cryptoHelper) throws MalformedMrzException {
+	public static WirelessInitializerMrz deriveMrz(final String mrz,
+			                                       final CryptoHelper cryptoHelper) throws MalformedMrzException {
 		if (mrz == null || mrz.isEmpty()) {
 			throw new IllegalArgumentException(
 				"El valor no puede ser nulo ni vacio" //$NON-NLS-1$

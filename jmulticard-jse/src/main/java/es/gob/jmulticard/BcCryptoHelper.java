@@ -223,6 +223,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     private static byte[] doRsa(final byte[] data,
     		                    final RSAKey key,
     		                    final boolean forEncryption) throws IOException {
+
     	final boolean isPrivateKey = key instanceof RSAPrivateKey;
 
     	final AsymmetricKeyParameter akp = new RSAKeyParameters(
@@ -735,7 +736,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 		// Solo creamos el PaceChannelHelper si nos lo piden, asi
 		// evitamos crearlo en uso con contactos (PACE solo se usa con NFC).
 		if (paceChannelHelper == null) {
-			paceChannelHelper = new PaceChannelHelperBc(this);
+			paceChannelHelper = new BcPaceChannelHelper(this);
 		}
 		return paceChannelHelper;
 	}

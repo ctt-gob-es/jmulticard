@@ -15,5 +15,4 @@ public final class InvalidSecurityObjectException extends CardException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 6199689552084252644L;
-
 }

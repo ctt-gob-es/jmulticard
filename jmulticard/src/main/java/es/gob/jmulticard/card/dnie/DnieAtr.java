@@ -4,7 +4,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.card.Atr;
 
 /** ATR de un DNIe.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DnieAtr extends Atr {
 
 	private static final long serialVersionUID = -4364467785373401604L;

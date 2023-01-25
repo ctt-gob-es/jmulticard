@@ -44,6 +44,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 /** APDU ISO 7816-4 de verificaci&oacute;n de intentos restantes de PIN.
  * <b>Importante</b>: La implementaci&oacute;n actual solo funciona bajo CWA-14890, para un
  * funcionamiento con canal no cifrado es necesario sobrecargar <code>getBytes()</code>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Sergio Mart&iacute;nez Rico. */
 public final class RetriesLeftApduCommand extends CommandApdu {
 
@@ -55,7 +56,7 @@ public final class RetriesLeftApduCommand extends CommandApdu {
         super(
     		new byte[] {
 	    		(byte)0x00,							// CLA
-	    		RetriesLeftApduCommand.INS_VERIFY, 	// INS
+	    		RetriesLeftApduCommand.INS_VERIFY,	// INS
 	    		(byte)0x00, 						// P1
 	    		(byte)0x00,							// P2
 	    		(byte)0x00							// Le

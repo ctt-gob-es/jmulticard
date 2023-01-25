@@ -41,16 +41,17 @@ package es.gob.jmulticard.ui.passwordcallback;
 
 import java.awt.Component;
 
-/** Gestor de opciones est&aacute;ticas de los <i>PasswordCallback</i>. Mediante este gestor es posible
- * establecer opciones en los <i>PasswordCallback</i> de forma est&aacute;tica, sin tener una referencia
- * directa a ellas.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+/** Gestor de opciones est&aacute;ticas de los <i>PasswordCallback</i>.
+ * Mediante este gestor es posible establecer opciones en los <i>PasswordCallback</i>
+ * de forma est&aacute;tica, sin tener una referencia directa a ellas.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PasswordCallbackManager {
 
 	private static Component dialogOwner = null;
 
 	/** Establece el componente padre de los di&aacute;logos gr&aacute;ficos (para la modalidad)
-	 * @param comp Componente (<code>java.awt.Component</code>) padre de los di&aacute;logos gr&aacute;ficos (para la modalidad) */
+	 * @param comp Componente (<code>java.awt.Component</code>) padre de los
+	 *             di&aacute;logos gr&aacute;ficos (para la modalidad). */
 	public static void setDialogOwner(final Object comp) {
 		if (comp instanceof Component) {
 			dialogOwner = (Component) comp;

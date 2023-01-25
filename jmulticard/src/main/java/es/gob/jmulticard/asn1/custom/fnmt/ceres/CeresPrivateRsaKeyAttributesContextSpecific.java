@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
 import es.gob.jmulticard.asn1.der.pkcs15.Path;
 
 /** Objeto ASN&#46;1 de contexto espec&iacute;fico 01 del <i>PrivateRsaKeyAttributes</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresPrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA1;
@@ -73,5 +73,4 @@ public final class CeresPrivateRsaKeyAttributesContextSpecific extends ContextSp
 	String getPath() {
 		return new String(((Path)getObject()).getPathBytes());
 	}
-
 }

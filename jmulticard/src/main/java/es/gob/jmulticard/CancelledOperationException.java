@@ -41,7 +41,8 @@
 package es.gob.jmulticard;
 
 /** Excepci&oacute;n que indica una operaci&oacute;n cancelada voluntariamente
- * por el usuario. */
+ * por el usuario.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CancelledOperationException extends RuntimeException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

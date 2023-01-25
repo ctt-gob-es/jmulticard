@@ -52,7 +52,8 @@ import es.gob.jmulticard.asn1.der.Utf8String;
  *  }
  *  Label ::= UTF8String (SIZE(0..pkcs15-ub-label))
  * </pre>
- * @author Gonzalo Henr&iacute;quez Manzano */
+ * @author Gonzalo Henr&iacute;quez Manzano
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CommonObjectAttributes extends Sequence {
 
     /** Construye un objeto <i>CommonObjectAttributes</i> ASN&#46;1 de PKCS#15. */

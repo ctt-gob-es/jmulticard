@@ -1,7 +1,7 @@
 package es.gob.jmulticard.card;
 
 /** Excepci&oacute;n relativa a la seguridad de una operaci&oacute;n criptogr&aacute;fica de tarjeta.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CryptoCardSecurityException extends CardException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

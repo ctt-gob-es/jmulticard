@@ -4,7 +4,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.StatusWord;
 
 /** APDU ISO 7816-4 de lectura de registro.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class ReadRecordApduCommand extends CommandApdu {
 
 	private static final byte INS_READ_RECORD = (byte) 0xB2;
@@ -24,5 +24,4 @@ public final class ReadRecordApduCommand extends CommandApdu {
 			Integer.valueOf(234) // 0xEA, tamano seguro de lectura
 		);
 	}
-
 }

@@ -44,7 +44,6 @@ import java.math.BigInteger;
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.der.ContextSpecific;
 
-
 /** Tipo PKCS#15 ASN&#46;1 <i>CertificateObject</i> (<i>CertificateInfoObject</i> en ISO 7816-15).
  *  <pre>
  *    CertificateObject {CertAttributes} ::= PKCS15Object {
@@ -87,7 +86,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *    }
  *
  *  </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class CertificateObject extends Pkcs15Object {
 
 	/** Crea un objeto <i>CertificateObject</i>. */
@@ -158,5 +157,4 @@ public class CertificateObject extends Pkcs15Object {
 			"\nAlias del certificado: " + getCommonObjectAttributes().getLabel() + //$NON-NLS-1$
 				"\nIdentificador del certificado: " + getClassAttributes().toString(); //$NON-NLS-1$
     }
-
 }

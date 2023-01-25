@@ -42,8 +42,8 @@ package es.gob.jmulticard.jse.provider.gide;
 import java.security.Provider;
 import java.security.ProviderException;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
+import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Proveedor criptogr&aacute;fico JCA para tarjeta G&amp;D SmartCafe con Applet PKCS#15.

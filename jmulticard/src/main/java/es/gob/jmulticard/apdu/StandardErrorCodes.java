@@ -49,7 +49,7 @@ final class StandardErrorCodes {
      * @return Descripci&oacute;n del error asociado a la <i>Status Word</i> proporcionada. */
     static String getErrorDescription(final StatusWord sw) {
     	if (sw == null) {
-    		return "Status Word nula"; //$NON-NLS-1$
+    		return "Palabra de estado nula"; //$NON-NLS-1$
     	}
     	if (ERRORS.containsKey(sw)) {
     		return ERRORS.get(sw);

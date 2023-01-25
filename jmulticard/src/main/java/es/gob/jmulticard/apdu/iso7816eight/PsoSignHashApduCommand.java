@@ -41,9 +41,10 @@ package es.gob.jmulticard.apdu.iso7816eight;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-/** APDU ISO 7816-8 para la realizaci&oacute;n de una operaci&oacute;n de seguridad, m&aacute;s
- * concretamente, la ejecuci&oacute;n de una firma digital.
- * @author Carlos Gamuci Mill&aacute;n */
+/** APDU ISO 7816-8 para la realizaci&oacute;n de una operaci&oacute;n de
+ * seguridad, m&aacute;s concretamente, la ejecuci&oacute;n de una firma digital.
+ * @author Carlos Gamuci Mill&aacute;n
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PsoSignHashApduCommand extends CommandApdu {
 
 	/** Byte de instrucci&oacute;n de la APDU. */
@@ -60,12 +61,12 @@ public final class PsoSignHashApduCommand extends CommandApdu {
 	 * @param digestInfo Objeto ASN&#46;1 de tipo <i>DigestInfo</i> generado a partir de la huella digital. */
 	public PsoSignHashApduCommand(final byte cla, final byte[] digestInfo) {
 		super(
-			cla,									// CLA
-			INS_PERFORM_SECURITY_OPERATION, 		// INS
-			DATA_FIELD_SIGN_OPERATION, 				// P1
-			DATA_FIELD_SIGN_HASH,					// P2
-			digestInfo,								// Data
-			null									// Le
+			cla,								// CLA
+			INS_PERFORM_SECURITY_OPERATION,		// INS
+			DATA_FIELD_SIGN_OPERATION, 			// P1
+			DATA_FIELD_SIGN_HASH,				// P2
+			digestInfo,							// Data
+			null								// Le
 		);
 	}
 }

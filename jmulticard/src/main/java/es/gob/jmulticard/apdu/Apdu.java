@@ -53,21 +53,21 @@ public class Apdu {
     /** Obtiene los octetos que conforman la APDU.
      * @return Array de octetos que conforman la APDU. */
     public byte[] getBytes() {
-        final byte[] response = new byte[this.apduBytes.length];
-        System.arraycopy(this.apduBytes, 0, response, 0, this.apduBytes.length);
+        final byte[] response = new byte[apduBytes.length];
+        System.arraycopy(apduBytes, 0, response, 0, apduBytes.length);
         return response;
     }
 
     /** Establece los octetos que conforman la APDU.
      * @param apdu Array de octetos que conforman la APDU. */
     protected void setBytes(final byte[] apdu) {
-        this.apduBytes = new byte[apdu.length];
-        System.arraycopy(apdu, 0, this.apduBytes, 0, apdu.length);
+        apduBytes = new byte[apdu.length];
+        System.arraycopy(apdu, 0, apduBytes, 0, apdu.length);
     }
 
     @Override
 	public String toString() {
-    	return HexUtils.hexify(getBytes(), true);
+    	return HexUtils.hexify(getBytes(), getBytes().length > 32);
     }
 
     /** Constructor. */

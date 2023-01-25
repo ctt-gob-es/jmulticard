@@ -84,5 +84,4 @@ public final class CommonPrivateKeyAttributesContextSpecific extends ContextSpec
 	public X500Principal getKeyPrincipal() {
 		return ((CommonPrivateKeyAttributes)getObject()).getKeyPrincipal();
 	}
-
 }

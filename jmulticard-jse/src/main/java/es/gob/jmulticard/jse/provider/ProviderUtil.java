@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnection;
 
 /** Utilidades comunes a todos los proveedores.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

@@ -76,8 +76,7 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
 
     /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
-     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
-     * utiliza).
+     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se utiliza).
      * (<i>sn-IFD</i>). */
 	private static final byte[] CHR_C_CV_IFD = {
 		(byte) 0x40, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01
@@ -136,7 +135,7 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
 
         @Override
         public BigInteger getModulus() {
-            return this.ifdModulus;
+            return ifdModulus;
         }
 
         @Override
@@ -156,7 +155,7 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return this.ifdPrivateExponent;
+            return ifdPrivateExponent;
         }
     };
 

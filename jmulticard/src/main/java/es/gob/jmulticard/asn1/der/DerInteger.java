@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo ASN&#46;1 <i>Integer</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class DerInteger extends DecoderObject {
 
 	private static final byte TAG_INTEGER = (byte) 0x02;
@@ -55,16 +55,16 @@ public class DerInteger extends DecoderObject {
 
 	@Override
     protected void decodeValue() throws TlvException {
-		this.value = new BigInteger(new Tlv(getRawDerValue()).getValue());
+		value = new BigInteger(new Tlv(getRawDerValue()).getValue());
 	}
 
 	/** Obtiene el valor entero (<code>BigInteger</code>) del objeto.
 	 * @return Valor del objeto. */
 	public BigInteger getIntegerValue() {
-		if (this.value == null) {
+		if (value == null) {
 			throw new IllegalStateException("El valor del objeto aun no esta establecido"); //$NON-NLS-1$
 		}
-		return this.value;
+		return value;
 	}
 
 	@Override
