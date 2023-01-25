@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo ASN&#46;1 <i>Boolean</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class DerBoolean extends DecoderObject {
 
 	private static final byte TAG_BOOLEAN = (byte)0x01;
@@ -56,7 +56,7 @@ public class DerBoolean extends DecoderObject {
     protected void decodeValue() throws Asn1Exception, TlvException {
 		final Tlv tmpTlv = new Tlv(getRawDerValue());
 		checkTag(tmpTlv.getTag());
-		this.booleanValue = Boolean.valueOf(tmpTlv.getValue()[0] == (byte) 0x00);
+		booleanValue = Boolean.valueOf(tmpTlv.getValue()[0] == (byte) 0x00);
 	}
 
 	@Override
@@ -67,10 +67,10 @@ public class DerBoolean extends DecoderObject {
 	/** Obtiene el valor del objeto.
 	 * @return Valor del objeto <i>Boolean</i>. */
 	public boolean getBooleanValue() {
-		if (this.booleanValue == null) {
+		if (booleanValue == null) {
 			throw new IllegalStateException("El valor del objeto boolean no esta establecido"); //$NON-NLS-1$
 		}
-		return this.booleanValue.booleanValue();
+		return booleanValue.booleanValue();
 	}
 
 }

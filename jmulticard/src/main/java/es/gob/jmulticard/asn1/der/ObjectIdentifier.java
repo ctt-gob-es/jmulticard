@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo ASN&#46;1 OID.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class ObjectIdentifier extends DecoderObject {
 
 	private static final byte TAG_OBJECTID = (byte) 0x06;
@@ -68,7 +68,7 @@ public final class ObjectIdentifier extends DecoderObject {
 
 	@Override
     protected void decodeValue() throws TlvException {
-		this.rawValue = new Tlv(getRawDerValue()).getValue();
+		rawValue = new Tlv(getRawDerValue()).getValue();
 	}
 
 	@Override
@@ -79,10 +79,10 @@ public final class ObjectIdentifier extends DecoderObject {
 	/** Devuelve una representaci&oacute;n textual del c&oacute;digo OID o su valor hexadecimal si no se reconoce. */
 	@Override
     public String toString() {
-		if (this.rawValue == null) {
+		if (rawValue == null) {
 			throw new IllegalStateException("El valor del OID no esta establecido"); //$NON-NLS-1$
 		}
-		return OidDictionary.getOidDescription(this.rawValue);
+		return OidDictionary.getOidDescription(rawValue);
 	}
 
 }

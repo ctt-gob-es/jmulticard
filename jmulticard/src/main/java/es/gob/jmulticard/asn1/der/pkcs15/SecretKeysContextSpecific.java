@@ -10,7 +10,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *  SecretKeys ::= PathOrObjects {PrivateKeyType}
  * </pre>
  * Esta implememtaci&oacute;n solo soporta <code>Path</code> como tipo de los registros.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SecretKeysContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA3;

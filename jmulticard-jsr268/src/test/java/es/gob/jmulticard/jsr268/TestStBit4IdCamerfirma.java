@@ -12,13 +12,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.bit4id.stcm.StCard;
+import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 
 /** Pruebas de la tajeta de <a href="http://www.bit4id.com/">Bit4Id</a> con chip <a href="http://www.st.com/">ST</a>
  *  distribuida por <a href="http://www.camerfirma.com/">CamerFirma</a>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestStBit4IdCamerfirma {
 
 	private static final String PIN =  "12345678"; //$NON-NLS-1$

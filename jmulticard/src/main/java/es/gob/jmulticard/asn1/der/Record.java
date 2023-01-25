@@ -50,7 +50,8 @@ import es.gob.jmulticard.asn1.TlvException;
 
 /** Registro de objetos ASN&#46;1. Un registro de objetos es una concatenaci&oacute;n directa de tipos ASN&#46;1 pero
  * sin construir un tipo compuesto, por lo que no conforma en si un TLV (y no tiene etiqueta de tipo). Todos los
- * objetos concatenados deben ser del mismo tipo ASN&#46;1. */
+ * objetos concatenados deben ser del mismo tipo ASN&#46;1.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Record extends DecoderObject {
 
     private transient final OptionalDecoderObjectElement[] elementsTypes;
@@ -66,24 +67,24 @@ public abstract class Record extends DecoderObject {
         		"Los tipos de los elementos del registro no pueden ser nulos ni vacios" //$NON-NLS-1$
             );
         }
-        this.elementsTypes = new OptionalDecoderObjectElement[types.length];
-        System.arraycopy(types, 0, this.elementsTypes, 0, types.length);
+        elementsTypes = new OptionalDecoderObjectElement[types.length];
+        System.arraycopy(types, 0, elementsTypes, 0, types.length);
     }
 
     /** Obtiene el n&uacute;mero de elementos en el registro.
      * @return N&uacute;mero de elementos en el registro */
     protected int getElementCount() {
-        return this.elements.size();
+        return elements.size();
     }
 
     /** Obtiene el elemento ASN&#46;1 situado en una posici&oacute;n concreta del registro.
      * @param pos Posici&oacute;n del elemento deseado.
      * @return Elemento ASN&#46;1 situado en la posici&oacute;n indicada. */
     protected DecoderObject getElementAt(final int pos) {
-        if (pos < 0 || pos >= this.elements.size()) {
+        if (pos < 0 || pos >= elements.size()) {
             throw new IndexOutOfBoundsException("No existe un elemento en este registro en el indice " + Integer.toString(pos)); //$NON-NLS-1$
         }
-        return this.elements.get(pos);
+        return elements.get(pos);
     }
 
     @Override
@@ -95,24 +96,24 @@ public abstract class Record extends DecoderObject {
         Tlv tlv;
         byte[] remainingBytes;
         DecoderObject tmpDo;
-        for (int i = 0; i < this.elementsTypes.length; i++) {
+        for (int i = 0; i < elementsTypes.length; i++) {
         	try {
 	            remainingBytes = new byte[getRawDerValue().length - offset];
 	            System.arraycopy(getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
 	            tlv = new Tlv(remainingBytes);
 	            try {
-	                tmpDo = this.elementsTypes[i].getElementType().getConstructor().newInstance();
+	                tmpDo = elementsTypes[i].getElementType().getConstructor().newInstance();
 	            }
 	            catch (final Exception e) {
 	                throw new Asn1Exception(
-	            		"No se ha podido instanciar un " + this.elementsTypes[i].getElementType().getName() + //$NON-NLS-1$
+	            		"No se ha podido instanciar un " + elementsTypes[i].getElementType().getName() + //$NON-NLS-1$
 	                        " en la posicion " + Integer.toString(i) + " del registro", e //$NON-NLS-1$ //$NON-NLS-2$
 	                );
 	            }
 	            tmpDo.checkTag(tlv.getTag());
         	}
         	catch(final Exception e) {
-            	if (this.elementsTypes[i].isOptional()) {
+            	if (elementsTypes[i].isOptional()) {
                 	// Como no ha avanzado el offset, se reutilizara el tipo en el proximo elemento
             		continue;
             	}
@@ -120,7 +121,7 @@ public abstract class Record extends DecoderObject {
         	}
             offset = offset + tlv.getBytes().length;
         	tmpDo.setDerValue(tlv.getBytes());
-            this.elements.add(tmpDo);
+            elements.add(tmpDo);
         }
     }
 

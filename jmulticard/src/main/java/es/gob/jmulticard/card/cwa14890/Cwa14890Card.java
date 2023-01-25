@@ -44,20 +44,12 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Tarjetas acordes a la especificaci&oacute;n CWA-14890.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Cwa14890Card {
-
-    /** Verifica la CA intermedia del certificado de componente de la tarjeta.
-     * @throws CertificateException Cuando ocurre alg&uacute;n problema en la
-     *         validaci&oacute;n del certificado.
-     * @throws IOException Cuando ocurre alg&uacute;n problema en la selecci&oacute;n
-     *                     y lectura del certificado.
-     * @throws SecurityException Si falla la validaci&oacute;n de la CA. */
-    void verifyCaIntermediateIcc() throws CertificateException, IOException;
 
     /** Verifica el certificado de componente de la tarjeta.
      * @throws CertificateException Cuando ocurre alg&uacute;n problema en la

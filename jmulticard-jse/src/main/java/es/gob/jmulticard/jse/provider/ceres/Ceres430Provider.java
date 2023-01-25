@@ -42,8 +42,8 @@ package es.gob.jmulticard.jse.provider.ceres;
 import java.security.Provider;
 import java.security.ProviderException;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Proveedor criptogr&aacute;fico JCA para tarjetas CERES 4.30 o superiores. Esta tarjeta es

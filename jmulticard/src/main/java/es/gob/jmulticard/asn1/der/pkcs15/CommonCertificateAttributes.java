@@ -51,6 +51,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *  }
  *  Identifier ::= OCTET STRING (SIZE (0..pkcs15-ub-identifier))
  * </pre>
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Gonzalo Henr&iacute;quez Manzano. */
 public final class CommonCertificateAttributes extends Sequence {
 

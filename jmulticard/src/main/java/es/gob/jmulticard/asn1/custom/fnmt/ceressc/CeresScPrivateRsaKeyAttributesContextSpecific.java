@@ -53,7 +53,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateRsaKeyAttributes;
  *     ... -- For future extensions
  *   }
  * </PRE>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresScPrivateRsaKeyAttributesContextSpecific extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0xA1;

@@ -63,7 +63,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *    PrivateRsaKeyAttributes
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class PrivateKeyObject extends Pkcs15Object {
 
     /** Construye un tipo PrivateKeyObject ASN&#46;1.

@@ -62,7 +62,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  *    PrivateRsaKeyAttributes
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresPrivateKeyObject extends PrivateKeyObject {
 
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i>

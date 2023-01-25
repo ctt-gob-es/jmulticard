@@ -42,8 +42,8 @@ package es.gob.jmulticard.card.dnie;
 import java.math.BigInteger;
 import java.security.interfaces.RSAPrivateKey;
 
-/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a de certificados) para
- * el establecimiento de canal seguro de usuario CWA-14890.
+/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva
+ * jerarqu&iacute;a de certificados) para el establecimiento de canal seguro de usuario CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 final class Dnie3r2UsrCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
@@ -70,9 +70,9 @@ final class Dnie3r2UsrCwa14890Constants extends Dnie3r2Cwa14890Constants {
         (byte) 0x44, (byte) 0x49, (byte) 0x62, (byte) 0x00, (byte) 0x18
 	};
 
-    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
+    /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 octetos y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
-     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
+     * Aqu&iacute; indicamos los 8 octetos del n&uacute;mero de serie obviando el resto del campo (que no se
      * utiliza).
      * (<i>sn-IFD</i>). */
 	private static final byte[] CHR_C_CV_IFD = {
@@ -132,7 +132,7 @@ final class Dnie3r2UsrCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
         public BigInteger getModulus() {
-            return this.ifdModulus;
+            return ifdModulus;
         }
 
         @Override
@@ -152,7 +152,7 @@ final class Dnie3r2UsrCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return this.ifdPrivateExponent;
+            return ifdPrivateExponent;
         }
     };
 

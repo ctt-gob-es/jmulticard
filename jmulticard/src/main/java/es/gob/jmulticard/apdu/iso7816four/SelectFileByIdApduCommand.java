@@ -42,7 +42,7 @@ package es.gob.jmulticard.apdu.iso7816four;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU ISO 7816-4 de selecci&oacute;n de fichero por <i>Id</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SelectFileByIdApduCommand extends CommandApdu {
 
     /** Octeto de instrucci&oacute;n de la APDU. */

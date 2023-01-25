@@ -59,7 +59,8 @@ import es.gob.jmulticard.asn1.der.x509.RdnSequence;
  *    rdnSequence RDNSequence
  *  }
  * </pre>
- * @author Gonzalo Henr&iacute;quez Manzano */
+ * @author Gonzalo Henr&iacute;quez Manzano
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class X509CertificateAttributes extends Sequence {
 
 	/** Crea un objeto ASN&#46;1 PKCS#15 <i>X509CertificateAttributes</i>. */

@@ -42,7 +42,7 @@ package es.gob.jmulticard.card;
 import java.io.IOException;
 
 /** Excepci&oacute;n gen&eacute;rica relacionada con una tarjeta.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class CardException extends IOException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */

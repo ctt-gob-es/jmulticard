@@ -40,7 +40,7 @@
 package es.gob.jmulticard.ui.passwordcallback;
 
 /** Excepci&oacute;n que indica que no se ha podido obtener la consola del sistema
- * @author jlescanciano */
+ * @author Jos&eacute; Luis Escanciano. */
 public final class NoConsoleException extends RuntimeException {
 
 	private static final long serialVersionUID = -7334724850280997156L;
@@ -50,5 +50,4 @@ public final class NoConsoleException extends RuntimeException {
 	public NoConsoleException(final String message) {
 		super(message);
 	}
-
 }

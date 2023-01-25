@@ -44,7 +44,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU de firma de datos.
  * Los datos a firmar deben cargarse previamente con una APDU <code>LoadData</code>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresSignDataApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;

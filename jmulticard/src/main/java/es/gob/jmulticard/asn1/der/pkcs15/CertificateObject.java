@@ -86,7 +86,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *    }
  *
  *  </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class CertificateObject extends Pkcs15Object {
 
 	/** Crea un objeto <i>CertificateObject</i>. */

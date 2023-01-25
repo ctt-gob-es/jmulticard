@@ -4,7 +4,7 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 
 /** Clave privada de una TUI. La clase no contiene la clave privada en si, sino una referencia a ella
  * y una referencia a la propia TUI.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class TuiPrivateKeyReference implements PrivateKeyReference {
 
 	private transient final byte keyIndex;
@@ -12,15 +12,15 @@ public class TuiPrivateKeyReference implements PrivateKeyReference {
 	/** Construye una clave privada de una TUI.
 	 * @param index &Iacute;ndice hacia la clave privada */
 	TuiPrivateKeyReference(final byte index) {
-		this.keyIndex = index;
+		keyIndex = index;
 	}
 
 	byte getIndex() {
-		return this.keyIndex;
+		return keyIndex;
 	}
 
 	@Override
 	public String toString() {
-		return "Referencia a clave privada de TUI con el indice: " + Byte.toString(this.keyIndex); //$NON-NLS-1$
+		return "Referencia a clave privada de TUI con el indice: " + Byte.toString(keyIndex); //$NON-NLS-1$
 	}
 }

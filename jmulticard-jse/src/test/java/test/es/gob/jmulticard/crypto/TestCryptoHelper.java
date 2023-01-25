@@ -59,7 +59,6 @@ import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
 
-
 /** Pruebas de operaciones criptogr&aacute;ficas con BcCryptoHelper.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TestCryptoHelper {

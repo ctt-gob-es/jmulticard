@@ -68,7 +68,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  * }
  * </pre>
  * En este caso, las claves siempre ser&aacute;n de tipo RSA.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
 
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>)

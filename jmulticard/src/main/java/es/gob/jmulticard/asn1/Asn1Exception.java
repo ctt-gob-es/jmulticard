@@ -39,7 +39,8 @@
  */
 package es.gob.jmulticard.asn1;
 
-/** Excepci&oacute;n gen&eacute;rica de ASN&#46;1 DER. */
+/** Excepci&oacute;n gen&eacute;rica de ASN&#46;1 DER.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Asn1Exception extends Exception {
 
     private static final long serialVersionUID = 6806321101842954785L;

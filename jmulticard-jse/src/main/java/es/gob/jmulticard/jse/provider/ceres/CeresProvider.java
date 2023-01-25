@@ -3,8 +3,8 @@ package es.gob.jmulticard.jse.provider.ceres;
 import java.security.Provider;
 import java.security.ProviderException;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
+import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Proveedor criptogr&aacute;fico JCA para tarjeta FNMT-RCM-CERES.

@@ -48,9 +48,9 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 
-import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
+import es.gob.jmulticard.connection.LostChannelException;
 
 /**
  * RSA cipher implementation. Supports RSA en/decryption and signing/verifying
@@ -133,7 +133,7 @@ public final class DnieCipherImpl extends CipherSpi {
 
     /** Construye un cifrador RSA para el DNIe. */
     public DnieCipherImpl() {
-        this.paddingType = PAD_PKCS1;
+        paddingType = PAD_PKCS1;
     }
 
     @Override
@@ -149,13 +149,13 @@ public final class DnieCipherImpl extends CipherSpi {
     		throw new NoSuchPaddingException("El tipo de relleno no puede ser nulo"); //$NON-NLS-1$
     	}
         if (PAD_NONE.equalsIgnoreCase(paddingName)) {
-            this.paddingType = PAD_NONE;
+            paddingType = PAD_NONE;
         }
         else if (PAD_PKCS1.equalsIgnoreCase(paddingName)) {
-            this.paddingType = PAD_PKCS1;
+            paddingType = PAD_PKCS1;
         }
         else if ("oaeppadding".equals(paddingName.toLowerCase(Locale.ENGLISH))) { //$NON-NLS-1$
-			this.paddingType = PAD_OAEP_MGF1;
+			paddingType = PAD_OAEP_MGF1;
         }
         throw new NoSuchPaddingException("Relleno no soportado: " + paddingName); //$NON-NLS-1$
     }
@@ -168,7 +168,7 @@ public final class DnieCipherImpl extends CipherSpi {
 
     @Override
 	protected int engineGetOutputSize(final int inputLen) {
-        return this.outputSize;
+        return outputSize;
     }
 
     @Override
@@ -179,12 +179,12 @@ public final class DnieCipherImpl extends CipherSpi {
 
     @Override
 	protected AlgorithmParameters engineGetParameters() {
-        if (this.spec == null || !(this.spec instanceof OAEPParameterSpec)) {
+        if (spec == null || !(spec instanceof OAEPParameterSpec)) {
             return null;
         }
 		try {
 		    final AlgorithmParameters params = AlgorithmParameters.getInstance("OAEP"); //$NON-NLS-1$
-		    params.init(this.spec);
+		    params.init(spec);
 		    return params;
 		}
 		catch (final NoSuchAlgorithmException nsae) {
@@ -261,28 +261,28 @@ public final class DnieCipherImpl extends CipherSpi {
         }
         final RSAKey rsaKey = (RSAKey) key;
         if (key instanceof RSAPublicKey) {
-            this.mode = encrypt ? MODE_ENCRYPT : MODE_VERIFY;
-            this.publicKey = (RSAPublicKey)key;
-            this.privateKey = null;
+            mode = encrypt ? MODE_ENCRYPT : MODE_VERIFY;
+            publicKey = (RSAPublicKey)key;
+            privateKey = null;
         }
         else { // RSAPrivateKey
-            this.mode = encrypt ? MODE_SIGN : MODE_DECRYPT;
-            this.privateKey = (RSAPrivateKey)key;
-            this.publicKey = null;
+            mode = encrypt ? MODE_SIGN : MODE_DECRYPT;
+            privateKey = (RSAPrivateKey)key;
+            publicKey = null;
         }
         final int n = RSACore.getByteLength(rsaKey.getModulus());
-        this.outputSize = n;
-        this.bufOfs = 0;
-        if (PAD_NONE.equals(this.paddingType)) {
+        outputSize = n;
+        bufOfs = 0;
+        if (PAD_NONE.equals(paddingType)) {
             if (params != null) {
                 throw new InvalidAlgorithmParameterException(
             		"Parametros no soportados para datos sin relleno" //$NON-NLS-1$
         		);
             }
-            this.padding = RSAPadding.createInstance(RSAPadding.PAD_NONE, n, rnd);
-            this.buffer = new byte[n];
+            padding = RSAPadding.createInstance(RSAPadding.PAD_NONE, n, rnd);
+            buffer = new byte[n];
         }
-        else if (PAD_PKCS1.equals(this.paddingType)) {
+        else if (PAD_PKCS1.equals(paddingType)) {
             if (params != null) {
                 if (!(params instanceof TlsRsaPremasterSecretParameterSpec)) {
                     throw new InvalidAlgorithmParameterException(
@@ -290,23 +290,23 @@ public final class DnieCipherImpl extends CipherSpi {
             		);
                 }
 
-                this.spec = params;
-                this.random = rnd;   // Para el TLS RSA premaster secret
+                spec = params;
+                random = rnd;   // Para el TLS RSA premaster secret
             }
-            final int blockType = this.mode <= MODE_DECRYPT ?
+            final int blockType = mode <= MODE_DECRYPT ?
         		RSAPadding.PAD_BLOCKTYPE_2 :
         			RSAPadding.PAD_BLOCKTYPE_1;
-            this.padding = RSAPadding.createInstance(blockType, n, rnd);
+            padding = RSAPadding.createInstance(blockType, n, rnd);
             if (encrypt) {
-                final int k = this.padding.getMaxDataSize();
-                this.buffer = new byte[k];
+                final int k = padding.getMaxDataSize();
+                buffer = new byte[k];
             }
             else {
-                this.buffer = new byte[n];
+                buffer = new byte[n];
             }
         }
         else { // PAD_OAEP_MGF1
-            if (this.mode == MODE_SIGN || this.mode == MODE_VERIFY) {
+            if (mode == MODE_SIGN || mode == MODE_VERIFY) {
                 throw new InvalidKeyException(
             		"OAEP no puede usarse para firmar ni para verificar firmas" //$NON-NLS-1$
         		);
@@ -315,23 +315,23 @@ public final class DnieCipherImpl extends CipherSpi {
                 if (!(params instanceof OAEPParameterSpec)) {
                     throw new InvalidAlgorithmParameterException("Parametros invalidos para el relleno OAEP"); //$NON-NLS-1$
                 }
-                this.spec = params;
+                spec = params;
             }
             else {
-                this.spec = new OAEPParameterSpec(
-            		this.oaepHashAlgorithm,
+                spec = new OAEPParameterSpec(
+            		oaepHashAlgorithm,
             		"MGF1", //$NON-NLS-1$
             		MGF1ParameterSpec.SHA1,
             		PSource.PSpecified.DEFAULT
         		);
             }
-            this.padding = RSAPadding.createInstance(RSAPadding.PAD_OAEP_MGF1, n, rnd, (OAEPParameterSpec)this.spec);
+            padding = RSAPadding.createInstance(RSAPadding.PAD_OAEP_MGF1, n, rnd, (OAEPParameterSpec)spec);
             if (encrypt) {
-                final int k = this.padding.getMaxDataSize();
-                this.buffer = new byte[k];
+                final int k = padding.getMaxDataSize();
+                buffer = new byte[k];
             }
             else {
-                this.buffer = new byte[n];
+                buffer = new byte[n];
             }
         }
     }
@@ -340,12 +340,12 @@ public final class DnieCipherImpl extends CipherSpi {
         if (inLen == 0 || inData == null) {
             return;
         }
-        if (this.bufOfs + inLen > this.buffer.length) {
-            this.bufOfs = this.buffer.length + 1;
+        if (bufOfs + inLen > buffer.length) {
+            bufOfs = buffer.length + 1;
             return;
         }
-        System.arraycopy(inData, inOfs, this.buffer, this.bufOfs, inLen);
-        this.bufOfs += inLen;
+        System.arraycopy(inData, inOfs, buffer, bufOfs, inLen);
+        bufOfs += inLen;
     }
 
     private byte[] doFinal() throws BadPaddingException,
@@ -354,34 +354,34 @@ public final class DnieCipherImpl extends CipherSpi {
                                     PinException,
                                     LostChannelException {
 
-        if (this.bufOfs > this.buffer.length) {
+        if (bufOfs > buffer.length) {
             throw new IllegalBlockSizeException(
-        		"Los datos no pueden exceder los " + this.buffer.length + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
+        		"Los datos no pueden exceder los " + buffer.length + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
     		);
         }
         try {
             final byte[] data;
-            switch (this.mode) {
+            switch (mode) {
 	            case MODE_SIGN:
-	                data = this.padding.pad(this.buffer, 0, this.bufOfs);
-	                return RSACore.rsa(data, this.privateKey);
+	                data = padding.pad(buffer, 0, bufOfs);
+	                return RSACore.rsa(data, privateKey);
 	            case MODE_VERIFY:
-	                final byte[] verifyBuffer = RSACore.convert(this.buffer, 0, this.bufOfs);
-	                data = RSACore.rsa(verifyBuffer, this.publicKey);
-	                return this.padding.unpad(data);
+	                final byte[] verifyBuffer = RSACore.convert(buffer, 0, bufOfs);
+	                data = RSACore.rsa(verifyBuffer, publicKey);
+	                return padding.unpad(data);
 	            case MODE_ENCRYPT:
-	                data = this.padding.pad(this.buffer, 0, this.bufOfs);
-	                return RSACore.rsa(data, this.publicKey);
+	                data = padding.pad(buffer, 0, bufOfs);
+	                return RSACore.rsa(data, publicKey);
 	            case MODE_DECRYPT:
-	                final byte[] decryptBuffer = RSACore.convert(this.buffer, 0, this.bufOfs);
-	                data = RSACore.rsa(decryptBuffer, this.privateKey);
-	                return this.padding.unpad(data);
+	                final byte[] decryptBuffer = RSACore.convert(buffer, 0, bufOfs);
+	                data = RSACore.rsa(decryptBuffer, privateKey);
+	                return padding.unpad(data);
 	            default:
-	                throw new AssertionError("Modo no soportado: " + this.mode); //$NON-NLS-1$
+	                throw new AssertionError("Modo no soportado: " + mode); //$NON-NLS-1$
             }
         }
         finally {
-            this.bufOfs = 0;
+            bufOfs = 0;
         }
     }
 
@@ -428,9 +428,9 @@ public final class DnieCipherImpl extends CipherSpi {
 			                    final int outOfs) throws ShortBufferException,
 	                                                     BadPaddingException,
 	                                                     IllegalBlockSizeException {
-        if (this.outputSize > out.length - outOfs) {
+        if (outputSize > out.length - outOfs) {
             throw new ShortBufferException(
-        		"Se necesitan al menos " + this.outputSize + " bytes en el buffer de salida" //$NON-NLS-1$ //$NON-NLS-2$
+        		"Se necesitan al menos " + outputSize + " bytes en el buffer de salida" //$NON-NLS-1$ //$NON-NLS-2$
     		);
         }
         update(inData, inOfs, inLen);
@@ -456,7 +456,7 @@ public final class DnieCipherImpl extends CipherSpi {
         if (encoded == null || encoded.length == 0) {
             throw new InvalidKeyException("No se ha podido obtener la codificacion de la clave"); //$NON-NLS-1$
         }
-        if (encoded.length > this.buffer.length) {
+        if (encoded.length > buffer.length) {
             throw new InvalidKeyException("La cave es demasiado grande como para ser envuelta"); //$NON-NLS-1$
         }
         update(encoded, 0, encoded.length);
@@ -479,7 +479,7 @@ public final class DnieCipherImpl extends CipherSpi {
 			                   final String algorithm,
 			                   final int type) throws InvalidKeyException,
 	                                                  NoSuchAlgorithmException {
-        if (wrappedKey.length > this.buffer.length) {
+        if (wrappedKey.length > buffer.length) {
             throw new InvalidKeyException(
         		"La clave es demasiado grande para la desenvoltura" //$NON-NLS-1$
     		);
@@ -511,18 +511,18 @@ public final class DnieCipherImpl extends CipherSpi {
 		}
 
         if (isTlsRsaPremasterSecret) {
-            if (!(this.spec instanceof TlsRsaPremasterSecretParameterSpec)) {
+            if (!(spec instanceof TlsRsaPremasterSecretParameterSpec)) {
                 throw new IllegalStateException(
             		"No se ha especificado un TlsRsaPremasterSecretParameterSpec" + //$NON-NLS-1$
-        				(this.spec != null ? ", sino un " + this.spec.getClass().getName() : "") //$NON-NLS-1$ //$NON-NLS-2$
+        				(spec != null ? ", sino un " + spec.getClass().getName() : "") //$NON-NLS-1$ //$NON-NLS-2$
         		);
             }
 
             // Preparamos el TLS premaster secret
             encoded = KeyUtil.checkTlsPreMasterSecretKey(
-                ((TlsRsaPremasterSecretParameterSpec)this.spec).getClientVersion(),
-                ((TlsRsaPremasterSecretParameterSpec)this.spec).getServerVersion(),
-                this.random,
+                ((TlsRsaPremasterSecretParameterSpec)spec).getClientVersion(),
+                ((TlsRsaPremasterSecretParameterSpec)spec).getServerVersion(),
+                random,
                 encoded,
                 failover != null
             );

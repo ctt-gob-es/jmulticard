@@ -44,7 +44,8 @@ import java.security.PublicKey;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PrivateConstants;
 import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 
-/** Constantes del DNIe para el establecimiento de canal seguro CWA-14890. */
+/** Constantes del DNIe para el establecimiento de canal seguro CWA-14890.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Dnie3Cwa14890Constants implements Cwa14890PublicConstants, Cwa14890PrivateConstants {
 
     /** Referencia al fichero en donde reside la clave p&uacute;blica de la autoridad certificadora
@@ -93,8 +94,8 @@ public abstract class Dnie3Cwa14890Constants implements Cwa14890PublicConstants,
 
         @Override
         public byte[] getEncoded() {
-            final byte[] out = new byte[this.encoded.length];
-            System.arraycopy(this.encoded, 0, out, 0, this.encoded.length);
+            final byte[] out = new byte[encoded.length];
+            System.arraycopy(encoded, 0, out, 0, encoded.length);
             return out;
         }
 

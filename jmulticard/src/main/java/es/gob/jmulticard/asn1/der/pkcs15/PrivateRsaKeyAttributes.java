@@ -52,7 +52,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *     ... -- For future extensions
  *   }
  * </PRE>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PrivateRsaKeyAttributes extends Sequence {
 
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateRsaKeyAttributes</i>. */

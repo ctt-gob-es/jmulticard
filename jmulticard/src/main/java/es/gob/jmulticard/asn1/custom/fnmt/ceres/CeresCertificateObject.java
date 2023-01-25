@@ -52,7 +52,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.CommonCertificateAttributes;
  *      X509CertificateAttributes
  *    }
  *  </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresCertificateObject extends CertificateObject {
 
 	/** Crea un objeto <i>CeresCertificateObject</i> espec&iacute;fico
