@@ -210,9 +210,8 @@ public class DnieNfc extends Dnie3 {
 	}
 
 	private ApduConnection getPaceConnection(final ApduConnection con,
-                                                    final PaceChannelHelper pch) throws ApduConnectionException,
-	                                                                                    IcaoException {
-
+                                             final PaceChannelHelper pch) throws ApduConnectionException,
+	                                                                             IcaoException {
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:

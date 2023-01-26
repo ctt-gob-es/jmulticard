@@ -357,7 +357,7 @@ public final class SecureMessaging {
 	}
 
 	private static void incrementAtIndex(final byte[] array) {
-		final byte[] result = new BigInteger(array).add(BigInteger.ONE).toByteArray();
+		final byte[] result = new BigInteger(1, array).add(BigInteger.ONE).toByteArray();
 		if (result.length > array.length) {
 			Arrays.fill(array, (byte)0);
 		}

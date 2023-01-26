@@ -54,7 +54,7 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 				new MrzInfo(mrz).getMrzPswd(cryptoHelper)
 			);
 		}
-		catch (final IOException ex) {
+		catch (final IOException | IllegalArgumentException ex) {
 			throw new MalformedMrzException("La MRZ no tiene formato valido", ex); //$NON-NLS-1$
 		}
 	}

@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -544,7 +545,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     }
 
     @Override
-    public X509Certificate getIccCert() throws IOException {
+    public RSAPublicKey getIccCertPublicKey() throws IOException {
         final byte[] iccCertEncoded;
         try {
         	selectMasterFile();
@@ -558,14 +559,16 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         catch (final Iso7816FourCardException e) {
             throw new IOException("Error en la seleccion del certificado de componente de la tarjeta", e); //$NON-NLS-1$
         }
+        final X509Certificate iccCert;
         try {
-			return cryptoHelper.generateCertificate(iccCertEncoded);
+        	iccCert = cryptoHelper.generateCertificate(iccCertEncoded);
 		}
         catch (final CertificateException e) {
         	throw new IOException(
         		"No se pudo obtener el certificado de componente", e //$NON-NLS-1$
             );
 		}
+        return cryptoHelper.getRsaPublicKey(iccCert);
     }
 
     @Override

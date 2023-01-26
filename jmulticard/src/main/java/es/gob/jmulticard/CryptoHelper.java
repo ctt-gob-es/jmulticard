@@ -51,6 +51,7 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.logging.Logger;
 
@@ -373,6 +374,14 @@ public abstract class CryptoHelper {
 	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	public abstract X509Certificate generateCertificate(final InputStream is) throws CertificateException;
+
+	/** Obtiene una clave p&uacute;blica de un certificado.
+	 * La raz&oacute;n de tener este m&eacute;todo en vez de invocar directamente al
+	 * <code><getPublicKey()</code> del certificado es evitar problemas por la interpretaci&oaccute;n
+	 * del signo del <code>BigInteger</code> en ciertos entornos (como <i>J2Obc</i>).
+	 * @param cert Certificado de origen.
+	 * @return Clave p&uacute;blica RSA del certificado. */
+	public abstract RSAPublicKey getRsaPublicKey(final X509Certificate cert);
 
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).

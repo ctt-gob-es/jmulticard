@@ -48,7 +48,7 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "can"; //$NON-NLS-1$
+	private static final String CAN = "203136"; //$NON-NLS-1$
 
 	private static final String PIN = "pin"; //$NON-NLS-1$
 
@@ -100,7 +100,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -198,15 +198,7 @@ public final class TestDnieLow {
 			false // No cargamos certificados ni nada
 		);
 
-		final X509Certificate iccCert = dnie.getIccCert();
-		try (
-			OutputStream fos = new FileOutputStream(File.createTempFile("CERT_COMPO_DNI_", ".cer")) //$NON-NLS-1$ //$NON-NLS-2$
-		) {
-			fos.write(iccCert.getEncoded());
-		}
-		System.out.println(
-			"Certificado de componente: " + iccCert.getSubjectX500Principal() //$NON-NLS-1$
-		);
+		final RSAPublicKey iccCertPuk = dnie.getIccCertPublicKey();
 
 		final X509Certificate iccIntCert = dnie.getCertificate(Dnie.CERT_ALIAS_INTERMEDIATE_CA);
 		try (
@@ -243,7 +235,7 @@ public final class TestDnieLow {
 			constants.getIfdKeyLength(),           // Longitud en octetos de las claves RSA del certificado de componente del terminal.
 			constants,                             // Constantes privadas para la apertura de canal CWA-14890.
 			constants,                             // Constantes publicas para la apertura de canal CWA-14890.
-			(RSAPublicKey) iccCert.getPublicKey(), // Clave publica del certificado de componente.
+			iccCertPuk,                            // Clave publica del certificado de componente.
 			cryptoHelper                           // Utilidad para la ejecucion de funciones criptograficas.
 		);
 

@@ -241,7 +241,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // Necesario para autenticacion interna y externa.
         final RSAPublicKey iccPublicKey;
         try {
-            iccPublicKey = (RSAPublicKey) card.getIccCert().getPublicKey();
+            iccPublicKey = card.getIccCertPublicKey();
         }
         catch (final IOException e) {
         	conn.close();
