@@ -114,12 +114,6 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
 	private transient String[] aliases = null;
 
-    private static final boolean PIN_AUTO_RETRY;
-    static {
-    	final String javaVendor = System.getProperty("java.vendor"); //$NON-NLS-1$
-    	PIN_AUTO_RETRY = javaVendor == null || !javaVendor.contains("Android");  //$NON-NLS-1$
-    }
-
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = {
         (byte) 0x60, (byte) 0x1F
@@ -189,8 +183,10 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
     private transient Location certPathSignAlias = null;
 
+    /** Referencia a la clave privada de autenticaci&oacute;n. */
     private transient DniePrivateKeyReference authKeyRef;
 
+    /** Referencia a la clave privada de firma. */
     private transient DniePrivateKeyReference signKeyRef;
 
     /** Referencia a la clave privada de cifrado.
@@ -1145,15 +1141,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         // a pedir si es necesario
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
-            	// Si no hay reintento automatico se lanza la excepcion.
-            	// Incluimos una proteccion en el caso de usar algun "CachePasswordCallback" del
-            	// Cliente @firma o un callback personalizado que indicaba que debia almacenarse el PIN,
-            	// ya que en caso de reutilizarlos se bloquearia el DNI
-            	if (!PIN_AUTO_RETRY || psc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
-            		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
-            	}
-            	// Si hay reintento automatico volvemos a pedir el PIN con la misma CallBack
-           		verifyPin(getInternalPasswordCallback(true));
+        		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&
             		 verifyResponse.getStatusWord().getLsb() == (byte)0x83) {

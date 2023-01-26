@@ -388,7 +388,7 @@ public abstract class CryptoHelper {
 	 * @return Utilidades para el establecimiento de un canal PACE */
 	public abstract PaceChannelHelper getPaceChannelHelper();
 
-	/** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
+	/** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr03110/tr-03110.html">PACE</a>
 	 * (Password Authenticated Connection Establishment).
 	 * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 	public abstract static class PaceChannelHelper {

@@ -151,8 +151,6 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
      * PIN por PIN incorrecto. */
     private final static byte ERROR_PIN_SW2 = (byte) 0x63;
 
-	private static final boolean AUTO_RETRY = true;
-
     /** Certificados de la tarjeta indexados por su alias. */
     private transient Map<String, X509Certificate> certs;
 
@@ -527,15 +525,6 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
         		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1 ||
         		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW2
     		) {
-            	// Evitamos explicitamente el reintento automatico con nuestro "CachePasswordCallback" para
-            	// no bloquear accidentalmente la tarjeta
-            	if(AUTO_RETRY && !pinPc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
-            		passwordCallback = null;
-            		verifyPin(
-                		getInternalPasswordCallback()
-                	);
-            		return;
-            	}
 				throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
 			if (new StatusWord((byte)0x69, (byte)0x83).equals(verifyResponse.getStatusWord())) {

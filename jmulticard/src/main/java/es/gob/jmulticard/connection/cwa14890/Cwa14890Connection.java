@@ -42,7 +42,7 @@ package es.gob.jmulticard.connection.cwa14890;
 
 import es.gob.jmulticard.connection.ApduConnection;
 
-/** Conexi&oacute;n CWA-14890.
+/** Conexi&oacute;n <a href="https://www.dnielectronico.es/PDFs/cwa14890-02-2004-May.pdf">CWA-14890</a>.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Cwa14890Connection extends ApduConnection {
 

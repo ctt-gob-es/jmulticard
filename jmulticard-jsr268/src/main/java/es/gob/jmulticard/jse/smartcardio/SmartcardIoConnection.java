@@ -76,8 +76,8 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 	 * una envoltura en varias APDU. */
 	private static final int MAX_APDU_SIZE = 0xFF;
 
-    /** Constante para la indicaci&oacute;n de que se ha detectado un reinicio del canal
-     * con la tarjeta. */
+    /** Constante para la indicaci&oacute;n de que se ha detectado un
+     * reinicio del canal con la tarjeta. */
     private static final String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
 
     private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$

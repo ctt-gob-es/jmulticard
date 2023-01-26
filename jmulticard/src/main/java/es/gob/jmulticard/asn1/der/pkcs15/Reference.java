@@ -50,7 +50,7 @@ public class Reference extends DerInteger {
 
 	/** Obtiene el valor entero del objeto.
 	 * @return Valor del objeto */
-	public int getItValue() {
+	public int getIntValue() {
 		return getIntegerValue().intValue();
 	}
 
