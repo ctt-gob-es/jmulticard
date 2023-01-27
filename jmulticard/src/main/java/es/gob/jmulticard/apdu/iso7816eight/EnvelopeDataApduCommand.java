@@ -7,14 +7,14 @@ import es.gob.jmulticard.apdu.CommandApdu;
 public final class EnvelopeDataApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
-	private static final byte INS_SIGN_DATA = (byte) 0xC2;
+	private static final byte INS_ENVELOPE = (byte) 0xC2;
 
 	/** Construye una APDU de envoltura de datos.
 	 * @param data Datos a envolver. */
 	public EnvelopeDataApduCommand(final byte[] data) {
 		super(
 			CLA,
-			INS_SIGN_DATA,
+			INS_ENVELOPE,
 			(byte) 0x00,
 			(byte) 0x00,
 			data,

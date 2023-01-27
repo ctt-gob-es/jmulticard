@@ -84,7 +84,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
     private int terminalNumber = -1;
 
-	private CardChannel canal = null;
+	private CardChannel cardChannel = null;
 
     private Card card = null;
 
@@ -146,7 +146,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 	        }
 	        card = null;
     	}
-        canal = null;
+        cardChannel = null;
     }
 
     /** {@inheritDoc} */
@@ -272,7 +272,8 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
                 );
             }
         }
-        canal = card.getBasicChannel();
+        cardChannel = card.getBasicChannel();
+        protocol = ApduConnectionProtocol.getApduConnectionProtocol(card.getProtocol());
     }
 
     /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
@@ -363,7 +364,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     @Override
     public ResponseApdu internalTransmit(final byte[] command) throws ApduConnectionException {
 
-        if (canal == null) {
+        if (cardChannel == null) {
             throw new ApduConnectionException(
                 "No se puede transmitir sobre una conexion cerrada" //$NON-NLS-1$
             );
@@ -383,7 +384,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
         try {
         	final ResponseApdu response = new ResponseApdu(
-				canal.transmit(commandApdu).getBytes()
+				cardChannel.transmit(commandApdu).getBytes()
 			);
             if (DEBUG) {
             	LOGGER.info(
@@ -405,7 +406,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             			"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
             				" en modo EXCLUSIVE=" + //$NON-NLS-1$
             					Boolean.toString(exclusive) +
-            						" con el protocolo " + protocol.toString()), e //$NON-NLS-1$
+            						" con el protocolo " + getProtocol()), e //$NON-NLS-1$
             );
         }
         catch (final Exception e) {
@@ -416,7 +417,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
                     			"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
                     				" en modo EXCLUSIVE=" + //$NON-NLS-1$
                     					Boolean.toString(exclusive) +
-                    						" con el protocolo " + protocol.toString()), e //$NON-NLS-1$
+                    						" con el protocolo " + getProtocol()), e //$NON-NLS-1$
             );
         }
     }

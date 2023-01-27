@@ -49,7 +49,7 @@ import es.gob.jmulticard.connection.ApduConnectionException;
 public abstract class AbstractSmartCard implements Card {
 
 	/** Establece el modo de depuraci&oacute;n para todo el proyecto. */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	/** Clase por defecto de APDU de la tarjeta. */
     private final byte cla;

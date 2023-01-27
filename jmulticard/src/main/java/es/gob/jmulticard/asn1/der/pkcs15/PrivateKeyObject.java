@@ -132,7 +132,9 @@ public class PrivateKeyObject extends Pkcs15Object {
 	/** Obtiene la referencia de la clave.
 	 * @return Referencia de la clave. */
 	public byte getKeyReference() {
-		return ((CommonKeyAttributes)getClassAttributes()).getReference().getIntegerValue().byteValue();
+		final Reference ref = ((CommonKeyAttributes)getClassAttributes()).getReference();
+		// Usamos directamente los octetos internos para avitar problemas de BigInteger en J2Obc
+		final byte[] referenceRawBytes = ref.getBytes();
+		return referenceRawBytes[referenceRawBytes.length -1];
 	}
-
 }

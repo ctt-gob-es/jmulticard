@@ -1,8 +1,11 @@
 package test.es.gob.jmulticard;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import es.gob.jmulticard.HexUtils;
 import junit.framework.TestCase;
@@ -88,5 +91,15 @@ public class TestHexUtils extends TestCase {
     	System.out.println(MessageDigest.getInstance("SHA-256").getDigestLength()); //$NON-NLS-1$
     	System.out.println(MessageDigest.getInstance("SHA-384").getDigestLength()); //$NON-NLS-1$
     	System.out.println(MessageDigest.getInstance("SHA-512").getDigestLength()); //$NON-NLS-1$
+    }
+
+    @Test
+    public void testBiByteValue() {
+    	for (int i=0;i<20;i++) {
+    		final byte[] b = new byte[3];
+    		new SecureRandom().nextBytes(b);
+    		final BigInteger bi = new BigInteger(b);
+    		System.out.println(HexUtils.hexify(b, false) + " -> " + HexUtils.hexify(new byte[] { bi.byteValue() }, false)); //$NON-NLS-1$
+    	}
     }
 }

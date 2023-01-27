@@ -235,7 +235,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
      *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
      *                         autenticaci&oacute;n con certificados.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
+     *                                 cerrada y no es posible abrirla. */
     protected Dnie(final ApduConnection conn,
     	           final PasswordCallback pwc,
     	           final CryptoHelper cryptoHlpr,
@@ -417,7 +417,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 		}
     	catch (final PinException e) {
     		throw new IllegalStateException(
-				"Error cargando los certificados por no pooder comprobar el PIN", e //$NON-NLS-1$
+				"Error cargando los certificados por no poder comprobar el PIN", e //$NON-NLS-1$
 			);
 		}
 
@@ -553,7 +553,9 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     		);
         }
         catch (final Iso7816FourCardException e) {
-            throw new IOException("Error en la seleccion del certificado de componente de la tarjeta", e); //$NON-NLS-1$
+            throw new IOException(
+        		"Error en la seleccion del certificado de componente de la tarjeta", e //$NON-NLS-1$
+    		);
         }
         final X509Certificate iccCert;
         try {
@@ -704,14 +706,16 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 			signAlgorithm,
 			privateKeyReference
 		);
+
     	try {
 			getConnection().close();
 		}
-    	catch (final ApduConnectionException e) {
+    	catch (final Throwable e) {
 			LOGGER.severe(
-				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones posteriores de firma: " + e //$NON-NLS-1$
+				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones posteriores: " + e //$NON-NLS-1$
 			);
 		}
+
     	return signBytes;
     }
 
@@ -775,8 +779,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     /** Indica si la tarjeta requiere autorizaci&oacute;n del usuario para ejecutar una
      * operaci&oacute;n de firma.
-     * @return <code>true</code> si la tarjeta requiere autorizaci&oacute;n del usuario para ejecutar una
-     *         operaci&oacute;n de firma, <code>false</code> en caso contrario. */
+     * @return <code>true</code> si la tarjeta requiere autorizaci&oacute;n del usuario para
+     *         ejecutar una operaci&oacute;n de firma, <code>false</code> en caso contrario. */
 	@SuppressWarnings("static-method")
 	protected boolean needAuthorizationToSign() {
     	return true;
@@ -786,8 +790,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	 * @param data Datos a cifrar.
 	 * @param privateKeyReference Referencia a la clave privada RSA a usar.
 	 * @return Datos cifrados.
-	 * @throws CryptoCardException Si hay errores en el proceso en la tarjeta o en la
-	 *                             comunicaci&oacute;n con ella.
+	 * @throws CryptoCardException Si hay errores en el proceso en la tarjeta
+	 *                             o en la comunicaci&oacute;n con ella.
 	 * @throws PinException Si el PIN introducido no es correcto.
 	 * @throws LostChannelException Si se pierde el canal de cifrado. */
 	public byte[] cipherData(final byte[] data,
@@ -862,7 +866,6 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         		((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath(),
         		null
     		);
-
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
@@ -915,18 +918,18 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
      * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
-     * 						un PIN para validar. */
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o
+     *                      no se ha proporcionado un PIN para validar. */
     public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
     	openSecureChannelIfNotAlreadyOpened(true);
     }
 
     /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
-     * @param doChv <code>true</code> si la apertura de canal seguro debe incluir la verificaci&oacute;n de PIN,
-     *              <code>false</code> si debe abrirse canal seguro <b>sin verificar PIN</b>.
+     * @param doChv <code>true</code> si la apertura de canal seguro debe incluir la verificaci&oacute;n
+     *              de PIN, <code>false</code> si debe abrirse canal seguro <b>sin verificar PIN</b>.
      * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
-     * 						un PIN para validar (en el caso de que se opte por verificar el PIN). */
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha
+     *                      proporcionado un PIN para validar (en el caso de que se opte por verificar el PIN). */
     public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException, PinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!isSecurityChannelOpen()) {
@@ -1266,6 +1269,5 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
             // Cargamos certificados si es necesario
 			loadCertificates();
         }
-
 	}
 }
