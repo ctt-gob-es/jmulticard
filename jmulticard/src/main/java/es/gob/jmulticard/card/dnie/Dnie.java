@@ -706,16 +706,14 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 			signAlgorithm,
 			privateKeyReference
 		);
-
     	try {
 			getConnection().close();
 		}
-    	catch (final Throwable e) {
+    	catch (final ApduConnectionException e) {
 			LOGGER.severe(
-				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones posteriores: " + e //$NON-NLS-1$
+				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones: " + e //$NON-NLS-1$
 			);
 		}
-
     	return signBytes;
     }
 

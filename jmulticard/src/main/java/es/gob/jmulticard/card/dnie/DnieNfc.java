@@ -281,8 +281,11 @@ public class DnieNfc extends Dnie3 {
     		           final String signAlgorithm,
     		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
     		                                                                 PinException {
-
-    	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
+    	final byte[] ret = signInternal(
+			data,
+			signAlgorithm,
+			privateKeyReference
+		);
     	try {
     		//Define el canal sin cifrar para resetearlo tras cada firma
     		setConnection(((Cwa14890Connection)getConnection()).getSubConnection());
