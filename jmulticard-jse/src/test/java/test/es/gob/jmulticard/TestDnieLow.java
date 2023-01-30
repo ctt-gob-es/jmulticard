@@ -48,9 +48,9 @@ import es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection;
 public final class TestDnieLow {
 
 //	private static final String MRZ = ""; //$NON-NLS-1$
-	private static final String CAN = "203136"; //$NON-NLS-1$
+	private static final String CAN = "630208"; //$NON-NLS-1$
 
-	private static final String PIN = "pin"; //$NON-NLS-1$
+	private static final String PIN = "WJ8d6EzzxDkz"; //$NON-NLS-1$
 
 	private static final CryptoHelper CH = new BcCryptoHelper();
 
@@ -100,7 +100,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore
 	public void testDnieSod() throws Exception {
 		final Dnie3 dnie = (Dnie3) DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
@@ -144,7 +144,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
+	//@Ignore
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),

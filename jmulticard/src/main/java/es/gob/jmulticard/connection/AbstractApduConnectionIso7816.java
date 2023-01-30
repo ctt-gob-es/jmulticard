@@ -7,20 +7,23 @@ import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 
-/** Conexi&oacute;n seg&uacute;n ISO 7816 con una tarjeta inteligente insertada en un lector.
+/** Conexi&oacute;n seg&uacute;n ISO 7816 con una tarjeta inteligente
+ * insertada en un lector.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 
-    /** Etiqueta que identifica que es necesario recuperar el resultado del comando anterior. */
+    /** Etiqueta que identifica que es necesario recuperar el
+     * resultado del comando anterior. */
     private static final byte TAG_RESPONSE_PENDING = 0x61;
 
-    /** Etiqueta que identifica que la longitud de respuesta indicada no es correcta. */
+    /** Etiqueta que identifica que la longitud de respuesta
+     * indicada no es correcta. */
     private static final byte TAG_RESPONSE_INVALID_LENGTH = 0x6C;
 
-	/** Obtiene el tama&ntilde;o m&aacute;ximo de APDU que se puede enviar sin necesidad de
-	 * hacer una envoltura.
-	 * @return Tama&ntilde;o m&aacute;ximo (en octetos) de APDU que se puede enviar sin
-	 *         necesidad de hacer una envoltura. */
+	/** Obtiene el tama&ntilde;o m&aacute;ximo de APDU que se puede
+	 * enviar sin necesidad de hacer una envoltura.
+	 * @return Tama&ntilde;o m&aacute;ximo (en octetos) de APDU que se
+	 *         puede enviar sin necesidad de hacer una envoltura. */
 	public abstract int getMaxApduSize();
 
 	/** Transmite una APDU.
@@ -37,7 +40,7 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
             );
         }
 
-    	final byte[] sendApdu;
+		final byte[] sendApdu;
 		// Si la APDU es mayor que el tamano maximo la troceamos y la envolvemos
 		if (command.getBytes().length > getMaxApduSize()) {
 

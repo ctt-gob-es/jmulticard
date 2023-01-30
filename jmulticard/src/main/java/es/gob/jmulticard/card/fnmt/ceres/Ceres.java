@@ -436,7 +436,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 		ResponseApdu res;
 
 		// Si la clave es de 1024 la carga se puede hacer en una unica APDU
-		if (keyBitSize < 2048) {
+		if (keyBitSize <= 1024) {
 			try {
 				res = sendArbitraryApdu(new CeresLoadDataApduCommand(paddedData));
 			}
@@ -452,6 +452,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 			}
 		}
 		// Pero si es de 2048 hacen falta mas de una APDU, haciendo envoltura de la APDU de carga de datos
+		//TODO: La envoltura de APDUs se hace ya en la capa de transporte, quitar de aqui
 		else if (keyBitSize == 2048) {
 
 			//TODO: Poner esto en un bucle. Separar de forma fija en dos APDU solo vale para claves de 2048, pero no de 4196 o superiores
@@ -496,14 +497,11 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 					"No se han podido enviar (segunda tanda) los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
 				);
 			}
-
 		}
-
 		else {
 			//TODO: Soportar claves de cualquier tamano
 			throw new IllegalArgumentException("Solo se soportan claves de 2048 o 1024 bits"); //$NON-NLS-1$
 		}
-
 	}
 
 	@Override
