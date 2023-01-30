@@ -144,7 +144,7 @@ public final class TestDnieLow {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	//@Ignore
+	@Ignore // Necesita tarjeta
 	public void testDnieSign() throws Exception {
 		final Dnie dnie = DnieFactory.getDnie(
 			ProviderUtil.getDefaultConnection(),
