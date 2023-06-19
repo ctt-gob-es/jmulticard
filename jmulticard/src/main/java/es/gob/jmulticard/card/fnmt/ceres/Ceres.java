@@ -61,8 +61,6 @@ import es.gob.jmulticard.apdu.StatusWord;
 import es.gob.jmulticard.apdu.ceres.CeresLoadDataApduCommand;
 import es.gob.jmulticard.apdu.ceres.CeresSignDataApduCommand;
 import es.gob.jmulticard.apdu.ceres.CeresVerifyApduCommand;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.apdu.dnie.RetriesLeftApduCommand;
 import es.gob.jmulticard.apdu.iso7816eight.EnvelopeDataApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
@@ -88,6 +86,8 @@ import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.iso7816eight.AbstractIso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Tarjeta FNMT-RCM CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
@@ -150,8 +150,6 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
     /** Octeto que identifica una verificaci&oacute;n fallida del
      * PIN por PIN incorrecto. */
     private final static byte ERROR_PIN_SW2 = (byte) 0x63;
-
-	private static final boolean AUTO_RETRY = true;
 
     /** Certificados de la tarjeta indexados por su alias. */
     private transient Map<String, X509Certificate> certs;
@@ -438,7 +436,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 		ResponseApdu res;
 
 		// Si la clave es de 1024 la carga se puede hacer en una unica APDU
-		if (keyBitSize < 2048) {
+		if (keyBitSize <= 1024) {
 			try {
 				res = sendArbitraryApdu(new CeresLoadDataApduCommand(paddedData));
 			}
@@ -454,6 +452,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 			}
 		}
 		// Pero si es de 2048 hacen falta mas de una APDU, haciendo envoltura de la APDU de carga de datos
+		//TODO: La envoltura de APDUs se hace ya en la capa de transporte, quitar de aqui
 		else if (keyBitSize == 2048) {
 
 			//TODO: Poner esto en un bucle. Separar de forma fija en dos APDU solo vale para claves de 2048, pero no de 4196 o superiores
@@ -498,14 +497,11 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 					"No se han podido enviar (segunda tanda) los datos a firmar a la tarjeta. Respuesta: " + HexUtils.hexify(res.getBytes(), true) //$NON-NLS-1$
 				);
 			}
-
 		}
-
 		else {
 			//TODO: Soportar claves de cualquier tamano
 			throw new IllegalArgumentException("Solo se soportan claves de 2048 o 1024 bits"); //$NON-NLS-1$
 		}
-
 	}
 
 	@Override
@@ -527,15 +523,6 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
         		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1 ||
         		verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW2
     		) {
-            	// Evitamos explicitamente el reintento automatico con nuestro "CachePasswordCallback" para
-            	// no bloquear accidentalmente la tarjeta
-            	if(AUTO_RETRY && !pinPc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
-            		passwordCallback = null;
-            		verifyPin(
-                		getInternalPasswordCallback()
-                	);
-            		return;
-            	}
 				throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
 			if (new StatusWord((byte)0x69, (byte)0x83).equals(verifyResponse.getStatusWord())) {

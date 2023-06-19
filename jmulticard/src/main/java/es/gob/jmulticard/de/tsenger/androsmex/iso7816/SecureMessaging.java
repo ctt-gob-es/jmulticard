@@ -37,7 +37,7 @@ import es.gob.jmulticard.asn1.TlvException;
 
 /** Empaquetado de env&iacute;o y recepci&oacute;n de APDUs
  * para establecer una mensajer&iacute;a segura.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Tobias Senger (tobias@t-senger.de). */
 public final class SecureMessaging {
 
@@ -55,10 +55,10 @@ public final class SecureMessaging {
 						   final byte[] ksmac,
 						   final byte[] initialSSC,
 						   final CryptoHelper ch) {
-		this.cryptoHelper = ch;
-		this.kenc = ksenc.clone();
-		this.kmac = ksmac.clone();
-		this.ssc = initialSSC.clone();
+		cryptoHelper = ch;
+		kenc = ksenc.clone();
+		kmac = ksmac.clone();
+		ssc = initialSSC.clone();
 	}
 
 	/** Transforma un Comando APDU en claro a Comando APDU protegido.
@@ -71,7 +71,7 @@ public final class SecureMessaging {
 		DO97 do97 = null;
 		DO87 do87 = null;
 
-		incrementAtIndex(this.ssc);
+		incrementAtIndex(ssc);
 
 		// Enmascara el byte de la clase y hace un padding del comando de cabecera
 		final byte[] header = new byte[4];
@@ -129,7 +129,7 @@ public final class SecureMessaging {
 		DO99 do99 = null;
 		DO8E do8E = null;
 
-		incrementAtIndex(this.ssc);
+		incrementAtIndex(ssc);
 
 		int pointer = 0;
 		final byte[] responseApduBytes = responseApduEncrypted.getData();
@@ -195,7 +195,7 @@ public final class SecureMessaging {
 
 		final byte[] cc;
 		try {
-			cc = getMac(bout.toByteArray(), this.ssc, this.kmac);
+			cc = getMac(bout.toByteArray(), ssc, kmac);
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e1) {
 			throw new SecureMessagingException(
@@ -219,17 +219,17 @@ public final class SecureMessaging {
 			final byte[] do87Data = do87.getData();
 			final byte[] data;
 			try {
-				data = this.cryptoHelper.aesDecrypt(
+				data = cryptoHelper.aesDecrypt(
 					do87Data,
 					// Vector de inicializacion a partir del cifrado del SSC
-					this.cryptoHelper.aesEncrypt(
-						this.ssc,  // Datos
+					cryptoHelper.aesEncrypt(
+						ssc,  // Datos
 						null,      // Sin vector de inicializacion
-						this.kenc, // Clave
+						kenc, // Clave
 						BlockMode.ECB,
 						Padding.NOPADDING
 					),
-					this.kenc,
+					kenc,
 					BlockMode.CBC,
 					Padding.ISO7816_4PADDING
 				);
@@ -263,17 +263,17 @@ public final class SecureMessaging {
 	private DO87 buildDO87(final byte[] data) throws SecureMessagingException  {
 		final byte[] encData;
 		try {
-			encData = this.cryptoHelper.aesEncrypt(
+			encData = cryptoHelper.aesEncrypt(
 				data,
 				// Vector de inicializacion a partir del cifrado del SSC
-				this.cryptoHelper.aesEncrypt(
-					this.ssc,  // Datos
+				cryptoHelper.aesEncrypt(
+					ssc,  // Datos
 					null,      // Sin vector de inicializacion
-					this.kenc, // Clave
+					kenc, // Clave
 					BlockMode.ECB,
 					Padding.NOPADDING
 				),
-				this.kenc,
+				kenc,
 				BlockMode.CBC,
 				Padding.ISO7816_4PADDING
 			);
@@ -311,7 +311,7 @@ public final class SecureMessaging {
 		}
 
 		try {
-			return new DO8E(getMac(m.toByteArray(), this.ssc, this.kmac));
+			return new DO8E(getMac(m.toByteArray(), ssc, kmac));
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new SecureMessagingException(
@@ -357,7 +357,7 @@ public final class SecureMessaging {
 	}
 
 	private static void incrementAtIndex(final byte[] array) {
-		final byte[] result = new BigInteger(array).add(BigInteger.ONE).toByteArray();
+		final byte[] result = new BigInteger(1, array).add(BigInteger.ONE).toByteArray();
 		if (result.length > array.length) {
 			Arrays.fill(array, (byte)0);
 		}
@@ -386,7 +386,7 @@ public final class SecureMessaging {
 		final byte[] n = new byte[ssCounter.length + data.length];
 		System.arraycopy(ssCounter, 0, n, 0, ssCounter.length);
 		System.arraycopy(data, 0, n, ssCounter.length, data.length);
-		return this.cryptoHelper.doAesCmac(addPadding(n), keyBytes);
+		return cryptoHelper.doAesCmac(addPadding(n), keyBytes);
 	}
 
 	/** Tama&ntilde;o de bloque de cifrado AES. */

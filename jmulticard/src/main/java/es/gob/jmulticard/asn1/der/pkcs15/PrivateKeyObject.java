@@ -63,7 +63,7 @@ import es.gob.jmulticard.asn1.der.ContextSpecific;
  *    PrivateRsaKeyAttributes
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class PrivateKeyObject extends Pkcs15Object {
 
     /** Construye un tipo PrivateKeyObject ASN&#46;1.
@@ -132,7 +132,9 @@ public class PrivateKeyObject extends Pkcs15Object {
 	/** Obtiene la referencia de la clave.
 	 * @return Referencia de la clave. */
 	public byte getKeyReference() {
-		return ((CommonKeyAttributes)getClassAttributes()).getReference().getIntegerValue().byteValue();
+		final Reference ref = ((CommonKeyAttributes)getClassAttributes()).getReference();
+		// Usamos directamente los octetos internos para avitar problemas de BigInteger en J2Obc
+		final byte[] referenceRawBytes = ref.getBytes();
+		return referenceRawBytes[referenceRawBytes.length -1];
 	}
-
 }

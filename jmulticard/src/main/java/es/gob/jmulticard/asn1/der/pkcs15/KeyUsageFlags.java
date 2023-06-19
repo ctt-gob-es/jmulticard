@@ -55,7 +55,7 @@ import es.gob.jmulticard.asn1.der.BitString;
  *       nonRepudiation  (8)
  * }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class KeyUsageFlags extends BitString {
 	// Sin cambios respecto a BitString
 }

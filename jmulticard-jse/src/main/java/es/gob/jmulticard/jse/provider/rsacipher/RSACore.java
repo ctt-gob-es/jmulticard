@@ -35,10 +35,10 @@ import java.util.WeakHashMap;
 
 import javax.crypto.BadPaddingException;
 
-import es.gob.jmulticard.apdu.connection.LostChannelException;
 import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.card.dnie.Dnie;
+import es.gob.jmulticard.connection.LostChannelException;
 import es.gob.jmulticard.jse.provider.DniePrivateKey;
 
 /** Operaciones con claves privadas RSA.
@@ -140,9 +140,7 @@ final class RSACore {
         return toByteArray(m, getByteLength(n));
     }
 
-    /**
-     * Parse the msg into a BigInteger and check against the modulus n.
-     */
+    /** Parse the msg into a BigInteger and check against the modulus n. */
     private static BigInteger parseMsg(final byte[] msg,
     		                           final BigInteger n) throws BadPaddingException {
 
@@ -153,11 +151,9 @@ final class RSACore {
         return m;
     }
 
-    /**
-     * Return the encoding of this BigInteger that is exactly len bytes long.
+    /** Return the encoding of this BigInteger that is exactly len bytes long.
      * Prefix/strip off leading 0x00 bytes if necessary.
-     * Precondition: bi must fit into len bytes
-     */
+     * Precondition: bi must fit into len bytes. */
     private static byte[] toByteArray(final BigInteger bi, final int len) {
         final byte[] b = bi.toByteArray();
         final int n = b.length;

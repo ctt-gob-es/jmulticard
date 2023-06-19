@@ -9,11 +9,6 @@ import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.PaceChannelHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
-import es.gob.jmulticard.apdu.connection.pace.PaceConnection;
-import es.gob.jmulticard.apdu.connection.pace.PaceException;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 import es.gob.jmulticard.card.CardMessages;
@@ -25,6 +20,11 @@ import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.card.icao.WirelessInitializerCan;
 import es.gob.jmulticard.card.icao.WirelessInitializerMrz;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.connection.pace.PaceConnection;
+import es.gob.jmulticard.connection.pace.PaceException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** DNIe 3 accedido mediante PACE por NFC.
@@ -210,9 +210,8 @@ public class DnieNfc extends Dnie3 {
 	}
 
 	private ApduConnection getPaceConnection(final ApduConnection con,
-                                                    final PaceChannelHelper pch) throws ApduConnectionException,
-	                                                                                    IcaoException {
-
+                                             final PaceChannelHelper pch) throws ApduConnectionException,
+	                                                                             IcaoException {
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
@@ -272,20 +271,21 @@ public class DnieNfc extends Dnie3 {
 	        		"Error al abrir el canal PACE", e //$NON-NLS-1$
 	    		);
 			}
-
 		}
 
 		super.openSecureChannelIfNotAlreadyOpened();
 	}
-
 
     @Override
     public byte[] sign(final byte[] data,
     		           final String signAlgorithm,
     		           final PrivateKeyReference privateKeyReference) throws CryptoCardException,
     		                                                                 PinException {
-
-    	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
+    	final byte[] ret = signInternal(
+			data,
+			signAlgorithm,
+			privateKeyReference
+		);
     	try {
     		//Define el canal sin cifrar para resetearlo tras cada firma
     		setConnection(((Cwa14890Connection)getConnection()).getSubConnection());

@@ -30,8 +30,8 @@ public final class TestCipher {
 
 	private static final String RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding"; //$NON-NLS-1$
 
-	private static final String CAN = "cancan"; //$NON-NLS-1$
-	private static final String PIN = "pinpin"; //$NON-NLS-1$
+	private static final String CAN = "630208"; //$NON-NLS-1$
+	private static final String PIN = "WJ8d6EzzxDkz"; //$NON-NLS-1$
 
 	/** Main para pruebas.
 	 * @param args No se usa.

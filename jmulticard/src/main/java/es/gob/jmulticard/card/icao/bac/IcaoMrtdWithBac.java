@@ -1,10 +1,10 @@
 package es.gob.jmulticard.card.icao.bac;
 
 import es.gob.jmulticard.CryptoHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.Dnie3;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
 /** Pasaporte accedido de forma inal&aacute;mbrica mediante BAC.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */

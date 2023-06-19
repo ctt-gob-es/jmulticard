@@ -22,13 +22,13 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 		private final byte[] paramBytes;
 
 		PaceAlgorithmParam(final byte[] paramId) {
-			this.paramBytes = paramId.clone();
+			paramBytes = paramId.clone();
 		}
 
 		/** Obtiene la representaci&oacute;n binaria del OID.
 		 * @return Representaci&oacute;n binaria del OID. */
 		public byte[] getBytes() {
-			return this.paramBytes.clone();
+			return paramBytes.clone();
 		}
 	}
 
@@ -55,13 +55,13 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 		private final byte[] pwdTypeBytes;
 
 		PacePasswordType(final byte[] tpy) {
-			this.pwdTypeBytes = tpy.clone();
+			pwdTypeBytes = tpy.clone();
 		}
 
 		/** Obtiene la representaci&oacute;n binaria del OID.
 		 * @return Representaci&oacute;n binaria del OID. */
 		public byte[] getBytes() {
-			return this.pwdTypeBytes.clone();
+			return pwdTypeBytes.clone();
 		}
 	}
 
@@ -94,6 +94,7 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 				        (byte) 0x02, (byte) 0x02, (byte) 0x04, (byte) 0x02, (byte) 0x02
 			}
 		),
+
 		/** id_PACE_DH_GM_AES_CBC_CMAC_128 (OID 0.4.0.127.0.7.2.2.4.1.2). */
 		PACE_DH_GM_AES_CBC_CMAC_128(
 			new byte[] {
@@ -107,13 +108,13 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 		private final byte[] oidBytes;
 
 		PaceAlgorithmOid(final byte[] oid) {
-			this.oidBytes = oid.clone();
+			oidBytes = oid.clone();
 		}
 
 		/** Obtiene la representaci&oacute;n binaria del OID.
 		 * @return Representaci&oacute;n binaria del OID. */
 		public byte[] getBytes() {
-			return this.oidBytes.clone();
+			return oidBytes.clone();
 		}
 	}
 
@@ -127,14 +128,13 @@ public class MseSetPaceAlgorithmApduCommand extends MseSetAuthenticationTemplate
 			                              final PacePasswordType pwdType,
 			                              final PaceAlgorithmParam algorithmParam) {
 		super(
-				cla,
-				HexUtils.concatenateByteArrays(
-					new byte[]{(byte)0x80},
-					algorithm.getBytes(),
-					pwdType.getBytes(),
-					algorithmParam.getBytes()
-				)
-			);
+			cla,
+			HexUtils.concatenateByteArrays(
+				new byte[]{(byte)0x80},
+				algorithm.getBytes(),
+				pwdType.getBytes(),
+				algorithmParam.getBytes()
+			)
+		);
 	}
-
 }

@@ -12,8 +12,9 @@ package es.gob.jmulticard.jse.provider;
 
 import javax.security.auth.callback.PasswordCallback;
 
-/** <code>PasswordCallbak</code> que almacena internamente y devuelve la contrase&ntilde;a con la que se
- * construy&oacute; o la que se le establece posteriormente. */
+/** <code>PasswordCallbak</code> que almacena internamente y devuelve la
+ * contrase&ntilde;a con la que se construy&oacute; o la que se le establece posteriormente.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CachePasswordCallback extends PasswordCallback {
 
     private static final long serialVersionUID = 816457144215238935L;

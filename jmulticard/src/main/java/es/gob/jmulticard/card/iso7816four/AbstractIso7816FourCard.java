@@ -50,9 +50,6 @@ import javax.security.auth.callback.PasswordCallback;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.iso7816four.GetChallengeApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ReadBinaryApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.ReadRecordApduCommand;
@@ -63,6 +60,9 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PinException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
 
 /** Tarjeta compatible ISO-7816-4.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
@@ -340,7 +340,7 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 		);
     	if (!res.isOk()) {
     		throw new SecureChannelException(
-				"Error estableciendo la clave publica para verificacion, con respuesta : " + //$NON-NLS-1$
+				"Error estableciendo la clave publica para verificacion, con respuesta: " + //$NON-NLS-1$
 					res.getStatusWord()
 			);
     	}

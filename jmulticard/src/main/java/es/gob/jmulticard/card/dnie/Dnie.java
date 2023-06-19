@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -57,13 +58,6 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.LostChannelException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV1Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
-import es.gob.jmulticard.apdu.connection.pace.PaceConnection;
 import es.gob.jmulticard.apdu.dnie.ChangePinApduCommand;
 import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
 import es.gob.jmulticard.apdu.dnie.LoadDataApduCommand;
@@ -96,6 +90,13 @@ import es.gob.jmulticard.card.cwa14890.Cwa14890PublicConstants;
 import es.gob.jmulticard.card.iso7816eight.AbstractIso7816EightCard;
 import es.gob.jmulticard.card.iso7816four.FileNotFoundException;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.LostChannelException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV1Connection;
+import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
+import es.gob.jmulticard.connection.pace.PaceConnection;
 
 /** DNI Electr&oacute;nico.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -113,12 +114,6 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
 	private transient String[] aliases = null;
 
-    private static final boolean PIN_AUTO_RETRY;
-    static {
-    	final String javaVendor = System.getProperty("java.vendor"); //$NON-NLS-1$
-    	PIN_AUTO_RETRY = javaVendor == null || !javaVendor.contains("Android");  //$NON-NLS-1$
-    }
-
     /** Identificador del fichero del certificado de componente del DNIe. */
     private static final byte[] CERT_ICC_FILE_ID = {
         (byte) 0x60, (byte) 0x1F
@@ -127,20 +122,20 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     /** Nombre del <i>Master File</i> del DNIe. */
     private static final String MASTER_FILE_NAME = "Master.File"; //$NON-NLS-1$
 
-	/** Alias del certificado de autenticaci&oacute;n del DNIe. */
+	/** Alias del certificado de autenticaci&oacute;n del DNIe (siempre el mismo en el DNIe y tarjetas derivadas). */
     public static final String CERT_ALIAS_AUTH = "CertAutenticacion"; //$NON-NLS-1$
 
-    /** Alias del certificado de firma del DNIe. */
+    /** Alias del certificado de firma del DNIe (siempre el mismo en el DNIe y tarjetas derivadas). */
     public static final String CERT_ALIAS_SIGN = "CertFirmaDigital"; //$NON-NLS-1$
 
-    /** Alias del certificado de firma (siempre el mismo en el DNIe). */
+    /** Alias del certificado de firma (siempre el mismo en el DNIe y tarjetas derivadas). */
     protected static final String CERT_ALIAS_SIGNALIAS = "CertFirmaSeudonimo"; //$NON-NLS-1$
 
     /** Alias del certificado de cifrado (siempre el mismo en las tarjetas derivadas del DNIe que soportan cifrado). */
     protected static final String CERT_ALIAS_CYPHER = "CertCifrado"; //$NON-NLS-1$
 
     /** Alias del certificado de CA intermedia (siempre el mismo en el DNIe). */
-    protected static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
+    public static final String CERT_ALIAS_INTERMEDIATE_CA = "CertCAIntermediaDGP"; //$NON-NLS-1$
 
     private static final String AUTH_KEY_LABEL = "KprivAutenticacion"; //$NON-NLS-1$
     private static final String SIGN_KEY_LABEL = "KprivFirmaDigital"; //$NON-NLS-1$
@@ -156,36 +151,42 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	protected static final Location IDESP_LOCATION = new Location("3F000006"); //$NON-NLS-1$
 
 	/** Certificado de autenticaci&oacute;n. */
-    protected transient X509Certificate authCert;
+    protected transient X509Certificate certAuth;
 
     /** Certificado de firma. */
-    protected transient X509Certificate signCert;
+    protected transient X509Certificate certSign;
 
     /** Certificado de cifrado. */
-    protected transient X509Certificate cyphCert;
+    protected transient X509Certificate certCyph;
 
     /** Certificado de firma con seud&oacute;nimo. */
-    protected transient X509Certificate signAliasCert;
+    protected transient X509Certificate certSignAlias;
+
+    /** Certificado de componente (ICC). */
+    protected transient X509Certificate certIcc;
 
     /** Certificado de CA intermedia. */
     protected transient X509Certificate intermediateCaCert;
 
-    private transient Location authCertPath;
+    /** Localizaci&oacute;n del certificado de autenticaci&oacute;n. */
+    private transient Location certPathAuth;
 
     /** Localizaci&oacute;n del certificado de firma.
      * Es opcional, ya que no est&aacute; presente en los DNI de menores de edad no emancipados. */
-    private transient Location signCertPath = null;
+    private transient Location certPathSign = null;
 
     /** Localizaci&oacute;n del certificado de cifrado.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
-    private transient Location cyphCertPath = null;
+    private transient Location certPathCyph = null;
 
     /** Localizaci&oacute;n del certificado de firma con seud&oacute;nimo.
      * Es opcional, ya que solo est&aacute; presente en las TIF, no en los DNIe normales. */
-    private transient Location signAliasCertPath = null;
+    private transient Location certPathSignAlias = null;
 
+    /** Referencia a la clave privada de autenticaci&oacute;n. */
     private transient DniePrivateKeyReference authKeyRef;
 
+    /** Referencia a la clave privada de firma. */
     private transient DniePrivateKeyReference signKeyRef;
 
     /** Referencia a la clave privada de cifrado.
@@ -234,7 +235,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
      *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
      *                         autenticaci&oacute;n con certificados.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
+     *                                 cerrada y no es posible abrirla. */
     protected Dnie(final ApduConnection conn,
     	           final PasswordCallback pwc,
     	           final CryptoHelper cryptoHlpr,
@@ -266,7 +267,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         if (loadCertsAndKeys) {
 
 	        // Cargamos la localizacion de los certificados y el certificado
-	        // de CA intermedia de los certificados de firma, autenticacion y, si existe, cifrado
+	        // de CA intermedia de los certificados de firma, autenticacion y,
+        	// si existe, cifrado
 	        loadCertificatesPaths();
 
 	        // Cargamos la informacion publica con la referencia a las claves
@@ -405,16 +407,30 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     @Override
     public String[] getAliases() {
+
+    	// Cargamos certificados si no lo estaban ya
+    	try {
+			loadCertificatesIfNotAlreadyLoaded();
+		}
+    	catch (final CryptoCardException | ApduConnectionException e) {
+			throw new IllegalStateException("Error cargando los certificados", e); //$NON-NLS-1$
+		}
+    	catch (final PinException e) {
+    		throw new IllegalStateException(
+				"Error cargando los certificados por no poder comprobar el PIN", e //$NON-NLS-1$
+			);
+		}
+
     	if (aliases == null) {
 	    	final List<String> aliasesList = new ArrayList<>();
 	    	aliasesList.add(CERT_ALIAS_AUTH);
-	    	if (signCertPath != null) {
+	    	if (certPathSign != null) {
 	    		aliasesList.add(CERT_ALIAS_SIGN);
 	    	}
-	    	if (cyphCertPath != null) {
+	    	if (certPathCyph != null) {
 	    		aliasesList.add(CERT_ALIAS_CYPHER);
 	    	}
-	    	if (signAliasCertPath != null) {
+	    	if (certPathSignAlias != null) {
 	    		aliasesList.add(CERT_ALIAS_SIGNALIAS);
 	    	}
 	    	aliases = aliasesList.toArray(new String[0]);
@@ -453,13 +469,13 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         for (int i = 0; i < cdf.getCertificateCount(); i++) {
         	final String currentAlias = cdf.getCertificateAlias(i);
             if (CERT_ALIAS_AUTH.equals(currentAlias)) {
-                authCertPath = new Location(cdf.getCertificatePath(i));
+                certPathAuth = new Location(cdf.getCertificatePath(i));
             }
             else if (CERT_ALIAS_SIGN.equals(currentAlias)) {
-                signCertPath = new Location(cdf.getCertificatePath(i));
+                certPathSign = new Location(cdf.getCertificatePath(i));
             }
             else if (CERT_ALIAS_CYPHER.equals(currentAlias)) {
-            	cyphCertPath = new Location(cdf.getCertificatePath(i));
+            	certPathCyph = new Location(cdf.getCertificatePath(i));
             }
             else if (CERT_ALIAS_INTERMEDIATE_CA.equals(currentAlias)) {
             	try {
@@ -481,7 +497,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
             	}
             }
             else if (CERT_ALIAS_SIGNALIAS.equals(currentAlias)){
-            	signAliasCertPath = new Location(cdf.getCertificatePath(i));
+            	certPathSignAlias = new Location(cdf.getCertificatePath(i));
             }
             else {
             	LOGGER.warning(
@@ -494,45 +510,29 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     @Override
     public X509Certificate getCertificate(final String alias) throws CryptoCardException, PinException {
 
-        if (authCert == null) { // Este certificado esta presente en todas las variantes del DNIe
-
-        	if (authCertPath == null) {
-        		try {
-					loadCertificatesPaths();
-				}
-        		catch (final ApduConnectionException e) {
-					throw new CryptoCardException(
-						"Error cargando las rutas hacia los certificados", e //$NON-NLS-1$
-					);
-				}
-        	}
-        	// Abrimos el canal si es necesario
-        	openSecureChannelIfNotAlreadyOpened();
-            // Cargamos certificados si es necesario
-        	loadCertificates();
-        }
+    	try {
+			loadCertificatesIfNotAlreadyLoaded();
+		}
+    	catch (final ApduConnectionException e) {
+			throw new CryptoCardException("Error cargando las rutas hacia los certificados", e); //$NON-NLS-1$
+		}
 
         if (CERT_ALIAS_AUTH.equals(alias)) {
-            return authCert;
+            return certAuth;
         }
         if (CERT_ALIAS_SIGN.equals(alias)) {
-            return signCert;
+            return certSign;
         }
         if (CERT_ALIAS_INTERMEDIATE_CA.equals(alias)) {
             return intermediateCaCert;
         }
         if (CERT_ALIAS_CYPHER.equals(alias)) {
-        	return cyphCert;
+        	return certCyph;
         }
         if (CERT_ALIAS_SIGNALIAS.equals(alias)) {
-        	return signAliasCert;
+        	return certSignAlias;
         }
         return null;
-    }
-
-    @Override
-    public void verifyCaIntermediateIcc() {
-        // No se comprueba
     }
 
     @Override
@@ -541,7 +541,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     }
 
     @Override
-    public X509Certificate getIccCert() throws IOException {
+    public RSAPublicKey getIccCertPublicKey() throws IOException {
         final byte[] iccCertEncoded;
         try {
         	selectMasterFile();
@@ -553,16 +553,20 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     		);
         }
         catch (final Iso7816FourCardException e) {
-            throw new IOException("Error en la seleccion del certificado de componente de la tarjeta", e); //$NON-NLS-1$
+            throw new IOException(
+        		"Error en la seleccion del certificado de componente de la tarjeta", e //$NON-NLS-1$
+    		);
         }
+        final X509Certificate iccCert;
         try {
-			return cryptoHelper.generateCertificate(iccCertEncoded);
+        	iccCert = cryptoHelper.generateCertificate(iccCertEncoded);
 		}
         catch (final CertificateException e) {
         	throw new IOException(
         		"No se pudo obtener el certificado de componente", e //$NON-NLS-1$
             );
 		}
+        return cryptoHelper.getRsaPublicKey(iccCert);
     }
 
     @Override
@@ -654,7 +658,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     }
 
     @Override
-    public byte[] getInternalAuthenticateMessage(final byte[] randomIfd, final byte[] chrCCvIfd) throws ApduConnectionException {
+    public byte[] getInternalAuthenticateMessage(final byte[] randomIfd,
+    		                                     final byte[] chrCCvIfd) throws ApduConnectionException {
         final CommandApdu apdu = new InternalAuthenticateApduCommand((byte) 0x00, randomIfd, chrCCvIfd);
         final ResponseApdu res = getConnection().transmit(apdu);
         if (res.isOk()) {
@@ -706,7 +711,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 		}
     	catch (final ApduConnectionException e) {
 			LOGGER.severe(
-				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones posteriores de firma: " + e //$NON-NLS-1$
+				"No se ha podido cerrar el canal despues de una firma, es posible que fallen operaciones: " + e //$NON-NLS-1$
 			);
 		}
     	return signBytes;
@@ -772,8 +777,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     /** Indica si la tarjeta requiere autorizaci&oacute;n del usuario para ejecutar una
      * operaci&oacute;n de firma.
-     * @return <code>true</code> si la tarjeta requiere autorizaci&oacute;n del usuario para ejecutar una
-     *         operaci&oacute;n de firma, <code>false</code> en caso contrario. */
+     * @return <code>true</code> si la tarjeta requiere autorizaci&oacute;n del usuario para
+     *         ejecutar una operaci&oacute;n de firma, <code>false</code> en caso contrario. */
 	@SuppressWarnings("static-method")
 	protected boolean needAuthorizationToSign() {
     	return true;
@@ -783,8 +788,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	 * @param data Datos a cifrar.
 	 * @param privateKeyReference Referencia a la clave privada RSA a usar.
 	 * @return Datos cifrados.
-	 * @throws CryptoCardException Si hay errores en el proceso en la tarjeta o en la
-	 *                             comunicaci&oacute;n con ella.
+	 * @throws CryptoCardException Si hay errores en el proceso en la tarjeta
+	 *                             o en la comunicaci&oacute;n con ella.
 	 * @throws PinException Si el PIN introducido no es correcto.
 	 * @throws LostChannelException Si se pierde el canal de cifrado. */
 	public byte[] cipherData(final byte[] data,
@@ -859,7 +864,6 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         		((DniePrivateKeyReference) privateKeyReference).getKeyPath().getLastFilePath(),
         		null
     		);
-
             res = getConnection().transmit(apdu);
             if (!res.isOk()) {
                 throw new DnieCardException(
@@ -912,18 +916,18 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
      * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
-     * 						un PIN para validar. */
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o
+     *                      no se ha proporcionado un PIN para validar. */
     public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
     	openSecureChannelIfNotAlreadyOpened(true);
     }
 
     /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
-     * @param doChv <code>true</code> si la apertura de canal seguro debe incluir la verificaci&oacute;n de PIN,
-     *              <code>false</code> si debe abrirse canal seguro <b>sin verificar PIN</b>.
+     * @param doChv <code>true</code> si la apertura de canal seguro debe incluir la verificaci&oacute;n
+     *              de PIN, <code>false</code> si debe abrirse canal seguro <b>sin verificar PIN</b>.
      * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha proporcionado
-     * 						un PIN para validar (en el caso de que se opte por verificar el PIN). */
+     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o no se ha
+     *                      proporcionado un PIN para validar (en el caso de que se opte por verificar el PIN). */
     public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException, PinException {
         // Abrimos el canal seguro si no lo esta ya
         if (!isSecurityChannelOpen()) {
@@ -955,7 +959,10 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         }
     }
 
-    private int getPinRetriesLeft() throws PinException {
+    /** Devuelve los intentos restantes de comprobaci&oacute;n de PIN del DNIe.
+     * @return Intentos restantes de comprobaci&oacute;n de PIN del DNIe.
+     * @throws PinException Si hay cualquier problema durante el proceso. */
+    public int getPinRetriesLeft() throws PinException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
     	final ResponseApdu verifyResponse;
 		try {
@@ -1062,25 +1069,25 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     protected void loadCertificates() throws CryptoCardException {
 
         // Cargamos certificados si es necesario
-    	if (authCert == null ||
-    		signCert == null ||
-    		cyphCert == null && cyphCertPath != null ||
-    		signAliasCert == null && signAliasCertPath != null) {
+    	if (certAuth == null ||
+    		certSign == null ||
+    		certCyph == null && certPathCyph != null ||
+    		certSignAlias == null && certPathSignAlias != null) {
 		        try {
-		        	if (signCertPath != null) {
-		        		signCert = loadCertificate(signCertPath);
+		        	if (certPathSign != null) {
+		        		certSign = loadCertificate(certPathSign);
 		        	}
 		        	else {
 		        		LOGGER.info(
 	        				"El DNIe no contiene certificado de firma (probablemente sea de un menor no emancipado)" //$NON-NLS-1$
         				);
 		        	}
-	        		authCert = loadCertificate(authCertPath);
-		            if (cyphCertPath != null) {
-	            		cyphCert = loadCertificate(cyphCertPath);
+	        		certAuth = loadCertificate(certPathAuth);
+		            if (certPathCyph != null) {
+	            		certCyph = loadCertificate(certPathCyph);
 	            	}
-		            if (signAliasCertPath != null) {
-		            	signAliasCert = loadCertificate(signAliasCertPath);
+		            if (certPathSignAlias != null) {
+		            	certSignAlias = loadCertificate(certPathSignAlias);
 		            }
 		        }
 		        catch (final CertificateException e) {
@@ -1135,15 +1142,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         // a pedir si es necesario
         if (!verifyResponse.isOk()) {
             if (verifyResponse.getStatusWord().getMsb() == ERROR_PIN_SW1) {
-            	// Si no hay reintento automatico se lanza la excepcion.
-            	// Incluimos una proteccion en el caso de usar algun "CachePasswordCallback" del
-            	// Cliente @firma o un callback personalizado que indicaba que debia almacenarse el PIN,
-            	// ya que en caso de reutilizarlos se bloquearia el DNI
-            	if (!PIN_AUTO_RETRY || psc.getClass().getName().endsWith("CachePasswordCallback")) { //$NON-NLS-1$
-            		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
-            	}
-            	// Si hay reintento automatico volvemos a pedir el PIN con la misma CallBack
-           		verifyPin(getInternalPasswordCallback(true));
+        		throw new BadPinException(verifyResponse.getStatusWord().getLsb() - (byte) 0xC0);
             }
             else if (verifyResponse.getStatusWord().getMsb() == (byte)0x69 &&
             		 verifyResponse.getStatusWord().getLsb() == (byte)0x83) {
@@ -1238,5 +1237,35 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	 * @throws IOException Si no se puede conectar con la tarjeta. */
 	public String getIdesp() throws Iso7816FourCardException, IOException {
 		return new String(selectFileByLocationAndRead(IDESP_LOCATION));
+	}
+
+	/** Indica si este DNIe necesita validar el PIN para tener acceso a los certificados.
+	 * @return <code>true</code> si este DNIe necesita validar el PIN para tener acceso a
+	 *         los certificados <code>false</code> en caso contrario. */
+	@SuppressWarnings("static-method")
+	protected boolean needsPinForLoadingCerts() {
+		// "true" en DNIe 1.0, "false" en cualquier otro, pero no distinguimos entre DNIe 1.0 y 2.0,
+		// por eso se devuelve "true" también en 2.0.
+		return true;
+	}
+
+	/** Carga los certificados del DNIe si no lo estaban ya.
+	 * @throws PinException Si se necesita el PIN para cargar certificados y no se ha podido comprobar el PIN. */
+	private void loadCertificatesIfNotAlreadyLoaded() throws ApduConnectionException, CryptoCardException, PinException {
+    	// Si los certificados no estan precargados, lo hacemos ahora
+        if (certAuth == null) { // Este certificado esta presente en todas las variantes del DNIe
+
+        	if (certPathAuth == null) {
+				loadCertificatesPaths();
+        	}
+
+        	// Abrimos el canal si es necesario (esto solo seria necesario en DNIe 1.0)
+        	if (needsPinForLoadingCerts()) {
+        		openSecureChannelIfNotAlreadyOpened();
+        	}
+
+            // Cargamos certificados si es necesario
+			loadCertificates();
+        }
 	}
 }

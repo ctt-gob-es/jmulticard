@@ -28,6 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
@@ -61,7 +65,6 @@ import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.prng.DigestRandomGenerator;
 import org.bouncycastle.crypto.prng.RandomGenerator;
 import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
-import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
@@ -225,6 +228,7 @@ public final class BcCryptoHelper extends CryptoHelper {
     private static byte[] doRsa(final byte[] data,
     		                    final RSAKey key,
     		                    final boolean forEncryption) throws IOException {
+
     	final boolean isPrivateKey = key instanceof RSAPrivateKey;
 
     	final AsymmetricKeyParameter akp = new RSAKeyParameters(
@@ -388,7 +392,7 @@ public final class BcCryptoHelper extends CryptoHelper {
 				     IllegalStateException |
 				     InvalidCipherTextException e) {
 			throw new IOException(
-				"Error en el descifrado AES: "+ e, e //$NON-NLS-1$
+				"Error en el descifrado AES", e //$NON-NLS-1$
 			);
 		}
 	}
@@ -729,7 +733,8 @@ public final class BcCryptoHelper extends CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	@Override
 	public X509Certificate generateCertificate(final InputStream is) throws CertificateException {
-		return (X509Certificate) new CertificateFactory().engineGenerateCertificate(is);
+		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+		return (X509Certificate) cf.generateCertificate(is);
 	}
 
 	@Override
@@ -737,9 +742,94 @@ public final class BcCryptoHelper extends CryptoHelper {
 		// Solo creamos el PaceChannelHelper si nos lo piden, asi
 		// evitamos crearlo en uso con contactos (PACE solo se usa con NFC).
 		if (paceChannelHelper == null) {
-			paceChannelHelper = new PaceChannelHelperBc(this);
+			paceChannelHelper = new BcPaceChannelHelper(this);
 		}
 		return paceChannelHelper;
 	}
 
+	@Override
+	public RSAPublicKey getRsaPublicKey(final X509Certificate cert) {
+		if (cert == null) {
+			throw new IllegalArgumentException(
+				"El certificado del cual extraer la clave publica no puede ser nulo" //$NON-NLS-1$
+			);
+		}
+		try {
+			return new CustomRsaPublicKey(cert.getPublicKey().getEncoded());
+		}
+		catch (final IOException e) {
+			throw new IllegalArgumentException(
+				"No se ha podido crear la clave publica a partir del certificado", e //$NON-NLS-1$
+			);
+		}
+	}
+
+	/** Clave p&uacute;blica RSA con control directo de la creaci&oaccute;n como
+	 * <code>BigInteger</code> de m&oacute;dulo y exponente (para evitar problemas
+	 * de interpretaci&oacute;n del signo (que puede darse en entornos como <i>J2Obc</i>).
+	 * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+	public static class CustomRsaPublicKey implements RSAPublicKey {
+
+		private static final long serialVersionUID = -1691684007756690866L;
+
+		private final byte[] keyBytes;
+		private final BigInteger modulus;
+		private final BigInteger exponent;
+
+		CustomRsaPublicKey(final byte[] pukBytes) throws IOException {
+			if (pukBytes == null) {
+				throw new IllegalArgumentException(
+					"La codificacion de la clave publica RSA no puede ser nula" //$NON-NLS-1$
+				);
+			}
+
+			keyBytes = pukBytes.clone();
+
+			ASN1Sequence seq = ASN1Sequence.getInstance(ASN1Primitive.fromByteArray(pukBytes));
+			final DERBitString bs = (DERBitString) seq.getObjectAt(1);
+
+			seq = ASN1Sequence.getInstance(ASN1Primitive.fromByteArray(bs.getBytes()));
+
+			final byte[] modBytes = ((ASN1Integer)seq.getObjectAt(0)).getValue().toByteArray();
+			if (modBytes == null || modBytes.length < 128) {
+				throw new IOException(
+					"El modulo obtenido es menor de 128 octetos (1024 bits)" //$NON-NLS-1$
+				);
+			}
+			final byte[] expBytes = ((ASN1Integer)seq.getObjectAt(1)).getValue().toByteArray();
+			if (expBytes == null || expBytes.length < 3) {
+				throw new IOException(
+					"El exponente obtenido es menor de 3 octetos" //$NON-NLS-1$
+				);
+			}
+
+			modulus = new BigInteger(1, modBytes);
+			exponent = new BigInteger(1, expBytes);
+		}
+
+		@Override
+		public String getAlgorithm() {
+			return "RSA"; //$NON-NLS-1$
+		}
+
+		@Override
+		public String getFormat() {
+			return "X.509"; //$NON-NLS-1$
+		}
+
+		@Override
+		public byte[] getEncoded() {
+			return keyBytes.clone();
+		}
+
+		@Override
+		public BigInteger getModulus() {
+			return modulus;
+		}
+
+		@Override
+		public BigInteger getPublicExponent() {
+			return exponent;
+		}
+	}
 }

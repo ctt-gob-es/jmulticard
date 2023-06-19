@@ -43,7 +43,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.der.pkcs15.CommonKeyAttributes;
 import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
 
-/** Tipo ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i>.
+/** Tipo ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> espec&iacute;fico para ciertas tarjetas FNMT CERES.
  * <pre>
  *  PrivateKeyObject {KeyAttributes} ::= PKCS15Object {
  *    CommonKeyAttributes,
@@ -62,10 +62,11 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrivateKeyObject;
  *    PrivateRsaKeyAttributes
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresPrivateKeyObject extends PrivateKeyObject {
 
-	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> */
+	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i>
+	 * espec&iacute;fico para ciertas tarjetas FNMT CERES. */
 	public CeresPrivateKeyObject() {
 		super(
 		 // CommonObjectAttributes (heredado de Pkcs15Object)
@@ -96,5 +97,4 @@ public final class CeresPrivateKeyObject extends PrivateKeyObject {
 			"', identificador '" + HexUtils.hexify(getKeyIdentifier(), true) + //$NON-NLS-1$
 			"' y referencia '0x" + HexUtils.hexify(new byte[] { getKeyReference() }, false); //$NON-NLS-1$
     }
-
 }

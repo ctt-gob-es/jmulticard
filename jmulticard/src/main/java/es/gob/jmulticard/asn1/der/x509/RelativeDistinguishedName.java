@@ -46,7 +46,7 @@ import es.gob.jmulticard.asn1.der.Set;
  * <pre>
  *  RelativeDistinguishedName ::= SET SIZE (1..MAX) OF AttributeTypeAndDistinguishedValue
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class RelativeDistinguishedName extends Set {
 
 	/** Construye un objeto ASN&#46;1 X&#46;500 <i>RelativeDistinguishedName</i>. */

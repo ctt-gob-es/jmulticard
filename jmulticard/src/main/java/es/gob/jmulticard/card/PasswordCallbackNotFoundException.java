@@ -1,7 +1,8 @@
 package es.gob.jmulticard.card;
 
 /** No se encuentra un mecanismo para la inserci&oacute;n de password (ni un
- * {@code PasswordCallback}, ni un {@code CallbackHandler} capaz de manejarlo). */
+ * {@code PasswordCallback}, ni un {@code CallbackHandler} capaz de manejarlo).
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class PasswordCallbackNotFoundException extends PinException {
 
 	/** Serial Id. */

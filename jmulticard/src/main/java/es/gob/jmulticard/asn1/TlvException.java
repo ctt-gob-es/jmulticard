@@ -39,7 +39,8 @@
  */
 package es.gob.jmulticard.asn1;
 
-/** Excepci&oacute;n gen&eacute;rica de error en un TLV. */
+/** Excepci&oacute;n gen&eacute;rica de error en un TLV.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class TlvException extends Exception {
 
     private static final long serialVersionUID = -295492295001355798L;

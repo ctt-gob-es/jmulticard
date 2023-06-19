@@ -14,16 +14,11 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.LostChannelException;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890Connection;
-import es.gob.jmulticard.apdu.connection.cwa14890.Cwa14890OneV2Connection;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.MseSetComputationApduCommand;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
-import es.gob.jmulticard.asn1.custom.fnmt.ceressc.PrKdfCeres;
+import es.gob.jmulticard.asn1.custom.fnmt.ceressc.CeresScPrKdf;
 import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
@@ -42,19 +37,28 @@ import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieCardException;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.LostChannelException;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890Connection;
+import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
 
 /** Tarjeta FNMT CERES con canal seguro.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresSc extends Dnie {
 
 	private static final byte[] ATR_MASK_TC = {
 		(byte) 0xff, (byte) 0xff, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff,
 		(byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xff, (byte) 0xff, (byte) 0xff
 	};
-	private static final Atr ATR_TC = new Atr(new byte[] {
+
+	/** ATR de las tarjetas FNMT CERES 4.30 y superior. */
+	public static final Atr ATR_TC = new Atr(new byte[] {
         (byte) 0x3B, (byte) 0x7F, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x6A, (byte) 0x46, (byte) 0x4E, (byte) 0x4d,
         (byte) 0x54, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, (byte) 0x90, (byte) 0x00
     }, ATR_MASK_TC);
+
+	private static String cardVersion = null;
 
     /** Certificados de la tarjeta indexados por su alias. */
     private transient Map<String, X509Certificate> certs;
@@ -81,7 +85,30 @@ public final class CeresSc extends Dnie {
 			       final CryptoHelper cryptoHlpr,
 			       final CallbackHandler ch) throws ApduConnectionException,
 	                                                InvalidCardException {
-		super(conn, pwc, cryptoHlpr, ch);
+		this(conn, pwc, cryptoHlpr, ch, true);
+	}
+
+	/** Construye una tarjeta FNMT CERES con canal seguro.
+     * @param conn Conexi&oacute;n con la tarjeta.
+     * @param pwc <i>PasswordCallback</i> para obtener el PIN de la tarjeta.
+     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
+     *                     variar entre m&aacute;quinas virtuales.
+     * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
+	 * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
+     *                         las claves privadas y a los certificados, mientras que si se
+     *                         indica <code>false</code>, no se cargan, permitiendo la
+     *                         instanciaci&oacute;n de una tarjeta sin capacidades de firma o
+     *                         autenticaci&oacute;n con certificados.
+     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se
+     *                                 proporciona cerrada y no es posible abrirla.
+	 * @throws InvalidCardException Si la tarjeta no es una CERES 4.30 o superior. */
+	public CeresSc(final ApduConnection conn,
+			       final PasswordCallback pwc,
+			       final CryptoHelper cryptoHlpr,
+			       final CallbackHandler ch,
+			       final boolean loadCertsAndKeys) throws ApduConnectionException,
+	                                                      InvalidCardException {
+		super(conn, pwc, cryptoHlpr, ch, loadCertsAndKeys);
 		checkAtr(conn.reset());
 	}
 
@@ -235,7 +262,7 @@ public final class CeresSc extends Dnie {
 			LOGGER.warning(
 				"Detectado posible PrKDF con CommonPrivateKeyAttributes vacio, se prueba con estructura alternativa: " + e //$NON-NLS-1$
 			);
-			prkdf = new PrKdfCeres();
+			prkdf = new CeresScPrKdf();
 			prkdf.setDerValue(prkdfValue);
 		}
 
@@ -302,12 +329,12 @@ public final class CeresSc extends Dnie {
     	// Aunque el canal seguro estuviese cerrado, podria si estar enganchado
     	if (!(getConnection() instanceof Cwa14890Connection)) {
     		final ApduConnection secureConnection = new Cwa14890OneV2Connection(
-    				this,
-    				getConnection(),
-    				cryptoHelper,
-    				getCwa14890PublicConstants(),
-    				getCwa14890PrivateConstants()
-    				);
+				this,
+				getConnection(),
+				cryptoHelper,
+				getCwa14890PublicConstants(),
+				getCwa14890PrivateConstants()
+			);
 
 	        try {
 	        	selectMasterFile();
@@ -347,12 +374,18 @@ public final class CeresSc extends Dnie {
     private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
     	final Atr tmpAtr = new Atr(atrBytes, ATR_MASK_TC);
     	if (ATR_TC.equals(tmpAtr) && atrBytes[15] >= (byte) 0x04 && atrBytes[16] >= (byte) 0x30) {
+    		cardVersion = HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false); //$NON-NLS-1$
 			LOGGER.info(
-				"Encontrada TC CERES en version " + //$NON-NLS-1$
-					HexUtils.hexify(new byte[] { atrBytes[15] }, false) + "." + HexUtils.hexify(new byte[] { atrBytes[16] }, false) //$NON-NLS-1$
+				"Encontrada TC CERES en version " + cardVersion //$NON-NLS-1$
+
 			);
 			return;
 		}
     	throw new InvalidCardException("CERES", ATR_TC, atrBytes); //$NON-NLS-1$
+    }
+
+    @Override
+	public String toString() {
+    	return "Tarjeta FNMT CERES" + (cardVersion != null ? " version " + cardVersion : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

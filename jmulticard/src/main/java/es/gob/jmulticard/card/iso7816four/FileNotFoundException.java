@@ -43,7 +43,7 @@ import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.StatusWord;
 
 /** Excepci&oacute;n que representa un fichero no encontrado.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class FileNotFoundException extends Iso7816FourCardException {
 
     private static final long serialVersionUID = -1114043381519603316L;
@@ -57,7 +57,7 @@ public final class FileNotFoundException extends Iso7816FourCardException {
     public FileNotFoundException() {
         super("Fichero no encontrado", //$NON-NLS-1$
               FileNotFoundException.FILE_NOT_FOUND_RETURN_CODE);
-        this.id = null;
+        id = null;
     }
 
     /** Construye una excepci&oacute;n de fichero no encontrado.
@@ -66,8 +66,8 @@ public final class FileNotFoundException extends Iso7816FourCardException {
         super("Fichero no encontrado: " + //$NON-NLS-1$
               HexUtils.hexify(fileId, false),
               FileNotFoundException.FILE_NOT_FOUND_RETURN_CODE);
-        this.id = new byte[fileId.length];
-        System.arraycopy(fileId, 0, this.id, 0, fileId.length);
+        id = new byte[fileId.length];
+        System.arraycopy(fileId, 0, id, 0, fileId.length);
     }
 
     /** Construye una excepci&oacute;n de fichero no encontrado.
@@ -78,14 +78,14 @@ public final class FileNotFoundException extends Iso7816FourCardException {
             filename,
             FileNotFoundException.FILE_NOT_FOUND_RETURN_CODE
         );
-        this.id = filename.getBytes();
+        id = filename.getBytes();
     }
 
     /** Obtiene el identificador del fichero no encontrado.
      * @return Identificador del fichero no encontrado */
     public byte[] getFileId() {
-        final byte[] out = new byte[this.id.length];
-        System.arraycopy(this.id, 0, out, 0, this.id.length);
+        final byte[] out = new byte[id.length];
+        System.arraycopy(id, 0, out, 0, id.length);
         return out;
     }
 }

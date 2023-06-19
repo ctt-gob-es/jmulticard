@@ -41,23 +41,16 @@ package es.gob.jmulticard.card.cwa14890;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionException;
 
-/** Tarjetas acordes a la especificaci&oacute;n CWA-14890.
+/** Tarjetas acordes a la especificaci&oacute;n
+ * <a href="https://www.dnielectronico.es/PDFs/cwa14890-02-2004-May.pdf">CWA-14890</a>.
  * @author Carlos Gamuci
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Cwa14890Card {
-
-    /** Verifica la CA intermedia del certificado de componente de la tarjeta.
-     * @throws CertificateException Cuando ocurre alg&uacute;n problema en la
-     *         validaci&oacute;n del certificado.
-     * @throws IOException Cuando ocurre alg&uacute;n problema en la selecci&oacute;n
-     *                     y lectura del certificado.
-     * @throws SecurityException Si falla la validaci&oacute;n de la CA. */
-    void verifyCaIntermediateIcc() throws CertificateException, IOException;
 
     /** Verifica el certificado de componente de la tarjeta.
      * @throws CertificateException Cuando ocurre alg&uacute;n problema en la
@@ -67,11 +60,11 @@ public interface Cwa14890Card {
      * @throws SecurityException Si falla la validaci&oacute;n del certificado. */
     void verifyIcc() throws CertificateException, IOException;
 
-    /** Recupera el certificado de componente.
-     * @return Certificado de componente.
+    /** Recupera la clave p&uacute;blica del certificado de componente.
+     * @return Clave p&uacute;blica del certificado de componente.
      * @throws IOException Cuando ocurre alg&uacute;n problema en la selecci&oacute;n
      *                     y lectura del certificado */
-    X509Certificate getIccCert() throws IOException;
+    RSAPublicKey getIccCertPublicKey() throws IOException;
 
     /** Verifica que los certificados declarados por el controlador (certificados de
      * terminal) sean v&aacute;lidos para el uso de la tarjeta.

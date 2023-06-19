@@ -46,7 +46,8 @@ import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
-/** Tipo ASN&#46;1 <i>SequenceOf</i>. */
+/** Tipo ASN&#46;1 <i>SequenceOf</i>.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class SequenceOf extends DecoderObject {
 
 	/** Tipo ASN&#46;1 <i>SequenceOf</i>. */
@@ -64,23 +65,23 @@ public abstract class SequenceOf extends DecoderObject {
 		byte[] remainingBytes;
         DecoderObject tmpDo;
         final byte[] valueBytes = tlv.getValue();
-        this.sequenceObjects = new Vector<>();
+        sequenceObjects = new Vector<>();
         while (offset < valueBytes.length) {
         	remainingBytes = new byte[valueBytes.length - offset];
         	System.arraycopy(valueBytes, offset, remainingBytes, 0, remainingBytes.length);
     		tlv = new Tlv(remainingBytes);
         	try {
-        		tmpDo = this.elementsType.getConstructor().newInstance();
+        		tmpDo = elementsType.getConstructor().newInstance();
         	}
         	catch (final Exception e) {
         		throw new Asn1Exception(
-    				"No se ha podido instanciar un " + this.elementsType.getName() + " en la secuencia", e  //$NON-NLS-1$ //$NON-NLS-2$
+    				"No se ha podido instanciar un " + elementsType.getName() + " en la secuencia", e  //$NON-NLS-1$ //$NON-NLS-2$
         		);
         	}
         	offset = offset + tlv.getBytes().length;
         	tmpDo.checkTag(tlv.getTag());
         	tmpDo.setDerValue(tlv.getBytes());
-        	this.sequenceObjects.add(tmpDo);
+        	sequenceObjects.add(tmpDo);
         }
 	}
 
@@ -91,7 +92,7 @@ public abstract class SequenceOf extends DecoderObject {
 	    if (type == null) {
 			throw new IllegalArgumentException();
 		}
-		this.elementsType = type;
+		elementsType = type;
 	}
 
     @Override
@@ -104,13 +105,13 @@ public abstract class SequenceOf extends DecoderObject {
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
      * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia. */
     protected DecoderObject getElementAt(final int index) {
-        return this.sequenceObjects.elementAt(index);
+        return sequenceObjects.elementAt(index);
     }
 
     /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
      * @return N&uacute;mero de elementos que contiene la secuencia. */
     protected int getElementCount() {
-    	return this.sequenceObjects.size();
+    	return sequenceObjects.size();
     }
 
 }

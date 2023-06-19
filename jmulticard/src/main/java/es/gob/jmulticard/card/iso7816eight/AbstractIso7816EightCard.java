@@ -42,13 +42,14 @@ package es.gob.jmulticard.card.iso7816eight;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.apdu.iso7816eight.PsoVerifyCertificateApduCommand;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
 
-/** Tarjeta compatible ISO-7816-8. */
+/** Tarjeta compatible ISO-7816-8.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
 
     /** Construye una tarjeta compatible ISO 7816-8.

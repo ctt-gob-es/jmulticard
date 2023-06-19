@@ -6,7 +6,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 abstract class MseSetApduCommand extends CommandApdu {
 
-    /** Byte de instrucci&oacute;n de la APDU. */
+    /** Octeto de instrucci&oacute;n de la APDU. */
     private static final byte INS_MANAGE_ENVIROMENT = (byte) 0x22;
 
     /** Establece modo para autenticaci&oacute;n. */
@@ -15,18 +15,18 @@ abstract class MseSetApduCommand extends CommandApdu {
     /** Establece modo para computaci&oacute;n. */
     protected static final byte SET_FOR_COMPUTATION = (byte) 0x41;
 
-    /** Control Reference Template for Digital Signature (DST). */
+    /** <i>Control Reference Template for Digital Signature</i> (DST). */
     protected static final byte DST = (byte) 0xB6;
 
-	/** Control Reference Template for Authentication (AT). */
+	/** <i>Control Reference Template for Authentication</i> (AT). */
     protected static final byte AT = (byte) 0xa4;
 
-    /** Referencia a una clave para uso directo en modo sim&eacute;trico o referencia a una clave
-     * p&uacute;blica en modo asim&eacute;trico. */
+    /** Referencia a una clave para uso directo en modo sim&eacute;trico o
+     * referencia a una clave p&uacute;blica en modo asim&eacute;trico. */
     protected static final byte PUBLIC_KEY_REFERENCE = (byte) 0x83;
 
-    /** Referencia a una clave para c&oacute;mputo de sesi&oacute;n en modo sim&eacute;trico o
-     * referencia a una clave privada en modo asim&eacute;trico. */
+    /** Referencia a una clave para c&oacute;mputo de sesi&oacute;n en modo
+     * sim&eacute;trico o referencia a una clave privada en modo asim&eacute;trico. */
     protected static final byte PRIVATE_KEY_REFERENCE = (byte) 0x84;
 
     /** Referencia a un algoritmo (a un mecanismo criptogr&aacute;fico). */
@@ -50,5 +50,4 @@ abstract class MseSetApduCommand extends CommandApdu {
 			null
 		);
 	}
-
 }

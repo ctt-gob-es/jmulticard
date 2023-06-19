@@ -49,7 +49,7 @@ import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo <i>UTF8String</i> de ASN&#46;1.
  * Incorpora soporte adem&aacute;s para <i>PrintableString</i> y <i>T61String</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Utf8String extends DecoderObject {
 
 	/** Tipo ASN&#46;1 "UTF8String". */
@@ -85,11 +85,11 @@ public final class Utf8String extends DecoderObject {
     protected void decodeValue() throws Asn1Exception, TlvException {
     	final Tlv tlv = new Tlv(getRawDerValue());
     	checkTag(tlv.getTag());
-    	this.stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
+    	stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
     }
 
     @Override
     public String toString() {
-    	return this.stringValue;
+    	return stringValue;
     }
 }

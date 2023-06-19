@@ -6,9 +6,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import es.gob.jmulticard.BcCryptoHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
+import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de cambio de PIN.

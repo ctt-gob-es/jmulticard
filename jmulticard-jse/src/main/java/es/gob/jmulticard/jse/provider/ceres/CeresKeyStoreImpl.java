@@ -27,10 +27,10 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.x500.X500Principal;
 
 import es.gob.jmulticard.BcCryptoHelper;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
+import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.CardPasswordCallback;
 import es.gob.jmulticard.jse.provider.JMultiCardProviderMessages;

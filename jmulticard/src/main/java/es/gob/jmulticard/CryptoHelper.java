@@ -51,15 +51,16 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.logging.Logger;
 
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
 
 /** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre
@@ -374,12 +375,20 @@ public abstract class CryptoHelper {
 	 *                              certificado o no se pudo leer del flujo de entrada. */
 	public abstract X509Certificate generateCertificate(final InputStream is) throws CertificateException;
 
+	/** Obtiene una clave p&uacute;blica de un certificado.
+	 * La raz&oacute;n de tener este m&eacute;todo en vez de invocar directamente al
+	 * <code><getPublicKey()</code> del certificado es evitar problemas por la interpretaci&oaccute;n
+	 * del signo del <code>BigInteger</code> en ciertos entornos (como <i>J2Obc</i>).
+	 * @param cert Certificado de origen.
+	 * @return Clave p&uacute;blica RSA del certificado. */
+	public abstract RSAPublicKey getRsaPublicKey(final X509Certificate cert);
+
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).
 	 * @return Utilidades para el establecimiento de un canal PACE */
 	public abstract PaceChannelHelper getPaceChannelHelper();
 
-	/** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Publications/TechnicalGuidelines/TR03110/BSITR03110.html">PACE</a>
+	/** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr03110/tr-03110.html">PACE</a>
 	 * (Password Authenticated Connection Establishment).
 	 * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 	public abstract static class PaceChannelHelper {

@@ -45,7 +45,7 @@ import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
 /** Tipo ASN&#46;1 <i>OctectString</i>.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class OctectString extends DecoderObject {
 
 	/** Tipo ASN&#46;1 <i>OctectString</i>. */
@@ -64,7 +64,7 @@ public class OctectString extends DecoderObject {
                 }, false)
             );
     	}
-    	this.value = tlv.getValue();
+    	value = tlv.getValue();
     }
 
     @Override
@@ -75,8 +75,8 @@ public class OctectString extends DecoderObject {
     /** Proporciona valor binario del <i>OctectString</i>.
      * @return Array de octetos con el valor binario del <i>OctectString</i> */
     public byte[] getOctectStringByteValue() {
-        final byte[] out = new byte[this.value.length];
-        System.arraycopy(this.value, 0, out, 0, this.value.length);
+        final byte[] out = new byte[value.length];
+        System.arraycopy(value, 0, out, 0, value.length);
         return out;
     }
 }

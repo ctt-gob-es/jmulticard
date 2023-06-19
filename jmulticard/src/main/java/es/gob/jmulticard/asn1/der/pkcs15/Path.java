@@ -52,7 +52,7 @@ import es.gob.jmulticard.asn1.der.Sequence;
  *   length [0] INTEGER (0..pkcs15-ub-index) OPTIONAL
  *  }
  * </pre>
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Path extends Sequence {
 
 	/** Crea un objeto ASN&#46;1 PKCS#15 <i>Path</i>. */
@@ -91,5 +91,4 @@ public final class Path extends Sequence {
 	public String toString() {
 		return getPathString();
 	}
-
 }

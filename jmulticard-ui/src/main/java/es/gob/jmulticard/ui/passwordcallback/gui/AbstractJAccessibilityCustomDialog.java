@@ -63,12 +63,10 @@ import javax.swing.JWindow;
 import es.gob.jmulticard.ui.passwordcallback.Messages;
 
 /** Componente que define un di&aacute;logo de alerta.
- * @author Inteco */
+ * @author Inteco. */
 abstract class AbstractJAccessibilityCustomDialog extends JDialog {
 
-	/**
-	 * uid.
-	 */
+	/** UID para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 1L;
 
 	/** Posici&oacute;n X actual. */
