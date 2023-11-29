@@ -7,12 +7,12 @@ import android.nfc.tech.IsoDep;
 import android.util.Log;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.ResponseApdu;
-import es.gob.jmulticard.apdu.connection.AbstractApduConnectionIso7816;
-import es.gob.jmulticard.apdu.connection.ApduConnection;
-import es.gob.jmulticard.apdu.connection.ApduConnectionException;
-import es.gob.jmulticard.apdu.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.apdu.connection.CardConnectionListener;
 import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
+import es.gob.jmulticard.connection.AbstractApduConnectionIso7816;
+import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.ApduConnectionProtocol;
+import es.gob.jmulticard.connection.CardConnectionListener;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre NFC para Android.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
