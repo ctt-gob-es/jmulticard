@@ -42,6 +42,7 @@ package es.gob.jmulticard.asn1.der;
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
+import es.gob.jmulticard.asn1.OidDictionary;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 
@@ -52,7 +53,7 @@ public final class ObjectIdentifier extends DecoderObject {
 	private static final byte TAG_OBJECTID = (byte) 0x06;
 	private static final byte RELATIVE_OID = (byte) 0x0d;
 
-	private transient byte[] rawValue = null;
+	private byte[] rawValue = null;
 
     @Override
     public void checkTag(final byte tag) throws Asn1Exception {
@@ -68,7 +69,7 @@ public final class ObjectIdentifier extends DecoderObject {
 
 	@Override
     protected void decodeValue() throws TlvException {
-		rawValue = new Tlv(getRawDerValue()).getValue();
+		rawValue = new Tlv(getBytes()).getValue();
 	}
 
 	@Override
@@ -84,5 +85,4 @@ public final class ObjectIdentifier extends DecoderObject {
 		}
 		return OidDictionary.getOidDescription(rawValue);
 	}
-
 }

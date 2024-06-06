@@ -5,8 +5,7 @@ import java.io.OutputStream;
 /**
  * Basic class for streaming generators.
  */
-public abstract class ASN1Generator
-{
+public abstract class ASN1Generator {
     // TODO This is problematic if we want an isolating buffer for all ASN.1 writes
     protected OutputStream _out;
 
@@ -16,7 +15,7 @@ public abstract class ASN1Generator
      * @param out
      *            the end output stream that object encodings are written to.
      */
-    public ASN1Generator(OutputStream out)
+    public ASN1Generator(final OutputStream out)
     {
         _out = out;
     }

@@ -2,6 +2,7 @@
 <!--
 mvn versions:display-plugin-updates
 mvn versions:display-dependency-updates 
+mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -9,7 +10,7 @@ mvn versions:display-dependency-updates
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.gob.afirma.jmulticard</groupId>
 	<artifactId>jmulticard-base</artifactId>
-	<version>1.9</version>
+	<version>3.0.3</version>
 	<packaging>pom</packaging>
 	
 	<name>jmulticard-base</name>
@@ -61,24 +62,26 @@ mvn versions:display-dependency-updates
 	
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<sonar.host.url>http://127.0.0.1:9000</sonar.host.url>
+		<sonar.login>admin</sonar.login>
+		<sonar.password>12341234</sonar.password>
 	</properties>
 	
 	<dependencies>
 	
-		<!-- El plugin OWASP encuentra vulnerabilidades en si mismo:
-		https://github.com/jeremylong/DependencyCheck/issues/2332 -->
-<!-- 		<dependency>
+ 		<dependency>
 			<groupId>org.owasp</groupId>
 			<artifactId>dependency-check-maven</artifactId>
-			<version>6.1.1</version>
-		</dependency> -->
+			<version>9.0.9</version>
+		</dependency>
 	
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.10.2</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<profiles>
@@ -96,24 +99,24 @@ mvn versions:display-dependency-updates
 			<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-jsr268</module>
-				<module>jmulticard-ui</module>
 				<module>jmulticard-jse</module>
+				<module>jmulticard-crypto</module>
 			</modules>
 
 			<build>
        			<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.2</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.3.2</version>
+					<configuration>
+						<excludes>
+							<exclude>**/package-info.class</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
+			</plugins>
+		</build>
 
 	    </profile>
 
@@ -130,8 +133,6 @@ mvn versions:display-dependency-updates
 			<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
-				<module>jmulticard-jsr268</module>
-				<module>jmulticard-ui</module>
 				<module>jmulticard-jse</module>
 			</modules>
 
@@ -163,11 +164,11 @@ mvn versions:display-dependency-updates
       		</activation>
       		<build>
        			<plugins>
-<!--
+
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-enforcer-plugin</artifactId>
-					  <version>3.1.0</version>
+					  <version>3.4.1</version>
 					  <executions>
 					    <execution>
 					      <id>enforce-maven</id>
@@ -184,14 +185,14 @@ mvn versions:display-dependency-updates
 					    </execution>
 					  </executions>
 					</plugin>
--->
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.10.1</version>
+						<version>3.12.1</version>
 						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
+							<source>1.8</source>
+							<target>1.8</target>
 						</configuration>
 					</plugin>
 					
@@ -228,32 +229,31 @@ mvn versions:display-dependency-updates
 			</distributionManagement>
       		<build>
        			<plugins>
-	
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.10.1</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
-						</configuration>
-					</plugin>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
+
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.10.1</version>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.3.0</version>
+					<configuration>
+						<excludes>
+							<exclude>**/package-info.class</exclude>
+						</excludes>
+					</configuration>
+				</plugin>
 
 			</plugins>
 		  </build>
 	    </profile>
-		
-		
+
 		<!-- Construcción para despliegue en el repositorio de artefactos -->
 		<profile>
 			<id>env-deploy</id>
@@ -267,8 +267,6 @@ mvn versions:display-dependency-updates
 		  	<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
-				<module>jmulticard-jsr268</module>
-				<module>jmulticard-ui</module>
 				<module>jmulticard-jse</module>
 			</modules>
 		  
@@ -278,7 +276,7 @@ mvn versions:display-dependency-updates
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-source-plugin</artifactId>
-					  <version>3.2.1</version>
+					  <version>3.3.0</version>
 					  <executions>
 						<execution>
 						  <id>attach-sources</id>
@@ -292,7 +290,7 @@ mvn versions:display-dependency-updates
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-javadoc-plugin</artifactId>
-					  <version>3.4.1</version>
+					  <version>3.6.3</version>
 					  <executions>
 						<execution>
 						  <id>attach-javadocs</id>
@@ -307,8 +305,8 @@ mvn versions:display-dependency-updates
 						<artifactId>maven-compiler-plugin</artifactId>
 						<version>3.10.1</version>
 						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
+							<source>1.8</source>
+							<target>1.8</target>
 						</configuration>
 					</plugin>
 					
@@ -326,7 +324,7 @@ mvn versions:display-dependency-updates
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-gpg-plugin</artifactId>
-					  <version>3.1.0</version>
+					  <version>3.2.0</version>
 					  <executions>
 						<execution>
 						  <id>sign-artifacts</id>

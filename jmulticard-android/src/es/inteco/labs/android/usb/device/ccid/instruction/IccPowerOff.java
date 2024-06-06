@@ -55,5 +55,4 @@ public final class IccPowerOff extends UsbCommand {
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
 }

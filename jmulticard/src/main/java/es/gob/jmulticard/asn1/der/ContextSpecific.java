@@ -51,11 +51,11 @@ import es.gob.jmulticard.asn1.TlvException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class ContextSpecific extends DecoderObject {
 
-    private transient DecoderObject object = null;
+    private DecoderObject object = null;
 
     /** Obtiene el objeto ASN&#46;1.
      * @return Objeto ASN&#46;1. */
-    protected DecoderObject getObject() {
+    protected final DecoderObject getObject() {
         if (object == null) {
             throw new IllegalStateException();
         }
@@ -79,16 +79,16 @@ public abstract class ContextSpecific extends DecoderObject {
         		"No se ha podido instanciar un " + elementType.getName() + " en el contexto especifico", e //$NON-NLS-1$ //$NON-NLS-2$
             );
         }
-        final Tlv tlv = new Tlv(getRawDerValue());
+        final Tlv tlv = new Tlv(getBytes());
         tmpDo.setDerValue(tlv.getValue());
         object = tmpDo;
     }
 
-    private transient final Class<? extends DecoderObject> elementType;
+    private final Class<? extends DecoderObject> elementType;
 
     /** Construye un tipo ASN&#46;1 espec&iacute;fico del contexto.
      * @param type Tipo de elemento contenido dentro de este objeto. */
-    public ContextSpecific(final Class<? extends DecoderObject> type) {
+    protected ContextSpecific(final Class<? extends DecoderObject> type) {
         if (type == null) {
             throw new IllegalArgumentException(
         		"El tipo contenido dentro de ContextSpecific no puede ser nulo" //$NON-NLS-1$

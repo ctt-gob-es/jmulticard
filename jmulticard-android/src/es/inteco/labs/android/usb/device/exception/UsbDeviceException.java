@@ -39,13 +39,13 @@ package es.inteco.labs.android.usb.device.exception;
 /** Error en el uso de un dispositivo USB.
  * @author Jose Luis Escanciano Garcia
  * @author Angel Gonzalez Villan */
-public class UsbDeviceException extends Exception {
+public final class UsbDeviceException extends Exception {
 
 	private static final long serialVersionUID = -1156028201713756451L;
 
 	/** Crea una excepci&oacute;n de error en el uso de un dispositivo USB. */
 	public UsbDeviceException() {
-		super();
+		// Vacio
 	}
 
 	/** Crea una excepci&oacute;n de error en el uso de un dispositivo USB.

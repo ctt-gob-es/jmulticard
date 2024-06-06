@@ -111,7 +111,7 @@ final class LibJ2PCSCGNULinuxFix {
 				break;
 
 			default:
-				Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+				Logger.getLogger(LibJ2PCSCGNULinuxFix.class.getName()).warning(
 					"No se ha podido determinar la arquitectura de Ubuntu, no se aplicaran correcciones de directorio de biliotecas" //$NON-NLS-1$
 				);
 				break;

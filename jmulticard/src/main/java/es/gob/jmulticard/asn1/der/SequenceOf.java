@@ -39,7 +39,7 @@
  */
 package es.gob.jmulticard.asn1.der;
 
-import java.util.Vector;
+import java.util.LinkedList;
 
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
@@ -53,19 +53,19 @@ public abstract class SequenceOf extends DecoderObject {
 	/** Tipo ASN&#46;1 <i>SequenceOf</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private transient final Class<? extends DecoderObject> elementsType;
+    private final Class<? extends DecoderObject> elementsType;
 
-    private transient Vector<DecoderObject> sequenceObjects = null;
+    private LinkedList<DecoderObject> sequenceObjects = null;
 
 	@Override
-    protected void decodeValue() throws Asn1Exception, TlvException {
-		Tlv tlv = new Tlv(getRawDerValue());
+    protected final void decodeValue() throws Asn1Exception, TlvException {
+		Tlv tlv = new Tlv(getBytes());
 		checkTag(tlv.getTag());
 		int offset = 0;
 		byte[] remainingBytes;
         DecoderObject tmpDo;
         final byte[] valueBytes = tlv.getValue();
-        sequenceObjects = new Vector<>();
+        sequenceObjects = new LinkedList<>();
         while (offset < valueBytes.length) {
         	remainingBytes = new byte[valueBytes.length - offset];
         	System.arraycopy(valueBytes, offset, remainingBytes, 0, remainingBytes.length);
@@ -96,7 +96,7 @@ public abstract class SequenceOf extends DecoderObject {
 	}
 
     @Override
-    protected byte getDefaultTag() {
+    protected final byte getDefaultTag() {
         return TAG_SEQUENCE;
     }
 
@@ -104,14 +104,13 @@ public abstract class SequenceOf extends DecoderObject {
      * @param index Posici&oacute;n del elemento a recuperar.
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
      * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia. */
-    protected DecoderObject getElementAt(final int index) {
-        return sequenceObjects.elementAt(index);
+    protected final DecoderObject getElementAt(final int index) {
+        return sequenceObjects.get(index);
     }
 
     /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
      * @return N&uacute;mero de elementos que contiene la secuencia. */
-    protected int getElementCount() {
+    protected final int getElementCount() {
     	return sequenceObjects.size();
     }
-
 }

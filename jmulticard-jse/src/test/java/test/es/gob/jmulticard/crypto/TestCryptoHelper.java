@@ -30,38 +30,39 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.spongycastle.crypto.AsymmetricBlockCipher;
-import org.spongycastle.crypto.BlockCipher;
-import org.spongycastle.crypto.BufferedBlockCipher;
-import org.spongycastle.crypto.DataLengthException;
-import org.spongycastle.crypto.InvalidCipherTextException;
-import org.spongycastle.crypto.engines.AESEngine;
-import org.spongycastle.crypto.engines.DESedeEngine;
-import org.spongycastle.crypto.engines.RSAEngine;
-import org.spongycastle.crypto.modes.CBCBlockCipher;
-import org.spongycastle.crypto.paddings.ISO7816d4Padding;
-import org.spongycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.spongycastle.crypto.params.AsymmetricKeyParameter;
-import org.spongycastle.crypto.params.KeyParameter;
-import org.spongycastle.crypto.params.ParametersWithIV;
-import org.spongycastle.crypto.params.RSAKeyParameters;
-import org.spongycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.jce.spec.ECNamedCurveGenParameterSpec;
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.DefaultBufferedBlockCipher;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.engines.AESEngine;
+import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.engines.RSAEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.KeyPairGeneratorSpi;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveGenParameterSpec;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.EcCurve;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 
 /** Pruebas de operaciones criptogr&aacute;ficas con BcCryptoHelper.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestCryptoHelper {
+final class TestCryptoHelper {
 
 	private static final CryptoHelper CH = new BcCryptoHelper();
 
@@ -69,8 +70,8 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testAesDecrypt() throws Exception {
+	@Disabled("No funciona en J2Obc (la parte de JCE puro)")
+	void testAesDecrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
 
@@ -104,8 +105,8 @@ public final class TestCryptoHelper {
 		int noBytesProcessed = 0; // Numero de octetos procesados
 
 		final BufferedBlockCipher decryptCipher = new PaddedBufferedBlockCipher(
-			new CBCBlockCipher(
-				new AESEngine()
+			CBCBlockCipher.newInstance(
+				AESEngine.newInstance()
 			),
 			new ISO7816d4Padding()
 		);
@@ -117,6 +118,7 @@ public final class TestCryptoHelper {
 		final byte[] buf = new byte[16]; // Buffer de entrada
 		final byte[] obuf = new byte[512]; // Buffer de salida
 
+		final String s1;
 		try (
 			final InputStream bin = new ByteArrayInputStream(in);
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream()
@@ -136,9 +138,9 @@ public final class TestCryptoHelper {
 			bout.write(obuf, 0, noBytesProcessed);
 			bout.flush();
 
-			System.out.println(HexUtils.hexify(bout.toByteArray(), false));
+			s1 = HexUtils.hexify(bout.toByteArray(), false);
+			System.out.println(s1);
 		}
-
 
 		// Ahora con JCA/JCE
 
@@ -151,16 +153,18 @@ public final class TestCryptoHelper {
 			new IvParameterSpec(iv)
 		);
 
-		System.out.println(HexUtils.hexify(aesCipher.doFinal(in), false));
+		final String s2 = HexUtils.hexify(aesCipher.doFinal(in), false);
+		System.out.println(s2);
 
+		Assertions.assertEquals(s1, s2);
 	}
 
 	/** Pruebas de cifrado AES.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testAesEncrypt() throws Exception {
+	@Disabled("Resultado invariable")
+	void testAesEncrypt() throws Exception {
 
 		Security.addProvider(new BouncyCastleProvider());
 
@@ -176,7 +180,7 @@ public final class TestCryptoHelper {
 			0x00, 0x01, 0x00, 0x08, (byte) 0xff, 0x00, 0x20, 0x00
 		};
 
-		byte[] tmp = CH.aesEncrypt(
+		final byte[] tmp = CH.aesEncrypt(
 			testBytes,
 			iv,
 			aesKey,
@@ -194,8 +198,8 @@ public final class TestCryptoHelper {
 
 		// AES block cipher en modo CBC con padding ISO7816d4
 		final BufferedBlockCipher encryptCipher = new PaddedBufferedBlockCipher(
-			new CBCBlockCipher(
-				new AESEngine()
+			CBCBlockCipher.newInstance(
+				AESEngine.newInstance()
 			),
 			new ISO7816d4Padding()
 		);
@@ -229,17 +233,19 @@ public final class TestCryptoHelper {
 			noBytesProcessed = encryptCipher.doFinal(obuf, 0);
 			bout.write(obuf, 0, noBytesProcessed);
 			bout.flush();
-			tmp = bout.toByteArray();
-			System.out.println(HexUtils.hexify(tmp, false));
+			final byte[] tmp2 = bout.toByteArray();
+			System.out.println(HexUtils.hexify(tmp2, false));
+
+			Assertions.assertEquals(tmp, tmp2);
 		}
 	}
 
 	/** Pruebas de cifrado de un solo bloque AES.
 	 * @throws Exception En cualquier error. */
 	@Test
-	@Ignore
+	@Disabled("Resultado invariable")
 	@SuppressWarnings("static-method")
-	public void testRawAes() throws Exception {
+	void testRawAes() throws Exception {
 
 		// Primero con JSE
 		final Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding"); //$NON-NLS-1$
@@ -260,19 +266,22 @@ public final class TestCryptoHelper {
 		// Ahora con BouncyCastle
 		final byte[] s = new byte[16];
 		final KeyParameter encKey = new KeyParameter(aesKey);
-		final BlockCipher bCipher = new AESEngine();
+		final BlockCipher bCipher = AESEngine.newInstance();
 		bCipher.init(true, encKey);
 		bCipher.processBlock(aesKey, 0, s, 0);
 		System.out.println(HexUtils.hexify(s, false));
+
+		Assertions.assertEquals(res, s);
 	}
 
 	/** Prueba de la generaci&oacute;n de un par de claves de curva el&iacute;ptica.
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testEcKeyPairGeneration() throws Exception {
+	@Disabled("Resultado invariable")
+	void testEcKeyPairGeneration() throws Exception {
 		final KeyPair kp = CH.generateEcKeyPair(EcCurve.BRAINPOOL_P256_R1);
+		Assertions.assertNotNull(kp);
 		System.out.println(kp);
 	}
 
@@ -280,8 +289,8 @@ public final class TestCryptoHelper {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testDesJca() throws Exception {
+	@Disabled("Resultado invariable")
+	void testDesJca() throws Exception {
 		final byte[] key = "12345678".getBytes(); //$NON-NLS-1$
 		final byte[] indata = "8765432123456789".getBytes(); //$NON-NLS-1$
 
@@ -305,8 +314,8 @@ public final class TestCryptoHelper {
 		System.out.println(new String(c3));
 		System.out.println(new String(c4));
 
-		Assert.assertTrue(HexUtils.arrayEquals(c3, c4));
-		Assert.assertTrue(HexUtils.arrayEquals(indata, c4));
+		Assertions.assertTrue(HexUtils.arrayEquals(c3, c4));
+		Assertions.assertTrue(HexUtils.arrayEquals(indata, c4));
 	}
 
 	/** Main para pruebas.
@@ -332,7 +341,6 @@ public final class TestCryptoHelper {
 
 		final KeyAgreement ka = KeyAgreement.getInstance("ECDH", BouncyCastleProvider.PROVIDER_NAME); //$NON-NLS-1$
 		System.out.println(ka.getClass().getName());
-
 	}
 
 	private static final byte[] RSA_TEST_DATA = {
@@ -424,13 +432,13 @@ public final class TestCryptoHelper {
 	 * @throws IOException En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testRsa() throws IOException {
+	@Disabled("Resultado invariable")
+	void testRsa() throws IOException {
 		final byte[] res1 = doRsaJca(RSA_TEST_DATA, RSA_TEST_PRIVATE_KEY);
 		System.out.println("Resultado con JCA: " + HexUtils.hexify(res1, false)); //$NON-NLS-1$
 		final byte[] res2 = doRsaBc(RSA_TEST_DATA, RSA_TEST_PRIVATE_KEY);
 		System.out.println("Resultado con BC:  " + HexUtils.hexify(res2, false)); //$NON-NLS-1$
-		Assert.assertArrayEquals(res1, res2);
+		Assertions.assertArrayEquals(res1, res2);
 	}
 
 	private static byte[] doRsaBc(final byte[] data, final RSAKey key) throws IOException {
@@ -502,8 +510,12 @@ public final class TestCryptoHelper {
         }
 	}
 
-	private static byte[] do3DesBc(final byte[] data, final byte[] key) throws DataLengthException, IllegalStateException, InvalidCipherTextException {
-		final BufferedBlockCipher cipher = new BufferedBlockCipher(new CBCBlockCipher(new DESedeEngine()));
+	private static byte[] do3DesBc(final byte[] data, final byte[] key) throws DataLengthException,
+	                                                                           IllegalStateException,
+	                                                                           InvalidCipherTextException {
+		final BufferedBlockCipher cipher = new DefaultBufferedBlockCipher(
+			CBCBlockCipher.newInstance(new DESedeEngine())
+		);
 		cipher.init(true, new KeyParameter(key));
 		final byte[] result = new byte[cipher.getOutputSize(data.length)];
 		final int tam = cipher.processBytes(data, 0, data.length, result, 0);
@@ -515,8 +527,8 @@ public final class TestCryptoHelper {
 	 * @throws Exception Si falla el 3DES. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void test3Des() throws Exception {
+	@Disabled("Resultado invariable")
+	void test3Des() throws Exception {
 		final byte[] key = {
 			(byte) 0xE0, (byte) 0x35, (byte) 0x76, (byte) 0xA0, (byte) 0x62, (byte) 0x53, (byte) 0x87, (byte) 0x36,
 			(byte) 0xD4, (byte) 0x37, (byte) 0xA1, (byte) 0x64, (byte) 0xFE, (byte) 0x72, (byte) 0x19, (byte) 0x0D,
@@ -529,7 +541,7 @@ public final class TestCryptoHelper {
 		final byte[] res2 = do3DesJca(data, key);
 		System.out.println(HexUtils.hexify(res1, false));
 		System.out.println(HexUtils.hexify(res2, false));
-		Assert.assertTrue(HexUtils.arrayEquals(res1, res2));
+		Assertions.assertTrue(HexUtils.arrayEquals(res1, res2));
 	}
 
     private static byte[] prepareDesedeKey(final byte[] key) {
@@ -550,18 +562,22 @@ public final class TestCryptoHelper {
 		);
     }
 
-    /** Pruebas de generaci&oaccute;n dee certificados.
-     * @throws Exception En cualquier error. */
+    /** Pruebas de generaci&oacute;n de certificados. */
     @SuppressWarnings("static-method")
 	@Test
-	@Ignore
-    public void testCertFactory() throws Exception {
-    	final Provider p = new BouncyCastleProvider();
-    	Security.insertProviderAt(p, 1);
-    	final CertificateFactory cf = CertificateFactory.getInstance("X.509", p); //$NON-NLS-1$
-    	System.out.println(cf.getClass().getName());
-    	final CertificateFactorySpi cfspi = new org.spongycastle.jcajce.provider.asymmetric.x509.CertificateFactory();
-    	System.out.println(cfspi);
-
+	@Disabled("Solo para comprobaciones manuales")
+    void testCertFactory() {
+    	try {
+	    	final Provider p = new BouncyCastleProvider();
+	    	Security.insertProviderAt(p, 1);
+	    	final CertificateFactory cf = CertificateFactory.getInstance("X.509", p); //$NON-NLS-1$
+	    	System.out.println(cf.getClass().getName());
+	    	final CertificateFactorySpi cfspi = new org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory();
+	    	System.out.println(cfspi);
+    	}
+    	catch(final Exception e) {
+    		e.printStackTrace();
+    		Assertions.fail();
+    	}
     }
 }

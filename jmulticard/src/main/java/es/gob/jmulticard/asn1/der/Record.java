@@ -54,9 +54,9 @@ import es.gob.jmulticard.asn1.TlvException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Record extends DecoderObject {
 
-    private transient final OptionalDecoderObjectElement[] elementsTypes;
+    private final OptionalDecoderObjectElement[] elementsTypes;
 
-    private transient final List<DecoderObject> elements = new ArrayList<>();
+    private final List<DecoderObject> elements = new ArrayList<>();
 
     /** Construye un elemento <i>Record Of</i>.
      * @param types Tipos de los objetos ASN&#46;1 que va a contener el registro (que obligatoriamente deben ser
@@ -73,14 +73,14 @@ public abstract class Record extends DecoderObject {
 
     /** Obtiene el n&uacute;mero de elementos en el registro.
      * @return N&uacute;mero de elementos en el registro */
-    protected int getElementCount() {
+    protected final int getElementCount() {
         return elements.size();
     }
 
     /** Obtiene el elemento ASN&#46;1 situado en una posici&oacute;n concreta del registro.
      * @param pos Posici&oacute;n del elemento deseado.
      * @return Elemento ASN&#46;1 situado en la posici&oacute;n indicada. */
-    protected DecoderObject getElementAt(final int pos) {
+    protected final DecoderObject getElementAt(final int pos) {
         if (pos < 0 || pos >= elements.size()) {
             throw new IndexOutOfBoundsException("No existe un elemento en este registro en el indice " + Integer.toString(pos)); //$NON-NLS-1$
         }
@@ -88,8 +88,8 @@ public abstract class Record extends DecoderObject {
     }
 
     @Override
-    protected void decodeValue() throws Asn1Exception, TlvException {
-        if (getRawDerValue().length == 0) {
+    protected final void decodeValue() throws Asn1Exception, TlvException {
+        if (getBytes().length == 0) {
             throw new Asn1Exception("El valor del objeto ASN.1 esta vacio"); //$NON-NLS-1$
         }
         int offset = 0;
@@ -98,8 +98,8 @@ public abstract class Record extends DecoderObject {
         DecoderObject tmpDo;
         for (int i = 0; i < elementsTypes.length; i++) {
         	try {
-	            remainingBytes = new byte[getRawDerValue().length - offset];
-	            System.arraycopy(getRawDerValue(), offset, remainingBytes, 0, remainingBytes.length);
+	            remainingBytes = new byte[getBytes().length - offset];
+	            System.arraycopy(getBytes(), offset, remainingBytes, 0, remainingBytes.length);
 	            tlv = new Tlv(remainingBytes);
 	            try {
 	                tmpDo = elementsTypes[i].getElementType().getConstructor().newInstance();

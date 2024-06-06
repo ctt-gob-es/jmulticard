@@ -38,16 +38,14 @@ public final class DataGroupHash extends Sequence {
 	/** Constructor. */
 	public DataGroupHash() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					DerInteger.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					OctectString.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				DerInteger.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				OctectString.class,
+				false
+			)
 		);
 	}
 

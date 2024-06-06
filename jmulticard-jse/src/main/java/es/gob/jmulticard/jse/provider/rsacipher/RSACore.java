@@ -27,7 +27,6 @@ package es.gob.jmulticard.jse.provider.rsacipher;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
@@ -49,12 +48,12 @@ import es.gob.jmulticard.jse.provider.DniePrivateKey;
 final class RSACore {
 
     // globally enable/disable use of blinding
-    private final static boolean ENABLE_BLINDING = true;
+    private static final boolean ENABLE_BLINDING = true;
 
     // cache for blinding parameters. Map<BigInteger, BlindingParameters>
     // use a weak hashmap so that cached values are automatically cleared
     // when the modulus is GC'ed
-    private final static Map<BigInteger, BlindingParameters> BLINDING_CACHE = new WeakHashMap<>();
+    private static final Map<BigInteger, BlindingParameters> BLINDING_CACHE = new WeakHashMap<>();
 
     private RSACore() {
         // No instanciable
@@ -68,15 +67,6 @@ final class RSACore {
     static int getByteLength(final BigInteger b) {
         final int n = b.bitLength();
         return n + 7 >> 3;
-    }
-
-    /** Devuelve el n&uacute;mero de octetos necesarios para almacenar el
-     * m&oacute;dulo de una clave RSA.
-     * @param key Clave RSA.
-     * @return N&uacute;mero de octetos necesarios para almacenar el m&oacute;dulo
-     *         de la clave proporcionada. */
-    static int getByteLength(final RSAKey key) {
-        return getByteLength(key.getModulus());
     }
 
     static byte[] convert(final byte[] b, final int ofs, final int len) {
@@ -121,9 +111,7 @@ final class RSACore {
         return toByteArray(c, getByteLength(n));
     }
 
-    /**
-     * RSA non-CRT private key operations.
-     */
+    /** RSA non-CRT private key operations. */
     private static byte[] priCrypt(final byte[] msg,
     		                       final BigInteger n,
     		                       final BigInteger exp) throws BadPaddingException {
@@ -267,7 +255,7 @@ final class RSACore {
      */
     private static final class BlindingParameters {
 
-        private final static BigInteger BIG_TWO = BigInteger.valueOf(2L);
+        private static final BigInteger BIG_TWO = BigInteger.valueOf(2L);
 
         /** Exponente RSA. */
         private final BigInteger e;
@@ -368,7 +356,7 @@ final class RSACore {
     private static BlindingRandomPair getBlindingRandomPair(final BigInteger e,
     		                                                final BigInteger d,
     		                                                final BigInteger n) {
-        BlindingParameters bps = null;
+        BlindingParameters bps;
         synchronized (BLINDING_CACHE) {
             bps = BLINDING_CACHE.get(n);
         }
@@ -384,7 +372,7 @@ final class RSACore {
 
         final BlindingRandomPair brp = bps.getBlindingRandomPair(e, d, n);
         if (brp == null) {
-            // need to reset the blinding parameters
+            // Necesitamos reniciar los blinding parameters
             bps = new BlindingParameters(e, d, n);
             synchronized (BLINDING_CACHE) {
             	if (BLINDING_CACHE.containsKey(n)) {

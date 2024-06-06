@@ -65,42 +65,40 @@ public abstract class Pkcs15Object extends Sequence {
 			               final Class<? extends ContextSpecific> subclassAttributes,
 			               final Class<? extends ContextSpecific> typeAttributes) {
         super(
-    		new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					CommonObjectAttributes.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					classAttributes,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					subclassAttributes,
-					true
-				),
-				new OptionalDecoderObjectElement(
-					typeAttributes,
-					false
-				)
-    		}
+			new OptionalDecoderObjectElement(
+				CommonObjectAttributes.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				classAttributes,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				subclassAttributes,
+				true
+			),
+			new OptionalDecoderObjectElement(
+				typeAttributes,
+				false
+			)
 		);
     }
 
     /** Obtiene los atributos comunes (<i>CommonObjectAttributes</i>).
      * @return Atributos comunes */
-    protected CommonObjectAttributes getCommonObjectAttributes() {
+    protected final CommonObjectAttributes getCommonObjectAttributes() {
         return (CommonObjectAttributes) getElementAt(0);
     }
 
     /** Obtiene los atributos espec&iacute;ficos de clase.
      * @return Atributos espec&iacute;ficos de clase */
-    public DecoderObject getClassAttributes() {
+    public final DecoderObject getClassAttributes() {
         return getElementAt(1);
     }
 
     /** Obtiene los atributos espec&iacute;ficos de subclase.
      * @return Atributos espec&iacute;ficos de subclase */
-    public DecoderObject getSubclassAttributes() {
+    public final DecoderObject getSubclassAttributes() {
     	// Si solo hay tres elementos, es que no hay SubclassAttributes,
     	// ya que es el unico elemento opcional
     	if (getElementCount() == 3) {
@@ -111,11 +109,10 @@ public abstract class Pkcs15Object extends Sequence {
 
     /** Obtiene los atributos espec&iacute;ficos del tipo.
      * @return Atributos espec&iacute;ficos del tipo */
-    public DecoderObject getTypeAttributes() {
+    public final DecoderObject getTypeAttributes() {
     	if (getElementCount() == 3) {
     		return getElementAt(2);
     	}
     	return getElementAt(3);
     }
-
 }

@@ -58,20 +58,18 @@ public final class Path extends Sequence {
 	/** Crea un objeto ASN&#46;1 PKCS#15 <i>Path</i>. */
 	public Path() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					OctectString.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					DerInteger.class,
-					true
-				),
-				new OptionalDecoderObjectElement(
-					PathLength.class,
-					true
-				)
-			}
+			new OptionalDecoderObjectElement(
+				OctectString.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				DerInteger.class,
+				true
+			),
+			new OptionalDecoderObjectElement(
+				PathLength.class,
+				true
+			)
 		);
 	}
 

@@ -43,7 +43,7 @@ package es.gob.jmulticard.apdu.dnie;
 import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU de carga de datos.
- * Estos deben proporcionarse en origen con relleno PKCS#1.
+ * Estos deben proporcionarse de origen con relleno PKCS#1.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class LoadDataApduCommand extends CommandApdu {
 
@@ -62,5 +62,4 @@ public final class LoadDataApduCommand extends CommandApdu {
 			null
 		);
 	}
-
 }

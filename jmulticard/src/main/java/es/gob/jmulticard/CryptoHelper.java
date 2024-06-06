@@ -39,6 +39,7 @@
  */
 package es.gob.jmulticard;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,18 +54,18 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
-import java.util.logging.Logger;
 
+import es.gob.jmulticard.apdu.iso7816four.pace.PaceChat;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.icao.CardAccess;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.WirelessInitializer;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
-import es.gob.jmulticard.de.tsenger.androsmex.iso7816.SecureMessaging;
+import es.gob.jmulticard.connection.pace.SecureMessaging;
 
-/** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre
- * JSE/JME/Dalvik.
+/** Funcionalidades criptogr&aacute;ficas de utilidad que pueden variar entre JSE/Android/J2Obc.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class CryptoHelper {
 
@@ -116,70 +117,6 @@ public abstract class CryptoHelper {
 		}
 	}
 
-	/** Algoritmo de huella digital. */
-	public enum DigestAlgorithm {
-
-		/** SHA-1. */
-		SHA1("SHA1", 20), //$NON-NLS-1$
-
-		/** SHA-256. */
-		SHA256("SHA-256", 32), //$NON-NLS-1$
-
-		/** SHA-384. */
-		SHA384("SHA-384", 48), //$NON-NLS-1$
-
-		/** SHA-512. */
-		SHA512("SHA-512", 64); //$NON-NLS-1$
-
-		/** Nombre del algoritmo de huella digital. */
-		private final String name;
-
-		/** Longitud (en octetos) de las huellas resultantes con este algoritmo.
-		 * La longitud se proporciona est&aacute;ticamente para no introducir aqu&iacute;
-		 * dependencias con proveedores de seguridad de Java o con BouncyCastle. */
-		private final int length;
-
-		/** Construye el algoritmo de huella digital.
-		 * @param n Nombre del algoritmo.
-		 * @param l Longitud (en octetos) de las huellas resultantes con este algoritmo. */
-		DigestAlgorithm(final String n, final int l) {
-			name = n;
-			length = l;
-		}
-
-		@Override
-		public String toString() {
-			return name;
-		}
-
-		/** Obtiene la longitud (en octetos) de las huellas resultantes con este algoritmo.
-		 * @return Longitud (en octetos) de las huellas resultantes con este algoritmo. */
-		public int getDigestLength() {
-			return length;
-		}
-
-		/** Obtiene un algoritmo de huella digital a partir de su nombre.
-		 * @param name Nombre del algoritmo de huella digital a partir de su nombre.
-		 * @return Algoritmo de huella digital. */
-		public static DigestAlgorithm getDigestAlgorithm(final String name) {
-			if ("SHA1".equals(name) || "SHA-1".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
-				return SHA1;
-			}
-			if ("SHA256".equals(name) || "SHA-256".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
-				return SHA256;
-			}
-			if ("SHA384".equals(name) || "SHA-384".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
-				return SHA384;
-			}
-			if ("SHA512".equals(name) || "SHA-512".equals(name)) { //$NON-NLS-1$ //$NON-NLS-2$
-				return SHA512;
-			}
-			throw new IllegalArgumentException(
-				"Algoritmo de huella no soportado: " + name //$NON-NLS-1$
-			);
-		}
-	}
-
 	private static final byte PKCS1_BLOCK_TYPE = (byte) 0x01;
 	private static final byte PKCS1_FILL = (byte) 0xff;
 	private static final byte PKCS1_DELIMIT = (byte) 0x00;
@@ -190,7 +127,7 @@ public abstract class CryptoHelper {
 	 *                con estos datos con relleno.
 	 * @return Datos con el relleno PKCS#1 a&ntilde;adido.
 	 * @throws IOException En caso de error el el tratamiento de datos. */
-	public final static byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] inByteArray,
+	public static final byte[] addPkcs1PaddingForPrivateKeyOperation(final byte[] inByteArray,
 			                                                         final int keySize) throws IOException {
 		if (inByteArray == null) {
 			throw new IllegalArgumentException("Los datos de entrada no pueden ser nulos"); //$NON-NLS-1$
@@ -217,8 +154,7 @@ public abstract class CryptoHelper {
      * @param algorithm Algoritmo de huella digital que debe utilizarse.
      * @param data Datos de entrada.
      * @return Huella digital de los datos.
-     * @throws IOException Si ocurre alg&uacute;n problema generando la huella
-     *                     digital. */
+     * @throws IOException Si ocurre alg&uacute;n problema generando la huella digital. */
     public abstract byte[] digest(DigestAlgorithm algorithm, byte[] data) throws IOException;
 
     /** Encripta datos mediante Triple DES (modo CBC sin relleno) y con una
@@ -229,8 +165,7 @@ public abstract class CryptoHelper {
      * @param data Datos a encriptar.
      * @param key Clave 3DES de cifrado.
      * @return Datos cifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         encriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el encriptado. */
     public abstract byte[] desedeEncrypt(byte[] data, byte[] key) throws IOException;
 
     /** Desencripta datos mediante Triple DES (modo CBC sin relleno) y con una
@@ -240,37 +175,32 @@ public abstract class CryptoHelper {
      * @param data Datos a desencriptar.
      * @param key Clave 3DES de descifrado.
      * @return Datos descifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         desencriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el desencriptado. */
     public abstract byte[] desedeDecrypt(byte[] data, byte[] key) throws IOException;
 
     /** Encripta datos mediante DES (modo ECB sin relleno).
      * @param data Datos a encriptar.
      * @param key Clave DES de cifrado.
      * @return Datos cifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         encriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el encriptado. */
     public abstract byte[] desEncrypt(byte[] data, byte[] key) throws IOException;
 
     /** Desencripta datos mediante DES (modo ECB sin relleno).
      * @param data Datos a desencriptar.
      * @param key Clave DES de descifrado.
      * @return Datos descifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *         desencriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el desencriptado. */
     public abstract byte[] desDecrypt(byte[] data, byte[] key) throws IOException;
 
     /** Desencripta datos mediante AES.
      * @param data Datos a encriptar.
      * @param iv Vector de inicializaci&oacute;n.
-     *           Si se proporciona <code>null</code> se usar&aacute;
-     *           un vector con valores aleatorios.
+     *           Si se proporciona <code>null</code> se usar&aacute; un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
      * @param blockMode Modo de gesti&oacute;n de bloques.
      * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *                     encriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el encriptado. */
     public abstract byte[] aesDecrypt(byte[] data,
     		                          byte[] iv,
     		                          byte[] key,
@@ -279,14 +209,13 @@ public abstract class CryptoHelper {
 
     /** Encripta datos mediante AES.
      * @param data Datos a encriptar.
-     * @param iv Vector de inicializaci&oacute;n. Si se proporciona <code>null</code>
-     *           se usar&aacute; un vector con valores aleatorios.
+     * @param iv Vector de inicializaci&oacute;n.
+     *           Si se proporciona <code>null</code> se usar&aacute; un vector con valores aleatorios.
      * @param key Clave AES de cifrado.
      * @param blockMode Modo de gesti&oacute;n de bloques.
      * @param padding Relleno a usar en los datos de entrada.
      * @return Datos cifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *                     encriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el encriptado. */
     public abstract byte[] aesEncrypt(byte[] data,
     		                          byte[] iv,
     		                          byte[] key,
@@ -297,32 +226,27 @@ public abstract class CryptoHelper {
      * @param cipheredData Datos a desencriptar.
      * @param key Clava RSA de descifrado.
      * @return Datos descifrados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *                     desencriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el desencriptado. */
     public abstract byte[] rsaDecrypt(byte[] cipheredData, RSAKey key) throws IOException;
 
     /** Encripta datos mediante RSA.
      * @param data Datos a encriptar.
      * @param key Clava RSA de cifrado.
      * @return Datos encriptados.
-     * @throws IOException Si ocurre alg&uacute;n problema durante el
-     *                     encriptado. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante el encriptado. */
     public abstract byte[] rsaEncrypt(byte[] data, RSAKey key) throws IOException;
 
     /** Genera contenido aleatorio en un array de bytes.
      * @param numBytes N&uacute;mero de bytes aleatorios que generar.
      * @return Array de bytes aleatorios.
-     * @throws IOException Si ocurre alg&uacute;n problema durante la
-     *         generaci&oacute;n del aleatorio. */
+     * @throws IOException Si ocurre alg&uacute;n problema durante la generaci&oacute;n del aleatorio. */
     public abstract byte[] generateRandomBytes(int numBytes) throws IOException;
 
 	/** Genera un par de claves de tipo curva el&iacute;ptica.
 	 * @param curveName Tipo de curva el&iacute;ptica a utilizar.
 	 * @return Par de claves generadas.
-	 * @throws NoSuchAlgorithmException Si el sistema no soporta la generaci&oacute;n de
-	 *                                  curvas el&iacute;pticas.
-	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva
-	 *                                            el&iacute;ptica indicada. */
+	 * @throws NoSuchAlgorithmException Si el sistema no soporta la generaci&oacute;n de curvas el&iacute;pticas.
+	 * @throws InvalidAlgorithmParameterException Si el sistema no soporta el tipo de curva el&iacute;ptica indicada. */
 	public abstract KeyPair generateEcKeyPair(EcCurve curveName) throws NoSuchAlgorithmException,
 	                                                                    InvalidAlgorithmParameterException;
 
@@ -330,8 +254,7 @@ public abstract class CryptoHelper {
 	 * @param data Datos (deben estar ya con el relleno adecuado).
 	 * @param key Clave AES.
 	 * @return CMAC.
-	 * @throws NoSuchAlgorithmException Si no se encuentra un proveedor que permita realizar
-	 *                                  CMAC con AES.
+	 * @throws NoSuchAlgorithmException Si no se encuentra un proveedor que permita realizar CMAC con AES.
 	 * @throws InvalidKeyException Si la clave proporcionada no es una clave AES v&aacute;lida. */
 	public abstract byte[] doAesCmac(byte[] data, byte[] key) throws NoSuchAlgorithmException,
 	                                                                 InvalidKeyException;
@@ -364,20 +287,24 @@ public abstract class CryptoHelper {
 	/** Genera un certificado a partir de su codificaci&oacute;n binaria.
 	 * @param encoded Codificaci&oacute;n binaria del certificado.
 	 * @return Certificado.
-	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
-	 *                              certificado. */
-	public abstract X509Certificate generateCertificate(final byte[] encoded) throws CertificateException;
+	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un certificado. */
+	public static X509Certificate generateCertificate(final byte[] encoded) throws CertificateException {
+		return generateCertificate(new ByteArrayInputStream(encoded));
+	}
 
 	/** Genera un certificado a partir de un flujo hacia su codificaci&oacute;n binaria.
 	 * @param is Flujo de lectura hacia la Codificaci&oacute;n binaria del certificado.
 	 * @return Certificado.
 	 * @throws CertificateException Si la codificaci&oacute;n binaria no correspond&iacute;a a un
 	 *                              certificado o no se pudo leer del flujo de entrada. */
-	public abstract X509Certificate generateCertificate(final InputStream is) throws CertificateException;
+	public static X509Certificate generateCertificate(final InputStream is) throws CertificateException {
+		final java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory.getInstance("X.509"); //$NON-NLS-1$
+		return (X509Certificate) cf.generateCertificate(is);
+	}
 
 	/** Obtiene una clave p&uacute;blica de un certificado.
-	 * La raz&oacute;n de tener este m&eacute;todo en vez de invocar directamente al
-	 * <code><getPublicKey()</code> del certificado es evitar problemas por la interpretaci&oaccute;n
+	 * Permite evitar invocar directamente al <code>getPublicKey()</code> del certificado
+	 * y as&iacute; evitar problemas por la interpretaci&oacute;n
 	 * del signo del <code>BigInteger</code> en ciertos entornos (como <i>J2Obc</i>).
 	 * @param cert Certificado de origen.
 	 * @return Clave p&uacute;blica RSA del certificado. */
@@ -385,18 +312,16 @@ public abstract class CryptoHelper {
 
 	/** Obtiene las utilidades para el establecimiento de un canal PACE
 	 * (Password Authenticated Connection Establishment).
+	 * @param cardAccess CardAccess de la tarjeta.
+	 * @param paceChat PACE CHAT a usar en el establecimiento del canal PACE.
 	 * @return Utilidades para el establecimiento de un canal PACE */
-	public abstract PaceChannelHelper getPaceChannelHelper();
+	public abstract PaceChannelHelper getPaceChannelHelper(final CardAccess cardAccess, final PaceChat paceChat);
 
-	/** Utilidades para el establecimiento de un canal <a href="https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr03110/tr-03110.html">PACE</a>
-	 * (Password Authenticated Connection Establishment).
+	/** Utilidades para el establecimiento de un canal PACE (Password Authenticated Connection Establishment).
 	 * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 	public abstract static class PaceChannelHelper {
 
-		/** <code>Logger</code>. */
-		protected static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
-		/** Relleno para el CAN o la MRZ. */
+		/** Relleno para el inicializador PACE (CAN, MRZ, PIN o PUK). */
 		protected static final byte[] CAN_MRZ_PADDING = {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03
 		};
@@ -411,56 +336,26 @@ public abstract class CryptoHelper {
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x02
 		};
 
-		/** Relleno para el MAC. */
-		protected static final byte[] MAC_PADDING = {
+		/** Relleno anterior para el MAC. */
+		protected static final byte[] MAC_PADDING_PRE = {
 			(byte) 0x7F, (byte) 0x49, (byte) 0x4F, (byte) 0x06
 		};
 
-		/** Relleno para el MAC2. */
-		protected static final byte[] MAC2_PADDING = {
+		/** Relleno posterior para el MAC. */
+		protected static final byte[] MAC2_PADDING_POST = {
 			(byte) 0x86, (byte) 0x41, (byte) 0x04
 		};
 
-		/** Etiqueta de los datos de autenticaci&oacute;n din&aacute;mica dentro de un
-		 * comando <i>General Autenticate</i>. */
-		protected static final byte TAG_DYNAMIC_AUTHENTICATION_DATA = (byte) 0x7C;
-
-		/** Etiqueta del segundo TLV de los datos de autenticaci&oacute;n din&aacute;mica
-		 * dentro de un comando <i>General Autenticate</i>. */
-		protected static final byte TAG_GEN_AUTH_2 = (byte) 0x81;
-
-		/** Etiqueta del tercer TLV de los datos de autenticaci&oacute;n din&aacute;mica
-		 * dentro de un comando <i>General Autenticate</i>. */
-		protected static final byte TAG_GEN_AUTH_3 = (byte) 0x83;
-
-		/** Etiqueta del cuarto TLV de los datos de autenticaci&oacute;n din&aacute;mica
-		 * dentro de un comando <i>General Autenticate</i>. */
-		protected static final byte TAG_GEN_AUTH_4 = (byte) 0x85;
-
 		/** Utilidad para operaciones criptogr&aacute;ficas. */
-		protected transient final CryptoHelper cryptoHelper;
+		protected final CryptoHelper cryptoHelper;
 
 		/** Constructor
 		 * @param ch Utilidad para operaciones criptogr&aacute;ficas. */
-		public PaceChannelHelper(final CryptoHelper ch) {
+		protected PaceChannelHelper(final CryptoHelper ch) {
 			cryptoHelper = ch;
 		}
 
-		/** Abre un canal PACE.
-		 * @param cla Clase de APDU para los comandos de establecimiento de canal.
-		 * @param pi Valor de inicializaci&oacute;n del canal. Puede ser un CAN
-		 *           (<i>Card Access Number</i>) o una MRZ (<i>Machine Readable Zone</i>).
-		 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
-		 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.
-		 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
-		 * @throws IcaoException Si hay problemas en la apertura del canal. */
-		public abstract SecureMessaging openPaceChannel(byte cla,
-				                                        WirelessInitializer pi,
-				                                        ApduConnection conn) throws ApduConnectionException,
-				                                                                    IcaoException;
-
-		/** Obtiene la representaci&oacute;n de un <code>BigInteger</code> como un
-		 * array de octetos.
+		/** Obtiene la representaci&oacute;n de un <code>BigInteger</code> como un array de octetos.
 		 * @param bi <code>BigInteger</code> a convertir.
 		 * @return Array de octetos que representa el <code>BigInteger</code> de entrada. */
 		protected static byte[] bigIntToByteArray(final BigInteger bi) {
@@ -473,14 +368,25 @@ public abstract class CryptoHelper {
 			return temp;
 		}
 
-		/** Obtiene la representaci&oacute;n de una clave de curva el&iacute;ptica como un
-		 * array de octetos.
+		/** Obtiene la representaci&oacute;n de una clave de curva el&iacute;ptica como un array de octetos.
 		 * @param key Clave de curva el&iacute;ptica de entrada.
 		 * @return Array de octetos que representa la clave de curva el&iacute;ptica de entrada.
 		 * @throws TlvException Si hay problemas desempaquetando la clave como array de octetos. */
 		protected static byte[] unwrapEcKey(final byte[] key) throws TlvException {
 			return new Tlv(new Tlv(key).getValue()).getValue();
 		}
-	}
 
+		/** Abre un canal PACE.
+		 * @param cla Clase de APDU para los comandos de establecimiento de canal.
+		 * @param pi Valor de inicializaci&oacute;n del canal. Puede ser un CAN
+		 *           (<i>Card Access Number</i>), una MRZ (<i>Machine Readable Zone</i>) o un PIN.
+		 * @param conn Conexi&oacute;n hacia la tarjeta inteligente.
+		 * @return SecureMessaging Objeto para el env&iacute;o de mensajes seguros a trav&eacute;s de canal PACE.
+		 * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
+		 * @throws IcaoException Si hay problemas en la apertura del canal. */
+		public abstract SecureMessaging openPaceChannel(byte cla,
+				                                        WirelessInitializer pi,
+				                                        ApduConnection conn) throws ApduConnectionException,
+				                                                                    IcaoException;
+	}
 }

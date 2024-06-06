@@ -38,13 +38,13 @@ package es.inteco.labs.android.usb.device.exception;
 
 /** Error en el canal de comunicaci&oacute;n con el lector de tarjetas.
  * @author Jose Luis Escanciano Garcia */
-public class UsbSmartCardChannelException extends Exception {
+public final class UsbSmartCardChannelException extends Exception {
 
 	private static final long serialVersionUID = 5669734920651151641L;
 
 	/** Crea una excepci&oacute;n de error en el canal de comunicaci&oacute;n con el lector de tarjetas. */
-	public UsbSmartCardChannelException(){
-		super();
+	public UsbSmartCardChannelException() {
+		// Vacio
 	}
 
 	/** Crea una excepci&oacute;n de error en el canal de comunicaci&oacute;n con el lector de tarjetas.
@@ -52,5 +52,4 @@ public class UsbSmartCardChannelException extends Exception {
 	public UsbSmartCardChannelException(final String message){
 		super(message);
 	}
-
 }

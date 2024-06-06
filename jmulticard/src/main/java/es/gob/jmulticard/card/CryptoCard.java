@@ -71,10 +71,9 @@ public interface CryptoCard {
      * @param data Datos a firmar.
      * @param algorithm Algoritmo de firma.
      * @param keyRef Referencia a la clave privada de firma.
-     * @return Datos firmados (PKCS#1 v1.5).
+     * @return Datos firmados (en el algoritmo y formato que determine la tarjeta).
      * @throws AuthenticationModeLockedException Cuando la tarjeta est&aacute; bloqueada.
      * @throws CryptoCardException Si ocurre alg&uacute;n problema durante la firma.
      * @throws PinException Si el PIN proporcionado es incorrecto o no es posible obtenerlo. */
     byte[] sign(byte[] data, String algorithm, PrivateKeyReference keyRef) throws CryptoCardException, PinException;
-
 }

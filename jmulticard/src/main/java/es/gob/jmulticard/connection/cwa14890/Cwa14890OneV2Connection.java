@@ -52,6 +52,50 @@ import es.gob.jmulticard.connection.ApduEncrypterDesMac8;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 
+	private final ChannelType channelType;
+
+    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta.
+     * Es necesario abrir el canal asoci&aacute;ndolo a una conexi&oacute;n para
+     * poder trasmitir APDUs.
+     * Si no se indica una conexi&oacute;n se utilizar&aacute;a la conexi&oacute;n
+     * impl&iacute;cita de la tarjeta indicada.
+     * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
+     * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas.
+     * @param chType Tipo de canal o conexi&oacute;n. */
+	public Cwa14890OneV2Connection(final ApduConnection connection,
+			                       final CryptoHelper cryptoHlpr,
+			                       final ChannelType chType) {
+		super(connection, cryptoHlpr);
+		channelType = chType;
+	}
+
+    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta.
+     * Es necesario abrir el canal asoci&aacute;ndolo a una conexi&oacute;n para
+     * poder trasmitir APDUs.
+     * Si no se indica una conexi&oacute;n se utilizar&aacute;a la conexi&oacute;n
+     * impl&iacute;cita de la tarjeta indicada.
+     * @param card Tarjeta con la funcionalidad CWA-14890.
+     * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
+     * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas.
+     * @param cwaConsts Clase de claves p&uacute;blicas CWA-14890.
+     * @param cwaPrivConsts Clase de claves privadas CWA-14890.
+     * @param chType Tipo de canal o conexi&oacute;n. */
+	public Cwa14890OneV2Connection(final Cwa14890Card card,
+			                       final ApduConnection connection,
+			                       final CryptoHelper cryptoHlpr,
+			                       final Cwa14890PublicConstants cwaConsts,
+			                       final Cwa14890PrivateConstants cwaPrivConsts,
+			                       final ChannelType chType) {
+		super(card, connection, cryptoHlpr, cwaConsts, cwaPrivConsts);
+		channelType = chType;
+	}
+
+	/** Obtiene el tipo de canal o conexi&oacute;n.
+	 * @return Tipo de canal o conexi&oacute;n. */
+	public ChannelType getChannelType() {
+		return channelType;
+	}
+
 	@Override
 	protected AbstractApduEncrypter instantiateApduEncrypter() {
     	return new ApduEncrypterDesMac8();
@@ -64,34 +108,4 @@ public class Cwa14890OneV2Connection extends Cwa14890OneV1Connection {
 				? "abierta sobre " + getSubConnection() //$NON-NLS-1$
 					: "cerrada"); //$NON-NLS-1$
     }
-
-    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta.
-     * Es necesario abrir el canal asoci&aacute;ndolo a una conexi&oacute;n para
-     * poder trasmitir APDUs.
-     * Si no se indica una conexi&oacute;n se utilizar&aacute;a la conexi&oacute;n
-     * impl&iacute;cita de la tarjeta indicada.
-     * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
-     * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas. */
-	public Cwa14890OneV2Connection(final ApduConnection connection,
-			                       final CryptoHelper cryptoHlpr) {
-		super(connection, cryptoHlpr);
-	}
-
-    /** Crea el canal seguro CWA-14890 para la comunicaci&oacute;n de la tarjeta.
-     * Es necesario abrir el canal asoci&aacute;ndolo a una conexi&oacute;n para
-     * poder trasmitir APDUs.
-     * Si no se indica una conexi&oacute;n se utilizar&aacute;a la conexi&oacute;n
-     * impl&iacute;cita de la tarjeta indicada.
-     * @param card Tarjeta con la funcionalidad CWA-14890.
-     * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
-     * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas.
-     * @param cwaConsts Clase de claves p&uacute;blicas CWA-14890.
-     * @param cwaPrivConsts Clase de claves privadas CWA-14890. */
-	public Cwa14890OneV2Connection(final Cwa14890Card card,
-			                       final ApduConnection connection,
-			                       final CryptoHelper cryptoHlpr,
-			                       final Cwa14890PublicConstants cwaConsts,
-			                       final Cwa14890PrivateConstants cwaPrivConsts) {
-		super(card, connection, cryptoHlpr, cwaConsts, cwaPrivConsts);
-	}
 }

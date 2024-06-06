@@ -49,13 +49,13 @@ public final class InvalidCardException extends CardException {
     private static final long serialVersionUID = 4888120866657775782L;
 
     /** ATR de la tarjeta que se esperaba encontrar. */
-    private transient final Atr atr;
+    private final Atr atr;
 
     /** Descripci&oacute;n de la excepci&oacute;n. */
-    private transient final String name;
+    private final String name;
 
     /** ATR de la tarjeta encontrada. */
-    private transient final byte[] badAtr;
+    private final byte[] badAtr;
 
     /** Construye una excepci&oacute;n de tarjeta inv&aacute;lida.
      * @param desc Descripci&oacute;n de la raz&oacute;n de invalidez de la tarjeta */

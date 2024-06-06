@@ -46,7 +46,6 @@ import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.connection.CardConnectionListener;
 import es.gob.jmulticard.connection.CardNotPresentException;
 import es.gob.jmulticard.connection.UnavailableReaderException;
 import es.inteco.labs.android.usb.device.SmartCardUsbDevice;
@@ -55,18 +54,19 @@ import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
 
 /** Conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
  * Basado en <code>es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
- * @author Jose Luis Escanciano Garcia */
-public final class AndroidCCIDConnection implements ApduConnection {
+ * @author Jose Luis Escanciano Garc&iacute;a
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+public final class AndroidCcidConnection implements ApduConnection {
 
 	private final SmartCardUsbDevice ccidReader;
 
 	private static final boolean DEBUG = false;
 
 	/** Construye una conexi&oacute;n con lector de tarjetas inteligentes implementado sobre Android USB Host API.
-	 * @param usbManager Gestor de dispositivos USB del sistema
+	 * @param usbManager Gestor de dispositivos USB del sistema.
 	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
 	 * @throws UsbDeviceException Cuando no se pueda preparar el dispositivo. */
-	public AndroidCCIDConnection(final UsbManager usbManager, final UsbDevice reader) throws UsbDeviceException{
+	public AndroidCcidConnection(final UsbManager usbManager, final UsbDevice reader) throws UsbDeviceException{
 		if (!isCardReader(reader)) {
 			throw new IllegalArgumentException(
 				"Debe proporcionarse un lector de tarjetas CCID" //$NON-NLS-1$
@@ -89,7 +89,6 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		return false;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void open() throws ApduConnectionException {
 		try {
@@ -102,7 +101,6 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void close() throws ApduConnectionException {
 		if(isOpen()) {
@@ -110,13 +108,12 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		}
 	}
 
-    /** Etiqueta que indica que es necesario recuperar el resultado del comando anterior. */
-    private static final byte TAG_RESPONSE_PENDING = 0x61;
+	/** Etiqueta que indica que es necesario recuperar el resultado del comando anterior. */
+	private static final byte TAG_RESPONSE_PENDING = 0x61;
 
-    /** Etiqueta que identifica si la respuesta tiene una longitud no valida. */
-    private static final byte TAG_RESPONSE_INVALID_LENGTH = 0x6C;
+	/** Etiqueta que identifica si la respuesta tiene una longitud no v&aacute;lida. */
+	private static final byte TAG_RESPONSE_INVALID_LENGTH = 0x6C;
 
-    /** {@inheritDoc} */
 	@Override
 	public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
 		if(!isOpen()){
@@ -164,11 +161,7 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		            }
 		            return transmit(new GetResponseApduCommand((byte) 0x00, response.getStatusWord().getLsb()));
 		        }
-
-		        // En caso de longitud esperada incorrecta reenviamos la APDU con la longitud esperada.
-		        // Incluimos la condicion del CLA igual 0x00 para que no afecte a las APDUs cifradas
-		        // (de eso se encargara la clase de conexion con canal seguro)
-		        else if (response.getStatusWord().getMsb() == TAG_RESPONSE_INVALID_LENGTH && command.getCla() == (byte) 0x00) {
+				if (response.getStatusWord().getMsb() == TAG_RESPONSE_INVALID_LENGTH && command.getCla() == (byte) 0x00) {
 		            command.setLe(response.getStatusWord().getLsb());
 		            return transmit(command);
 		        }
@@ -186,7 +179,6 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public byte[] reset() throws ApduConnectionException {
 		try {
@@ -196,24 +188,11 @@ public final class AndroidCCIDConnection implements ApduConnection {
 			throw new ApduConnectionException("Error al reiniciar tarjeta: " + e, e); //$NON-NLS-1$
 		}
 		catch (final NotAvailableUSBDeviceException e) {
-			//Error al acceder al dispositivo
+			// Error al acceder al dispositivo
 			throw new UnavailableReaderException("No se puede acceder al dispositivo USB: " + e, e); //$NON-NLS-1$
 		}
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void addCardConnectionListener(final CardConnectionListener ccl) {
-		throw new UnsupportedOperationException("No soporta eventos de insercion o extraccion"); //$NON-NLS-1$
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void removeCardConnectionListener(final CardConnectionListener ccl) {
-		throw new UnsupportedOperationException("No soporta eventos de insercion o extraccion"); //$NON-NLS-1$
-	}
-
-	/** {@inheritDoc} */
 	@Override
 	public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
 		if (onlyWithCardPresent) {
@@ -230,7 +209,6 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		return new long[] { 0 };
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String getTerminalInfo(final int terminal) throws ApduConnectionException {
 		if (terminal != 0) {
@@ -239,7 +217,6 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		return this.ccidReader.getDeviceName();
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public void setTerminal(final int t) {
 		if (t != 0) {
@@ -247,7 +224,6 @@ public final class AndroidCCIDConnection implements ApduConnection {
 		}
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean isOpen() {
 		return this.ccidReader.isOpen();

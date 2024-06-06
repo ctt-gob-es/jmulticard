@@ -67,5 +67,4 @@ public final class SignDataApduCommand extends CommandApdu {
 			Integer.valueOf(keySize / 8)
 		);
 	}
-
 }

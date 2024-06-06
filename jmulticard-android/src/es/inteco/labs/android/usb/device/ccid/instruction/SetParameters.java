@@ -38,8 +38,6 @@ package es.inteco.labs.android.usb.device.ccid.instruction;
 
 import java.nio.ByteBuffer;
 
-import es.gob.jmulticard.HexUtils;
-
 /** Comando USB <i>SetParameters</i>.
  * @author Jose Luis Escanciano Garcia */
 final class SetParameters extends UsbCommand {
@@ -53,7 +51,7 @@ final class SetParameters extends UsbCommand {
 		this.instructionCount = insCount;
 		final ByteBuffer commandBuffer = ByteBuffer.allocate(UsbCommand.USB_HEADER_BASE_SIZE + parameters.length);
 		commandBuffer.put((byte) 0x61);
-		HexUtils.intToByteArray(parameters.length);
+		InstructionUtil.intToByteArray(parameters.length);
 		commandBuffer.put(new byte[]{(byte) 0x00, insCount, PARAMETER_T0, (byte) 0x00, (byte) 0x00});
 		commandBuffer.put(parameters);
 		this.command = commandBuffer.array();
@@ -63,5 +61,4 @@ final class SetParameters extends UsbCommand {
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
 }

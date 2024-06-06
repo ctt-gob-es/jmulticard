@@ -3,27 +3,33 @@
  */
 package test.es.gob.jmulticard.asn1;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.asn1.Asn1Exception;
-import junit.framework.TestCase;
 
 /** Pruebas unitarias para la clase {@linkplain es.gob.jmulticard.asn1.Asn1Exception}
  * @author Alberto Mart&iacute;nez */
-public class TestAsn1Exception extends TestCase {
+final class TestAsn1Exception {
 
     /** Test method for {@link es.gob.jmulticard.asn1.Asn1Exception#Asn1Exception(java.lang.String)}. */
-    public final static void testAsn1ExceptionString() {
-        Assert.assertNotNull(new Asn1Exception("")); //$NON-NLS-1$
+	@SuppressWarnings("static-method")
+	@Test
+	void testAsn1ExceptionString() {
+        Assertions.assertNotNull(new Asn1Exception("")); //$NON-NLS-1$
     }
 
     /** Test method for {@link es.gob.jmulticard.asn1.Asn1Exception#Asn1Exception(java.lang.Throwable)}. */
-    public final static void testAsn1ExceptionThrowable() {
-        Assert.assertNotNull(new Asn1Exception(new Exception()));
+	@SuppressWarnings("static-method")
+	@Test
+	void testAsn1ExceptionThrowable() {
+        Assertions.assertNotNull(new Asn1Exception(new Exception()));
     }
 
     /** Test method for {@link es.gob.jmulticard.asn1.Asn1Exception#Asn1Exception(java.lang.String, java.lang.Throwable)}. */
-    public final static void testAsn1ExceptionStringThrowable() {
-        Assert.assertNotNull(new Asn1Exception("", new Exception())); //$NON-NLS-1$
+	@SuppressWarnings("static-method")
+	@Test
+	void testAsn1ExceptionStringThrowable() {
+        Assertions.assertNotNull(new Asn1Exception("", new Exception())); //$NON-NLS-1$
     }
 }

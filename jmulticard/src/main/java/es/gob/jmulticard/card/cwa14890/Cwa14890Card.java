@@ -70,9 +70,7 @@ public interface Cwa14890Card {
      * terminal) sean v&aacute;lidos para el uso de la tarjeta.
      * @param consts Clase de claves.
      * @throws ApduConnectionException Cuando ocurre alg&iacute;n error en la
-     *         comunicaci&oacute;n con la tarjeta.
-     * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre alg&uacute;n error en la
-     *                                                                           verificaci&oacute;n de los certificados. */
+     *         comunicaci&oacute;n con la tarjeta. */
     void verifyIfdCertificateChain(Cwa14890PublicConstants consts) throws ApduConnectionException;
 
     /** Obtiene el mensaje de autenticaci&oacute;n interna de la tarjeta.
@@ -93,20 +91,17 @@ public interface Cwa14890Card {
      * interna y externa de la tarjeta.
      * @param refPublicKey Referencia a la clave p&uacute;blica.
      * @param refPrivateKey Referencia a la clave privada.
-     * @throws es.gob.jmulticard.apdu.connection.cwa14890.SecureChannelException Cuando ocurre un error durante el
-     *                                                                           proceso de autenticaci&oacute;n.
      * @throws ApduConnectionException Cuando ocurre un error de comunicaci&oacute;n con la tarjeta. */
     void setKeysToAuthentication(byte[] refPublicKey, byte[] refPrivateKey) throws ApduConnectionException;
 
-    /** Solicita un desaf&iacute;o de 8 bytes a la tarjeta.
+    /** Solicita un desaf&iacute;o de 8 octetos a la tarjeta.
      * @return Array de 8 bytes aleatorios.
      * @throws ApduConnectionException Cuando ocurre un error de comunicaci&oacute;n con la tarjeta */
     byte[] getChallenge() throws ApduConnectionException;
 
     /** Recupera el n&uacute;mero de serie de la tarjeta.
      * @return N&uacute;mero de serie.
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
-     *                                 la tarjeta. */
+     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
     byte[] getSerialNumber() throws ApduConnectionException;
 
     /** Recupera la referencia a la clave privada del certificado de componente.
@@ -124,8 +119,7 @@ public interface Cwa14890Card {
      * @return Clave privada. */
     RSAPrivateKey getIfdPrivateKey(Cwa14890PrivateConstants consts);
 
-    /** Obtiene la longitud, <u>en octetos</u>, de las claves RSA del certificado de
-     * comnponente del terminal.
+    /** Obtiene la longitud, <u>en octetos</u>, de las claves RSA del certificado de comnponente del terminal.
      * @param consts Clase de claves.
      * @return Longitud, <u>en octetos</u>, de las claves RSA del certificado de
      *         comnponente del terminal. */

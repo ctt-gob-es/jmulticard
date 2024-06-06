@@ -1,16 +1,22 @@
 package test.es.gob.jmulticard.apdu;
 
-import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-/** Prueba del m&eacute;todo {@linkplain es.gob.jmulticard.apdu.CommandApdu#setLe(int)} de
+import es.gob.jmulticard.apdu.CommandApdu;
+import es.gob.jmulticard.apdu.dnie.GetChipInfoApduCommand;
+
+/** Prueba de {@linkplain es.gob.jmulticard.apdu.CommandApdu#setLe(int)} de
  * la clase {@linkplain es.gob.jmulticard.apdu.CommandApdu}
- * @author Alberto Mart&iacute;nez */
-public class TestCommandApdu extends TestCase {
+ * @author Alberto Mart&iacute;nez. */
+class TestCommandApdu {
 
     /** {@linkplain es.gob.jmulticard.apdu.CommandApdu#setLe(int)} */
-    public final static void testSetLe() {
-        final GetChipInfoApduCommand command = new GetChipInfoApduCommand();
+	@SuppressWarnings("static-method")
+	@Test
+    final void testSetLe() {
+        final CommandApdu command = new GetChipInfoApduCommand();
         command.setLe(0);
+        Assertions.assertNotNull(command);
     }
 }

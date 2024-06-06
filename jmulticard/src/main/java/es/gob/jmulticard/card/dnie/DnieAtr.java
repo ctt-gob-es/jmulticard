@@ -9,9 +9,11 @@ public final class DnieAtr extends Atr {
 
 	private static final long serialVersionUID = -4364467785373401604L;
 
+	private static final String UNKNOWN = "desconocido"; //$NON-NLS-1$
+
 	/** Construye el ATR de un DNIe.
 	 * @param cardAtr ATR de origen. */
-	public DnieAtr(final Atr cardAtr) {
+	DnieAtr(final Atr cardAtr) {
 		super(cardAtr.getBytes(), cardAtr.getMask());
 	}
 
@@ -46,31 +48,37 @@ public final class DnieAtr extends Atr {
 
 		sb.append("  Fabricante de la tecnologia 'Match-on-Card' incorporada: "); //$NON-NLS-1$
 		if (atrBytes[11] == (byte) 0x10) {
-			sb.append("SAGEM"); //$NON-NLS-1$
+			sb.append("Sagem / Morpho"); //$NON-NLS-1$
 		}
 		else if (atrBytes[11] == (byte) 0x20) {
-			sb.append("SIEMENS"); //$NON-NLS-1$
+			sb.append("Siemens / Atos"); //$NON-NLS-1$
 		}
 		else {
-			sb.append("desconocido"); //$NON-NLS-1$
+			sb.append(UNKNOWN);
 		}
 		sb.append('\n');
 
 		sb.append("  Fabricante del chip: "); //$NON-NLS-1$
-		if (atrBytes[12] == (byte) 0x02) {
+		if (atrBytes[12] == (byte) 0x01) {
+			sb.append("Infineon"); //$NON-NLS-1$
+		}
+		else if (atrBytes[12] == (byte) 0x02) {
 			sb.append("STMicroelectronics"); //$NON-NLS-1$
 		}
 		else {
-			sb.append("desconocido"); //$NON-NLS-1$
+			sb.append(UNKNOWN);
 		}
 		sb.append('\n');
 
 		sb.append("  Tipo de chip: "); //$NON-NLS-1$
-		if (atrBytes[13] == (byte) 0x4C && atrBytes[14] == (byte) 0x34) {
+		if (atrBytes[13] == (byte) 0x01 && atrBytes[14] == (byte) 0x55) {
+			sb.append("SLE78CLX408AP"); //$NON-NLS-1$
+		}
+		else if (atrBytes[13] == (byte) 0x4C && atrBytes[14] == (byte) 0x34) {
 			sb.append("19WL34"); //$NON-NLS-1$
 		}
 		else {
-			sb.append("desconocido"); //$NON-NLS-1$
+			sb.append(UNKNOWN);
 		}
 		sb.append('\n');
 
@@ -95,7 +103,7 @@ public final class DnieAtr extends Atr {
 				sb.append("final"); //$NON-NLS-1$
 				break;
 			default:
-				sb.append("desconocido"); //$NON-NLS-1$
+				sb.append(UNKNOWN);
 		}
 		sb.append('\n');
 
@@ -107,7 +115,7 @@ public final class DnieAtr extends Atr {
 			sb.append("memoria volatil borrada"); //$NON-NLS-1$
 		}
 		else {
-			sb.append("desconocido"); //$NON-NLS-1$
+			sb.append(UNKNOWN);
 		}
 
 		return sb.toString();

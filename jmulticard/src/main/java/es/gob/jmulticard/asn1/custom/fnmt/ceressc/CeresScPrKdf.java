@@ -53,19 +53,17 @@ public final class CeresScPrKdf extends PrKdf {
      * espec&iacute;fico para ciertas tarjetas FNMT CERES. */
 	public CeresScPrKdf() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				// Maximo 10 certificados
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, false),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true)
-			}
+			// Maximo 10 certificados
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, false),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresScPrivateKeyObject.class, true)
 		);
 	}
 
@@ -152,5 +150,4 @@ public final class CeresScPrKdf extends PrKdf {
 	public X500Principal getKeyPrincipal(final int index) {
 		return ((CeresScPrivateKeyObject) getElementAt(index)).getKeyPrincipal();
 	}
-
 }

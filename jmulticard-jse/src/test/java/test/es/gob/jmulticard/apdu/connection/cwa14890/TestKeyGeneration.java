@@ -2,16 +2,17 @@ package test.es.gob.jmulticard.apdu.connection.cwa14890;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.DigestAlgorithm;
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.BcCryptoHelper;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 
 /** Utilidad de generaci&oacute;n de claves a partir de constantes.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestKeyGeneration {
+final class TestKeyGeneration {
 
     /** C&oacute;digo auxiliar para el c&aacute;lculo de la clave Kenc del canal seguro. */
     private static final byte[] SECURE_CHANNEL_KENC_AUX = {
@@ -53,7 +54,7 @@ public final class TestKeyGeneration {
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
     		TestKeyGeneration.CRYPTO_HELPER.digest(
-				CryptoHelper.DigestAlgorithm.SHA256,
+				DigestAlgorithm.SHA256,
 				kidficcConcat
 			),
 			0,
@@ -77,7 +78,7 @@ public final class TestKeyGeneration {
         final byte[] keyMac = new byte[16];
         System.arraycopy(
     		TestKeyGeneration.CRYPTO_HELPER.digest(
-				CryptoHelper.DigestAlgorithm.SHA256,
+				DigestAlgorithm.SHA256,
 				kidficcConcat
 			),
     		0,
@@ -93,11 +94,11 @@ public final class TestKeyGeneration {
      * @throws Exception en cualquier error. */
     @SuppressWarnings("static-method")
 	@Test
-    public void testKeysGeneration() throws Exception {
+    void testKeysGeneration() throws Exception {
 
         // Calculamos Kifdicc como el XOR de los valores Kifd y Kicc
         final byte[] kidficc = HexUtils.xor(K_ICC, K_IDF);
-        Assert.assertEquals(
+        Assertions.assertEquals(
     		"820d590bc2c7aea5f12050374fbe381b76e779d6b57395e90167f657bec47475", //$NON-NLS-1$
         	HexUtils.hexify(kidficc, false).toLowerCase()
     	);

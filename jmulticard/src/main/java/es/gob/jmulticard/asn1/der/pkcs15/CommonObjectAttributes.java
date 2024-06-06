@@ -59,20 +59,18 @@ public final class CommonObjectAttributes extends Sequence {
     /** Construye un objeto <i>CommonObjectAttributes</i> ASN&#46;1 de PKCS#15. */
 	public CommonObjectAttributes() {
         super(
-    		new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					Utf8String.class, // Label
-					false
-				),
-				new OptionalDecoderObjectElement(
-					CommonObjectFlags.class, // Subtipo de Bit String
-					true
-				),
-				new OptionalDecoderObjectElement(
-					Identifier.class,        // Subtipo de Octet String
-					true
-				)
-    		}
+			new OptionalDecoderObjectElement(
+				Utf8String.class, // Label
+				false
+			),
+			new OptionalDecoderObjectElement(
+				CommonObjectFlags.class, // Subtipo de Bit String
+				true
+			),
+			new OptionalDecoderObjectElement(
+				Identifier.class,        // Subtipo de Octet String
+				true
+			)
 		);
     }
 
@@ -93,5 +91,4 @@ public final class CommonObjectAttributes extends Sequence {
     	}
     	return null;
     }
-
 }

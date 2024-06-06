@@ -67,7 +67,7 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @param usbDev Lector de tarjetas USB CCID.
 	 * @param usbManager Gestor de dispositivos USB de Android
 	 * @throws UsbDeviceException Cuando no se encuentre ninguna tarjeta en el lector u ocurra un
-	 * 			error al comunicarse con ella. */
+	 * 			                  error al comunicarse con ella. */
 	public SmartCardUsbDevice(final UsbManager usbManager, final UsbDevice usbDev) throws UsbDeviceException {
 		super(usbManager, usbDev);
 	}
@@ -76,7 +76,7 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @return <code>true</code> si la tarjeta est&aacute; presente en el lector de tarjetas,
 	 *         <code>false</code> en caso contrario
 	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
-	 * 			o cuando no se pueda conectar con &eacute;l. */
+	 * 			                              o cuando no se pueda conectar con &eacute;l. */
 	public boolean isCardPresent() throws NotAvailableUSBDeviceException{
 		try {
 			final UsbResponse response = getSlotStatus();
@@ -85,11 +85,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 		catch (final UsbCommandTransmissionException e) {
 			close();
 			this.channel = open();
-			Log.w("es.gob.afirma", "Error de transmision USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
+			Log.w("es.gob.afirma", "Error de transmision USB", e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbDeviceException e) {
-			Log.w("es.gob.afirma", "Error en dispositivo USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
+			Log.w("es.gob.afirma", "Error en dispositivo USB", e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbSmartCardChannelException e) {
@@ -103,8 +103,7 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @return <code>true</code> si la tarjeta est&aacute; presente y activa en el lector de tarjetas,
 	 *         <code>false</code> en caso contrario
 	 * @throws NotAvailableUSBDeviceException Cuando no se encuentre ning&uacute;n lector por USB
-	 * 			o cuando no se pueda conectar con &eacute;l.
-	 */
+	 * 			                              o cuando no se pueda conectar con &eacute;l. */
 	public boolean isCardActive() throws NotAvailableUSBDeviceException{
 		try {
 			final UsbResponse response = getSlotStatus();
@@ -113,11 +112,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 		catch (final UsbCommandTransmissionException e) {
 			close();
 			this.channel = open();
-			Log.w("es.gob.afirma", "Error de transmision USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
+			Log.w("es.gob.afirma", "Error de transmision USB", e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbDeviceException e) {
-			Log.w("es.gob.afirma", "Error en dispositivo USB: " + e);  //$NON-NLS-1$//$NON-NLS-2$
+			Log.w("es.gob.afirma", "Error en dispositivo USB", e);  //$NON-NLS-1$//$NON-NLS-2$
 			return false;
 		}
 		catch (final UsbSmartCardChannelException e) {
@@ -132,7 +131,7 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @return <code>true</code> si la tarjeta est&aacute; presente en el lector de tarjetas,
 	 *         <code>false</code> en caso contrario */
 	private static boolean isCardPresent(final UsbResponse slotStatus){
-		return slotStatus != null && slotStatus.getIccStatus() != UsbResponse.ICC_STATUS_NOT_PRESENT ? true : false;
+		return slotStatus != null && slotStatus.getIccStatus() != UsbResponse.ICC_STATUS_NOT_PRESENT;
 	}
 
 	/** Indica si la tarjeta est&aacute; presente y activa en el lector de tarjetas
@@ -140,7 +139,7 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @return <code>true</code> si la tarjeta est&aacute; presente y activa en el lector de tarjetas,
 	           <code>false</code> en caso contrario */
 	private static boolean isCardActive(final UsbResponse slotStatus){
-		return slotStatus != null && slotStatus.getIccStatus() == UsbResponse.ICC_STATUS_ACTIVE ? true : false;
+		return slotStatus != null && slotStatus.getIccStatus() == UsbResponse.ICC_STATUS_ACTIVE;
 	}
 
 	/** Env&iacute;a una petici&oacute;n <i>getSlotStatus</i> al lector.
@@ -148,9 +147,11 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 	 * @throws UsbDeviceException Cuando no se encuentre ninguna tarjeta en el lector.
 	 * @throws UsbCommandTransmissionException Cuando ocurre un error en el env&iacute;o de la petici&oacute;n.
 	 * @throws UsbSmartCardChannelException Cuando ocurre un error en el canal de comunicaci&oacute;n con la tarjeta.
-	 * @throws NotAvailableUSBDeviceException Cuando no se encuentra un dispositivo USB conectado.
-	 */
-	protected UsbResponse getSlotStatus() throws UsbDeviceException, UsbCommandTransmissionException, UsbSmartCardChannelException, NotAvailableUSBDeviceException{
+	 * @throws NotAvailableUSBDeviceException Cuando no se encuentra un dispositivo USB conectado. */
+	protected UsbResponse getSlotStatus() throws UsbDeviceException,
+	                                             UsbCommandTransmissionException,
+	                                             UsbSmartCardChannelException,
+	                                             NotAvailableUSBDeviceException {
 		final UsbCommand getStatus = UsbInstructionFactory.getInstance().getSlotStatusCommand();
 		return getChannel().transmit(getStatus);
 	}
@@ -179,10 +180,7 @@ public final class SmartCardUsbDevice extends AnyUSBDevice{
 			}
 			throw new UsbDeviceException("Imposible enviar PowerOn al terminal"); //$NON-NLS-1$
 		}
-		catch (final UsbCommandTransmissionException e) {
-			throw new UsbDeviceException(e);
-		}
-		catch (final UsbResponseException e){
+		catch (final UsbCommandTransmissionException | UsbResponseException e){
 			throw new UsbDeviceException(e);
 		}
 		catch (final UsbSmartCardChannelException e) {

@@ -50,13 +50,17 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.DigestAlgorithm;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.icao.AdditionalPersonalDetails;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.DataGroupHash;
 import es.gob.jmulticard.asn1.icao.LdsSecurityObject;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
+import es.gob.jmulticard.asn1.icao.SecurityOptions;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
 import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
@@ -65,7 +69,6 @@ import es.gob.jmulticard.card.CryptoCardException;
 import es.gob.jmulticard.card.CryptoCardSecurityException;
 import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
-import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.icao.InvalidSecurityObjectException;
 import es.gob.jmulticard.card.icao.MrtdLds1;
 import es.gob.jmulticard.card.icao.Mrz;
@@ -73,13 +76,14 @@ import es.gob.jmulticard.card.iso7816four.Iso7816FourCardException;
 import es.gob.jmulticard.card.iso7816four.RequiredSecurityStateNotSatisfiedException;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
+import es.gob.jmulticard.connection.cwa14890.ChannelType;
 import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV2Connection;
 
 /** DNI Electr&oacute;nico versi&oacute;n 3&#46;0.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class Dnie3 extends Dnie implements MrtdLds1 {
 
-    private transient String idesp = null;
+    private String idesp = null;
 
 	//*************************************************************************
 	//************************ CONSTRUCTORES **********************************
@@ -90,55 +94,24 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
      * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
      *                   variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
-     * @param loadCertsAndKeys Si se indica <code>true</code>, se cargan las referencias a
-     *                         las claves privadas y a los certificados mientras que, si se
-     *                         indica <code>false</code>, no se cargan, permitiendo la
-     *                         instanciaci&oacute;n de un DNIe sin capacidades de firma o
-     *                         autenticaci&oacute;n con certificados.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
      *                                 cerrada y no es posible abrirla.*/
     protected Dnie3(final ApduConnection conn,
     	            final PasswordCallback pwc,
     	            final CryptoHelper cryptoHlpr,
-    	            final CallbackHandler ch,
-    	            final boolean loadCertsAndKeys) throws ApduConnectionException {
+    	            final CallbackHandler ch) throws ApduConnectionException {
 
-        super(conn, pwc, cryptoHlpr, ch, loadCertsAndKeys);
-        this.rawConnection = conn;
-        if (loadCertsAndKeys) {
-        	try {
-				loadCertificates();
-			}
-        	catch (final CryptoCardException e) {
-				throw new ApduConnectionException(
-					"Error cargando los certificados del DNIe 3.0/4.0", e //$NON-NLS-1$
-				);
-			}
-        }
+        super(conn, pwc, cryptoHlpr, ch);
+        rawConnection = conn;
 
     	// Identificamos numero de soporte (IDESP)
 		try {
-			this.idesp = getIdesp();
+			idesp = getIdesp();
 		}
 		catch (final Exception e1) {
-			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
-			this.idesp = null;
+			JmcLogger.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
+			idesp = null;
 		}
-    }
-
-    /** Construye una clase que representa un DNIe 3&#46;0.
-     * @param conn Conexi&oacute;n con la tarjeta.
-     * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
-     * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que pueden
-     *                   variar entre m&aacute;quinas virtuales.
-     * @param ch Gestor de las <i>Callbacks</i> (PIN, confirmaci&oacute;n, etc.).
-     * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla.*/
-    Dnie3(final ApduConnection conn,
-    	  final PasswordCallback pwc,
-    	  final CryptoHelper cryptoHlpr,
-    	  final CallbackHandler ch) throws ApduConnectionException {
-        this(conn, pwc, cryptoHlpr, ch, true);
     }
 
 	//*************************************************************************
@@ -146,15 +119,36 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
 	@Override
     public String getCardName() {
-        return "DNIe 3.0/4.0"; //$NON-NLS-1$
+        return "DNIe 3.0"; //$NON-NLS-1$
     }
 
-    /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
-     * solicita y comprueba el PIN e inmediatamente despu&eacute;s y, si la verificaci&oacute;n es correcta,
-     * establece el canal de <b>usuario</b> CWA-14890.
-     * Si falla alg&uacute;n punto del proceso, vuelve al modo inicial de conexi&oacute;n (sin canal seguro).
-     * @throws CryptoCardException Si hay problemas en el proceso.
-     * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido. */
+    @Override
+	public int getPinRetriesLeft() throws ApduConnectionException {
+    	if (!(getConnection() instanceof Cwa14890OneV2Connection)) {
+			throw new ApduConnectionException("Es necesario abrir canal CWA para obtener los intentos de PIN restantes"); //$NON-NLS-1$
+    	}
+		final ChannelType channelType = ((Cwa14890OneV2Connection)getConnection()).getChannelType();
+		final int retriesLeft;
+		switch(channelType) {
+    		case CWA_USER:
+				try {
+					openPinChannel();
+				}
+				catch (final CryptoCardException e) {
+					throw new ApduConnectionException("Error estableciendo el canal de PIN para obtener los intentos restantes", e); //$NON-NLS-1$
+				}
+    			retriesLeft = super.getPinRetriesLeft();
+//    			openUserChannel(); // Lo dejamos como estaba
+    			break;
+    		case CWA_PIN:
+    			retriesLeft = super.getPinRetriesLeft();
+    			break;
+    		default:
+    			throw new ApduConnectionException("Es necesario abrir canal CWA para obtener los intentos de PIN restantes"); //$NON-NLS-1$
+		}
+    	return retriesLeft;
+    }
+
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException, PinException {
 		openSecureChannelIfNotAlreadyOpened(true);
@@ -163,131 +157,104 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	@Override
 	public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException,
 	                                                                            PinException {
-
         // Si el canal seguro esta ya abierto salimos sin hacer nada
         if (isSecurityChannelOpen()) {
         	return;
         }
 
-        if (DEBUG) {
-        	LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
-        	LOGGER.info("Conexion subyacente: " + this.rawConnection); //$NON-NLS-1$
-        }
+    	JmcLogger.info(Dnie3.class.getName(), "openSecureChannelIfNotAlreadyOpened", "Conexion actual: " + getConnection()); //$NON-NLS-1$ //$NON-NLS-2$
+    	JmcLogger.info(
+			Dnie3.class.getName(),
+			"openSecureChannelIfNotAlreadyOpened", //$NON-NLS-1$
+			"Conexion subyacente: " + (rawConnection != null ? rawConnection : "ninguna") //$NON-NLS-1$ //$NON-NLS-2$
+		);
 
         // Si la conexion esta cerrada, la reestablecemos
         if (!getConnection().isOpen()) {
 	        try {
-				setConnection(this.rawConnection);
+				setConnection(rawConnection);
 			}
 	        catch (final ApduConnectionException e) {
-	        	throw new CryptoCardException(
-	        		"Error en el establecimiento del canal inicial previo al seguro de PIN", e //$NON-NLS-1$
-	    		);
+	        	throw new CryptoCardException("Error en el establecimiento del canal inicial previo al seguro de PIN", e); //$NON-NLS-1$
 			}
         }
 
         if (doChv) {
 	        // Establecemos el canal PIN y lo verificamos
-	        final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
-	    		this,
-	    		getConnection(),
-	    		getCryptoHelper(),
-	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
-	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
-			);
-
-	        try {
-	        	selectMasterFile();
-	        }
-	        catch (final Exception e) {
-	        	LOGGER.warning(
-	    			"Error seleccionando el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
-				);
-	        }
-
-	        try {
-	        	setConnection(pinSecureConnection);
-	        }
-	        catch (final ApduConnectionException e) {
-	        	throw new CryptoCardException(
-	    			"Error en el establecimiento del canal seguro de PIN", e //$NON-NLS-1$
-				);
-	        }
-
-	        LOGGER.info("Canal seguro de PIN para DNIe establecido"); //$NON-NLS-1$
-
+        	openPinChannel();
 	        try {
 	        	verifyPin(getInternalPasswordCallback());
 	        }
 	        catch (final PasswordCallbackNotFoundException e) {
-	        	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento del canal
-	        	// de PIN, pero continuamos para establecer el canal de usuario
-	        	LOGGER.info("No se proporcionaron medios para verificar el canal de PIN: " + e); //$NON-NLS-1$
+	        	// Si no se indico un medio para obtener el PIN, ignoramos el establecimiento
+	        	// del canal de PIN, pero continuamos para establecer el canal de usuario
+	        	JmcLogger.info(
+        			Dnie3.class.getName(),
+        			"openSecureChannelIfNotAlreadyOpened", //$NON-NLS-1$
+        			"No se proporcionaron medios para verificar el PIN: " + e //$NON-NLS-1$
+    			);
 			}
 	        catch (final ApduConnectionException e) {
-	        	throw new CryptoCardException(
-	    			"Error en la verificacion de PIN", e //$NON-NLS-1$
-				);
+	        	throw new CryptoCardException("Error en la verificacion de PIN", e); //$NON-NLS-1$
 	        }
+
+	        JmcLogger.info(Dnie3.class.getName(), "openSecureChannelIfNotAlreadyOpened", "PIN verificado correctamente"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-		try {
-			selectMasterFile();
-		}
-		catch (final Exception e) {
-			throw new CryptoCardException(
-        		"Error seleccionado el MF antes del establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
-		}
-
-        // Establecemos ahora el canal de usuario
-        final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
-    		this,
-    		getConnection(),
-    		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
-		);
-
-        try {
-            setConnection(usrSecureConnection);
-        }
-        catch (final ApduConnectionException e) {
-            throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
-        }
-
-        LOGGER.info("Canal seguro de Usuario para DNIe establecido"); //$NON-NLS-1$
+        openUserChannel();
     }
-
-	@Override
-	protected byte[] signInternal(final byte[] data,
-                                  final String signAlgorithm,
-                                  final PrivateKeyReference privateKeyReference) throws CryptoCardException,
-                                                                                        PinException {
-		if (!(privateKeyReference instanceof DniePrivateKeyReference)) {
-            throw new IllegalArgumentException(
-        		"La referencia a la clave privada tiene que ser de tipo DniePrivateKeyReference" //$NON-NLS-1$
-    		);
-        }
-        return signOperation(data, signAlgorithm, privateKeyReference);
-	}
 
 	//*************************************************************************
 	//******************* METODOS DE EXCLUSIVOS DE ESTA CLASE *****************
 
-    /** Abre el canal seguro de usuario.
+    /** Abre y establece el canal seguro de PIN.
      * @return Nueva conexi&oacute;n establecida.
      * @throws CryptoCardException Si hay problemas en la apertura de canal. */
-    public ApduConnection openUserChannel() throws CryptoCardException {
+    public final ApduConnection openPinChannel() throws CryptoCardException {
+        final ApduConnection pinSecureConnection = new Cwa14890OneV2Connection(
+    		this,
+    		getConnection(),
+    		getCryptoHelper(),
+    		DnieFactory.getDnie3PinCwa14890Constants(idesp),
+    		DnieFactory.getDnie3PinCwa14890Constants(idesp),
+			ChannelType.CWA_PIN
+		);
+
+        try {
+        	selectMasterFile();
+        }
+        catch (final Exception e) {
+        	JmcLogger.warning(
+    			"Error seleccionando el MF tras el establecimiento del canal seguro de PIN: " + e //$NON-NLS-1$
+			);
+        }
+
+        try {
+        	setConnection(pinSecureConnection);
+        }
+        catch (final ApduConnectionException e) {
+        	throw new CryptoCardException("Error en el establecimiento del canal seguro de PIN", e); //$NON-NLS-1$
+        }
+
+        JmcLogger.info(
+			Dnie3.class.getName(), "openPinChannel", "Canal seguro de PIN para DNIe establecido" //$NON-NLS-1$ //$NON-NLS-2$
+		);
+
+        return pinSecureConnection;
+    }
+
+    /** Abre y establece el canal seguro de usuario.
+     * @return Nueva conexi&oacute;n establecida.
+     * @throws CryptoCardException Si hay problemas en la apertura de canal. */
+    public final ApduConnection openUserChannel() throws CryptoCardException {
 
     	final ApduConnection usrSecureConnection = new Cwa14890OneV2Connection(
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
+    		DnieFactory.getDnie3UsrCwa14890Constants(idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(idesp),
+			ChannelType.CWA_USER
 		);
 
 		try {
@@ -303,30 +270,30 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
             setConnection(usrSecureConnection);
         }
         catch (final ApduConnectionException e) {
-            throw new CryptoCardException(
-        		"Error en el establecimiento del canal seguro de usuario", e //$NON-NLS-1$
-    		);
+            throw new CryptoCardException("Error en el establecimiento del canal seguro de usuario", e); //$NON-NLS-1$
         }
-    	return getConnection();
+
+        JmcLogger.info(
+			Dnie3.class.getName(), "openUserChannel", "Canal seguro de Usuario para DNIe establecido" //$NON-NLS-1$ //$NON-NLS-2$
+		);
+
+    	return usrSecureConnection;
     }
 
 	@Override
 	protected boolean needsPinForLoadingCerts() {
-		// "true" en DNIe 1.0, "false" en cualquier otro.
-		return false;
+		return false; // "true" en DNIe 1.0, "false" en cualquier otro.
 	}
-
 
 	//*************************************************************************
 	//*************** METODOS HEREDADOS DE ICAO MRTD LDS1 *********************
 
 	@Override
-	public X509Certificate[] checkSecurityObjects() throws IOException,
-	                                                       InvalidSecurityObjectException,
-	                                                       TlvException,
-	                                                       Asn1Exception,
-	                                                       SignatureException,
-	                                                       CertificateException {
+	public final X509Certificate[] checkSecurityObjects() throws IOException,
+	                                                             TlvException,
+	                                                             Asn1Exception,
+	                                                             SignatureException,
+	                                                             CertificateException {
 		openSecureChannelIfNotAlreadyOpened(false);
 		final Sod sod = getSod();
 		sod.validateSignature();
@@ -351,7 +318,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 						dgBytes = getDg3();
 					}
 					catch(final CardSecurityException e) {
-						LOGGER.warning(
+						JmcLogger.warning(
 							"Se omite la comprobacion del DG3 con el SOD por no poder leerse: " + e //$NON-NLS-1$
 						);
 						continue;
@@ -379,7 +346,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 					dgBytes = getDg10();
 					break;
 				case 11:
-					dgBytes = getDg11();
+					dgBytes = getDg11().getBytes();
 					break;
 				case 12:
 					dgBytes = getDg12();
@@ -388,7 +355,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 					dgBytes = getDg13().getBytes();
 					break;
 				case 14:
-					dgBytes = getDg14();
+					dgBytes = getDg14().getBytes();
 					break;
 				case 15:
 					dgBytes = getDg15();
@@ -401,8 +368,8 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 						"El SOD define huella para un DG inexistente: " + dgh.getDataGroupNumber() //$NON-NLS-1$
 					);
 			}
-			final byte[] actualHash = this.cryptoHelper.digest(
-				CryptoHelper.DigestAlgorithm.getDigestAlgorithm(ldsSecurityObject.getDigestAlgorithm()),
+			final byte[] actualHash = getCryptoHelper().digest(
+				DigestAlgorithm.getDigestAlgorithm(ldsSecurityObject.getDigestAlgorithm()),
 				dgBytes
 			);
 
@@ -420,12 +387,12 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getCardAccess() throws IOException {
+	public final byte[] getCardAccess() throws IOException {
     	try {
 			return selectFileByLocationAndRead(FILE_CARD_ACCESS_LOCATION);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("CardAcess no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("CardAcess no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el CardAccess", e); //$NON-NLS-1$
@@ -433,12 +400,12 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     }
 
     @Override
-	public byte[] getAtrInfo() throws IOException {
+	public final byte[] getAtrInfo() throws IOException {
     	try {
 			return selectFileByLocationAndRead(FILE_ATR_INFO_LOCATION);
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("ATR/INFO no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("ATR/INFO no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el ATR/INFO", e); //$NON-NLS-1$
@@ -446,14 +413,12 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     }
 
     @Override
-	public Mrz getDg1() throws IOException {
+	public final Mrz getDg1() throws IOException {
 		try {
-			return new Dnie3Dg01Mrz(
-				selectFileByLocationAndRead(FILE_DG01_LOCATION)
-			);
+			return new Mrz(selectFileByLocationAndRead(FILE_DG01_LOCATION));
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG1 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG1 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG1", e); //$NON-NLS-1$
@@ -461,13 +426,13 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public SubjectFacePhoto getDg2() throws IOException {
+	public final SubjectFacePhoto getDg2() throws IOException {
     	final SubjectFacePhoto ret = new SubjectFacePhoto();
 		try {
 			ret.setDerValue(selectFileByLocationAndRead(FILE_DG02_LOCATION));
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
-    		throw new FileNotFoundException("DG2 no encontrado: " + e); //$NON-NLS-1$
+    		throw (IOException) new FileNotFoundException("DG2 no encontrado").initCause(e); //$NON-NLS-1$
     	}
 		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG2", e); //$NON-NLS-1$
@@ -485,9 +450,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     	}
 		// El DG3 necesita canal administrativo, le damos un tratamiento especial
 		catch(final RequiredSecurityStateNotSatisfiedException e) {
-			throw new CardSecurityException(
-				"No se tienen permisos para leer el DG3", e //$NON-NLS-1$
-			);
+			throw new CardSecurityException("No se tienen permisos para leer el DG3", e); //$NON-NLS-1$
 		}
 		catch (final Iso7816FourCardException e) {
 			throw new CryptoCardException("Error leyendo el DG3", e); //$NON-NLS-1$
@@ -495,7 +458,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public SubjectSignaturePhoto getDg7() throws IOException {
+	public final SubjectSignaturePhoto getDg7() throws IOException {
     	final SubjectSignaturePhoto ret = new SubjectSignaturePhoto();
 		try {
 			ret.setDerValue(selectFileByLocationAndRead(FILE_DG07_LOCATION));
@@ -510,20 +473,22 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getDg11() throws IOException {
+	public final AdditionalPersonalDetails getDg11() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG11_LOCATION);
+			final AdditionalPersonalDetails personalDetails = new AdditionalPersonalDetails();
+			personalDetails.setDerValue(selectFileByLocationAndRead(FILE_DG11_LOCATION));
+			return personalDetails;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw (IOException) new FileNotFoundException("DG11 no encontrado").initCause(e); //$NON-NLS-1$
     	}
-		catch (final Iso7816FourCardException e) {
+		catch (final Iso7816FourCardException | Asn1Exception | TlvException e) {
 			throw new CryptoCardException("Error leyendo el DG11", e); //$NON-NLS-1$
 		}
 	}
 
     @Override
-	public byte[] getDg12() throws IOException {
+	public final byte[] getDg12() throws IOException {
 		try {
 			return selectFileByLocationAndRead(FILE_DG12_LOCATION);
 		}
@@ -538,10 +503,8 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     @Override
 	public OptionalDetails getDg13() throws IOException {
 		try {
-			final OptionalDetails ret = new OptionalDetailsDnie3();
-			ret.setDerValue(
-				selectFileByLocationAndRead(FILE_DG13_LOCATION)
-			);
+			final OptionalDetails ret = new OptionalDetails();
+			ret.setDerValue(selectFileByLocationAndRead(FILE_DG13_LOCATION));
 			return ret;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
@@ -553,41 +516,37 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	}
 
     @Override
-	public byte[] getDg14() throws IOException {
+	public final SecurityOptions getDg14() throws IOException {
 		try {
-			return selectFileByLocationAndRead(FILE_DG14_LOCATION);
+			final SecurityOptions securityOptions = new SecurityOptions();
+			securityOptions.setDerValue(selectFileByLocationAndRead(FILE_DG14_LOCATION));
+			return securityOptions;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
     		throw (IOException) new FileNotFoundException("DG14 no encontrado").initCause(e); //$NON-NLS-1$
     	}
-		catch (final Iso7816FourCardException e) {
+		catch (final Iso7816FourCardException | TlvException | Asn1Exception e) {
 			throw new CryptoCardException("Error leyendo el DG14", e); //$NON-NLS-1$
 		}
 	}
 
     @Override
-	public Sod getSod() throws IOException {
-    	final Sod sod = new Sod(this.cryptoHelper);
+	public final Sod getSod() throws IOException {
+    	final Sod sod = new Sod(getCryptoHelper());
     	try {
-			sod.setDerValue(
-				selectFileByLocationAndRead(FILE_SOD_LOCATION)
-			);
+			sod.setDerValue(selectFileByLocationAndRead(FILE_SOD_LOCATION));
 		}
     	catch (final Asn1Exception | TlvException | Iso7816FourCardException e) {
-			throw new IOException(
-				"No se puede crear un SOD a partir del contenido del fichero", e //$NON-NLS-1$
-			);
+			throw new IOException("No se puede crear un SOD a partir del contenido del fichero", e); //$NON-NLS-1$
 		}
     	return sod;
     }
 
     @Override
-	public Com getCom() throws IOException {
+	public final Com getCom() throws IOException {
 		try {
 			final Com com = new Com();
-			com.setDerValue(
-				selectFileByLocationAndRead(FILE_COM_LOCATION)
-			);
+			com.setDerValue(selectFileByLocationAndRead(FILE_COM_LOCATION));
 			return com;
 		}
     	catch(final es.gob.jmulticard.card.iso7816four.FileNotFoundException e) {
@@ -603,65 +562,51 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
     @Override
 	public byte[] getCardSecurity() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene CardSecurity" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene CardSecurity"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg4() throws IOException {
-    	throw new CryptoCardSecurityException(
-			"Hace falta canal de administrador para leer el DG4" //$NON-NLS-1$
-		);
+    	throw new CryptoCardSecurityException("Hace falta canal de administrador para leer el DG4"); //$NON-NLS-1$
 	}
 
     @Override
 	public byte[] getDg5() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG5" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG5"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg6() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG6" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG6"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg8() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG8" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG8"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg9() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG9" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG9"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg10() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG10" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG10"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg15() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG15" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG15"); //$NON-NLS-1$
     }
 
     @Override
 	public byte[] getDg16() throws IOException {
-    	throw new UnsupportedOperationException(
-			"Este MRTD no tiene DG16" //$NON-NLS-1$
-		);
+    	throw new UnsupportedOperationException("Este MRTD no tiene DG16"); //$NON-NLS-1$
     }
 
+	@Override
+	public final byte[] getDir() throws IOException {
+    	throw new UnsupportedOperationException("Este MRTD no tiene DIR"); //$NON-NLS-1$
+	}
 }

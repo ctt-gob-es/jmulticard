@@ -2,22 +2,23 @@ package test.es.gob.jmulticard;
 
 import java.security.cert.X509Certificate;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.iso7816four.AbstractIso7816FourCard;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 
 /** Pruebas de las tarjetas G&amp;D de ACCV.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestAccv {
+final class TestAccv {
 
 	private static final char[] PIN = "11111111".toCharArray(); //$NON-NLS-1$
 	//private static final char[] PIN = "96824042".toCharArray(); //$NON-NLS-1$
@@ -27,8 +28,8 @@ public final class TestAccv {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testReadCertificates() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testReadCertificates() throws Exception {
 		final CryptoCard card = new SmartCafePkcs15Applet(
 			ProviderUtil.getDefaultConnection(),
 			new BcCryptoHelper()
@@ -45,6 +46,7 @@ public final class TestAccv {
 		}
 		System.out.println();
 		final X509Certificate c = card.getCertificate(selectedAlias);
+		Assertions.assertNotNull(c);
 		System.out.println("Primer certificado encontrado: " + c.getSubjectX500Principal()); //$NON-NLS-1$
 	}
 
@@ -52,12 +54,13 @@ public final class TestAccv {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testVerifyPin() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testVerifyPin() throws Exception {
 		final AbstractIso7816FourCard card = new SmartCafePkcs15Applet(
 			ProviderUtil.getDefaultConnection(),
 			new BcCryptoHelper()
 		);
+		Assertions.assertNotNull(card);
 		card.verifyPin(new CachePasswordCallback(PIN));
 	}
 
@@ -65,12 +68,13 @@ public final class TestAccv {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testSign() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testSign() throws Exception {
 		final SmartCafePkcs15Applet card = new SmartCafePkcs15Applet(
 			ProviderUtil.getDefaultConnection(),
 			new BcCryptoHelper()
 		);
+		Assertions.assertNotNull(card);
 		card.setPasswordCallback(new CachePasswordCallback(PIN));
 		final PrivateKeyReference pkr = card.getPrivateKey(card.getAliases()[0]);
 		final byte[] sign = card.sign("Hola mundo!".getBytes(), "SHA512withRSA", pkr); //$NON-NLS-1$ //$NON-NLS-2$

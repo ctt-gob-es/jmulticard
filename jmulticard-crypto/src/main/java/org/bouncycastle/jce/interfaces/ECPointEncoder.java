@@ -7,14 +7,14 @@ package org.bouncycastle.jce.interfaces;
  * By default BC keys produce encodings without point compression,
  * to turn this on call setPointFormat() with "COMPRESSED".
  */
-public interface ECPointEncoder
-{
+public interface ECPointEncoder {
+
     /**
      * Set the formatting for encoding of points. If the String "UNCOMPRESSED" is passed
      * in point compression will not be used. If the String "COMPRESSED" is passed point
      * compression will be used. The default is "UNCOMPRESSED".
-     * 
+     *
      * @param style the style to use.
      */
-    public void setPointFormat(String style);
+    void setPointFormat(String style);
 }

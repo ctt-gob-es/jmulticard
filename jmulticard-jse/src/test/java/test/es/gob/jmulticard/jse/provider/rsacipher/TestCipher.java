@@ -12,13 +12,13 @@ import java.util.Enumeration;
 import javax.crypto.Cipher;
 import javax.smartcardio.CommandAPDU;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.iso7816eight.PsoSignHashApduCommand;
-import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DniePrivateKeyReference;
 import es.gob.jmulticard.jse.provider.DniePrivateKey;
 import es.gob.jmulticard.jse.provider.DnieProvider;
@@ -26,12 +26,15 @@ import test.es.gob.jmulticard.TestingDnieCallbackHandler;
 
 /** Pruebas de cifrado RSA.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestCipher {
+final class TestCipher {
 
 	private static final String RSA_ECB_PKCS1PADDING = "RSA/ECB/PKCS1Padding"; //$NON-NLS-1$
 
 	private static final String CAN = "630208"; //$NON-NLS-1$
 	private static final String PIN = "WJ8d6EzzxDkz"; //$NON-NLS-1$
+
+	/** Alias del certificado de autenticaci&oacute;n del DNIe (siempre el mismo en el DNIe y tarjetas derivadas). */
+    private static final String CERT_ALIAS_AUTH = "CertAutenticacion"; //$NON-NLS-1$
 
 	/** Main para pruebas.
 	 * @param args No se usa.
@@ -61,7 +64,7 @@ public final class TestCipher {
 			System.out.println(aliases.nextElement());
 		}
 
-		final DniePrivateKey prK = (DniePrivateKey) ks.getKey(Dnie.CERT_ALIAS_AUTH, PIN.toCharArray());
+		final DniePrivateKey prK = (DniePrivateKey) ks.getKey(CERT_ALIAS_AUTH, PIN.toCharArray());
 		final DniePrivateKeyReference dpkr = prK.getDniePrivateKeyReference();
 
 		System.out.println(dpkr);
@@ -77,7 +80,7 @@ public final class TestCipher {
 			)
 		);
 
-		final PublicKey puK = ks.getCertificate(Dnie.CERT_ALIAS_AUTH).getPublicKey();
+		final PublicKey puK = ks.getCertificate(CERT_ALIAS_AUTH).getPublicKey();
 		final Cipher cipherDec = Cipher.getInstance(RSA_ECB_PKCS1PADDING);
 		cipherDec.init(Cipher.DECRYPT_MODE, puK);
 		final byte[] descifrado = cipherDec.doFinal(out);
@@ -106,16 +109,16 @@ public final class TestCipher {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testP12KeyCipher() throws Exception {
+	void testP12KeyCipher() throws Exception {
 		final KeyStore ks;
 		final PrivateKeyEntry pke;
 		final String alias;
         try (
-    		final InputStream is = TestCipher.class.getResourceAsStream(KEYSTORE_FILE)
+    		InputStream is = TestCipher.class.getResourceAsStream(KEYSTORE_FILE)
 		) {
     		ks = KeyStore.getInstance(KEYSTORE_TYPE);
         	ks.load(is, KEYSTORE_PWD);
+        	Assertions.assertTrue(ks.aliases().hasMoreElements(), "No se ha cargado el KeyStore o esta vacio"); //$NON-NLS-1$
             alias = ks.aliases().nextElement();
             pke = (PrivateKeyEntry) ks.getEntry(alias, new KeyStore.PasswordProtection(KEYSTORE_FIRST_ENTRY_PWD));
         }
@@ -149,8 +152,8 @@ public final class TestCipher {
 	/** Prueba de conformaci&oacute;n de APDU PSO Sign Hash. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testCommandAdpu() {
+	@Disabled("Resultado invariable")
+	void testCommandAdpu() {
 		final byte[] data = new byte[256];
 		new SecureRandom().nextBytes(data);
 
@@ -164,14 +167,19 @@ public final class TestCipher {
 	/** Lista los servicios soportados por cada proveedor instalado. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testProviderSupp() {
-		for (final Provider provider: Security.getProviders()) {
-		  System.out.println(provider.getName());
-		  for (final String key: provider.stringPropertyNames()) {
-			System.out.println('\t' + key + '\t' + provider.getProperty(key));
-		  }
+	@Disabled("Solo para comprobacion manual")
+	void testProviderSupp() {
+		try {
+			for (final Provider provider: Security.getProviders()) {
+			  System.out.println(provider.getName());
+			  for (final String key: provider.stringPropertyNames()) {
+				System.out.println('\t' + key + '\t' + provider.getProperty(key));
+			  }
+			}
+		}
+		catch(final Exception e) {
+			e.printStackTrace();
+			Assertions.fail();
 		}
 	}
-
 }

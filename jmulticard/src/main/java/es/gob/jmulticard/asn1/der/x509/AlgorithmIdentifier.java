@@ -17,16 +17,14 @@ public final class AlgorithmIdentifier extends Sequence {
 	/** Crea un objeto <i>AlgorithmIdentifier</i> ASN&#46;1 de X&#46;509. */
 	public AlgorithmIdentifier() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					ObjectIdentifier.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					ObjectIdentifier.class,
-					true
-				)
-			}
+			new OptionalDecoderObjectElement(
+				ObjectIdentifier.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				ObjectIdentifier.class,
+				true
+			)
 		);
 	}
 
@@ -34,5 +32,4 @@ public final class AlgorithmIdentifier extends Sequence {
 	public String toString() {
 		return getElementAt(0).toString();
 	}
-
 }

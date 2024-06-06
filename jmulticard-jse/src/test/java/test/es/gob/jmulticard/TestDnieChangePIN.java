@@ -2,21 +2,22 @@ package test.es.gob.jmulticard;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de cambio de PIN.
  * @author Sergio Mart&iacute;nez Rico. */
-public final class TestDnieChangePIN {
+final class TestDnieChangePIN {
 
 	/** <code>passwordCallback</code> que cachea el PIN. */
-	private final static class CachePasswordCallback extends PasswordCallback {
+	private static final class CachePasswordCallback extends PasswordCallback {
 
 	    private static final long serialVersionUID = 816457144215238935L;
 
@@ -39,11 +40,12 @@ public final class TestDnieChangePIN {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testChangePIN() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testChangePIN() throws Exception {
 		final CachePasswordCallback cpc = new CachePasswordCallback("password".toCharArray()); //$NON-NLS-1$
 		final ApduConnection ac = ProviderUtil.getDefaultConnection();
 		final Dnie dni = DnieFactory.getDnie(ac , cpc, new BcCryptoHelper(), null);
+		Assertions.assertNotNull(dni);
 		dni.changePIN("password", "pinNuevo"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

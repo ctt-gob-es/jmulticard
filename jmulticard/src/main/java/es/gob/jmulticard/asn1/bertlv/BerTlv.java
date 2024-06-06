@@ -22,31 +22,32 @@ import es.gob.jmulticard.HexUtils;
 /** TLV seg&uacute;n ASN&#46;1 BER. Soporta etiquetas de doble octeto.
  * @author Isaac Levin. */
 public final class BerTlv {
-    private transient BerTlvIdentifier tag;
-    private transient int length;
-    private transient byte[] value;
+
+    private BerTlvIdentifier tag;
+    private int length;
+    private byte[] value;
 
     /** Obtiene la etiqueta (tipo) del TLV.
      * @return Etiqueta (tipo) del TLV. */
     public byte getTag() {
-        return (byte) this.tag.getTagValue();
+        return (byte) tag.getTagValue();
     }
 
     /** Obtiene el valor del TLV.
      * @return Valor del TLV. */
     public byte[] getValue() {
-        if (this.value == null) {
+        if (value == null) {
             return null;
         }
-        final byte[] out = new byte[this.value.length];
-        System.arraycopy(this.value, 0, out, 0, this.value.length);
+        final byte[] out = new byte[value.length];
+        System.arraycopy(value, 0, out, 0, value.length);
         return out;
     }
 
     /** Obtiene la longitud de los datos del valor del TLV.
      * @return Longitud de los datos del valor del TLV. */
     public int getLength() {
-    	return this.length;
+    	return length;
     }
 
     /** Obtiene una instancia del TLV.
@@ -70,8 +71,8 @@ public final class BerTlv {
 
     private void decode(final ByteArrayInputStream stream) {
         // Decodificamos el Tag
-        this.tag = new BerTlvIdentifier();
-        this.tag.decode(stream);
+        tag = new BerTlvIdentifier();
+        tag.decode(stream);
 
         // Decodificamos la longitud
         int tmpLength = stream.read();
@@ -85,10 +86,10 @@ public final class BerTlv {
                 tmpLength |= nextLengthOctet;
             }
         }
-		this.length = tmpLength;
+		length = tmpLength;
 
         // Decodificamos el valor
-        if (this.length == 128) { // 1000 0000
+        if (length == 128) { // 1000 0000
             // Formato indefinido
             stream.mark(0);
             int prevOctet = 1;
@@ -103,19 +104,19 @@ public final class BerTlv {
                 prevOctet = curOctet;
             }
             len -= 2;
-            this.value = new byte[len];
+            value = new byte[len];
             stream.reset();
-            if (len != stream.read(this.value, 0, len)) {
+            if (len != stream.read(value, 0, len)) {
                 throw new IndexOutOfBoundsException(
             		"La longitud de los datos leidos no coincide con el parametro indicado" //$NON-NLS-1$
         		);
             }
-            this.length = len;
+            length = len;
         }
         else {
             // Formato definido
-            this.value = new byte[this.length];
-            if (this.length != stream.read(this.value, 0, this.length)) {
+            value = new byte[length];
+            if (length != stream.read(value, 0, length)) {
                 throw new IndexOutOfBoundsException(
             		"La longitud de los datos leidos no coincide con el parametro indicado" //$NON-NLS-1$
         		);
@@ -125,7 +126,7 @@ public final class BerTlv {
 
     @Override
     public String toString() {
-        return "[TLV: T=" + this.tag + "; L=" + this.length + "d; V=" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    		(this.value == null ? "null" : HexUtils.hexify(this.value, false)) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+        return "[TLV: T=" + tag + "; L=" + length + "d; V=" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    		(value == null ? "null" : HexUtils.hexify(value, false)) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

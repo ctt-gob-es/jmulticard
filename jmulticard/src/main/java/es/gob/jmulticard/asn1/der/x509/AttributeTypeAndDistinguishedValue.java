@@ -57,16 +57,14 @@ public final class AttributeTypeAndDistinguishedValue extends Sequence {
 	/** Construye un objeto ASN&#46;1 X&#46;500 <i>AttributeTypeAndDistinguishedValue</i>. */
 	public AttributeTypeAndDistinguishedValue() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					ObjectIdentifier.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					Utf8String.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				ObjectIdentifier.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				Utf8String.class,
+				false
+			)
 		);
 	}
 
@@ -74,5 +72,4 @@ public final class AttributeTypeAndDistinguishedValue extends Sequence {
     public String toString() {
 		return getElementAt(0).toString() + "=\"" + getElementAt(1).toString() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
 }

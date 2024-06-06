@@ -68,7 +68,7 @@ public final class USBResponseErrorsMap {
     }
 
     private USBResponseErrorsMap() {
-        this.errors = new HashMap<USBResponseErrorStructure, String>();
+        this.errors = new HashMap<>();
         addPowerOnErrors();
         addPowerOffErrors();
         addGetSlotStatusErrors();

@@ -21,16 +21,14 @@ public final class SubjectPublicKeyInfo extends Sequence {
 	/** Crea un objeto <code>SubjectPublicKeyInfo</code> de X&#46;509. */
 	public SubjectPublicKeyInfo() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					AlgorithmIdentifier.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					SubjectPublicKey.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				AlgorithmIdentifier.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				SubjectPublicKey.class,
+				false
+			)
 		);
 	}
 
@@ -43,5 +41,4 @@ public final class SubjectPublicKeyInfo extends Sequence {
 		System.arraycopy(tmp, 1, ret, 0, ret.length);
 		return ret;
 	}
-
 }

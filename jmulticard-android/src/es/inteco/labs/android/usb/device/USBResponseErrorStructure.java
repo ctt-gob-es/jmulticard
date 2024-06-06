@@ -36,9 +36,11 @@
 
 package es.inteco.labs.android.usb.device;
 
+import java.util.Objects;
+
 /** Esta clase encapsula todos los par&aacute;metros que configuran un error en el env&iacute;o de un comando USB.
  * @author Angel Gonzalez Villan */
-public class USBResponseErrorStructure {
+public final class USBResponseErrorStructure {
 
 	private int requestID;
 	private byte iccStatus;
@@ -54,7 +56,6 @@ public class USBResponseErrorStructure {
 			                  final byte iccStatus,
 			                  final byte commandStatus,
 			                  final byte bError) {
-		super();
 		this.requestID = requestID;
 		this.iccStatus = iccStatus;
 		this.commandStatus = commandStatus;
@@ -63,13 +64,12 @@ public class USBResponseErrorStructure {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + this.bError;
-		result = prime * result + this.commandStatus;
-		result = prime * result + this.iccStatus;
-		result = prime * result + this.requestID;
-		return result;
+		return Objects.hash(
+			Integer.valueOf(bError),
+			Integer.valueOf(commandStatus),
+			Integer.valueOf(iccStatus),
+			Integer.valueOf(requestID)
+		);
 	}
 
 	@Override
@@ -77,23 +77,11 @@ public class USBResponseErrorStructure {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
 		final USBResponseErrorStructure other = (USBResponseErrorStructure) obj;
-		if (this.bError != other.bError) {
-			return false;
-		}
-		if (this.commandStatus != other.commandStatus) {
-			return false;
-		}
-		if (this.iccStatus != other.iccStatus) {
-			return false;
-		}
-		if (this.requestID != other.requestID) {
+		if (this.bError != other.bError || this.commandStatus != other.commandStatus || this.iccStatus != other.iccStatus || this.requestID != other.requestID) {
 			return false;
 		}
 		return true;
@@ -130,5 +118,4 @@ public class USBResponseErrorStructure {
 	void setRequestID(final int requestID) {
 		this.requestID = requestID;
 	}
-
 }

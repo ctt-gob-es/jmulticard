@@ -43,10 +43,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
@@ -59,6 +59,7 @@ import es.gob.jmulticard.apdu.iso7816four.SelectFileByIdApduCommand;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.card.AbstractSmartCard;
 import es.gob.jmulticard.card.Location;
+import es.gob.jmulticard.card.PasswordCallbackNotFoundException;
 import es.gob.jmulticard.card.PinException;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
@@ -84,23 +85,18 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
     /** Tama&ntilde;o m&aacute;ximo de datos que se puede leer en una &uacute;nica APDU. */
     private static final int MAX_READ_CHUNK = 0xDE;
 
-    /** <code>Logger</code> por defecto. */
-    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
     /** Construye una tarjeta compatible ISO 7816-4.
      * @param c Octeto de clase (CLA) de las APDU.
      * @param conn Connexi&oacute;n con la tarjeta. */
-    public AbstractIso7816FourCard(final byte c, final ApduConnection conn) {
+    protected AbstractIso7816FourCard(final byte c, final ApduConnection conn) {
         super(c, conn);
     }
 
     /** Lee un contenido binario del fichero actualmente seleccionado.
-     * @param msbOffset Octeto m&aacute;s significativo del desplazamiento
-     *                  (<i>offset</i>) hasta el punto de inicio de la lectura desde
-     *        			el comienzo del fichero.
-     * @param lsbOffset Octeto menos significativo del desplazamiento (<i>offset</i>)
-     *                  hasta el punto de inicio de la lectura desde el comienzo del
-     *                  fichero.
+     * @param msbOffset Octeto m&aacute;s significativo del desplazamiento (<i>offset</i>)
+     *                  hasta el punto de inicio de la lectura desde el comienzo del fichero.
+     * @param lsbOffset Octeto menos significativo del desplazamiento (<i>offset</i>) hasta
+     *                  el punto de inicio de la lectura desde el comienzo del fichero.
      * @param readLength Longitud de los datos a leer (en octetos).
      * @return APDU de respuesta.
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
@@ -129,7 +125,7 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
         	throw new RequiredSecurityStateNotSatisfiedException(res.getStatusWord());
         }
         if (SW_EOF_REACHED.equals(res.getStatusWord())) {
-        	LOGGER.warning("Se ha alcanzado el final de fichero antes de poder leer los octetos indicados"); //$NON-NLS-1$
+        	JmcLogger.warning("Se ha alcanzado el final de fichero antes de poder leer los octetos indicados"); //$NON-NLS-1$
         	return res;
         }
         throw new ApduConnectionException("Respuesta invalida en la lectura de binario con el codigo: " + res.getStatusWord()); //$NON-NLS-1$
@@ -182,15 +178,13 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 	            }
             }
             catch(final OffsetOutsideEfException e) {
-            	LOGGER.warning(
+            	JmcLogger.warning(
         			"Se ha intentado una lectura fuera de los limites del fichero, se devolvera lo leido hasta ahora: " + e //$NON-NLS-1$
     			);
             	return out.toByteArray();
             }
             catch (final RequiredSecurityStateNotSatisfiedException e) {
-				throw new IOException(
-					"Condicion de seguridad no satisfecha", e //$NON-NLS-1$
-				);
+				throw new IOException("Condicion de seguridad no satisfecha", e); //$NON-NLS-1$
 			}
 
             final boolean eofReached = SW_EOF_REACHED.equals(readedResponse.getStatusWord());
@@ -231,7 +225,6 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
      * @throws ApduConnectionException Si ocurre alg&uacute;n problema durante la selecci&oacute;n
 	 * @throws Iso7816FourCardException Si el fichero no se puede seleccionar por cualquier otra causa */
     public int selectFileByName(final byte[] name) throws ApduConnectionException,
-                                                          FileNotFoundException,
                                                           Iso7816FourCardException {
     	final CommandApdu selectCommand = new SelectDfByNameApduCommand(getCla(), name);
     	final ResponseApdu response = sendArbitraryApdu(selectCommand);
@@ -284,11 +277,11 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
     }
 
     /** Selecciona un fichero (DF o EF).
-     * @param location La ruta absoluta donde se encuentra el fichero a leer
-     * @return Tama&ntilde;o del fichero seleccionado
-     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU
-     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero */
-    public int selectFileByLocation(final Location location) throws ApduConnectionException,
+     * @param location Ruta absoluta donde se encuentra el fichero a leer.
+     * @return Tama&ntilde;o del fichero seleccionado.
+     * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
+     * @throws Iso7816FourCardException Si falla la selecci&oacute;n de fichero. */
+    private int selectFileByLocation(final Location location) throws ApduConnectionException,
                                                                     Iso7816FourCardException {
         int fileLength = 0;
         Location loc = location;
@@ -315,19 +308,15 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 
     /** Selecciona el fichero maestro (directorio ra&iacute;z de la tarjeta).
      * @throws ApduConnectionException Si hay problemas en el env&iacute;o de la APDU.
-     * @throws FileNotFoundException Si no se encuentra el MF.
      * @throws Iso7816FourCardException Si no se puede seleccionar el fichero maestro por cualquier otra causa. */
     protected abstract void selectMasterFile() throws ApduConnectionException,
-                                                      FileNotFoundException,
                                                       Iso7816FourCardException;
 
     /** Establece una clave p&uacute;blica para la la verificaci&oacute;n posterior de
      * un certificado emitido por otro al que pertenece esta clave.
      * @param refPublicKey Referencia a la clave p&uacute;blica para su carga.
-     * @throws SecureChannelException Cuando ocurre un error durante la selecci&oacute;n de la clave.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
-    public void setPublicKeyToVerification(final byte[] refPublicKey) throws SecureChannelException,
-                                                                             ApduConnectionException {
+    public void setPublicKeyToVerification(final byte[] refPublicKey) throws ApduConnectionException {
     	final ResponseApdu res = sendArbitraryApdu(
 			new CommandApdu(
 				(byte)0x00, // CLA
@@ -359,16 +348,18 @@ public abstract class AbstractIso7816FourCard extends AbstractSmartCard {
 		);
     }
 
-    /** Verifica el PIN de la tarjeta. El m&eacute;todo reintenta hasta que se introduce el PIN correctamente,
+    /** Verifica el PIN de la tarjeta. Reintenta hasta que se introduce el PIN correctamente,
      * se bloquea la tarjeta por exceso de intentos de introducci&oacute;n de PIN o se recibe una excepci&oacute;n
      * (derivada de <code>RuntimeException</code> o una <code>ApduConnectionException</code>.
      * @param pinPc PIN de la tarjeta.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i>
-     *                      es incorrecto y no estaba habilitado el reintento autom&aacute;tico
+     * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i> es incorrecto o la tarjeta
+     *                      tiene el PIN bloqueado.
+     * @throws PasswordCallbackNotFoundException Si no se ha proporcionado una forma de obtener el PIN.
      * @throws es.gob.jmulticard.card.AuthenticationModeLockedException Si est&aacute; bloqueada la verificaci&oacute;n
      *         de PIN (por ejemplo, por superar el n&uacute;mero m&aacute;ximo de intentos). */
     public abstract void verifyPin(PasswordCallback pinPc) throws ApduConnectionException,
-                                                                  PinException;
+                                                                  PinException,
+   	                                                              PasswordCallbackNotFoundException;
 
 }

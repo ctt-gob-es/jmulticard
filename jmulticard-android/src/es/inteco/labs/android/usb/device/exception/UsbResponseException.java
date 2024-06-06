@@ -40,7 +40,7 @@ import es.gob.jmulticard.HexUtils;
 
 /** Error en la respuesta de un comando USB.
  * @author Jose Luis Escanciano */
-public class UsbResponseException extends Exception {
+public final class UsbResponseException extends Exception {
 
 	private static final long serialVersionUID = 6173469040352723982L;
 
@@ -68,5 +68,4 @@ public class UsbResponseException extends Exception {
 		       HexUtils.hexify(new byte[] { this.commandStatus }, false) +
 		       "]: " + this.getMessage(); //$NON-NLS-1$
 	}
-
 }

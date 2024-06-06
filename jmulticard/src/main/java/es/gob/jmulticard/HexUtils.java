@@ -42,15 +42,12 @@ package es.gob.jmulticard;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.logging.Logger;
 
 /** Utilidades varias de tratamiento de datos binarios y hexadecimales.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
  * @author Alberto Mart&iacute;nez
  * @author Carlos Gamuci. */
 public final class HexUtils {
-
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
     /** Equivalencias de hexadecimal a texto por la posici&oacute;n del vector.
      * Para ser usado en <code>hexify()</code>. */
@@ -127,26 +124,26 @@ public final class HexUtils {
      * @param separator Indica si han de separarse o no los octetos con un gui&oacute;n y en
      *                  l&iacute;neas de 16.
      * @return Representaci&oacute;n textual del vector de octetos de entrada. */
-    public static String hexify(final byte abyte[], final boolean separator) {
+    public static String hexify(final byte[] abyte, final boolean separator) {
         if (abyte == null) {
             return "null"; //$NON-NLS-1$
         }
-        final StringBuilder stringbuffer = new StringBuilder(256);
+        final StringBuilder stringbuilder = new StringBuilder(256);
         int i = 0;
         for (final byte element : abyte) {
             if (separator && i > 0) {
-                stringbuffer.append('-');
+                stringbuilder.append('-');
             }
-            stringbuffer.append(HexUtils.HEX_CHARS[element >> 4 & 0xf]);
-            stringbuffer.append(HexUtils.HEX_CHARS[element & 0xf]);
+            stringbuilder.append(HexUtils.HEX_CHARS[element >> 4 & 0xf]);
+            stringbuilder.append(HexUtils.HEX_CHARS[element & 0xf]);
             if (++i == 16) {
                 if (separator) {
-                    stringbuffer.append('\n');
+                    stringbuilder.append('\n');
                 }
                 i = 0;
             }
         }
-        return stringbuffer.toString();
+        return stringbuilder.toString();
     }
 
     /** Devuelve una porci&oacute;n del <i>array</i> especificado.
@@ -182,19 +179,6 @@ public final class HexUtils {
         return trimmedXor;
     }
 
-    /** Convierte un entero a un <i>array</i> de octetos de 4 posiciones, ordenado de
-     * izquierda a derecha.
-     * @param value Entero a convertir.
-     * @return <i>Array</i> de octetos resultante. */
-    public static byte[] intToByteArray(final int value) {
-        final byte[] b = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            final int offset = (b.length - 1 - i) * 8;
-            b[3 - i] = (byte) (value >>> offset & 0xFF);
-        }
-        return b;
-    }
-
 	/** Concatena <i>arrays</i> de octetos.
 	 * @param arrays <i>Arrays</i> de octetos a concatenar, en el orden de concatenaci&oacute;n.
 	 * @return <i>Arrays</i> concatenados. */
@@ -205,9 +189,7 @@ public final class HexUtils {
 				baos.write(array);
 			}
 			catch (final IOException e) {
-				throw new IllegalStateException(
-					"Error construyendo el campo de datos", e //$NON-NLS-1$
-				);
+				throw new IllegalStateException("Error construyendo el campo de datos", e); //$NON-NLS-1$
 			}
 		}
 		return baos.toByteArray();
@@ -219,15 +201,11 @@ public final class HexUtils {
      *         <i>array</i> de <code>char</code> de entrada. */
     public static byte[] charArrayToByteArray(final char[] inCharArray) {
     	if (inCharArray == null) {
-    		LOGGER.warning(
-				"Se ha pedido convertir un array de caracteres nulo, se devolvera otro vacio de octetos" //$NON-NLS-1$
-			);
+    		JmcLogger.warning("Se ha pedido convertir un array de caracteres nulo, se devolvera otro vacio de octetos"); //$NON-NLS-1$
     		return new byte[0];
     	}
     	if (inCharArray.length < 1) {
-    		LOGGER.warning(
-				"El array de caracteres proporcionado esta vacio, se devolvera otro vacio de octetos" //$NON-NLS-1$
-			);
+    		JmcLogger.warning("El array de caracteres proporcionado esta vacio, se devolvera otro vacio de octetos"); //$NON-NLS-1$
     		return new byte[0];
     	}
     	final byte[] ret = new byte[inCharArray.length];
@@ -236,5 +214,4 @@ public final class HexUtils {
     	}
     	return ret;
     }
-
 }

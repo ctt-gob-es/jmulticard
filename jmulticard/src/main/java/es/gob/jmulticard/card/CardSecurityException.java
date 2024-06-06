@@ -9,7 +9,7 @@ public final class CardSecurityException extends CardException {
 
 	/** Construye una excepci&oacute;n gen&eacute;rica de seguridad en tarjeta.
 	 * @param desc descripci&oacute;n de la excepci&oacute;n.
-	 * @param cause Cause inicial de la excepci&oacute;n. */
+	 * @param cause Causa inicial de la excepci&oacute;n. */
 	public CardSecurityException(final String desc, final Exception cause) {
 		super(desc, cause);
 	}
