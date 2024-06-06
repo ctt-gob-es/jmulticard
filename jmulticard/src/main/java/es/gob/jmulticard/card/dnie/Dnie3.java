@@ -104,25 +104,25 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     	            final boolean loadCertsAndKeys) throws ApduConnectionException {
 
         super(conn, pwc, cryptoHlpr, ch, loadCertsAndKeys);
-        rawConnection = conn;
+        this.rawConnection = conn;
         if (loadCertsAndKeys) {
         	try {
 				loadCertificates();
 			}
         	catch (final CryptoCardException e) {
 				throw new ApduConnectionException(
-					"Error cargando los certificados del DNIe 3.0", e //$NON-NLS-1$
+					"Error cargando los certificados del DNIe 3.0/4.0", e //$NON-NLS-1$
 				);
 			}
         }
 
     	// Identificamos numero de soporte (IDESP)
 		try {
-			idesp = getIdesp();
+			this.idesp = getIdesp();
 		}
 		catch (final Exception e1) {
 			LOGGER.warning("No se ha podido leer el IDESP del DNIe: " + e1); //$NON-NLS-1$
-			idesp = null;
+			this.idesp = null;
 		}
     }
 
@@ -146,7 +146,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
 	@Override
     public String getCardName() {
-        return "DNIe 3.0"; //$NON-NLS-1$
+        return "DNIe 3.0/4.0"; //$NON-NLS-1$
     }
 
     /** Si no se hab&iacute;a hecho anteriormente, establece y abre el canal seguro de PIN CWA-14890,
@@ -171,13 +171,13 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
         if (DEBUG) {
         	LOGGER.info("Conexion actual: " + getConnection()); //$NON-NLS-1$
-        	LOGGER.info("Conexion subyacente: " + rawConnection); //$NON-NLS-1$
+        	LOGGER.info("Conexion subyacente: " + this.rawConnection); //$NON-NLS-1$
         }
 
         // Si la conexion esta cerrada, la reestablecemos
         if (!getConnection().isOpen()) {
 	        try {
-				setConnection(rawConnection);
+				setConnection(this.rawConnection);
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(
@@ -192,8 +192,8 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 	    		this,
 	    		getConnection(),
 	    		getCryptoHelper(),
-	    		DnieFactory.getDnie3PinCwa14890Constants(idesp),
-	    		DnieFactory.getDnie3PinCwa14890Constants(idesp)
+	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp),
+	    		DnieFactory.getDnie3PinCwa14890Constants(this.idesp)
 			);
 
 	        try {
@@ -245,8 +245,8 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(idesp)
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
 		);
 
         try {
@@ -286,8 +286,8 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
     		this,
     		getConnection(),
     		getCryptoHelper(),
-    		DnieFactory.getDnie3UsrCwa14890Constants(idesp),
-    		DnieFactory.getDnie3UsrCwa14890Constants(idesp)
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp),
+    		DnieFactory.getDnie3UsrCwa14890Constants(this.idesp)
 		);
 
 		try {
@@ -401,7 +401,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 						"El SOD define huella para un DG inexistente: " + dgh.getDataGroupNumber() //$NON-NLS-1$
 					);
 			}
-			final byte[] actualHash = cryptoHelper.digest(
+			final byte[] actualHash = this.cryptoHelper.digest(
 				CryptoHelper.DigestAlgorithm.getDigestAlgorithm(ldsSecurityObject.getDigestAlgorithm()),
 				dgBytes
 			);
@@ -567,7 +567,7 @@ public class Dnie3 extends Dnie implements MrtdLds1 {
 
     @Override
 	public Sod getSod() throws IOException {
-    	final Sod sod = new Sod(cryptoHelper);
+    	final Sod sod = new Sod(this.cryptoHelper);
     	try {
 			sod.setDerValue(
 				selectFileByLocationAndRead(FILE_SOD_LOCATION)

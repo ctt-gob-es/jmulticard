@@ -186,9 +186,9 @@ public final class DnieFactory {
 		throw new ApduConnectionException("No se ha podido conectar con ningun lector de tarjetas"); //$NON-NLS-1$
 	}
 
-	/** Obtiene las constantes de canal de usuario CWA-14890 de un DNIe 3.0.
+	/** Obtiene las constantes de canal de usuario CWA-14890 de un DNIe 3.0/4.0.
 	 * @param idesp IDESP del DNIe para el cual se desea obtener las constantes de canal.
-	 * @return Constantes de canal de usuario CWA-14890 de un DNIe 3.0. */
+	 * @return Constantes de canal de usuario CWA-14890 de un DNIe 3.0/4.0. */
 	public static Dnie3Cwa14890Constants getDnie3UsrCwa14890Constants(final String idesp) {
 		if (idesp == null || idesp.isEmpty()) {
 			LOGGER.warning(

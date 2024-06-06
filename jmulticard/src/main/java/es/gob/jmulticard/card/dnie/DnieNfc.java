@@ -87,7 +87,7 @@ public class DnieNfc extends Dnie3 {
 
 	@Override
     public String getCardName() {
-        return "DNIe 3.0 accedido de forma inalambrica"; //$NON-NLS-1$
+        return "DNIe 3.0/4.0 accedido de forma inalambrica"; //$NON-NLS-1$
     }
 
 	private static ApduConnection getPaceConnection(final ApduConnection con,
@@ -215,7 +215,7 @@ public class DnieNfc extends Dnie3 {
 		final WirelessInitializer paceInitializer;
 		switch (paceInitType) {
 			case MRZ:
-				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, cryptoHelper);
+				paceInitializer = WirelessInitializerMrz.deriveMrz(paceInitValue, this.cryptoHelper);
 				break;
 			case CAN:
 				paceInitializer = new WirelessInitializerCan(paceInitValue);
@@ -235,7 +235,7 @@ public class DnieNfc extends Dnie3 {
         // Establecemos el canal PACE
     	return new PaceConnection(
     		con,
-    		cryptoHelper,
+    		this.cryptoHelper,
     		sm
 		);
 
@@ -247,9 +247,9 @@ public class DnieNfc extends Dnie3 {
 
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
-				rawConnection = getPaceConnection(
+				this.rawConnection = getPaceConnection(
 					getConnection(),
-					cryptoHelper.getPaceChannelHelper()
+					this.cryptoHelper.getPaceChannelHelper()
 				);
 			}
 			catch (final ApduConnectionException e) {
@@ -264,7 +264,7 @@ public class DnieNfc extends Dnie3 {
 			}
 
 			try {
-				setConnection(rawConnection);
+				setConnection(this.rawConnection);
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException(

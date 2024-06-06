@@ -135,7 +135,7 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
 
         @Override
         public BigInteger getModulus() {
-            return ifdModulus;
+            return this.ifdModulus;
         }
 
         @Override
@@ -155,7 +155,7 @@ final class Dnie3PinCwa14890Constants extends Dnie3r1Cwa14890Constants {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return ifdPrivateExponent;
+            return this.ifdPrivateExponent;
         }
     };
 

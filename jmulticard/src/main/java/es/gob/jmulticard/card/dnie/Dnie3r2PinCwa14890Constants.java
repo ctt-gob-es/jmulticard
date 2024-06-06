@@ -87,7 +87,7 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
 		public String toString() {
-        	return "Clave privada RSA del certificado de Terminal para DNIe 3.0 R2 (canal de PIN)"; //$NON-NLS-1$
+        	return "Clave privada RSA del certificado de Terminal para DNIe 3.0/4.0 R2 (canal de PIN)"; //$NON-NLS-1$
         }
 
         /** (<i>n</i>). */
@@ -132,7 +132,7 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
         public BigInteger getModulus() {
-            return ifdModulus;
+            return this.ifdModulus;
         }
 
         @Override
@@ -152,7 +152,7 @@ final class Dnie3r2PinCwa14890Constants extends Dnie3r2Cwa14890Constants {
 
         @Override
         public BigInteger getPrivateExponent() {
-            return ifdPrivateExponent;
+            return this.ifdPrivateExponent;
         }
     };
 
