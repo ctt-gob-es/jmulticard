@@ -26,9 +26,7 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 		</developer>
 		<developer>
 			<name>Tomás García-Merás</name>
-			<email>tomas.capote@accenture.com</email>
-			<organization>Accenture</organization>
-			<organizationUrl>https://www.accenture.com</organizationUrl>
+			<email>clawgrip@hotmail.com</email>
 		</developer>
 	</developers>
 	
