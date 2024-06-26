@@ -52,7 +52,7 @@ public final class PathLength extends ContextSpecific {
 
 	private static final byte TAG = (byte) 0x80;
 
-	private transient Integer value = null;
+	private Integer value = null;
 
 	int getIntValue() {
 		return value.intValue();
@@ -65,7 +65,7 @@ public final class PathLength extends ContextSpecific {
 
 	@Override
     protected void decodeValue() throws TlvException {
-		value = Integer.valueOf(String.valueOf(HexUtils.getUnsignedInt(new Tlv(getRawDerValue()).getValue(), 0)));
+		value = Integer.valueOf(String.valueOf(HexUtils.getUnsignedInt(new Tlv(getBytes()).getValue(), 0)));
 	}
 
 	@Override

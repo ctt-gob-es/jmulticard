@@ -7,8 +7,10 @@ import java.security.cert.X509Certificate;
 
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
+import es.gob.jmulticard.asn1.icao.AdditionalPersonalDetails;
 import es.gob.jmulticard.asn1.icao.Com;
 import es.gob.jmulticard.asn1.icao.OptionalDetails;
+import es.gob.jmulticard.asn1.icao.SecurityOptions;
 import es.gob.jmulticard.asn1.icao.Sod;
 import es.gob.jmulticard.asn1.icao.SubjectFacePhoto;
 import es.gob.jmulticard.asn1.icao.SubjectSignaturePhoto;
@@ -78,8 +80,17 @@ public interface MrtdLds1 {
     /** Localizaci&oacute;n del fichero EF&#46;ATR/INFO. */
     Location FILE_ATR_INFO_LOCATION = new Location("2F01"); //$NON-NLS-1$
 
+    /** Localizaci&oacute;n del fichero EF&#46;DIR. */
+    Location FILE_DIR_LOCATION = new Location("2F00"); //$NON-NLS-1$
+
     /** Localizaci&oacute;n del fichero EF&#46;CardSecurity. */
     Location FILE_CARD_SECURITY_LOCATION = new Location("011D"); //$NON-NLS-1$
+
+    /** Obtiene el DIR.
+     * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
+     * @return DIR.
+     * @throws IOException Si hay problemas leyendo el fichero. */
+    byte[] getDir() throws IOException;
 
     /** Obtiene el DG1 (MRZ).
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
@@ -154,12 +165,10 @@ public interface MrtdLds1 {
     byte[] getDg10() throws IOException;
 
 	/** Obtiene el DG11 (detalles personales adicionales).
-	 * Devuelve el objeto binario sin tratar.
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
      * @return DG11 (detalles personales adicionales).
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getDg11() throws IOException;
+    AdditionalPersonalDetails getDg11() throws IOException;
 
     /** Obtiene el DG12 (detalles del documento adicionales).
      * Devuelve el objeto binario sin tratar.
@@ -171,18 +180,16 @@ public interface MrtdLds1 {
 
     /** Obtiene el DG13 (detalles opcionales).
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
-     * @author Ignacio Mar&iacute;n.
      * @return DG13 (detalles opcionales).
      * @throws IOException Si hay problemas leyendo el fichero. */
     OptionalDetails getDg13() throws IOException;
 
     /** Obtiene el DG14 (opciones de seguridad).
-     * Devuelve el objeto binario sin tratar.
      * Puede necesitar que el canal de usuario est&eacute; previamente establecido.
      * @author Ignacio Mar&iacute;n.
      * @return DG14 (opciones de seguridad).
      * @throws IOException Si hay problemas leyendo el fichero. */
-    byte[] getDg14() throws IOException;
+    SecurityOptions getDg14() throws IOException;
 
     /** Obtiene el DG15 (informaci&oacute;n de clave p&uacute;blica de autenticaci&oacute;n activa).
      * Devuelve el objeto binario sin tratar.
@@ -231,15 +238,13 @@ public interface MrtdLds1 {
     /** Comprueba la validez de los objetos de seguridad a partir del SOD.
      * @return Cadena de certificados del firmante del SOD (para comprobaci&oacute;n
      *         externa).
-     * @throws IOException Si no se puede  finalizar la comprobaci&oacute;n.
-     * @throws InvalidSecurityObjectException Si un objeto de seguridad no supera
-     *                                        las comprobaciones de seguridad.
+     * @throws IOException Si no se puede  finalizar la comprobaci&oacute;n o esta
+     *                     resulta en que alg&uacute;n objeto no pasa las validaciones.
      * @throws TlvException Si el SOD del documento no es un TLV v&aacute;lido.
      * @throws Asn1Exception Si el SOD es estructuralmente incorrecto.
      * @throws CertificateException Si los certificados de firma del SOD presentan problemas.
      * @throws SignatureException Si la firma del SOD es inv&aacute;lida o presenta problemas. */
     X509Certificate[] checkSecurityObjects() throws IOException,
-                                                    InvalidSecurityObjectException,
                                                     TlvException,
                                                     Asn1Exception,
                                                     SignatureException,

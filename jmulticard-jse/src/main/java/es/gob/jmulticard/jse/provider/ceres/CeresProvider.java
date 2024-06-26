@@ -31,7 +31,7 @@ public final class CeresProvider extends Provider {
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para tarjeta FNMT-RCM-CERES"; //$NON-NLS-1$
-    private static final double VERSION = 0.1;
+    private static final double VERSION = 0.2;
     private static final String NAME = "CeresJCAProvider"; //$NON-NLS-1$
 
     private static ApduConnection defaultConnection = null;

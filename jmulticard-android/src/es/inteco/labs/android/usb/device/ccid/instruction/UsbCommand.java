@@ -62,5 +62,4 @@ public abstract class UsbCommand {
 	/** Obtiene el identificador del comando USB.
 	 * @return Identificador del comando USB */
 	public abstract int getCommandID();
-
 }

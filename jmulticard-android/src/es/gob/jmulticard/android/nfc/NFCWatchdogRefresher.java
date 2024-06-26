@@ -3,6 +3,9 @@
 
 package es.gob.jmulticard.android.nfc;
 
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
+
 import android.annotation.TargetApi;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -11,10 +14,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /** <p>The purpose of this class is to keep the android system from
  * sending keep-alive commands to NFC tags.</p>
@@ -30,37 +29,37 @@ import java.lang.reflect.Method;
 @TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 final class NFCWatchdogRefresher {
 
-    private static final String TAG = NFCWatchdogRefresher.class.getSimpleName();
+    static final String TAG = NFCWatchdogRefresher.class.getSimpleName();
     private static final int TECHNOLOGY_ISO_DEP = 3;
 
     private static HandlerThread sHandlerThread;
     private static Handler sHandler;
     private static WatchdogRefresher sRefresher;
-    private static volatile boolean sIsRunning = false;
+    static volatile boolean sIsRunning = false;
 
     /** <p>Should be called as soon as possible after the last NFC communication.</p>
      * <p>If this method is called multiple times without any calls to
      * {@link #stopHoldingConnection()}, each subsequent call will automatically
      * cancel the previous one.</p> */
     static void holdConnection(final IsoDep isoDep) {
-        Log.v(TAG, "holdConnection()");
+        Log.v(TAG, "holdConnection()"); //$NON-NLS-1$
         if (sHandlerThread != null || sHandler != null || sRefresher != null) {
-            Log.d(TAG, "holdConnection(): Existing background thread found, stopping!");
+            Log.d(TAG, "holdConnection(): Existing background thread found, stopping!"); //$NON-NLS-1$
             stopHoldingConnection();
         }
-        sHandlerThread = new HandlerThread("NFCWatchdogRefresherThread");
+        sHandlerThread = new HandlerThread("NFCWatchdogRefresherThread"); //$NON-NLS-1$
         try {
             sHandlerThread.start();
         }
-        catch (IllegalThreadStateException e) {
-            Log.d(TAG, "holdConnection(): Failed starting background thread!", e);
+        catch (final IllegalThreadStateException e) {
+            Log.d(TAG, "holdConnection(): Failed starting background thread!", e); //$NON-NLS-1$
         }
         final Looper looper = sHandlerThread.getLooper();
         if (looper != null) {
             sHandler = new Handler(looper);
         }
         else {
-            Log.d(TAG, "holdConnection(): No looper on background thread!");
+            Log.d(TAG, "holdConnection(): No looper on background thread!"); //$NON-NLS-1$
             sHandlerThread.quit();
             sHandler = new Handler();
         }
@@ -73,7 +72,7 @@ final class NFCWatchdogRefresher {
      * {@link #holdConnection(IsoDep)} has been called since
      * the last communication. */
     static void stopHoldingConnection() {
-        Log.v(TAG, "stopHoldingConnection()");
+        Log.v(TAG, "stopHoldingConnection()"); //$NON-NLS-1$
         sIsRunning = false;
         if (sHandler != null) {
             if (sRefresher != null) {
@@ -113,9 +112,9 @@ final class NFCWatchdogRefresher {
         private final WeakReference<IsoDep> mIsoDep;
         private int mCurrentRuntime;
 
-        private WatchdogRefresher(final Handler handler, final IsoDep isoDep) {
-            mHandler = new WeakReference<Handler>(handler);
-            mIsoDep = new WeakReference<IsoDep>(isoDep);
+        WatchdogRefresher(final Handler handler, final IsoDep isoDep) {
+            mHandler = new WeakReference<>(handler);
+            mIsoDep = new WeakReference<>(isoDep);
             mCurrentRuntime = 0;
         }
 
@@ -124,25 +123,35 @@ final class NFCWatchdogRefresher {
             final Tag tag = getTag();
             if (tag != null) {
                 try {
-                    final Method getTagService = Tag.class.getMethod("getTagService");
+                    final Method getTagService = Tag.class.getMethod("getTagService"); //$NON-NLS-1$
                     final Object tagService = getTagService.invoke(tag);
-                    final Method getServiceHandle = Tag.class.getMethod("getServiceHandle");
+                    final Method getServiceHandle = Tag.class.getMethod("getServiceHandle"); //$NON-NLS-1$
                     final Object serviceHandle = getServiceHandle.invoke(tag);
-                    final Method connect = tagService.getClass().getMethod("connect", int.class, int.class);
-                    final Object result = connect.invoke(tagService, serviceHandle, TECHNOLOGY_ISO_DEP);
+                    final Method connect = tagService.getClass().getMethod("connect", int.class, int.class); //$NON-NLS-1$
+                    final Object result = connect.invoke(
+                		tagService,
+                		serviceHandle,
+                		Integer.valueOf(TECHNOLOGY_ISO_DEP)
+            		);
 
                     final Handler handler = getHandler();
-                    if (result != null && result.equals(0) && handler != null && sIsRunning && mCurrentRuntime < RUNTIME_MAX) {
+                    if (
+                		result != null                    &&
+                		result.equals(Integer.valueOf(0)) &&
+                		handler != null                   &&
+                		sIsRunning                        &&
+                		mCurrentRuntime < RUNTIME_MAX
+            		) {
                         handler.postDelayed(this, INTERVAL);
                         mCurrentRuntime += INTERVAL;
-                        Log.v(TAG, "Told NFC Watchdog to wait");
+                        Log.v(TAG, "Told NFC Watchdog to wait"); //$NON-NLS-1$
                     }
                     else {
-                        Log.d(TAG, "result: " + result);
+                        Log.d(TAG, "result: " + result); //$NON-NLS-1$
                     }
                 }
                 catch (final Exception e) {
-                    Log.d(TAG, "WatchdogRefresher.run()", e);
+                    Log.d(TAG, "WatchdogRefresher.run()", e); //$NON-NLS-1$
                 }
             }
         }

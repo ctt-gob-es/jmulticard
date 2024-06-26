@@ -26,9 +26,8 @@ public final class SubjectFacePhoto extends DecoderObject {
 
     /** Obtiene la foto del titular en formato JPEG2000.
      * @return Foto del titular en formato JPEG2000.
-     * @throws IOException Si no se puede leer la foto del titular. */
+     * @throws IOException Si la imagen del MRTD no est&aacute; en formato JPEG2000. */
 	public byte[] getSubjectPhotoAsJpeg2k() throws IOException {
-		return IcaoUtils.extractImage(getBytes());
+		return IcaoUtils.extractJpeg2kImage(getBytes());
 	}
-
 }

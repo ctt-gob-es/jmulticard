@@ -52,7 +52,6 @@ public class CommandApdu extends Apdu {
 	private Integer le;
 	private final byte[] body;
 
-
 	private static byte[] getBody(final byte[] bytes) {
 		if (bytes == null || bytes.length < 5) {
 			throw new IllegalArgumentException(

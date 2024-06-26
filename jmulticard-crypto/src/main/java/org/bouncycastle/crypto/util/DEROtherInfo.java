@@ -34,7 +34,7 @@ public class DEROtherInfo
          * @param partyUInfo  sender party info.
          * @param partyVInfo  receiver party info.
          */
-        public Builder(AlgorithmIdentifier algorithmID, byte[] partyUInfo, byte[] partyVInfo)
+        public Builder(final AlgorithmIdentifier algorithmID, final byte[] partyUInfo, final byte[] partyVInfo)
         {
             this.algorithmID = algorithmID;
             this.partyUVInfo = DerUtil.getOctetString(partyUInfo);
@@ -47,7 +47,7 @@ public class DEROtherInfo
          * @param suppPubInfo supplementary public info.
          * @return  the current builder instance.
          */
-        public Builder withSuppPubInfo(byte[] suppPubInfo)
+        public Builder withSuppPubInfo(final byte[] suppPubInfo)
         {
             this.suppPubInfo = new DERTaggedObject(false, 0, DerUtil.getOctetString(suppPubInfo));
 
@@ -60,7 +60,7 @@ public class DEROtherInfo
          * @param suppPrivInfo supplementary private info.
          * @return the current builder instance.
          */
-        public Builder withSuppPrivInfo(byte[] suppPrivInfo)
+        public Builder withSuppPrivInfo(final byte[] suppPrivInfo)
         {
             this.suppPrivInfo = new DERTaggedObject(false, 1, DerUtil.getOctetString(suppPrivInfo));
 
@@ -74,7 +74,7 @@ public class DEROtherInfo
          */
         public DEROtherInfo build()
         {
-            ASN1EncodableVector v = new ASN1EncodableVector();
+            final ASN1EncodableVector v = new ASN1EncodableVector();
 
             v.add(algorithmID);
             v.add(partyUVInfo);
@@ -96,14 +96,11 @@ public class DEROtherInfo
 
     private final DERSequence sequence;
 
-    private DEROtherInfo(DERSequence sequence)
-    {
+    DEROtherInfo(final DERSequence sequence) {
         this.sequence = sequence;
     }
 
-    public byte[] getEncoded()
-        throws IOException
-    {
+    public byte[] getEncoded() throws IOException {
         return sequence.getEncoded();
     }
 }

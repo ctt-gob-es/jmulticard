@@ -14,7 +14,7 @@ final class StandardErrorCodes {
 		// No instanciable
 	}
 
-    private static final AbstractMap<StatusWord, String> ERRORS = new HashMap<>();
+    private static final AbstractMap<StatusWord, String> ERRORS = new HashMap<>(26); // Actualizar capacidad al anadir entradas
     static {
         ERRORS.put(new StatusWord((byte) 0x62, (byte) 0x83), "El fichero seleccionado esta invalidado (6283)"); //$NON-NLS-1$
         ERRORS.put(new StatusWord((byte) 0x65, (byte) 0x81), "Fallo en la memoria (6581)"); //$NON-NLS-1$
@@ -44,7 +44,7 @@ final class StandardErrorCodes {
         ERRORS.put(new StatusWord((byte) 0x6F, (byte) 0x00), "Diagnostico no preciso (6F00)"); //$NON-NLS-1$
     }
 
-    /** Obtiene la descripci&oacute;n del error asociado a una determinada <i>Status Word</i>.
+    /** Obtiene la descripci&oacute;n del error asociado a una determinada palabra de estado (<i>Status Word</i>).
      * @param sw <i>Status Word</i> de entrada.
      * @return Descripci&oacute;n del error asociado a la <i>Status Word</i> proporcionada. */
     static String getErrorDescription(final StatusWord sw) {
@@ -56,5 +56,4 @@ final class StandardErrorCodes {
     	}
     	return HexUtils.hexify(sw.getBytes(), true);
     }
-
 }

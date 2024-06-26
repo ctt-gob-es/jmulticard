@@ -56,35 +56,26 @@ public final class CeresCdf extends Record implements Pkcs15Cdf {
      * espec&iacute;fico para ciertas tarjetas FNMT CERES. */
 	public CeresCdf() {
         super(
-    		new OptionalDecoderObjectElement[] {
-				// Maximo 10 certificados por tarjeta
-
-    			// Estructura antigua, que incumple PKCS#15
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
-				new OptionalDecoderObjectElement(CeresCertificateObject.class, true)
-    		}
+			// Maximo 10 certificados por tarjeta
+			// Estructura antigua, que incumple PKCS#15
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true),
+			new OptionalDecoderObjectElement(CeresCertificateObject.class, true)
 		);
     }
 
-    /** Obtiene el n&uacute;mero de certificados del CDF.
-     * @return N&uacute;mero de certificados del CDF */
     @Override
 	public int getCertificateCount() {
         return getElementCount();
     }
 
-    /** Obtiene el identificador del certificado indicado.
-     * @param index &Iacute;ndice del certificado.
-     * @return Identificador del certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
     @Override
 	public byte[] getCertificateId(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);
@@ -94,10 +85,15 @@ public final class CeresCdf extends Record implements Pkcs15Cdf {
     	return null;
     }
 
-    /** Obtiene la ruta PKCS#15 hacia el certificado indicado.
-     * @param index &Iacute;ndice del certificado.
-     * @return Ruta PKCS#15 hacia el certificado indicado o {@code null} si no
-     * se encontr&oacute; el certificado. */
+	@Override
+	public String getCertificateAlias(final int index) {
+		final byte[] id = getCertificateId(index);
+		if (id != null) {
+			return HexUtils.hexify(id, false);
+		}
+		return null;
+	}
+
     @Override
 	public String getCertificatePath(final int index) {
     	final CertificateObject tmpCo = (CertificateObject) getElementAt(index);

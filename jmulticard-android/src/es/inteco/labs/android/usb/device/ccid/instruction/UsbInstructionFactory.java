@@ -44,7 +44,6 @@ public final class UsbInstructionFactory {
 
 	/** Constructor. */
 	private UsbInstructionFactory() {
-		super();
 		this.instructionCount = (byte) 0x00;
 	}
 

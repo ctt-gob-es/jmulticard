@@ -3,6 +3,7 @@ package org.bouncycastle.crypto.modes;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.DefaultMultiBlockCipher;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Arrays;
 
@@ -10,23 +11,36 @@ import org.bouncycastle.util.Arrays;
  * implements Cipher-Block-Chaining (CBC) mode on top of a simple cipher.
  */
 public class CBCBlockCipher
-    implements BlockCipher
+    extends DefaultMultiBlockCipher
+    implements CBCModeCipher
 {
-    private byte[]          IV;
+    private final byte[]          IV;
     private byte[]          cbcV;
     private byte[]          cbcNextV;
 
-    private int             blockSize;
+    private final int             blockSize;
     private BlockCipher     cipher = null;
     private boolean         encrypting;
+
+    /**
+     * Return a new CBC mode cipher based on the passed in base cipher
+     *
+     * @param cipher the base cipher for the CBC mode.
+     */
+    public static CBCModeCipher newInstance(final BlockCipher cipher)
+    {
+        return new CBCBlockCipher(cipher);
+    }
 
     /**
      * Basic constructor.
      *
      * @param cipher the block cipher to be used as the basis of chaining.
+     * @deprecated use the CBCBlockCipher.newInstance() static method.
      */
-    public CBCBlockCipher(
-        BlockCipher cipher)
+    @Deprecated
+	public CBCBlockCipher(
+        final BlockCipher cipher)
     {
         this.cipher = cipher;
         this.blockSize = cipher.getBlockSize();
@@ -56,20 +70,19 @@ public class CBCBlockCipher
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    @Override
-	public void init(
-        boolean             encrypting,
+    public void init(
+        final boolean             encrypting,
         CipherParameters    params)
         throws IllegalArgumentException
     {
-        boolean oldEncrypting = this.encrypting;
+        final boolean oldEncrypting = this.encrypting;
 
         this.encrypting = encrypting;
 
         if (params instanceof ParametersWithIV)
         {
-            ParametersWithIV ivParam = (ParametersWithIV)params;
-            byte[] iv = ivParam.getIV();
+            final ParametersWithIV ivParam = (ParametersWithIV)params;
+            final byte[] iv = ivParam.getIV();
 
             if (iv.length != blockSize)
             {
@@ -78,31 +91,23 @@ public class CBCBlockCipher
 
             System.arraycopy(iv, 0, IV, 0, iv.length);
 
-            reset();
-
-            // if null it's an IV changed only.
-            if (ivParam.getParameters() != null)
-            {
-                cipher.init(encrypting, ivParam.getParameters());
-            }
-            else if (oldEncrypting != encrypting)
-            {
-                throw new IllegalArgumentException("cannot change encrypting state without providing key.");
-            }
+            params = ivParam.getParameters();
         }
         else
         {
-            reset();
+            Arrays.fill(IV, (byte)0);
+        }
 
-            // if it's null, key is to be reused.
-            if (params != null)
-            {
-                cipher.init(encrypting, params);
-            }
-            else if (oldEncrypting != encrypting)
-            {
-                throw new IllegalArgumentException("cannot change encrypting state without providing key.");
-            }
+        reset();
+
+        // if null it's an IV changed only (key is to be reused).
+        if (params != null)
+        {
+            cipher.init(encrypting, params);
+        }
+        else if (oldEncrypting != encrypting)
+        {
+            throw new IllegalArgumentException("cannot change encrypting state without providing key.");
         }
     }
 
@@ -111,8 +116,7 @@ public class CBCBlockCipher
      *
      * @return the name of the underlying algorithm followed by "/CBC".
      */
-    @Override
-	public String getAlgorithmName()
+    public String getAlgorithmName()
     {
         return cipher.getAlgorithmName() + "/CBC";
     }
@@ -122,8 +126,7 @@ public class CBCBlockCipher
      *
      * @return the block size of the underlying cipher.
      */
-    @Override
-	public int getBlockSize()
+    public int getBlockSize()
     {
         return cipher.getBlockSize();
     }
@@ -141,23 +144,21 @@ public class CBCBlockCipher
      * @exception IllegalStateException if the cipher isn't initialised.
      * @return the number of bytes processed and produced.
      */
-    @Override
-	public int processBlock(
-        byte[]      in,
-        int         inOff,
-        byte[]      out,
-        int         outOff)
+    public int processBlock(
+        final byte[]      in,
+        final int         inOff,
+        final byte[]      out,
+        final int         outOff)
         throws DataLengthException, IllegalStateException
     {
-        return (encrypting) ? encryptBlock(in, inOff, out, outOff) : decryptBlock(in, inOff, out, outOff);
+        return encrypting ? encryptBlock(in, inOff, out, outOff) : decryptBlock(in, inOff, out, outOff);
     }
 
     /**
      * reset the chaining vector back to the IV and reset the underlying
      * cipher.
      */
-    @Override
-	public void reset()
+    public void reset()
     {
         System.arraycopy(IV, 0, cbcV, 0, IV.length);
         Arrays.fill(cbcNextV, (byte)0);
@@ -178,13 +179,13 @@ public class CBCBlockCipher
      * @return the number of bytes processed and produced.
      */
     private int encryptBlock(
-        byte[]      in,
-        int         inOff,
-        byte[]      out,
-        int         outOff)
+        final byte[]      in,
+        final int         inOff,
+        final byte[]      out,
+        final int         outOff)
         throws DataLengthException, IllegalStateException
     {
-        if ((inOff + blockSize) > in.length)
+        if (inOff + blockSize > in.length)
         {
             throw new DataLengthException("input buffer too short");
         }
@@ -198,7 +199,7 @@ public class CBCBlockCipher
             cbcV[i] ^= in[inOff + i];
         }
 
-        int length = cipher.processBlock(cbcV, 0, out, outOff);
+        final int length = cipher.processBlock(cbcV, 0, out, outOff);
 
         /*
          * copy ciphertext to cbcV
@@ -221,20 +222,20 @@ public class CBCBlockCipher
      * @return the number of bytes processed and produced.
      */
     private int decryptBlock(
-        byte[]      in,
-        int         inOff,
-        byte[]      out,
-        int         outOff)
+        final byte[]      in,
+        final int         inOff,
+        final byte[]      out,
+        final int         outOff)
         throws DataLengthException, IllegalStateException
     {
-        if ((inOff + blockSize) > in.length)
+        if (inOff + blockSize > in.length)
         {
             throw new DataLengthException("input buffer too short");
         }
 
         System.arraycopy(in, inOff, cbcNextV, 0, blockSize);
 
-        int length = cipher.processBlock(in, inOff, out, outOff);
+        final int length = cipher.processBlock(in, inOff, out, outOff);
 
         /*
          * XOR the cbcV and the output

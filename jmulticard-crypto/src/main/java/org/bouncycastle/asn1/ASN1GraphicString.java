@@ -5,10 +5,7 @@ import java.io.IOException;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Strings;
 
-public abstract class ASN1GraphicString
-    extends ASN1Primitive
-    implements ASN1String
-{
+public abstract class ASN1GraphicString extends ASN1Primitive implements ASN1String {
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1GraphicString.class, BERTags.GRAPHIC_STRING)
     {
         @Override

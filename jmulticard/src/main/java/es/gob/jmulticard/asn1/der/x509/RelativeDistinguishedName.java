@@ -52,12 +52,10 @@ public final class RelativeDistinguishedName extends Set {
 	/** Construye un objeto ASN&#46;1 X&#46;500 <i>RelativeDistinguishedName</i>. */
 	public RelativeDistinguishedName() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					AttributeTypeAndDistinguishedValue.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				AttributeTypeAndDistinguishedValue.class,
+				false
+			)
 		);
 	}
 
@@ -65,5 +63,4 @@ public final class RelativeDistinguishedName extends Set {
     public String toString() {
 		return getElementAt(0).toString();
 	}
-
 }

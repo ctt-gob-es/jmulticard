@@ -1,59 +1,57 @@
 package test.es.gob.jmulticard;
 
-
 import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import es.gob.jmulticard.BcCryptoHelper;
+import es.gob.jmulticard.CryptoHelper;
 
 /** Pruebas de an&aacute;lisis del certificado del DNIe.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestCertParseUtil {
+final class TestCertParseUtil {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.afirma"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger(TestCertParseUtil.class.getName());
 
-	/** Pruebas de la obtenci&oacute;n de nombre y apellidos.
-	 * @throws Exception En cualquier error. */
+	/** Pruebas de la obtenci&oacute;n de nombre y apellidos. */
 	@SuppressWarnings("static-method")
 	@Test
-	public void testGetFields() throws Exception {
-		final X509Certificate c;
-		try (InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
-			c = new BcCryptoHelper().generateCertificate(is);
+	void testGetFields() {
+		try {
+			final X509Certificate c;
+			try (InputStream is = TestCertParseUtil.class.getResourceAsStream("/DNICERT.cer")) { //$NON-NLS-1$
+				c = CryptoHelper.generateCertificate(is);
+			}
+			final String dn = c.getSubjectX500Principal().toString();
+			String cn = getCN(dn);
+			if (cn.contains("(")) { //$NON-NLS-1$
+				cn = cn.substring(0, cn.indexOf('(')).trim();
+			}
+			System.out.println(dn);
+			System.out.println(cn);
+
+			final String name = cn.substring(cn.indexOf(',') + 1).trim();
+			System.out.println("Nombre: " + name); //$NON-NLS-1$
+
+			String sn1 = getRDNvalueFromLdapName("SN", dn); //$NON-NLS-1$
+			if (sn1 == null) {
+				sn1 = getRDNvalueFromLdapName("SURNAME", dn); //$NON-NLS-1$
+			}
+			System.out.println("Apellido 1: " + sn1); //$NON-NLS-1$
+
+			final String sn2 = cn.replace(",", "").replace(name, "").replace(sn1, "").trim(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.out.println("Apellido 2: " + sn2); //$NON-NLS-1$
+
+			final String num = getRDNvalueFromLdapName("SERIALNUMBER", dn); //$NON-NLS-1$
+			System.out.println("Numero: " + num); //$NON-NLS-1$
 		}
-		final String dn = c.getSubjectX500Principal().toString();
-		String cn = getCN(dn);
-		if (cn.contains("(")) { //$NON-NLS-1$
-			cn = cn.substring(
-				0,
-				cn.indexOf('(')
-			).trim();
+		catch(final Exception e) {
+			e.printStackTrace();
+			Assertions.fail();
 		}
-		System.out.println(dn);
-		System.out.println(cn);
-
-		final String name = cn.substring(
-			cn.indexOf(',') + 1
-		).trim();
-		System.out.println("Nombre: " + //$NON-NLS-1$
-			name
-		);
-
-		String sn1 = getRDNvalueFromLdapName("SN", dn); //$NON-NLS-1$
-		if (sn1 == null) {
-			sn1 = getRDNvalueFromLdapName("SURNAME", dn); //$NON-NLS-1$
-		}
-		System.out.println("Apellido 1: " + sn1); //$NON-NLS-1$
-
-		final String sn2 = cn.replace(",", "").replace(name, "").replace(sn1, "").trim(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		System.out.println("Apellido 2: " + sn2); //$NON-NLS-1$
-
-		final String num = getRDNvalueFromLdapName("SERIALNUMBER", dn); //$NON-NLS-1$
-		System.out.println("Numero: " + num); //$NON-NLS-1$
 	}
 
     /** Obtiene el nombre com&uacute;n (Common Name, CN) de un <i>Principal</i>
@@ -64,7 +62,7 @@ public final class TestCertParseUtil {
      *        com&uacute;n
      * @return Nombre com&uacute;n (Common Name, CN) de un <i>Principal</i>
      *         X.400 */
-    public static String getCN(final String principal) {
+    static String getCN(final String principal) {
         if (principal == null) {
             return null;
         }
@@ -95,7 +93,7 @@ public final class TestCertParseUtil {
      * @param rdn RDN que deseamos encontrar.
      * @param principal Principal del que extraer el RDN (seg&uacute;n la <a href="http://www.ietf.org/rfc/rfc4514.txt">RFC 4514</a>).
      * @return Valor del RDN indicado o {@code null} si no se encuentra. */
-    public static String getRDNvalueFromLdapName(final String rdn, final String principal) {
+    static String getRDNvalueFromLdapName(final String rdn, final String principal) {
 
         int offset1 = 0;
         while ((offset1 = principal.toLowerCase(Locale.US).indexOf(rdn.toLowerCase(), offset1)) != -1) {
@@ -155,5 +153,4 @@ public final class TestCertParseUtil {
 
         return null;
     }
-
 }

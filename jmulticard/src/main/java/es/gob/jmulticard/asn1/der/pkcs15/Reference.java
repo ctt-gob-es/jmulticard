@@ -53,5 +53,4 @@ public class Reference extends DerInteger {
 	public int getIntValue() {
 		return getIntegerValue().intValue();
 	}
-
 }

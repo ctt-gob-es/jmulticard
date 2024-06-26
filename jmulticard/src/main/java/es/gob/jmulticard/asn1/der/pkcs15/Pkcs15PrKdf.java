@@ -7,8 +7,7 @@ import es.gob.jmulticard.asn1.TlvException;
 
 /** Funciones comunes a un PrKDF.
  * Necesario para acomodar PrKDF que no se adec&uacute;en por completo al PrKDF especificado en PKCS#15,
- * para tener de esta manera todas las implementanciones un ancestro com&uacute;n con todos los
- * m&eacute;todos.
+ * para tener de esta manera todas las implementanciones un ancestro com&uacute;n.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public interface Pkcs15PrKdf {
 
@@ -36,5 +35,4 @@ public interface Pkcs15PrKdf {
 	 * @param index &Iacute;ndice de la clave.
 	 * @return <i>X&#46;500 Principal</i> de la clave. */
 	X500Principal getKeyPrincipal(int index);
-
 }

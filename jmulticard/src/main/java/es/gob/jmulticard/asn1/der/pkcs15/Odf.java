@@ -41,13 +41,11 @@ public final class Odf extends Record {
 	/** Construye un objeto PKCS#15 ODF (<i>Object Description File</i>) ASN&#46;1. */
 	public Odf() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(PrivateKeysContextSpecific.class, true),       // PrKDF
-				new OptionalDecoderObjectElement(PublicKeysContextSpecific.class, true),
-				new OptionalDecoderObjectElement(TrustedPublicKeysContextSpecific.class, true),
-				new OptionalDecoderObjectElement(SecretKeysContextSpecific.class, true),
-				new OptionalDecoderObjectElement(CertificatesContextSpecific.class, true)       // CDF
-			}
+			new OptionalDecoderObjectElement(PrivateKeysContextSpecific.class, true),       // PrKDF
+			new OptionalDecoderObjectElement(PublicKeysContextSpecific.class, true),
+			new OptionalDecoderObjectElement(TrustedPublicKeysContextSpecific.class, true),
+			new OptionalDecoderObjectElement(SecretKeysContextSpecific.class, true),
+			new OptionalDecoderObjectElement(CertificatesContextSpecific.class, true)       // CDF
 		);
 	}
 

@@ -1,10 +1,8 @@
 package es.gob.jmulticard.card.icao;
 
-import es.gob.jmulticard.connection.pace.PaceException;
-
 /** MRZ err&oacute;neo.
- * @author Ignacio Mar&iacute;n. */
-public final class MalformedMrzException extends PaceException {
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+public final class MalformedMrzException extends IcaoException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 437348879325857134L;
@@ -21,5 +19,4 @@ public final class MalformedMrzException extends PaceException {
 	MalformedMrzException(final String description, final Exception cause) {
 		super(description, cause);
 	}
-
 }

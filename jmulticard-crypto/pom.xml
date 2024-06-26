@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>jmulticard-crypto</artifactId>
+	<name>jmulticard-crypto</name>
+
+	<parent>
+		<groupId>es.gob.afirma.jmulticard</groupId>
+		<artifactId>jmulticard-base</artifactId>
+		<version>3.0.3</version>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>es.gob.afirma.jmulticard</groupId>
+			<artifactId>jmulticard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>es.gob.afirma.jmulticard</groupId>
+			<artifactId>jmulticard-jsr268</artifactId>
+			<version>${project.version}</version>
+			<!-- <scope>test</scope> -->
+		</dependency>
+
+	</dependencies>
+
+</project>

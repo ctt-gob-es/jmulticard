@@ -6,10 +6,9 @@ package org.bouncycastle.asn1;
  * lightweight Java environment don't support classes like
  * StringTokenizer.
  */
-public class OIDTokenizer
-{
-    private String  oid;
-    private int     index;
+public class OIDTokenizer {
+    private final String  oid;
+    private int index;
 
     /**
      * Base constructor.
@@ -17,10 +16,10 @@ public class OIDTokenizer
      * @param oid the string representation of the OID.
      */
     public OIDTokenizer(
-        String oid)
+        final String oid)
     {
         this.oid = oid;
-        this.index = 0;
+        index = 0;
     }
 
     /**
@@ -30,7 +29,7 @@ public class OIDTokenizer
      */
     public boolean hasMoreTokens()
     {
-        return (index != -1);
+        return index != -1;
     }
 
     /**
@@ -46,7 +45,7 @@ public class OIDTokenizer
         }
 
         String  token;
-        int     end = oid.indexOf('.', index);
+        final int     end = oid.indexOf('.', index);
 
         if (end == -1)
         {

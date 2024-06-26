@@ -75,22 +75,18 @@ public final class CeresPrKdf extends Record implements Pkcs15PrKdf {
      * ASN&#46;1 espec&iacute;fico para ciertas tarjetas FNMT CERES. */
 	public CeresPrKdf() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				// Maximo 10 certificados por tarjeta
-
-				// Estructura antigua, que incumple PKCS#15
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true)
-
-			}
+			// Maximo 10 certificados por tarjeta
+			// Estructura antigua, que incumple PKCS#15
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(CeresPrivateKeyObject.class, true)
 		);
 	}
 

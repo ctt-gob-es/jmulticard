@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	 
- 	<modelVersion>4.0.0</modelVersion>
-    <groupId>es.gob.afirma.jmulticard</groupId>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>es.gob.afirma.jmulticard</groupId>
 	<artifactId>jmulticard-android</artifactId>
-    <version>1.9</version>
-	<packaging>aar</packaging>
+	<version>3.0.3</version>
+	<packaging>jar</packaging>
 
 	<name>jmulticard-android</name>
 	<description>Proyecto Android para el uso de tarjetas inteligentes desde Android</description>
 	<url>https://administracionelectronica.gob.es/ctt/clienteafirma</url>
-	
+
 	<developers>
 		<developer>
 			<name>Secretaría General de Administración Digital</name>
@@ -20,7 +21,7 @@
 			<organizationUrl>https://administracionelectronica.gob.es</organizationUrl>
 		</developer>
 	</developers>
-	
+
 	<licenses>
 		<license>
 			<name>GPL-v2.0</name>
@@ -28,7 +29,8 @@
 		</license>
 		<license>
 			<name>EUPL-v1.1</name>
-			<url>http://joinup.ec.europa.eu/system/files/ES/EUPL%20v.1.1%20-%20Licencia.pdf</url>
+			<url>
+				http://joinup.ec.europa.eu/system/files/ES/EUPL%20v.1.1%20-%20Licencia.pdf</url>
 		</license>
 	</licenses>
 
@@ -37,199 +39,62 @@
 		<developerConnection>scm:git:ssh://github.com/ctt-gob-es/jmulticard.git</developerConnection>
 		<url>https://github.com/ctt-gob-es/jmulticard</url>
 	</scm>
-	
+
 	<distributionManagement>
-	  <snapshotRepository>
-		<id>ossrh</id>
-		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	  </snapshotRepository>
-	  <repository>
-		<id>ossrh</id>
-		<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-	  </repository>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
-	
+
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 	</properties>
 
 	<repositories>
 		<repository>
-		  <id>Google</id>
-		  <url>https://maven.google.com</url>
+			<id>Google</id>
+			<url>https://maven.google.com</url>
 		</repository>
 	</repositories>
-	
+
 	<dependencies>
-	        <dependency>
+
+		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
 			<version>4.1.1.4</version>
+			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.android.support</groupId>
-			<artifactId>support-annotations</artifactId>
-			<version>28.0.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.google.android</groupId>
-		    <artifactId>support-v4</artifactId>
-		    <version>r7</version>
-		</dependency>
+
 		<dependency>
 			<groupId>es.gob.afirma.jmulticard</groupId>
 			<artifactId>jmulticard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 	</dependencies>
-		
-	<profiles>
-		<!-- Construccion para despliegue en el repositorio de artefactos -->
-		<profile>
-			<id>env-deploy</id>
-			<activation>
-				<property>
-				  <name>env</name>
-				  <value>deploy</value>
-				</property>
-			</activation>
-		  
-			<build>
-				<plugins>
-				
-					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-source-plugin</artifactId>
-					  <version>2.2.1</version>
-					  <executions>
-						<execution>
-						  <id>attach-sources</id>
-						  <goals>
-							<goal>jar-no-fork</goal>
-						  </goals>
-						</execution>
-					  </executions>
-					</plugin>
-					
-					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-javadoc-plugin</artifactId>
-					  <version>2.9.1</version>
-					  <executions>
-						<execution>
-						  <id>attach-javadocs</id>
-						  <goals>
-							<goal>jar</goal>
-						  </goals>
-						</execution>
-					  </executions>
-					</plugin>
-					
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.6.2</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-						</configuration>
-					</plugin>
-					
-					
-					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-gpg-plugin</artifactId>
-					  <version>3.0.1</version>
-					  <executions>
-						<execution>
-						  <id>sign-artifacts</id>
-						  <phase>verify</phase>
-						  <goals>
-							<goal>sign</goal>
-						  </goals>
-						</execution>
-					  </executions>
-					</plugin>
-					
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-		
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<sourceDirectory>src</sourceDirectory>
-		
-		<pluginManagement>
-			<plugins>
-				<plugin>
-				    <groupId>com.simpligility.maven.plugins</groupId>
-				    <artifactId>android-maven-plugin</artifactId>
-				    <version>4.3.0</version>
-			        <extensions>true</extensions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.0.0-M3</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		
+    
 		<plugins>
+
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.simpligility.maven.plugins</groupId>
-				<artifactId>android-maven-plugin</artifactId>
-				<configuration>
-                    <sdk>
-						<path>${env.ANDROID_HOME}</path>
-	                	<platform>15</platform>
-					</sdk>
-					<sign><debug>both</debug></sign>
-					<resourceDirectory>${basedir}/res</resourceDirectory>
-					<nativeLibrariesDirectory>${basedir}/libs</nativeLibrariesDirectory>
-					<androidManifestFile>${basedir}/AndroidManifest.xml</androidManifestFile>
-				</configuration>
-				<extensions>true</extensions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.10</version>
-				<configuration>
-					<downloadSources>true</downloadSources>
-					<downloadJavadocs>false</downloadJavadocs>
-					<additionalProjectnatures>
-						<projectnature>com.android.ide.eclipse.adt.AndroidNature</projectnature>
-					</additionalProjectnatures>
-					<additionalBuildcommands>
-						<buildcommand>com.android.ide.eclipse.adt.ResourceManagerBuilder</buildcommand>
-						<buildcommand>com.android.ide.eclipse.adt.PreCompilerBuilder</buildcommand>
-						<buildcommand>com.android.ide.eclipse.adt.ApkBuilder</buildcommand>
-					</additionalBuildcommands>
-					<!--
-							This is a workaround : we do not want JRE_CONTAINER, however if
-							we remove it, it will be automatically added, and placed first.
-							So we add it in the second position, so that the project is
-							recognized as an Android project.
-					-->
-					<classpathContainers>
-						<classpathContainer>com.android.ide.eclipse.adt.ANDROID_FRAMEWORK</classpathContainer>
-						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-					</classpathContainers>
-				</configuration>
-			</plugin>
-        	</plugins>   
+
+		</plugins>
 	</build>
+
 </project> 

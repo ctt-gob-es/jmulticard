@@ -1,6 +1,6 @@
 package es.gob.jmulticard.connection;
 
-import java.util.logging.Logger;
+import es.gob.jmulticard.JmcLogger;
 
 /** Protocolo de conexi&oacute;n con la tarjeta.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -38,9 +38,7 @@ public enum ApduConnectionProtocol {
     		case "T=0": return T0; //$NON-NLS-1$
     		case "T=CL": return TCL; //$NON-NLS-1$
     		default:
-    			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-					"Protocolo desconocido, se devolvera '*': " + name //$NON-NLS-1$
-				);
+    			JmcLogger.warning("Protocolo desconocido, se devolvera '*': " + name); //$NON-NLS-1$
     			return ANY;
     	}
     }

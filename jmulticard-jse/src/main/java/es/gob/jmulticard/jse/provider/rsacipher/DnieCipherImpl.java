@@ -76,28 +76,28 @@ import es.gob.jmulticard.connection.LostChannelException;
 public final class DnieCipherImpl extends CipherSpi {
 
     // constant for an empty byte array
-    private final static byte[] B0 = {};
+    private static final byte[] B0 = {};
 
     // mode constant for public key encryption
-    private final static int MODE_ENCRYPT = 1;
+    private static final int MODE_ENCRYPT = 1;
 
     // mode constant for private key decryption
-    private final static int MODE_DECRYPT = 2;
+    private static final int MODE_DECRYPT = 2;
 
     // mode constant for private key encryption (signing)
-    private final static int MODE_SIGN    = 3;
+    private static final int MODE_SIGN    = 3;
 
     // mode constant for public key decryption (verifying)
-    private final static int MODE_VERIFY  = 4;
+    private static final int MODE_VERIFY  = 4;
 
     /** RSA sin relleno. */
-    private final static String PAD_NONE  = "NoPadding"; //$NON-NLS-1$
+    private static final String PAD_NONE  = "NoPadding"; //$NON-NLS-1$
 
     /** RSA con relleno PKCS#1 v1.5. */
-    private final static String PAD_PKCS1 = "PKCS1Padding"; //$NON-NLS-1$
+    private static final String PAD_PKCS1 = "PKCS1Padding"; //$NON-NLS-1$
 
     // constant for PKCS#2 v2.0 OAEP with MGF1
-    private final static String PAD_OAEP_MGF1  = "OAEP"; //$NON-NLS-1$
+    private static final String PAD_OAEP_MGF1  = "OAEP"; //$NON-NLS-1$
 
     // current mode, one of MODE_* above. Set when init() is called
     private int mode;
@@ -127,7 +127,7 @@ public final class DnieCipherImpl extends CipherSpi {
     private RSAPrivateKey privateKey;
 
     /** Algoritmo de huella para el OAEP. */
-    private final String oaepHashAlgorithm = "SHA-1"; //$NON-NLS-1$
+    private static final String OAEP_HASH_ALGORITHM = "SHA-1"; //$NON-NLS-1$
 
     private SecureRandom random;
 
@@ -179,7 +179,7 @@ public final class DnieCipherImpl extends CipherSpi {
 
     @Override
 	protected AlgorithmParameters engineGetParameters() {
-        if (spec == null || !(spec instanceof OAEPParameterSpec)) {
+        if (!(spec instanceof OAEPParameterSpec)) {
             return null;
         }
 		try {
@@ -189,13 +189,13 @@ public final class DnieCipherImpl extends CipherSpi {
 		}
 		catch (final NoSuchAlgorithmException nsae) {
 		    // No deberia pasar
-		    throw new RuntimeException(
+		    throw new IllegalStateException(
 	    		"No se ha encontrado una implementacion OAEP de 'AlgorithmParameters'", nsae //$NON-NLS-1$
     		);
 		}
 		catch (final InvalidParameterSpecException ipse) {
 		    // No deberia pasar
-		    throw new RuntimeException("No se soporta OAEPParameterSpec", ipse); //$NON-NLS-1$
+		    throw new IllegalStateException("No se soporta OAEPParameterSpec", ipse); //$NON-NLS-1$
 		}
     }
 
@@ -319,7 +319,7 @@ public final class DnieCipherImpl extends CipherSpi {
             }
             else {
                 spec = new OAEPParameterSpec(
-            		oaepHashAlgorithm,
+            		OAEP_HASH_ALGORITHM,
             		"MGF1", //$NON-NLS-1$
             		MGF1ParameterSpec.SHA1,
             		PSource.PSpecified.DEFAULT
@@ -414,7 +414,7 @@ public final class DnieCipherImpl extends CipherSpi {
         catch (final CryptoCardException  |
         		     PinException         |
         		     LostChannelException e) {
-        	final BadPaddingException bpe = new BadPaddingException("Error en la operacion RSA con el DNIe"); //$NON-NLS-1$
+        	final BadPaddingException bpe = new BadPaddingException("Error en el cifrado RSA con el DNIe"); //$NON-NLS-1$
         	bpe.initCause(e);
 			throw bpe;
 		}
@@ -441,7 +441,7 @@ public final class DnieCipherImpl extends CipherSpi {
 		catch (final CryptoCardException |
 				     PinException        |
 				     LostChannelException e) {
-        	final BadPaddingException bpe = new BadPaddingException("Error en la operacion RSA con el DNIe"); //$NON-NLS-1$
+        	final BadPaddingException bpe = new BadPaddingException("Error en el cifrado RSA con el DNIe"); //$NON-NLS-1$
         	bpe.initCause(e);
 			throw bpe;
 		}
@@ -470,7 +470,7 @@ public final class DnieCipherImpl extends CipherSpi {
         catch (final CryptoCardException |
         		     PinException        |
         		     LostChannelException e) {
-        	throw new InvalidKeyException("Error en la operacion RSA con el DNIe", e); //$NON-NLS-1$
+        	throw new InvalidKeyException("Error en la envoltura para el cifrado RSA con el DNIe", e); //$NON-NLS-1$
 		}
     }
 
@@ -507,7 +507,7 @@ public final class DnieCipherImpl extends CipherSpi {
         catch (final CryptoCardException |
 	   		         PinException        |
 	   		         LostChannelException e) {
-        	throw new InvalidKeyException("Error en la operacion RSA con el DNIe", e); //$NON-NLS-1$
+        	throw new InvalidKeyException("Error en la desenvoltura para el descifrado RSA con el DNIe", e); //$NON-NLS-1$
 		}
 
         if (isTlsRsaPremasterSecret) {

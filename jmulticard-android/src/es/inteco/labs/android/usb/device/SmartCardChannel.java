@@ -50,6 +50,7 @@ import es.inteco.labs.android.usb.device.exception.UsbSmartCardChannelException;
 /** Representa el canal a traves del cual se procesan las peticiones USB para un dispositivo concreto.
  * @author Jose Luis Escanciano Garcia */
 final class SmartCardChannel {
+
 	private UsbEndpoint endPointIn;
 	private UsbEndpoint endPointOut;
 
@@ -115,7 +116,7 @@ final class SmartCardChannel {
 	 * @throws UsbCommandTransmissionException */
 	private void usbSendCommand(final byte[] data) throws UsbCommandTransmissionException {
 		final int dataTransferred = this.usbDeviceConnection.bulkTransfer(this.endPointOut, data, data.length, TIMEOUT_MS);
-		if(!(dataTransferred == 0 || dataTransferred==data.length)) {
+		if(dataTransferred != 0 && dataTransferred != data.length) {
 			throw new UsbCommandTransmissionException("Error al transmitir el comando [" + dataTransferred + " ; " + data.length + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
@@ -132,5 +133,4 @@ final class SmartCardChannel {
 		}
 		throw new UsbCommandTransmissionException("Error al recibir respuesta del comando [" + dataTransferred + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
 }

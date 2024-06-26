@@ -42,7 +42,6 @@ package es.gob.jmulticard.jse.provider.gide;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStore.PasswordProtection;
@@ -52,6 +51,7 @@ import java.security.KeyStoreSpi;
 import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,11 +63,12 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 
-import es.gob.jmulticard.BcCryptoHelper;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePkcs15Applet;
 import es.gob.jmulticard.card.gide.smartcafe.SmartCafePrivateKeyReference;
 import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
@@ -75,7 +76,7 @@ import es.gob.jmulticard.jse.provider.ProviderUtil;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger(SmartCafeKeyStoreImpl.class.getName());
 
     private SmartCafePkcs15Applet cryptoCard = null;
     private List<String> aliases = null;
@@ -99,15 +100,23 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     }
 
     @Override
-    public String engineGetCertificateAlias(final Certificate cert) {
-        if (!(cert instanceof X509Certificate)) {
+    public String engineGetCertificateAlias(final Certificate otherCert) {
+        if (!(otherCert instanceof X509Certificate)) {
             return null;
         }
-        final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
         for (final String alias : aliases) {
-            if (((X509Certificate) engineGetCertificate(alias)).getSerialNumber() == serial) {
-                return alias;
-            }
+        	final X509Certificate myCert = (X509Certificate) engineGetCertificate(alias);
+            try {
+				if (myCert != null && HexUtils.arrayEquals(otherCert.getEncoded(), myCert.getEncoded())) {
+				    return alias;
+				}
+			}
+            catch (final CertificateEncodingException e) {
+            	LOGGER.warning(
+        			"No se han podido comparar certificados: " + e //$NON-NLS-1$
+    			);
+				return null;
+			}
         }
         return null;
     }
@@ -227,7 +236,8 @@ public final class SmartCafeKeyStoreImpl extends KeyStoreSpi {
     		}
     		else {
     			LOGGER.warning(
-	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + //$NON-NLS-1$
+   						(pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$
 				);
     		}
     	}

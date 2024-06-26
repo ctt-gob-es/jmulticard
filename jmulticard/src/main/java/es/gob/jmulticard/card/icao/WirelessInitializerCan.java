@@ -4,32 +4,29 @@ import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand;
 import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.PacePasswordType;
 
 /** Valor CAN para inicializaci&oacute;n de un canal PACE.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s
- * @author Ignacio Mar&iacute;n. */
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class WirelessInitializerCan implements WirelessInitializer {
 
 	/** CAN del eMRTD. */
-	private transient final String can;
+	private final String can;
 
 	/** Construye un CAN para inicializaci&oacute;n de un canal PACE.
 	 * @param cardAccessNumber CAN. */
 	public WirelessInitializerCan(final String cardAccessNumber) {
 		if (cardAccessNumber == null || cardAccessNumber.isEmpty()) {
-			throw new IllegalArgumentException(
-				"El valor no puede ser nulo ni vacio" //$NON-NLS-1$
-			);
+			throw new IllegalArgumentException("El valor del CAN no puede ser nulo ni vacio"); //$NON-NLS-1$
 		}
-		this.can = cardAccessNumber;
+		can = cardAccessNumber;
 	}
 
 	@Override
 	public  byte[] getBytes() {
-		return this.can.getBytes();
+		return can.getBytes();
 	}
 
 	@Override
 	public String toString() {
-		return this.can;
+		return can;
 	}
 
 	@Override

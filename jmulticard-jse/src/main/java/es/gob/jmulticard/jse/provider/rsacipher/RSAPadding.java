@@ -89,16 +89,16 @@ final class RSAPadding {
     // file. Do not change without coordinating the update
 
     /** Relleno PKCS#1 v1.5, blocktype 1 (firma). */
-    final static int PAD_BLOCKTYPE_1 = 1;
+    static final int PAD_BLOCKTYPE_1 = 1;
 
     /** Relleno PKCS#1 v1.5, blocktype 2 (cifrado). */
-    final static int PAD_BLOCKTYPE_2 = 2;
+    static final int PAD_BLOCKTYPE_2 = 2;
 
     /** Sin relleno. Con este tipo la clase no hace nada. */
-    final static int PAD_NONE  = 3;
+    static final int PAD_NONE  = 3;
 
     /** Relleno PKCS#1 v2.1 OAEP. */
-    final static int PAD_OAEP_MGF1 = 4;
+    static final int PAD_OAEP_MGF1 = 4;
 
     // type, one of PAD_*
     private final int type;
@@ -150,9 +150,9 @@ final class RSAPadding {
     		           final SecureRandom randomSrc,
     		           final OAEPParameterSpec spec) throws InvalidKeyException,
                                                             InvalidAlgorithmParameterException {
-        this.type = paddingType;
-        this.paddedSize = sizeAfterPadding;
-        this.random = randomSrc;
+        type = paddingType;
+        paddedSize = sizeAfterPadding;
+        random = randomSrc;
         if (sizeAfterPadding < 64) {
             throw new InvalidKeyException(
         		"El tamano tras el relleno debe ser de al menos 64 octetos, y es de " + sizeAfterPadding + " octetos"//$NON-NLS-1$ //$NON-NLS-2$
@@ -161,10 +161,10 @@ final class RSAPadding {
         switch (paddingType) {
 	        case PAD_BLOCKTYPE_1:
 	        case PAD_BLOCKTYPE_2:
-	            this.maxDataSize = sizeAfterPadding - 11;
+	            maxDataSize = sizeAfterPadding - 11;
 	            break;
 	        case PAD_NONE:
-	            this.maxDataSize = sizeAfterPadding;
+	            maxDataSize = sizeAfterPadding;
 	            break;
 	        case PAD_OAEP_MGF1:
 	            String mdName = "SHA-1"; //$NON-NLS-1$
@@ -186,16 +186,16 @@ final class RSAPadding {
 	                    }
 	                    digestInput = ((PSource.PSpecified) pSrc).getValue();
 	                }
-	                this.md = MessageDigest.getInstance(mdName);
-	                this.mgfMd = MessageDigest.getInstance(mgfMdName);
+	                md = MessageDigest.getInstance(mdName);
+	                mgfMd = MessageDigest.getInstance(mgfMdName);
 	            }
 	            catch (final NoSuchAlgorithmException e) {
 	                throw new InvalidKeyException("Digest " + mdName + " not available", e); //$NON-NLS-1$ //$NON-NLS-2$
 	            }
-	            this.lHash = getInitialHash(this.md, digestInput);
-	            final int digestLen = this.lHash.length;
-	            this.maxDataSize = sizeAfterPadding - 2 - 2 * digestLen;
-	            if (this.maxDataSize <= 0) {
+	            lHash = getInitialHash(md, digestInput);
+	            final int digestLen = lHash.length;
+	            maxDataSize = sizeAfterPadding - 2 - 2 * digestLen;
+	            if (maxDataSize <= 0) {
 	                throw new InvalidKeyException("Key is too short for encryption using OAEPPadding with " + mdName + " and MGF1" + mgfMdName); //$NON-NLS-1$ //$NON-NLS-2$
 	            }
 	            break;
@@ -206,7 +206,7 @@ final class RSAPadding {
 
     // cache of hashes of zero length data
     private static final Map<String,byte[]> EMPTY_HASHES =
-        Collections.synchronizedMap(new HashMap<String,byte[]>());
+        Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Return the value of the digest using the specified message digest
@@ -215,48 +215,33 @@ final class RSAPadding {
      * is used to generate the initial digest.
      * Note: the md object must be in reset state
      */
-    private static byte[] getInitialHash(final MessageDigest md,
-        final byte[] digestInput) {
-        byte[] result;
+    private static byte[] getInitialHash(final MessageDigest md, final byte[] digestInput) {
         if (digestInput == null || digestInput.length == 0) {
             final String digestName = md.getAlgorithm();
-            result = EMPTY_HASHES.get(digestName);
-            if (result == null) {
-                result = md.digest();
-                EMPTY_HASHES.put(digestName, result);
-            }
+            return EMPTY_HASHES.computeIfAbsent(digestName, k-> md.digest());
         }
-        else {
-            result = md.digest(digestInput);
-        }
-        return result;
+		return md.digest(digestInput);
     }
 
-    /**
-     * Return the maximum size of the plaintext data that can be processed
-     * using this object.
-     */
+    /** Return the maximum size of the plaintext data that can be processed using this object. */
     int getMaxDataSize() {
-        return this.maxDataSize;
+        return maxDataSize;
     }
 
     /** Rellena los datos.
-     * Pad the data and return the padded block.
-     */
+     * @return Bloque de datos con el relleno aplicado. */
     byte[] pad(final byte[] data, final int ofs, final int len) throws BadPaddingException {
         return pad(RSACore.convert(data, ofs, len));
     }
 
-    /**
-     * Pad the data and return the padded block.
-     */
-    byte[] pad(final byte[] data) throws BadPaddingException {
-        if (data.length > this.maxDataSize) {
+    /** Pad the data and return the padded block. */
+    private byte[] pad(final byte[] data) throws BadPaddingException {
+        if (data.length > maxDataSize) {
             throw new BadPaddingException(
-        		"Los datos deben ser de tamano inferior a " + (this.maxDataSize + 1) + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
+        		"Los datos deben ser de tamano inferior a " + (maxDataSize + 1) + " octetos" //$NON-NLS-1$ //$NON-NLS-2$
     		);
         }
-        switch (this.type) {
+        switch (type) {
 	        case PAD_NONE:
 	            return data;
 	        case PAD_BLOCKTYPE_1:
@@ -269,14 +254,12 @@ final class RSAPadding {
         }
     }
 
-    /**
-     * Unpad the padded block and return the data.
-     */
+    /** Unpad the padded block and return the data. */
     byte[] unpad(final byte[] padded) throws BadPaddingException {
-        if (padded.length != this.paddedSize) {
+        if (padded.length != paddedSize) {
             throw new BadPaddingException("El tamano de los datos rellenos no es valido"); //$NON-NLS-1$
         }
-        switch (this.type) {
+        switch (type) {
 	        case PAD_NONE:
 	            return padded;
 	        case PAD_BLOCKTYPE_1:
@@ -289,17 +272,15 @@ final class RSAPadding {
         }
     }
 
-    /**
-     * PKCS#1 v1.5 padding (blocktype 1 and 2).
-     */
+    /** PKCS#1 v1.5 padding (blocktype 1 and 2). */
     private byte[] padV15(final byte[] data) {
-        final byte[] padded = new byte[this.paddedSize];
-        System.arraycopy(data, 0, padded, this.paddedSize - data.length, data.length);
-        int psSize = this.paddedSize - 3 - data.length;
+        final byte[] padded = new byte[paddedSize];
+        System.arraycopy(data, 0, padded, paddedSize - data.length, data.length);
+        int psSize = paddedSize - 3 - data.length;
         int k = 0;
         padded[k++] = 0;
-        padded[k++] = (byte)this.type;
-        if (this.type == PAD_BLOCKTYPE_1) {
+        padded[k++] = (byte)type;
+        if (type == PAD_BLOCKTYPE_1) {
             // blocktype 1: all padding bytes are 0xff
             while (psSize-- > 0) {
                 padded[k++] = (byte)0xff;
@@ -307,8 +288,8 @@ final class RSAPadding {
         }
         else {
             // blocktype 2: padding bytes are random non-zero bytes
-            if (this.random == null) {
-                this.random = new SecureRandom();
+            if (random == null) {
+                random = new SecureRandom();
             }
             // generate non-zero padding bytes
             // use a buffer to reduce calls to SecureRandom
@@ -318,7 +299,7 @@ final class RSAPadding {
                 int b;
                 do {
                     if (i < 0) {
-                        this.random.nextBytes(r);
+                        random.nextBytes(r);
                         i = r.length - 1;
                     }
                     b = r[i--] & 0xff;
@@ -329,10 +310,8 @@ final class RSAPadding {
         return padded;
     }
 
-    /**
-     * PKCS#1 v1.5 unpadding (blocktype 1 (signature) and 2 (encryption)).
-     * Note that we want to make it a constant-time operation
-     */
+    /** PKCS#1 v1.5 unpadding (blocktype 1 (signature) and 2 (encryption)).
+     * Note that we want to make it a constant-time operation. */
     private byte[] unpadV15(final byte[] padded) throws BadPaddingException {
         int k = 0;
         final boolean bp = false;
@@ -340,10 +319,7 @@ final class RSAPadding {
         if (padded[k++] != 0) {
         	throw new BadPaddingException("Los datos rellenos no empiezan en cero"); //$NON-NLS-1$
         }
-//        final byte typeHeader = padded[k++];
-//        if (typeHeader != this.type) {
-//        	throw new BadPaddingException("La cabecera de los datos rellenos (" + typeHeader + ") no se corresponde con el tipo de relleno (" + this.type + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-//        }
+
         int p = 0;
         while (k < padded.length) {
             final int b = padded[k++] & 0xff;
@@ -351,14 +327,14 @@ final class RSAPadding {
                 p = k;
             }
             if (k == padded.length && p == 0) {
-            	throw new BadPaddingException("Decryption error"); //$NON-NLS-1$
+            	throw new BadPaddingException("Error en la retirada del relleno PKCS#1 v1.5"); //$NON-NLS-1$
             }
-            if (this.type == PAD_BLOCKTYPE_1 && b != 0xff && p == 0) {
-            	throw new BadPaddingException("Decryption error"); //$NON-NLS-1$
+            if (type == PAD_BLOCKTYPE_1 && b != 0xff && p == 0) {
+            	throw new BadPaddingException("Error en la retirada del relleno PKCS#1 v1.5 tipo 1 (firma)"); //$NON-NLS-1$
             }
         }
         final int n = padded.length - p;
-        if (n > this.maxDataSize) {
+        if (n > maxDataSize) {
         	throw new BadPaddingException("El tamano de los datos rellenos (" + n + ") excede del maximo permitido");  //$NON-NLS-1$//$NON-NLS-2$
         }
 
@@ -370,28 +346,26 @@ final class RSAPadding {
         System.arraycopy(padded, p, data, 0, n);
 
         if (bp) {
-            throw new BadPaddingException("Decryption error"); //$NON-NLS-1$
+            throw new BadPaddingException("Error en la retirada del relleno PKCS#1 v1.5"); //$NON-NLS-1$
         }
 		return data;
     }
 
-    /**
-     * PKCS#1 v2.0 OAEP padding (MGF1).
-     * Paragraph references refer to PKCS#1 v2.1 (June 14, 2002)
-     */
+    /** PKCS#1 v2.0 OAEP padding (MGF1).
+     * Paragraph references refer to PKCS#1 v2.1 (June 14, 2002). */
     private byte[] padOaep(final byte[] message) throws BadPaddingException {
-        if (this.random == null) {
-            this.random = new SecureRandom();
+        if (random == null) {
+            random = new SecureRandom();
         }
-        final int hLen = this.lHash.length;
+        final int hLen = lHash.length;
 
         // 2.d: generate a random octet string seed of length hLen
         // if necessary
         final byte[] seed = new byte[hLen];
-        this.random.nextBytes(seed);
+        random.nextBytes(seed);
 
         // buffer for encoded message EM
-        final byte[] encodedMessage = new byte[this.paddedSize];
+        final byte[] encodedMessage = new byte[paddedSize];
 
         // start and length of seed (as index into EM)
         final int seedStart = 1;
@@ -406,14 +380,14 @@ final class RSAPadding {
         final int dbLen = encodedMessage.length - dbStart;
 
         // start of message M in EM
-        final int mStart = this.paddedSize - message.length;
+        final int mStart = paddedSize - message.length;
 
         // build DB
         // 2.b: Concatenate lHash, PS, a single octet with hexadecimal value
         // 0x01, and the message M to form a data block DB of length
         // k - hLen -1 octets as DB = lHash || PS || 0x01 || M
         // (note that PS is all zeros)
-        System.arraycopy(this.lHash, 0, encodedMessage, dbStart, hLen);
+        System.arraycopy(lHash, 0, encodedMessage, dbStart, hLen);
         encodedMessage[mStart - 1] = 1;
         System.arraycopy(message, 0, encodedMessage, mStart, message.length);
 
@@ -426,13 +400,11 @@ final class RSAPadding {
         return encodedMessage;
     }
 
-    /**
-     * PKCS#1 v2.1 OAEP unpadding (MGF1).
-     */
+    /** PKCS#1 v2.1 OAEP unpadding (MGF1). */
     private byte[] unpadOAEP(final byte[] padded) throws BadPaddingException {
         final byte[] encodedMessage = padded;
         boolean bp = false;
-        final int hLen = this.lHash.length;
+        final int hLen = lHash.length;
 
         if (encodedMessage[0] != 0) {
             bp = true;
@@ -449,7 +421,7 @@ final class RSAPadding {
 
         // verify lHash == lHash'
         for (int i = 0; i < hLen; i++) {
-            if (this.lHash[i] != encodedMessage[dbStart + i]) {
+            if (lHash[i] != encodedMessage[dbStart + i]) {
                 bp = true;
 				break;
             }
@@ -461,11 +433,11 @@ final class RSAPadding {
         for (int i = padStart; i < encodedMessage.length; i++) {
             final int value = encodedMessage[i];
             if (onePos == -1) {
-                if (value == 0x00) {
-                    // continue;
-                } else if (value == 0x01) {
+            	// Si es 0x00 no hacemos nada
+                if (value == 0x01) {
                     onePos = i;
-                } else {  // Anything other than {0,1} is bad.
+                }
+                else if (value != 0x00) { // Lo que no sea cero o uno es malo
                     bp = true;
                 }
             }
@@ -486,7 +458,9 @@ final class RSAPadding {
         final byte [] m = new byte[encodedMessage.length - mStart];
         System.arraycopy(encodedMessage, mStart, m, 0, m.length);
 
-        final BadPaddingException bpe = new BadPaddingException("Decryption error"); //$NON-NLS-1$
+        final BadPaddingException bpe = new BadPaddingException(
+    		"Error en la retiarada del relleno PKCS#1 v2.1 OAEP" //$NON-NLS-1$
+		);
 
         if (bp) {
             throw bpe;
@@ -494,14 +468,9 @@ final class RSAPadding {
 		return m;
     }
 
-    /**
-     * Compute MGF1 using mgfMD as the message digest.
-     * Note that we combine MGF1 with the XOR operation to reduce data
-     * copying.
-     *
-     * We generate maskLen bytes of MGF1 from the seed and XOR it into
-     * out[] starting at outOfs;
-     */
+    /** Compute MGF1 using mgfMD as the message digest.
+     * Note that we combine MGF1 with the XOR operation to reduce data copying.
+     * We generate maskLen bytes of MGF1 from the seed and XOR it into out[] starting at outOfs. */
     private void mgf1(final byte[] seed,
     		          final int seedOfs,
     		          final int seedLen,
@@ -513,12 +482,12 @@ final class RSAPadding {
     	int outOfs = outOffset;
 
         final byte[] counter = new byte[4]; // Contador de 32 bits
-        final byte[] digest = new byte[this.mgfMd.getDigestLength()];
+        final byte[] digest = new byte[mgfMd.getDigestLength()];
         while (maskLen > 0) {
-            this.mgfMd.update(seed, seedOfs, seedLen);
-            this.mgfMd.update(counter);
+            mgfMd.update(seed, seedOfs, seedLen);
+            mgfMd.update(counter);
             try {
-                this.mgfMd.digest(digest, 0, digest.length);
+                mgfMd.digest(digest, 0, digest.length);
             }
             catch (final DigestException e) {
                 // No deberia ocurrir

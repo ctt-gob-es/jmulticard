@@ -38,8 +38,6 @@ package es.inteco.labs.android.usb.device.ccid.instruction;
 
 import java.nio.ByteBuffer;
 
-import es.gob.jmulticard.HexUtils;
-
 /** Comando USB XfrBlock.
  * @author Jose Luis Escanciano Garcia
  * @author Angel Gonzalez Villan */
@@ -48,14 +46,14 @@ public final class XfrBlock extends UsbCommand {
 	/** ID de comando USB. */
 	public static final int ID_COMMAND = 3;
 
-	static final byte[] APDU_BEGIN_AND_END = new byte[]{(byte) 0x00, (byte) 0x00};
+	static final byte[] APDU_BEGIN_AND_END = {(byte) 0x00, (byte) 0x00};
 
 	XfrBlock(final byte insCount, final byte[] apdu, final byte[] typeXfr){
 		this.instructionCount = insCount;
 		final ByteBuffer commandBuffer = ByteBuffer.allocate(UsbCommand.USB_HEADER_BASE_SIZE + apdu.length);
 		final byte DEFAULT_BLOCKING_WAIT = (byte) 0x01;
 		commandBuffer.put((byte) 0x6F);
-		commandBuffer.put(HexUtils.intToByteArray(apdu.length));
+		commandBuffer.put(InstructionUtil.intToByteArray(apdu.length));
 		commandBuffer.put(new byte[]{(byte) 0x00, this.instructionCount, DEFAULT_BLOCKING_WAIT});
 		commandBuffer.put(typeXfr);
 		commandBuffer.put(apdu);
@@ -66,5 +64,4 @@ public final class XfrBlock extends UsbCommand {
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
 }

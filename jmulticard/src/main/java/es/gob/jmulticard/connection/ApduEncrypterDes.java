@@ -97,10 +97,10 @@ public class ApduEncrypterDes extends AbstractApduEncrypter {
                                  final byte[] kMac,
                                  final CryptoHelper cryptoHelper) throws IOException {
 
-        final byte keyDesBytes[] = new byte[8];
+        final byte[] keyDesBytes = new byte[8];
         System.arraycopy(kMac, 0, keyDesBytes, 0, 8);
 
-        byte tmpData[] = cryptoHelper.desEncrypt(ssc, keyDesBytes);
+        byte[] tmpData = cryptoHelper.desEncrypt(ssc, keyDesBytes);
 
         int i = 0;
         while (i < dataPadded.length - 8) {

@@ -51,10 +51,10 @@ public class Atr implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** Octetos del ATR. */
-    protected transient final byte[] atrBytes;
+    protected final byte[] atrBytes;
 
     /** M&aacute;scara de posiciones con valor constante dentro de los octetos del ATR. */
-    private transient final byte[] mask;
+    private final byte[] mask;
 
     /** Construye una respuesta al reset.
      * @param cardAtr ATR de la tarjeta

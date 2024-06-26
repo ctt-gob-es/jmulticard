@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.DecoderObject;
 import es.gob.jmulticard.asn1.Tlv;
@@ -18,23 +18,23 @@ import es.gob.jmulticard.asn1.TlvException;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Sod extends DecoderObject {
 
-	private transient final CryptoHelper cryptoHelper;
+	private final CryptoHelper cryptoHelper;
 
 	private static final byte TAG = 0x77;
 
-	private transient byte[] ldsSecurityObjectBytes = null;
-	private transient LdsSecurityObject ldsSecurityObject = null;
-	private transient X509Certificate[] certificateChain = null;
+	private byte[] ldsSecurityObjectBytes = null;
+	private LdsSecurityObject ldsSecurityObject = null;
+	private X509Certificate[] certificateChain = null;
 
 	/** Constructor.
 	 * @param ch Clase de utilidad para operaciones criptogr&aacute;ficas. */
 	public Sod(final CryptoHelper ch) {
-		this.cryptoHelper = ch;
+		cryptoHelper = ch;
 	}
 
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
-		final Tlv tlv = new Tlv(getRawDerValue());
+		final Tlv tlv = new Tlv(getBytes());
 		checkTag(tlv.getTag());
 	}
 
@@ -50,13 +50,13 @@ public final class Sod extends DecoderObject {
 	                                       IOException,
 	                                       Asn1Exception {
 
-		final Tlv tlv = new Tlv(getRawDerValue());
+		final Tlv tlv = new Tlv(getBytes());
 
-		this.certificateChain = this.cryptoHelper.validateCmsSignature(tlv.getValue());
+		certificateChain = cryptoHelper.validateCmsSignature(tlv.getValue());
 
-		this.ldsSecurityObjectBytes = this.cryptoHelper.getCmsSignatureSignedContent(tlv.getValue());
-		this.ldsSecurityObject = new LdsSecurityObject();
-		this.ldsSecurityObject.setDerValue(this.ldsSecurityObjectBytes);
+		ldsSecurityObjectBytes = cryptoHelper.getCmsSignatureSignedContent(tlv.getValue());
+		ldsSecurityObject = new LdsSecurityObject();
+		ldsSecurityObject.setDerValue(ldsSecurityObjectBytes);
 	}
 
 	@Override
@@ -78,10 +78,10 @@ public final class Sod extends DecoderObject {
 	                                                 TlvException,
 	                                                 IOException,
 	                                                 Asn1Exception {
-		if (this.ldsSecurityObjectBytes == null) {
+		if (ldsSecurityObjectBytes == null) {
 			validateSignature();
 		}
-		return this.ldsSecurityObjectBytes;
+		return ldsSecurityObjectBytes;
 	}
 
 	/** Obtiene el <code>LDSSecurityObject</code>.
@@ -95,10 +95,10 @@ public final class Sod extends DecoderObject {
 	 * @throws CertificateException Si los certificados de firma del SOD presentan problemas.
 	 * @throws SignatureException Si la firma del SOD es inv&aacute;lida o presenta problemas. */
 	public LdsSecurityObject getLdsSecurityObject() throws TlvException, Asn1Exception, IOException, SignatureException, CertificateException {
-		if (this.ldsSecurityObject == null) {
+		if (ldsSecurityObject == null) {
 			validateSignature();
 		}
-		return this.ldsSecurityObject;
+		return ldsSecurityObject;
 	}
 
 	/** Obtiene la cadena de certificados del firmante del LDSSecurityObject.
@@ -111,10 +111,10 @@ public final class Sod extends DecoderObject {
 	 * @throws CertificateException Si los certificados de firma del SOD presentan problemas.
 	 * @throws SignatureException Si la firma del SOD es inv&aacute;lida o presenta problemas. */
 	public X509Certificate[] getCertificateChain() throws TlvException, Asn1Exception, SignatureException, CertificateException, IOException {
-		if (this.certificateChain == null) {
+		if (certificateChain == null) {
 			validateSignature();
 		}
-		return this.certificateChain.clone();
+		return certificateChain.clone();
 	}
 
 	@Override
@@ -126,14 +126,14 @@ public final class Sod extends DecoderObject {
 			);
 		}
 		catch (final Exception e) {
-			Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+			JmcLogger.warning(
 				"No se ha podido obtener la cadena de certificados de firma del SOD: " + e //$NON-NLS-1$
 			);
 			return sb.toString();
 		}
 		sb.append("\n  Con huellas para los siguientes grupos de datos\n"); //$NON-NLS-1$
 
-		for (final DataGroupHash dgh : this.ldsSecurityObject.getDataGroupHashes()) {
+		for (final DataGroupHash dgh : ldsSecurityObject.getDataGroupHashes()) {
 			sb.append("    DG"); //$NON-NLS-1$
 			sb.append(dgh.getDataGroupNumber());
 			sb.append(" = "); //$NON-NLS-1$
@@ -143,5 +143,4 @@ public final class Sod extends DecoderObject {
 
 		return sb.toString();
 	}
-
 }

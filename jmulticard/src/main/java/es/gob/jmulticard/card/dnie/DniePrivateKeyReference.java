@@ -44,8 +44,8 @@ import es.gob.jmulticard.card.CryptoCard;
 import es.gob.jmulticard.card.Location;
 import es.gob.jmulticard.card.PrivateKeyReference;
 
-/** Clave privada de un DNIe. La clase no contiene la clave privada en si, sino una referencia a ella
- * y una referencia al propio DNIe, con el canal seguro establecido.
+/** Clave privada de un DNIe. La clase no contiene la clave privada en si, sino una
+ * referencia a ella y una referencia al propio DNIe, con el canal seguro establecido.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class DniePrivateKeyReference implements PrivateKeyReference {
 
@@ -53,8 +53,8 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 	private final byte[] identifier;
 	private final Location keyPath;
 	private final String label;
-	private transient final byte reference;
-	private transient final int keySize;
+	private final byte reference;
+	private final int keySize;
 
 	/** Crea una referencia a una clave privada del DNIe.
 	 * @param card Tarjeta en la que se almacena la clave privada.
@@ -69,55 +69,54 @@ public final class DniePrivateKeyReference implements PrivateKeyReference {
 			                       final String lbl,
 			                       final byte ref,
 			                       final int keyLength) {
-		this.dnieCard = card;
-		this.identifier = id != null ? id.clone() : null;
-		this.keyPath = path;
-		this.label = lbl;
-		this.reference = ref;
-		this.keySize = keyLength;
+		dnieCard = card;
+		identifier = id != null ? id.clone() : null;
+		keyPath = path;
+		label = lbl;
+		reference = ref;
+		keySize = keyLength;
 	}
 
 	@Override
 	public String toString() {
-		return "Clave privada de DNIe con etiqueta '" + this.label + //$NON-NLS-1$
-			"', identificador '" + HexUtils.hexify(this.identifier, false) + //$NON-NLS-1$
-				"' y ruta '" + this.keyPath + "'"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "Clave privada de DNIe con etiqueta '" + label + //$NON-NLS-1$
+			"', identificador '" + HexUtils.hexify(identifier, false) + //$NON-NLS-1$
+				"' y ruta '" + keyPath + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/** Recupera el manejador de la tarjeta en la que se almacena la clave.
 	 * @return Manejador de la tarjeta. */
 	public CryptoCard getDnieCard() {
-		return this.dnieCard;
+		return dnieCard;
 	}
 
 	/** Recupera el identificador de la clave.
 	 * @return Identificador de la clave. */
 	public byte[] getIdentifier() {
-		return this.identifier;
+		return identifier;
 	}
 
 	/** Recupera la ruta de la clave.
 	 * @return Ruta de la clave. */
 	public Location getKeyPath() {
-		return this.keyPath;
+		return keyPath;
 	}
 
 	/** Recupera la etiqueta de la clave.
 	 * @return Etiqueta de la clave. */
 	public String getLabel() {
-		return this.label;
+		return label;
 	}
 
 	/** Recupera la referencia de la clave.
 	 * @return Referencia de la clave. */
 	public byte getKeyReference() {
-		return this.reference;
+		return reference;
 	}
 
 	/** Obtiene el tam&ntilde;o en bits de la clave.
 	 * @return Tam&ntilde;o en bits de la clave. */
 	public int getKeyBitSize() {
-		return this.keySize;
+		return keySize;
 	}
-
 }

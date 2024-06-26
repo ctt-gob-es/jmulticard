@@ -54,8 +54,8 @@ final class TlsRsaPremasterSecretParameterSpec implements AlgorithmParameterSpec
      */
     TlsRsaPremasterSecretParameterSpec(final int clientVer, final int serverVer) {
 
-        this.clientVersion = checkVersion(clientVer);
-        this.serverVersion = checkVersion(serverVer);
+        clientVersion = checkVersion(clientVer);
+        serverVersion = checkVersion(serverVer);
     }
 
     /**
@@ -65,7 +65,7 @@ final class TlsRsaPremasterSecretParameterSpec implements AlgorithmParameterSpec
      * @return the version of the TLS protocol in ClientHello message
      */
     int getClientVersion() {
-        return this.clientVersion;
+        return clientVersion;
     }
 
     /**
@@ -76,7 +76,7 @@ final class TlsRsaPremasterSecretParameterSpec implements AlgorithmParameterSpec
      * @return the negotiated version of the TLS protocol in ServerHello message
      */
     int getServerVersion() {
-        return this.serverVersion;
+        return serverVersion;
     }
 
     private static int checkVersion(final int version) {

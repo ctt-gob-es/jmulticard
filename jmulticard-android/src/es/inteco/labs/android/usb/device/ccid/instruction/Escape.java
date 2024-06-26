@@ -38,8 +38,6 @@ package es.inteco.labs.android.usb.device.ccid.instruction;
 
 import java.nio.ByteBuffer;
 
-import es.gob.jmulticard.HexUtils;
-
 /** Comando USB <i>Escape</i>.
  * @author Angel Gonzalez Villan */
 public final class Escape extends UsbCommand {
@@ -49,19 +47,17 @@ public final class Escape extends UsbCommand {
 
     Escape(final byte insCount, final byte[] data) {
         this.instructionCount = insCount;
-        final byte[] dataLength = HexUtils.intToByteArray(data.length);
-        final byte[] header = new byte[] { (byte) 0x6B, dataLength[0], dataLength[1], dataLength[2], dataLength[3], (byte) 0x00, this.instructionCount, (byte) 0x00, (byte) 0x00,
+        final byte[] dataLength = InstructionUtil.intToByteArray(data.length);
+        final byte[] header = { (byte) 0x6B, dataLength[0], dataLength[1], dataLength[2], dataLength[3], (byte) 0x00, this.instructionCount, (byte) 0x00, (byte) 0x00,
                 (byte) 0x00 };
         final ByteBuffer buffer = ByteBuffer.allocate(header.length+data.length);
         buffer.put(header);
         buffer.put(data);
         this.command = buffer.array();
-
     }
 
 	@Override
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
 }

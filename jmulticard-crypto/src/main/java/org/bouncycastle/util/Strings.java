@@ -13,108 +13,87 @@ import org.bouncycastle.util.encoders.UTF8;
 /**
  * String utilities.
  */
-public final class Strings
-{
+public final class Strings {
+
     private static String LINE_SEPARATOR;
 
-    static
-    {
-        try
-        {
-            LINE_SEPARATOR = AccessController.doPrivileged(new PrivilegedAction<String>()
-            {
+    static {
+        try {
+            LINE_SEPARATOR = AccessController.doPrivileged(new PrivilegedAction<String>() {
                 @Override
-				public String run()
-                {
+				public String run() {
                     // the easy way
                     return System.getProperty("line.separator");
                 }
             });
 
         }
-        catch (final Exception e)
-        {
-            try
-            {
+        catch (final Exception e) {
+            try {
                 // the harder way
                 LINE_SEPARATOR = String.format("%n");
             }
-            catch (final Exception ef)
-            {
+            catch (final Exception ef) {
                 LINE_SEPARATOR = "\n";   // we're desperate use this...
             }
         }
     }
 
-    public static String fromUTF8ByteArray(final byte[] bytes)
-    {
+    public static String fromUTF8ByteArray(final byte[] bytes) {
         final char[] chars = new char[bytes.length];
         final int len = UTF8.transcodeToUTF16(bytes, chars);
-        if (len < 0)
-        {
+        if (len < 0) {
             throw new IllegalArgumentException("Invalid UTF-8 input");
         }
         return new String(chars, 0, len);
     }
 
-    public static String fromUTF8ByteArray(final byte[] bytes, final int off, final int length)
-    {
+    public static String fromUTF8ByteArray(final byte[] bytes, final int off, final int length) {
         final char[] chars = new char[length];
         final int len = UTF8.transcodeToUTF16(bytes, off, length, chars);
-        if (len < 0)
-        {
+        if (len < 0) {
             throw new IllegalArgumentException("Invalid UTF-8 input");
         }
         return new String(chars, 0, len);
     }
 
-    public static byte[] toUTF8ByteArray(final String string)
-    {
+    public static byte[] toUTF8ByteArray(final String string) {
         return toUTF8ByteArray(string.toCharArray());
     }
 
-    public static byte[] toUTF8ByteArray(final char[] string)
-    {
+    public static byte[] toUTF8ByteArray(final char[] string) {
         final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
 
-        try
-        {
+        try {
             toUTF8ByteArray(string, bOut);
         }
-        catch (final IOException e)
-        {
+        catch (final IOException e) {
             throw new IllegalStateException("cannot encode string to byte array!");
         }
 
         return bOut.toByteArray();
     }
 
-    public static void toUTF8ByteArray(final char[] string, final OutputStream sOut)
-        throws IOException
-    {
+    public static void toUTF8ByteArray(final char[] string,
+    		                           final OutputStream sOut) throws IOException {
         final char[] c = string;
         int i = 0;
 
-        while (i < c.length)
-        {
+        while (i < c.length) {
             char ch = c[i];
 
-            if (ch < 0x0080)
-            {
+            if (ch < 0x0080) {
                 sOut.write(ch);
             }
-            else if (ch < 0x0800)
-            {
+            else if (ch < 0x0800) {
                 sOut.write(0xc0 | ch >> 6);
                 sOut.write(0x80 | ch & 0x3f);
             }
             // surrogate pair
-            else if (ch >= 0xD800 && ch <= 0xDFFF)
-            {
+            else if (ch >= 0xD800 && ch <= 0xDFFF) {
                 // in error - can only happen, if the Java String class has a
                 // bug.
-                if (i + 1 >= c.length)
-                {
+                if (i + 1 >= c.length) {
                     throw new IllegalStateException("invalid UTF-16 codepoint");
                 }
                 final char W1 = ch;
@@ -122,8 +101,7 @@ public final class Strings
                 final char W2 = ch;
                 // in error - can only happen, if the Java String class has a
                 // bug.
-                if (W1 > 0xDBFF)
-                {
+                if (W1 > 0xDBFF) {
                     throw new IllegalStateException("invalid UTF-16 codepoint");
                 }
                 final int codePoint = ((W1 & 0x03FF) << 10 | W2 & 0x03FF) + 0x10000;
@@ -132,8 +110,7 @@ public final class Strings
                 sOut.write(0x80 | codePoint >> 6 & 0x3F);
                 sOut.write(0x80 | codePoint & 0x3F);
             }
-            else
-            {
+            else {
                 sOut.write(0xe0 | ch >> 12);
                 sOut.write(0x80 | ch >> 6 & 0x3F);
                 sOut.write(0x80 | ch & 0x3F);
@@ -149,23 +126,20 @@ public final class Strings
      * @param string input to be converted
      * @return a US Ascii uppercase version
      */
-    public static String toUpperCase(final String string)
-    {
+    public static String toUpperCase(final String string) {
+
         boolean changed = false;
         final char[] chars = string.toCharArray();
 
-        for (int i = 0; i != chars.length; i++)
-        {
+        for (int i = 0; i != chars.length; i++) {
             final char ch = chars[i];
-            if ('a' <= ch && 'z' >= ch)
-            {
+            if ('a' <= ch && 'z' >= ch) {
                 changed = true;
                 chars[i] = (char)(ch - 'a' + 'A');
             }
         }
 
-        if (changed)
-        {
+        if (changed) {
             return new String(chars);
         }
 
@@ -178,35 +152,31 @@ public final class Strings
      * @param string input to be converted
      * @return a US ASCII lowercase version
      */
-    public static String toLowerCase(final String string)
-    {
+    public static String toLowerCase(final String string) {
+
         boolean changed = false;
         final char[] chars = string.toCharArray();
 
-        for (int i = 0; i != chars.length; i++)
-        {
+        for (int i = 0; i != chars.length; i++) {
             final char ch = chars[i];
-            if ('A' <= ch && 'Z' >= ch)
-            {
+            if ('A' <= ch && 'Z' >= ch) {
                 changed = true;
                 chars[i] = (char)(ch - 'A' + 'a');
             }
         }
 
-        if (changed)
-        {
+        if (changed) {
             return new String(chars);
         }
 
         return string;
     }
 
-    public static byte[] toByteArray(final char[] chars)
-    {
+    public static byte[] toByteArray(final char[] chars) {
+
         final byte[] bytes = new byte[chars.length];
 
-        for (int i = 0; i != bytes.length; i++)
-        {
+        for (int i = 0; i != bytes.length; i++) {
             bytes[i] = (byte)chars[i];
         }
 
@@ -214,25 +184,21 @@ public final class Strings
     }
 
 
-    public static byte[] toByteArray(final String string)
-    {
+    public static byte[] toByteArray(final String string) {
+
         final byte[] bytes = new byte[string.length()];
 
-        for (int i = 0; i != bytes.length; i++)
-        {
+        for (int i = 0; i != bytes.length; i++) {
             final char ch = string.charAt(i);
-
             bytes[i] = (byte)ch;
         }
 
         return bytes;
     }
 
-    public static int toByteArray(final String s, final byte[] buf, final int off)
-    {
+    public static int toByteArray(final String s, final byte[] buf, final int off) {
         final int count = s.length();
-        for (int i = 0; i < count; ++i)
-        {
+        for (int i = 0; i < count; ++i) {
             final char c = s.charAt(i);
             buf[off + i] = (byte)c;
         }

@@ -8,7 +8,10 @@ public enum Gender {
 	MALE("Hombre"), //$NON-NLS-1$
 
 	/** Mujer. */
-	FEMALE("Mujer"); //$NON-NLS-1$
+	FEMALE("Mujer"), //$NON-NLS-1$
+
+	/** Desconocido. */
+	OTHER("No conocido"); //$NON-NLS-1$
 
 	/** Texto descriptivo del sexo. */
 	private final String desc;
@@ -16,12 +19,12 @@ public enum Gender {
 	/** Constructor.
 	 * @param d Texto descriptivo del sexo del titular. */
 	Gender(final String d) {
-		this.desc = d;
+		desc = d;
 	}
 
 	@Override
 	public String toString() {
-		return this.desc;
+		return desc;
 	}
 
 	/** Obtiene el sexo del titular a partir del texto correspondiente en la MRZ del MRTD.
@@ -40,5 +43,4 @@ public enum Gender {
 		}
 		throw new IllegalArgumentException("Sexo indeterminado: " + text); //$NON-NLS-1$
 	}
-
 }

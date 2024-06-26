@@ -30,6 +30,10 @@ import java.security.SecureRandom;
 /** Utilidad para claves RSA. */
 final class KeyUtil {
 
+	private KeyUtil() {
+		// Vacio
+	}
+
     /**
      * Check the format of TLS PreMasterSecret.
      * <P>

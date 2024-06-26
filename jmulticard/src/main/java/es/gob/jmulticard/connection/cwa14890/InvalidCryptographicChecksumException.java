@@ -47,10 +47,9 @@ public final class InvalidCryptographicChecksumException extends SecurityExcepti
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = -366110067889217051L;
 
-	/** Construye una excepci&oacute;n relacionada con un <i>checksum</i> criptogr&aacute;fico inv&aacute;lido
-	 * en una APDU protegida seg&uacute;n CWA-14890. */
+	/** Construye una excepci&oacute;n relacionada con un <i>checksum</i> criptogr&aacute;fico
+	 * inv&aacute;lido en una APDU protegida seg&uacute;n CWA-14890. */
 	public InvalidCryptographicChecksumException() {
 		super("Checksum criptografico invalido (APDU respuesta = 6688)"); //$NON-NLS-1$
 	}
-
 }

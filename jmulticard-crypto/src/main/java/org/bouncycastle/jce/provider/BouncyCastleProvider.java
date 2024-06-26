@@ -7,7 +7,6 @@ import java.security.PrivilegedAction;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -57,9 +56,8 @@ import org.bouncycastle.pqc.jcajce.provider.xmss.XMSSMTKeyFactorySpi;
  * <p>Note: JCE algorithm names should be upper-case only so the case insensitive
  * test for getInstance works.
  */
-public final class BouncyCastleProvider extends Provider
-    implements ConfigurableProvider
-{
+public final class BouncyCastleProvider extends Provider implements ConfigurableProvider {
+
     private static String info = "BouncyCastle Security Provider v1.71";
 
     public static final String PROVIDER_NAME = "BC";
@@ -235,11 +233,10 @@ public final class BouncyCastleProvider extends Provider
         put("Alg.Alias.CertStore.X509LDAP", "LDAP");
     }
 
-    private void loadAlgorithms(String packageName, String[] names)
+    private void loadAlgorithms(final String packageName, final String[] names)
     {
-        for (int i = 0; i != names.length; i++)
-        {
-            Class clazz = ClassUtil.loadClass(BouncyCastleProvider.class, packageName + names[i] + "$Mappings");
+        for (final String name : names) {
+            final Class clazz = ClassUtil.loadClass(BouncyCastleProvider.class, packageName + name + "$Mappings");
 
             if (clazz != null)
             {
@@ -247,10 +244,10 @@ public final class BouncyCastleProvider extends Provider
                 {
                     ((AlgorithmProvider)clazz.newInstance()).configure(this);
                 }
-                catch (Exception e)
+                catch (final Exception e)
                 {   // this should never ever happen!!
                     throw new InternalError("cannot create instance of "
-                        + packageName + names[i] + "$Mappings : " + e);
+                        + packageName + name + "$Mappings : " + e);
                 }
             }
         }
@@ -277,7 +274,7 @@ public final class BouncyCastleProvider extends Provider
     }
 
     @Override
-	public void setParameter(String parameterName, Object parameter)
+	public void setParameter(final String parameterName, final Object parameter)
     {
         synchronized (CONFIGURATION)
         {
@@ -286,13 +283,13 @@ public final class BouncyCastleProvider extends Provider
     }
 
     @Override
-	public boolean hasAlgorithm(String type, String name)
+	public boolean hasAlgorithm(final String type, final String name)
     {
         return containsKey(type + "." + name) || containsKey("Alg.Alias." + type + "." + name);
     }
 
     @Override
-	public void addAlgorithm(String key, String value)
+	public void addAlgorithm(final String key, final String value)
     {
         if (containsKey(key))
         {
@@ -303,14 +300,14 @@ public final class BouncyCastleProvider extends Provider
     }
 
     @Override
-	public void addAlgorithm(String type, ASN1ObjectIdentifier oid, String className)
+	public void addAlgorithm(final String type, final ASN1ObjectIdentifier oid, final String className)
     {
         addAlgorithm(type + "." + oid, className);
         addAlgorithm(type + ".OID." + oid, className);
     }
 
     @Override
-	public void addKeyInfoConverter(ASN1ObjectIdentifier oid, AsymmetricKeyInfoConverter keyInfoConverter)
+	public void addKeyInfoConverter(final ASN1ObjectIdentifier oid, final AsymmetricKeyInfoConverter keyInfoConverter)
     {
         synchronized (keyInfoConverters)
         {
@@ -319,18 +316,17 @@ public final class BouncyCastleProvider extends Provider
     }
 
     @Override
-	public AsymmetricKeyInfoConverter getKeyInfoConverter(ASN1ObjectIdentifier oid)
+	public AsymmetricKeyInfoConverter getKeyInfoConverter(final ASN1ObjectIdentifier oid)
     {
         return (AsymmetricKeyInfoConverter)keyInfoConverters.get(oid);
     }
 
     @Override
-	public void addAttributes(String key, Map<String, String> attributeMap)
+	public void addAttributes(final String key, final Map<String, String> attributeMap)
     {
-        for (Iterator it = attributeMap.keySet().iterator(); it.hasNext();)
-        {
-            String attributeName = (String)it.next();
-            String attributeKey = key + " " + attributeName;
+        for (final Object element : attributeMap.keySet()) {
+            final String attributeName = (String)element;
+            final String attributeKey = key + " " + attributeName;
             if (containsKey(attributeKey))
             {
                 throw new IllegalStateException("duplicate provider attribute key (" + attributeKey + ") found");
@@ -340,7 +336,7 @@ public final class BouncyCastleProvider extends Provider
         }
     }
 
-    private static AsymmetricKeyInfoConverter getAsymmetricKeyInfoConverter(ASN1ObjectIdentifier algorithm)
+    private static AsymmetricKeyInfoConverter getAsymmetricKeyInfoConverter(final ASN1ObjectIdentifier algorithm)
     {
         synchronized (keyInfoConverters)
         {
@@ -348,10 +344,10 @@ public final class BouncyCastleProvider extends Provider
         }
     }
 
-    public static PublicKey getPublicKey(SubjectPublicKeyInfo publicKeyInfo)
+    public static PublicKey getPublicKey(final SubjectPublicKeyInfo publicKeyInfo)
         throws IOException
     {
-        AsymmetricKeyInfoConverter converter = getAsymmetricKeyInfoConverter(publicKeyInfo.getAlgorithm().getAlgorithm());
+        final AsymmetricKeyInfoConverter converter = getAsymmetricKeyInfoConverter(publicKeyInfo.getAlgorithm().getAlgorithm());
 
         if (converter == null)
         {
@@ -361,10 +357,10 @@ public final class BouncyCastleProvider extends Provider
         return converter.generatePublic(publicKeyInfo);
     }
 
-    public static PrivateKey getPrivateKey(PrivateKeyInfo privateKeyInfo)
+    public static PrivateKey getPrivateKey(final PrivateKeyInfo privateKeyInfo)
         throws IOException
     {
-        AsymmetricKeyInfoConverter converter = getAsymmetricKeyInfoConverter(privateKeyInfo.getPrivateKeyAlgorithm().getAlgorithm());
+        final AsymmetricKeyInfoConverter converter = getAsymmetricKeyInfoConverter(privateKeyInfo.getPrivateKeyAlgorithm().getAlgorithm());
 
         if (converter == null)
         {

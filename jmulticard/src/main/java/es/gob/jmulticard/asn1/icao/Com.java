@@ -1,9 +1,9 @@
 package es.gob.jmulticard.asn1.icao;
 
 import java.io.ByteArrayInputStream;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import es.gob.jmulticard.HexUtils;
@@ -22,7 +22,7 @@ public final class Com extends DecoderObject {
 	private static final byte TAG_COM = 0x60;
 	private static final char DOT = '.';
 
-	private static final Dictionary<Byte, String> DGTAGS = new Hashtable<>(16);
+	private static final AbstractMap<Byte, String> DGTAGS = new HashMap<>(16);
 	static {
 		DGTAGS.put(Byte.valueOf((byte) 0x61), "DG1"); //$NON-NLS-1$
 		DGTAGS.put(Byte.valueOf((byte) 0x75), "DG2"); //$NON-NLS-1$
@@ -42,14 +42,14 @@ public final class Com extends DecoderObject {
 		DGTAGS.put(Byte.valueOf((byte) 0x70), "DG16"); //$NON-NLS-1$
 	}
 
-	private transient String ldsVersion = null;
-	private transient String unicodeVersion = null;
+	private String ldsVersion = null;
+	private String unicodeVersion = null;
 	private final List<String> presentDgs = new ArrayList<>();
 
 	@Override
 	protected void decodeValue() throws Asn1Exception, TlvException {
 
-		BerTlv tlv = BerTlv.createInstance(getRawDerValue());
+		BerTlv tlv = BerTlv.createInstance(getBytes());
 		checkTag(tlv.getTag());
 
 		final ByteArrayInputStream tlvs = new ByteArrayInputStream(tlv.getValue());
@@ -66,10 +66,8 @@ public final class Com extends DecoderObject {
 					HexUtils.hexify(new byte[] { tlv.getTag() }, false) + "'" //$NON-NLS-1$
 			);
 		}
-		ldsVersion =
-			new String(new byte[] { tlv.getValue()[0], tlv.getValue()[1] }) +
-				DOT +
-					new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] });
+		ldsVersion = new String(new byte[] { tlv.getValue()[0], tlv.getValue()[1] }) + DOT +
+					 new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] });
 
 		tlv = BerTlv.createInstance(tlvs);
 		if (tlv.getLength() != 6) {
@@ -84,11 +82,9 @@ public final class Com extends DecoderObject {
 			);
 		}
 		unicodeVersion =
-			new String(new byte[] { tlv.getValue()[0], tlv.getValue()[1] }) +
-				DOT +
-					new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] }) +
-						DOT +
-							new String(new byte[] { tlv.getValue()[4], tlv.getValue()[5] });
+			new String(new byte[] { tlv.getValue()[0], tlv.getValue()[1] }) + DOT +
+			new String(new byte[] { tlv.getValue()[2], tlv.getValue()[3] }) + DOT +
+			new String(new byte[] { tlv.getValue()[4], tlv.getValue()[5] });
 
 		tlv = BerTlv.createInstance(tlvs);
 		if (tlv.getTag() != 0x5c) {
@@ -101,7 +97,6 @@ public final class Com extends DecoderObject {
 		for (final byte dgTag : dgList) {
 			presentDgs.add(DGTAGS.get(Byte.valueOf(dgTag)));
 		}
-
 	}
 
 	@Override
@@ -134,7 +129,104 @@ public final class Com extends DecoderObject {
 	/** Obtiene la lista de r&oacute;tulos.
 	 * @return Lista de todos los grupos de datos presentes. */
 	public String[] getPresentDgs() {
-		return (String[]) presentDgs.toArray();
+		return presentDgs.toArray(new String[0]);
 	}
 
+	/** Indica si est&aacute; presente el Grupo de Datos 1.
+	 * @return <code>true</code> si el Grupo de Datos 1 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg1Present() {
+		return presentDgs.contains("DG1"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 2.
+	 * @return <code>true</code> si el Grupo de Datos 2 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg2Present() {
+		return presentDgs.contains("DG2"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 3.
+	 * @return <code>true</code> si el Grupo de Datos 3 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg3Present() {
+		return presentDgs.contains("DG3"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 4.
+	 * @return <code>true</code> si el Grupo de Datos 4 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg4Present() {
+		return presentDgs.contains("DG4"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 5.
+	 * @return <code>true</code> si el Grupo de Datos 5 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg5Present() {
+		return presentDgs.contains("DG5"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 6.
+	 * @return <code>true</code> si el Grupo de Datos 6 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg6Present() {
+		return presentDgs.contains("DG6"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 7.
+	 * @return <code>true</code> si el Grupo de Datos 7 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg7Present() {
+		return presentDgs.contains("DG7"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 8.
+	 * @return <code>true</code> si el Grupo de Datos 8 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg8Present() {
+		return presentDgs.contains("DG8"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 9.
+	 * @return <code>true</code> si el Grupo de Datos 9 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg9Present() {
+		return presentDgs.contains("DG9"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 10.
+	 * @return <code>true</code> si el Grupo de Datos 10 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg10Present() {
+		return presentDgs.contains("DG10"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 11.
+	 * @return <code>true</code> si el Grupo de Datos 11 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg11Present() {
+		return presentDgs.contains("DG11"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 12.
+	 * @return <code>true</code> si el Grupo de Datos 12 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg12Present() {
+		return presentDgs.contains("DG12"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 13.
+	 * @return <code>true</code> si el Grupo de Datos 13 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg13Present() {
+		return presentDgs.contains("DG13"); //$NON-NLS-1$
+	}
+
+	/** Indica si est&aacute; presente el Grupo de Datos 14.
+	 * @return <code>true</code> si el Grupo de Datos 14 est&aacute; presente en este MRTD,
+	 *         <code>false</code> en caso contrario. */
+	public boolean isDg14Present() {
+		return presentDgs.contains("DG14"); //$NON-NLS-1$
+	}
 }

@@ -15,17 +15,14 @@ final class LTreeAddress
     private final int treeHeight;
     private final int treeIndex;
 
-    private LTreeAddress(Builder builder)
-    {
+    LTreeAddress(final Builder builder) {
         super(builder);
         lTreeAddress = builder.lTreeAddress;
         treeHeight = builder.treeHeight;
         treeIndex = builder.treeIndex;
     }
 
-    protected static class Builder
-        extends XMSSAddress.Builder<Builder>
-    {
+    protected static class Builder extends XMSSAddress.Builder<Builder> {
 
         /* optional */
         private int lTreeAddress = 0;
@@ -37,19 +34,19 @@ final class LTreeAddress
             super(TYPE);
         }
 
-        protected Builder withLTreeAddress(int val)
+        protected Builder withLTreeAddress(final int val)
         {
             lTreeAddress = val;
             return this;
         }
 
-        protected Builder withTreeHeight(int val)
+        protected Builder withTreeHeight(final int val)
         {
             treeHeight = val;
             return this;
         }
 
-        protected Builder withTreeIndex(int val)
+        protected Builder withTreeIndex(final int val)
         {
             treeIndex = val;
             return this;
@@ -71,7 +68,7 @@ final class LTreeAddress
     @Override
     protected byte[] toByteArray()
     {
-        byte[] byteRepresentation = super.toByteArray();
+        final byte[] byteRepresentation = super.toByteArray();
         Pack.intToBigEndian(lTreeAddress, byteRepresentation, 16);
         Pack.intToBigEndian(treeHeight, byteRepresentation, 20);
         Pack.intToBigEndian(treeIndex, byteRepresentation, 24);

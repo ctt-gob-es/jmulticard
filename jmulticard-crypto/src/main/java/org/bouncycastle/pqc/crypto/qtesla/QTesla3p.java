@@ -582,7 +582,7 @@ class QTesla3p
         Pack.intToLittleEndian(value, bs, base * 4 + index * 4);
     }
 
-    private static int at(final byte[] bs, final int base, final int index)
+    static int at(final byte[] bs, final int base, final int index)
     {
         int off = base * 4 + index * 4;
 
@@ -848,30 +848,24 @@ class QTesla3p
     static boolean memoryEqual(final byte[] left, final int leftOffset, final byte[] right, final int rightOffset, final int length)
     {
 
-        if (leftOffset + length <= left.length && rightOffset + length <= right.length)
-        {
-
-            for (int i = 0; i < length; i++)
-            {
-
-                if (left[leftOffset + i] != right[rightOffset + i])
-                {
-
-                    return false;
-
-                }
-
-            }
-
-            return true;
-
-        }
-        else
-        {
+        if ((leftOffset + length > left.length) || (rightOffset + length > right.length)) {
 
             return false;
 
         }
+		for (int i = 0; i < length; i++)
+		{
+
+		    if (left[leftOffset + i] != right[rightOffset + i])
+		    {
+
+		        return false;
+
+		    }
+
+		}
+
+		return true;
 
     }
 

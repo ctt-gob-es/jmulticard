@@ -4,19 +4,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.JmcLogger;
 
 /** Utilidades de compresi&oacute;n de certificados seg&uacute;n uso com&uacute;n en
  * tarjetas FNMT.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CompressionUtils {
-
-	/** Registro. */
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
 
 	/** Constructor privado y vac&iacute;o. */
 	private CompressionUtils() {
@@ -50,12 +47,12 @@ public final class CompressionUtils {
 			);
 		}
         catch(final Exception e) {
-        	LOGGER.warning(
+        	JmcLogger.warning(
     			"Ha fallado la descompresion del certificado, se probara sin descomprimir: " + e //$NON-NLS-1$
 			);
         	rawData = data;
         }
-		return cryptoHelper.generateCertificate(rawData);
+		return CryptoHelper.generateCertificate(rawData);
 	}
 
     /** Descomprime un certificado.

@@ -3,7 +3,6 @@ package es.gob.jmulticard.jse.provider.ceres;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStore.PasswordProtection;
@@ -13,6 +12,7 @@ import java.security.KeyStoreSpi;
 import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -24,13 +24,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.x500.X500Principal;
 
-import es.gob.jmulticard.BcCryptoHelper;
+import es.gob.jmulticard.HexUtils;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
 import es.gob.jmulticard.card.fnmt.ceres.CeresPrivateKeyReference;
 import es.gob.jmulticard.connection.ApduConnection;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.CardPasswordCallback;
 import es.gob.jmulticard.jse.provider.JMultiCardProviderMessages;
@@ -39,7 +39,9 @@ import es.gob.jmulticard.jse.provider.JMultiCardProviderMessages;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class CeresKeyStoreImpl extends KeyStoreSpi {
 
-    private static List<String> userCertAliases = null;
+	private static final Logger LOGGER = Logger.getLogger(CeresKeyStoreImpl.class.getName());
+
+    private List<String> userCertAliases = null;
 
     private Ceres cryptoCard = null;
 
@@ -68,19 +70,23 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     }
 
     @Override
-    public String engineGetCertificateAlias(final Certificate cert) {
-        if (!(cert instanceof X509Certificate)) {
+    public String engineGetCertificateAlias(final Certificate otherCert) {
+        if (!(otherCert instanceof X509Certificate)) {
             return null;
         }
-
-        final BigInteger serial = ((X509Certificate) cert).getSerialNumber();
-        final X500Principal principal = ((X509Certificate) cert).getIssuerX500Principal();
-
         for (final String alias : userCertAliases) {
-        	final X509Certificate c = (X509Certificate) engineGetCertificate(alias);
-            if (c.getSerialNumber().equals(serial) && c.getIssuerX500Principal().equals(principal)) {
-                return alias;
-            }
+        	final X509Certificate myCert = (X509Certificate) engineGetCertificate(alias);
+            try {
+				if (myCert != null && HexUtils.arrayEquals(otherCert.getEncoded(), myCert.getEncoded())) {
+				    return alias;
+				}
+			}
+            catch (final CertificateEncodingException e) {
+            	LOGGER.warning(
+        			"No se han podido comparar certificados: " + e //$NON-NLS-1$
+    			);
+				return null;
+			}
         }
         return null;
     }
@@ -178,8 +184,9 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     			cryptoCard.setPasswordCallback(pwc);
     		}
     		else {
-	       		Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + (pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$ //$NON-NLS-2$
+    			LOGGER.warning(
+	   				"Se ha proporcionado un LoadStoreParameter de tipo no soportado, se ignorara: " + //$NON-NLS-1$
+	   					(pp != null ? pp.getClass().getName() : "NULO") //$NON-NLS-1$
 				);
     		}
     	}
@@ -255,7 +262,7 @@ public final class CeresKeyStoreImpl extends KeyStoreSpi {
     /** Operaci&oacute;n no soportada. */
     @Override
     public Date engineGetCreationDate(final String alias) {
-    	Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
+    	LOGGER.warning(
 			"No se soporta la obtencion de fecha de creacion, se devuelve la fecha actual" //$NON-NLS-1$
 		);
         return new Date();

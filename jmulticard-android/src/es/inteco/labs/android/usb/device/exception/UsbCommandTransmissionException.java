@@ -38,13 +38,13 @@ package es.inteco.labs.android.usb.device.exception;
 
 /** Error en una transmisi&oacute;n de comandos USB.
  * @author Jose Luis Escanciano Garcia */
-public class UsbCommandTransmissionException extends Exception {
+public final class UsbCommandTransmissionException extends Exception {
 
 	private static final long serialVersionUID = 7866707651866044939L;
 
 	/** Crea una excepci&oacute;n de error en una transmisi&oacute;n de comandos USB. */
 	public UsbCommandTransmissionException(){
-		super();
+		// Vacio
 	}
 
 	/** Crea una excepci&oacute;n de error en una transmisi&oacute;n de comandos USB.

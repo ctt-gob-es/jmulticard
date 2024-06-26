@@ -15,8 +15,7 @@ final class OTSHashAddress
     private final int chainAddress;
     private final int hashAddress;
 
-    private OTSHashAddress(final Builder builder)
-    {
+    OTSHashAddress(final Builder builder) {
         super(builder);
         otsAddress = builder.otsAddress;
         chainAddress = builder.chainAddress;

@@ -21,8 +21,7 @@ public final class IcaoMrtdWithBac extends Dnie3 {
 			conn,
 			null,          // No hay PIN
 			cryptoHlpr,
-			null,          // No hace falta CAN ni MRZ
-			false          // No se cargan claves y certificados
+			null          // No hace falta CAN ni MRZ
 		);
 	}
 
@@ -51,5 +50,4 @@ public final class IcaoMrtdWithBac extends Dnie3 {
 			"No se permite firmar con un MRTD" //$NON-NLS-1$
 		);
     }
-
 }

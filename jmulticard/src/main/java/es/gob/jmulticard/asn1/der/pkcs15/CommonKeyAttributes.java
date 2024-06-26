@@ -66,28 +66,26 @@ public final class CommonKeyAttributes extends Sequence {
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>CommonKeyAttributes</i>. */
 	public CommonKeyAttributes() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					Identifier.class,    // Subtipo de Octet String
-					false
-				),
-				new OptionalDecoderObjectElement(
-					KeyUsageFlags.class, // Subtipo de Bit String
-					false
-				),
-				new OptionalDecoderObjectElement(
-					DerBoolean.class,
-					true // Opcional
-				),
-				new OptionalDecoderObjectElement(
-					AccessFlags.class,   // Subtipo de Bit String
-					false
-				),
-				new OptionalDecoderObjectElement(
-					Reference.class,     // Subtipo de Integer
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				Identifier.class,    // Subtipo de Octet String
+				false
+			),
+			new OptionalDecoderObjectElement(
+				KeyUsageFlags.class, // Subtipo de Bit String
+				false
+			),
+			new OptionalDecoderObjectElement(
+				DerBoolean.class,
+				true // Opcional
+			),
+			new OptionalDecoderObjectElement(
+				AccessFlags.class,   // Subtipo de Bit String
+				false
+			),
+			new OptionalDecoderObjectElement(
+				Reference.class,     // Subtipo de Integer
+				false
+			)
 		);
 	}
 

@@ -23,12 +23,10 @@ public final class CommonPrivateKeyAttributes extends Sequence {
 		super(
 			// Solo contemplamos el "name", que es de tipo "Name",
 			// implementado casi siempre como "RdnSequence".
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					RdnSequence.class,
-					true // Opcional
-				)
-			}
+			new OptionalDecoderObjectElement(
+				RdnSequence.class,
+				true // Opcional
+			)
 		);
 	}
 

@@ -46,13 +46,13 @@ import es.gob.jmulticard.HexUtils;
  * @author Alberto Mart&iacute;nez. */
 public abstract class DecoderObject {
 
-    private transient byte[] rawDerValue = null;
+    private byte[] rawDerValue = null;
 
-	/** Obtiene el valor directo ASN&#46;1 DER.
+	/** Obtiene el valor directo binario ASN&#46;1 DER.
 	 * @return Valor directo ASN&#46;1 DER. */
-	protected byte[] getRawDerValue() {
-		final byte[] out = new byte[this.rawDerValue.length];
-		System.arraycopy(this.rawDerValue, 0, out, 0, this.rawDerValue.length);
+	public final byte[] getBytes() {
+		final byte[] out = new byte[rawDerValue.length];
+		System.arraycopy(rawDerValue, 0, out, 0, rawDerValue.length);
 		return out;
 	}
 
@@ -62,19 +62,13 @@ public abstract class DecoderObject {
      * @throws TlvException Si hay errores relativos a los TLV DER al decodificar los datos de entrada. */
     public void setDerValue(final byte[] value) throws Asn1Exception, TlvException {
         if (value == null) {
-            throw new IllegalArgumentException("El valor del objeto ASN.1 no puede ser nulo"); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+        		"El valor del objeto ASN.1 no puede ser nulo" //$NON-NLS-1$
+    		);
         }
-        this.rawDerValue = new byte[value.length];
-        System.arraycopy(value, 0, this.rawDerValue, 0, value.length);
+        rawDerValue = new byte[value.length];
+        System.arraycopy(value, 0, rawDerValue, 0, value.length);
         decodeValue();
-    }
-
-    /** Obtiene el valor binario del objeto ASN&#46;1.
-     * @return Valor binario del objeto ASN&#46;1. */
-    public byte[] getBytes() {
-        final byte[] out = new byte[this.rawDerValue.length];
-        System.arraycopy(this.rawDerValue, 0, out, 0, this.rawDerValue.length);
-        return out;
     }
 
     /** Decodifica el valor DER establecido comprobando que corresponde al esperado y formando las

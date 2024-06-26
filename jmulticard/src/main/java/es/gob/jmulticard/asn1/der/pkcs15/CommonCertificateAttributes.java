@@ -58,12 +58,10 @@ public final class CommonCertificateAttributes extends Sequence {
     /** Construye un objeto ASN&#46;1 <i>CommonCertificateAttributes</i>. */
 	public CommonCertificateAttributes() {
         super(
-    		new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					Identifier.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				Identifier.class,
+				false
+			)
 		);
     }
 

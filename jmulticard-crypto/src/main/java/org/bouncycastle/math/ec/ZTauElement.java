@@ -10,16 +10,12 @@ import java.math.BigInteger;
  * are no accessor methods.
  * Immutable class.
  */
-class ZTauElement
-{
-    /**
-     * The &quot;real&quot; part of <code>&lambda;</code>.
-     */
+class ZTauElement {
+
+    /** The &quot;real&quot; part of <code>&lambda;</code>. */
     public final BigInteger u;
 
-    /**
-     * The &quot;<code>&tau;</code>-adic&quot; part of <code>&lambda;</code>.
-     */
+    /** The &quot;<code>&tau;</code>-adic&quot; part of <code>&lambda;</code>. */
     public final BigInteger v;
 
     /**
@@ -29,8 +25,7 @@ class ZTauElement
      * @param v The &quot;<code>&tau;</code>-adic&quot; part of
      * <code>&lambda;</code>.
      */
-    public ZTauElement(BigInteger u, BigInteger v)
-    {
+    public ZTauElement(final BigInteger u, final BigInteger v) {
         this.u = u;
         this.v = v;
     }

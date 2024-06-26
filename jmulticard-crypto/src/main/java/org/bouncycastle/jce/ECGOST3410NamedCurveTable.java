@@ -10,17 +10,16 @@ import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 /**
  * a table of locally supported named curves.
  */
-public class ECGOST3410NamedCurveTable
-{
+public class ECGOST3410NamedCurveTable {
     /**
      * return a parameter spec representing the passed in named
      * curve. The routine returns null if the curve is not present.
-     * 
+     *
      * @param name the name of the curve requested
      * @return a parameter spec for the curve, null if it is not available.
      */
     public static ECNamedCurveParameterSpec getParameterSpec(
-        String  name)
+        final String  name)
     {
         X9ECParameters  ecP = ECGOST3410NamedCurves.getByNameX9(name);
         if (ecP == null)
@@ -29,12 +28,12 @@ public class ECGOST3410NamedCurveTable
             {
                 ecP = ECGOST3410NamedCurves.getByOIDX9(new ASN1ObjectIdentifier(name));
             }
-            catch (IllegalArgumentException e)
+            catch (final IllegalArgumentException e)
             {
                 return null; // not an oid.
             }
         }
-        
+
         if (ecP == null)
         {
             return null;

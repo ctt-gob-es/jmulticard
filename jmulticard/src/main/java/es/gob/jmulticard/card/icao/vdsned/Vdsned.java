@@ -10,9 +10,9 @@ import java.security.SignatureException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.asn1.Tlv;
 import es.gob.jmulticard.asn1.TlvException;
 import es.gob.jmulticard.card.icao.CountryCodes;
@@ -21,11 +21,9 @@ import es.gob.jmulticard.card.icao.CountryCodes;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class Vdsned {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
 	private static final byte MAGIC = (byte) 0xdc;
 
-	private transient final byte[] encoded;
+	private final byte[] encoded;
 
 	private final int version;
 
@@ -38,12 +36,12 @@ public final class Vdsned {
 	private final int documentFeatureDefinitionReference;
 	private final int documentTypeCategory;
 
-	private transient String mrzB = null;
-	private transient int nEntries = 0;
-	private transient int durationOfStay = 0;
-	private transient String passportNumber = null;
-	private transient byte[] signature = null;
-	private transient byte[] dataTbs = null;
+	private String mrzB = null;
+	private int nEntries = 0;
+	private int durationOfStay = 0;
+	private String passportNumber = null;
+	private byte[] signature = null;
+	private byte[] dataTbs = null;
 
 	private static final String DEFAULT_SIGNATURE_ALGORITHM = "SHA256withECDSA"; //$NON-NLS-1$
 
@@ -126,7 +124,7 @@ public final class Vdsned {
 		// Categoria
 		documentTypeCategory = encoded[offset++];
 		if ((documentTypeCategory & 1) == 0 ) {
-			LOGGER.warning(
+			JmcLogger.warning(
 				"La categoria deberia ser un numero impar, pero se ha encontrado " +  documentTypeCategory //$NON-NLS-1$
 			);
 		}
@@ -169,7 +167,7 @@ public final class Vdsned {
 					break;
 				case (byte) 0xff:
 
-					// Hemos llegado a la firma, con lo que todo el conjunto anterior de
+					// Hemos llegado a la firma, con lo que el conjunto anterior de
 					// datos es lo que se firma
 					dataTbs = new byte[offset];
 					System.arraycopy(encoded, 0, dataTbs, 0, offset);
@@ -182,7 +180,7 @@ public final class Vdsned {
 					signature = encodeEcdsaSignature(r, s);
 					break;
 				default:
-					LOGGER.warning("Encontrado campo de datos desconocido: " + tlv); //$NON-NLS-1$
+					JmcLogger.warning("Encontrado campo de datos desconocido: " + tlv); //$NON-NLS-1$
 			}
 
 			offset = offset + tlv.getBytes().length;

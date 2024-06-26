@@ -24,19 +24,19 @@ import es.gob.jmulticard.HexUtils;
  * @author Isaac Levin */
 final class BerTlvIdentifier {
 
-    private transient byte[] value;
+    private byte[] value;
 
     /** Obtiene el valor de la etiqueta (tipo) del TLV.
      * @return Valor de la etiqueta (tipo) del TLV. */
     int getTagValue() {
-        if (this.value == null) {
+        if (value == null) {
             return 0;
         }
-        if (this.value.length == 1) {
-            return this.value[0];
+        if (value.length == 1) {
+            return value[0];
         }
-        final byte[] tagBytes = new byte[this.value.length - 1];
-        System.arraycopy(this.value, 1, tagBytes, 0, this.value.length - 1);
+        final byte[] tagBytes = new byte[value.length - 1];
+        System.arraycopy(value, 1, tagBytes, 0, value.length - 1);
         for (int i = 0; i < tagBytes.length - 1; i++) {
             // Establecemos el octavo bit indicador a false
             tagBytes[i] = (byte) BitManipulationHelper.setBitValue(tagBytes[i], 8, false);
@@ -47,7 +47,7 @@ final class BerTlvIdentifier {
     void decode(final ByteArrayInputStream stream) {
         final int tlvIdFirstOctet = stream.read();
 
-        this.value = new byte[] {
+        value = new byte[] {
             (byte) tlvIdFirstOctet
         };
         // Comprobamos si el id es multi-octeto (los bits del 5 al 1 deben codificarse como 11111)
@@ -61,7 +61,7 @@ final class BerTlvIdentifier {
                     lastOctet = true;
                 }
 
-                this.value = BitManipulationHelper.mergeArrays(this.value, new byte[] {
+                value = BitManipulationHelper.mergeArrays(value, new byte[] {
                     (byte) tlvIdNextOctet
                 });
 
@@ -78,26 +78,23 @@ final class BerTlvIdentifier {
             return true;
         }
         if (obj instanceof BerTlvIdentifier) {
-            if (!HexUtils.arrayEquals(this.value, ((BerTlvIdentifier) obj).value)) {
-            	return false;
-            }
-            return true;
+            return HexUtils.arrayEquals(value, ((BerTlvIdentifier) obj).value);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return new BigInteger(this.value).intValue();
+        return new BigInteger(value).intValue();
     }
 
     @Override
     public String toString() {
-        if (this.value == null) {
+        if (value == null) {
             return "NULL"; //$NON-NLS-1$
         }
-        final StringBuffer buf = new StringBuffer("["); //$NON-NLS-1$
-        for (final byte element : this.value) {
+        final StringBuilder buf = new StringBuilder("["); //$NON-NLS-1$
+        for (final byte element : value) {
             buf.append("0x").append(Integer.toHexString(element)).append(' '); //$NON-NLS-1$
         }
         buf.append(']');

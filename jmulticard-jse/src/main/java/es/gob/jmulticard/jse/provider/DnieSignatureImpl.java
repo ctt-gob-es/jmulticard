@@ -77,7 +77,7 @@ abstract class DnieSignatureImpl extends SignatureSpi {
     private final String signatureAlgo;
 
     DnieSignatureImpl(final String signatureAlgorithm) {
-        this.signatureAlgo = signatureAlgorithm;
+        signatureAlgo = signatureAlgorithm;
     }
 
     @Override
@@ -93,35 +93,33 @@ abstract class DnieSignatureImpl extends SignatureSpi {
         if (!(prKey instanceof DniePrivateKey)) {
             throw new InvalidKeyException("La clave proporcionada no es de un DNIe: " + prKey.getClass().getName()); //$NON-NLS-1$
         }
-        this.privateKey = (DniePrivateKey) prKey;
-        this.data.reset();
+        privateKey = (DniePrivateKey) prKey;
+        data.reset();
     }
 
     @Override
     protected void engineInitVerify(final PublicKey publicKey) throws InvalidKeyException {
-        this.data.reset();
+        data.reset();
         try {
-        	this.signatureVerifier = Signature.getInstance(this.signatureAlgo);
-            try {
-            	if (this.signatureVerifier.getProvider() instanceof DnieProvider) {
-            		this.signatureVerifier = Signature.getInstance(
-        				this.signatureAlgo,
-        				ProviderUtil.getDefaultOtherProvider("Signature", this.signatureAlgo) //$NON-NLS-1$
-    				);
-            	}
-            }
-            catch (final NoSuchProviderException e) {
-                throw new IllegalStateException(
-            		"No esta instalado el proveedor por defecto de firma", e //$NON-NLS-1$
-                );
-            }
+        	signatureVerifier = Signature.getInstance(signatureAlgo);
+        	if (signatureVerifier.getProvider() instanceof DnieProvider) {
+        		signatureVerifier = Signature.getInstance(
+    				signatureAlgo,
+    				ProviderUtil.getDefaultOtherProvider("Signature", signatureAlgo) //$NON-NLS-1$
+				);
+        	}
         }
         catch (final NoSuchAlgorithmException e) {
             throw new IllegalStateException(
-                "No existe un proveedor para validar firmas con el algoritmo " + this.signatureAlgo, e //$NON-NLS-1$
+                "No existe un proveedor para validar firmas con el algoritmo " + signatureAlgo, e //$NON-NLS-1$
             );
         }
-        this.signatureVerifier.initVerify(publicKey);
+        catch (final NoSuchProviderException e) {
+            throw new IllegalStateException(
+        		"No esta instalado el proveedor por defecto de firma", e //$NON-NLS-1$
+            );
+        }
+        signatureVerifier.initVerify(publicKey);
     }
 
     @Override
@@ -132,25 +130,25 @@ abstract class DnieSignatureImpl extends SignatureSpi {
     @Override
     protected byte[] engineSign() throws SignatureException {
 
-    	if (!(this.privateKey.getCryptoCard() instanceof Dni)) {
+    	if (!(privateKey.getCryptoCard() instanceof Dni)) {
     		throw new ProviderException(
-				"La clave proporcionada no es de un DNIe: " + this.privateKey.getCryptoCard().getClass().getName() //$NON-NLS-1$
+				"La clave proporcionada no es de un DNIe: " + privateKey.getCryptoCard().getClass().getName() //$NON-NLS-1$
 			);
     	}
 
     	final DniePrivateKeyReference dniePkRef = new DniePrivateKeyReference(
-			this.privateKey.getCryptoCard(),
-			this.privateKey.getId(),
-			this.privateKey.getPath(),
-			this.privateKey.toString(),
-			this.privateKey.getKeyReference(),
-			this.privateKey.getKeyBitSize()
+			privateKey.getCryptoCard(),
+			privateKey.getId(),
+			privateKey.getPath(),
+			privateKey.toString(),
+			privateKey.getKeyReference(),
+			privateKey.getKeyBitSize()
 		);
 
     	try {
-            return this.privateKey.getCryptoCard().sign(
-        		this.data.toByteArray(),
-        		this.signatureAlgo,
+            return privateKey.getCryptoCard().sign(
+        		data.toByteArray(),
+        		signatureAlgo,
         		dniePkRef
     		);
         }
@@ -164,22 +162,22 @@ abstract class DnieSignatureImpl extends SignatureSpi {
 
     @Override
     protected void engineUpdate(final byte b) {
-        this.data.write(b);
+        data.write(b);
     }
 
     @Override
     protected void engineUpdate(final byte[] b, final int off, final int len) {
-        this.data.write(b, off, len);
+        data.write(b, off, len);
     }
 
     @Override
     protected boolean engineVerify(final byte[] sigBytes) throws SignatureException {
-        if (this.signatureVerifier == null) {
+        if (signatureVerifier == null) {
             throw new SignatureException("La verificacion no esta inicializada"); //$NON-NLS-1$
         }
-        this.signatureVerifier.update(this.data.toByteArray());
-        this.data.reset();
-        return this.signatureVerifier.verify(sigBytes);
+        signatureVerifier.update(data.toByteArray());
+        data.reset();
+        return signatureVerifier.verify(sigBytes);
     }
 
     /** Firma SHA1withRSA. */

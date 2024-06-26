@@ -20,9 +20,8 @@ import org.bouncycastle.jcajce.provider.config.ProviderConfigurationPermission;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 
-class BouncyCastleProviderConfiguration
-    implements ProviderConfiguration
-{
+class BouncyCastleProviderConfiguration implements ProviderConfiguration {
+
     private static Permission BC_EC_LOCAL_PERMISSION = new ProviderConfigurationPermission(
         BouncyCastleProvider.PROVIDER_NAME, ConfigurableProvider.THREAD_LOCAL_EC_IMPLICITLY_CA);
     private static Permission BC_EC_PERMISSION = new ProviderConfigurationPermission(
@@ -36,19 +35,19 @@ class BouncyCastleProviderConfiguration
     private static Permission BC_ADDITIONAL_EC_CURVE_PERMISSION = new ProviderConfigurationPermission(
         BouncyCastleProvider.PROVIDER_NAME, ConfigurableProvider.ADDITIONAL_EC_PARAMETERS);
 
-    private ThreadLocal ecThreadSpec = new ThreadLocal();
-    private ThreadLocal dhThreadSpec = new ThreadLocal();
+    private final ThreadLocal ecThreadSpec = new ThreadLocal();
+    private final ThreadLocal dhThreadSpec = new ThreadLocal();
 
     private volatile ECParameterSpec ecImplicitCaParams;
     private volatile Object dhDefaultParams;
     private volatile Set acceptableNamedCurves = new HashSet();
     private volatile Map additionalECParameters = new HashMap();
 
-    void setParameter(String parameterName, Object parameter)
+    void setParameter(final String parameterName, final Object parameter)
     {
-        SecurityManager securityManager = System.getSecurityManager();
+        final SecurityManager securityManager = System.getSecurityManager();
 
-        if (parameterName.equals(ConfigurableProvider.THREAD_LOCAL_EC_IMPLICITLY_CA))
+        if (ConfigurableProvider.THREAD_LOCAL_EC_IMPLICITLY_CA.equals(parameterName))
         {
             ECParameterSpec curveSpec;
 
@@ -75,7 +74,7 @@ class BouncyCastleProviderConfiguration
                 ecThreadSpec.set(curveSpec);
             }
         }
-        else if (parameterName.equals(ConfigurableProvider.EC_IMPLICITLY_CA))
+        else if (ConfigurableProvider.EC_IMPLICITLY_CA.equals(parameterName))
         {
             if (securityManager != null)
             {
@@ -91,7 +90,7 @@ class BouncyCastleProviderConfiguration
                 ecImplicitCaParams = EC5Util.convertSpec((java.security.spec.ECParameterSpec)parameter);
             }
         }
-        else if (parameterName.equals(ConfigurableProvider.THREAD_LOCAL_DH_DEFAULT_PARAMS))
+        else if (ConfigurableProvider.THREAD_LOCAL_DH_DEFAULT_PARAMS.equals(parameterName))
         {
             Object dhSpec;
 
@@ -118,7 +117,7 @@ class BouncyCastleProviderConfiguration
                 dhThreadSpec.set(dhSpec);
             }
         }
-        else if (parameterName.equals(ConfigurableProvider.DH_DEFAULT_PARAMS))
+        else if (ConfigurableProvider.DH_DEFAULT_PARAMS.equals(parameterName))
         {
             if (securityManager != null)
             {
@@ -134,30 +133,30 @@ class BouncyCastleProviderConfiguration
                 throw new IllegalArgumentException("not a valid DHParameterSpec or DHParameterSpec[]");
             }
         }
-        else if (parameterName.equals(ConfigurableProvider.ACCEPTABLE_EC_CURVES))
+        else if (ConfigurableProvider.ACCEPTABLE_EC_CURVES.equals(parameterName))
         {
             if (securityManager != null)
             {
                 securityManager.checkPermission(BC_EC_CURVE_PERMISSION);
             }
 
-            this.acceptableNamedCurves = (Set)parameter;
+            acceptableNamedCurves = (Set)parameter;
         }
-        else if (parameterName.equals(ConfigurableProvider.ADDITIONAL_EC_PARAMETERS))
+        else if (ConfigurableProvider.ADDITIONAL_EC_PARAMETERS.equals(parameterName))
         {
             if (securityManager != null)
             {
                 securityManager.checkPermission(BC_ADDITIONAL_EC_CURVE_PERMISSION);
             }
 
-            this.additionalECParameters = (Map)parameter;
+            additionalECParameters = (Map)parameter;
         }
     }
 
     @Override
 	public ECParameterSpec getEcImplicitlyCa()
     {
-        ECParameterSpec spec = (ECParameterSpec)ecThreadSpec.get();
+        final ECParameterSpec spec = (ECParameterSpec)ecThreadSpec.get();
 
         if (spec != null)
         {
@@ -168,7 +167,7 @@ class BouncyCastleProviderConfiguration
     }
 
     @Override
-	public DHParameterSpec getDHDefaultParameters(int keySize)
+	public DHParameterSpec getDHDefaultParameters(final int keySize)
     {
         Object params = dhThreadSpec.get();
         if (params == null)
@@ -178,7 +177,7 @@ class BouncyCastleProviderConfiguration
 
         if (params instanceof DHParameterSpec)
         {
-            DHParameterSpec spec = (DHParameterSpec)params;
+            final DHParameterSpec spec = (DHParameterSpec)params;
 
             if (spec.getP().bitLength() == keySize)
             {
@@ -187,18 +186,17 @@ class BouncyCastleProviderConfiguration
         }
         else if (params instanceof DHParameterSpec[])
         {
-            DHParameterSpec[] specs = (DHParameterSpec[])params;
+            final DHParameterSpec[] specs = (DHParameterSpec[])params;
 
-            for (int i = 0; i != specs.length; i++)
-            {
-                if (specs[i].getP().bitLength() == keySize)
+            for (final DHParameterSpec spec : specs) {
+                if (spec.getP().bitLength() == keySize)
                 {
-                    return specs[i];
+                    return spec;
                 }
             }
         }
 
-        DHParameters dhParams = CryptoServicesRegistrar.getSizedProperty(CryptoServicesRegistrar.Property.DH_DEFAULT_PARAMS, keySize);
+        final DHParameters dhParams = CryptoServicesRegistrar.getSizedProperty(CryptoServicesRegistrar.Property.DH_DEFAULT_PARAMS, keySize);
         if (dhParams != null)
         {
             return new DHDomainParameterSpec(dhParams);
@@ -208,9 +206,9 @@ class BouncyCastleProviderConfiguration
     }
 
     @Override
-	public DSAParameterSpec getDSADefaultParameters(int keySize)
+	public DSAParameterSpec getDSADefaultParameters(final int keySize)
     {
-        DSAParameters dsaParams = CryptoServicesRegistrar.getSizedProperty(CryptoServicesRegistrar.Property.DSA_DEFAULT_PARAMS, keySize);
+        final DSAParameters dsaParams = CryptoServicesRegistrar.getSizedProperty(CryptoServicesRegistrar.Property.DSA_DEFAULT_PARAMS, keySize);
         if (dsaParams != null)
         {
             return new DSAParameterSpec(dsaParams.getP(), dsaParams.getQ(), dsaParams.getG());

@@ -39,8 +39,8 @@
  */
 package es.gob.jmulticard.card.dnie;
 
-/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a de certificados) para
- * el establecimiento de canal seguro de PIN CWA-14890.
+/** Constantes del DNIe (versiones con IDESP posterior a "BMP100001", con nueva jerarqu&iacute;a
+ * de certificados) para el establecimiento de canal seguro de PIN CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 abstract class Dnie3r2Cwa14890Constants extends Dnie3Cwa14890Constants {
 
@@ -68,9 +68,8 @@ abstract class Dnie3r2Cwa14890Constants extends Dnie3Cwa14890Constants {
     };
 
     /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
-     * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
-     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
-     * utiliza).
+     * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 octetos.
+     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se utiliza).
      * (<i>ifd-keyRef</i>).*/
 	private static final byte[] CHR_C_CV_CA = {
 		(byte) 0x65, (byte) 0x73, (byte) 0x53, (byte) 0x44, (byte) 0x49, (byte) 0x62, (byte) 0x00, (byte) 0x18

@@ -42,7 +42,6 @@ package es.gob.jmulticard.asn1.custom.fnmt.ceres;
 import es.gob.jmulticard.asn1.der.pkcs15.CertificateObject;
 import es.gob.jmulticard.asn1.der.pkcs15.CommonCertificateAttributes;
 
-
 /** Tipo PKCS#15 ASN&#46;1 <i>CeresCertificateObject</i> (<i>CertificateInfoObject</i>
  * en ISO 7816-15) espec&iacute;fico para ciertas tarjetas FNMT CERES.
  *  <pre>

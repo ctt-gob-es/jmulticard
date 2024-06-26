@@ -48,13 +48,13 @@ import es.gob.jmulticard.apdu.ResponseApdu;
 public final class SelectFileApduResponse extends ResponseApdu {
 
 	/** Nombre del DF que contiene el EF. */
-    private transient byte[] dfName = null;
+    private byte[] dfName = null;
 
     /** Identificador del EF seleccionado. */
-    private transient byte[] fileId = null;
+    private byte[] fileId = null;
 
     /** Longitud (en octetos) del EF seleccionado. */
-    private transient byte[] fileLength = null;
+    private byte[] fileLength = null;
 
     /** Construye una APDU respuesta al comando APDU ISO 7816-4 de selecci&oacute;n de fichero.
      * @param apduResponse APDU devuelta por la operaci&oacute;n de selecci&oacute;n de fichero. */

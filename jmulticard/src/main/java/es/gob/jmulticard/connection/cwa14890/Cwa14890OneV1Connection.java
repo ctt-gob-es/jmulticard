@@ -47,7 +47,9 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 import es.gob.jmulticard.CryptoHelper;
+import es.gob.jmulticard.DigestAlgorithm;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.StatusWord;
@@ -59,7 +61,6 @@ import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.connection.ApduConnectionProtocol;
 import es.gob.jmulticard.connection.ApduEncrypterDes;
-import es.gob.jmulticard.connection.CardConnectionListener;
 
 /** Utilidad para el establecimiento y control del canal seguro CWA-14890
  * con cifrado DES y MAC de cuatro octetos.
@@ -91,31 +92,31 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     };
 
     /** Utilidad para la ejecuci&oacute;n de funciones criptogr&aacute;ficas. */
-    protected transient final CryptoHelper cryptoHelper;
+    private final CryptoHelper cryptoHelper;
 
     /** Tarjeta CWA-14890 con la que se desea establecer el canal seguro. */
-    private transient Cwa14890Card card;
+    private Cwa14890Card card;
 
     /** Conexi&oacute;n subyacente para el env&iacute;o de APDUs. */
-    protected transient ApduConnection subConnection;
+    protected ApduConnection subConnection;
 
     /** Clave Triple DES (TDES o DESEDE) para encriptar y desencriptar criptogramas. */
-    private transient byte[] kenc = null;
+    private byte[] kenc = null;
 
     /** Clave Triple DES (TDES o DESEDE) para calcular y verificar <i>checksums</i>. */
-    private transient byte[] kmac = null;
+    private byte[] kmac = null;
 
     /** Contador de secuencia. */
-    private transient byte[] ssc = null;
+    private byte[] ssc = null;
 
     /** Indica el estado de la conexi&oacute;n. */
-    protected transient boolean openState = false;
+    protected boolean openState = false;
 
     /** Clase de utilidad para encriptar las APDU. */
-    protected transient final AbstractApduEncrypter apduEncrypter;
+    private final AbstractApduEncrypter apduEncrypter;
 
-    private transient Cwa14890PublicConstants pubConsts;
-    private transient Cwa14890PrivateConstants privConsts;
+    private Cwa14890PublicConstants pubConsts;
+    private Cwa14890PrivateConstants privConsts;
 
     /** Obtiene la clase de utilidad para encriptar las APDU.
      * @return Clase de utilidad para encriptar las APDU. */
@@ -139,15 +140,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * impl&iacute;cita de la tarjeta indicada.
      * @param connection Conexi&oacute;n sobre la cual montar el canal seguro.
      * @param cryptoHlpr Motor de operaciones criptogr&aacute;ficas. */
-    public Cwa14890OneV1Connection(final ApduConnection connection,
-    		                       final CryptoHelper cryptoHlpr) {
+    Cwa14890OneV1Connection(final ApduConnection connection,
+    		                final CryptoHelper cryptoHlpr) {
 
         if (cryptoHlpr == null) {
             throw new IllegalArgumentException(
         		"CryptoHelper no puede ser nulo" //$NON-NLS-1$
             );
         }
-
     	subConnection = connection instanceof Cwa14890Connection ?
 			((Cwa14890Connection)connection).getSubConnection() :
 				connection;
@@ -176,13 +176,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         		"No se ha proporcionado la tarjeta CWA-14890 con la que abrir el canal seguro" //$NON-NLS-1$
             );
         }
-
         if (cryptoHlpr == null) {
             throw new IllegalArgumentException(
         		"CryptoHelper no puede ser nulo" //$NON-NLS-1$
             );
         }
-
         if (cwaConsts == null) {
         	throw new IllegalArgumentException(
         		"las claves CWA-14890 no pueden ser nulas" //$NON-NLS-1$
@@ -211,6 +209,8 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // IMPORTANTE: Esta operacion debe realizarse antes del inicio del proceso de autenticacion
         final byte[] serial = getPaddedSerial();
 
+        JmcLogger.info(Cwa14890OneV1Connection.class.getName(), "open", "Obtenido el numero de serie de la tarjeta"); //$NON-NLS-1$ //$NON-NLS-2$
+
         // --- STAGE 1 ---
         // Verificamos el certificado de la tarjeta.
         // ---------------
@@ -226,16 +226,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
         catch (final CertificateException e) {
             conn.close();
-            throw new IllegalStateException(
-        		"No se han podido tratar los certificados CWA-14890", e //$NON-NLS-1$
-            );
+            throw new IllegalStateException("No se han podido tratar los certificados CWA-14890", e); //$NON-NLS-1$
         }
         catch (final IOException e) {
             conn.close();
-            throw new IllegalStateException(
-        		"No se han podido validar los certificados CWA-14890", e //$NON-NLS-1$
-            );
+            throw new IllegalStateException("No se han podido validar los certificados CWA-14890", e); //$NON-NLS-1$
         }
+
+        JmcLogger.info(Cwa14890OneV1Connection.class.getName(), "open", "Verificado correctamente el certificado de la tarjeta"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Clave publica del certificado de componente de la tarjeta.
         // Necesario para autenticacion interna y externa.
@@ -245,9 +243,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
         catch (final IOException e) {
         	conn.close();
-            throw new ApduConnectionException(
-        		"No se pudo leer certificado de componente", e //$NON-NLS-1$
-            );
+            throw new ApduConnectionException("No se pudo leer certificado de componente", e); //$NON-NLS-1$
 		}
 
         // --- STAGE 2 ---
@@ -258,10 +254,14 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
         catch (final Exception e) {
             conn.close();
-            throw new ApduConnectionException(
-        		"Error al verificar la cadena de certificados del controlador", e //$NON-NLS-1$
-    		);
+            throw new ApduConnectionException("Error al verificar la cadena de certificados del controlador", e); //$NON-NLS-1$
         }
+
+        JmcLogger.info(
+    		Cwa14890OneV1Connection.class.getName(),
+    		"open", //$NON-NLS-1$
+    		"Verificada correctamente la cadena de certificados del controlador" //$NON-NLS-1$
+		);
 
         // --- STAGE 3 ---
         // Autenticacion interna (el driver comprueba la tarjeta)
@@ -272,9 +272,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
         catch (final IOException e1) {
             conn.close();
-            throw new SecureChannelException(
-        		"No se pudo generar el array de aleatorios", e1 //$NON-NLS-1$
-    		);
+            throw new SecureChannelException("No se pudo generar el array de aleatorios", e1); //$NON-NLS-1$
         }
 
         final byte[] kicc;
@@ -287,6 +285,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         		"Error durante el proceso de autenticacion interna de la tarjeta", e //$NON-NLS-1$
     		);
         }
+
+        JmcLogger.info(
+    		Cwa14890OneV1Connection.class.getName(),
+    		"open", //$NON-NLS-1$
+    		"Autenticacion interna de la tarjeta completada" //$NON-NLS-1$
+		);
 
         // --- STAGE 4 ---
         // Autenticacion externa (la tarjeta comprueba el driver)
@@ -302,6 +306,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         		"Error durante el proceso de autenticacion externa de la tarjeta", e //$NON-NLS-1$
     		);
         }
+
+        JmcLogger.info(
+    		Cwa14890OneV1Connection.class.getName(),
+    		"open", //$NON-NLS-1$
+    		"Autenticacion externa de la tarjeta completada" //$NON-NLS-1$
+		);
 
         // --- STAGE 5 ---
         // Esta fase no pertenece al procedimiento de apertura del canal seguro (ya esta
@@ -336,6 +346,12 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
         ssc = generateSsc(randomIfd, randomIcc);
 
+        JmcLogger.info(
+    		Cwa14890OneV1Connection.class.getName(),
+    		"open", //$NON-NLS-1$
+    		"Generadas claves y contador de secuencia para el canal CWA-14890" //$NON-NLS-1$
+		);
+
         openState = true;
     }
 
@@ -351,10 +367,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
         final byte[] keyEnc = new byte[16];
         System.arraycopy(
-    		cryptoHelper.digest(
-				CryptoHelper.DigestAlgorithm.SHA1,
-				kidficcConcat
-			),
+    		cryptoHelper.digest(DigestAlgorithm.SHA1, kidficcConcat),
 			0,
 			keyEnc,
 			0,
@@ -377,10 +390,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
         final byte[] keyMac = new byte[16];
         System.arraycopy(
-    		cryptoHelper.digest(
-				CryptoHelper.DigestAlgorithm.SHA1,
-				kidficcConcat
-			),
+    		cryptoHelper.digest(DigestAlgorithm.SHA1, kidficcConcat),
     		0,
     		keyMac,
     		0,
@@ -411,8 +421,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * @param card Tarjeta que se desea autenticar.
      * @param pubConsts Constantes p&uacute;blicas para la apertura de canal CWA-14890.
      * @param randomIfd Aleatorio del desaf&iacute;o del terminal.
-     * @return Mensaje de autenticaci&oacute;n interna firmado por la tarjeta con su clave
-     *         privada de componente.
+     * @return Mensaje de autenticaci&oacute;n interna firmado por la tarjeta con su clave privada de componente.
      * @throws ApduConnectionException Si hay cualquier error durante el proceso. */
     public static byte[] internalAuthGetInternalAuthenticateMessage(final Cwa14890Card card,
     		                                                        final Cwa14890PublicConstants pubConsts,
@@ -434,11 +443,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         }
 
         // Iniciamos la autenticacion interna de la clave privada del certificado de componente
-        return card.getInternalAuthenticateMessage(
-    		randomIfd,
-    		card.getChrCCvIfd(pubConsts)
-		);
-
+        return card.getInternalAuthenticateMessage(randomIfd, card.getChrCCvIfd(pubConsts));
     }
 
     /** Valida un mensaje de autenticaci&oacute;n interna generado por una tarjeta.
@@ -448,7 +453,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * @param ifdPrivateKey Clave privada del certificado de terminal.
      * @param ifdKeyLength Longitud, <u>en octetos</u>, de las claves RSA del certificado de
      *                     componente del terminal.
-     * @param privConsts Constantes privadas para la apertura de canal CWA-14890.
      * @param pubConsts Constantes p&uacute;blicas para la apertura de canal CWA-14890.
      * @param iccPublicKey Clave p&uacute;blica del certificado de componente.
      * @param cryptoHelper Utilidad para la ejecuci&oacute;n de funciones criptogr&aacute;ficas.
@@ -459,15 +463,11 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     				                                                     final byte[] randomIfd,
     				                                                     final RSAPrivateKey ifdPrivateKey,
     				                                                     final int ifdKeyLength,
-    			                                                         final Cwa14890PrivateConstants privConsts,
     	    		                                                     final Cwa14890PublicConstants pubConsts,
     			                                                         final RSAPublicKey iccPublicKey,
     			                                                         final CryptoHelper cryptoHelper) throws IOException {
         // -- Descifrado con la clave privada del Terminal
-        final byte[] sigMin = cryptoHelper.rsaDecrypt(
-    		sigMinCiphered,
-    		ifdPrivateKey
-		);
+        final byte[] sigMin = cryptoHelper.rsaDecrypt(sigMinCiphered, ifdPrivateKey);
 
         // Este resultado es el resultado de la funcion SIGMIN que es minimo de SIG (los
         // datos sobre los que se ejecuto la funcion) y N.ICC-SIG.
@@ -518,7 +518,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // Bytes [Kicc] Semilla de 32 [KICC_LENGTH] bytes generada por la tarjeta para la derivacion de claves
         // Bytes [h: PRND1||Kicc||RND.IFD||SN.IFD] Hash SHA1
         // Ultimo Byte: Relleno segun ISO-9796-2 (option 1)
-        final byte[] prnd1 = new byte[ifdKeyLength - KICC_LENGTH - CryptoHelper.DigestAlgorithm.SHA1.getDigestLength() - 2];
+        final byte[] prnd1 = new byte[ifdKeyLength - KICC_LENGTH - DigestAlgorithm.SHA1.getDigestLength() - 2];
         System.arraycopy(
     		desMsg,
     		1,
@@ -536,7 +536,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     		kicc.length
 		);
 
-        final byte[] hash = new byte[CryptoHelper.DigestAlgorithm.SHA1.getDigestLength()];
+        final byte[] hash = new byte[DigestAlgorithm.SHA1.getDigestLength()];
         System.arraycopy(
     		desMsg,
     		prnd1.length + kicc.length + 1,
@@ -559,10 +559,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         baos.write(randomIfd);
         baos.write(chrCCvIfd);
 
-        final byte[] calculatedHash = cryptoHelper.digest(
-    		CryptoHelper.DigestAlgorithm.SHA1,
-    		baos.toByteArray()
-		);
+        final byte[] calculatedHash = cryptoHelper.digest(DigestAlgorithm.SHA1, baos.toByteArray());
         if (!HexUtils.arrayEquals(hash, calculatedHash)) {
             throw new SecureChannelException(
         		"Error en la comprobacion de la clave de autenticacion interna. Se obtuvo el hash '" + //$NON-NLS-1$
@@ -580,13 +577,10 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * @param iccPublicKey Clave p&uacute;blica del certificado de componente.
      * @return Semilla de 32 [KICC_LENGTH] bits, generada por la tarjeta, para la derivaci&oacute;n de
      *         claves del canal seguro.
-     * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
-     * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes. */
+     * @throws IOException Cuando ocurre un error en el cifrado/descifrado de los mensajes o
+     *                     en la comunicaci&oacute;n con la tarjeta. */
     private byte[] internalAuthentication(final byte[] randomIfd,
-    		                              final RSAPublicKey iccPublicKey) throws SecureChannelException,
-                                                                                  ApduConnectionException,
-                                                                                  IOException {
+    		                              final RSAPublicKey iccPublicKey) throws IOException {
 
         // Iniciamos la autenticacion interna de la clave privada del certificado de componente
         final byte[] sigMinCiphered = internalAuthGetInternalAuthenticateMessage(card, pubConsts, randomIfd);
@@ -599,7 +593,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
     		randomIfd,
     		card.getIfdPrivateKey(privConsts),
     		card.getIfdKeyLength(pubConsts),
-    		privConsts,
     		pubConsts,
     		iccPublicKey,
     		cryptoHelper
@@ -614,8 +607,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
      * @return Semilla de 32 [KIFD_LENGTH] bytes, generada por el Terminal, para la
      *         derivaci&oacute;n de claves del canal seguro.
      * @throws SecureChannelException Cuando ocurre un error en el establecimiento de claves.
-     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con
-     *                                 la tarjeta.
+     * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta.
      * @throws IOException Cuando ocurre un error en el cifrado o en el descifrado de los mensajes. */
     private byte[] externalAuthentication(final byte[] serial,
     		                              final byte[] randomIcc,
@@ -631,21 +623,21 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         // y
         // SIG= DS[SK.IFD.AUT]
         // (
-        // "6A" = relleno segun ISO 9796-2 (DS scheme 1)
-        // PRND2 ="XX ... XX" bytes de relleno aleatorios generados por el terminal. La longitud
-        // debe ser la necesaria para que la longitud desde "6A" hasta "BC" coincida con
-        // la longitud de la clave RSA
-        // KIFD = Semilla de 32 [KIFD_LENGTH] bytes, generada por el terminal, para la derivacion
-    	// de claves del canal seguro.
-        // h[PRND2 || KIFD || RND.ICC || SN.ICC ] = hash SHA1 que incluye los datos aportados por
-        // la tarjeta y por el terminal
-        // "BC" = relleno segun ISO 9796-2 (option 1)
+        //   "6A" = relleno segun ISO 9796-2 (DS scheme 1)
+        //   PRND2 ="XX ... XX" bytes de relleno aleatorios generados por el terminal.
+    	//   La longitud debe ser la necesaria para que la longitud desde "6A" hasta "BC" coincida con
+        //   la longitud de la clave RSA
+        //   KIFD = Semilla de 32 [KIFD_LENGTH] bytes, generada por el terminal, para la derivacion
+    	//   de claves del canal seguro.
+        //   h[PRND2 || KIFD || RND.ICC || SN.ICC ] = hash SHA1 que incluye los datos aportados por
+        //   la tarjeta y por el terminal
+        //   "BC" = relleno segun ISO 9796-2 (option 1)
         // )
         // ----------------------
 
         // Generamos PRN2 y Kifd como valores aleatorios de la longitud apropiada
         final byte[] prnd2 = cryptoHelper.generateRandomBytes(
-    		card.getIfdKeyLength(pubConsts) - 2 - KIFD_LENGTH - CryptoHelper.DigestAlgorithm.SHA1.getDigestLength()
+    		card.getIfdKeyLength(pubConsts) - 2 - KIFD_LENGTH - DigestAlgorithm.SHA1.getDigestLength()
 		);
         final byte[] kifd = cryptoHelper.generateRandomBytes(KIFD_LENGTH);
 
@@ -662,7 +654,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         baos.write(serial);
 
         final byte[] hash = cryptoHelper.digest(
-    		CryptoHelper.DigestAlgorithm.SHA1,
+    		DigestAlgorithm.SHA1,
     		baos.toByteArray()
 		);
 
@@ -694,9 +686,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
 
         final boolean valid = card.externalAuthentication(extAuthenticationData);
         if (!valid) {
-            throw new SecureChannelException(
-        		"Error durante la autenticacion externa del canal seguro" //$NON-NLS-1$
-            );
+            throw new SecureChannelException("Error durante la autenticacion externa del canal seguro"); //$NON-NLS-1$
         }
 
         return kifd;
@@ -736,13 +726,7 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         final CommandApdu protectedApdu;
         try {
         	ssc = increment(ssc);
-            protectedApdu = apduEncrypter.protectAPDU(
-        		command,
-        		kenc,
-        		kmac,
-        		ssc,
-        		cryptoHelper
-    		);
+            protectedApdu = apduEncrypter.protectAPDU(command, kenc, kmac, ssc, cryptoHelper);
         }
         catch (final IOException e) {
             throw new SecureChannelException(
@@ -797,16 +781,6 @@ public class Cwa14890OneV1Connection implements Cwa14890Connection {
         open();
 
         return atr;
-    }
-
-    @Override
-    public void addCardConnectionListener(final CardConnectionListener ccl) {
-        subConnection.addCardConnectionListener(ccl);
-    }
-
-    @Override
-    public void removeCardConnectionListener(final CardConnectionListener ccl) {
-        subConnection.removeCardConnectionListener(ccl);
     }
 
     @Override

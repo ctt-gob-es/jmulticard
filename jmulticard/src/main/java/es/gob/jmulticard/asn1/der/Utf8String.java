@@ -79,11 +79,11 @@ public final class Utf8String extends DecoderObject {
 		}
     }
 
-    private transient String stringValue = null;
+    private String stringValue = null;
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-    	final Tlv tlv = new Tlv(getRawDerValue());
+    	final Tlv tlv = new Tlv(getBytes());
     	checkTag(tlv.getTag());
     	stringValue = new String(tlv.getValue(), StandardCharsets.UTF_8);
     }

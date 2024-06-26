@@ -55,12 +55,10 @@ public final class AlgorithmIdentifer extends Sequence {
 	/** Construye un objeto ASN&#46;1 PKCS#1 <i>AlgorithmIdentifer</i>. */
 	public AlgorithmIdentifer() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					ObjectIdentifier.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				ObjectIdentifier.class,
+				false
+			)
 		);
 	}
 

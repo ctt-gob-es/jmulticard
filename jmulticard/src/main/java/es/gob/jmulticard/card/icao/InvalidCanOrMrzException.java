@@ -26,5 +26,4 @@ public final class InvalidCanOrMrzException extends IcaoException {
 			                        final String description) {
         super(retCode, origin, description);
 	}
-
 }

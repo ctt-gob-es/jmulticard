@@ -16,7 +16,7 @@ abstract class MseSetApduCommand extends CommandApdu {
     protected static final byte SET_FOR_COMPUTATION = (byte) 0x41;
 
     /** <i>Control Reference Template for Digital Signature</i> (DST). */
-    protected static final byte DST = (byte) 0xB6;
+    protected static final byte DST = (byte) 0xb6;
 
 	/** <i>Control Reference Template for Authentication</i> (AT). */
     protected static final byte AT = (byte) 0xa4;
@@ -41,13 +41,6 @@ abstract class MseSetApduCommand extends CommandApdu {
 			                    final byte param1,
 			                    final byte param2,
 			                    final byte[] data) {
-		super(
-			cla,
-			INS_MANAGE_ENVIROMENT,
-			param1,
-			param2,
-			data,
-			null
-		);
+		super(cla, INS_MANAGE_ENVIROMENT, param1, param2, data, null);
 	}
 }

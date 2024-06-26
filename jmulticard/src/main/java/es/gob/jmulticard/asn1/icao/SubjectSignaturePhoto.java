@@ -26,9 +26,8 @@ public final class SubjectSignaturePhoto extends DecoderObject {
 
     /** Obtiene la foto de la firma o marca habitual del titular en formato JPEG2000.
      * @return Foto de la firma del titular en formato JPEG2000.
-     * @throws IOException Si no se puede leer la foto de la firma del titular. */
+     * @throws IOException Si la imagen no est&aacute; en formato JPEG2000. */
 	public byte[] getSubjectSignaturePhotoAsJpeg2k() throws IOException {
-		return IcaoUtils.extractImage(getBytes());
+		return IcaoUtils.extractJpeg2kImage(getBytes());
 	}
-
 }

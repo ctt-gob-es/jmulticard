@@ -52,10 +52,10 @@ public final class StatusWord implements Serializable {
 	private static final long serialVersionUID = -735824987343408119L;
 
     /** Octeto m&aacute;s significativo dentro de la palabra de estado. */
-    private transient byte msb = 0x00;
+    private byte msb = 0x00;
 
     /** Octeto menos significativo dentro de la palabra de estado. */
-    private transient byte lsb = 0x00;
+    private byte lsb = 0x00;
 
     /** Construye una palabra de estado de una APDU.
      * @param mostSigniticativeByte Octeto m&aacute;s significativo de la palabra de estado.
@@ -93,10 +93,7 @@ public final class StatusWord implements Serializable {
             return false;
         }
         final StatusWord other = (StatusWord) obj;
-        if (lsb == other.lsb && msb == other.msb) {
-            return true;
-        }
-        return false;
+        return lsb == other.lsb && msb == other.msb;
     }
 
     /** Devuelve un c&oacute;digo <i>hash</i> para la palabra de estado.

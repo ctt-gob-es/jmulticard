@@ -41,12 +41,12 @@ package es.gob.jmulticard.asn1.der;
 
 import es.gob.jmulticard.asn1.OptionalDecoderObjectElement;
 
-/** Tipo ASN&#46;1 <i>Set</i> (de cero a N elementos, el orden no es relevante).
+/** Tipo ASN&#46;1 <i>Set</i> (de cero a <i>N</i> elementos, el orden no es relevante).
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public abstract class Set extends Sequence {
 
     /** Construye el <i>Set</i> ASN&#46;1.
-     * @param types Tipos de datos ASN&#46;1 de cada elemento de <i>Set</i>. */
+     * @param types Tipos de datos ASN&#46;1 de cada elemento del <i>Set</i>. */
     protected Set(final OptionalDecoderObjectElement... types) {
 		super(types);
 	}
@@ -54,8 +54,7 @@ public abstract class Set extends Sequence {
 	private static final byte TAG_SET = (byte) 0x31;
 
 	@Override
-    protected byte getDefaultTag() {
+    protected final byte getDefaultTag() {
 		return TAG_SET;
 	}
-
 }

@@ -3,6 +3,7 @@ package es.gob.jmulticard.connection;
 import java.util.Arrays;
 
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 import es.gob.jmulticard.apdu.iso7816four.GetResponseApduCommand;
@@ -33,7 +34,7 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 	protected abstract ResponseApdu internalTransmit(byte[] apdu) throws ApduConnectionException;
 
 	@Override
-	public ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
+	public final ResponseApdu transmit(final CommandApdu command) throws ApduConnectionException {
         if (command == null) {
             throw new IllegalArgumentException(
         		"No se puede transmitir una APDU nula" //$NON-NLS-1$
@@ -43,6 +44,12 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 		final byte[] sendApdu;
 		// Si la APDU es mayor que el tamano maximo la troceamos y la envolvemos
 		if (command.getBytes().length > getMaxApduSize()) {
+
+			JmcLogger.debug(
+				AbstractApduConnectionIso7816.class.getName(),
+				"transmit", //$NON-NLS-1$
+				"La APDU supera el tamano maximo, se envolvera en fragmentos mas pequenos" //$NON-NLS-1$
+			);
 
 			int sentLength = 0;
 			final int totalLength = command.getBytes().length;
@@ -126,5 +133,4 @@ public abstract class AbstractApduConnectionIso7816 implements ApduConnection {
 
         return response;
 	}
-
 }

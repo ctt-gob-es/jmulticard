@@ -51,11 +51,11 @@ public class DerInteger extends DecoderObject {
 
 	private static final byte TAG_INTEGER = (byte) 0x02;
 
-	private transient BigInteger value = null;
+	private BigInteger value = null;
 
 	@Override
     protected void decodeValue() throws TlvException {
-		value = new BigInteger(new Tlv(getRawDerValue()).getValue());
+		value = new BigInteger(new Tlv(getBytes()).getValue());
 	}
 
 	/** Obtiene el valor entero (<code>BigInteger</code>) del objeto.
@@ -76,5 +76,4 @@ public class DerInteger extends DecoderObject {
 	public String toString() {
 		return getIntegerValue().toString();
 	}
-
 }

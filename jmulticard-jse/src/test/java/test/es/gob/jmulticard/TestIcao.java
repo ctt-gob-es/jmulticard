@@ -2,21 +2,24 @@ package test.es.gob.jmulticard;
 
 import java.io.IOException;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.asn1.icao.AdditionalPersonalDetails;
 import es.gob.jmulticard.asn1.icao.Com;
+import es.gob.jmulticard.asn1.icao.SecurityOptions;
 import es.gob.jmulticard.asn1.icao.Sod;
+import es.gob.jmulticard.card.icao.IcaoMrtdWithPace;
 import es.gob.jmulticard.card.icao.Mrz;
 import es.gob.jmulticard.connection.ApduConnection;
-import es.gob.jmulticard.connection.pace.IcaoMrtdWithPace;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de operaciones en MRTD ICAO.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestIcao {
+final class TestIcao {
 
 //	private static final String MRZ =
 //			"P<ESPORTEGA<SANCHEZ<<MARIA<ESTHER<<<<<<<<<<<" + //$NON-NLS-1$
@@ -30,8 +33,8 @@ public final class TestIcao {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testPassportWithPaceReadDgs() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testPassportWithPaceReadDgs() throws Exception {
 
 		// ATR = 3B-88-80-01-E1-F3-5E-11-77-83-D7-00-77
 
@@ -43,6 +46,7 @@ public final class TestIcao {
 			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler(MRZ, (String)null)
 		);
+		Assertions.assertNotNull(passport);
 
 		System.out.println();
 		System.out.println(passport);
@@ -145,8 +149,8 @@ public final class TestIcao {
 		}
 
 		try {
-			final byte[] dg = passport.getDg11();
-			System.out.println(new String(dg));
+			final AdditionalPersonalDetails dg = passport.getDg11();
+			System.out.println(dg);
 			System.out.println();
 		}
 		catch(final Exception e) {
@@ -172,8 +176,8 @@ public final class TestIcao {
 		}
 
 		try {
-			final byte[] dg = passport.getDg14();
-			System.out.println(new String(dg));
+			final SecurityOptions dg = passport.getDg14();
+			System.out.println(dg);
 			System.out.println();
 		}
 		catch(final IOException e) {

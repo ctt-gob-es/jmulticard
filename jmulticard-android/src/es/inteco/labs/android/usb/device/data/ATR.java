@@ -38,14 +38,13 @@ package es.inteco.labs.android.usb.device.data;
 
 /** ATR devuelto por una tarjeta.
  * @author Jose Luis Escanciano Garcia */
-public class ATR {
+public final class ATR {
 
 	private final byte[] atrBytes;
 
 	/** Crea un ATR a partir de sus octetos.
 	 * @param bytes Octetos del ATR */
 	public ATR(final byte[] bytes){
-		super();
 		this.atrBytes = bytes;
 	}
 

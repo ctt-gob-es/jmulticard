@@ -1,7 +1,7 @@
 package test.es.gob.jmulticard.asn1;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.asn1.Asn1Exception;
 import es.gob.jmulticard.asn1.TlvException;
@@ -11,7 +11,7 @@ import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.AccessFlags;
 
 /** Prueba del tipos simples ASN&#46;1. */
-public final class TestAsn1SimpleTypes {
+final class TestAsn1SimpleTypes {
 
 	private static final byte[] SAMPLE_DIGEST_INFO = {
 		(byte)0x30, (byte)0x21, (byte)0x30, (byte)0x09, (byte)0x06, (byte)0x05, (byte)0x2B, (byte)0x0E,
@@ -25,9 +25,10 @@ public final class TestAsn1SimpleTypes {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	public void testDigestInfoCreation() throws Exception {
+	void testDigestInfoCreation() throws Exception {
 		final DigestInfo di = new DigestInfo();
 		di.setDerValue(SAMPLE_DIGEST_INFO);
+		Assertions.assertNotNull(di);
 		System.out.println(di);
 	}
 
@@ -35,7 +36,7 @@ public final class TestAsn1SimpleTypes {
 	 * @throws TlvException Si no se puede crear el TLV. */
 	@Test
 	@SuppressWarnings("static-method")
-    public void testUtf8StringCreationWithBadData() throws TlvException {
+    void testUtf8StringCreationWithBadData() throws TlvException {
 		final Utf8String u = new Utf8String();
 		try {
 			u.setDerValue(new byte[] { (byte)0x00, (byte) 0x01, (byte) 0xff});
@@ -44,14 +45,14 @@ public final class TestAsn1SimpleTypes {
 			System.out.println("Fallo esperado: " + e); //$NON-NLS-1$
 			return;
 		}
-		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
+		Assertions.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
 	}
 
 	/** Prueba la creaci&oacute; de un tipo <code>BitString</code> con datos incorrectos.
 	 * @throws TlvException Si no se puede crear el TLV. */
 	@Test
 	@SuppressWarnings("static-method")
-    public void testBitStringCreationWithBadData() throws TlvException {
+    void testBitStringCreationWithBadData() throws TlvException {
 		final BitString u = new AccessFlags();
 		try {
 			u.setDerValue(new byte[] { (byte)0x00, (byte) 0x01, (byte) 0xff});
@@ -60,7 +61,6 @@ public final class TestAsn1SimpleTypes {
 			System.out.println("Fallo esperado: " + e); //$NON-NLS-1$
 			return;
 		}
-		Assert.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
+		Assertions.fail("Tendria que haber saltado un Asn1Exception"); //$NON-NLS-1$
 	}
-
 }

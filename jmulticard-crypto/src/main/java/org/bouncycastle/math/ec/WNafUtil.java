@@ -2,137 +2,116 @@ package org.bouncycastle.math.ec;
 
 import java.math.BigInteger;
 
-public abstract class WNafUtil
-{
+public abstract class WNafUtil {
+
     public static final String PRECOMP_NAME = "bc_wnaf";
 
-    private static final int[] DEFAULT_WINDOW_SIZE_CUTOFFS = new int[]{ 13, 41, 121, 337, 897, 2305 };
+    private static final int[] DEFAULT_WINDOW_SIZE_CUTOFFS = { 13, 41, 121, 337, 897, 2305 };
     private static final int MAX_WIDTH = 16;
 
-    private static final byte[] EMPTY_BYTES = new byte[0];
-    private static final int[] EMPTY_INTS = new int[0];
-    private static final ECPoint[] EMPTY_POINTS = new ECPoint[0];
+    private static final byte[] EMPTY_BYTES = {};
+    private static final int[] EMPTY_INTS = {};
+    private static final ECPoint[] EMPTY_POINTS = {};
 
-    public static void configureBasepoint(ECPoint p)
-    {
+    public static void configureBasepoint(final ECPoint p) {
         final ECCurve c = p.getCurve();
-        if (null == c)
-        {
+        if (null == c) {
             return;
         }
 
-        BigInteger n = c.getOrder();
-        int bits = (null == n) ? c.getFieldSize() + 1 : n.bitLength();
+        final BigInteger n = c.getOrder();
+        final int bits = null == n ? c.getFieldSize() + 1 : n.bitLength();
         final int confWidth = Math.min(MAX_WIDTH, getWindowSize(bits) + 3);
 
-        c.precompute(p, PRECOMP_NAME, new PreCompCallback()
-        {
-            @Override
-			public PreCompInfo precompute(PreCompInfo existing)
-            {
-                WNafPreCompInfo existingWNaf = (existing instanceof WNafPreCompInfo) ? (WNafPreCompInfo)existing : null;
+        c.precompute(p, PRECOMP_NAME, existing -> {
+		    final WNafPreCompInfo existingWNaf = existing instanceof WNafPreCompInfo ? (WNafPreCompInfo)existing : null;
 
-                if (null != existingWNaf && existingWNaf.getConfWidth() == confWidth)
-                {
-                    existingWNaf.setPromotionCountdown(0);
-                    return existingWNaf;
-                }
+		    if (null != existingWNaf && existingWNaf.getConfWidth() == confWidth) {
+		        existingWNaf.setPromotionCountdown(0);
+		        return existingWNaf;
+		    }
 
-                WNafPreCompInfo result = new WNafPreCompInfo();
+		    final WNafPreCompInfo result = new WNafPreCompInfo();
 
-                result.setPromotionCountdown(0);
-                result.setConfWidth(confWidth);
+		    result.setPromotionCountdown(0);
+		    result.setConfWidth(confWidth);
 
-                if (null != existingWNaf)
-                {
-                    result.setPreComp(existingWNaf.getPreComp());
-                    result.setPreCompNeg(existingWNaf.getPreCompNeg());
-                    result.setTwice(existingWNaf.getTwice());
-                    result.setWidth(existingWNaf.getWidth());
-                }
+		    if (null != existingWNaf) {
+		        result.setPreComp(existingWNaf.getPreComp());
+		        result.setPreCompNeg(existingWNaf.getPreCompNeg());
+		        result.setTwice(existingWNaf.getTwice());
+		        result.setWidth(existingWNaf.getWidth());
+		    }
 
-                return result;
-            }
-        });
+		    return result;
+		});
     }
 
-    public static int[] generateCompactNaf(BigInteger k)
-    {
-        if ((k.bitLength() >>> 16) != 0)
-        {
+    public static int[] generateCompactNaf(final BigInteger k) {
+        if (k.bitLength() >>> 16 != 0) {
             throw new IllegalArgumentException("'k' must have bitlength < 2^16");
         }
-        if (k.signum() == 0)
-        {
+        if (k.signum() == 0) {
             return EMPTY_INTS;
         }
 
-        BigInteger _3k = k.shiftLeft(1).add(k);
+        final BigInteger _3k = k.shiftLeft(1).add(k);
 
-        int bits = _3k.bitLength();
+        final int bits = _3k.bitLength();
         int[] naf = new int[bits >> 1];
 
-        BigInteger diff = _3k.xor(k);
+        final BigInteger diff = _3k.xor(k);
 
-        int highBit = bits - 1, length = 0, zeroes = 0;
-        for (int i = 1; i < highBit; ++i)
-        {
-            if (!diff.testBit(i))
-            {
+        final int highBit = bits - 1;
+		int length = 0, zeroes = 0;
+        for (int i = 1; i < highBit; ++i) {
+            if (!diff.testBit(i)) {
                 ++zeroes;
                 continue;
             }
 
-            int digit  = k.testBit(i) ? -1 : 1;
-            naf[length++] = (digit << 16) | zeroes;
+            final int digit  = k.testBit(i) ? -1 : 1;
+            naf[length++] = digit << 16 | zeroes;
             zeroes = 1;
             ++i;
         }
 
-        naf[length++] = (1 << 16) | zeroes;
+        naf[length++] = 1 << 16 | zeroes;
 
-        if (naf.length > length)
-        {
+        if (naf.length > length) {
             naf = trim(naf, length);
         }
 
         return naf;
     }
 
-    public static int[] generateCompactWindowNaf(int width, BigInteger k)
-    {
-        if (width == 2)
-        {
+    public static int[] generateCompactWindowNaf(final int width, BigInteger k) {
+        if (width == 2) {
             return generateCompactNaf(k);
         }
 
-        if (width < 2 || width > 16)
-        {
+        if (width < 2 || width > 16) {
             throw new IllegalArgumentException("'width' must be in the range [2, 16]");
         }
-        if ((k.bitLength() >>> 16) != 0)
-        {
+        if (k.bitLength() >>> 16 != 0) {
             throw new IllegalArgumentException("'k' must have bitlength < 2^16");
         }
-        if (k.signum() == 0)
-        {
+        if (k.signum() == 0) {
             return EMPTY_INTS;
         }
 
         int[] wnaf = new int[k.bitLength() / width + 1];
 
         // 2^width and a mask and sign bit set accordingly
-        int pow2 = 1 << width;
-        int mask = pow2 - 1;
-        int sign = pow2 >>> 1;
+        final int pow2 = 1 << width;
+        final int mask = pow2 - 1;
+        final int sign = pow2 >>> 1;
 
         boolean carry = false;
         int length = 0, pos = 0;
 
-        while (pos <= k.bitLength())
-        {
-            if (k.testBit(pos) == carry)
-            {
+        while (pos <= k.bitLength()) {
+            if (k.testBit(pos) == carry) {
                 ++pos;
                 continue;
             }
@@ -140,8 +119,7 @@ public abstract class WNafUtil
             k = k.shiftRight(pos);
 
             int digit = k.intValue() & mask;
-            if (carry)
-            {
+            if (carry) {
                 ++digit;
             }
 
@@ -151,8 +129,8 @@ public abstract class WNafUtil
                 digit -= pow2;
             }
 
-            int zeroes = length > 0 ? pos - 1 : pos;
-            wnaf[length++] = (digit << 16) | zeroes;
+            final int zeroes = length > 0 ? pos - 1 : pos;
+            wnaf[length++] = digit << 16 | zeroes;
             pos = width;
         }
 
@@ -165,9 +143,9 @@ public abstract class WNafUtil
         return wnaf;
     }
 
-    public static byte[] generateJSF(BigInteger g, BigInteger h)
+    public static byte[] generateJSF(final BigInteger g, final BigInteger h)
     {
-        int digits = Math.max(g.bitLength(), h.bitLength()) + 1;
+        final int digits = Math.max(g.bitLength(), h.bitLength()) + 1;
         byte[] jsf = new byte[digits];
 
         BigInteger k0 = g, k1 = h;
@@ -176,13 +154,13 @@ public abstract class WNafUtil
         int offset = 0;
         while ((d0 | d1) != 0 || k0.bitLength() > offset || k1.bitLength() > offset)
         {
-            int n0 = ((k0.intValue() >>> offset) + d0) & 7, n1 = ((k1.intValue() >>> offset) + d1) & 7;
+            final int n0 = (k0.intValue() >>> offset) + d0 & 7, n1 = (k1.intValue() >>> offset) + d1 & 7;
 
             int u0 = n0 & 1;
             if (u0 != 0)
             {
-                u0 -= (n0 & 2);
-                if ((n0 + u0) == 4 && (n1 & 3) == 2)
+                u0 -= n0 & 2;
+                if (n0 + u0 == 4 && (n1 & 3) == 2)
                 {
                     u0 = -u0;
                 }
@@ -191,18 +169,18 @@ public abstract class WNafUtil
             int u1 = n1 & 1;
             if (u1 != 0)
             {
-                u1 -= (n1 & 2);
-                if ((n1 + u1) == 4 && (n0 & 3) == 2)
+                u1 -= n1 & 2;
+                if (n1 + u1 == 4 && (n0 & 3) == 2)
                 {
                     u1 = -u1;
                 }
             }
 
-            if ((d0 << 1) == 1 + u0)
+            if (d0 << 1 == 1 + u0)
             {
                 d0 ^= 1;
             }
-            if ((d1 << 1) == 1 + u1)
+            if (d1 << 1 == 1 + u1)
             {
                 d1 ^= 1;
             }
@@ -214,7 +192,7 @@ public abstract class WNafUtil
                 k1 = k1.shiftRight(30);
             }
 
-            jsf[j++] = (byte)((u0 << 4) | (u1 & 0xF));
+            jsf[j++] = (byte)(u0 << 4 | u1 & 0xF);
         }
 
         // Reduce the JSF array to its actual length
@@ -226,19 +204,19 @@ public abstract class WNafUtil
         return jsf;
     }
 
-    public static byte[] generateNaf(BigInteger k)
+    public static byte[] generateNaf(final BigInteger k)
     {
         if (k.signum() == 0)
         {
             return EMPTY_BYTES;
         }
 
-        BigInteger _3k = k.shiftLeft(1).add(k);
+        final BigInteger _3k = k.shiftLeft(1).add(k);
 
-        int digits = _3k.bitLength() - 1;
-        byte[] naf = new byte[digits];
+        final int digits = _3k.bitLength() - 1;
+        final byte[] naf = new byte[digits];
 
-        BigInteger diff = _3k.xor(k);
+        final BigInteger diff = _3k.xor(k);
 
         for (int i = 1; i < digits; ++i)
         {
@@ -266,7 +244,7 @@ public abstract class WNafUtil
      * </code>, where the <code>k<sub>i</sub></code> denote the elements of the
      * returned <code>byte[]</code>.
      */
-    public static byte[] generateWindowNaf(int width, BigInteger k)
+    public static byte[] generateWindowNaf(final int width, BigInteger k)
     {
         if (width == 2)
         {
@@ -285,9 +263,9 @@ public abstract class WNafUtil
         byte[] wnaf = new byte[k.bitLength() + 1];
 
         // 2^width and a mask and sign bit set accordingly
-        int pow2 = 1 << width;
-        int mask = pow2 - 1;
-        int sign = pow2 >>> 1;
+        final int pow2 = 1 << width;
+        final int mask = pow2 - 1;
+        final int sign = pow2 >>> 1;
 
         boolean carry = false;
         int length = 0, pos = 0;
@@ -314,7 +292,7 @@ public abstract class WNafUtil
                 digit -= pow2;
             }
 
-            length += (length > 0) ? pos - 1 : pos;
+            length += length > 0 ? pos - 1 : pos;
             wnaf[length++] = (byte)digit;
             pos = width;
         }
@@ -324,77 +302,77 @@ public abstract class WNafUtil
         {
             wnaf = trim(wnaf, length);
         }
-        
+
         return wnaf;
     }
 
-    public static int getNafWeight(BigInteger k)
+    public static int getNafWeight(final BigInteger k)
     {
         if (k.signum() == 0)
         {
             return 0;
         }
 
-        BigInteger _3k = k.shiftLeft(1).add(k);
-        BigInteger diff = _3k.xor(k);
+        final BigInteger _3k = k.shiftLeft(1).add(k);
+        final BigInteger diff = _3k.xor(k);
 
         return diff.bitCount();
     }
 
-    public static WNafPreCompInfo getWNafPreCompInfo(ECPoint p)
+    public static WNafPreCompInfo getWNafPreCompInfo(final ECPoint p)
     {
         return getWNafPreCompInfo(p.getCurve().getPreCompInfo(p, PRECOMP_NAME));
     }
 
-    public static WNafPreCompInfo getWNafPreCompInfo(PreCompInfo preCompInfo)
+    public static WNafPreCompInfo getWNafPreCompInfo(final PreCompInfo preCompInfo)
     {
-        return (preCompInfo instanceof WNafPreCompInfo) ? (WNafPreCompInfo)preCompInfo : null;
+        return preCompInfo instanceof WNafPreCompInfo ? (WNafPreCompInfo)preCompInfo : null;
     }
 
     /**
      * Determine window width to use for a scalar multiplication of the given size.
-     * 
+     *
      * @param bits the bit-length of the scalar to multiply by
      * @return the window size to use
      */
-    public static int getWindowSize(int bits)
+    public static int getWindowSize(final int bits)
     {
         return getWindowSize(bits, DEFAULT_WINDOW_SIZE_CUTOFFS, MAX_WIDTH);
     }
 
     /**
      * Determine window width to use for a scalar multiplication of the given size.
-     * 
+     *
      * @param bits the bit-length of the scalar to multiply by
-     * @param maxWidth the maximum window width to return 
+     * @param maxWidth the maximum window width to return
      * @return the window size to use
      */
-    public static int getWindowSize(int bits, int maxWidth)
+    public static int getWindowSize(final int bits, final int maxWidth)
     {
         return getWindowSize(bits, DEFAULT_WINDOW_SIZE_CUTOFFS, maxWidth);
     }
 
     /**
      * Determine window width to use for a scalar multiplication of the given size.
-     * 
+     *
      * @param bits the bit-length of the scalar to multiply by
      * @param windowSizeCutoffs a monotonically increasing list of bit sizes at which to increment the window width
      * @return the window size to use
      */
-    public static int getWindowSize(int bits, int[] windowSizeCutoffs)
+    public static int getWindowSize(final int bits, final int[] windowSizeCutoffs)
     {
         return getWindowSize(bits, windowSizeCutoffs, MAX_WIDTH);
     }
 
     /**
      * Determine window width to use for a scalar multiplication of the given size.
-     * 
+     *
      * @param bits the bit-length of the scalar to multiply by
      * @param windowSizeCutoffs a monotonically increasing list of bit sizes at which to increment the window width
-     * @param maxWidth the maximum window width to return 
+     * @param maxWidth the maximum window width to return
      * @return the window size to use
      */
-    public static int getWindowSize(int bits, int[] windowSizeCutoffs, int maxWidth)
+    public static int getWindowSize(final int bits, final int[] windowSizeCutoffs, final int maxWidth)
     {
         int w = 0;
         for (; w < windowSizeCutoffs.length; ++w)
@@ -415,12 +393,12 @@ public abstract class WNafUtil
         return (WNafPreCompInfo)c.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
             @Override
-			public PreCompInfo precompute(PreCompInfo existing)
+			public PreCompInfo precompute(final PreCompInfo existing)
             {
-                WNafPreCompInfo existingWNaf = (existing instanceof WNafPreCompInfo) ? (WNafPreCompInfo)existing : null;
+                final WNafPreCompInfo existingWNaf = existing instanceof WNafPreCompInfo ? (WNafPreCompInfo)existing : null;
 
                 int width = Math.max(2, Math.min(MAX_WIDTH, minWidth));
-                int reqPreCompLen = 1 << (width - 2);
+                int reqPreCompLen = 1 << width - 2;
 
                 if (checkExisting(existingWNaf, width, reqPreCompLen, includeNegated))
                 {
@@ -428,17 +406,17 @@ public abstract class WNafUtil
                     return existingWNaf;
                 }
 
-                WNafPreCompInfo result = new WNafPreCompInfo();
+                final WNafPreCompInfo result = new WNafPreCompInfo();
 
                 ECPoint[] preComp = null, preCompNeg = null;
                 ECPoint twiceP = null;
 
                 if (null != existingWNaf)
                 {
-                    int promotionCountdown = existingWNaf.decrementPromotionCountdown();
+                    final int promotionCountdown = existingWNaf.decrementPromotionCountdown();
                     result.setPromotionCountdown(promotionCountdown);
 
-                    int confWidth = existingWNaf.getConfWidth();
+                    final int confWidth = existingWNaf.getConfWidth();
                     result.setConfWidth(confWidth);
 
                     preComp = existingWNaf.getPreComp();
@@ -447,7 +425,7 @@ public abstract class WNafUtil
                 }
 
                 width = Math.min(MAX_WIDTH, Math.max(result.getConfWidth(), width));
-                reqPreCompLen = 1 << (width - 2);
+                reqPreCompLen = 1 << width - 2;
 
                 int iniPreCompLen = 0;
                 if (null == preComp)
@@ -495,7 +473,7 @@ public abstract class WNafUtil
                                  * where 'twiceP' is "affine", so that the subsequent additions are cheaper. This
                                  * also requires scaling the initial point's X, Y coordinates, and reversing the
                                  * isomorphism as part of the subsequent normalization.
-                                 * 
+                                 *
                                  *  NOTE: The correctness of this optimization depends on:
                                  *      1) additions do not use the curve's A, B coefficients.
                                  *      2) no special cases (i.e. Q +/- Q) when calculating 1P, 3P, 5P, ...
@@ -512,7 +490,7 @@ public abstract class WNafUtil
                                         isoTwiceP = c.createPoint(twiceP.getXCoord().toBigInteger(), twiceP.getYCoord()
                                             .toBigInteger());
 
-                                        ECFieldElement iso2 = iso.square(), iso3 = iso2.multiply(iso);
+                                        final ECFieldElement iso2 = iso.square(), iso3 = iso2.multiply(iso);
                                         last = last.scaleX(iso2).scaleY(iso3);
 
                                         if (iniPreCompLen == 0)
@@ -548,7 +526,7 @@ public abstract class WNafUtil
                     if (null == preCompNeg)
                     {
                         pos = 0;
-                        preCompNeg = new ECPoint[reqPreCompLen]; 
+                        preCompNeg = new ECPoint[reqPreCompLen];
                     }
                     else
                     {
@@ -573,7 +551,7 @@ public abstract class WNafUtil
                 return result;
             }
 
-            private boolean checkExisting(WNafPreCompInfo existingWNaf, int width, int reqPreCompLen, boolean includeNegated)
+            private boolean checkExisting(final WNafPreCompInfo existingWNaf, final int width, final int reqPreCompLen, final boolean includeNegated)
             {
                 return null != existingWNaf
                     && existingWNaf.getWidth() >= Math.max(existingWNaf.getConfWidth(), width)
@@ -581,7 +559,7 @@ public abstract class WNafUtil
                     && (!includeNegated || checkTable(existingWNaf.getPreCompNeg(), reqPreCompLen));
             }
 
-            private boolean checkTable(ECPoint[] table, int reqLen)
+            private boolean checkTable(final ECPoint[] table, final int reqLen)
             {
                 return null != table && table.length >= reqLen;
             }
@@ -596,12 +574,12 @@ public abstract class WNafUtil
         return (WNafPreCompInfo)c.precompute(p, PRECOMP_NAME, new PreCompCallback()
         {
             @Override
-			public PreCompInfo precompute(PreCompInfo existing)
+			public PreCompInfo precompute(final PreCompInfo existing)
             {
-                WNafPreCompInfo existingWNaf = (existing instanceof WNafPreCompInfo) ? (WNafPreCompInfo)existing : null;
+                final WNafPreCompInfo existingWNaf = existing instanceof WNafPreCompInfo ? (WNafPreCompInfo)existing : null;
 
-                int width = fromWNaf.getWidth();
-                int reqPreCompLen = fromWNaf.getPreComp().length;
+                final int width = fromWNaf.getWidth();
+                final int reqPreCompLen = fromWNaf.getPreComp().length;
 
                 if (checkExisting(existingWNaf, width, reqPreCompLen, includeNegated))
                 {
@@ -613,19 +591,19 @@ public abstract class WNafUtil
                  * TODO Ideally this method would support incremental calculation, but given the
                  * existing use-cases it would be of little-to-no benefit.
                  */
-                WNafPreCompInfo result = new WNafPreCompInfo();
+                final WNafPreCompInfo result = new WNafPreCompInfo();
 
                 result.setPromotionCountdown(fromWNaf.getPromotionCountdown());
 
-                ECPoint twiceFrom = fromWNaf.getTwice();
+                final ECPoint twiceFrom = fromWNaf.getTwice();
                 if (null != twiceFrom)
                 {
-                    ECPoint twice = pointMap.map(twiceFrom);
+                    final ECPoint twice = pointMap.map(twiceFrom);
                     result.setTwice(twice);
                 }
 
-                ECPoint[] preCompFrom = fromWNaf.getPreComp();
-                ECPoint[] preComp = new ECPoint[preCompFrom.length];
+                final ECPoint[] preCompFrom = fromWNaf.getPreComp();
+                final ECPoint[] preComp = new ECPoint[preCompFrom.length];
                 for (int i = 0; i < preCompFrom.length; ++i)
                 {
                     preComp[i] = pointMap.map(preCompFrom[i]);
@@ -635,7 +613,7 @@ public abstract class WNafUtil
 
                 if (includeNegated)
                 {
-                    ECPoint[] preCompNeg = new ECPoint[preComp.length];
+                    final ECPoint[] preCompNeg = new ECPoint[preComp.length];
                     for (int i = 0; i < preCompNeg.length; ++i)
                     {
                         preCompNeg[i] = preComp[i].negate();
@@ -646,7 +624,7 @@ public abstract class WNafUtil
                 return result;
             }
 
-            private boolean checkExisting(WNafPreCompInfo existingWNaf, int width, int reqPreCompLen, boolean includeNegated)
+            private boolean checkExisting(final WNafPreCompInfo existingWNaf, final int width, final int reqPreCompLen, final boolean includeNegated)
             {
                 return null != existingWNaf
                     && existingWNaf.getWidth() >= width
@@ -654,30 +632,30 @@ public abstract class WNafUtil
                     && (!includeNegated || checkTable(existingWNaf.getPreCompNeg(), reqPreCompLen));
             }
 
-            private boolean checkTable(ECPoint[] table, int reqLen)
+            private boolean checkTable(final ECPoint[] table, final int reqLen)
             {
                 return null != table && table.length >= reqLen;
             }
         });
     }
 
-    private static byte[] trim(byte[] a, int length)
+    private static byte[] trim(final byte[] a, final int length)
     {
-        byte[] result = new byte[length];
+        final byte[] result = new byte[length];
         System.arraycopy(a, 0, result, 0, result.length);
         return result;
     }
 
-    private static int[] trim(int[] a, int length)
+    private static int[] trim(final int[] a, final int length)
     {
-        int[] result = new int[length];
+        final int[] result = new int[length];
         System.arraycopy(a, 0, result, 0, result.length);
         return result;
     }
 
-    private static ECPoint[] resizeTable(ECPoint[] a, int length)
+    static ECPoint[] resizeTable(final ECPoint[] a, final int length)
     {
-        ECPoint[] result = new ECPoint[length];
+        final ECPoint[] result = new ECPoint[length];
         System.arraycopy(a, 0, result, 0, a.length);
         return result;
     }

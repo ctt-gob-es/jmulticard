@@ -42,6 +42,7 @@ package es.gob.jmulticard.jse.smartcardio;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.smartcardio.Card;
@@ -57,9 +58,7 @@ import es.gob.jmulticard.apdu.dnie.VerifyApduCommand;
 import es.gob.jmulticard.connection.AbstractApduConnectionIso7816;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
-import es.gob.jmulticard.connection.ApduConnectionOpenedInExclusiveModeException;
 import es.gob.jmulticard.connection.ApduConnectionProtocol;
-import es.gob.jmulticard.connection.CardConnectionListener;
 import es.gob.jmulticard.connection.CardNotPresentException;
 import es.gob.jmulticard.connection.LostChannelException;
 import es.gob.jmulticard.connection.NoReadersFoundException;
@@ -80,7 +79,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
      * reinicio del canal con la tarjeta. */
     private static final String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
 
-    private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+    private static final Logger LOGGER = Logger.getLogger(SmartcardIoConnection.class.getName());
 
     private int terminalNumber = -1;
 
@@ -105,18 +104,23 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 			);
     	}
 
-    	// Aplicamos un parche para el error JDK-8255877 de Java:
-   	 	// https://bugs.openjdk.java.net/browse/JDK-8255877
+    	// Aplicamos un parche para el error JDK-8255877 de Java: https://bugs.openjdk.java.net/browse/JDK-8255877
     	final String osName = System.getProperty("os.name"); //$NON-NLS-1$
-		if (osName != null && osName.startsWith("Mac OS X")) { //$NON-NLS-1$
-			final String dir = "/System/Library/Frameworks/PCSC.framework/Versions/Current"; //$NON-NLS-1$
-			if (new File(dir).isDirectory()) {
-				System.setProperty(
-					"sun.security.smartcardio.library", //$NON-NLS-1$
-					"/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC" //$NON-NLS-1$
-				);
-			}
+		if (
+			osName != null &&
+			osName.startsWith("Mac OS X") && //$NON-NLS-1$
+			new File("/System/Library/Frameworks/PCSC.framework/Versions/Current").isDirectory() //$NON-NLS-1$
+		) {
+			System.setProperty(
+				"sun.security.smartcardio.library", //$NON-NLS-1$
+				"/System/Library/Frameworks/PCSC.framework/Versions/Current/PCSC" //$NON-NLS-1$
+			);
 		}
+    }
+
+    /** Constructor por defecto. */
+    public SmartcardIoConnection() {
+    	// Vacio
     }
 
     @Override
@@ -125,12 +129,6 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 			(isOpen()
 				? "abierta en modo " + (exclusive ? "" : "no") + " exclusivo" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					: "cerrada"); //$NON-NLS-1$
-    }
-
-    /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
-    @Override
-    public void addCardConnectionListener(final CardConnectionListener ccl) {
-        throw new UnsupportedOperationException("JSR-268 no soporta eventos de insercion o extraccion"); //$NON-NLS-1$
     }
 
     @Override
@@ -177,7 +175,11 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     		terminales = TerminalFactory.getDefault().terminals().list();
     	}
     	catch(final CardException e) {
-    		LOGGER.warning("No se ha podido recuperar la lista de lectores del sistema: " + e); //$NON-NLS-1$
+    		LOGGER.log(
+				Level.WARNING,
+				"No se ha podido recuperar la lista de lectores del sistema", //$NON-NLS-1$
+				e
+			);
     		return new long[0];
     	}
 
@@ -216,13 +218,13 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     @Override
     public void open() throws ApduConnectionException {
 
+    	if (isOpen()) {
+    		return;
+    	}
+
         // Desactivamos las respuestas automaticas para evitar los problemas con el canal seguro
         System.setProperty("sun.security.smartcardio.t0GetResponse", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         System.setProperty("sun.security.smartcardio.t1GetResponse", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        if (isExclusiveUse() && isOpen()) {
-            throw new ApduConnectionOpenedInExclusiveModeException();
-        }
 
         final List<CardTerminal> terminales;
         try {
@@ -274,12 +276,6 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
         }
         cardChannel = card.getBasicChannel();
         protocol = ApduConnectionProtocol.getApduConnectionProtocol(card.getProtocol());
-    }
-
-    /** JSR-268 no soporta eventos de inserci&oacute;n o extracci&oacute;n. */
-    @Override
-    public void removeCardConnectionListener(final CardConnectionListener ccl) {
-        throw new UnsupportedOperationException("JSR-268 no soporta eventos de insercion o extraccion"); //$NON-NLS-1$
     }
 
     @Override
@@ -340,8 +336,11 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
         final boolean wasOpened = isOpen();
 
+        terminalNumber = terminalN;
+
         if (wasOpened) {
             try {
+            	// El cierre no mira el terminalNumber, no pasa nada por cambiarlo antes de llamar a close()
                 close();
             }
             catch (final ApduConnectionException e) {
@@ -349,9 +348,6 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
                     "Error intentando cerrar la conexion con el lector: " + e //$NON-NLS-1$
         		);
             }
-        }
-        terminalNumber = terminalN;
-        if (wasOpened) {
             try {
             	open();
             }

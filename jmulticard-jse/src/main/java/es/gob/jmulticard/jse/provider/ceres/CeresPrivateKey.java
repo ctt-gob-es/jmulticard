@@ -18,10 +18,10 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	private static final long serialVersionUID = 4403051294889801855L;
 
 	/** Instancia de la tarjeta donde reside la clave. */
-	private final Ceres ceres;
+	private final transient Ceres ceres;
 
 	/** Referencia a la clave dentro de la tarjeta. */
-	private final CeresPrivateKeyReference keyRef;
+	private final transient CeresPrivateKeyReference keyRef;
 
 	/** M&oacute;dulo de la clave privada.
 	 * Al ser la clave privada interna a la tarjeta, este dato se obtiene de la p&uacute;blica (es igual). */
@@ -32,9 +32,9 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	 * @param card Tarjeta a la cual pertenece esta clave.
 	 * @param mod M&oacute;dulo de la clave privada. */
 	CeresPrivateKey(final CeresPrivateKeyReference keyReference, final Ceres card, final BigInteger mod) {
-		this.keyRef = keyReference;
-		this.ceres = card;
-		this.modulus = mod;
+		keyRef = keyReference;
+		ceres = card;
+		modulus = mod;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	/** Obtiene la tarjeta capaz de operar con esta clave.
 	 * @return Tarjeta capaz de operar con esta clave. */
 	CryptoCard getCryptoCard() {
-		return this.ceres;
+		return ceres;
 	}
 
 	@Override
@@ -61,16 +61,16 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 	/** Recupera la referencia de la clave.
 	 * @return Referencia de la clave. */
 	CeresPrivateKeyReference getReference() {
-		return this.keyRef;
+		return keyRef;
 	}
 
-	/** M&eacute;todo no soportado. */
+	/** No soportado. */
 	@Override
 	public BigInteger getModulus() {
-		return this.modulus;
+		return modulus;
 	}
 
-	/** M&eacute;todo no soportado. */
+	/** No soportado. */
 	@Override
 	public BigInteger getPrivateExponent() {
 		throw new UnsupportedOperationException();
@@ -78,7 +78,7 @@ public final class CeresPrivateKey implements RSAPrivateKey {
 
 	@Override
 	public String toString() {
-		return this.keyRef.toString();
+		return keyRef.toString();
 	}
 
 	/** Serializaci&oacute;n no soportada, lanza un <code>NotSerializableException</code>.

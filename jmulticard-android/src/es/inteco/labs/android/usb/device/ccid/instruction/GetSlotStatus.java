@@ -55,6 +55,4 @@ public final class GetSlotStatus extends UsbCommand{
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
-
 }

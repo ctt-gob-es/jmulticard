@@ -15,5 +15,4 @@ public interface WirelessInitializer {
 	/** Obtiene el tipo de contrase&ntilde;a asociada a esta inicializaci&oacute;n.
 	 * @return tipo de contrase&ntilde;a. */
 	PacePasswordType getPasswordType();
-
 }

@@ -11,7 +11,7 @@ public final class CardPasswordCallback extends PasswordCallback {
 	private static final long serialVersionUID = -2511696590746468782L;
 
 	/** <code>PasswordProtection</code> para solicitar la contrase&ntilde;a. */
-	private transient final PasswordProtection passp;
+	private final transient PasswordProtection passp;
 
 	/** Constructor.
 	 * @param pp <code>PasswordProtection</code> para solicitar la contrase&ntilde;a.
@@ -23,12 +23,12 @@ public final class CardPasswordCallback extends PasswordCallback {
 				"El PasswordProtection no puede ser nulo" //$NON-NLS-1$
 			);
 		}
-		this.passp = pp;
+		passp = pp;
 	}
 
 	@Override
 	public char[] getPassword() {
-		return this.passp.getPassword();
+		return passp.getPassword();
 	}
 
 }

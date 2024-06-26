@@ -39,8 +39,8 @@
  */
 package es.gob.jmulticard.card;
 
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import es.gob.jmulticard.HexUtils;
@@ -57,12 +57,12 @@ public final class Location {
     private static final int MASTER_FILE_ID = 0x3F00;
 
     /** Elementos de la ruta hacia el fichero. */
-    private transient Vector<Integer> path = new Vector<>();
+    private final ArrayList<Integer> path;
 
     private static final Map<String, Integer> HEXBYTES = new ConcurrentHashMap<>();
 
     static {
-        final String hex[] = {
+        final String[] hex = {
     		"a", "b", "c", "d", "e", "f" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
         };
         for (int i = 0; i <= 9; i++) {
@@ -74,21 +74,28 @@ public final class Location {
         }
     }
 
-    /** Constructor de la clase Location.
+    /** Constructor.
      * @param absolutePath Ruta absoluta donde se encuentra el fichero */
     public Location(final String absolutePath) {
+    	path = new ArrayList<>();
         init(absolutePath);
     }
 
     /** Constructor privado. Necesario para algunas operaciones internas.
-     * @param locationPath Ruta asociada */
-    private Location(final Vector<Integer> locationPath) {
+     * @param locationPath Ruta asociada. */
+    private Location(final ArrayList<Integer> locationPath) {
         if (locationPath != null) {
             final int numElements = locationPath.size();
-            this.path = new Vector<>(numElements);
+            path = new ArrayList<>(numElements);
             for (int i = 0; i < numElements; i++) {
-                this.path.insertElementAt(locationPath.elementAt(i), i);
+                path.add(
+            		i,                  // Indice
+            		locationPath.get(i) // Valor
+        		);
             }
+        }
+        else {
+        	path = new ArrayList<>();
         }
     }
 
@@ -96,9 +103,9 @@ public final class Location {
      * @return Devuelve un objeto location que contiene el hijo del fichero actual si existe.
      *         Si no tiene hijos devuelve <code>null</code>. */
     public Location getChild() {
-        final Location aux = new Location(this.path);
+        final Location aux = new Location(path);
         if (aux.path != null && aux.path.size() > 1) {
-            aux.path.removeElementAt(0);
+            aux.path.remove(0);
             return aux;
         }
         return null;
@@ -107,7 +114,7 @@ public final class Location {
     /** Obtiene la direcci&oacute;n f&iacute;sica del fichero actualmente apuntado.
      * @return Una palabra con la direcci&oacute;n de memoria seleccionada. */
     public byte[] getFile() {
-        final int address = this.path.elementAt(0).intValue();
+        final int address = path.get(0).intValue();
         return new byte[] {
                 (byte) (address >> 8 & 0xFF), (byte) (address & 0xFF)
         };
@@ -116,10 +123,10 @@ public final class Location {
     /** Obtiene la direcci&oacute;n del &uacute;ltimo fichero de la ruta indicada.
      * @return Path con la direcci&oacute;n del fichero. */
     public byte[] getLastFilePath() {
-    	if (this.path.isEmpty()) {
+    	if (path.isEmpty()) {
     		return null;
     	}
-        final int address = this.path.elementAt(this.path.size() - 1).intValue();
+        final int address = path.get(path.size() - 1).intValue();
         return new byte[] {
                 (byte) (address >> 8 & 0xFF), (byte) (address & 0xFF)
         };
@@ -127,7 +134,7 @@ public final class Location {
 
     /** Comprueba que la ruta indicada corresponda al patr&oacute;n alfanum&eacute;rico.
      * @param absolutePath Ruta a comprobar.
-     * @throws IllegalArgumentException si la ruta es inv&aacute;lida. */
+     * @throws IllegalArgumentException Si la ruta es inv&aacute;lida. */
     private static void checkValidPath(final String absolutePath) {
     	if (absolutePath == null) {
     		throw new IllegalArgumentException("Ruta nula"); //$NON-NLS-1$
@@ -177,24 +184,30 @@ public final class Location {
             id += mm << 4 << 8;
 
             if (id != Location.MASTER_FILE_ID) {
-                this.path.addElement(Integer.valueOf(String.valueOf(id)));
+                path.add(Integer.valueOf(String.valueOf(id)));
             }
         }
     }
 
     /** Devuelve una representaci&oacute;n de la ruta absoluta del fichero,
      * separando cada identificador mediante barras (/).
-     * @see java.lang.Object#toString() */
+     * @return Ruta absoluta del fichero. */
     @Override
     public String toString() {
-        final StringBuffer buffer = new StringBuffer();
-        if (this.path != null && !this.path.isEmpty()) {
+        final StringBuilder buffer = new StringBuilder();
+        if (path != null && !path.isEmpty()) {
             buffer.append("3F00"); //$NON-NLS-1$
-            for (int i = 0; i < this.path.size(); i++) {
-                final Integer integer = this.path.elementAt(i);
-                buffer.append('/').append(HexUtils.hexify(new byte[] {
-                        (byte) (integer.shortValue() >> 8), integer.byteValue()
-                }, false));
+            for (final Integer integer : path) {
+                buffer.append('/')
+                      .append(
+                		  HexUtils.hexify(
+            				  new byte[] {
+        						  (byte) (integer.shortValue() >> 8),
+        						  integer.byteValue()
+            				  },
+            				  false
+        				  )
+            		  );
             }
         }
         return buffer.toString();

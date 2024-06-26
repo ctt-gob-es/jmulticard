@@ -7,12 +7,11 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
@@ -24,10 +23,11 @@ import es.gob.jmulticard.connection.AbstractApduEncrypter;
 import es.gob.jmulticard.connection.ApduEncrypterAes;
 import es.gob.jmulticard.connection.ApduEncrypterDes;
 import es.gob.jmulticard.connection.CipheredApdu;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 
 /** Pruebas del cifrado de APDU seg&uacute;n CWA-14890.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestApduEncrypter extends AbstractApduEncrypter {
+final class TestApduEncrypter extends AbstractApduEncrypter {
 
 	private static final CryptoHelper CRYPTO_HELPER = new BcCryptoHelper();
 
@@ -64,8 +64,8 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	/** Prueba la generaci&oacute;n de CMAC con datos dependientes del SSC.
 	 * @throws IOException En cualquier error. */
 	@Test
-	@Ignore // Necesita el proveedor BC/SC firmado
-	public void testCMacGeneration() throws IOException {
+	@Disabled("Necesita el proveedor BC/SC firmado")
+	void testCMacGeneration() throws IOException {
 		final byte[] data = {
 			(byte)0x0c, (byte)0xa4, (byte)0x04, (byte)0x00, (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x00,
 			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
@@ -74,7 +74,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			(byte)0x82, (byte)0x7f, (byte)0x0f, (byte)0x80, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 			(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
 		};
-		Assert.assertEquals(
+		Assertions.assertEquals(
 			"70e6de5f679aee64", //$NON-NLS-1$
 			HexUtils.hexify(
 				generateMac(data, SSC2, KMAC2, CRYPTO_HELPER),
@@ -86,8 +86,8 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	/** Prueba de cifrado AES de una APDU.
 	 * @throws Exception En cualquier error. */
 	@Test
-	@Ignore // Necesita el proveedor BC/SC firmado
-	public void testEncryptionAes() throws Exception {
+	@Disabled("Necesita el proveedor BC/SC firmado")
+	void testEncryptionAes() throws Exception {
 
 		paddingLength = 16;
 
@@ -102,9 +102,26 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			},
 			null
 		);
+
+		final CipheredApdu ciphApdu = protectAPDU(
+			apdu,
+			KENC2,
+			KMAC2,
+			SSC2,
+			CRYPTO_HELPER
+		);
+		Assertions.assertNotNull(ciphApdu);
+
 		System.out.println(
 			HexUtils.hexify(
-				protectAPDU(
+				ciphApdu.getBytes(),
+				false
+			).toLowerCase()
+		);
+
+		System.out.println(
+			HexUtils.hexify(
+				new ApduEncrypterAes().protectAPDU(
 					apdu,
 					KENC2,
 					KMAC2,
@@ -113,23 +130,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 				).getBytes(),
 				false
 			).toLowerCase()
-		)
-			;
-
-		System.out.println(
-				HexUtils.hexify(
-					new ApduEncrypterAes().protectAPDU(
-						apdu,
-						KENC2,
-						KMAC2,
-						SSC2,
-						CRYPTO_HELPER
-					).getBytes(),
-					false
-				).toLowerCase()
-			)
-				;
-
+		);
 
 		System.out.println("0ca404001d871101f5124ee2f53962e86e66a6d234827f0f8e0870e6de5f679aee64"); //$NON-NLS-1$
 	}
@@ -137,7 +138,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	/** Prueba de cifrado AES del cuerpo de una APDU.
 	 * @throws Exception En cualquier error. */
 	@Test
-	public void testPartialEncryptionAes() throws Exception {
+	void testPartialEncryptionAes() throws Exception {
 
 		paddingLength = 16;
 
@@ -152,12 +153,14 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			},
 			null
 		);
-		Assert.assertEquals(
+		Assertions.assertEquals(
 			"00a404000b4d61737465722e46696c65", //$NON-NLS-1$
 			HexUtils.hexify(apdu.getBytes(), false).toLowerCase()
 		);
 		final byte[] paddedData = addPadding7816(apdu.getData(), paddingLength);
-		Assert.assertEquals(
+		Assertions.assertNotNull(paddedData);
+
+		Assertions.assertEquals(
 			"4d61737465722e46696c658000000000", //$NON-NLS-1$
 			HexUtils.hexify(paddedData, false).toLowerCase()
 		);
@@ -168,7 +171,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			SSC2,
 			CRYPTO_HELPER
 		);
-		Assert.assertEquals(
+		Assertions.assertEquals(
 			"f5124ee2f53962e86e66a6d234827f0f", //$NON-NLS-1$
 			HexUtils.hexify(encryptedApdu, false).toLowerCase()
 		);
@@ -179,7 +182,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	public void testPinEncryptionDes() throws Exception {
+	void testPinEncryptionDes() throws Exception {
 		final CommandApdu verifyCommandApdu = new VerifyApduCommand(
 			(byte) 0x00,
 			new CachePasswordCallback("CRYPTOKI".toCharArray()) //$NON-NLS-1$
@@ -192,7 +195,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			SSC_PIN,
 			CRYPTO_HELPER
 		).getBytes();
-		Assert.assertEquals(
+		Assertions.assertEquals(
 			"0c20000019871101ce1ab937c332f3faee43336d4311ef338e046908df4e", //$NON-NLS-1$
 			HexUtils.hexify(res, false).toLowerCase()
 		);
@@ -202,7 +205,7 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	public void testEncryptionDes() throws Exception {
+	void testEncryptionDes() throws Exception {
 		final AbstractApduEncrypter apduEncrypterDes = new ApduEncrypterDes();
 		final CipheredApdu a = apduEncrypterDes.protectAPDU(
 			new CommandApdu(
@@ -221,12 +224,11 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 			SSC_SIMPLE,
 			CRYPTO_HELPER
 		);
-		Assert.assertEquals(
+		Assertions.assertEquals(
 			"0ca40400198711013e9ac315a8e855dd3722f291078ac2bd8e04b6f56963", //$NON-NLS-1$
 			HexUtils.hexify(a.getBytes(), false).toLowerCase()
 		);
 	}
-
 
 	@Override
 	protected byte[] encryptData(final byte[] data, final byte[] key, final byte[] ssc, final CryptoHelper cryptoHelper) throws IOException {
@@ -273,5 +275,4 @@ public final class TestApduEncrypter extends AbstractApduEncrypter {
 	public ResponseApdu decryptResponseApdu(final ResponseApdu responseApdu, final byte[] keyCipher, final byte[] ssc, final byte[] kMac, final CryptoHelper cryptoHelper) {
 		throw new UnsupportedOperationException();
 	}
-
 }

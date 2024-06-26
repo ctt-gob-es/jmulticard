@@ -7,12 +7,16 @@ import java.security.Security;
 import java.security.Signature;
 import java.util.Enumeration;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import es.gob.jmulticard.jse.provider.DnieProvider;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 /** Pruebas de firma consecutiva en DNIe 100% Java.
  * @author Sergio Mart&iacute;nez Rico. */
-public final class TestDoubleSign {
+final class TestDoubleSign {
 
 	private static final char[] PASSWORD = "password".toCharArray(); //$NON-NLS-1$
 
@@ -20,10 +24,13 @@ public final class TestDoubleSign {
 	 * @param args No se usa.
 	 * @throws Exception En cualquier error. */
 	public static void main(final String[] args) throws Exception {
-		TestDoubleSign.testDoubleSign();
+		new TestDoubleSign().testDoubleSign();
 	}
 
-	static void testDoubleSign() throws Exception {
+	@SuppressWarnings("static-method")
+	@Test
+	@Disabled("Necesita DNI")
+	void testDoubleSign() throws Exception {
 
 		final Provider p = new DnieProvider(ProviderUtil.getDefaultConnection());
 		Security.addProvider(p);
@@ -43,7 +50,7 @@ public final class TestDoubleSign {
 		signature = Signature.getInstance("SHA1withRSA"); //$NON-NLS-1$
 		signature.initSign((PrivateKey) ks.getKey("CertFirmaDigital", PASSWORD)); //$NON-NLS-1$
 		signature.update("Hola Mundo 2!!".getBytes()); //$NON-NLS-1$
-		signature.sign();
+		Assertions.assertNotNull(signature.sign());
 
 		System.out.println("Segunda firma generada correctamente"); //$NON-NLS-1$
 	}

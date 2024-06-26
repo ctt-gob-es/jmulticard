@@ -80,7 +80,6 @@ public final class CeresScPrivateKeyObject extends Pkcs15Object {
         super(classAttributes, subclassAttributes, typeAttributes);
 	}
 
-
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateKeyObject</i> */
 	public CeresScPrivateKeyObject() {
 		super(

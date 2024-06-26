@@ -52,7 +52,7 @@ public final class Cwa14890CipheredApdu extends CommandApdu {
 	private static final byte TAG_CRYPTOGRAPHIC_CHECKSUM = (byte) 0x8E;
 
 	private final byte[] mac;
-	private transient final byte[] data;
+	private final byte[] data;
 
     byte[] getMac() {
         final byte[] out = new byte[mac.length];
@@ -121,5 +121,4 @@ public final class Cwa14890CipheredApdu extends CommandApdu {
     public void setLe(final int le) {
         throw new UnsupportedOperationException("No se puede establecer el Le en una APDU cifrada"); //$NON-NLS-1$
     }
-
 }

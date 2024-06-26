@@ -8,7 +8,6 @@ import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
 import es.gob.jmulticard.connection.CardNotPresentException;
-import es.gob.jmulticard.jse.provider.ceres.Ceres430Provider;
 import es.gob.jmulticard.jse.provider.ceres.CeresProvider;
 import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
 
@@ -16,7 +15,7 @@ import es.gob.jmulticard.jse.provider.gide.SmartCafeProvider;
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public final class JMultiCardProviderFactory {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger(JMultiCardProviderFactory.class.getName());
 
 	// **************************************************************************
 	// ********* ATR DNIe Y COMPATIBLES *****************************************
@@ -200,7 +199,8 @@ public final class JMultiCardProviderFactory {
 					(connectionClassName != null && !connectionClassName.isEmpty() ?
 						connectionClassName :
 							ProviderUtil.DEFAULT_PROVIDER_CLASSNAME),
-				e2);
+				e2
+			);
 		}
 		final long[] terminals;
 		try {
@@ -230,11 +230,9 @@ public final class JMultiCardProviderFactory {
 			}
 			catch (final CardNotPresentException e) {
 				LOGGER.info("No hay tarjeta insertada en el lector " + terminal + ": " + e); //$NON-NLS-1$ //$NON-NLS-2$
-				continue;
 			}
 			catch(final Exception e) {
 				LOGGER.warning("Error reiniciando el lector " + terminal + ": " + e); //$NON-NLS-1$ //$NON-NLS-2$
-				continue;
 			}
 		}
 		return null;
@@ -250,11 +248,8 @@ public final class JMultiCardProviderFactory {
 		if (atr == null) {
 			return null;
 		}
-		if (isDni(atr)) {
+		if (isDni(atr) || isCeres430(atr)) {
 			return new DnieProvider();
-		}
-		if (isCeres430(atr)) {
-			return new Ceres430Provider();
 		}
 		if (isCeres(atr)) {
 			return new CeresProvider();
@@ -266,44 +261,28 @@ public final class JMultiCardProviderFactory {
 	}
 
 	private static boolean isDni(final byte[] atr) {
-		if (
+		return
 			DNI_ATR.equals(new Atr(atr, DNI_ATR_MASK)) ||
 			TIF_ATR.equals(new Atr(atr, TIF_ATR_MASK)) ||
-			DNI_NFC_ATR.equals(new Atr(atr, DNI_NFC_ATR_MASK))
-		) {
-			return true;
-		}
-		return false;
+			DNI_NFC_ATR.equals(new Atr(atr, DNI_NFC_ATR_MASK));
 	}
 
 	private static boolean isCeres430(final byte[] atr) {
-		if (FNMT_TC_430_ATR.equals(new Atr(atr, FNMT_TC_430_ATR_MASK)) && atr[15] >= (byte) 0x04 && atr[16] >= (byte) 0x30) {
-			return true;
-		}
-		return false;
+		return FNMT_TC_430_ATR.equals(new Atr(atr, FNMT_TC_430_ATR_MASK)) && atr[15] >= (byte) 0x04 && atr[16] >= (byte) 0x30;
 	}
 
 	private static boolean isCeres(final byte[] atr) {
-		if (
+		return
 			CERES_TC_ATR.equals(new Atr(atr, CERES_TC_ATR_MASK))             ||
 			CERES_ST_ATR.equals(new Atr(atr, CERES_ST_ATR_MASK))             ||
 			CERES_SLE_FN20_ATR.equals(new Atr(atr, CERES_SLE_FN20_ATR_MASK)) ||
-			CERES_SLE_FN19_ATR.equals(new Atr(atr, CERES_SLE_FN19_ATR_MASK))
-		) {
-			return true;
-		}
-		return false;
+			CERES_SLE_FN19_ATR.equals(new Atr(atr, CERES_SLE_FN19_ATR_MASK));
 	}
 
 	private static boolean isGiDeSmartCafe(final byte[] atr) {
-		if (
+		return
 			GIDE_SCAF_ATR.equals(new Atr(atr, GIDE_SCAF_ATR_MASK))         ||
 			GIDE_SCAF_MSC_ATR.equals(new Atr(atr, GIDE_SCAF_MSC_ATR_MASK)) ||
-			GIDE_SCAF_TCL_ATR.equals(new Atr(atr, GIDE_SCAF_TCL_ATR_MASK))
-		) {
-			return true;
-		}
-		return false;
+			GIDE_SCAF_TCL_ATR.equals(new Atr(atr, GIDE_SCAF_TCL_ATR_MASK));
 	}
-
 }

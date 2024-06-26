@@ -21,7 +21,7 @@ public class NHOtherInfoGenerator
     protected final SecureRandom random;
 
     protected boolean used = false;
-    
+
     /**
      * Create a basic builder with just the compulsory fields.
      *
@@ -30,7 +30,7 @@ public class NHOtherInfoGenerator
      * @param partyVInfo  receiver party info.
      * @param random a source of randomness.
      */
-    public NHOtherInfoGenerator(AlgorithmIdentifier algorithmID, byte[] partyUInfo, byte[] partyVInfo, SecureRandom random)
+    public NHOtherInfoGenerator(final AlgorithmIdentifier algorithmID, final byte[] partyUInfo, final byte[] partyVInfo, final SecureRandom random)
     {
         this.otherInfoBuilder = new DEROtherInfo.Builder(algorithmID, partyUInfo, partyVInfo);
         this.random = random;
@@ -42,14 +42,14 @@ public class NHOtherInfoGenerator
     public static class PartyU
         extends NHOtherInfoGenerator
     {
-        private AsymmetricCipherKeyPair aKp;
-        private NHAgreement agreement = new NHAgreement();
+        private final AsymmetricCipherKeyPair aKp;
+        private final NHAgreement agreement = new NHAgreement();
 
-        public PartyU(AlgorithmIdentifier algorithmID, byte[] partyUInfo, byte[] partyVInfo, java.security.SecureRandom random)
+        public PartyU(final AlgorithmIdentifier algorithmID, final byte[] partyUInfo, final byte[] partyVInfo, final java.security.SecureRandom random)
         {
             super(algorithmID, partyUInfo, partyVInfo, random);
 
-            NHKeyPairGenerator kpGen = new NHKeyPairGenerator();
+            final NHKeyPairGenerator kpGen = new NHKeyPairGenerator();
 
             kpGen.init(new KeyGenerationParameters(random, 2048));
 
@@ -64,7 +64,7 @@ public class NHOtherInfoGenerator
          * @param suppPubInfo supplementary public info.
          * @return the current builder instance.
          */
-        public NHOtherInfoGenerator withSuppPubInfo(byte[] suppPubInfo)
+        public NHOtherInfoGenerator withSuppPubInfo(final byte[] suppPubInfo)
         {
             this.otherInfoBuilder.withSuppPubInfo(suppPubInfo);
 
@@ -76,11 +76,11 @@ public class NHOtherInfoGenerator
             return getEncoded((NHPublicKeyParameters)aKp.getPublic());
         }
 
-        public DEROtherInfo generate(byte[] suppPrivInfoPartB)
+        public DEROtherInfo generate(final byte[] suppPrivInfoPartB)
         {
             if (used)
             {
-                throw new IllegalStateException("builder already used");
+                throw new IllegalStateException("builder already used"); //$NON-NLS-1$
             }
 
             used = true;
@@ -97,7 +97,7 @@ public class NHOtherInfoGenerator
     public static class PartyV
         extends NHOtherInfoGenerator
     {
-        public PartyV(AlgorithmIdentifier algorithmID, byte[] partyUInfo, byte[] partyVInfo, SecureRandom random)
+        public PartyV(final AlgorithmIdentifier algorithmID, final byte[] partyUInfo, final byte[] partyVInfo, final SecureRandom random)
         {
             super(algorithmID, partyUInfo, partyVInfo, random);
         }
@@ -108,18 +108,18 @@ public class NHOtherInfoGenerator
          * @param suppPubInfo supplementary public info.
          * @return the current builder instance.
          */
-        public NHOtherInfoGenerator withSuppPubInfo(byte[] suppPubInfo)
+        public NHOtherInfoGenerator withSuppPubInfo(final byte[] suppPubInfo)
         {
             this.otherInfoBuilder.withSuppPubInfo(suppPubInfo);
 
             return this;
         }
 
-        public byte[] getSuppPrivInfoPartB(byte[] suppPrivInfoPartA)
+        public byte[] getSuppPrivInfoPartB(final byte[] suppPrivInfoPartA)
         {
-            NHExchangePairGenerator exchGen = new NHExchangePairGenerator(random);
+            final NHExchangePairGenerator exchGen = new NHExchangePairGenerator(random);
 
-            ExchangePair bEp = exchGen.generateExchange(getPublicKey(suppPrivInfoPartA));
+            final ExchangePair bEp = exchGen.generateExchange(getPublicKey(suppPrivInfoPartA));
 
             this.otherInfoBuilder.withSuppPrivInfo(bEp.getSharedValue());
 
@@ -130,7 +130,7 @@ public class NHOtherInfoGenerator
         {
             if (used)
             {
-                throw new IllegalStateException("builder already used");
+                throw new IllegalStateException("builder already used"); //$NON-NLS-1$
             }
 
             used = true;
@@ -139,25 +139,25 @@ public class NHOtherInfoGenerator
         }
     }
 
-    private static byte[] getEncoded(NHPublicKeyParameters pubKey)
+    static byte[] getEncoded(final NHPublicKeyParameters pubKey)
     {
         SubjectPublicKeyInfo pki;
         try
         {
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.newHope);
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.newHope);
             pki = new SubjectPublicKeyInfo(algorithmIdentifier, pubKey.getPubData());
 
             return pki.getEncoded();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             return null;
         }
     }
 
-    private static NHPublicKeyParameters getPublicKey(byte[] enc)
+    static NHPublicKeyParameters getPublicKey(final byte[] enc)
     {
-        SubjectPublicKeyInfo pki = SubjectPublicKeyInfo.getInstance(enc);
+        final SubjectPublicKeyInfo pki = SubjectPublicKeyInfo.getInstance(enc);
 
         return new NHPublicKeyParameters(pki.getPublicKeyData().getOctets());
     }

@@ -18,7 +18,7 @@ import org.bouncycastle.asn1.DERSequence;
  *     attrType OBJECT IDENTIFIER,
  *     attrValues SET OF AttributeValue
  * }
- * 
+ *
  * AttributeValue ::= ANY
  * </pre>
  * <p>
@@ -33,8 +33,8 @@ import org.bouncycastle.asn1.DERSequence;
 public class Attribute
     extends ASN1Object
 {
-    private ASN1ObjectIdentifier attrType;
-    private ASN1Set             attrValues;
+    private final ASN1ObjectIdentifier attrType;
+    private final ASN1Set             attrValues;
 
     /**
      * Return an Attribute object from the given object.
@@ -50,13 +50,13 @@ public class Attribute
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static Attribute getInstance(
-        Object o)
+        final Object o)
     {
         if (o instanceof Attribute)
         {
             return (Attribute)o;
         }
-        
+
         if (o != null)
         {
             return new Attribute(ASN1Sequence.getInstance(o));
@@ -64,17 +64,17 @@ public class Attribute
 
         return null;
     }
-    
+
     private Attribute(
-        ASN1Sequence seq)
+        final ASN1Sequence seq)
     {
         attrType = (ASN1ObjectIdentifier)seq.getObjectAt(0);
         attrValues = (ASN1Set)seq.getObjectAt(1);
     }
 
     public Attribute(
-        ASN1ObjectIdentifier attrType,
-        ASN1Set             attrValues)
+        final ASN1ObjectIdentifier attrType,
+        final ASN1Set             attrValues)
     {
         this.attrType = attrType;
         this.attrValues = attrValues;
@@ -84,7 +84,7 @@ public class Attribute
     {
         return attrType;
     }
-    
+
     public ASN1Set getAttrValues()
     {
         return attrValues;
@@ -95,13 +95,13 @@ public class Attribute
         return attrValues.toArray();
     }
 
-    /** 
+    /**
      * Produce an object suitable for an ASN1OutputStream.
      */
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
         v.add(attrType);
         v.add(attrValues);

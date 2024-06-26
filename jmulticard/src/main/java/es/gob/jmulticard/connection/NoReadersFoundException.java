@@ -57,5 +57,4 @@ public class NoReadersFoundException extends ApduConnectionException {
     public NoReadersFoundException(final String msg, final Throwable e) {
     	super(msg, e);
     }
-
 }

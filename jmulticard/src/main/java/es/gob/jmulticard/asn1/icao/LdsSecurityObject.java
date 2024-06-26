@@ -9,11 +9,11 @@ import es.gob.jmulticard.asn1.der.x509.AlgorithmIdentifier;
 /** <code>LDSSecurityObject</code> de ICAO MRTD.
  * <pre>
  *	LDSSecurityObject ::= SEQUENCE {
- *	   version                LDSSecurityObjectVersion,
- *	   hashAlgorithm          DigestAlgorithmIdentifier,
- *	   dataGroupHashValues    SEQUENCE SIZE (2..ub-DataGroups) OF DataHashGroup,
- *	   ldsVersionInfo         LDSVersionInfo OPTIONAL
- *	   -- if present, version MUST be v1
+ *     version                LDSSecurityObjectVersion,
+ *     hashAlgorithm          DigestAlgorithmIdentifier,
+ *     dataGroupHashValues    SEQUENCE SIZE (2..ub-DataGroups) OF DataHashGroup,
+ *     ldsVersionInfo         LDSVersionInfo OPTIONAL
+ *     -- if present, version MUST be v1
  *	 }
  *
  *	 DigestAlgorithmIdentifier ::= AlgorithmIdentifier
@@ -21,7 +21,7 @@ import es.gob.jmulticard.asn1.der.x509.AlgorithmIdentifier;
  *	 LDSSecurityObjectVersion :: INTEGER {V0(0)}
  *
  *   AlgorithmIdentifier ::= SEQUENCE {
- *		algorithm OBJECT IDENTIFIER,
+ *      algorithm OBJECT IDENTIFIER,
  *      parameters ANY DEFINED BY algorithm OPTIONAL
  *   }
  *
@@ -35,24 +35,22 @@ public final class LdsSecurityObject extends Sequence {
 	/** Constructor. */
 	public LdsSecurityObject() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					DerInteger.class,          // LDSSecurityObjectVersion
-					false
-				),
-				new OptionalDecoderObjectElement(
-					AlgorithmIdentifier.class, // DigestAlgorithmIdentifier
-					false
-				),
-				new OptionalDecoderObjectElement(
-					DataGroupHashValues.class, // SEQUENCE SIZE OF DataHashGroup
-					false
-				),
-				new OptionalDecoderObjectElement(
-					Sequence.class,            // LDSVersionInfo
-					true // Opcional
-				),
-			}
+			new OptionalDecoderObjectElement(
+				DerInteger.class,          // LDSSecurityObjectVersion
+				false
+			),
+			new OptionalDecoderObjectElement(
+				AlgorithmIdentifier.class, // DigestAlgorithmIdentifier
+				false
+			),
+			new OptionalDecoderObjectElement(
+				DataGroupHashValues.class, // SEQUENCE SIZE OF DataHashGroup
+				false
+			),
+			new OptionalDecoderObjectElement(
+				Sequence.class,            // LDSVersionInfo
+				true // Opcional
+			)
 		);
 	}
 

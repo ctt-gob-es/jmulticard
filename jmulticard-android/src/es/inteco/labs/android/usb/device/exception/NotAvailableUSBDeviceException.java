@@ -37,7 +37,7 @@
 package es.inteco.labs.android.usb.device.exception;
 
 
-/** Se lanza cuando se produce un error al acceder un dispositivo USB que ya no est&aacute; disponible.
+/** Error al acceder un dispositivo USB que ya no est&aacute; disponible.
  * @author Jose Luis Escanciano Garcia */
 public final class NotAvailableUSBDeviceException extends Exception {
 

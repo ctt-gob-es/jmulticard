@@ -52,11 +52,11 @@ public abstract class BitString extends DecoderObject {
     /** Tipo ASN&#46;1 "BIT STRING". */
     private static final byte TAG_BITSTRING = (byte) 0x03;
 
-    private transient Tlv tlv = null;
+    private Tlv tlv = null;
 
     @Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-        tlv = new Tlv(getRawDerValue());
+        tlv = new Tlv(getBytes());
         if (TAG_BITSTRING != tlv.getTag()) {
             throw new Asn1Exception(
         		"Se esperaba un TLV de tipo BitString pero se ha encontrado uno de tipo " + //$NON-NLS-1$
@@ -74,8 +74,7 @@ public abstract class BitString extends DecoderObject {
 
     /** Obtiene el valor binario del campo de datos del <i>BitString</i>.
      * @return Valor binario del campo de datos del <i>BitString</i>. */
-    public byte[] getValue() {
+    public final byte[] getValue() {
     	return tlv != null ? tlv.getValue() : null;
     }
-
 }
