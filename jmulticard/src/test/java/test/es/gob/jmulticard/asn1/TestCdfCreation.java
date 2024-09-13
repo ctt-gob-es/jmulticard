@@ -13,13 +13,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 final class TestCdfCreation {
 
     private static final String[] CDF_TEST_FILES = {
-        "CDF_GSD.BER", //$NON-NLS-1$
-        "CDF_EEE.BER", //$NON-NLS-1$
-        "CDF_GVA.BER", //$NON-NLS-1$
-        "CDF_JBM.BER", //$NON-NLS-1$
-        "CDF_JMA.BER", //$NON-NLS-1$
-        "CDF_TGM.BER", //$NON-NLS-1$
-        "CDF_TUI_SAMPLE1.asn1" //$NON-NLS-1$
+        "CDF_ESPECIMEN.ber" //$NON-NLS-1$
     };
 
     private static final byte[] SAMPLE_CDF = {

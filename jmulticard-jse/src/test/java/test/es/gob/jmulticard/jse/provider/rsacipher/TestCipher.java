@@ -101,9 +101,9 @@ final class TestCipher {
 	}
 
 	private static final char[] KEYSTORE_PWD = "12341234".toCharArray(); //$NON-NLS-1$
-	private static final String KEYSTORE_FILE = "/Demo_Movil_Accenture.jks"; //$NON-NLS-1$
-	private static final String KEYSTORE_TYPE = "JKS"; //$NON-NLS-1$
-	static final char[] KEYSTORE_FIRST_ENTRY_PWD = "".toCharArray(); //$NON-NLS-1$
+	private static final String KEYSTORE_FILE = "/ANF_PF_Activo.pfx"; //$NON-NLS-1$
+	private static final String KEYSTORE_TYPE = "PKCS12"; //$NON-NLS-1$
+	static final char[] KEYSTORE_FIRST_ENTRY_PWD = "12341234".toCharArray(); //$NON-NLS-1$
 
 	/** Prueba de cifrado usando un PKCS#12 y el proveedor por defecto.
 	 * @throws Exception En cualquier error. */

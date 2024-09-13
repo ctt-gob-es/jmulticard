@@ -12,9 +12,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
 class TestPrKdfCreation {
 
     private static final String[] TEST_FILES = {
-        "PRKDF_TGM.BER", //$NON-NLS-1$
-        "PrKDF_2281552478270226931.der", //$NON-NLS-1$
-        "PrKDF_TUI_01.der" //$NON-NLS-1$
+        "PRKDF_ESPECIMEN.BER" //$NON-NLS-1$
     };
 
     private static final byte[] SAMPLE_PRKDF = {

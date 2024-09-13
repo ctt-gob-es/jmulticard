@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-mvn versions:display-plugin-updates
-mvn versions:display-dependency-updates 
-mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json
- -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -60,23 +55,20 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 	
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-		<sonar.host.url>http://127.0.0.1:9000</sonar.host.url>
-		<sonar.login>admin</sonar.login>
-		<sonar.password>12341234</sonar.password>
+		<java.source>1.8</java.source>
+		<junit.version>5.10.2</junit.version>
+		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+		<maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
 	</properties>
 	
 	<dependencies>
-	
- 		<dependency>
-			<groupId>org.owasp</groupId>
-			<artifactId>dependency-check-maven</artifactId>
-			<version>9.0.9</version>
-		</dependency>
-	
+		
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.10.2</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -101,21 +93,6 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 				<module>jmulticard-crypto</module>
 			</modules>
 
-			<build>
-       			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.3.2</version>
-					<configuration>
-						<excludes>
-							<exclude>**/package-info.class</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-			</plugins>
-		</build>
-
 	    </profile>
 
 		<!-- Construcción que incluye el módulo Android -->
@@ -131,84 +108,9 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 			<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
-				<module>jmulticard-jse</module>
 			</modules>
 
-			<build>
-       			<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 	    </profile>
-	
-	
-		<!-- Construcción por defecto -->
-		<profile>
-			<id>env-dev</id>
-			<activation>
-				<property>
-					<name>defaultProfile</name>
-					<value>!false</value>
-				</property>
-      		</activation>
-      		<build>
-       			<plugins>
-
-					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-enforcer-plugin</artifactId>
-					  <version>3.4.1</version>
-					  <executions>
-					    <execution>
-					      <id>enforce-maven</id>
-					      <goals>
-					        <goal>enforce</goal>
-					      </goals>
-					      <configuration>
-					        <rules>
-					          <requireMavenVersion>
-					            <version>3.6.0</version>
-					          </requireMavenVersion>
-					        </rules>
-					      </configuration>
-					    </execution>
-					  </executions>
-					</plugin>
-
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.12.1</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-						</configuration>
-					</plugin>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-
-			</plugins>
-		  </build>
-	    </profile>
-		
 		
 		<!-- Construcción para despliegue en el repositorio de la SGAD -->
 		<profile>
@@ -225,31 +127,6 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 					<url>https://artefactos.scae.redsara.es/artifactory/AFIRMA-snapshot/</url>
 				</snapshotRepository>
 			</distributionManagement>
-      		<build>
-       			<plugins>
-
-				<plugin>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.10.1</version>
-					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.3.0</version>
-					<configuration>
-						<excludes>
-							<exclude>**/package-info.class</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-
-			</plugins>
-		  </build>
 	    </profile>
 
 		<!-- Construcción para despliegue en el repositorio de artefactos -->
@@ -265,16 +142,18 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 		  	<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
+				<module>jmulticard-jsr268</module>
 				<module>jmulticard-jse</module>
+				<module>jmulticard-crypto</module>
 			</modules>
 		  
 			<build>
 				<plugins>
-				
+
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-source-plugin</artifactId>
-					  <version>3.3.0</version>
+					  <version>${maven-source-plugin.version}</version>
 					  <executions>
 						<execution>
 						  <id>attach-sources</id>
@@ -288,7 +167,7 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-javadoc-plugin</artifactId>
-					  <version>3.6.3</version>
+					  <version>${maven-javadoc-plugin.version}</version>
 					  <executions>
 						<execution>
 						  <id>attach-javadocs</id>
@@ -298,27 +177,7 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 						</execution>
 					  </executions>
 					</plugin>
-					
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.10.1</version>
-						<configuration>
-							<source>1.8</source>
-							<target>1.8</target>
-						</configuration>
-					</plugin>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-					
+
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-gpg-plugin</artifactId>
@@ -338,4 +197,61 @@ mvn sonar:sonar -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-re
 			</build>
 		</profile>
 	</profiles>
+	
+	<build>
+		<plugins>
+
+			<!-- Forzamos al uso de una version minima de Maven -->
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-enforcer-plugin</artifactId>
+			  <version>3.4.1</version>
+			  <executions>
+				<execution>
+				  <id>enforce-maven</id>
+				  <goals>
+					<goal>enforce</goal>
+				  </goals>
+				  <configuration>
+					<rules>
+					  <requireMavenVersion>
+						<version>3.6.0</version>
+					  </requireMavenVersion>
+					</rules>
+				  </configuration>
+				</execution>
+			  </executions>
+			</plugin>
+			
+			<!-- Establecemos la version de codigo compatible -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${java.source}</source>
+					<target>${java.source}</target>
+				</configuration>
+			</plugin>
+			
+			<!-- Omitimos la inclusion de los paquetes de modulo (package-info.class) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/package-info.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- Configuracion para la correcta configuracion de los JUnit en versiones diversas -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.0</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>

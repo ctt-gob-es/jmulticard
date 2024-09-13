@@ -48,7 +48,7 @@ final class TestIcaoAsn1 {
 	@Test
 	void testSod() throws Exception {
     	final byte[] sod1;
-    	try (final InputStream is = TestIcaoAsn1.class.getResourceAsStream("/SOD_1223499971262354764.asn1")) { //$NON-NLS-1$
+    	try (final InputStream is = TestIcaoAsn1.class.getResourceAsStream("/SOD_ESPECIMEN.der")) { //$NON-NLS-1$
     		sod1 = getDataFromInputStream(is);
     	}
     	final Sod sod = new Sod(new BcCryptoHelper());

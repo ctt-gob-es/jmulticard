@@ -56,7 +56,7 @@ import es.inteco.labs.android.usb.device.exception.UsbDeviceException;
  * Basado en <code>es.gob.jmulticard.jse.smartcardio.SmartcardIoConnection</code>.
  * @author Jose Luis Escanciano Garc&iacute;a
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class AndroidCcidConnection implements ApduConnection {
+public final class AndroidCCIDConnection implements ApduConnection {
 
 	private final SmartCardUsbDevice ccidReader;
 
@@ -66,7 +66,7 @@ public final class AndroidCcidConnection implements ApduConnection {
 	 * @param usbManager Gestor de dispositivos USB del sistema.
 	 * @param reader Dispositivo USB de tipo CCID (lector de tarjetas).
 	 * @throws UsbDeviceException Cuando no se pueda preparar el dispositivo. */
-	public AndroidCcidConnection(final UsbManager usbManager, final UsbDevice reader) throws UsbDeviceException{
+	public AndroidCCIDConnection(final UsbManager usbManager, final UsbDevice reader) throws UsbDeviceException{
 		if (!isCardReader(reader)) {
 			throw new IllegalArgumentException(
 				"Debe proporcionarse un lector de tarjetas CCID" //$NON-NLS-1$

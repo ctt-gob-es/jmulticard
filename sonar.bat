@@ -1,1 +1,0 @@
-mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=pass -X -Dsonar.dependencyCheck.xmlReportPath=target/dependency-check-report.xml -Dsonar.dependencyCheck.htmlReportPath=target/dependency-check-report.html -Dsonar.dependencyCheck.jsonReportPath=target/dependency-check-report.json
