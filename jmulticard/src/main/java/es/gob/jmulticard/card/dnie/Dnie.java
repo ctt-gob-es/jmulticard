@@ -99,8 +99,10 @@ import es.gob.jmulticard.connection.cwa14890.Cwa14890OneV1Connection;
 import es.gob.jmulticard.connection.cwa14890.SecureChannelException;
 import es.gob.jmulticard.connection.pace.PaceConnection;
 
-/** DNI Electr&oacute;nico.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+/**
+ * DNI Electr&oacute;nico.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ */
 public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card {
 
 	/** Octeto que identifica una verificaci&oacute;n fallida del PIN. */
@@ -126,8 +128,10 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     /** Certificados de la tarjeta indexados por su alias. */
     private final Map<String, X509Certificate> certs = new LinkedHashMap<>();
 
-    /** Alias de los certificados de la tarjeta indexados por el identificador
-     * interno del certificado (pasado de <code>byte[]</code> a <code>String</code>). */
+    /**
+     * Alias de los certificados de la tarjeta indexados por el identificador
+     * interno del certificado (pasado de <code>byte[]</code> a <code>String</code>).
+     */
     private final Map<String, String> aliasByCertAndKeyId = new LinkedHashMap<>();
 
     /** Referencias a las claves privadas de la tarjeta indexadas por el alias de su certificado asociado. */
@@ -145,14 +149,16 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	//*************************************************************************
 	//************************ CONSTRUCTORES **********************************
 
-    /** Construye una clase que representa un DNIe.
+    /**
+     * Construye una clase que representa un DNIe.
      * @param conn Conexi&oacute;n con la tarjeta.
      * @param pwc <i>PasswordCallback</i> para obtener el PIN del DNIe.
      * @param cryptoHlpr Funcionalidades criptogr&aacute;ficas de utilidad que
      *                   pueden variar entre m&aacute;quinas virtuales.
      * @param ch Gestor de <i>callbacks</i> para la solicitud de datos al usuario.
      * @throws ApduConnectionException Si la conexi&oacute;n con la tarjeta se proporciona
-     *                                 cerrada y no es posible abrirla. */
+     *                                 cerrada y no es posible abrirla.
+     */
     protected Dnie(final ApduConnection conn,
     	           final PasswordCallback pwc,
     	           final CryptoHelper cryptoHlpr,
@@ -161,15 +167,15 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         conn.reset();
         connect(conn);
 
-        rawConnection = conn;
-        callbackHandler = ch;
+        this.rawConnection = conn;
+        this.callbackHandler = ch;
 
-        passwordCallback = pwc;
+        this.passwordCallback = pwc;
 
         if (cryptoHlpr == null) {
             throw new IllegalArgumentException("El CryptoHelper no puede ser nulo"); //$NON-NLS-1$
         }
-        cryptoHelper = cryptoHlpr;
+        this.cryptoHelper = cryptoHlpr;
 
 		loadCertificates();
     }
@@ -177,40 +183,50 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	//*************************************************************************
 	//********************* METODOS PROTEGIDOS ********************************
 
-    /** Obtiene la clase con funcionalidades de base de criptograf&iacute;a.
-     * @return Clase con funcionalidades de base de criptograf&iacute;a. */
+    /**
+     * Obtiene la clase con funcionalidades de base de criptograf&iacute;a.
+     * @return Clase con funcionalidades de base de criptograf&iacute;a.
+     */
     protected final CryptoHelper getCryptoHelper() {
-    	return cryptoHelper;
+    	return this.cryptoHelper;
     }
 
-    /** Obtiene la <code>PasswordCallback</code>.
-	 * @return <code>PasswordCallback</code>. */
+    /**
+     * Obtiene la <code>PasswordCallback</code>.
+	 * @return <code>PasswordCallback</code>.
+	 */
     protected final PasswordCallback getPasswordCallback() {
-    	return passwordCallback;
+    	return this.passwordCallback;
     }
 
-	/** Obtiene las constantes p&uacute;blicas CWA-14890 para el cifrado de canal.
-	 * @return Constantes p&uacute;blicas CWA-14890 para el cifrado de canal. */
+	/**
+	 * Obtiene las constantes p&uacute;blicas CWA-14890 para el cifrado de canal.
+	 * @return Constantes p&uacute;blicas CWA-14890 para el cifrado de canal.
+	 */
 	@SuppressWarnings("static-method")
 	protected Cwa14890PublicConstants getCwa14890PublicConstants() {
 		return new DnieCwa14890Constants();
 	}
 
-	/** Obtiene las constantes privadas CWA-14890 para el cifrado de canal.
-	 * @return Constantes privadas CWA-14890 para el cifrado de canal. */
+	/**
+	 * Obtiene las constantes privadas CWA-14890 para el cifrado de canal.
+	 * @return Constantes privadas CWA-14890 para el cifrado de canal.
+	 */
 	@SuppressWarnings("static-method")
 	protected Cwa14890PrivateConstants getCwa14890PrivateConstants() {
 		return new DnieCwa14890Constants();
 	}
 
-    /** Ejecuta la operaci&oacute;n interna de firma de la tarjeta.
+    /**
+     * Ejecuta la operaci&oacute;n interna de firma de la tarjeta.
      * @param data Datos a firmar.
      * @param signAlgorithm Algoritmo de firma.
      * @param privateKeyReference Referencia a la clave privada de firma.
      * @return Datos firmados.
      * @throws CryptoCardException Si hay problemas durante el proceso.
      * @throws PinException Si no se ha podido realizar la firma por un problema con el PIN
-     *                      (no estar hecha la autenticaci&oacute;n de PIN). */
+     *                      (no estar hecha la autenticaci&oacute;n de PIN).
+     */
     protected final byte[] signInternal(final byte[] data,
     		                      final String signAlgorithm,
     		                      final PrivateKeyReference privateKeyReference) throws CryptoCardException,
@@ -223,7 +239,8 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         return signOperation(data, signAlgorithm, privateKeyReference);
     }
 
-    /** Realiza la operaci&oacute;n de firma.
+    /**
+     * Realiza la operaci&oacute;n de firma.
      * @param data Datos que se desean firmar.
      * @param signAlgorithm Algoritmo de firma (por ejemplo, <code>SHA512withRSA</code>, <code>SHA1withRSA</code>, etc.).
      * @param privateKeyReference Referencia a la clave privada para la firma.
@@ -232,7 +249,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
      * @throws PinException Si el PIN proporcionado en la <i>PasswordCallback</i> es incorrecto o
      *                      la tarjeta tiene el PIN bloqueado.
      * @throws PasswordCallbackNotFoundException Si no se ha proporcionado una forma de obtener el PIN.
-     * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
+     */
     private byte[] signOperation(final byte[] data,
     		                     final String signAlgorithm,
     		                     final PrivateKeyReference privateKeyReference) throws CryptoCardException,
@@ -258,7 +275,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
             final byte[] digestInfo;
             try {
-                digestInfo = DigestInfo.encode(signAlgorithm, data, cryptoHelper);
+                digestInfo = DigestInfo.encode(signAlgorithm, data, this.cryptoHelper);
             }
             catch (final IOException e) {
                 throw new DnieCardException("Error en el calculo de la huella para firmar", e); //$NON-NLS-1$
@@ -297,10 +314,12 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         return res.getData();
     }
 
-    /** Obtiene la <code>PasswordCallback</code> predefinida.
+    /**
+     * Obtiene la <code>PasswordCallback</code> predefinida.
 	 * @return <code>PasswordCallback</code> predefinida.
 	 * @throws BadPinException Si el <code>PasswordCallback</code> devuelve un PIN nulo o vac&iacute;o.
-     * @throws PasswordCallbackNotFoundException Si no hay una <code>PasswordCallback</code> definida. */
+     * @throws PasswordCallbackNotFoundException Si no hay una <code>PasswordCallback</code> definida.
+     */
     protected PasswordCallback getInternalPasswordCallback() throws PinException {
     	final int retriesLeft;
     	try {
@@ -314,18 +333,18 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 		}
 
     	// Si hay establecido un PasswordCallback, devolvemos ese
-    	if (passwordCallback != null) {
-    		return passwordCallback;
+    	if (this.passwordCallback != null) {
+    		return this.passwordCallback;
     	}
 
     	// Si hay establecido un CallbackHandler, le solicitamos un PasswordCallback
-    	if (callbackHandler != null) {
+    	if (this.callbackHandler != null) {
         	final PasswordCallback  pwc = new PasswordCallback(
     			getPinMessage(retriesLeft),
 				false
 			);
 			try {
-				callbackHandler.handle(new Callback[] { pwc });
+				this.callbackHandler.handle(new Callback[] { pwc });
 			}
 			catch (final IOException | UnsupportedCallbackException e) {
 				throw new PasswordCallbackNotFoundException(
@@ -340,17 +359,21 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     	throw new PasswordCallbackNotFoundException("No hay ningun metodo para obtener el PIN"); //$NON-NLS-1$
     }
 
-    /** Devuelve el texto del di&aacute;logo de inserci&oacute;n de PIN.
+    /**
+     * Devuelve el texto del di&aacute;logo de inserci&oacute;n de PIN.
      * @param retriesLeft Intentos restantes antes de bloquear la tarjeta.
-     * @return Mensaje que mostrar en el cuerpo del di&aacute;logo de inserci&oacute;n de PIN. */
+     * @return Mensaje que mostrar en el cuerpo del di&aacute;logo de inserci&oacute;n de PIN.
+     */
     @SuppressWarnings("static-method")
 	protected String getPinMessage(final int retriesLeft) {
     	return CardMessages.getString("Dnie.0", Integer.toString(retriesLeft)); //$NON-NLS-1$
     }
 
-    /** Indica si el canal CWA-14890 est&aacute; o no abierto.
+    /**
+     * Indica si el canal CWA-14890 est&aacute; o no abierto.
      * @return <code>true</code> si el canal CWA-14890 est&aacute; abierto,
-     *         <code>false</code> en caso contrario. */
+     *         <code>false</code> en caso contrario.
+     */
     protected final boolean isSecurityChannelOpen() {
 	    //Devuelve true si el canal actual es de PIN o de usuario
         return getConnection() instanceof Cwa14890Connection &&
@@ -358,9 +381,11 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         			!(getConnection() instanceof PaceConnection);
     }
 
-    /** Indica si es necesario haber verificado o no el PIN para poder leer los certicados.
+    /**
+     * Indica si es necesario haber verificado o no el PIN para poder leer los certicados.
      * @return <code>true</code> si es necesario haber verificado o no el PIN para poder leer los certicados,
-     *         <code>false</code> en caso contrario. */
+     *         <code>false</code> en caso contrario.
+     */
 	@SuppressWarnings("static-method")
 	protected boolean needsPinForLoadingCerts() {
 		return true; // "true" en DNIe 1.0, "false" en cualquier otro.
@@ -397,12 +422,12 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     @Override
     public final String[] getAliases() {
-    	return aliases.toArray(new String[0]);
+    	return this.aliases.toArray(new String[0]);
     }
 
 	@Override
 	public final X509Certificate getCertificate(final String alias) {
-		return certs.get(alias);
+		return this.certs.get(alias);
 	}
 
     @Override
@@ -432,7 +457,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         catch (final CertificateException e) {
         	throw new IOException("No se pudo obtener el certificado de componente", e); //$NON-NLS-1$
 		}
-        return cryptoHelper.getRsaPublicKey(iccCert);
+        return this.cryptoHelper.getRsaPublicKey(iccCert);
     }
 
     @Override
@@ -530,7 +555,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     @Override
     public final PrivateKeyReference getPrivateKey(final String alias) {
-    	return keyReferences.get(alias);
+    	return this.keyReferences.get(alias);
     }
 
     @Override
@@ -594,13 +619,15 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	//*************************************************************************
 	//*********************** METODOS PUBLICOS ********************************
 
-	/** Realiza un cifrado RSA directo con una clave privada.
+	/**
+	 * Realiza un cifrado RSA directo con una clave privada.
 	 * @param data Datos a cifrar.
 	 * @param privateKeyReference Referencia a la clave privada RSA a usar.
 	 * @return Datos cifrados.
 	 * @throws CryptoCardException Si hay errores en el proceso en la tarjeta o en la comunicaci&oacute;n con ella.
 	 * @throws PinException Si el PIN introducido no es correcto.
-	 * @throws LostChannelException Si se pierde el canal de cifrado. */
+	 * @throws LostChannelException Si se pierde el canal de cifrado.
+	 */
 	public final byte[] cipherData(final byte[] data,
                                    final PrivateKeyReference privateKeyReference) throws CryptoCardException,
                                                                                          PinException,
@@ -647,23 +674,27 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         return res.getData();
 	}
 
-    /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
+    /**
+     * Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o
      *                      la tarjeta tiene el PIN bloqueado.
-     * @throws PasswordCallbackNotFoundException Si no se ha proporcionado una forma de obtener el PIN. */
+     * @throws PasswordCallbackNotFoundException Si no se ha proporcionado una forma de obtener el PIN.
+     */
     public void openSecureChannelIfNotAlreadyOpened() throws CryptoCardException,
                                                              PinException {
     	openSecureChannelIfNotAlreadyOpened(true);
     }
 
-    /** Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
+    /**
+     * Establece y abre el canal seguro CWA-14890 si no lo estaba ya.
      * @param doChv <code>true</code> si la apertura de canal seguro debe incluir la verificaci&oacute;n
      *              de PIN, <code>false</code> si debe abrirse canal seguro <b>sin verificar PIN</b>.
      * @throws CryptoCardException Si hay problemas en el proceso.
      * @throws PinException Si el PIN usado para la apertura de canal no es v&aacute;lido o
      *         la tarjeta tiene el PIN bloqueado.
-     * @throws PasswordCallbackNotFoundException Si no se ha proporcionado una forma de obtener el PIN. */
+     * @throws PasswordCallbackNotFoundException Si no se ha proporcionado una forma de obtener el PIN.
+     */
     public void openSecureChannelIfNotAlreadyOpened(final boolean doChv) throws CryptoCardException,
                                                                                 PinException {
         if (!isSecurityChannelOpen()) {
@@ -673,7 +704,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         		secureConnection = new Cwa14890OneV1Connection(
             		this,
             		getConnection(),
-            		cryptoHelper,
+            		this.cryptoHelper,
             		getCwa14890PublicConstants(),
             		getCwa14890PrivateConstants()
         		);
@@ -695,9 +726,11 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
         }
     }
 
-    /** Devuelve los intentos restantes de comprobaci&oacute;n de PIN del DNIe.
+    /**
+     * Devuelve los intentos restantes de comprobaci&oacute;n de PIN del DNIe.
      * @return Intentos restantes de comprobaci&oacute;n de PIN del DNIe.
-     * @throws ApduConnectionException Cuando hay problemas en el proceso. */
+     * @throws ApduConnectionException Cuando hay problemas en el proceso.
+     */
     public int getPinRetriesLeft() throws ApduConnectionException {
     	final CommandApdu verifyCommandApdu = new RetriesLeftApduCommand();
     	final ResponseApdu verifyResponse = getConnection().transmit(verifyCommandApdu);
@@ -708,13 +741,15 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
     	return resSw.getLsb() - (byte) 0xC0;
     }
 
-	/** Realiza la operaci&oacute;n de cambio de PIN. Necesita tener un canal administrativo abierto.
+	/**
+	 * Realiza la operaci&oacute;n de cambio de PIN. Necesita tener un canal administrativo abierto.
 	 * @param oldPin PIN actual.
 	 * @param newPin PIN nuevo.
 	 * @return APDU de respuesta de la operaci&oacute;n.
 	 * @throws CryptoCardException Cuando se produce un error en el cambio de PIN.
 	 * @throws PinException Si el PIN actual es incorrecto.
-	 * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado. */
+	 * @throws AuthenticationModeLockedException Cuando el DNIe est&aacute; bloqueado.
+	 */
 	public final byte[] changePIN(final String oldPin, final String newPin) throws CryptoCardException,
 	                                                                               PinException {
 		openSecureChannelIfNotAlreadyOpened();
@@ -758,32 +793,40 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 		}
 	}
 
-    /** Asigna un <code>CallbackHandler</code> a la tarjeta.
-     * @param handler <code>CallbackHandler</code> a asignar. */
+    /**
+     * Asigna un <code>CallbackHandler</code> a la tarjeta.
+     * @param handler <code>CallbackHandler</code> a asignar.
+     */
     public final void setCallbackHandler(final CallbackHandler handler) {
-    	callbackHandler = handler;
+    	this.callbackHandler = handler;
     }
 
-	/** Asigna un <code>PasswordCallback</code> a la tarjeta.
-	 * @param pwc <code>PasswordCallback</code> a asignar. */
+	/**
+	 * Asigna un <code>PasswordCallback</code> a la tarjeta.
+	 * @param pwc <code>PasswordCallback</code> a asignar.
+	 */
 	public final void setPasswordCallback(final PasswordCallback pwc) {
-		passwordCallback = pwc;
+		this.passwordCallback = pwc;
 	}
 
-	/** Obtiene el n&uacute;mero de soporte (IDESP) del DNIe.
+	/**
+	 * Obtiene el n&uacute;mero de soporte (IDESP) del DNIe.
 	 * @return Obtiene el n&uacute;mero de soporte (IDESP) del DNIe.
 	 * @throws Iso7816FourCardException Si hay problemas enviando la APDU.
 	 * @throws FileNotFoundException Si no se encuentra el fichero que contiene el IDESP.
-	 * @throws IOException Si no se puede conectar con la tarjeta. */
+	 * @throws IOException Si no se puede conectar con la tarjeta.
+	 */
 	public String getIdesp() throws Iso7816FourCardException, IOException {
 		final String idEsp = new String(selectFileByLocationAndRead(IDESP_LOCATION));
 		JmcLogger.info(Dnie.class.getName(), "getIdesp", "Leido el IDESP del DNIe: " + idEsp.trim()); //$NON-NLS-1$ //$NON-NLS-2$
 		return idEsp;
 	}
 
-    /** Conecta con el lector del sistema que tenga un DNIe insertado.
+    /**
+     * Conecta con el lector del sistema que tenga un DNIe insertado.
      * @param conn Conexi&oacute;n hacia el DNIe.
-     * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta. */
+     * @throws ApduConnectionException Si hay problemas de conexi&oacute;n con la tarjeta.
+     */
     public static void connect(final ApduConnection conn) throws ApduConnectionException {
     	if (!conn.isOpen()) {
     		conn.open();
@@ -793,8 +836,10 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	//*************************************************************************
 	//*********************** METODOS PRIVADOS ********************************
 
-    /** Carga localizaciones de claves, alias y certificados.
-     * @throws ApduConnectionException Si hay problemas en la carga. */
+    /**
+     * Carga localizaciones de claves, alias y certificados.
+     * @throws ApduConnectionException Si hay problemas en la carga.
+     */
 	private void loadCertificates() throws ApduConnectionException {
     	if (needsPinForLoadingCerts()) {
     		try {
@@ -826,11 +871,11 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 				final Location loc = new Location(cdf.getCertificatePath(i).replace("\\", "").trim()); //$NON-NLS-1$ //$NON-NLS-2$
 				final X509Certificate cert = CompressionUtils.getCertificateFromCompressedOrNotData(
 					selectFileByLocationAndRead(loc),
-					cryptoHelper
+					this.cryptoHelper
 				);
 				final String alias = cdf.getCertificateAlias(i);
-				aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
-				certs.put(alias, cert);
+				this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
+				this.certs.put(alias, cert);
 				JmcLogger.info(
 					Dnie.class.getName(),
 					"loadCertificates", //$NON-NLS-1$
@@ -864,9 +909,9 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 		}
 
 		for (int i = 0; i < prkdf.getKeyCount(); i++) {
-			final String alias = aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
+			final String alias = this.aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
 			if (alias != null) {
-				keyReferences.put(
+				this.keyReferences.put(
 					alias,
 					new DniePrivateKeyReference(
 						this,
@@ -874,24 +919,26 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	            		new Location(prkdf.getKeyPath(i)),
 	            		prkdf.getKeyName(i),
 	            		prkdf.getKeyReference(i),
-	            		((RSAPublicKey)certs.get(alias).getPublicKey()).getModulus().bitLength()
+	            		((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
 					)
 				);
 			}
 		}
 
-		aliases.addAll(certs.keySet());
+		this.aliases.addAll(this.certs.keySet());
 
 		// Sincronizamos claves y certificados
 		hideCertsWithoutKey();
     }
 
-	/** Oculta los alias certificados que no tienen una clave privada asociada.
-	 * Los certificados se mantienen, y se pueden seguir obteniendo si se conoce el alias. */
+	/**
+	 * Oculta los alias certificados que no tienen una clave privada asociada.
+	 * Los certificados se mantienen, y se pueden seguir obteniendo si se conoce el alias.
+	 */
 	private void hideCertsWithoutKey() {
-		for (final String alias : aliases) {
-			if (keyReferences.get(alias) == null) {
-				aliases.remove(alias);
+		for (final String alias : this.aliases) {
+			if (this.keyReferences.get(alias) == null) {
+				this.aliases.remove(alias);
 			}
 		}
 	}
