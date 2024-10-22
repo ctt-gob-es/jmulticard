@@ -5,6 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>jmulticard-crypto</artifactId>
 	<name>jmulticard-crypto</name>
+	<description>Módulo con funcionalidades criptográficas que sustituye a "jmulticard-jse" cuando se quiere usar la biblioteca sin depender del proveedor de Java, como cuando se quiere convertir el código a Objetive-C para su uso desde iOS.</description>
 
 	<parent>
 		<groupId>es.gob.afirma.jmulticard</groupId>
@@ -17,13 +18,6 @@
 			<groupId>es.gob.afirma.jmulticard</groupId>
 			<artifactId>jmulticard</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>es.gob.afirma.jmulticard</groupId>
-			<artifactId>jmulticard-jsr268</artifactId>
-			<version>${project.version}</version>
-			<!-- <scope>test</scope> -->
 		</dependency>
 
 	</dependencies>

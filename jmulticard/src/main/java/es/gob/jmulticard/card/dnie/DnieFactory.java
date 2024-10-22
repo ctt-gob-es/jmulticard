@@ -11,6 +11,7 @@ import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.card.dnie.tif.Tif;
 import es.gob.jmulticard.card.icao.IcaoException;
 import es.gob.jmulticard.card.icao.IcaoMrtdWithPace;
+import es.gob.jmulticard.card.icao.InvalidCanOrMrzException;
 import es.gob.jmulticard.card.icao.MrtdLds1;
 import es.gob.jmulticard.connection.ApduConnection;
 import es.gob.jmulticard.connection.ApduConnectionException;
@@ -136,6 +137,9 @@ public final class DnieFactory {
 					);
 					return new DnieNfc(conn, null, cryptoHelper, ch);
 				}
+				catch (final InvalidCanOrMrzException e) {
+					throw new InvalidAccessCodeException("El CAN indicado del DNIe no es correcto", e); //$NON-NLS-1$
+				}
 				catch (final IcaoException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE", e); //$NON-NLS-1$
 				}
@@ -195,6 +199,9 @@ public final class DnieFactory {
 				try {
 					JmcLogger.info(DnieFactory.class.getName(), "getEmrtdNfc", "Detectado eMRTD con ATR: " + new DnieAtr(actualAtr)); //$NON-NLS-1$ //$NON-NLS-2$
 					return new IcaoMrtdWithPace(conn, cryptoHelper, ch);
+				}
+				catch (final InvalidCanOrMrzException e) {
+					throw new InvalidAccessCodeException("El MRZ del documento de viaje no es correcto", e); //$NON-NLS-1$
 				}
 				catch (final IcaoException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE", e); //$NON-NLS-1$
@@ -260,6 +267,9 @@ public final class DnieFactory {
 					//      3B8C800150D71A03F3E1F35E117781A16A
 					JmcLogger.info(DnieFactory.class.getName(), "getDnie", "Detectado DNIe 3.0 o 4.0: " + new DnieAtr(actualAtr)); //$NON-NLS-1$ //$NON-NLS-2$
 					return new DnieNfc(conn, pwc, cryptoHelper, ch);
+				}
+				catch (final InvalidCanOrMrzException e) {
+					throw new InvalidAccessCodeException("El CAN indicado del DNIe no es correcto", e); //$NON-NLS-1$
 				}
 				catch (final IcaoException e) {
 					throw new ApduConnectionException("No se ha podido abrir el canal PACE", e); //$NON-NLS-1$

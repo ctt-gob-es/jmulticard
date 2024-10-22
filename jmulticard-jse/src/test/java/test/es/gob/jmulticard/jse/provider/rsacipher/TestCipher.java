@@ -10,7 +10,6 @@ import java.security.Security;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
-import javax.smartcardio.CommandAPDU;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -157,7 +156,7 @@ final class TestCipher {
 		final byte[] data = new byte[256];
 		new SecureRandom().nextBytes(data);
 
-		final CommandAPDU apu = new CommandAPDU(0x00, (byte) 0x2a, (byte) 0x9e, (byte) 0x9a, data);
+		final CommandApdu apu = new CommandApdu((byte) 0x00, (byte) 0x2a, (byte) 0x9e, (byte) 0x9a, data, null);
 		System.out.println(HexUtils.hexify(apu.getBytes(), false));
 
 		final CommandApdu apu2 = new PsoSignHashApduCommand((byte)0x00, data);

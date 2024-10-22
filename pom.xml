@@ -90,7 +90,6 @@
 				<module>jmulticard</module>
 				<module>jmulticard-jsr268</module>
 				<module>jmulticard-jse</module>
-				<module>jmulticard-crypto</module>
 			</modules>
 
 	    </profile>
@@ -108,6 +107,23 @@
 			<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
+			</modules>
+
+	    </profile>
+		
+		<!-- Construcción que incluye el módulo iOS -->
+		<profile>
+			<id>ios</id>
+			<activation>
+				<property>
+					<name>ios</name>
+					<value>true</value>
+				</property>
+      		</activation>
+
+			<modules>
+				<module>jmulticard</module>
+				<module>jmulticard-crypto</module>
 			</modules>
 
 	    </profile>
