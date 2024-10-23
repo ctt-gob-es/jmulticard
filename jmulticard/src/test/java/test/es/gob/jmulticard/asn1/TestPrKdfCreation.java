@@ -1,27 +1,18 @@
 package test.es.gob.jmulticard.asn1;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
-import junit.framework.TestCase;
 
 /** Prueba de creaci&oacute;n de PrKDK PKCS#15.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public class TestPrKdfCreation extends TestCase {
-
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(TestPrKdfCreation.class.getName());
-
-    private static final int BUFFER_SIZE = 4096;
+class TestPrKdfCreation {
 
     private static final String[] TEST_FILES = {
-        "PRKDF_TGM.BER", //$NON-NLS-1$
-        "PrKDF_2281552478270226931.der", //$NON-NLS-1$
-        "PrKDF_TUI_01.der" //$NON-NLS-1$
+        "PRKDF_ESPECIMEN.BER" //$NON-NLS-1$
     };
 
     private static final byte[] SAMPLE_PRKDF = {
@@ -93,48 +84,31 @@ public class TestPrKdfCreation extends TestCase {
 
     /** Prueba la creaci&oacute;n de PrKDK con volcados en disco.
      * @throws Exception en caso de cualquier tipo de error */
-    @Test
-    public static void testPrKdf() throws Exception {
+    @SuppressWarnings("static-method")
+	@Test
+    void testPrKdf() throws Exception {
         byte[] prkdfdata;
         for (final String element : TEST_FILES) {
         	try (final InputStream is = ClassLoader.getSystemResourceAsStream(element)) {
-        		prkdfdata = getDataFromInputStream(is);
+        		prkdfdata = TestingUtil.getDataFromInputStream(is);
         	}
-            //LOGGER.info("\n\nPrKDF completo (" + Integer.toString(prkdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
-            //LOGGER.info(HexUtils.hexify(prkdfdata, true));
+            //JmcLogger.info("\n\nPrKDF completo (" + Integer.toString(prkdfdata.length) + "):"); //$NON-NLS-1$ //$NON-NLS-2$
+            //JmcLogger.info(HexUtils.hexify(prkdfdata, true));
             final PrKdf prkdf = new PrKdf();
-            Assert.assertNotNull(prkdf);
+            Assertions.assertNotNull(prkdf);
             prkdf.setDerValue(prkdfdata);
-            LOGGER.info("\n" + prkdf.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+            System.out.println("\n" + prkdf.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
     /** Prueba de an&aacute;lisis de PrKDF de prueba.
      * @throws Exception En cualquier error. */
-    @Test
-    public static void testSamplePrKdf() throws Exception {
+    @SuppressWarnings("static-method")
+	@Test
+    void testSamplePrKdf() throws Exception {
     	final PrKdf prkdf = new PrKdf();
-        Assert.assertNotNull(prkdf);
+        Assertions.assertNotNull(prkdf);
         prkdf.setDerValue(SAMPLE_PRKDF);
-        LOGGER.info("\n" + prkdf.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    /** Lee un flujo de datos de entrada y los recupera en forma de array de
-     * bytes. Este m&eacute;todo consume pero no cierra el flujo de datos de
-     * entrada.
-     * @param input Flujo de donde se toman los datos.
-     * @return Los datos obtenidos del flujo.
-     * @throws IOException Cuando ocurre un problema durante la lectura */
-    private static byte[] getDataFromInputStream(final InputStream input) throws IOException {
-        if (input == null) {
-            return new byte[0];
-        }
-        int nBytes = 0;
-        final byte[] buffer = new byte[BUFFER_SIZE];
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        while ((nBytes = input.read(buffer)) != -1) {
-            baos.write(buffer, 0, nBytes);
-        }
-        return baos.toByteArray();
+        System.out.println("\n" + prkdf.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -16,12 +16,9 @@ import java.io.IOException;
  * from the way {@link DERSet} does things.
  * </p>
  */
-public class BERSet
-    extends ASN1Set
-{
-    /**
-     * Create an empty SET.
-     */
+public class BERSet extends ASN1Set {
+
+    /** Create an empty SET. */
     public BERSet()
     {
     }
@@ -31,7 +28,7 @@ public class BERSet
      *
      * @param element - a single object that makes up the set.
      */
-    public BERSet(ASN1Encodable element)
+    public BERSet(final ASN1Encodable element)
     {
         super(element);
     }
@@ -40,7 +37,7 @@ public class BERSet
      * Create a SET containing multiple objects.
      * @param elementVector a vector of objects making up the set.
      */
-    public BERSet(ASN1EncodableVector elementVector)
+    public BERSet(final ASN1EncodableVector elementVector)
     {
         super(elementVector, false);
     }
@@ -49,24 +46,23 @@ public class BERSet
      * Create a SET from an array of objects.
      * @param elements an array of ASN.1 objects.
      */
-    public BERSet(ASN1Encodable[] elements)
+    public BERSet(final ASN1Encodable[] elements)
     {
         super(elements, false);
     }
 
-    BERSet(boolean isSorted, ASN1Encodable[] elements)
+    BERSet(final boolean isSorted, final ASN1Encodable[] elements)
     {
         super(isSorted, elements);
     }
 
     @Override
-	int encodedLength(boolean withTag) throws IOException
+	int encodedLength(final boolean withTag) throws IOException
     {
         int totalLength = withTag ? 4 : 3;
 
-        for (int i = 0, count = elements.length; i < count; ++i)
-        {
-            ASN1Primitive p = elements[i].toASN1Primitive();
+        for (final ASN1Encodable element : elements) {
+            final ASN1Primitive p = element.toASN1Primitive();
             totalLength += p.encodedLength(true);
         }
 
@@ -74,7 +70,7 @@ public class BERSet
     }
 
     @Override
-	void encode(ASN1OutputStream out, boolean withTag) throws IOException
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
         out.writeEncodingIL(withTag, BERTags.CONSTRUCTED | BERTags.SET, elements);
     }

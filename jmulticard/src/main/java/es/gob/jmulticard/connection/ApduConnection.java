@@ -42,9 +42,9 @@ package es.gob.jmulticard.connection;
 import es.gob.jmulticard.apdu.CommandApdu;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
-/** Define los requerimientos de clases que representen una conexi&oacute;n con una tarjeta inteligente insertada en un lector.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote
- * @author Gonzalo Henr&iacute;quez Manzano. */
+/** Define los requerimientos de clases que representen una conexi&oacute;n con una
+ * tarjeta inteligente insertada en un lector.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote. */
 public interface ApduConnection {
 
 	/** Establece el Protocolo de conexi&oacute;n con la tarjeta.
@@ -72,15 +72,6 @@ public interface ApduConnection {
      * @throws ApduConnectionException Cuando ocurre cualquier problema reinicializando la conexi&oacute;n. */
     byte[] reset() throws ApduConnectionException;
 
-    /** A&ntilde;ade un objeto al que se notificar&aacute; cuando existan eventos en la conexi&oacute;n.
-     * Solo se notificar&aacute;n las inserciones y las extracciones cuando la implementaci&oacute;n subyacente lo soporte.
-     * @param ccl Objeto al que se desea notificar los eventos de la conexi&oacute;n. */
-    void addCardConnectionListener(CardConnectionListener ccl);
-
-    /** Indica que ya no se desea notificar a un objeto cuando existan eventos en la conexi&oacute;n.
-     * @param ccl Objeto al que ya no se desea notificar los eventos de la conexi&oacute;n. */
-    void removeCardConnectionListener(CardConnectionListener ccl);
-
     /** Devuelve todos los lectores de tarjetas presentes en el sistema.
      * @param onlyWithCardPresent Para indicar que s&oacute;lo devuelva lectores que tengan una tarjeta insertada.
      * @return Una lista con los identificadores de lectores de tarjetas conectados.
@@ -107,5 +98,4 @@ public interface ApduConnection {
      * @return Conexi&oacute;n subyacente con la tarjeta o <code>null</code> si esta
      * conexi&oacute;n es ya la de m&aacute;s bajo nivel. */
     ApduConnection getSubConnection();
-
 }

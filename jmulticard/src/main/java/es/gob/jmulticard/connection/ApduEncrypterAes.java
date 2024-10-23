@@ -43,12 +43,12 @@ package es.gob.jmulticard.connection;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.logging.Logger;
 
 import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.CryptoHelper.BlockMode;
 import es.gob.jmulticard.CryptoHelper.Padding;
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 import es.gob.jmulticard.apdu.ResponseApdu;
 
 /** Operaciones de cifrado AES.
@@ -56,11 +56,11 @@ import es.gob.jmulticard.apdu.ResponseApdu;
  * @author Sergio Mart&iacute;nez Rico. */
 public final class ApduEncrypterAes extends AbstractApduEncrypter {
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
-
 	/** Constructor de la clase para operaciones de cifrado AES. */
 	public ApduEncrypterAes() {
-		LOGGER.info(
+		JmcLogger.info(
+			ApduEncrypterAes.class.getName(),
+			"constructor", //$NON-NLS-1$
 			"Se usara AES y CMAC para el cifrado de mensajes en el canal seguro" //$NON-NLS-1$
 		);
 		paddingLength = 16;
@@ -77,7 +77,7 @@ public final class ApduEncrypterAes extends AbstractApduEncrypter {
 			);
 		}
 		// El vector de inicializacion del cifrado AES se calcula cifrando el SSC igualmente en AES
-		// con la misma clave y un vector de inicializacion todo a 0x00
+		// con la misma clave y un vector de inicializacion con todas sus posiciones a 0x00
 		final byte[] iv = cryptoHelper.aesEncrypt(
 			ssc,
 			new byte[0], // Vector de inicializacion vacio
@@ -104,9 +104,7 @@ public final class ApduEncrypterAes extends AbstractApduEncrypter {
 			mac = cryptoHelper.doAesCmac(HexUtils.concatenateByteArrays(ssc, dataPadded), kMac);
 		}
 		catch (final InvalidKeyException | NoSuchAlgorithmException e) {
-			throw new IOException(
-				"Error creando la CMAC de la APDU cifrada", e //$NON-NLS-1$
-			);
+			throw new IOException("Error creando la CMAC de la APDU cifrada", e); //$NON-NLS-1$
 		}
 		final byte[] ret = new byte[8];
 		System.arraycopy(mac, 0, ret, 0, 8);
@@ -121,5 +119,4 @@ public final class ApduEncrypterAes extends AbstractApduEncrypter {
 			                                final CryptoHelper cryptoHelper) {
 		return null;
 	}
-
 }

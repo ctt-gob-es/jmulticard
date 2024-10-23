@@ -69,7 +69,7 @@ public class JcaContentVerifierProviderBuilder
         }
         catch (final CertificateEncodingException e)
         {
-            throw new OperatorCreationException("cannot process certificate: " + e.getMessage(), e);
+            throw new OperatorCreationException("cannot process certificate: " + e.getMessage(), e); //$NON-NLS-1$
         }
 
         return new ContentVerifierProvider()
@@ -94,31 +94,25 @@ public class JcaContentVerifierProviderBuilder
                 {
                     return createCompositeVerifier(algorithm, certificate.getPublicKey());
                 }
-                else
-                {
-                    Signature sig;
-                    try
-                    {
-                        sig = helper.createSignature(algorithm);
+				Signature sig;
+				try
+				{
+				    sig = helper.createSignature(algorithm);
 
-                        sig.initVerify(certificate.getPublicKey());
-                    }
-                    catch (final GeneralSecurityException e)
-                    {
-                        throw new OperatorCreationException("exception on setup: " + e, e);
-                    }
+				    sig.initVerify(certificate.getPublicKey());
+				}
+				catch (final GeneralSecurityException e)
+				{
+				    throw new OperatorCreationException("exception on setup: " + e, e); //$NON-NLS-1$
+				}
 
-                    final Signature rawSig = createRawSig(algorithm, certificate.getPublicKey());
+				final Signature rawSig = createRawSig(algorithm, certificate.getPublicKey());
 
-                    if (rawSig != null)
-                    {
-                        return new RawSigVerifier(algorithm, sig, rawSig);
-                    }
-                    else
-                    {
-                        return new SigVerifier(algorithm, sig);
-                    }
-                }
+				if (rawSig != null)
+				{
+				    return new RawSigVerifier(algorithm, sig, rawSig);
+				}
+				return new SigVerifier(algorithm, sig);
             }
         };
     }
@@ -149,36 +143,7 @@ public class JcaContentVerifierProviderBuilder
                     return createCompositeVerifier(algorithm, publicKey);
                 }
 
-                if (publicKey instanceof CompositePublicKey)
-                {
-                    final List<PublicKey> keys = ((CompositePublicKey)publicKey).getPublicKeys();
-
-                    for (final PublicKey key : keys) {
-                        try
-                        {
-                            final Signature sig = createSignature(algorithm, key);
-
-                            final Signature rawSig = createRawSig(algorithm, key);
-
-                            if (rawSig != null)
-                            {
-                                return new RawSigVerifier(algorithm, sig, rawSig);
-                            }
-                            else
-                            {
-                                return new SigVerifier(algorithm, sig);
-                            }
-                        }
-                        catch (final OperatorCreationException e)
-                        {
-                            // skip incorrect keys
-                        }
-                    }
-
-                    throw new OperatorCreationException("no matching algorithm found for key");
-                }
-                else
-                {
+                if (!(publicKey instanceof CompositePublicKey)) {
                     final Signature sig = createSignature(algorithm, publicKey);
 
                     final Signature rawSig = createRawSig(algorithm, publicKey);
@@ -187,11 +152,30 @@ public class JcaContentVerifierProviderBuilder
                     {
                         return new RawSigVerifier(algorithm, sig, rawSig);
                     }
-                    else
-                    {
-                        return new SigVerifier(algorithm, sig);
-                    }
+					return new SigVerifier(algorithm, sig);
                 }
+				final List<PublicKey> keys = ((CompositePublicKey)publicKey).getPublicKeys();
+
+				for (final PublicKey key : keys) {
+				    try
+				    {
+				        final Signature sig = createSignature(algorithm, key);
+
+				        final Signature rawSig = createRawSig(algorithm, key);
+
+				        if (rawSig != null)
+				        {
+				            return new RawSigVerifier(algorithm, sig, rawSig);
+				        }
+						return new SigVerifier(algorithm, sig);
+				    }
+				    catch (final OperatorCreationException e)
+				    {
+				        // skip incorrect keys
+				    }
+				}
+
+				throw new OperatorCreationException("no matching algorithm found for key"); //$NON-NLS-1$
             }
         };
     }
@@ -202,7 +186,7 @@ public class JcaContentVerifierProviderBuilder
         return this.build(helper.convertPublicKey(publicKey));
     }
 
-    private ContentVerifier createCompositeVerifier(final AlgorithmIdentifier compAlgId, final PublicKey publicKey)
+    ContentVerifier createCompositeVerifier(final AlgorithmIdentifier compAlgId, final PublicKey publicKey)
         throws OperatorCreationException
     {
         if (publicKey instanceof CompositePublicKey)
@@ -225,26 +209,23 @@ public class JcaContentVerifierProviderBuilder
 
             return new CompositeVerifier(sigs);
         }
-        else
-        {
-            final ASN1Sequence keySeq = ASN1Sequence.getInstance(compAlgId.getParameters());
-            final Signature[] sigs = new Signature[keySeq.size()];
-            for (int i = 0; i != keySeq.size(); i++)
-            {
-                final AlgorithmIdentifier sigAlg = AlgorithmIdentifier.getInstance(keySeq.getObjectAt(i));
-                try
-                {
-                    sigs[i] = createSignature(sigAlg, publicKey);
-                }
-                catch (final Exception e)
-                {
-                    sigs[i] = null;
-                    // continue
-                }
-            }
+		final ASN1Sequence keySeq = ASN1Sequence.getInstance(compAlgId.getParameters());
+		final Signature[] sigs = new Signature[keySeq.size()];
+		for (int i = 0; i != keySeq.size(); i++)
+		{
+		    final AlgorithmIdentifier sigAlg = AlgorithmIdentifier.getInstance(keySeq.getObjectAt(i));
+		    try
+		    {
+		        sigs[i] = createSignature(sigAlg, publicKey);
+		    }
+		    catch (final Exception e)
+		    {
+		        sigs[i] = null;
+		        // continue
+		    }
+		}
 
-            return new CompositeVerifier(sigs);
-        }
+		return new CompositeVerifier(sigs);
     }
 
     Signature createSignature(final AlgorithmIdentifier algorithm, final PublicKey publicKey)
@@ -260,11 +241,11 @@ public class JcaContentVerifierProviderBuilder
         }
         catch (final GeneralSecurityException e)
         {
-            throw new OperatorCreationException("exception on setup: " + e, e);
+            throw new OperatorCreationException("exception on setup: " + e, e); //$NON-NLS-1$
         }
     }
 
-    private Signature createRawSig(final AlgorithmIdentifier algorithm, final PublicKey publicKey)
+    Signature createRawSig(final AlgorithmIdentifier algorithm, final PublicKey publicKey)
     {
         Signature rawSig;
         try
@@ -309,7 +290,7 @@ public class JcaContentVerifierProviderBuilder
         {
             if (stream == null)
             {
-                throw new IllegalStateException("verifier not initialised");
+                throw new IllegalStateException("verifier not initialised"); //$NON-NLS-1$
             }
 
             return stream;
@@ -324,7 +305,7 @@ public class JcaContentVerifierProviderBuilder
             }
             catch (final SignatureException e)
             {
-                throw new RuntimeOperatorException("exception obtaining signature: " + e.getMessage(), e);
+                throw new RuntimeOperatorException("exception obtaining signature: " + e.getMessage(), e); //$NON-NLS-1$
             }
         }
     }
@@ -374,7 +355,7 @@ public class JcaContentVerifierProviderBuilder
             }
             catch (final SignatureException e)
             {
-                throw new RuntimeOperatorException("exception obtaining raw signature: " + e.getMessage(), e);
+                throw new RuntimeOperatorException("exception obtaining raw signature: " + e.getMessage(), e); //$NON-NLS-1$
             }
             finally
             {
@@ -411,7 +392,7 @@ public class JcaContentVerifierProviderBuilder
 
             if (start == sigs.length)
             {
-                throw new OperatorCreationException("no matching signature found in composite");
+                throw new OperatorCreationException("no matching signature found in composite"); //$NON-NLS-1$
             }
             stream = OutputStreamFactory.createStream(sigs[start]);
             for (int i = start + 1; i != sigs.length; i++)
@@ -444,7 +425,7 @@ public class JcaContentVerifierProviderBuilder
                 boolean failed = false;
                 for (int i = 0; i != sigSeq.size(); i++)
                 {
-                    if ((sigs[i] != null) && !sigs[i].verify(DERBitString.getInstance(sigSeq.getObjectAt(i)).getBytes()))
+                    if (sigs[i] != null && !sigs[i].verify(DERBitString.getInstance(sigSeq.getObjectAt(i)).getBytes()))
 					{
 					    failed = true;
 					}
@@ -453,7 +434,7 @@ public class JcaContentVerifierProviderBuilder
             }
             catch (final SignatureException e)
             {
-                throw new RuntimeOperatorException("exception obtaining signature: " + e.getMessage(), e);
+                throw new RuntimeOperatorException("exception obtaining signature: " + e.getMessage(), e); //$NON-NLS-1$
             }
         }
     }

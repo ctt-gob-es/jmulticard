@@ -44,6 +44,10 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Sharon Liu. */
 final class ConstructKeys {
 
+	private ConstructKeys() {
+		// Vacio
+	}
+
     /** Construye una clave p&uacute;blica a partir de su codificaci&oacute;n.
      * @param encodedKey Codificaci&oacute;n de la clave p&uacute;blica.
      * @param encodedKeyAlgorithm Nombre del algoritmo de codificaci&oacute;n.

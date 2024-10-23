@@ -70,18 +70,8 @@ public final class SmartCafeProvider extends Provider {
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para tarjeta G&D SmartCafe con Applet PKCS#15"; //$NON-NLS-1$
-    private static final double VERSION = 0.1;
+    private static final double VERSION = 0.2;
     private static final String NAME = "SmartCafePkcs15JCAProvider"; //$NON-NLS-1$
-
-    private static ApduConnection defaultConnection = null;
-
-    /** Obtiene de forma est&aacute;tica el tipo de conexi&oacute;n de APDU que debe usar el <i>KeyStore</i>.
-     * Si es nula (se ha invocado al constructor por defecto), es el propio <code>KeyStore</code> el que decide que
-     * conexi&oacute;n usar.
-     * @return Conexi&oacute;n por defecto */
-    static ApduConnection getDefaultApduConnection() {
-    	return defaultConnection;
-    }
 
     /** Crea un proveedor JCA para tarjeta G&amp;D SmartCafe con Applet PKCS#15 con la conexi&oacute;n por defecto. */
     public SmartCafeProvider() {
@@ -93,6 +83,7 @@ public final class SmartCafeProvider extends Provider {
     public SmartCafeProvider(final ApduConnection conn) {
         super(NAME, VERSION, INFO);
 
+        final ApduConnection defaultConnection;
         try {
 			defaultConnection = conn == null ?
 				ProviderUtil.getDefaultConnection() :
@@ -154,5 +145,4 @@ public final class SmartCafeProvider extends Provider {
         put("Alg.Alias.Signature.SHA-512withRSAEncryption", SmartCafeProvider.SHA512WITH_RSA); //$NON-NLS-1$
         put("Alg.Alias.Signature.SHA512withRSAEncryption", SmartCafeProvider.SHA512WITH_RSA); //$NON-NLS-1$
     }
-
 }

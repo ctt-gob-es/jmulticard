@@ -52,12 +52,10 @@ class AnyUSBDevice {
 	private UsbInterface usbInterface;
 
 	/** Constructor.
-	 * @param usbDev Dispositivo USB
-	 * @param UsbManager Gestor de dispositivos USB de Android
-	 * @throws UsbDeviceException */
+	 * @param UsbMan Gestor de dispositivos USB de Android.
+	 * @param usbDev Dispositivo USB.
+	 * @throws UsbDeviceException En cualquier error. */
 	protected AnyUSBDevice(final UsbManager usbMan, final UsbDevice usbDev) throws UsbDeviceException {
-		super();
-
 		this.usbManager = usbMan;
 		this.usbDevice = usbDev;
 

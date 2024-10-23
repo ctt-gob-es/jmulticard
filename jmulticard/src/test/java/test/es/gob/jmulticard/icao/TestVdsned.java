@@ -1,12 +1,13 @@
 package test.es.gob.jmulticard.icao;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.card.icao.vdsned.Vdsned;
 
 /** Pruebas de <i>Visible Digital Seals for Non-Electronic Documents</i> de ICAO.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestVdsned {
+final class TestVdsned {
 
 	private static final byte[] SAMPLE = {
 
@@ -51,9 +52,9 @@ public final class TestVdsned {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	public void testVdsned() throws Exception {
+	void testVdsned() throws Exception {
 		final Vdsned vdsned = new Vdsned(SAMPLE);
+		Assertions.assertNotNull(vdsned);
 		System.out.println(vdsned);
 	}
-
 }

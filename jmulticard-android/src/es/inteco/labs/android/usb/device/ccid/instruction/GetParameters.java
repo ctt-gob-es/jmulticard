@@ -54,5 +54,4 @@ public final class GetParameters extends UsbCommand {
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
 }

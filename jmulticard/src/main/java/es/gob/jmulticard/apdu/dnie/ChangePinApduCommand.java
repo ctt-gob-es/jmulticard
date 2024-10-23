@@ -2,10 +2,10 @@ package es.gob.jmulticard.apdu.dnie;
 
 import es.gob.jmulticard.apdu.CommandApdu;
 
-/** APDU para el cambio de PIN
+/** APDU para el cambio de PIN.
  * @author Sergio Mart&iacute;nez Rico
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s Capote. */
-public class ChangePinApduCommand extends CommandApdu {
+public final class ChangePinApduCommand extends CommandApdu {
 
 	private static final byte CLA = (byte) 0x90;
 
@@ -17,9 +17,9 @@ public class ChangePinApduCommand extends CommandApdu {
 
 	private static final byte CHV_CODE = 0x01;
 
-	/** Construye una APDU ISO 7816-4 de cambio de PIN
-	 * @param oldPIN Pin actual de la tarjeta inteligente
-	 * @param newPIN Pin nuevo de la tarjeta inteligente */
+	/** Construye una APDU ISO 7816-4 de cambio de PIN.
+	 * @param oldPIN Pin actual de la tarjeta inteligente.
+	 * @param newPIN Pin nuevo de la tarjeta inteligente. */
 	public ChangePinApduCommand(final byte[] oldPIN, final byte[] newPIN) {
 		super(
 			CLA,					  // CLA
@@ -31,13 +31,13 @@ public class ChangePinApduCommand extends CommandApdu {
 		);
 	}
 
-	private static byte[] buidData(final byte[] oldPIN, final byte[] newPIN) {
-		final byte[] data = new byte[1 + 1 + oldPIN.length + 1 + newPIN.length];
+	private static byte[] buidData(final byte[] oldPin, final byte[] newPin) {
+		final byte[] data = new byte[1 + 1 + oldPin.length + 1 + newPin.length];
 		data[0] = CHV_CODE;
-		data[1] = (byte) oldPIN.length;
-		System.arraycopy(oldPIN, 0, data, 2, oldPIN.length);
-		data[2+oldPIN.length] = (byte) newPIN.length;
-		System.arraycopy(newPIN, 0, data, 3+oldPIN.length, newPIN.length);
+		data[1] = (byte) oldPin.length;
+		System.arraycopy(oldPin, 0, data, 2, oldPin.length);
+		data[2+oldPin.length] = (byte) newPin.length;
+		System.arraycopy(newPin, 0, data, 3+oldPin.length, newPin.length);
 		return data;
 	}
 }

@@ -70,7 +70,7 @@ import es.gob.jmulticard.asn1.Tlv;
     private static final byte ISO7816_PADDING_PREFIX = (byte) 0x80;
 
     /** En el relleno ISO-7816, longitud de la cual debe ser m&uacute;ltiplo el tama&ntilde;o de los datos de salida. */
-    protected transient int paddingLength = 8;
+    protected int paddingLength = 8;
 
     /** Encapsula una APDU para ser enviada por un canal seguro CWA-14890.
      * El contador SSC se autoincrementa durante la operaci&oacute;n.
@@ -171,7 +171,7 @@ import es.gob.jmulticard.asn1.Tlv;
                 return paddedData;
             }
         }
-        // Esto solo ocurriria si todo fuesen 0x00
+        // Esto solo ocurriria si todas las posiciones fuesen 0x00
         return paddedData;
     }
 

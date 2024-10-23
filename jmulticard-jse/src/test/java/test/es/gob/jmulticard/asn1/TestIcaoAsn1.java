@@ -4,14 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.asn1.icao.Sod;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 
 /** Pruebas de estructuras ICAO.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class TestIcaoAsn1 {
+final class TestIcaoAsn1 {
 
     private static final int BUFFER_SIZE = 4096;
 
@@ -45,14 +46,14 @@ public final class TestIcaoAsn1 {
      * @throws Exception En cualquier error. */
     @SuppressWarnings("static-method")
 	@Test
-	public void testSod() throws Exception {
+	void testSod() throws Exception {
     	final byte[] sod1;
-    	try (final InputStream is = TestIcaoAsn1.class.getResourceAsStream("/SOD_1223499971262354764.asn1")) { //$NON-NLS-1$
+    	try (final InputStream is = TestIcaoAsn1.class.getResourceAsStream("/SOD_ESPECIMEN.der")) { //$NON-NLS-1$
     		sod1 = getDataFromInputStream(is);
     	}
     	final Sod sod = new Sod(new BcCryptoHelper());
+    	Assertions.assertNotNull(sod);
 		sod.setDerValue(sod1);
 		System.out.println(sod);
 	}
-
 }

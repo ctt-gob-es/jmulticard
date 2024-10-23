@@ -17,8 +17,8 @@ import java.util.StringTokenizer;
  * thread local, and system properties. They are checked for in the same order with
  * checking stopped as soon as a value is found.
  */
-public class Properties
-{
+public class Properties {
+
     private Properties()
     {
     }
@@ -31,14 +31,11 @@ public class Properties
      * @param propertyName the property name for the override.
      * @return true if the property is set to "true", false otherwise.
      */
-    public static boolean isOverrideSet(String propertyName)
-    {
-        try
-        {
+    public static boolean isOverrideSet(final String propertyName) {
+        try {
             return isSetTrue(getPropertyValue(propertyName));
         }
-        catch (AccessControlException e)
-        {
+        catch (final AccessControlException e) {
             return false;
         }
     }
@@ -50,19 +47,15 @@ public class Properties
      * @param isTrue true if the override should be true, false otherwise.
      * @return true if the property is set to the value of isTrue, false otherwise.
      */
-    public static boolean isOverrideSetTo(String propertyName, boolean isTrue)
-    {
-        try
-        {
-            String propertyValue = getPropertyValue(propertyName);
-            if (isTrue)
-            {
+    public static boolean isOverrideSetTo(final String propertyName, final boolean isTrue) {
+        try {
+            final String propertyValue = getPropertyValue(propertyName);
+            if (isTrue) {
                 return isSetTrue(propertyValue);
             }
             return isSetFalse(propertyValue);
         }
-        catch (AccessControlException e)
-        {
+        catch (final AccessControlException e) {
             return false;
         }
     }
@@ -74,13 +67,11 @@ public class Properties
      * @param enable true if the override should be enabled, false if it should be disabled.
      * @return true if the override was already set true, false otherwise.
      */
-    public static boolean setThreadOverride(String propertyName, boolean enable)
-    {
-        boolean isSet = isOverrideSet(propertyName);
+    public static boolean setThreadOverride(final String propertyName, final boolean enable) {
+        final boolean isSet = isOverrideSet(propertyName);
 
         Map localProps = (Map)threadProperties.get();
-        if (localProps == null)
-        {
+        if (localProps == null) {
             localProps = new HashMap();
 
             threadProperties.set(localProps);
@@ -97,12 +88,12 @@ public class Properties
      * @param propertyName the property name for the override.
      * @return true if the override was already set true in thread local, false otherwise.
      */
-    public static boolean removeThreadOverride(String propertyName)
+    public static boolean removeThreadOverride(final String propertyName)
     {
-        Map localProps = (Map)threadProperties.get();
+        final Map localProps = (Map)threadProperties.get();
         if (localProps != null)
         {
-            String p = (String)localProps.remove(propertyName);
+            final String p = (String)localProps.remove(propertyName);
             if (p != null)
             {
                 if (localProps.isEmpty())
@@ -124,9 +115,9 @@ public class Properties
      * @param defaultValue integer to return if property not defined.
      * @return value of property, or default if not found, as an int.
      */
-    public static int asInteger(String propertyName, int defaultValue)
+    public static int asInteger(final String propertyName, final int defaultValue)
     {
-        String p = getPropertyValue(propertyName);
+        final String p = getPropertyValue(propertyName);
 
         if (p != null)
         {
@@ -142,9 +133,9 @@ public class Properties
      * @param propertyName name of property.
      * @return value of property as a BigInteger, null if not defined.
      */
-    public static BigInteger asBigInteger(String propertyName)
+    public static BigInteger asBigInteger(final String propertyName)
     {
-        String p = getPropertyValue(propertyName);
+        final String p = getPropertyValue(propertyName);
 
         if (p != null)
         {
@@ -154,15 +145,15 @@ public class Properties
         return null;
     }
 
-    public static Set<String> asKeySet(String propertyName)
+    public static Set<String> asKeySet(final String propertyName)
     {
-        Set<String> set = new HashSet<String>();
+        final Set<String> set = new HashSet<>();
 
-        String p = getPropertyValue(propertyName);
+        final String p = getPropertyValue(propertyName);
 
         if (p != null)
         {
-            StringTokenizer sTok = new StringTokenizer(p, ",");
+            final StringTokenizer sTok = new StringTokenizer(p, ",");
             while (sTok.hasMoreElements())
             {
                 set.add(Strings.toLowerCase(sTok.nextToken()).trim());
@@ -181,7 +172,7 @@ public class Properties
      */
     public static String getPropertyValue(final String propertyName)
     {
-        String val = (String)AccessController.doPrivileged(new PrivilegedAction()
+        final String val = (String)AccessController.doPrivileged(new PrivilegedAction()
         {
             @Override
 			public Object run()
@@ -194,10 +185,10 @@ public class Properties
             return val;
         }
 
-        Map localProps = (Map)threadProperties.get();
+        final Map localProps = (Map)threadProperties.get();
         if (localProps != null)
         {
-            String p = (String)localProps.get(propertyName);
+            final String p = (String)localProps.get(propertyName);
             if (p != null)
             {
                 return p;
@@ -214,7 +205,7 @@ public class Properties
         });
     }
 
-    private static boolean isSetFalse(String p)
+    private static boolean isSetFalse(final String p)
     {
         if (p == null || p.length() != 5)
         {
@@ -228,7 +219,7 @@ public class Properties
             && (p.charAt(4) == 'e' || p.charAt(4) == 'E');
     }
 
-    private static boolean isSetTrue(String p)
+    private static boolean isSetTrue(final String p)
     {
         if (p == null || p.length() != 4)
         {

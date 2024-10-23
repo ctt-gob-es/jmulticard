@@ -39,6 +39,8 @@
  */
 package es.gob.jmulticard.apdu;
 
+import es.gob.jmulticard.JmcLogger;
+
 /** APDU de respuesta para comunicaci&oacute;n con tarjeta inteligente.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
 public class ResponseApdu extends Apdu {
@@ -49,8 +51,7 @@ public class ResponseApdu extends Apdu {
      * binaria directa.
      * @param fullBytes Representaci&oacute;n binaria directa de la APDU. */
     public ResponseApdu(final byte[] fullBytes) {
-        setBytes(fullBytes);
-        encryptedByes = null;
+        this(fullBytes, null);
     }
 
     /** Construye una APDU de respuesta a partir de su representaci&oacute;n
@@ -73,6 +74,18 @@ public class ResponseApdu extends Apdu {
     /** Obtiene la palabra de estado (<i>Status Word</i>) de la APDU.
      * @return Palabra de estado (<i>Status Word</i>) de la APDU. */
     public StatusWord getStatusWord() {
+    	if (getBytes() == null) {
+    		JmcLogger.warning(
+				"Se ha pedido la palabra de estado de una APDU de cuerpo nulo, se devolvera null" //$NON-NLS-1$
+			);
+    		return null;
+    	}
+    	if (getBytes().length < 2) {
+    		JmcLogger.warning(
+				"Se ha pedido la palabra de estado de una APDU de cuerpo vacio o sin palabra de estado, se devolvera null" //$NON-NLS-1$
+			);
+    		return null;
+    	}
         return new StatusWord(getBytes()[getBytes().length - 2], getBytes()[getBytes().length - 1]);
     }
 

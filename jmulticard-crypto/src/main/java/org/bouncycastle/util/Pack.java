@@ -3,10 +3,9 @@ package org.bouncycastle.util;
 /**
  * Utility methods for converting byte arrays into ints and longs, and back again.
  */
-public abstract class Pack
-{
-    public static short bigEndianToShort(final byte[] bs, int off)
-    {
+public abstract class Pack {
+
+    public static short bigEndianToShort(final byte[] bs, int off) {
         int n = (bs[off] & 0xff) << 8;
         n |= bs[++off] & 0xff;
         return (short)n;

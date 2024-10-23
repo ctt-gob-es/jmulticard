@@ -17,12 +17,12 @@ public class DERBMPString
      * @param obj the object we want converted.
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return a DERBMPString instance, or null.
-     * 
+     *
      * @deprecated Use {@link ASN1BMPString#getInstance(Object)} instead.
      */
     @Deprecated
 	public static DERBMPString getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof DERBMPString)
         {
@@ -38,7 +38,7 @@ public class DERBMPString
             {
                 return (DERBMPString)fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -55,16 +55,16 @@ public class DERBMPString
      *                 otherwise.
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return a DERBMPString instance.
-     * 
+     *
      * @deprecated Use {@link ASN1BMPString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
     @Deprecated
 	public static DERBMPString getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
-        ASN1Primitive o = obj.getObject();
+        final ASN1Primitive o = obj.getObject();
 
         if (explicit || o instanceof DERBMPString)
         {
@@ -80,7 +80,7 @@ public class DERBMPString
      * Basic constructor
      * @param string a String to wrap as a BMP STRING.
      */
-    public DERBMPString(String string)
+    public DERBMPString(final String string)
     {
         super(string);
     }
@@ -89,12 +89,12 @@ public class DERBMPString
      * Basic constructor - byte encoded string.
      * @param string the encoded BMP STRING to wrap.
      */
-    DERBMPString(byte[] contents)
+    DERBMPString(final byte[] contents)
     {
         super(contents);
     }
 
-    DERBMPString(char[] string)
+    DERBMPString(final char[] string)
     {
         super(string);
     }

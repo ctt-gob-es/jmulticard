@@ -50,11 +50,11 @@ public class DerBoolean extends DecoderObject {
 
 	private static final byte TAG_BOOLEAN = (byte)0x01;
 
-	private transient Boolean booleanValue = null;
+	private Boolean booleanValue = null;
 
 	@Override
     protected void decodeValue() throws Asn1Exception, TlvException {
-		final Tlv tmpTlv = new Tlv(getRawDerValue());
+		final Tlv tmpTlv = new Tlv(getBytes());
 		checkTag(tmpTlv.getTag());
 		booleanValue = Boolean.valueOf(tmpTlv.getValue()[0] == (byte) 0x00);
 	}
@@ -72,5 +72,4 @@ public class DerBoolean extends DecoderObject {
 		}
 		return booleanValue.booleanValue();
 	}
-
 }

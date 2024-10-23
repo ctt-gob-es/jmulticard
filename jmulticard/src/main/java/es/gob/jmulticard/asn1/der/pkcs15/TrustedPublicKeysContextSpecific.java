@@ -30,5 +30,4 @@ public final class TrustedPublicKeysContextSpecific extends ContextSpecific {
 			);
 		}
 	}
-
 }

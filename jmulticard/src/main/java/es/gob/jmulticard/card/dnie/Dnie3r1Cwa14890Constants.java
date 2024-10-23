@@ -71,8 +71,7 @@ abstract class Dnie3r1Cwa14890Constants extends Dnie3Cwa14890Constants {
 
     /** Identificador de la CA intermedia (CHR). El campo ocupa siempre 12 bytes y si el n&uacute;mero de serie es
      * de menor longitud se rellena con ceros a la izquierda. El n&uacute;mero de serie es de al menos 8 bytes.
-     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se
-     * utiliza).
+     * Aqu&iacute; indicamos los 8 bytes del n&uacute;mero de serie obviando el resto del campo (que no se utiliza).
      * (<i>ifd-keyRef</i>).*/
 	private static final byte[] CHR_C_CV_CA = {
         (byte) 0x65, (byte) 0x73, (byte) 0x53, (byte) 0x44, (byte) 0x49, (byte) 0x60, (byte) 0x00, (byte) 0x06

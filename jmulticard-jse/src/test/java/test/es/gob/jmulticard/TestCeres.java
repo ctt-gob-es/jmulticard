@@ -4,21 +4,22 @@ import java.util.Arrays;
 
 import javax.security.auth.callback.PasswordCallback;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import es.gob.jmulticard.HexUtils;
-import es.gob.jmulticard.BcCryptoHelper;
 import es.gob.jmulticard.card.PrivateKeyReference;
 import es.gob.jmulticard.card.dnie.ceressc.CeresSc;
 import es.gob.jmulticard.card.fnmt.ceres.Ceres;
+import es.gob.jmulticard.crypto.BcCryptoHelper;
 import es.gob.jmulticard.jse.provider.CachePasswordCallback;
 import es.gob.jmulticard.jse.provider.ProviderUtil;
 
 
 /** Pruebas de FNMT-CERES.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s */
-public final class TestCeres {
+final class TestCeres {
 
 //	private static final char[] PIN = "eJh3Rhbf".toCharArray(); //$NON-NLS-1$
 	private static final char[] PIN = "2gh4GRlJ".toCharArray(); //$NON-NLS-1$
@@ -31,6 +32,7 @@ public final class TestCeres {
 			ProviderUtil.getDefaultConnection(),
 			new BcCryptoHelper()
 		);
+		Assertions.assertNotNull(ceres);
 		ceres.setPasswordCallback(new CachePasswordCallback(PIN));
 		System.out.println(ceres.getCardName());
 		System.out.println(Arrays.asList(ceres.getAliases()));
@@ -54,14 +56,15 @@ public final class TestCeres {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testCeresSecureChannel() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testCeresSecureChannel() throws Exception {
 		final CeresSc ceres430 = new CeresSc(
 			ProviderUtil.getDefaultConnection(),
 			new CachePasswordCallback(PIN),
 			new BcCryptoHelper(),
 			new TestingDnieCallbackHandler("can", PIN) //$NON-NLS-1$
 		);
+		Assertions.assertNotNull(ceres430);
 
 		ceres430.setPasswordCallback(new CachePasswordCallback(PIN));
 		System.out.println(ceres430.getCardName());
@@ -81,12 +84,13 @@ public final class TestCeres {
 	 * @throws Exception En cualquier error. */
 	@SuppressWarnings("static-method")
 	@Test
-	@Ignore
-	public void testCeresUIPasswordCallbackSpecialCharsOnPin() throws Exception {
+	@Disabled("Necesita tarjeta")
+	void testCeresUIPasswordCallbackSpecialCharsOnPin() throws Exception {
 		final Ceres ceres = new Ceres(
 			ProviderUtil.getDefaultConnection(),
 			new BcCryptoHelper()
 		);
+		Assertions.assertNotNull(ceres);
 		ceres.setPasswordCallback(
 			new PasswordCallback("PIN de la tarjeta CERES", false) //$NON-NLS-1$
 		);

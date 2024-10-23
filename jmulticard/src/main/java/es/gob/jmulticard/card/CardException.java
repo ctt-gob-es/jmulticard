@@ -71,5 +71,4 @@ public abstract class CardException extends IOException {
 	protected CardException(final Throwable cause) {
 		super(cause);
 	}
-
 }

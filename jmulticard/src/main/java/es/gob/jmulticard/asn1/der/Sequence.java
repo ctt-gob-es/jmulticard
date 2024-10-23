@@ -55,13 +55,13 @@ public abstract class Sequence extends DecoderObject {
     /** Tipo ASN&#46;1 <i>Sequence</i>. */
     private static final byte TAG_SEQUENCE = (byte) 0x30;
 
-    private transient final List<DecoderObject> elements = new ArrayList<>();
+    private final List<DecoderObject> elements = new ArrayList<>();
 
-    private transient final OptionalDecoderObjectElement[] elementsTypes;
+    private final OptionalDecoderObjectElement[] elementsTypes;
 
     /** Obtiene el n&uacute;mero de elementos que contiene la secuencia.
      * @return N&uacute;mero de elementos que contiene la secuencia. */
-    protected int getElementCount() {
+    protected final int getElementCount() {
     	return elements.size();
     }
 
@@ -77,8 +77,8 @@ public abstract class Sequence extends DecoderObject {
     }
 
     @Override
-    protected void decodeValue() throws Asn1Exception, TlvException {
-        final Tlv mainTlv = new Tlv(getRawDerValue());
+    protected final void decodeValue() throws Asn1Exception, TlvException {
+        final Tlv mainTlv = new Tlv(getBytes());
         checkTag(mainTlv.getTag());
         int offset = 0;
         Tlv tlv;
@@ -120,7 +120,7 @@ public abstract class Sequence extends DecoderObject {
      * @param index Posici&oacute;n del elemento a recuperar.
      * @return Un objeto de tipo <code>DecoderObject</code> que contiene el TLV deseado.
      * @throws IndexOutOfBoundsException Si el indice indicado no pertenece al rango de la secuencia. */
-    protected DecoderObject getElementAt(final int index) {
+    public final DecoderObject getElementAt(final int index) {
         return elements.get(index);
     }
 }

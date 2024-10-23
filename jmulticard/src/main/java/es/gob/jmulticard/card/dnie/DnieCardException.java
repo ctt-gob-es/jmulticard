@@ -49,14 +49,14 @@ public final class DnieCardException extends CryptoCardException {
 	private static final long serialVersionUID = 5935577997660561619L;
 
 	/** C&oacute;digo de retorno que se obtuvo tras producirse el error. */
-    private transient final StatusWord returnCode;
+    private final StatusWord returnCode;
 
     /** Construye la excepci&oacute;n.
      * @param desc Descripci&oacute;n del problema.
      * @param retCode C&oacute;digo devuelto por la tarjeta. */
     public DnieCardException(final String desc, final StatusWord retCode) {
         super(desc);
-        this.returnCode = retCode;
+        returnCode = retCode;
     }
 
     /** Construye la excepci&oacute;n.
@@ -64,19 +64,19 @@ public final class DnieCardException extends CryptoCardException {
      * @param t Problema que origino la excepci&oacute;n. */
     public DnieCardException(final String desc, final Throwable t) {
         super(desc, t);
-        this.returnCode = null;
+        returnCode = null;
     }
 
     /** Construye la excepci&oacute;n.
      * @param retCode C&oacute;digo devuelto por la tarjeta. */
     DnieCardException(final StatusWord retCode) {
-        this.returnCode = retCode;
+        returnCode = retCode;
     }
 
-    /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado) que caus&oacute; la
-     * excepci&oacute;n.
+    /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de
+     * estado) que caus&oacute; la excepci&oacute;n.
      * @return C&oacute;digo de finalizaci&oacute;n que caus&oacute; la excepci&oacute;n */
     public StatusWord getStatusWord() {
-        return this.returnCode;
+        return returnCode;
     }
 }

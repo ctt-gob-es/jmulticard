@@ -56,5 +56,4 @@ public final class T0APDU extends UsbCommand {
 	public int getCommandID() {
 		return ID_COMMAND;
 	}
-
 }

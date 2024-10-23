@@ -43,7 +43,7 @@ import es.gob.jmulticard.apdu.CommandApdu;
 
 /** APDU de DNIe de obtenci&oacute;n del n&uacute;mero de serie.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public class GetChipInfoApduCommand extends CommandApdu {
+public final class GetChipInfoApduCommand extends CommandApdu {
 
 	/** Clase por defeccto de la APDU. */
 	private static final byte DEFAULT_CLA = (byte) 0x90;
@@ -63,15 +63,14 @@ public class GetChipInfoApduCommand extends CommandApdu {
 
     /** Crea una APDU de DNIe de obtenci&oacute;n del n&uacute;mero de serie.
      * @param cla Clase de la APDU. */
-    public GetChipInfoApduCommand(final byte cla) {
+    private GetChipInfoApduCommand(final byte cla) {
         super(
     		cla,						// CLA
     		INS_GET_CHIP_INFO, 			// INS
     		INSTRUCTION_PARAMETER_P1, 	// P1
     		INSTRUCTION_PARAMETER_P2,	// P2
     		null,						// Data
-    		Integer.valueOf(String.valueOf(MAXIMUM_LENGTH_EXPECTED_LE)) // Le
+    		Integer.valueOf(MAXIMUM_LENGTH_EXPECTED_LE) // Le
 		);
     }
-
 }

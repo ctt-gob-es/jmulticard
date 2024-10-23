@@ -3,9 +3,7 @@ package org.bouncycastle.asn1;
 import java.io.IOException;
 import java.io.InputStream;
 
-class ConstructedBitStream
-    extends InputStream
-{
+class ConstructedBitStream extends InputStream {
     private final ASN1StreamParser _parser;
     private final boolean _octetAligned;
 
@@ -15,59 +13,47 @@ class ConstructedBitStream
     private ASN1BitStringParser    _currentParser;
     private InputStream            _currentStream;
 
-    ConstructedBitStream(ASN1StreamParser parser, boolean octetAligned)
-    {
+    ConstructedBitStream(final ASN1StreamParser parser, final boolean octetAligned) {
         _parser = parser;
         _octetAligned = octetAligned;
     }
 
-    int getPadBits()
-    {
+    int getPadBits() {
         return _padBits;
     }
 
     @Override
-	public int read(byte[] b, int off, int len) throws IOException
-    {
-        if (_currentStream == null)
-        {
-            if (!_first)
-            {
+	public int read(final byte[] b, final int off, final int len) throws IOException {
+        if (_currentStream == null) {
+            if (!_first) {
                 return -1;
             }
 
             _currentParser = getNextParser();
-            if (_currentParser == null)
-            {
+            if (_currentParser == null) {
                 return -1;
             }
 
             _first = false;
             _currentStream = _currentParser.getBitStream();
-            
         }
 
         int totalRead = 0;
 
-        for (;;)
-        {
-            int numRead = _currentStream.read(b, off + totalRead, len - totalRead);
+        for (;;) {
+            final int numRead = _currentStream.read(b, off + totalRead, len - totalRead);
 
-            if (numRead >= 0)
-            {
+            if (numRead >= 0) {
                 totalRead += numRead;
 
-                if (totalRead == len)
-                {
+                if (totalRead == len) {
                     return totalRead;
                 }
             }
-            else
-            {
+            else {
                 _padBits = _currentParser.getPadBits();
                 _currentParser = getNextParser();
-                if (_currentParser == null)
-                {
+                if (_currentParser == null) {
                     _currentStream = null;
                     return totalRead < 1 ? -1 : totalRead;
                 }
@@ -100,7 +86,7 @@ class ConstructedBitStream
 
         for (;;)
         {
-            int b = _currentStream.read();
+            final int b = _currentStream.read();
 
             if (b >= 0)
             {
@@ -121,7 +107,7 @@ class ConstructedBitStream
 
     private ASN1BitStringParser getNextParser() throws IOException
     {
-        ASN1Encodable asn1Obj = _parser.readObject();
+        final ASN1Encodable asn1Obj = _parser.readObject();
         if (asn1Obj == null)
         {
             if (_octetAligned && _padBits != 0)

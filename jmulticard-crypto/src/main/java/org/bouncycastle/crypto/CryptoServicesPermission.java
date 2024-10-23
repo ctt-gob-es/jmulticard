@@ -25,28 +25,28 @@ public class CryptoServicesPermission
      */
     public static final String DEFAULT_RANDOM = "defaultRandomConfig";
 
-    private final Set<String> actions = new HashSet<String>();
+    /**
+     * Enable the setting of the constraints.
+     */
+    public static final String CONSTRAINTS = "constraints";
 
-    public CryptoServicesPermission(String name)
+    private final Set<String> actions = new HashSet<>();
+
+    public CryptoServicesPermission(final String name)
     {
         super(name);
 
-        this.actions.add(name);
+        actions.add(name);
     }
 
     @Override
-	public boolean implies(Permission permission)
+	public boolean implies(final Permission permission)
     {
         if (permission instanceof CryptoServicesPermission)
         {
-            CryptoServicesPermission other = (CryptoServicesPermission)permission;
+            final CryptoServicesPermission other = (CryptoServicesPermission)permission;
 
-            if (this.getName().equals(other.getName()))
-            {
-                return true;
-            }
-
-            if (this.actions.containsAll(other.actions))
+            if (this.getName().equals(other.getName()) || actions.containsAll(other.actions))
             {
                 return true;
             }
@@ -56,13 +56,13 @@ public class CryptoServicesPermission
     }
 
     @Override
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
     {
         if (obj instanceof CryptoServicesPermission)
         {
-            CryptoServicesPermission other = (CryptoServicesPermission)obj;
+            final CryptoServicesPermission other = (CryptoServicesPermission)obj;
 
-            if (this.actions.equals(other.actions))
+            if (actions.equals(other.actions))
             {
                 return true;
             }

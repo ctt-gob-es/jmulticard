@@ -16,19 +16,19 @@ import org.bouncycastle.util.encoders.Hex;
  */
 public class X962NamedCurves
 {
-    private static X9ECPoint configureBasepoint(ECCurve curve, String encoding)
+    static X9ECPoint configureBasepoint(final ECCurve curve, final String encoding)
     {
-        X9ECPoint G = new X9ECPoint(curve, Hex.decodeStrict(encoding));
+        final X9ECPoint G = new X9ECPoint(curve, Hex.decodeStrict(encoding));
         WNafUtil.configureBasepoint(G.getPoint());
         return G;
     }
 
-    private static ECCurve configureCurve(ECCurve curve)
+    static ECCurve configureCurve(final ECCurve curve)
     {
         return curve;
     }
 
-    private static BigInteger fromHex(String hex)
+    static BigInteger fromHex(final String hex)
     {
         return new BigInteger(1, Hex.decodeStrict(hex));
     }
@@ -38,24 +38,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("ffffffffffffffffffffffff99def836146bc9b1b4d22831");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("ffffffffffffffffffffffff99def836146bc9b1b4d22831"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF"),
-                fromHex("fffffffffffffffffffffffffffffffefffffffffffffffc"),
-                fromHex("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1"),
+                fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF"), //$NON-NLS-1$
+                fromHex("fffffffffffffffffffffffffffffffefffffffffffffffc"), //$NON-NLS-1$
+                fromHex("64210519e59c80e70fa7e9ab72243049feb8deecc146b9b1"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("3045AE6FC8422f64ED579528D38120EAE12196D5");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("3045AE6FC8422f64ED579528D38120EAE12196D5"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "03188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012");
+            final X9ECPoint G = configureBasepoint(curve,
+                "03188da80eb03090f67cbf20eb43a18800f4ff0afd82ff1012"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -66,24 +66,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("fffffffffffffffffffffffe5fb1a724dc80418648d8dd31");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("fffffffffffffffffffffffe5fb1a724dc80418648d8dd31"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF"),
-                fromHex("fffffffffffffffffffffffffffffffefffffffffffffffc"),
-                fromHex("cc22d6dfb95c6b25e49c0d6364a4e5980c393aa21668d953"),
+                fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF"), //$NON-NLS-1$
+                fromHex("fffffffffffffffffffffffffffffffefffffffffffffffc"), //$NON-NLS-1$
+                fromHex("cc22d6dfb95c6b25e49c0d6364a4e5980c393aa21668d953"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("31a92ee2029fd10d901b113e990710f0d21ac6b6");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("31a92ee2029fd10d901b113e990710f0d21ac6b6"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "03eea2bae7e1497842f2de7769cfe9c989c072ad696f48034a");
+            final X9ECPoint G = configureBasepoint(curve,
+                "03eea2bae7e1497842f2de7769cfe9c989c072ad696f48034a"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -94,24 +94,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("ffffffffffffffffffffffff7a62d031c83f4294f640ec13");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("ffffffffffffffffffffffff7a62d031c83f4294f640ec13"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF"),
-                fromHex("fffffffffffffffffffffffffffffffefffffffffffffffc"),
-                fromHex("22123dc2395a05caa7423daeccc94760a7d462256bd56916"),
+                fromHex("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF"), //$NON-NLS-1$
+                fromHex("fffffffffffffffffffffffffffffffefffffffffffffffc"), //$NON-NLS-1$
+                fromHex("22123dc2395a05caa7423daeccc94760a7d462256bd56916"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("c469684435deb378c4b65ca9591e2a5763059a2e");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("c469684435deb378c4b65ca9591e2a5763059a2e"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "027d29778100c65a1da1783716588dce2b8b4aee8e228f1896");
+            final X9ECPoint G = configureBasepoint(curve,
+                "027d29778100c65a1da1783716588dce2b8b4aee8e228f1896"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -122,24 +122,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("7fffffffffffffffffffffff7fffff9e5e9a9f5d9071fbd1522688909d0b");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("7fffffffffffffffffffffff7fffff9e5e9a9f5d9071fbd1522688909d0b"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"),
-                fromHex("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc"),
-                fromHex("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a"),
+                new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), //$NON-NLS-1$
+                fromHex("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc"), //$NON-NLS-1$
+                fromHex("6b016c3bdcf18941d0d654921475ca71a9db2fb27d1d37796185c2942c0a"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("e43bb460f0b80cc0c0b075798e948060f8321b7d");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("e43bb460f0b80cc0c0b075798e948060f8321b7d"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "020ffa963cdca8816ccc33b8642bedf905c3d358573d3f27fbbd3b3cb9aaaf");
+            final X9ECPoint G = configureBasepoint(curve,
+                "020ffa963cdca8816ccc33b8642bedf905c3d358573d3f27fbbd3b3cb9aaaf"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -150,24 +150,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("7fffffffffffffffffffffff800000cfa7e8594377d414c03821bc582063");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("7fffffffffffffffffffffff800000cfa7e8594377d414c03821bc582063"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"),
-                fromHex("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc"),
-                fromHex("617fab6832576cbbfed50d99f0249c3fee58b94ba0038c7ae84c8c832f2c"),
+                new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), //$NON-NLS-1$
+                fromHex("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc"), //$NON-NLS-1$
+                fromHex("617fab6832576cbbfed50d99f0249c3fee58b94ba0038c7ae84c8c832f2c"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("e8b4011604095303ca3b8099982be09fcb9ae616");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("e8b4011604095303ca3b8099982be09fcb9ae616"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0238af09d98727705120c921bb5e9e26296a3cdcf2f35757a0eafd87b830e7");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0238af09d98727705120c921bb5e9e26296a3cdcf2f35757a0eafd87b830e7"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -178,24 +178,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("7fffffffffffffffffffffff7fffff975deb41b3a6057c3c432146526551");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("7fffffffffffffffffffffff7fffff975deb41b3a6057c3c432146526551"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"),
-                fromHex("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc"),
-                fromHex("255705fa2a306654b1f4cb03d6a750a30c250102d4988717d9ba15ab6d3e"),
+                new BigInteger("883423532389192164791648750360308885314476597252960362792450860609699839"), //$NON-NLS-1$
+                fromHex("7fffffffffffffffffffffff7fffffffffff8000000000007ffffffffffc"), //$NON-NLS-1$
+                fromHex("255705fa2a306654b1f4cb03d6a750a30c250102d4988717d9ba15ab6d3e"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("7d7374168ffe3471b60a857686a19475d3bfa2ff");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("7d7374168ffe3471b60a857686a19475d3bfa2ff"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "036768ae8e18bb92cfcf005c949aa2c6d94853d0e660bbf854b1c9505fe95a");
+            final X9ECPoint G = configureBasepoint(curve,
+                "036768ae8e18bb92cfcf005c949aa2c6d94853d0e660bbf854b1c9505fe95a"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -206,24 +206,24 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551");
-            BigInteger h = BigInteger.valueOf(1);
+            final BigInteger n = fromHex("ffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(1);
 
             return configureCurve(new ECCurve.Fp(
-                new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853951"),
-                fromHex("ffffffff00000001000000000000000000000000fffffffffffffffffffffffc"),
-                fromHex("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b"),
+                new BigInteger("115792089210356248762697446949407573530086143415290314195533631308867097853951"), //$NON-NLS-1$
+                fromHex("ffffffff00000001000000000000000000000000fffffffffffffffffffffffc"), //$NON-NLS-1$
+                fromHex("5ac635d8aa3a93e7b3ebbd55769886bc651d06b0cc53b0f63bce3c3e27d2604b"), //$NON-NLS-1$
                 n, h, true));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("c49d360886e704936a6678e1139d26b7819f7e90");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("c49d360886e704936a6678e1139d26b7819f7e90"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296");
+            final X9ECPoint G = configureBasepoint(curve,
+                "036b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -237,25 +237,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("0400000000000000000001E60FC8821CC74DAEAFC1");
-            BigInteger h = BigInteger.valueOf(2);
+            final BigInteger n = fromHex("0400000000000000000001E60FC8821CC74DAEAFC1"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(2);
 
             return configureCurve(new ECCurve.F2m(
                 163,
                 1, 2, 8,
-                fromHex("072546B5435234A422E0789675F432C89435DE5242"),
-                fromHex("00C9517D06D5240D3CFF38C74B20B6CD4D6F9DD4D9"),
+                fromHex("072546B5435234A422E0789675F432C89435DE5242"), //$NON-NLS-1$
+                fromHex("00C9517D06D5240D3CFF38C74B20B6CD4D6F9DD4D9"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("D2C0FB15760860DEF1EEF4D696E6768756151754");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("D2C0FB15760860DEF1EEF4D696E6768756151754"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0307AF69989546103D79329FCC3D74880F33BBE803CB");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0307AF69989546103D79329FCC3D74880F33BBE803CB"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -266,25 +266,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("03FFFFFFFFFFFFFFFFFFFDF64DE1151ADBB78F10A7");
-            BigInteger h = BigInteger.valueOf(2);
+            final BigInteger n = fromHex("03FFFFFFFFFFFFFFFFFFFDF64DE1151ADBB78F10A7"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(2);
 
             return configureCurve(new ECCurve.F2m(
                 163,
                 1, 2, 8,
-                fromHex("0108B39E77C4B108BED981ED0E890E117C511CF072"),
-                fromHex("0667ACEB38AF4E488C407433FFAE4F1C811638DF20"),
+                fromHex("0108B39E77C4B108BED981ED0E890E117C511CF072"), //$NON-NLS-1$
+                fromHex("0667ACEB38AF4E488C407433FFAE4F1C811638DF20"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "030024266E4EB5106D0A964D92C4860E2671DB9B6CC5");
+            final X9ECPoint G = configureBasepoint(curve,
+                "030024266E4EB5106D0A964D92C4860E2671DB9B6CC5"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -295,25 +295,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("03FFFFFFFFFFFFFFFFFFFE1AEE140F110AFF961309");
-            BigInteger h = BigInteger.valueOf(2);
+            final BigInteger n = fromHex("03FFFFFFFFFFFFFFFFFFFE1AEE140F110AFF961309"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(2);
 
             return configureCurve(new ECCurve.F2m(
                 163,
                 1, 2, 8,
-                fromHex("07A526C63D3E25A256A007699F5447E32AE456B50E"),
-                fromHex("03F7061798EB99E238FD6F1BF95B48FEEB4854252B"),
+                fromHex("07A526C63D3E25A256A007699F5447E32AE456B50E"), //$NON-NLS-1$
+                fromHex("03F7061798EB99E238FD6F1BF95B48FEEB4854252B"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0202F9F87B7C574D0BDECF8A22E6524775F98CDEBDCB");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0202F9F87B7C574D0BDECF8A22E6524775F98CDEBDCB"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -324,25 +324,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("010092537397ECA4F6145799D62B0A19CE06FE26AD");
-            BigInteger h = BigInteger.valueOf(0xFF6E);
+            final BigInteger n = fromHex("010092537397ECA4F6145799D62B0A19CE06FE26AD"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(0xFF6E);
 
             return configureCurve(new ECCurve.F2m(
                 176,
                 1, 2, 43,
-                fromHex("E4E6DB2995065C407D9D39B8D0967B96704BA8E9C90B"),
-                fromHex("5DDA470ABE6414DE8EC133AE28E9BBD7FCEC0AE0FFF2"),
+                fromHex("E4E6DB2995065C407D9D39B8D0967B96704BA8E9C90B"), //$NON-NLS-1$
+                fromHex("5DDA470ABE6414DE8EC133AE28E9BBD7FCEC0AE0FFF2"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "038D16C2866798B600F9F08BB4A8E860F3298CE04A5798");
+            final X9ECPoint G = configureBasepoint(curve,
+                "038D16C2866798B600F9F08BB4A8E860F3298CE04A5798"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -353,25 +353,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("40000000000000000000000004A20E90C39067C893BBB9A5");
-            BigInteger h = BigInteger.valueOf(2);
+            final BigInteger n = fromHex("40000000000000000000000004A20E90C39067C893BBB9A5"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(2);
 
             return configureCurve(new ECCurve.F2m(
                 191,
                 9,
-                fromHex("2866537B676752636A68F56554E12640276B649EF7526267"),
-                fromHex("2E45EF571F00786F67B0081B9495A3D95462F5DE0AA185EC"),
+                fromHex("2866537B676752636A68F56554E12640276B649EF7526267"), //$NON-NLS-1$
+                fromHex("2E45EF571F00786F67B0081B9495A3D95462F5DE0AA185EC"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = Hex.decodeStrict("4E13CA542744D696E67687561517552F279A8C84");
-            ECCurve curve = getCurve();
+            final byte[] S = Hex.decodeStrict("4E13CA542744D696E67687561517552F279A8C84"); //$NON-NLS-1$
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0236B3DAF8A23206F9C4F299D7B21A9C369137F2C84AE1AA0D");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0236B3DAF8A23206F9C4F299D7B21A9C369137F2C84AE1AA0D"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -382,25 +382,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("20000000000000000000000050508CB89F652824E06B8173");
-            BigInteger h = BigInteger.valueOf(4);
+            final BigInteger n = fromHex("20000000000000000000000050508CB89F652824E06B8173"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(4);
 
             return configureCurve(new ECCurve.F2m(
                 191,
                 9,
-                fromHex("401028774D7777C7B7666D1366EA432071274F89FF01E718"),
-                fromHex("0620048D28BCBD03B6249C99182B7C8CD19700C362C46A01"),
+                fromHex("401028774D7777C7B7666D1366EA432071274F89FF01E718"), //$NON-NLS-1$
+                fromHex("0620048D28BCBD03B6249C99182B7C8CD19700C362C46A01"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "023809B2B7CC1B28CC5A87926AAD83FD28789E81E2C9E3BF10");
+            final X9ECPoint G = configureBasepoint(curve,
+                "023809B2B7CC1B28CC5A87926AAD83FD28789E81E2C9E3BF10"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -411,25 +411,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("155555555555555555555555610C0B196812BFB6288A3EA3");
-            BigInteger h = BigInteger.valueOf(6);
+            final BigInteger n = fromHex("155555555555555555555555610C0B196812BFB6288A3EA3"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(6);
 
             return configureCurve(new ECCurve.F2m(
                 191,
                 9,
-                fromHex("6C01074756099122221056911C77D77E77A777E7E7E77FCB"),
-                fromHex("71FE1AF926CF847989EFEF8DB459F66394D90F32AD3F15E8"),
+                fromHex("6C01074756099122221056911C77D77E77A777E7E7E77FCB"), //$NON-NLS-1$
+                fromHex("71FE1AF926CF847989EFEF8DB459F66394D90F32AD3F15E8"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "03375D4CE24FDE434489DE8746E71786015009E66E38A926DD");
+            final X9ECPoint G = configureBasepoint(curve,
+                "03375D4CE24FDE434489DE8746E71786015009E66E38A926DD"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -440,25 +440,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("0101BAF95C9723C57B6C21DA2EFF2D5ED588BDD5717E212F9D");
-            BigInteger h = BigInteger.valueOf(0xFE48);
+            final BigInteger n = fromHex("0101BAF95C9723C57B6C21DA2EFF2D5ED588BDD5717E212F9D"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(0xFE48);
 
             return configureCurve(new ECCurve.F2m(
                 208,
                 1, 2, 83,
                 BigInteger.valueOf(0),
-                fromHex("C8619ED45A62E6212E1160349E2BFA844439FAFC2A3FD1638F9E"),
+                fromHex("C8619ED45A62E6212E1160349E2BFA844439FAFC2A3FD1638F9E"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0289FDFBE4ABE193DF9559ECF07AC0CE78554E2784EB8C1ED1A57A");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0289FDFBE4ABE193DF9559ECF07AC0CE78554E2784EB8C1ED1A57A"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -469,25 +469,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("2000000000000000000000000000000F4D42FFE1492A4993F1CAD666E447");
-            BigInteger h = BigInteger.valueOf(4);
+            final BigInteger n = fromHex("2000000000000000000000000000000F4D42FFE1492A4993F1CAD666E447"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(4);
 
             return configureCurve(new ECCurve.F2m(
                 239,
                 36,
-                fromHex("32010857077C5431123A46B808906756F543423E8D27877578125778AC76"),
-                fromHex("790408F2EEDAF392B012EDEFB3392F30F4327C0CA3F31FC383C422AA8C16"),
+                fromHex("32010857077C5431123A46B808906756F543423E8D27877578125778AC76"), //$NON-NLS-1$
+                fromHex("790408F2EEDAF392B012EDEFB3392F30F4327C0CA3F31FC383C422AA8C16"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0257927098FA932E7C0A96D3FD5B706EF7E5F5C156E16B7E7C86038552E91D");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0257927098FA932E7C0A96D3FD5B706EF7E5F5C156E16B7E7C86038552E91D"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -498,25 +498,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("1555555555555555555555555555553C6F2885259C31E3FCDF154624522D");
-            BigInteger h = BigInteger.valueOf(6);
+            final BigInteger n = fromHex("1555555555555555555555555555553C6F2885259C31E3FCDF154624522D"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(6);
 
             return configureCurve(new ECCurve.F2m(
                 239,
                 36,
-                fromHex("4230017757A767FAE42398569B746325D45313AF0766266479B75654E65F"),
-                fromHex("5037EA654196CFF0CD82B2C14A2FCF2E3FF8775285B545722F03EACDB74B"),
+                fromHex("4230017757A767FAE42398569B746325D45313AF0766266479B75654E65F"), //$NON-NLS-1$
+                fromHex("5037EA654196CFF0CD82B2C14A2FCF2E3FF8775285B545722F03EACDB74B"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0228F9D04E900069C8DC47A08534FE76D2B900B7D7EF31F5709F200C4CA205");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0228F9D04E900069C8DC47A08534FE76D2B900B7D7EF31F5709F200C4CA205"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -527,25 +527,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("0CCCCCCCCCCCCCCCCCCCCCCCCCCCCCAC4912D2D9DF903EF9888B8A0E4CFF");
-            BigInteger h = BigInteger.valueOf(10);
+            final BigInteger n = fromHex("0CCCCCCCCCCCCCCCCCCCCCCCCCCCCCAC4912D2D9DF903EF9888B8A0E4CFF"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(10);
 
             return configureCurve(new ECCurve.F2m(
                 239,
                 36,
-                fromHex("01238774666A67766D6676F778E676B66999176666E687666D8766C66A9F"),
-                fromHex("6A941977BA9F6A435199ACFC51067ED587F519C5ECB541B8E44111DE1D40"),
+                fromHex("01238774666A67766D6676F778E676B66999176666E687666D8766C66A9F"), //$NON-NLS-1$
+                fromHex("6A941977BA9F6A435199ACFC51067ED587F519C5ECB541B8E44111DE1D40"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "0370F6E9D04D289C4E89913CE3530BFDE903977D42B146D539BF1BDE4E9C92");
+            final X9ECPoint G = configureBasepoint(curve,
+                "0370F6E9D04D289C4E89913CE3530BFDE903977D42B146D539BF1BDE4E9C92"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -556,25 +556,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("0100FAF51354E0E39E4892DF6E319C72C8161603FA45AA7B998A167B8F1E629521");
-            BigInteger h = BigInteger.valueOf(0xFF06);
+            final BigInteger n = fromHex("0100FAF51354E0E39E4892DF6E319C72C8161603FA45AA7B998A167B8F1E629521"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(0xFF06);
 
             return configureCurve(new ECCurve.F2m(
                 272,
                 1, 3, 56,
-                fromHex("91A091F03B5FBA4AB2CCF49C4EDD220FB028712D42BE752B2C40094DBACDB586FB20"),
-                fromHex("7167EFC92BB2E3CE7C8AAAFF34E12A9C557003D7C73A6FAF003F99F6CC8482E540F7"),
+                fromHex("91A091F03B5FBA4AB2CCF49C4EDD220FB028712D42BE752B2C40094DBACDB586FB20"), //$NON-NLS-1$
+                fromHex("7167EFC92BB2E3CE7C8AAAFF34E12A9C557003D7C73A6FAF003F99F6CC8482E540F7"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "026108BABB2CEEBCF787058A056CBE0CFE622D7723A289E08A07AE13EF0D10D171DD8D");
+            final X9ECPoint G = configureBasepoint(curve,
+                "026108BABB2CEEBCF787058A056CBE0CFE622D7723A289E08A07AE13EF0D10D171DD8D"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -585,25 +585,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("0101D556572AABAC800101D556572AABAC8001022D5C91DD173F8FB561DA6899164443051D");
-            BigInteger h = BigInteger.valueOf(0xFE2E);
+            final BigInteger n = fromHex("0101D556572AABAC800101D556572AABAC8001022D5C91DD173F8FB561DA6899164443051D"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(0xFE2E);
 
             return configureCurve(new ECCurve.F2m(
                 304,
                 1, 2, 11,
-                fromHex("FD0D693149A118F651E6DCE6802085377E5F882D1B510B44160074C1288078365A0396C8E681"),
-                fromHex("BDDB97E555A50A908E43B01C798EA5DAA6788F1EA2794EFCF57166B8C14039601E55827340BE"),
+                fromHex("FD0D693149A118F651E6DCE6802085377E5F882D1B510B44160074C1288078365A0396C8E681"), //$NON-NLS-1$
+                fromHex("BDDB97E555A50A908E43B01C798EA5DAA6788F1EA2794EFCF57166B8C14039601E55827340BE"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "02197B07845E9BE2D96ADB0F5F3C7F2CFFBD7A3EB8B6FEC35C7FD67F26DDF6285A644F740A2614");
+            final X9ECPoint G = configureBasepoint(curve,
+                "02197B07845E9BE2D96ADB0F5F3C7F2CFFBD7A3EB8B6FEC35C7FD67F26DDF6285A644F740A2614"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -614,25 +614,25 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("01AF286BCA1AF286BCA1AF286BCA1AF286BCA1AF286BC9FB8F6B85C556892C20A7EB964FE7719E74F490758D3B");
-            BigInteger h = BigInteger.valueOf(0x4C);
+            final BigInteger n = fromHex("01AF286BCA1AF286BCA1AF286BCA1AF286BCA1AF286BC9FB8F6B85C556892C20A7EB964FE7719E74F490758D3B"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(0x4C);
 
             return configureCurve(new ECCurve.F2m(
                 359,
                 68,
-                fromHex("5667676A654B20754F356EA92017D946567C46675556F19556A04616B567D223A5E05656FB549016A96656A557"),
-                fromHex("2472E2D0197C49363F1FE7F5B6DB075D52B6947D135D8CA445805D39BC345626089687742B6329E70680231988"),
+                fromHex("5667676A654B20754F356EA92017D946567C46675556F19556A04616B567D223A5E05656FB549016A96656A557"), //$NON-NLS-1$
+                fromHex("2472E2D0197C49363F1FE7F5B6DB075D52B6947D135D8CA445805D39BC345626089687742B6329E70680231988"), //$NON-NLS-1$
                 n, h));
         }
 
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
-                "033C258EF3047767E7EDE0F1FDAA79DAEE3841366A132E163ACED4ED2401DF9C6BDCDE98E8E707C07A2239B1B097");
+            final X9ECPoint G = configureBasepoint(curve,
+                "033C258EF3047767E7EDE0F1FDAA79DAEE3841366A132E163ACED4ED2401DF9C6BDCDE98E8E707C07A2239B1B097"); //$NON-NLS-1$
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
         }
@@ -643,8 +643,8 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("010090512DA9AF72B08349D98A5DD4C7B0532ECA51CE03E2D10F3B7AC579BD87E909AE40A6F131E9CFCE5BD967");
-            BigInteger h = BigInteger.valueOf(0xFF70);
+            final BigInteger n = fromHex("010090512DA9AF72B08349D98A5DD4C7B0532ECA51CE03E2D10F3B7AC579BD87E909AE40A6F131E9CFCE5BD967"); //$NON-NLS-1$
+            final BigInteger h = BigInteger.valueOf(0xFF70);
 
             return configureCurve(new ECCurve.F2m(
                 368,
@@ -657,10 +657,10 @@ public class X962NamedCurves
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
+            final X9ECPoint G = configureBasepoint(curve,
                 "021085E2755381DCCCE3C1557AFA10C2F0C0C2825646C5B34A394CBCFA8BC16B22E7E789E927BE216F02E1FB136A5F");
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
@@ -672,8 +672,8 @@ public class X962NamedCurves
         @Override
 		protected ECCurve createCurve()
         {
-            BigInteger n = fromHex("0340340340340340340340340340340340340340340340340340340323C313FAB50589703B5EC68D3587FEC60D161CC149C1AD4A91");
-            BigInteger h = BigInteger.valueOf(0x2760);
+            final BigInteger n = fromHex("0340340340340340340340340340340340340340340340340340340323C313FAB50589703B5EC68D3587FEC60D161CC149C1AD4A91");
+            final BigInteger h = BigInteger.valueOf(0x2760);
 
             return configureCurve(new ECCurve.F2m(
                 431,
@@ -686,10 +686,10 @@ public class X962NamedCurves
         @Override
 		protected X9ECParameters createParameters()
         {
-            byte[] S = null;
-            ECCurve curve = getCurve();
+            final byte[] S = null;
+            final ECCurve curve = getCurve();
 
-            X9ECPoint G = configureBasepoint(curve,
+            final X9ECPoint G = configureBasepoint(curve,
                 "02120FC05D3C67A99DE161D2F4092622FECA701BE4F50F4758714E8A87BBF2A658EF8C21E7C5EFE965361F6C2999C0C247B0DBD70CE6B7");
 
             return new X9ECParameters(curve, G, curve.getOrder(), curve.getCofactor(), S);
@@ -701,7 +701,7 @@ public class X962NamedCurves
     static final Hashtable curves = new Hashtable();
     static final Hashtable names = new Hashtable();
 
-    static void defineCurve(String name, ASN1ObjectIdentifier oid, X9ECParametersHolder holder)
+    static void defineCurve(final String name, final ASN1ObjectIdentifier oid, final X9ECParametersHolder holder)
     {
         objIds.put(name, oid);
         names.put(oid, name);
@@ -735,15 +735,15 @@ public class X962NamedCurves
         defineCurve("c2tnb431r1", X9ObjectIdentifiers.c2tnb431r1, c2tnb431r1);
     }
 
-    public static X9ECParameters getByName(String name)
+    public static X9ECParameters getByName(final String name)
     {
-        ASN1ObjectIdentifier oid = getOID(name);
+        final ASN1ObjectIdentifier oid = getOID(name);
         return oid == null ? null : getByOID(oid);
     }
 
-    public static X9ECParametersHolder getByNameLazy(String name)
+    public static X9ECParametersHolder getByNameLazy(final String name)
     {
-        ASN1ObjectIdentifier oid = getOID(name);
+        final ASN1ObjectIdentifier oid = getOID(name);
         return oid == null ? null : getByOIDLazy(oid);
     }
 
@@ -753,13 +753,13 @@ public class X962NamedCurves
      *
      * @param oid an object identifier representing a named curve, if present.
      */
-    public static X9ECParameters getByOID(ASN1ObjectIdentifier oid)
+    public static X9ECParameters getByOID(final ASN1ObjectIdentifier oid)
     {
-        X9ECParametersHolder holder = getByOIDLazy(oid);
+        final X9ECParametersHolder holder = getByOIDLazy(oid);
         return holder == null ? null : holder.getParameters();
     }
 
-    public static X9ECParametersHolder getByOIDLazy(ASN1ObjectIdentifier oid)
+    public static X9ECParametersHolder getByOIDLazy(final ASN1ObjectIdentifier oid)
     {
         return (X9ECParametersHolder)curves.get(oid);
     }
@@ -771,7 +771,7 @@ public class X962NamedCurves
      * @return the object identifier associated with name, if present.
      */
     public static ASN1ObjectIdentifier getOID(
-        String name)
+        final String name)
     {
         return (ASN1ObjectIdentifier)objIds.get(Strings.toLowerCase(name));
     }
@@ -780,7 +780,7 @@ public class X962NamedCurves
      * return the named curve name represented by the given object identifier.
      */
     public static String getName(
-        ASN1ObjectIdentifier oid)
+        final ASN1ObjectIdentifier oid)
     {
         return (String)names.get(oid);
     }

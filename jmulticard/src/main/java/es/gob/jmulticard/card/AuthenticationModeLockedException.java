@@ -39,12 +39,13 @@
  */
 package es.gob.jmulticard.card;
 
-/** Excepci&oacute;n que indica que est&aacute; bloqueada la verificaci&oacute;n de PIN (por ejemplo, por superar
- * el n&uacute;mero m&aacute;ximo de intentos.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class AuthenticationModeLockedException extends RuntimeException {
+/**
+ * Excepci&oacute;n que indica que est&aacute; bloqueada la verificaci&oacute;n
+ * de PIN (por ejemplo, por superar el n&uacute;mero m&aacute;ximo de intentos).
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ */
+public final class AuthenticationModeLockedException extends PinException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
 	private static final long serialVersionUID = 2145610318258116584L;
-
 }

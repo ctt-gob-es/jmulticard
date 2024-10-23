@@ -58,18 +58,16 @@ public final class PrivateRsaKeyAttributes extends Sequence {
 	/** Construye un objeto ASN&#46;1 PKCS#15 <i>PrivateRsaKeyAttributes</i>. */
 	public PrivateRsaKeyAttributes() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					Path.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					DerInteger.class,
-					false
-				)
-				// Faltaria el KeyInfo, pero es un campo
-				// que normalmente no esta
-			}
+			new OptionalDecoderObjectElement(
+				Path.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				DerInteger.class,
+				false
+			)
+			// Faltaria el KeyInfo, pero es un campo
+			// que normalmente no esta
 		);
 	}
 
@@ -84,5 +82,4 @@ public final class PrivateRsaKeyAttributes extends Sequence {
 	public int getKeyLength() {
 		return ((DerInteger)getElementAt(1)).getIntegerValue().intValue();
 	}
-
 }

@@ -51,19 +51,17 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
     /** Construye un objeto PKCS#15 PrKDF (<i>Private Key Description File</i>) ASN&#46;1. */
 	public PrKdf() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				// Maximo 10 certificados
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, false),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
-				new OptionalDecoderObjectElement(PrivateKeyObject.class, true)
-			}
+			// Maximo 10 certificados
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, false),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true),
+			new OptionalDecoderObjectElement(PrivateKeyObject.class, true)
 		);
 	}
 
@@ -152,5 +150,4 @@ public class PrKdf extends Record implements Pkcs15PrKdf {
 	public X500Principal getKeyPrincipal(final int index) {
 		return ((PrivateKeyObject) getElementAt(index)).getKeyPrincipal();
 	}
-
 }

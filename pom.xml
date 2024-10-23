@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-mvn versions:display-plugin-updates
-mvn versions:display-dependency-updates 
- -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.gob.afirma.jmulticard</groupId>
 	<artifactId>jmulticard-base</artifactId>
-	<version>1.9</version>
+	<version>3.0.3</version>
 	<packaging>pom</packaging>
 	
 	<name>jmulticard-base</name>
@@ -25,9 +21,7 @@ mvn versions:display-dependency-updates
 		</developer>
 		<developer>
 			<name>Tomás García-Merás</name>
-			<email>tomas.capote@accenture.com</email>
-			<organization>Accenture</organization>
-			<organizationUrl>https://www.accenture.com</organizationUrl>
+			<email>clawgrip@hotmail.com</email>
 		</developer>
 	</developers>
 	
@@ -61,24 +55,23 @@ mvn versions:display-dependency-updates
 	
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<java.source>1.8</java.source>
+		<junit.version>5.10.2</junit.version>
+		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+		<maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
 	</properties>
 	
 	<dependencies>
-	
-		<!-- El plugin OWASP encuentra vulnerabilidades en si mismo:
-		https://github.com/jeremylong/DependencyCheck/issues/2332 -->
-<!-- 		<dependency>
-			<groupId>org.owasp</groupId>
-			<artifactId>dependency-check-maven</artifactId>
-			<version>6.1.1</version>
-		</dependency> -->
-	
+		
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 
 	<profiles>
@@ -96,24 +89,8 @@ mvn versions:display-dependency-updates
 			<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-jsr268</module>
-				<module>jmulticard-ui</module>
 				<module>jmulticard-jse</module>
 			</modules>
-
-			<build>
-       			<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.2</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
 
 	    </profile>
 
@@ -130,86 +107,26 @@ mvn versions:display-dependency-updates
 			<modules>
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
-				<module>jmulticard-jsr268</module>
-				<module>jmulticard-ui</module>
-				<module>jmulticard-jse</module>
 			</modules>
 
-			<build>
-       			<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-	    </profile>
-	
-	
-		<!-- Construcción por defecto -->
-		<profile>
-			<id>env-dev</id>
-			<activation>
-				<property>
-					<name>defaultProfile</name>
-					<value>!false</value>
-				</property>
-      		</activation>
-      		<build>
-       			<plugins>
-<!--
-					<plugin>
-					  <groupId>org.apache.maven.plugins</groupId>
-					  <artifactId>maven-enforcer-plugin</artifactId>
-					  <version>3.1.0</version>
-					  <executions>
-					    <execution>
-					      <id>enforce-maven</id>
-					      <goals>
-					        <goal>enforce</goal>
-					      </goals>
-					      <configuration>
-					        <rules>
-					          <requireMavenVersion>
-					            <version>3.6.0</version>
-					          </requireMavenVersion>
-					        </rules>
-					      </configuration>
-					    </execution>
-					  </executions>
-					</plugin>
--->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.10.1</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
-						</configuration>
-					</plugin>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-
-			</plugins>
-		  </build>
 	    </profile>
 		
+		<!-- Construcción que incluye el módulo iOS -->
+		<profile>
+			<id>ios</id>
+			<activation>
+				<property>
+					<name>ios</name>
+					<value>true</value>
+				</property>
+      		</activation>
+
+			<modules>
+				<module>jmulticard</module>
+				<module>jmulticard-crypto</module>
+			</modules>
+
+	    </profile>
 		
 		<!-- Construcción para despliegue en el repositorio de la SGAD -->
 		<profile>
@@ -226,34 +143,8 @@ mvn versions:display-dependency-updates
 					<url>https://artefactos.scae.redsara.es/artifactory/AFIRMA-snapshot/</url>
 				</snapshotRepository>
 			</distributionManagement>
-      		<build>
-       			<plugins>
-	
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.10.1</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
-						</configuration>
-					</plugin>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-
-			</plugins>
-		  </build>
 	    </profile>
-		
-		
+
 		<!-- Construcción para despliegue en el repositorio de artefactos -->
 		<profile>
 			<id>env-deploy</id>
@@ -268,17 +159,17 @@ mvn versions:display-dependency-updates
 				<module>jmulticard</module>
 				<module>jmulticard-android</module>
 				<module>jmulticard-jsr268</module>
-				<module>jmulticard-ui</module>
 				<module>jmulticard-jse</module>
+				<module>jmulticard-crypto</module>
 			</modules>
 		  
 			<build>
 				<plugins>
-				
+
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-source-plugin</artifactId>
-					  <version>3.2.1</version>
+					  <version>${maven-source-plugin.version}</version>
 					  <executions>
 						<execution>
 						  <id>attach-sources</id>
@@ -292,7 +183,7 @@ mvn versions:display-dependency-updates
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-javadoc-plugin</artifactId>
-					  <version>3.4.1</version>
+					  <version>${maven-javadoc-plugin.version}</version>
 					  <executions>
 						<execution>
 						  <id>attach-javadocs</id>
@@ -302,31 +193,11 @@ mvn versions:display-dependency-updates
 						</execution>
 					  </executions>
 					</plugin>
-					
-					<plugin>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>3.10.1</version>
-						<configuration>
-							<source>1.7</source>
-							<target>1.7</target>
-						</configuration>
-					</plugin>
-					
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jar-plugin</artifactId>
-						<version>3.3.0</version>
-						<configuration>
-							<excludes>
-								<exclude>**/package-info.class</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-					
+
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-gpg-plugin</artifactId>
-					  <version>3.1.0</version>
+					  <version>3.2.0</version>
 					  <executions>
 						<execution>
 						  <id>sign-artifacts</id>
@@ -342,4 +213,61 @@ mvn versions:display-dependency-updates
 			</build>
 		</profile>
 	</profiles>
+	
+	<build>
+		<plugins>
+
+			<!-- Forzamos al uso de una version minima de Maven -->
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-enforcer-plugin</artifactId>
+			  <version>3.4.1</version>
+			  <executions>
+				<execution>
+				  <id>enforce-maven</id>
+				  <goals>
+					<goal>enforce</goal>
+				  </goals>
+				  <configuration>
+					<rules>
+					  <requireMavenVersion>
+						<version>3.6.0</version>
+					  </requireMavenVersion>
+					</rules>
+				  </configuration>
+				</execution>
+			  </executions>
+			</plugin>
+			
+			<!-- Establecemos la version de codigo compatible -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${java.source}</source>
+					<target>${java.source}</target>
+				</configuration>
+			</plugin>
+			
+			<!-- Omitimos la inclusion de los paquetes de modulo (package-info.class) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/package-info.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- Configuracion para la correcta configuracion de los JUnit en versiones diversas -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.5.0</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>

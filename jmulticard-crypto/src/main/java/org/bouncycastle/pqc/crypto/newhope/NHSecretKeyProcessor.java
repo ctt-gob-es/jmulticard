@@ -26,9 +26,9 @@ public class NHSecretKeyProcessor
         private byte[] sharedInfo = null;
         private boolean used = false;
 
-        public PartyUBuilder(SecureRandom random)
+        public PartyUBuilder(final SecureRandom random)
         {
-            NHKeyPairGenerator kpGen = new NHKeyPairGenerator();
+            final NHKeyPairGenerator kpGen = new NHKeyPairGenerator();
 
             kpGen.init(new KeyGenerationParameters(random, 2048));
 
@@ -37,7 +37,7 @@ public class NHSecretKeyProcessor
             agreement.init(aKp.getPrivate());
         }
 
-        public PartyUBuilder withSharedInfo(byte[] sharedInfo)
+        public PartyUBuilder withSharedInfo(final byte[] sharedInfo)
         {
             this.sharedInfo = Arrays.clone(sharedInfo);
 
@@ -49,7 +49,7 @@ public class NHSecretKeyProcessor
             return ((NHPublicKeyParameters)aKp.getPublic()).getPubData();
         }
 
-        public NHSecretKeyProcessor build(byte[] partB)
+        public NHSecretKeyProcessor build(final byte[] partB)
         {
             if (used)
             {
@@ -73,23 +73,23 @@ public class NHSecretKeyProcessor
         private byte[] sharedSecret = null;
         private boolean used = false;
 
-        public PartyVBuilder(SecureRandom random)
+        public PartyVBuilder(final SecureRandom random)
         {
             this.random = random;
         }
 
-        public PartyVBuilder withSharedInfo(byte[] sharedInfo)
+        public PartyVBuilder withSharedInfo(final byte[] sharedInfo)
         {
             this.sharedInfo = Arrays.clone(sharedInfo);
 
             return this;
         }
 
-        public byte[] getPartB(byte[] partUContribution)
+        public byte[] getPartB(final byte[] partUContribution)
         {
-            NHExchangePairGenerator exchGen = new NHExchangePairGenerator(random);
+            final NHExchangePairGenerator exchGen = new NHExchangePairGenerator(random);
 
-            ExchangePair bEp = exchGen.generateExchange(new NHPublicKeyParameters(partUContribution));
+            final ExchangePair bEp = exchGen.generateExchange(new NHPublicKeyParameters(partUContribution));
 
             sharedSecret = bEp.getSharedValue();
 
@@ -111,21 +111,19 @@ public class NHSecretKeyProcessor
 
     private final Xof xof = new SHAKEDigest(256);
 
-    private NHSecretKeyProcessor(byte[] secret, byte[] shared)
-    {
+    NHSecretKeyProcessor(final byte[] secret, final byte[] shared) {
         xof.update(secret, 0, secret.length);
 
-        if (shared != null)
-        {
+        if (shared != null) {
             xof.update(shared, 0, shared.length);
         }
 
         Arrays.fill(secret, (byte)0);
     }
 
-    public byte[] processKey(byte[] initialKey)
+    public byte[] processKey(final byte[] initialKey)
     {
-        byte[] xorBytes = new byte[initialKey.length];
+        final byte[] xorBytes = new byte[initialKey.length];
 
         xof.doFinal(xorBytes, 0, xorBytes.length);
 
@@ -136,7 +134,7 @@ public class NHSecretKeyProcessor
         return initialKey;
     }
 
-    private static void xor(byte[] a, byte[] b)
+    private static void xor(final byte[] a, final byte[] b)
     {
         for (int i = 0; i != a.length; i++)
         {

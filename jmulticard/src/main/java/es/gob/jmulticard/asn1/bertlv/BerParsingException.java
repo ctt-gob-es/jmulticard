@@ -23,7 +23,7 @@ public final class BerParsingException extends RuntimeException {
 
     /** Construye una excepci&oacute;n en el an&aacute;lisis de un TLV.
      * @param message Mensaje de la excepci&oacute;n. */
-    public BerParsingException(final String message) {
+    BerParsingException(final String message) {
         super(message);
     }
 

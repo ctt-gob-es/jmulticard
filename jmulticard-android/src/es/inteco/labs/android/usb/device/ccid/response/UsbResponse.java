@@ -119,8 +119,7 @@ public final class UsbResponse {
 	 * @param usbCommand Comando USB.
 	 * @param response Respuesta */
 	public UsbResponse(final UsbCommand usbCommand, final byte[] response){
-		super();
-		final byte[] length = new byte[]{(byte)0x00, response[4], response[3], response[2], response[1]};
+		final byte[] length = {(byte)0x00, response[4], response[3], response[2], response[1]};
 		final int absoluteDataLength = new BigInteger(length).intValue();
 		this.responseBytes = HexUtils.subArray(response, 0, USB_HEADER_BASE_SIZE + absoluteDataLength);
 		this.command = usbCommand;

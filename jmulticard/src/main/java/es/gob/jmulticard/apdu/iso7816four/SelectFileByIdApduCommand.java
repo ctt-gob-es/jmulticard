@@ -72,5 +72,4 @@ public final class SelectFileByIdApduCommand extends CommandApdu {
     		);
         }
     }
-
 }

@@ -9,7 +9,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import es.gob.jmulticard.callback.CustomAuthorizeCallback;
 import es.gob.jmulticard.callback.CustomTextInputCallback;
 
 /** <code>CallbackHandler</code> que gestiona los <i>Callbacks</i> de petici&oacute;n de
@@ -37,7 +36,7 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 		pin = p != null ? p.clone() : null;
 	}
 
-	private static final Logger LOGGER = Logger.getLogger("es.gob.jmulticard"); //$NON-NLS-1$
+	private static final Logger LOGGER = Logger.getLogger(TestingDnieCallbackHandler.class.getName());
 
 	@Override
 	public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
@@ -64,9 +63,6 @@ public final class TestingDnieCallbackHandler implements CallbackHandler {
 					}
 					else if (cb instanceof CustomTextInputCallback) {
 						((CustomTextInputCallback)cb).setText(can);
-					}
-					else if (cb instanceof CustomAuthorizeCallback) {
-						((CustomAuthorizeCallback)cb).setAuthorized(true);
 					}
 					else if (cb instanceof PasswordCallback) {
 						((PasswordCallback)cb).setPassword(pin);

@@ -17,17 +17,14 @@ public final class EcdsaSignature extends Sequence {
 	/** Constructor. */
 	public EcdsaSignature() {
 		super(
-			new OptionalDecoderObjectElement[] {
-				new OptionalDecoderObjectElement(
-					DerInteger.class,
-					false
-				),
-				new OptionalDecoderObjectElement(
-					DerInteger.class,
-					false
-				)
-			}
+			new OptionalDecoderObjectElement(
+				DerInteger.class,
+				false
+			),
+			new OptionalDecoderObjectElement(
+				DerInteger.class,
+				false
+			)
 		);
 	}
-
 }

@@ -48,7 +48,7 @@ import es.gob.jmulticard.apdu.StatusWord;
 public class Iso7816FourCardException extends Exception {
 
 	/** C&oacute;digo de retorno que se obtuvo tras producirse el error. */
-    private transient final StatusWord returnCode;
+    private final StatusWord returnCode;
 
     /** Crea una excepci&oacute;n referente a ISO 7816-4 en base a una palabra de estado.
      * @param desc Descripci&oacute;n de la excepci&oacute;n.
@@ -100,8 +100,8 @@ public class Iso7816FourCardException extends Exception {
     /** Identificador de versi&oacute;n para la serializaci&oacute;n. */
     private static final long serialVersionUID = 5935577997660561619L;
 
-    /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado) que caus&oacute; la
-     * excepci&oacute;n.
+    /** Obtiene el c&oacute;digo de finalizaci&oacute;n (en modo de palabra de estado)
+     * que caus&oacute; la excepci&oacute;n.
      * @return C&oacute;digo de finalizaci&oacute;n que caus&oacute; la excepci&oacute;n */
     public StatusWord getStatusWord() {
         return returnCode;

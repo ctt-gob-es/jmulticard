@@ -22,7 +22,7 @@ public final class TestSmartCafeProvider {
 		final Provider p = new SmartCafeProvider();
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("GDSCPKCS15"); //$NON-NLS-1$
-		final char[] pin = new UIPasswordCallback(
+		final char[] pin = new TestingUiPasswordCallback(
 			"PIN de la tarjeta SmartCafe", //$NON-NLS-1$
 			null,
 			"Introduzca el PIN de la tarjeta SmartCafe", //$NON-NLS-1$
@@ -47,6 +47,5 @@ public final class TestSmartCafeProvider {
 
 		System.out.println("Firma generada correctamente:"); //$NON-NLS-1$
 		System.out.println(HexUtils.hexify(sign, true));
-
 	}
 }

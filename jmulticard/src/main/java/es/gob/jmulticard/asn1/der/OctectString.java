@@ -51,11 +51,11 @@ public class OctectString extends DecoderObject {
 	/** Tipo ASN&#46;1 <i>OctectString</i>. */
     private static final byte TAG_OCTECTSTRING = (byte) 0x04;
 
-    private transient byte[] value = null;
+    private byte[] value = null;
 
     @Override
     protected void decodeValue() throws TlvException {
-    	final Tlv tlv = new Tlv(getRawDerValue());
+    	final Tlv tlv = new Tlv(getBytes());
     	if (TAG_OCTECTSTRING != tlv.getTag()) {
     		throw new TlvException(
 				"Se esperaba un TLV de tipo OctectString pero se ha encontrado uno de tipo " + //$NON-NLS-1$

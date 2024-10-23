@@ -11,7 +11,7 @@ import es.gob.jmulticard.apdu.iso7816four.pace.MseSetPaceAlgorithmApduCommand.Pa
  * @author Ignacio Mar&iacute;n. */
 public final class WirelessInitializerMrz implements WirelessInitializer {
 
-	private transient final byte[] k;
+	private final byte[] k;
 
 	/** Construye una MRZ para inicializaci&oacute;n de un canal PACE.
 	 * @param mrz MRZ. */
@@ -51,12 +51,11 @@ public final class WirelessInitializerMrz implements WirelessInitializer {
 		}
 		try {
 			return new WirelessInitializerMrz(
-				new MrzInfo(mrz).getMrzPswd(cryptoHelper)
+				new Mrz(mrz).getMrzPswd(cryptoHelper)
 			);
 		}
 		catch (final IOException | IllegalArgumentException ex) {
 			throw new MalformedMrzException("La MRZ no tiene formato valido", ex); //$NON-NLS-1$
 		}
 	}
-
 }

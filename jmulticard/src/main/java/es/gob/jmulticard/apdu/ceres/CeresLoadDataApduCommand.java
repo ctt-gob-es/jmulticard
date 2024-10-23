@@ -64,5 +64,4 @@ public final class CeresLoadDataApduCommand extends CommandApdu {
 			null
 		);
 	}
-
 }

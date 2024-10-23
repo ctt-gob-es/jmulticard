@@ -70,5 +70,4 @@ public final class RdnSequence extends SequenceOf {
 	public X500Principal getKeyprincipal() {
 		return new X500Principal(toString());
 	}
-
 }

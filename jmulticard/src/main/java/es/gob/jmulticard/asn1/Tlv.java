@@ -41,9 +41,9 @@ package es.gob.jmulticard.asn1;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import es.gob.jmulticard.HexUtils;
+import es.gob.jmulticard.JmcLogger;
 
 /** Representaci&oacute;n de un TLV (Tipo-Longitud-Valor) binario en forma ASN&#46;1 DER.
  * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
@@ -58,7 +58,7 @@ public final class Tlv {
     /** Estructura binaria completa del TLV. */
     private final byte[] bytes;
 
-    private transient final int valueOffset;
+    private final int valueOffset;
 
     /** Construye un TLV simple con etiqueta y longitud de un solo octeto cada uno.
      * @param t Etiqueta (tipo) del TLV.
@@ -67,39 +67,39 @@ public final class Tlv {
     	if (value == null) {
             throw new IllegalArgumentException("El valor del TLV no puede ser nulo"); //$NON-NLS-1$
         }
-        this.valueOffset = 2;
-        this.tag = t;
-        this.length = value.length;
+        valueOffset = 2;
+        tag = t;
+        length = value.length;
 
 
         final int iExtLen;
-        if (this.length >= 256) {
+        if (length >= 256) {
         	iExtLen = 4;
         }
-        else if (this.length >= 128) {
+        else if (length >= 128) {
         	iExtLen = 3;
         }
         else {
         	iExtLen = 2;
         }
 
-        this.bytes = new byte[value.length + iExtLen];
-        this.bytes[0] = t;
+        bytes = new byte[value.length + iExtLen];
+        bytes[0] = t;
 
-        if (this.length >= 256) {
-        	this.bytes[1] = (byte) 0x82;
-        	this.bytes[2] = (byte) (value.length >> 8 & 0xFF);
-        	this.bytes[3] = (byte) (value.length & 0xFF);
+        if (length >= 256) {
+        	bytes[1] = (byte) 0x82;
+        	bytes[2] = (byte) (value.length >> 8 & 0xFF);
+        	bytes[3] = (byte) (value.length & 0xFF);
     	}
         else if (value.length >= 128) {
-        	this.bytes[1] = (byte) 0x81;
-        	this.bytes[2] = (byte)value.length;
+        	bytes[1] = (byte) 0x81;
+        	bytes[2] = (byte)value.length;
     	}
         else {
-            this.bytes[1] = (byte)value.length;
+            bytes[1] = (byte)value.length;
         }
 
-        System.arraycopy(value, 0, this.bytes, iExtLen, value.length);
+        System.arraycopy(value, 0, bytes, iExtLen, value.length);
     }
 
     /** Construye un TLV simple a partir de su representaci&oacute;n binaria directa.
@@ -110,13 +110,11 @@ public final class Tlv {
             throw new IllegalArgumentException("El TLV no puede ser nulo"); //$NON-NLS-1$
         }
         if (buffer.length == 0) {
-        	Logger.getLogger("es.gob.jmulticard").warning( //$NON-NLS-1$
-    			"Se ha pedido crear un TLV vacio" //$NON-NLS-1$
-			);
-        	this.length = 0;
-        	this.bytes = new byte[0];
-        	this.tag = (byte) 0xff;
-        	this.valueOffset = 0;
+        	JmcLogger.warning("Se ha pedido crear un TLV vacio"); //$NON-NLS-1$
+        	length = 0;
+        	bytes = new byte[0];
+        	tag = (byte) 0xff;
+        	valueOffset = 0;
         	return;
         }
         if (buffer.length < 2) {
@@ -131,18 +129,13 @@ public final class Tlv {
         final byte[] tempBytes = new byte[buffer.length];
         System.arraycopy(buffer, 0, tempBytes, 0, buffer.length);
 
-        this.tag = tempBytes[offset++];
-
-        // Comprobamos que el Tipo sea valido (tipos multi-octeto)
-//        if ((this.tag & 0x1f) == 0x1f) {
-//            throw new TlvException("El tipo del TLV es invalido"); //$NON-NLS-1$
-//        }
+        tag = tempBytes[offset++];
 
         // Copiamos la longitud
         int size = tempBytes[offset++] & 0xff;
         final boolean indefinite = size == 128;
         if (indefinite) {
-            if ((this.tag & 0x20) == 0) {
+            if ((tag & 0x20) == 0) {
                 throw new TlvException("Longitud del TLV invalida"); //$NON-NLS-1$
             }
         }
@@ -159,39 +152,39 @@ public final class Tlv {
             }
         }
 
-        this.length = size;
-        this.valueOffset = offset;
+        length = size;
+        valueOffset = offset;
 
-        this.bytes = new byte[this.valueOffset + this.length];
-        System.arraycopy(tempBytes, 0, this.bytes, 0, this.valueOffset + this.length);
+        bytes = new byte[valueOffset + length];
+        System.arraycopy(tempBytes, 0, bytes, 0, valueOffset + length);
 
     }
 
     /** Devuelve el TLV directamente en binario.
      * @return Valor binario completo del TLV. */
     public byte[] getBytes() {
-        final byte[] out = new byte[this.bytes.length];
-        System.arraycopy(this.bytes, 0, out, 0, this.bytes.length);
+        final byte[] out = new byte[bytes.length];
+        System.arraycopy(bytes, 0, out, 0, bytes.length);
         return out;
     }
 
     /** Devuelve la longitud del valor del TLV.
      * @return Longitud del valor del TLV. */
     public int getLength() {
-        return this.length;
+        return length;
     }
 
     /** Devuelve el tipo (etiqueta) del TLV.
      * @return Tipo (etiqueta) del TLV. */
     public byte getTag() {
-        return this.tag;
+        return tag;
     }
 
     /** Devuelve el valor del TLV.
      * @return Valor del del TLV. */
     public byte[] getValue() {
-        final byte[] out = new byte[this.length];
-        System.arraycopy(this.bytes, this.valueOffset, out, 0, this.length);
+        final byte[] out = new byte[length];
+        System.arraycopy(bytes, valueOffset, out, 0, length);
         return out;
     }
 

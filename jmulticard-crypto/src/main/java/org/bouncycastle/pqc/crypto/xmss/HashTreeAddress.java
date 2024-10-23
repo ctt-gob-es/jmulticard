@@ -16,8 +16,7 @@ final class HashTreeAddress
     private final int treeHeight;
     private final int treeIndex;
 
-    private HashTreeAddress(Builder builder)
-    {
+    HashTreeAddress(final Builder builder) {
         super(builder);
         padding = PADDING;
         treeHeight = builder.treeHeight;
@@ -29,21 +28,21 @@ final class HashTreeAddress
     {
 
         /* optional */
-        private int treeHeight = 0;
-        private int treeIndex = 0;
+        int treeHeight = 0;
+        int treeIndex = 0;
 
         protected Builder()
         {
             super(TYPE);
         }
 
-        protected Builder withTreeHeight(int val)
+        protected Builder withTreeHeight(final int val)
         {
             treeHeight = val;
             return this;
         }
 
-        protected Builder withTreeIndex(int val)
+        protected Builder withTreeIndex(final int val)
         {
             treeIndex = val;
             return this;
@@ -65,7 +64,7 @@ final class HashTreeAddress
     @Override
     protected byte[] toByteArray()
     {
-        byte[] byteRepresentation = super.toByteArray();
+        final byte[] byteRepresentation = super.toByteArray();
         Pack.intToBigEndian(padding, byteRepresentation,16);
         Pack.intToBigEndian(treeHeight, byteRepresentation, 20);
         Pack.intToBigEndian(treeIndex, byteRepresentation, 24);

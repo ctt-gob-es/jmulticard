@@ -27,7 +27,7 @@ public final class TestJseProviderCeres {
 		final Provider p = new CeresProvider();
 		Security.addProvider(p);
 		final KeyStore ks = KeyStore.getInstance("CERES"); //$NON-NLS-1$
-		final char[] pin = new UIPasswordCallback(
+		final char[] pin = new TestingUiPasswordCallback(
 			"PIN de la tarjeta CERES", //$NON-NLS-1$
 			null,
 			"Introduzca el PIN de la tarjeta CERES", //$NON-NLS-1$
@@ -97,5 +97,4 @@ public final class TestJseProviderCeres {
 			((X509Certificate)ks.getCertificate(alias)).getIssuerX500Principal().toString()
 		);
 	}
-
 }

@@ -67,5 +67,4 @@ public final class CeresSignDataApduCommand extends CommandApdu {
 			Integer.valueOf(keySize / 8)
 		);
 	}
-
 }

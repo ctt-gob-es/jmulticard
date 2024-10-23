@@ -62,11 +62,6 @@ public final class GiDeVerifyApduCommand extends CommandApdu {
     		getPin(pinPc), // Data
     		null		   // Le
 		);
-        if (pinPc == null) {
-        	throw new IllegalArgumentException(
-    			"No se puede verificar el titular con un PasswordCallback nulo" //$NON-NLS-1$
-        	);
-        }
     }
 
     private static byte[] getPin(final PasswordCallback pinPc) {
@@ -78,5 +73,4 @@ public final class GiDeVerifyApduCommand extends CommandApdu {
     	final char[] in = pinPc.getPassword();
     	return HexUtils.charArrayToByteArray(in);
     }
-
 }

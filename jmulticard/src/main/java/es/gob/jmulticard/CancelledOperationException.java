@@ -53,5 +53,4 @@ public final class CancelledOperationException extends RuntimeException {
     public CancelledOperationException(final String msg) {
         super(msg);
     }
-
 }

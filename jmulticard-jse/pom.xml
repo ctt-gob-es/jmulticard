@@ -8,35 +8,25 @@
 	<parent>
 		<groupId>es.gob.afirma.jmulticard</groupId>
 		<artifactId>jmulticard-base</artifactId>
-		<version>1.9</version>
+		<version>3.0.3</version>
 	</parent>
 	
 	<dependencies>
+		
 		<dependency>
 			<groupId>es.gob.afirma.jmulticard</groupId>
 			<artifactId>jmulticard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>es.gob.afirma.jmulticard</groupId>
-			<artifactId>jmulticard-jsr268</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk18on</artifactId>
+			<version>1.77</version>
 		</dependency>
 		<dependency>
-			<groupId>es.gob.afirma.jmulticard</groupId>
-			<artifactId>jmulticard-ui</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.madgag.spongycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.58.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.madgag.spongycastle</groupId>
-			<artifactId>prov</artifactId>
-			<version>1.58.0.0</version>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.77</version>
 		</dependency>
 		
 		<!--  Solo para las pruebas unitarias -->
@@ -44,6 +34,12 @@
 			<groupId>com.github.jai-imageio</groupId>
 			<artifactId>jai-imageio-jpeg2000</artifactId>
 			<version>1.4.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>es.gob.afirma.jmulticard</groupId>
+			<artifactId>jmulticard-jsr268</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		

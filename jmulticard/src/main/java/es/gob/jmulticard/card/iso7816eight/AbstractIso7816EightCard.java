@@ -55,7 +55,7 @@ public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
     /** Construye una tarjeta compatible ISO 7816-8.
      * @param c Clase (CLA) de la APDU.
      * @param conn Connexi&oacute;n con la tarjeta. */
-    public AbstractIso7816EightCard(final byte c, final ApduConnection conn) {
+    protected AbstractIso7816EightCard(final byte c, final ApduConnection conn) {
         super(c, conn);
     }
 
@@ -63,7 +63,8 @@ public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
      * y que deber&aacute; ser la del certificado a partir del cual se gener&oacute; el
      * certificado que ahora se valida.
      * @param cert Certificado que se desea comprobar.
-     * @throws SecureChannelException Cuando el certificado no es correcto u ocurre alg&uacute;n error en la validaci&oacute;n.
+     * @throws SecureChannelException Cuando el certificado no es correcto u ocurre
+     *                                alg&uacute;n error en la validaci&oacute;n.
      * @throws ApduConnectionException Cuando ocurre un error en la comunicaci&oacute;n con la tarjeta. */
     public void verifyCertificate(final byte[] cert) throws ApduConnectionException {
         final CommandApdu apdu = new PsoVerifyCertificateApduCommand((byte) 0x00, cert);
@@ -71,7 +72,7 @@ public abstract class AbstractIso7816EightCard extends AbstractIso7816FourCard {
         if (!res.isOk()) {
             throw new SecureChannelException(
         		"Error en la verificacion del certificado. Se obtuvo el error: " + //$NON-NLS-1$
-                HexUtils.hexify(res.getBytes(), true)
+    				HexUtils.hexify(res.getBytes(), true)
             );
         }
     }

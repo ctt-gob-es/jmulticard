@@ -23,10 +23,8 @@ public abstract class ASN1ApplicationSpecific
      * @param obj the object to be converted.
      * @return obj's representation as an ASN1ApplicationSpecific object.
      */
-    public static ASN1ApplicationSpecific getInstance(final Object obj)
-    {
-        if (obj == null || obj instanceof ASN1ApplicationSpecific)
-        {
+    public static ASN1ApplicationSpecific getInstance(final Object obj) {
+        if (obj == null || obj instanceof ASN1ApplicationSpecific) {
             return (ASN1ApplicationSpecific)obj;
         }
         else if (obj instanceof byte[])
