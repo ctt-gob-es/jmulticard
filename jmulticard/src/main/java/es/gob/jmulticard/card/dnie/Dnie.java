@@ -919,7 +919,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	            		new Location(prkdf.getKeyPath(i)),
 	            		prkdf.getKeyName(i),
 	            		prkdf.getKeyReference(i),
-	            		((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
+	            		this.cryptoHelper.getRsaPublicKey(this.certs.get(alias)).getModulus().bitLength()
 					)
 				);
 			}
