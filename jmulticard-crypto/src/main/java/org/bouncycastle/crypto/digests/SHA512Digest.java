@@ -30,8 +30,9 @@ public class SHA512Digest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t Digest.
      */
-    public SHA512Digest(SHA512Digest t)
+    public SHA512Digest(final SHA512Digest t)
     {
         super(t);
     }
@@ -41,7 +42,7 @@ public class SHA512Digest
      *
      * @param encodedState the encoded state from the originating digest.
      */
-    public SHA512Digest(byte[] encodedState)
+    public SHA512Digest(final byte[] encodedState)
     {
         restoreState(encodedState);
     }
@@ -60,19 +61,19 @@ public class SHA512Digest
 
     @Override
 	public int doFinal(
-        byte[]  out,
-        int     outOff)
+        final byte[]  out,
+        final int     outOff)
     {
         finish();
 
-        Pack.longToBigEndian(H1, out, outOff);
-        Pack.longToBigEndian(H2, out, outOff + 8);
-        Pack.longToBigEndian(H3, out, outOff + 16);
-        Pack.longToBigEndian(H4, out, outOff + 24);
-        Pack.longToBigEndian(H5, out, outOff + 32);
-        Pack.longToBigEndian(H6, out, outOff + 40);
-        Pack.longToBigEndian(H7, out, outOff + 48);
-        Pack.longToBigEndian(H8, out, outOff + 56);
+        Pack.longToBigEndian(this.H1, out, outOff);
+        Pack.longToBigEndian(this.H2, out, outOff + 8);
+        Pack.longToBigEndian(this.H3, out, outOff + 16);
+        Pack.longToBigEndian(this.H4, out, outOff + 24);
+        Pack.longToBigEndian(this.H5, out, outOff + 32);
+        Pack.longToBigEndian(this.H6, out, outOff + 40);
+        Pack.longToBigEndian(this.H7, out, outOff + 48);
+        Pack.longToBigEndian(this.H8, out, outOff + 56);
 
         reset();
 
@@ -91,14 +92,14 @@ public class SHA512Digest
          * The first 64 bits of the fractional parts of the square roots
          * of the first eight prime numbers
          */
-        H1 = 0x6a09e667f3bcc908L;
-        H2 = 0xbb67ae8584caa73bL;
-        H3 = 0x3c6ef372fe94f82bL;
-        H4 = 0xa54ff53a5f1d36f1L;
-        H5 = 0x510e527fade682d1L;
-        H6 = 0x9b05688c2b3e6c1fL;
-        H7 = 0x1f83d9abfb41bd6bL;
-        H8 = 0x5be0cd19137e2179L;
+        this.H1 = 0x6a09e667f3bcc908L;
+        this.H2 = 0xbb67ae8584caa73bL;
+        this.H3 = 0x3c6ef372fe94f82bL;
+        this.H4 = 0xa54ff53a5f1d36f1L;
+        this.H5 = 0x510e527fade682d1L;
+        this.H6 = 0x9b05688c2b3e6c1fL;
+        this.H7 = 0x1f83d9abfb41bd6bL;
+        this.H8 = 0x5be0cd19137e2179L;
     }
 
     @Override
@@ -108,9 +109,9 @@ public class SHA512Digest
     }
 
     @Override
-	public void reset(Memoable other)
+	public void reset(final Memoable other)
     {
-        SHA512Digest d = (SHA512Digest)other;
+        final SHA512Digest d = (SHA512Digest)other;
 
         copyIn(d);
     }
@@ -118,7 +119,7 @@ public class SHA512Digest
     @Override
 	public byte[] getEncodedState()
     {
-        byte[] encoded = new byte[getEncodedStateSize()];
+        final byte[] encoded = new byte[getEncodedStateSize()];
         super.populateState(encoded);
         return encoded;
     }

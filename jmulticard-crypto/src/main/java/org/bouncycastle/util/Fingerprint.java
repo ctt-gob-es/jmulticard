@@ -22,7 +22,7 @@ public class Fingerprint
      *
      * @param source original data to calculate the fingerprint from.
      */
-    public Fingerprint(byte[] source)
+    public Fingerprint(final byte[] source)
     {
         this(source, 160);
     }
@@ -32,8 +32,9 @@ public class Fingerprint
      * produced by the FIPS API.
      *
      * @param source original data to calculate the fingerprint from.
+     * @param bitLength bit length of finger print to be produced.
      */
-    public Fingerprint(byte[] source, int bitLength)
+    public Fingerprint(final byte[] source, final int bitLength)
     {
         this.fingerprint = calculateFingerprint(source, bitLength);
     }
@@ -46,7 +47,7 @@ public class Fingerprint
      * @deprecated use the SHAKE only version.
      */
     @Deprecated
-	public Fingerprint(byte[] source, boolean useSHA512t)
+	public Fingerprint(final byte[] source, final boolean useSHA512t)
     {
         if (useSHA512t)
         {
@@ -60,28 +61,28 @@ public class Fingerprint
 
     public byte[] getFingerprint()
     {
-        return Arrays.clone(fingerprint);
+        return Arrays.clone(this.fingerprint);
     }
 
     @Override
 	public String toString()
     {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i != fingerprint.length; i++)
+        final StringBuffer sb = new StringBuffer();
+        for (int i = 0; i != this.fingerprint.length; i++)
         {
             if (i > 0)
             {
                 sb.append(":");
             }
-            sb.append(encodingTable[(fingerprint[i] >>> 4) & 0xf]);
-            sb.append(encodingTable[fingerprint[i] & 0x0f]);
+            sb.append(encodingTable[this.fingerprint[i] >>> 4 & 0xf]);
+            sb.append(encodingTable[this.fingerprint[i] & 0x0f]);
         }
 
         return sb.toString();
     }
 
     @Override
-	public boolean equals(Object o)
+	public boolean equals(final Object o)
     {
         if (o == this)
         {
@@ -89,7 +90,7 @@ public class Fingerprint
         }
         if (o instanceof Fingerprint)
         {
-            return Arrays.areEqual(((Fingerprint)o).fingerprint, fingerprint);
+            return Arrays.areEqual(((Fingerprint)o).fingerprint, this.fingerprint);
         }
 
         return false;
@@ -98,7 +99,7 @@ public class Fingerprint
     @Override
 	public int hashCode()
     {
-        return Arrays.hashCode(fingerprint);
+        return Arrays.hashCode(this.fingerprint);
     }
 
     /**
@@ -108,7 +109,7 @@ public class Fingerprint
      * @param input data to base the fingerprint on.
      * @return a byte array containing a 160 bit fingerprint.
      */
-    public static byte[] calculateFingerprint(byte[] input)
+    public static byte[] calculateFingerprint(final byte[] input)
     {
         return calculateFingerprint(input, 160);
     }
@@ -121,18 +122,18 @@ public class Fingerprint
      * @param bitLength bit length of finger print to be produced.
      * @return a byte array containing a 20 byte fingerprint.
      */
-    public static byte[] calculateFingerprint(byte[] input, int bitLength)
+    public static byte[] calculateFingerprint(final byte[] input, final int bitLength)
     {
         if (bitLength % 8 != 0)
         {
             throw new IllegalArgumentException("bitLength must be a multiple of 8");
         }
 
-        SHAKEDigest digest = new SHAKEDigest(256);
+        final SHAKEDigest digest = new SHAKEDigest(256);
 
         digest.update(input, 0, input.length);
 
-        byte[] rv = new byte[bitLength / 8];
+        final byte[] rv = new byte[bitLength / 8];
 
         digest.doFinal(rv, 0, bitLength / 8);
 
@@ -148,13 +149,13 @@ public class Fingerprint
      * @deprecated use the SHAKE based version.
      */
     @Deprecated
-	public static byte[] calculateFingerprintSHA512_160(byte[] input)
+	public static byte[] calculateFingerprintSHA512_160(final byte[] input)
     {
-        SHA512tDigest digest = new SHA512tDigest(160);
+        final SHA512tDigest digest = new SHA512tDigest(160);
 
         digest.update(input, 0, input.length);
 
-        byte[] rv = new byte[digest.getDigestSize()];
+        final byte[] rv = new byte[digest.getDigestSize()];
 
         digest.doFinal(rv, 0);
 

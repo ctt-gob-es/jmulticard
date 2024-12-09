@@ -36,78 +36,78 @@ class CMCEEngine
 
     public int getIrrBytes()
     {
-        return IRR_BYTES;
+        return this.IRR_BYTES;
     }
 
     public int getCondBytes()
     {
-        return COND_BYTES;
+        return this.COND_BYTES;
     }
 
     public int getPrivateKeySize()
     {
-        return COND_BYTES + IRR_BYTES + SYS_N / 8 + 40;
+        return this.COND_BYTES + this.IRR_BYTES + this.SYS_N / 8 + 40;
     }
 
     public int getPublicKeySize()
     {
-        if (usePadding)
+        if (this.usePadding)
         {
-            return PK_NROWS * (SYS_N / 8 - (PK_NROWS - 1) / 8);
+            return this.PK_NROWS * (this.SYS_N / 8 - (this.PK_NROWS - 1) / 8);
         }
-        return PK_NROWS * PK_NCOLS / 8;
+        return this.PK_NROWS * this.PK_NCOLS / 8;
     }
 
     //    public int getPublicKeySize(){ return PK_NCOLS*PK_NROWS/8; }
     public int getCipherTextSize()
     {
-        return SYND_BYTES + 32;
+        return this.SYND_BYTES + 32;
     }
 
     public CMCEEngine(final int m, final int n, final int t, final int[] p, final boolean usePivots, final int defaultKeySize)
     {
         this.usePivots = usePivots;
-        SYS_N = n;
-        SYS_T = t;
-        GFBITS = m;
-        poly = p;
+        this.SYS_N = n;
+        this.SYS_T = t;
+        this.GFBITS = m;
+        this.poly = p;
         this.defaultKeySize = defaultKeySize;
 
-        IRR_BYTES = SYS_T * 2; // t * ceil(m/8)
-        COND_BYTES = (1 << GFBITS - 4) * (2 * GFBITS - 1);
+        this.IRR_BYTES = this.SYS_T * 2; // t * ceil(m/8)
+        this.COND_BYTES = (1 << this.GFBITS - 4) * (2 * this.GFBITS - 1);
 
-        PK_NROWS = SYS_T * GFBITS;
-        PK_NCOLS = SYS_N - PK_NROWS;
-        PK_ROW_BYTES = (PK_NCOLS + 7) / 8;
+        this.PK_NROWS = this.SYS_T * this.GFBITS;
+        this.PK_NCOLS = this.SYS_N - this.PK_NROWS;
+        this.PK_ROW_BYTES = (this.PK_NCOLS + 7) / 8;
 
-        SYND_BYTES = (PK_NROWS + 7) / 8;
-        GFMASK = (1 << GFBITS) - 1;
+        this.SYND_BYTES = (this.PK_NROWS + 7) / 8;
+        this.GFMASK = (1 << this.GFBITS) - 1;
 
 
-        if (GFBITS == 12)
+        if (this.GFBITS == 12)
         {
-            gf = new GF12(GFBITS);
-            benes = new BENES12(SYS_N, SYS_T, GFBITS);
+            this.gf = new GF12(this.GFBITS);
+            this.benes = new BENES12(this.SYS_N, this.SYS_T, this.GFBITS);
         }
         else
         {
-            gf = new GF13(GFBITS);
-            benes = new BENES13(SYS_N, SYS_T, GFBITS);
+            this.gf = new GF13(this.GFBITS);
+            this.benes = new BENES13(this.SYS_N, this.SYS_T, this.GFBITS);
 
         }
-        usePadding = SYS_T % 8 != 0;
-        countErrorIndices = 1 << GFBITS > SYS_N;
+        this.usePadding = this.SYS_T % 8 != 0;
+        this.countErrorIndices = 1 << this.GFBITS > this.SYS_N;
     }
     public byte[] generate_public_key_from_private_key(final byte[] sk)
     {
         final byte[] pk = new byte[getPublicKeySize()];
-        final short[] pi = new short[1 << GFBITS];
+        final short[] pi = new short[1 << this.GFBITS];
         final long[] pivots = {0};
 
         // generating the perm used to generate the private key
-        final int[] perm = new int[1 << GFBITS];
-        final byte[] hash = new byte[SYS_N / 8 + (1 << GFBITS) * 4];
-        final int hash_idx = hash.length - 32 - IRR_BYTES - (1 << GFBITS) * 4;
+        final int[] perm = new int[1 << this.GFBITS];
+        final byte[] hash = new byte[this.SYS_N / 8 + (1 << this.GFBITS) * 4];
+        final int hash_idx = hash.length - 32 - this.IRR_BYTES - (1 << this.GFBITS) * 4;
 
         Xof digest;
         digest = new SHAKEDigest(256);
@@ -115,7 +115,7 @@ class CMCEEngine
         digest.update(sk, 0, 32);
         digest.doFinal(hash, 0, hash.length);
 
-        for (int i = 0; i < 1 << GFBITS; i++)
+        for (int i = 0; i < 1 << this.GFBITS; i++)
         {
             perm[i] = Utils.load4(hash, hash_idx + i * 4);
         }
@@ -134,7 +134,7 @@ class CMCEEngine
         // g: IRR_BYTES (polynomial) (t * 2)
 
         // generate hash using the seed given in the sk (64 || first 32 bytes)
-        final byte[] hash = new byte[SYS_N / 8 + (1 << GFBITS) * 4 + IRR_BYTES + 32];
+        final byte[] hash = new byte[this.SYS_N / 8 + (1 << this.GFBITS) * 4 + this.IRR_BYTES + 32];
 
         int hash_idx = 0;
         Xof digest;
@@ -147,44 +147,44 @@ class CMCEEngine
         // generate g
         if (sk.length <= 40)
         {
-            final short[] field = new short[SYS_T];
+            final short[] field = new short[this.SYS_T];
 
-            final byte[] reg_g = new byte[IRR_BYTES];
-            hash_idx = hash.length - 32 - IRR_BYTES;
-            for (int i = 0; i < SYS_T; i++)
+            final byte[] reg_g = new byte[this.IRR_BYTES];
+            hash_idx = hash.length - 32 - this.IRR_BYTES;
+            for (int i = 0; i < this.SYS_T; i++)
             {
-                field[i] = Utils.load_gf(hash, hash_idx + i * 2, GFMASK);
+                field[i] = Utils.load_gf(hash, hash_idx + i * 2, this.GFMASK);
             }
             generate_irr_poly(field);
 
-            for (int i = 0; i < SYS_T; i++)
+            for (int i = 0; i < this.SYS_T; i++)
             {
                 Utils.store_gf(reg_g, i * 2, field[i]);
             }
-            System.arraycopy(reg_g, 0, reg_sk, 40, IRR_BYTES);
+            System.arraycopy(reg_g, 0, reg_sk, 40, this.IRR_BYTES);
         }
 
         // generate a
-        if (sk.length <= 40 + IRR_BYTES)
+        if (sk.length <= 40 + this.IRR_BYTES)
         {
-            final int[] perm = new int[1 << GFBITS];
-            final short[] pi = new short[1 << GFBITS];
+            final int[] perm = new int[1 << this.GFBITS];
+            final short[] pi = new short[1 << this.GFBITS];
 
-            hash_idx = hash.length - 32 - IRR_BYTES - (1 << GFBITS) * 4;
-            for (int i = 0; i < 1 << GFBITS; i++)
+            hash_idx = hash.length - 32 - this.IRR_BYTES - (1 << this.GFBITS) * 4;
+            for (int i = 0; i < 1 << this.GFBITS; i++)
             {
                 perm[i] = Utils.load4(hash, hash_idx + i * 4);
             }
 
-            if (usePivots)
+            if (this.usePivots)
             {
                 final long[] pivots = {0};
                 pk_gen(null, reg_sk, perm, pi, pivots);
             }
             else
             {
-                final long[] buf = new long[1 << GFBITS];
-                for (int i = 0; i < 1 << GFBITS; i++)
+                final long[] buf = new long[1 << this.GFBITS];
+                for (int i = 0; i < 1 << this.GFBITS; i++)
                 {
                     buf[i] = perm[i];
                     buf[i] <<= 31;
@@ -192,36 +192,36 @@ class CMCEEngine
                     buf[i] &= 0x7fffffffffffffffL; // getting rid of signed longs
                 }
                 sort64(buf, 0, buf.length);
-                for (int i = 0; i < 1 << GFBITS; i++)
+                for (int i = 0; i < 1 << this.GFBITS; i++)
                 {
-                    pi[i] = (short)(buf[i] & GFMASK);
+                    pi[i] = (short)(buf[i] & this.GFMASK);
                 }
             }
 
 
-            final byte[] out = new byte[COND_BYTES];
-            controlbitsfrompermutation(out, pi, GFBITS, 1 << GFBITS);
+            final byte[] out = new byte[this.COND_BYTES];
+            controlbitsfrompermutation(out, pi, this.GFBITS, 1 << this.GFBITS);
             //copy the controlbits from the permutation to the private key
-            System.arraycopy(out, 0, reg_sk, IRR_BYTES + 40, out.length);
+            System.arraycopy(out, 0, reg_sk, this.IRR_BYTES + 40, out.length);
         }
 
         // reg s
-        System.arraycopy(hash, 0, reg_sk, getPrivateKeySize() - SYS_N / 8, SYS_N / 8);
+        System.arraycopy(hash, 0, reg_sk, getPrivateKeySize() - this.SYS_N / 8, this.SYS_N / 8);
         return reg_sk;
     }
 
     public void kem_keypair(final byte[] pk, final byte[] sk, final SecureRandom random)
     {
 
-        // 1. Generate a uniform random l-bit string δ. (This is called a seed.)
+        // 1. Generate a uniform random l-bit string Î´. (This is called a seed.)
         final byte[] seed_a = new byte[1];
         byte[] seed_b = new byte[32];
         seed_a[0] = 64;
         random.nextBytes(seed_b);
 
-        //2. Output SeededKeyGen(δ).
+        //2. Output SeededKeyGen(Î´).
         // SeededKeyGen
-        final byte[] E = new byte[SYS_N / 8 + (1 << GFBITS) * 4 + SYS_T * 2 + 32];
+        final byte[] E = new byte[this.SYS_N / 8 + (1 << this.GFBITS) * 4 + this.SYS_T * 2 + 32];
         int seedIndex, skIndex = 0;
         byte[] prev_sk = seed_b;
         final long[] pivots = {0};
@@ -229,40 +229,36 @@ class CMCEEngine
         final Xof digest = new SHAKEDigest(256);
         while (true)
         {
-            // SeededKeyGen - 1. Compute E = G(δ), a string of n + σ2q + σ1t + l bits. (3488 + 32*4096 + 16*64 + 256)
             digest.update(seed_a, 0, seed_a.length);
             digest.update(seed_b, 0, seed_b.length);
             digest.doFinal(E, 0, E.length);
             // Store the seeds generated
 
-            // SeededKeyGen - 2. Define δ′ as the last l bits of E.
+            // SeededKeyGen - 2. Define Î´â€² as the last l bits of E.
             // Update seed using the last 32 bytes (l) of E
-            // If anything fails, this set δ ←δ′ (the next last 32 bytes of E) and restart the algorithm.
+            // If anything fails, this set XXXX (the next last 32 bytes of E) and restart the algorithm.
             seedIndex = E.length - 32;
             seed_b = Arrays.copyOfRange(E, seedIndex, seedIndex + 32);
 
-            // store the previous last 32 bytes used as δ
+            // store the previous last 32 bytes used as Î´
             System.arraycopy(prev_sk, 0, sk, 0, 32);
             prev_sk = Arrays.copyOfRange(seed_b, 0, 32);
 
             // (step 5 and 4 are swapped)
-            // SeededKeyGen - 5. Compute g from the next σ1t bits of E by the Irreducible algorithm. If this fails,
-            // set δ ←δ′ and restart the algorithm.
 
             // Create Field which is an element in gf2^mt
 
             // 2.4.1 Irreducible-polynomial generation
-            final short[] field = new short[SYS_T];
-            final int sigma1_t = E.length - 32 - 2 * SYS_T;
+            final short[] field = new short[this.SYS_T];
+            final int sigma1_t = E.length - 32 - 2 * this.SYS_T;
             seedIndex = sigma1_t;
 
 
-            // Irreducible 2.4.1 - 1. Define βj = ∑m−1
-            // i=0 dσ1j+izi for each j ∈ {0,1,...,t −1}. (Within each group of σ1
+            // Irreducible 2.4.1 - 1. Define Î²j = âˆ‘mâˆ’1
             // input bits, this uses only the first m bits.
-            for (int i = 0; i < SYS_T; i++)
+            for (int i = 0; i < this.SYS_T; i++)
             {
-                field[i] = Utils.load_gf(E, sigma1_t + i * 2, GFMASK);
+                field[i] = Utils.load_gf(E, sigma1_t + i * 2, this.GFMASK);
             }
 
             if (generate_irr_poly(field) == -1)
@@ -272,31 +268,22 @@ class CMCEEngine
 
             // storing poly to sk
             skIndex = 32 + 8;
-            for (int i = 0; i < SYS_T; i++)
+            for (int i = 0; i < this.SYS_T; i++)
             {
                 Utils.store_gf(sk, skIndex + i * 2, field[i]);
             }
 
-            // SeededKeyGen - 4. Compute α1,...,αq from the next σ2q bits of E by the FieldOrdering algorithm.
-            // If this fails, set δ ←δ′ and restart the algorithm.
-
             // Generate permutation
-            final int[] perm = new int[1 << GFBITS];
-            seedIndex -= (1 << GFBITS) * 4;
+            final int[] perm = new int[1 << this.GFBITS];
+            seedIndex -= (1 << this.GFBITS) * 4;
 
-            // FieldOrdering 2.4.2 - 1. Take the first σ2 input bits b0,b1,...,bσ2−1 as a σ2-bit integer a0 =
-            // b0 + 2b1 + ··· + 2σ2−1bσ2−1, take the next σ2 bits as a σ2-bit integer a1, and so on through aq−1.
-
-
-            for (int i = 0; i < 1 << GFBITS; i++)
+            for (int i = 0; i < 1 << this.GFBITS; i++)
             {
                 perm[i] = Utils.load4(E, seedIndex + i * 4);
             }
             // generating public key
-            final short[] pi = new short[1 << GFBITS];
+            final short[] pi = new short[1 << this.GFBITS];
 
-
-            //8. Write Γ′ as (g,α′1,α′2,...,α′n)
             if (pk_gen(pk, sk, perm, pi, pivots) == -1)
             {
 //                System.out.println("FAILED GENERATING PUBLIC KEY");
@@ -306,18 +293,18 @@ class CMCEEngine
             // computing c using Nassimi-Sahni algorithm which is a
             // parallel algorithms to set up the Benes permutation network
 
-            final byte[] out = new byte[COND_BYTES];
-            controlbitsfrompermutation(out, pi, GFBITS, 1 << GFBITS);
+            final byte[] out = new byte[this.COND_BYTES];
+            controlbitsfrompermutation(out, pi, this.GFBITS, 1 << this.GFBITS);
 
             //copy the controlbits from the permutation to the private key
-            System.arraycopy(out, 0, sk, IRR_BYTES + 40, out.length);
+            System.arraycopy(out, 0, sk, this.IRR_BYTES + 40, out.length);
 
             // storing the random string s
-            seedIndex -= SYS_N / 8;
-            System.arraycopy(E, seedIndex, sk, sk.length - SYS_N / 8, SYS_N / 8);
+            seedIndex -= this.SYS_N / 8;
+            System.arraycopy(E, seedIndex, sk, sk.length - this.SYS_N / 8, this.SYS_N / 8);
 
             // This part is reserved for compression which is not implemented and is not required
-            if (!usePivots)
+            if (!this.usePivots)
             {
                 Utils.store8(sk, 32, 0xFFFFFFFFL);
             }
@@ -326,8 +313,8 @@ class CMCEEngine
                 Utils.store8(sk, 32, pivots[0]);
             }
 
-            // 9. Output T as public key and (δ,c,g,α,s) as private key, where c = (cn−k−μ+1,...,cn−k)
-            // and α = (α′1,...,α′n,αn+1,...,αq
+            // 9. Output T as public key and (Î´,c,g,Î±,s) as private key, where c = (cnâˆ’kâˆ’Î¼+1,...,cnâˆ’k)
+            // and Î± = (Î±â€²1,...,Î±â€²n,Î±n+1,...,Î±q
             break;
         }
     }
@@ -337,33 +324,33 @@ class CMCEEngine
     {
         /*
         2.2.3 Encoding subroutine
-        1. Define H = (In−k |T)
-        2. Compute and return C0 = He ∈Fn−k2 .
+        1. Define H = (Inâˆ’k |T)
+        2. Compute and return C0 = He âˆˆFnâˆ’k2 .
          */
-        final short[] row = new short[SYS_N / 8];
+        final short[] row = new short[this.SYS_N / 8];
         int i, j, pk_ptr = 0;
         byte b;
-        final int tail = PK_NROWS % 8;
+        final int tail = this.PK_NROWS % 8;
 
-        for (i = 0; i < SYND_BYTES; i++)
+        for (i = 0; i < this.SYND_BYTES; i++)
         {
             cipher_text[i] = 0;
         }
 
-        for (i = 0; i < PK_NROWS; i++)
+        for (i = 0; i < this.PK_NROWS; i++)
         {
-            for (j = 0; j < SYS_N / 8; j++)
+            for (j = 0; j < this.SYS_N / 8; j++)
             {
                 row[j] = 0;
             }
 
-            for (j = 0; j < PK_ROW_BYTES; j++)
+            for (j = 0; j < this.PK_ROW_BYTES; j++)
             {
-                row[SYS_N / 8 - PK_ROW_BYTES + j] = pk[pk_ptr + j];
+                row[this.SYS_N / 8 - this.PK_ROW_BYTES + j] = pk[pk_ptr + j];
             }
-            if (usePadding)
+            if (this.usePadding)
             {
-                for (j = SYS_N / 8 - 1; j >= SYS_N / 8 - PK_ROW_BYTES; j--)
+                for (j = this.SYS_N / 8 - 1; j >= this.SYS_N / 8 - this.PK_ROW_BYTES; j--)
                 {
                     row[j] = (short)(((row[j] & 0xff) << tail | (row[j - 1] & 0xff) >>> 8 - tail) & 0xff);
 //                    System.out.printf("%04x ", row[j]);
@@ -374,7 +361,7 @@ class CMCEEngine
             row[i / 8] |= 1 << i % 8;
 
             b = 0;
-            for (j = 0; j < SYS_N / 8; j++)
+            for (j = 0; j < this.SYS_N / 8; j++)
             {
                 b ^= row[j] & error_vector[j];
             }
@@ -386,7 +373,7 @@ class CMCEEngine
 
             cipher_text[i / 8] |= b << i % 8;
 
-            pk_ptr += PK_ROW_BYTES;
+            pk_ptr += this.PK_ROW_BYTES;
         }
     }
 
@@ -394,49 +381,44 @@ class CMCEEngine
     private void generate_error_vector(final byte[] error_vector, final SecureRandom random)
     {
         byte[] buf_bytes;
-        final short[] buf_nums = new short[SYS_T * 2];
-        final short[] ind = new short[SYS_T];
-        final byte[] val = new byte[SYS_T];
+        final short[] buf_nums = new short[this.SYS_T * 2];
+        final short[] ind = new short[this.SYS_T];
+        final byte[] val = new byte[this.SYS_T];
 
         /*
         2.4.4 Fixed-weight-vector generation
-        1. Generate σ1τ uniform random bits b0,b1,...,bσ1τ−1.
          */
         while (true)
         {
 
             /*
             2.4.4 Fixed-weight-vector generation
-            2. Define dj = ∑m−1
-            i=0 bσ1j+i2i for each j ∈{0,1,...,τ −1}.
              */
-            if (countErrorIndices)
+            if (this.countErrorIndices)
             {
-                buf_bytes = new byte[SYS_T * 4];
+                buf_bytes = new byte[this.SYS_T * 4];
 
                 random.nextBytes(buf_bytes);
-                for (int i = 0; i < SYS_T * 2; i++)
+                for (int i = 0; i < this.SYS_T * 2; i++)
                 {
-                    buf_nums[i] = Utils.load_gf(buf_bytes, i * 2, GFMASK);
+                    buf_nums[i] = Utils.load_gf(buf_bytes, i * 2, this.GFMASK);
                 }
 
             /*
             2.4.4 Fixed-weight-vector generation
-            3. Define a0,a1,...,at−1 as the first t entries in d0,d1,...,dτ−1 in the range
-            {0,1,...,n −1}. If there are fewer than t such entries, restart the algorithm
              */
 
                 // moving and counting indices in the correct range
                 int count = 0;
-                for (int i = 0; i < SYS_T * 2 && count < SYS_T; i++)
+                for (int i = 0; i < this.SYS_T * 2 && count < this.SYS_T; i++)
                 {
-                    if (buf_nums[i] < SYS_N)
+                    if (buf_nums[i] < this.SYS_N)
                     {
                         ind[count++] = buf_nums[i];
                     }
                 }
 
-                if (count < SYS_T)
+                if (count < this.SYS_T)
                 {
 //                System.out.println("Failed Encrypt indices wrong range");
                     continue;
@@ -444,23 +426,23 @@ class CMCEEngine
             }
             else
             {
-                buf_bytes = new byte[SYS_T * 2];
+                buf_bytes = new byte[this.SYS_T * 2];
                 random.nextBytes(buf_bytes);
 
-                for (int i = 0; i < SYS_T; i++)
+                for (int i = 0; i < this.SYS_T; i++)
                 {
-                    ind[i] = Utils.load_gf(buf_bytes, i * 2, GFMASK);
+                    ind[i] = Utils.load_gf(buf_bytes, i * 2, this.GFMASK);
                 }
             }
 
 
             /*
             2.4.4 Fixed-weight-vector generation
-            4. If a0,a1,...,at−1 are not all distinct, restart the algorithm.
+            4. If a0,a1,...,atâˆ’1 are not all distinct, restart the algorithm.
              */
             int eq = 0;
             // check for repetition
-            for (int i = 1; i < SYS_T && eq != 1; i++)
+            for (int i = 1; i < this.SYS_T && eq != 1; i++)
             {
                 for (int j = 0; j < i; j++)
                 {
@@ -485,20 +467,20 @@ class CMCEEngine
 
         /*
         2.4.4 Fixed-weight-vector generation
-        5. Define e = (e0,e1,...,en−1) ∈ Fn2 as the weight-t vector such that eai = 1 for each i.
+        5. Define e = (e0,e1,...,enâˆ’1) âˆˆ Fn2 as the weight-t vector such that eai = 1 for each i.
         (Implementors are cautioned to compute e through arithmetic rather than variable-
         time RAM lookups.)
          */
-        for (int i = 0; i < SYS_T; i++)
+        for (int i = 0; i < this.SYS_T; i++)
         {
             val[i] = (byte)(1 << (ind[i] & 7));
         }
 //        System.out.print("e: ");
-        for (short i = 0; i < SYS_N / 8; i++)
+        for (short i = 0; i < this.SYS_N / 8; i++)
         {
             error_vector[i] = 0;
 
-            for (int j = 0; j < SYS_T; j++)
+            for (int j = 0; j < this.SYS_T; j++)
             {
                 short mask = same_mask32(i, (short)(ind[j] >> 3));
                 mask &= 0xff;
@@ -512,7 +494,7 @@ class CMCEEngine
     {
         /*
         2.4.5 Encapsulation
-        1. Use FixedWeight to generate a vector e ∈Fn2 of weight t.
+        1. Use FixedWeight to generate a vector e âˆˆFn2 of weight t.
          */
 
         // 2.4.4 Fixed-weight-vector generation
@@ -528,10 +510,10 @@ class CMCEEngine
     // 2.4.5 Encapsulation
     public int kem_enc(final byte[] cipher_text, final byte[] key, final byte[] pk, final SecureRandom random)
     {
-        final byte[] error_vector = new byte[SYS_N / 8];
+        final byte[] error_vector = new byte[this.SYS_N / 8];
         byte mask;
         int i, padding_ok = 0;
-        if (usePadding)
+        if (this.usePadding)
         {
             padding_ok = check_pk_padding(pk);
 //            System.out.println("padding_ok: " + padding_ok);
@@ -539,7 +521,7 @@ class CMCEEngine
 
         /*
         2.4.5 Encapsulation
-        1. Use FixedWeight to generate a vector e ∈Fn2 of weight t.
+        1. Use FixedWeight to generate a vector e âˆˆFn2 of weight t.
         2. Compute C0 = Encode(e,T).
          */
         encrypt(cipher_text, pk, error_vector, random);
@@ -554,7 +536,7 @@ class CMCEEngine
         final Xof digest = new SHAKEDigest(256);
         digest.update((byte)0x02);
         digest.update(error_vector, 0, error_vector.length); // input
-        digest.doFinal(cipher_text, SYND_BYTES, 32);     // output
+        digest.doFinal(cipher_text, this.SYND_BYTES, 32);     // output
 
         /*
         2.4.5 Encapsulation
@@ -567,14 +549,14 @@ class CMCEEngine
         digest.update(cipher_text, 0, cipher_text.length); // input
         digest.doFinal(key, 0, key.length);     // output
 
-        if (usePadding)
+        if (this.usePadding)
         {
             //
             // clear outputs (set to all 0's) if padding bits are not all zero
             mask = (byte)padding_ok;
             mask ^= 0xFF;
 
-            for (i = 0; i < SYND_BYTES + 32; i++)
+            for (i = 0; i < this.SYND_BYTES + 32; i++)
             {
                 cipher_text[i] &= mask;
             }
@@ -593,18 +575,17 @@ class CMCEEngine
     public int kem_dec(final byte[] key, final byte[] cipher_text, final byte[] sk)
     {
         final byte[] conf = new byte[32];
-        final byte[] error_vector = new byte[SYS_N / 8];
+        final byte[] error_vector = new byte[this.SYS_N / 8];
 
         int i, padding_ok = 0;
         byte mask;
-        if (usePadding)
+        if (this.usePadding)
         {
             padding_ok = check_c_padding(cipher_text);
         }
 
         /*
         2.3.3 Decapsulation
-        4. Compute e ←Decode(C0,Γ′). If e = ⊥, set e ←s and b ←0.
          */
 
         // Decrypt
@@ -613,7 +594,6 @@ class CMCEEngine
 
         /*
         2.3.3 Decapsulation
-        5. Compute C′1 = H(2,e)
          */
 
         // 0x2 || error_vector
@@ -624,12 +604,11 @@ class CMCEEngine
 
         /*
         2.3.3 Decapsulation
-        6. If C′1 6= C1, set e ←s and b ←0.
          */
         byte ret_confirm = 0;
         for (i = 0; i < 32; i++)
         {
-            ret_confirm |= conf[i] ^ cipher_text[SYND_BYTES + i];
+            ret_confirm |= conf[i] ^ cipher_text[this.SYND_BYTES + i];
         }
         short m;
 
@@ -638,20 +617,19 @@ class CMCEEngine
         m >>= 8;
         m &= 0xff;
 
-        final byte[] preimage = new byte[1 + SYS_N / 8 + SYND_BYTES + 32];
+        final byte[] preimage = new byte[1 + this.SYS_N / 8 + this.SYND_BYTES + 32];
 
         /*
         2.3.3 Decapsulation
-        2. Set b ←1.
          */
         preimage[0] = (byte)(m & 1);
-        for (i = 0; i < SYS_N / 8; i++)
+        for (i = 0; i < this.SYS_N / 8; i++)
         {
-            preimage[1 + i] = (byte)(~m & sk[i + 40 + IRR_BYTES + COND_BYTES] | m & error_vector[i]);
+            preimage[1 + i] = (byte)(~m & sk[i + 40 + this.IRR_BYTES + this.COND_BYTES] | m & error_vector[i]);
         }
-        for (i = 0; i < SYND_BYTES + 32; i++)
+        for (i = 0; i < this.SYND_BYTES + 32; i++)
         {
-            preimage[1 + SYS_N / 8 + i] = cipher_text[i];
+            preimage[1 + this.SYS_N / 8 + i] = cipher_text[i];
         }
 
         /*
@@ -666,7 +644,7 @@ class CMCEEngine
 
 
         // clear outputs (set to all 1's) if padding bits are not all zero
-        if (usePadding)
+        if (this.usePadding)
         {
             mask = (byte)padding_ok;
 
@@ -685,46 +663,44 @@ class CMCEEngine
     private int decrypt(final byte[] error_vector, final byte[] sk, final byte[] cipher_text)
     {
 
-        final short[] g = new short[SYS_T + 1];
-        final short[] L = new short[SYS_N];
+        final short[] g = new short[this.SYS_T + 1];
+        final short[] L = new short[this.SYS_N];
 
-        final short[] s = new short[SYS_T * 2];
-        final short[] s_cmp = new short[SYS_T * 2];
-        final short[] locator = new short[SYS_T + 1];
-        final short[] images = new short[SYS_N];
+        final short[] s = new short[this.SYS_T * 2];
+        final short[] s_cmp = new short[this.SYS_T * 2];
+        final short[] locator = new short[this.SYS_T + 1];
+        final short[] images = new short[this.SYS_N];
 
         short t;
 
-        final byte[] r = new byte[SYS_N / 8];
+        final byte[] r = new byte[this.SYS_N / 8];
 
         /*
         2.2.4 Decoding subroutine
-        1. Extend C0 to v = (C0,0,...,0) ∈Fn2 by appending k zeros.
+        1. Extend C0 to v = (C0,0,...,0) âˆˆFn2 by appending k zeros.
          */
-        for (int i = 0; i < SYND_BYTES; i++)
+        for (int i = 0; i < this.SYND_BYTES; i++)
         {
             r[i] = cipher_text[i];
         }
 
-        for (int i = SYND_BYTES; i < SYS_N / 8; i++)
+        for (int i = this.SYND_BYTES; i < this.SYS_N / 8; i++)
         {
             r[i] = 0;
         }
 
-        for (int i = 0; i < SYS_T; i++)
+        for (int i = 0; i < this.SYS_T; i++)
         {
-            g[i] = Utils.load_gf(sk, 40 + i * 2, GFMASK);
+            g[i] = Utils.load_gf(sk, 40 + i * 2, this.GFMASK);
         }
-        g[SYS_T] = 1;
+        g[this.SYS_T] = 1;
 
         /*
         2.2.4 Decoding subroutine
-        2. Find the unique codeword c in the Goppa code defined by Γ′ that is at distance ≤t
-        from v. If there is no such codeword, return ⊥.
          */
 
         // support gen
-        benes.support_gen(L, sk);
+        this.benes.support_gen(L, sk);
 
         // compute syndrome
         synd(s, g, L, r);
@@ -740,15 +716,15 @@ class CMCEEngine
         2.2.4 Decoding subroutine
         3. Set e = v + c.
          */
-        for (int i = 0; i < SYS_N / 8; i++)
+        for (int i = 0; i < this.SYS_N / 8; i++)
         {
             error_vector[i] = 0;
         }
 
         int w = 0;
-        for (int i = 0; i < SYS_N; i++)
+        for (int i = 0; i < this.SYS_N; i++)
         {
-            t = (short)(gf.gf_iszero(images[i]) & 1);
+            t = (short)(this.gf.gf_iszero(images[i]) & 1);
 
             error_vector[i / 8] |= t << i % 8;
             w += t;
@@ -759,13 +735,13 @@ class CMCEEngine
 
         /*
         2.2.4 Decoding subroutine
-        4. If wt(e) = t and C0 = He, return e. Otherwise return ⊥
+        4. If wt(e) = t and C0 = He, return e. Otherwise return âŠ¥
          */
         int check;
         check = w;
-        check ^= SYS_T;
+        check ^= this.SYS_T;
 
-        for (int i = 0; i < SYS_T * 2; i++)
+        for (int i = 0; i < this.SYS_T * 2; i++)
         {
             check |= s[i] ^ s_cmp[i];
         }
@@ -801,14 +777,14 @@ class CMCEEngine
         short mle;
         short mne;
 
-        final short[] T = new short[SYS_T + 1];
-        final short[] C = new short[SYS_T + 1];
-        final short[] B = new short[SYS_T + 1];
+        final short[] T = new short[this.SYS_T + 1];
+        final short[] C = new short[this.SYS_T + 1];
+        final short[] B = new short[this.SYS_T + 1];
 
         short b = 1, d, f;
         //
 
-        for (i = 0; i < SYS_T + 1; i++)
+        for (i = 0; i < this.SYS_T + 1; i++)
         {
             C[i] = B[i] = 0;
         }
@@ -817,13 +793,13 @@ class CMCEEngine
 
         //
 
-        for (N = 0; N < 2 * SYS_T; N++)
+        for (N = 0; N < 2 * this.SYS_T; N++)
         {
             d = 0;
 
-            for (i = 0; i <= min(N, SYS_T); i++)
+            for (i = 0; i <= min(N, this.SYS_T); i++)
             {
-                d ^= gf.gf_mul(C[i], s[N - i]);
+                d ^= this.gf.gf_mul(C[i], s[N - i]);
             }
 
             mne = d;
@@ -838,27 +814,27 @@ class CMCEEngine
             mle -= 1;
             mle &= mne;
 
-            for (i = 0; i <= SYS_T; i++)
+            for (i = 0; i <= this.SYS_T; i++)
             {
                 T[i] = C[i];
             }
 
-            f = gf.gf_frac(b, d);
+            f = this.gf.gf_frac(b, d);
 
-            for (i = 0; i <= SYS_T; i++)
+            for (i = 0; i <= this.SYS_T; i++)
             {
-                C[i] ^= gf.gf_mul(f, B[i]) & mne;
+                C[i] ^= this.gf.gf_mul(f, B[i]) & mne;
             }
             L = (short)(L & ~mle | N + 1 - L & mle);
 
-            for (i = 0; i <= SYS_T; i++)
+            for (i = 0; i <= this.SYS_T; i++)
             {
                 B[i] = (short)(B[i] & ~mle | T[i] & mle);
             }
 
             b = (short)(b & ~mle | d & mle);
 
-            for (i = SYS_T; i >= 1; i--)
+            for (i = this.SYS_T; i >= 1; i--)
             {
                 B[i] = B[i - 1];
             }
@@ -866,9 +842,9 @@ class CMCEEngine
             B[0] = 0;
         }
 
-        for (i = 0; i <= SYS_T; i++)
+        for (i = 0; i <= this.SYS_T; i++)
         {
-            out[i] = C[SYS_T - i];
+            out[i] = C[this.SYS_T - i];
         }
     }
 
@@ -879,22 +855,22 @@ class CMCEEngine
         int i, j;
         short e, e_inv, c;
 
-        for (j = 0; j < 2 * SYS_T; j++)
+        for (j = 0; j < 2 * this.SYS_T; j++)
         {
             out[j] = 0;
         }
 
-        for (i = 0; i < SYS_N; i++)
+        for (i = 0; i < this.SYS_N; i++)
         {
             c = (short)(r[i / 8] >> i % 8 & 1);
 
             e = eval(f, L[i]);
-            e_inv = gf.gf_inv(gf.gf_mul(e, e));
+            e_inv = this.gf.gf_inv(this.gf.gf_mul(e, e));
 
-            for (j = 0; j < 2 * SYS_T; j++)
+            for (j = 0; j < 2 * this.SYS_T; j++)
             {
-                out[j] = gf.gf_add(out[j], gf.gf_mul(e_inv, c));
-                e_inv = gf.gf_mul(e_inv, L[i]);
+                out[j] = this.gf.gf_add(out[j], this.gf.gf_mul(e_inv, c));
+                e_inv = this.gf.gf_mul(e_inv, L[i]);
             }
         }
     }
@@ -909,12 +885,12 @@ class CMCEEngine
 
         final byte[] tmp = new byte[9]; // Used for padding
 
-        row = PK_NROWS - 32;
+        row = this.PK_NROWS - 32;
         block_idx = row / 8;
         tail = row % 8;
 
         // extract the 32x64 matrix
-        if (usePadding)
+        if (this.usePadding)
         {
             for (i = 0; i < 32; i++)
             {
@@ -989,9 +965,9 @@ class CMCEEngine
 
         // moving columns of mat according to the column indices of pivots
 
-        for (i = 0; i < PK_NROWS; i++)
+        for (i = 0; i < this.PK_NROWS; i++)
         {
-            if (usePadding)
+            if (this.usePadding)
             {
                 for (k = 0; k < 9; k++)
                 {
@@ -1017,7 +993,7 @@ class CMCEEngine
                 t ^= d << ctz_list[j];
                 t ^= d << j;
             }
-            if (usePadding)
+            if (this.usePadding)
             {
                 Utils.store8(tmp, 0, t);
 
@@ -1377,18 +1353,18 @@ class CMCEEngine
 
     private int pk_gen(final byte[] pk, final byte[] sk, final int[] perm, final short[] pi, final long[] pivots)
     {
-        final short[] g = new short[SYS_T + 1]; // Goppa polynomial
+        final short[] g = new short[this.SYS_T + 1]; // Goppa polynomial
         int i, j, k;
-        g[SYS_T] = 1;
+        g[this.SYS_T] = 1;
 
-        for (i = 0; i < SYS_T; i++)
+        for (i = 0; i < this.SYS_T; i++)
         {
-            g[i] = Utils.load_gf(sk, 40 + i * 2, GFMASK);
+            g[i] = Utils.load_gf(sk, 40 + i * 2, this.GFMASK);
         }
 
         // Create buffer
-        final long[] buf = new long[1 << GFBITS];
-        for (i = 0; i < 1 << GFBITS; i++)
+        final long[] buf = new long[1 << this.GFBITS];
+        for (i = 0; i < 1 << this.GFBITS; i++)
         {
             buf[i] = perm[i];
             buf[i] <<= 31;
@@ -1397,12 +1373,10 @@ class CMCEEngine
         }
         // sort32 the buffer
 
-        // FieldOrdering 2.4.2 - 3. sort32 the pairs (ai,i) in lexicographic order to obtain pairs (aπ(i),π(i))
-        // where π is a permutation of {0,1,...,q −1}
         sort64(buf, 0, buf.length);
 
-        // FieldOrdering 2.4.2 - 2. If a0,a1,...,aq−1 are not distinct, return ⊥.
-        for (i = 1; i < 1 << GFBITS; i++)
+        // FieldOrdering 2.4.2 - 2. If a0,a1,...,aqâˆ’1 are not distinct, return âŠ¥.
+        for (i = 1; i < 1 << this.GFBITS; i++)
         {
             if (buf[i - 1] >> 31 == buf[i] >> 31)
             {
@@ -1412,40 +1386,40 @@ class CMCEEngine
         }
 
         // FieldOrdering 2.4.2 - 4.
-        final short[] L = new short[SYS_N];
-        for (i = 0; i < 1 << GFBITS; i++)
+        final short[] L = new short[this.SYS_N];
+        for (i = 0; i < 1 << this.GFBITS; i++)
         {
-            pi[i] = (short)(buf[i] & GFMASK);
+            pi[i] = (short)(buf[i] & this.GFMASK);
         }
-        for (i = 0; i < SYS_N; i++)
+        for (i = 0; i < this.SYS_N; i++)
         {
-            L[i] = Utils.bitrev(pi[i], GFBITS);
+            L[i] = Utils.bitrev(pi[i], this.GFBITS);
         }
 
         // filling matrix
-        final short[] inv = new short[SYS_N];
+        final short[] inv = new short[this.SYS_N];
 
         root(inv, g, L);
 
-        for (i = 0; i < SYS_N; i++)
+        for (i = 0; i < this.SYS_N; i++)
         {
-            inv[i] = gf.gf_inv(inv[i]);
+            inv[i] = this.gf.gf_inv(inv[i]);
         }
-        final byte[][] mat = new byte[PK_NROWS][SYS_N / 8];
+        final byte[][] mat = new byte[this.PK_NROWS][this.SYS_N / 8];
         byte b;
-        for (i = 0; i < PK_NROWS; i++)
+        for (i = 0; i < this.PK_NROWS; i++)
         {
-            for (j = 0; j < SYS_N / 8; j++)
+            for (j = 0; j < this.SYS_N / 8; j++)
             {
                 mat[i][j] = 0;
             }
         }
 
-        for (i = 0; i < SYS_T; i++)
+        for (i = 0; i < this.SYS_T; i++)
         {
-            for (j = 0; j < SYS_N; j += 8)
+            for (j = 0; j < this.SYS_N; j += 8)
             {
-                for (k = 0; k < GFBITS; k++)
+                for (k = 0; k < this.GFBITS; k++)
                 {
                     b = (byte)(inv[j + 7] >>> k & 1);
                     b <<= 1;
@@ -1463,31 +1437,31 @@ class CMCEEngine
                     b <<= 1;
                     b |= inv[j + 0] >>> k & 1;
 
-                    mat[i * GFBITS + k][j / 8] = b;
+                    mat[i * this.GFBITS + k][j / 8] = b;
                 }
             }
 
-            for (j = 0; j < SYS_N; j++)
+            for (j = 0; j < this.SYS_N; j++)
             {
-                inv[j] = gf.gf_mul(inv[j], L[j]);
+                inv[j] = this.gf.gf_mul(inv[j], L[j]);
             }
         }
 
         // gaussian elimination
         int row, c;
         byte mask;
-        for (i = 0; i < (PK_NROWS + 7) / 8; i++)
+        for (i = 0; i < (this.PK_NROWS + 7) / 8; i++)
         {
             for (j = 0; j < 8; j++)
             {
                 row = i * 8 + j;
 
-                if (row >= PK_NROWS)
+                if (row >= this.PK_NROWS)
                 {
                     break;
                 }
 
-                if (usePivots && row == PK_NROWS - 32)
+                if (this.usePivots && row == this.PK_NROWS - 32)
 				{
 				    if (mov_columns(mat, pi, pivots) != 0)
 				    {
@@ -1496,27 +1470,25 @@ class CMCEEngine
 				    }
 				}
 
-                for (k = row + 1; k < PK_NROWS; k++)
+                for (k = row + 1; k < this.PK_NROWS; k++)
                 {
                     mask = (byte)(mat[row][i] ^ mat[k][i]);
                     mask >>= j;
                     mask &= 1;
                     mask = (byte)-mask;
 
-                    for (c = 0; c < SYS_N / 8; c++)
+                    for (c = 0; c < this.SYS_N / 8; c++)
                     {
                         mat[row][c] ^= mat[k][c] & mask;
                     }
                 }
-                // 7. Compute (T,cn−k−μ+1,...,cn−k,Γ′) ← MatGen(Γ). If this fails, set δ ← δ′ and
-                // restart the algorithm.
                 if ((mat[row][i] >> j & 1) == 0) // return if not systematic
                 {
 //                    System.out.println("FAIL 2\n");
                     return -1;
                 }
 
-                for (k = 0; k < PK_NROWS; k++)
+                for (k = 0; k < this.PK_NROWS; k++)
                 {
                     if (k != row)
                     {
@@ -1524,7 +1496,7 @@ class CMCEEngine
                         mask &= 1;
                         mask = (byte)-mask;
 
-                        for (c = 0; c < SYS_N / 8; c++)
+                        for (c = 0; c < this.SYS_N / 8; c++)
                         {
                             mat[k][c] ^= mat[row][c] & mask;
 
@@ -1534,16 +1506,16 @@ class CMCEEngine
             }
         }
 
-        // FieldOrdering 2.4.2 - 5. Output (α1,α2,...,αq)
+        // FieldOrdering 2.4.2 - 5. Output (Î±1,Î±2,...,Î±q)
         if (pk != null)
         {
-            if (usePadding)
+            if (this.usePadding)
             {
                 int tail, pk_index = 0;
-                tail = PK_NROWS % 8;
-                for (i = 0; i < PK_NROWS; i++)
+                tail = this.PK_NROWS % 8;
+                for (i = 0; i < this.PK_NROWS; i++)
                 {
-                    for (j = (PK_NROWS - 1) / 8; j < SYS_N / 8 - 1; j++)
+                    for (j = (this.PK_NROWS - 1) / 8; j < this.SYS_N / 8 - 1; j++)
                     {
                         pk[pk_index++] = (byte)((mat[i][j] & 0xff) >>> tail | mat[i][j + 1] << 8 - tail);
                     }
@@ -1552,12 +1524,12 @@ class CMCEEngine
             }
             else
             {
-                for (i = 0; i < PK_NROWS; i++)
+                for (i = 0; i < this.PK_NROWS; i++)
                 {
                     k = 0;
-                    for (j = 0; j < (SYS_N - PK_NROWS + 7) / 8; j++)
+                    for (j = 0; j < (this.SYS_N - this.PK_NROWS + 7) / 8; j++)
                     {
-                        pk[i * ((SYS_N - PK_NROWS + 7) / 8) + k] = mat[i][j + PK_NROWS / 8];
+                        pk[i * ((this.SYS_N - this.PK_NROWS + 7) / 8) + k] = mat[i][j + this.PK_NROWS / 8];
                         k++;
                     }
                 }
@@ -1571,12 +1543,12 @@ class CMCEEngine
     {
         short r;
 
-        r = f[SYS_T];
+        r = f[this.SYS_T];
 
-        for (int i = SYS_T - 1; i >= 0; i--)
+        for (int i = this.SYS_T - 1; i >= 0; i--)
         {
-            r = gf.gf_mul(r, a);
-            r = gf.gf_add(r, f[i]);
+            r = this.gf.gf_mul(r, a);
+            r = this.gf.gf_add(r, f[i]);
         }
 
         return r;
@@ -1584,7 +1556,7 @@ class CMCEEngine
 
     private void root(final short[] out, final short[] f, final short[] L)
     {
-        for (int i = 0; i < SYS_N; i++)
+        for (int i = 0; i < this.SYS_N; i++)
         {
             out[i] = eval(f, L[i]);
         }
@@ -1593,44 +1565,44 @@ class CMCEEngine
     private int generate_irr_poly(final short[] field)
     {
 
-        // Irreducible 2.4.1 - 2. Define β = β0 + β1y + ···+ βt−1yt−1 ∈Fq[y]/F(y).
+        // Irreducible 2.4.1 - 2. Define Î² = Î²0 + Î²1y + Â·Â·Â·+ Î²tâˆ’1ytâˆ’1 âˆˆFq[y]/F(y).
         // generating poly
-        final short[][] m = new short[SYS_T + 1][SYS_T];
+        final short[][] m = new short[this.SYS_T + 1][this.SYS_T];
 
         // filling matrix
         m[0][0] = 1;
-        for (int i = 1; i < SYS_T; i++)
+        for (int i = 1; i < this.SYS_T; i++)
         {
             m[0][i] = 0;
         }
 
         // System.arraycopy(field, 0, m[1], 0, 64);
-        for (int i = 0; i < SYS_T; i++)
+        for (int i = 0; i < this.SYS_T; i++)
         {
             m[1][i] = field[i];
         }
-        for (int j = 2; j <= SYS_T; j++)
+        for (int j = 2; j <= this.SYS_T; j++)
         {
             GF_mul(m[j], m[j - 1], field);
         }
 
-        // Irreducible 2.4.1 - 3. Compute the minimal polynomial g of β over Fq. (By definition g is monic and irre-
-        // ducible, and g(β) = 0.)
+        // Irreducible 2.4.1 - 3. Compute the minimal polynomial g of Î² over Fq. (By definition g is monic and irre-
+        // ducible, and g(Î²) = 0.)
 
         // gaussian
-        for (int j = 0; j < SYS_T; j++)
+        for (int j = 0; j < this.SYS_T; j++)
         {
-            for (int k = j + 1; k < SYS_T; k++)
+            for (int k = j + 1; k < this.SYS_T; k++)
             {
-                final short mask = gf.gf_iszero(m[j][j]);
-                for (int c = j; c < SYS_T + 1; c++)
+                final short mask = this.gf.gf_iszero(m[j][j]);
+                for (int c = j; c < this.SYS_T + 1; c++)
                 {
                     final short temp = (short)(m[c][j] ^ m[c][k] & mask);
                     m[c][j] = temp;
                 }
             }
 
-            // Irreducible 2.4.1 - 4. Return g if g has degree t. Otherwise return ⊥
+            // Irreducible 2.4.1 - 4. Return g if g has degree t. Otherwise return âŠ¥
             if (m[j][j] == 0) // return if not systematic
             {
 //                System.out.println("FAILED GENERATING IRR POLY");
@@ -1638,29 +1610,29 @@ class CMCEEngine
 
             }
 
-            final short inv = gf.gf_inv(m[j][j]);
+            final short inv = this.gf.gf_inv(m[j][j]);
 
-            for (int c = j; c < SYS_T + 1; c++)
+            for (int c = j; c < this.SYS_T + 1; c++)
             {
-                m[c][j] = gf.gf_mul(m[c][j], inv);
+                m[c][j] = this.gf.gf_mul(m[c][j], inv);
             }
 
-            for (int k = 0; k < SYS_T; k++)
+            for (int k = 0; k < this.SYS_T; k++)
             {
                 if (k != j)
                 {
                     final short t = m[j][k];
 
-                    for (int c = j; c < SYS_T + 1; c++)
+                    for (int c = j; c < this.SYS_T + 1; c++)
                     {
-                        m[c][k] ^= gf.gf_mul(m[c][j], t);
+                        m[c][k] ^= this.gf.gf_mul(m[c][j], t);
                     }
                 }
             }
         }
-        for (int i = 0; i < SYS_T; i++)
+        for (int i = 0; i < this.SYS_T; i++)
         {
-            field[i] = m[SYS_T][i];
+            field[i] = m[this.SYS_T][i];
         }
         return 0;
     }
@@ -1668,37 +1640,37 @@ class CMCEEngine
     private void GF_mul(final short[] out, final short[] left, final short[] right)
     {
 
-        final short[] prod = new short[SYS_T * 2 - 1];
-        for (int i = 0; i < SYS_T * 2 - 1; i++)
+        final short[] prod = new short[this.SYS_T * 2 - 1];
+        for (int i = 0; i < this.SYS_T * 2 - 1; i++)
         {
             prod[i] = 0;
         }
-        for (int i = 0; i < SYS_T; i++)
+        for (int i = 0; i < this.SYS_T; i++)
         {
-            for (int j = 0; j < SYS_T; j++)
+            for (int j = 0; j < this.SYS_T; j++)
             {
-                final short temp = gf.gf_mul(left[i], right[j]);
+                final short temp = this.gf.gf_mul(left[i], right[j]);
                 prod[i + j] ^= temp;
             }
         }
 
-        for (int i = (SYS_T - 1) * 2; i >= SYS_T; i--)
+        for (int i = (this.SYS_T - 1) * 2; i >= this.SYS_T; i--)
         {
-            for (final int element : poly) {
+            for (final int element : this.poly) {
                 final int polyIndex = element;
-                if (polyIndex == 0 && GFBITS == 12)
+                if (polyIndex == 0 && this.GFBITS == 12)
                 {
-                    prod[i - SYS_T] ^= gf.gf_mul(prod[i], (short)2);
+                    prod[i - this.SYS_T] ^= this.gf.gf_mul(prod[i], (short)2);
                 }
                 else
                 {
-                    prod[i - SYS_T + polyIndex] ^= prod[i];
+                    prod[i - this.SYS_T + polyIndex] ^= prod[i];
                 }
             }
         }
 
-        System.arraycopy(prod, 0, out, 0, SYS_T);
-        for (int i = 0; i < SYS_T; i++)
+        System.arraycopy(prod, 0, out, 0, this.SYS_T);
+        for (int i = 0; i < this.SYS_T; i++)
         {
             out[i] = prod[i];
         }
@@ -1711,12 +1683,12 @@ class CMCEEngine
         int i, ret;
 
         b = 0;
-        for (i = 0; i < PK_NROWS; i++)
+        for (i = 0; i < this.PK_NROWS; i++)
         {
-            b |= pk[i * PK_ROW_BYTES + PK_ROW_BYTES - 1];
+            b |= pk[i * this.PK_ROW_BYTES + this.PK_ROW_BYTES - 1];
         }
 
-        b = (byte)((b & 0xff) >>> PK_NCOLS % 8);
+        b = (byte)((b & 0xff) >>> this.PK_NCOLS % 8);
         b -= 1;
         b = (byte)((b & 0xff) >>> 7);
         ret = b;
@@ -1730,7 +1702,7 @@ class CMCEEngine
         byte b;
         int ret;
 
-        b = (byte)((c[SYND_BYTES - 1] & 0xff) >>> PK_NROWS % 8);
+        b = (byte)((c[this.SYND_BYTES - 1] & 0xff) >>> this.PK_NROWS % 8);
         b -= 1;
         b = (byte)((b & 0xff) >>> 7);
         ret = b;
@@ -1740,7 +1712,7 @@ class CMCEEngine
 
     public int getDefaultSessionKeySize()
     {
-        return defaultKeySize;
+        return this.defaultKeySize;
     }
 
     private static void sort32(final int[] temp, final int from, final int to)

@@ -482,6 +482,7 @@ public class TeleTrusTNamedCurves
      * the passed in object identifier. Null if the curve isn't present.
      *
      * @param oid an object identifier representing a named curve, if present.
+     * @return EC parameters.
      */
     public static X9ECParameters getByOID(final ASN1ObjectIdentifier oid)
     {
@@ -497,7 +498,7 @@ public class TeleTrusTNamedCurves
     /**
      * return the object identifier signified by the passed in name. Null
      * if there is no object identifier associated with name.
-     *
+     * @param name OID name.
      * @return the object identifier associated with name, if present.
      */
     public static ASN1ObjectIdentifier getOID(
@@ -507,7 +508,8 @@ public class TeleTrusTNamedCurves
     }
 
     /**
-     * return the named curve name represented by the given object identifier.
+     * @param oid OID.
+     * @return the named curve name represented by the given object identifier.
      */
     public static String getName(
         final ASN1ObjectIdentifier oid)
@@ -516,7 +518,7 @@ public class TeleTrusTNamedCurves
     }
 
     /**
-     * returns an enumeration containing the name strings for curves
+     * @return an enumeration containing the name strings for curves
      * contained in this structure.
      */
     public static Enumeration getNames()

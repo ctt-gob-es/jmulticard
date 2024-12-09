@@ -24,19 +24,19 @@ import org.bouncycastle.util.Arrays;
  */
 public class Layer
 {
-    private int vi; // number of vinegars in this layer
-    private int viNext; // number of vinegars in next layer
-    private int oi; // number of oils in this layer
+    private final int vi; // number of vinegars in this layer
+    private final int viNext; // number of vinegars in next layer
+    private final int oi; // number of oils in this layer
 
     /*
       * k : index of polynomial
       *
       * i,j : indices of oil and vinegar variables
       */
-    private short[/* k */][/* i */][/* j */] coeff_alpha;
-    private short[/* k */][/* i */][/* j */] coeff_beta;
-    private short[/* k */][/* i */] coeff_gamma;
-    private short[/* k */] coeff_eta;
+    private final short[/* k */][/* i */][/* j */] coeff_alpha;
+    private final short[/* k */][/* i */][/* j */] coeff_beta;
+    private final short[/* k */][/* i */] coeff_gamma;
+    private final short[/* k */] coeff_eta;
 
     /**
      * Constructor
@@ -49,8 +49,8 @@ public class Layer
      * @param coeffGamma gamma-coefficients in the polynomials of this layer
      * @param coeffEta   eta-coefficients in the polynomials of this layer
      */
-    public Layer(byte vi, byte viNext, short[][][] coeffAlpha,
-                 short[][][] coeffBeta, short[][] coeffGamma, short[] coeffEta)
+    public Layer(final byte vi, final byte viNext, final short[][][] coeffAlpha,
+                 final short[][][] coeffBeta, final short[][] coeffGamma, final short[] coeffEta)
     {
         this.vi = vi & 0xff;
         this.viNext = viNext & 0xff;
@@ -66,10 +66,12 @@ public class Layer
     /**
      * This function generates the coefficients of all polynomials in this layer
      * at random using random generator.
-     *
+     * @param vi         number of vinegar variables of this layer
+     * @param viNext     number of vinegar variables of next layer. It's the same as
+     *                   (num of oils) + (num of vinegars) of this layer.
      * @param sr the random generator which is to be used
      */
-    public Layer(int vi, int viNext, SecureRandom sr)
+    public Layer(final int vi, final int viNext, final SecureRandom sr)
     {
         this.vi = vi;
         this.viNext = viNext;
@@ -81,7 +83,7 @@ public class Layer
         this.coeff_gamma = new short[this.oi][this.viNext];
         this.coeff_eta = new short[this.oi];
 
-        int numOfPoly = this.oi; // number of polynomials per layer
+        final int numOfPoly = this.oi; // number of polynomials per layer
 
         // Alpha coeffs
         for (int k = 0; k < numOfPoly; k++)
@@ -90,7 +92,7 @@ public class Layer
             {
                 for (int j = 0; j < this.vi; j++)
                 {
-                    coeff_alpha[k][i][j] = (short)(sr.nextInt() & GF2Field.MASK);
+                    this.coeff_alpha[k][i][j] = (short)(sr.nextInt() & GF2Field.MASK);
                 }
             }
         }
@@ -101,7 +103,7 @@ public class Layer
             {
                 for (int j = 0; j < this.vi; j++)
                 {
-                    coeff_beta[k][i][j] = (short)(sr.nextInt() & GF2Field.MASK);
+                    this.coeff_beta[k][i][j] = (short)(sr.nextInt() & GF2Field.MASK);
                 }
             }
         }
@@ -110,13 +112,13 @@ public class Layer
         {
             for (int i = 0; i < this.viNext; i++)
             {
-                coeff_gamma[k][i] = (short)(sr.nextInt() & GF2Field.MASK);
+                this.coeff_gamma[k][i] = (short)(sr.nextInt() & GF2Field.MASK);
             }
         }
         // Eta
         for (int k = 0; k < numOfPoly; k++)
         {
-            coeff_eta[k] = (short)(sr.nextInt() & GF2Field.MASK);
+            this.coeff_eta[k] = (short)(sr.nextInt() & GF2Field.MASK);
         }
     }
 
@@ -132,27 +134,27 @@ public class Layer
      * @return coeff the coefficients of Oil variables and the free coeff in the
      *         polynomials of this layer.
      */
-    public short[][] plugInVinegars(short[] x)
+    public short[][] plugInVinegars(final short[] x)
     {
         // temporary variable needed for the multiplication
         short tmpMult = 0;
         // coeff: 1st index = which polynomial, 2nd index=which variable
-        short[][] coeff = new short[oi][oi + 1]; // gets returned
+        final short[][] coeff = new short[this.oi][this.oi + 1]; // gets returned
         // free coefficient per polynomial
-        short[] sum = new short[oi];
+        final short[] sum = new short[this.oi];
 
         /*
            * evaluate the beta-part of the polynomials (it contains no oil
            * variables)
            */
-        for (int k = 0; k < oi; k++)
+        for (int k = 0; k < this.oi; k++)
         {
-            for (int i = 0; i < vi; i++)
+            for (int i = 0; i < this.vi; i++)
             {
-                for (int j = 0; j < vi; j++)
+                for (int j = 0; j < this.vi; j++)
                 {
                     // tmp = beta * xi (plug in)
-                    tmpMult = GF2Field.multElem(coeff_beta[k][i][j], x[i]);
+                    tmpMult = GF2Field.multElem(this.coeff_beta[k][i][j], x[i]);
                     // tmp = tmp * xj
                     tmpMult = GF2Field.multElem(tmpMult, x[j]);
                     // accumulate into the array for the free coefficients.
@@ -162,53 +164,53 @@ public class Layer
         }
 
         /* evaluate the alpha-part (it contains oils) */
-        for (int k = 0; k < oi; k++)
+        for (int k = 0; k < this.oi; k++)
         {
-            for (int i = 0; i < oi; i++)
+            for (int i = 0; i < this.oi; i++)
             {
-                for (int j = 0; j < vi; j++)
+                for (int j = 0; j < this.vi; j++)
                 {
                     // alpha * xj (plug in)
-                    tmpMult = GF2Field.multElem(coeff_alpha[k][i][j], x[j]);
+                    tmpMult = GF2Field.multElem(this.coeff_alpha[k][i][j], x[j]);
                     // accumulate
                     coeff[k][i] = GF2Field.addElem(coeff[k][i], tmpMult);
                 }
             }
         }
         /* evaluate the gama-part of the polynomial (containing no oils) */
-        for (int k = 0; k < oi; k++)
+        for (int k = 0; k < this.oi; k++)
         {
-            for (int i = 0; i < vi; i++)
+            for (int i = 0; i < this.vi; i++)
             {
                 // gamma * xi (plug in)
-                tmpMult = GF2Field.multElem(coeff_gamma[k][i], x[i]);
+                tmpMult = GF2Field.multElem(this.coeff_gamma[k][i], x[i]);
                 // accumulate in the array for the free coefficients (per
                 // polynomial).
                 sum[k] = GF2Field.addElem(sum[k], tmpMult);
             }
         }
         /* evaluate the gama-part of the polynomial (but containing oils) */
-        for (int k = 0; k < oi; k++)
+        for (int k = 0; k < this.oi; k++)
         {
-            for (int i = vi; i < viNext; i++)
+            for (int i = this.vi; i < this.viNext; i++)
             { // oils
                 // accumulate the coefficients of the oil variables (per
                 // polynomial).
-                coeff[k][i - vi] = GF2Field.addElem(coeff_gamma[k][i],
-                    coeff[k][i - vi]);
+                coeff[k][i - this.vi] = GF2Field.addElem(this.coeff_gamma[k][i],
+                    coeff[k][i - this.vi]);
             }
         }
         /* evaluate the eta-part of the polynomial */
-        for (int k = 0; k < oi; k++)
+        for (int k = 0; k < this.oi; k++)
         {
             // accumulate in the array for the free coefficients per polynomial.
-            sum[k] = GF2Field.addElem(sum[k], coeff_eta[k]);
+            sum[k] = GF2Field.addElem(sum[k], this.coeff_eta[k]);
         }
 
         /* put the free coefficients (sum) into the coeff-array as last column */
-        for (int k = 0; k < oi; k++)
+        for (int k = 0; k < this.oi; k++)
         {
-            coeff[k][oi] = sum[k];
+            coeff[k][this.oi] = sum[k];
         }
         return coeff;
     }
@@ -220,7 +222,7 @@ public class Layer
      */
     public int getVi()
     {
-        return vi;
+        return this.vi;
     }
 
     /**
@@ -230,7 +232,7 @@ public class Layer
      */
     public int getViNext()
     {
-        return viNext;
+        return this.viNext;
     }
 
     /**
@@ -240,7 +242,7 @@ public class Layer
      */
     public int getOi()
     {
-        return oi;
+        return this.oi;
     }
 
     /**
@@ -250,7 +252,7 @@ public class Layer
      */
     public short[][][] getCoeffAlpha()
     {
-        return coeff_alpha;
+        return this.coeff_alpha;
     }
 
     /**
@@ -261,7 +263,7 @@ public class Layer
 
     public short[][][] getCoeffBeta()
     {
-        return coeff_beta;
+        return this.coeff_beta;
     }
 
     /**
@@ -271,7 +273,7 @@ public class Layer
      */
     public short[][] getCoeffGamma()
     {
-        return coeff_gamma;
+        return this.coeff_gamma;
     }
 
     /**
@@ -281,7 +283,7 @@ public class Layer
      */
     public short[] getCoeffEta()
     {
-        return coeff_eta;
+        return this.coeff_eta;
     }
 
     /**
@@ -291,33 +293,33 @@ public class Layer
      * @return the result of the comparison
      */
     @Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
     {
         if (other == null || !(other instanceof Layer))
         {
             return false;
         }
-        Layer otherLayer = (Layer)other;
+        final Layer otherLayer = (Layer)other;
 
-        return  vi == otherLayer.getVi()
-                && viNext == otherLayer.getViNext()
-                && oi == otherLayer.getOi()
-                && RainbowUtil.equals(coeff_alpha, otherLayer.getCoeffAlpha())
-                && RainbowUtil.equals(coeff_beta, otherLayer.getCoeffBeta())
-                && RainbowUtil.equals(coeff_gamma, otherLayer.getCoeffGamma())
-                && RainbowUtil.equals(coeff_eta, otherLayer.getCoeffEta());
+        return  this.vi == otherLayer.getVi()
+                && this.viNext == otherLayer.getViNext()
+                && this.oi == otherLayer.getOi()
+                && RainbowUtil.equals(this.coeff_alpha, otherLayer.getCoeffAlpha())
+                && RainbowUtil.equals(this.coeff_beta, otherLayer.getCoeffBeta())
+                && RainbowUtil.equals(this.coeff_gamma, otherLayer.getCoeffGamma())
+                && RainbowUtil.equals(this.coeff_eta, otherLayer.getCoeffEta());
     }
 
     @Override
 	public int hashCode()
     {
-        int hash = vi;
-        hash = hash * 37 + viNext;
-        hash = hash * 37 + oi;
-        hash = hash * 37 + Arrays.hashCode(coeff_alpha);
-        hash = hash * 37 + Arrays.hashCode(coeff_beta);
-        hash = hash * 37 + Arrays.hashCode(coeff_gamma);
-        hash = hash * 37 + Arrays.hashCode(coeff_eta);
+        int hash = this.vi;
+        hash = hash * 37 + this.viNext;
+        hash = hash * 37 + this.oi;
+        hash = hash * 37 + Arrays.hashCode(this.coeff_alpha);
+        hash = hash * 37 + Arrays.hashCode(this.coeff_beta);
+        hash = hash * 37 + Arrays.hashCode(this.coeff_gamma);
+        hash = hash * 37 + Arrays.hashCode(this.coeff_eta);
 
         return hash;
     }

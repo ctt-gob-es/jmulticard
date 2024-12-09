@@ -15,8 +15,8 @@ public class IntEuclidean
      * Runs the EEA on two <code>int</code>s<br>
      * Implemented from pseudocode on <a href="https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">Wikipedia</a>.
      *
-     * @param a
-     * @param b
+     * @param a First param.
+     * @param b Seconf param.
      * @return a <code>IntEuclidean</code> object that contains the result in the variables <code>x</code>, <code>y</code>, and <code>gcd</code>
      */
     public static IntEuclidean calculate(int a, int b)
@@ -27,7 +27,7 @@ public class IntEuclidean
         int lasty = 0;
         while (b != 0)
         {
-            int quotient = a / b;
+            final int quotient = a / b;
 
             int temp = a;
             a = b;
@@ -42,7 +42,7 @@ public class IntEuclidean
             lasty = temp;
         }
 
-        IntEuclidean result = new IntEuclidean();
+        final IntEuclidean result = new IntEuclidean();
         result.x = lastx;
         result.y = lasty;
         result.gcd = a;

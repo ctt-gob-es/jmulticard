@@ -38,7 +38,7 @@ public class McElieceParameters
      */
     private int fieldPoly;
 
-    private Digest digest;
+    private final Digest digest;
 
     /**
      * Constructor. Set the default parameters: extension degree.
@@ -48,7 +48,7 @@ public class McElieceParameters
         this(DEFAULT_M, DEFAULT_T);
     }
 
-    public McElieceParameters(Digest digest)
+    public McElieceParameters(final Digest digest)
     {
         this(DEFAULT_M, DEFAULT_T, digest);
     }
@@ -59,7 +59,7 @@ public class McElieceParameters
      * @param keysize the length of a Goppa code
      * @throws IllegalArgumentException if <tt>keysize &lt; 1</tt>.
      */
-    public McElieceParameters(int keysize)
+    public McElieceParameters(final int keysize)
     {
         this(keysize, null);
     }
@@ -71,22 +71,22 @@ public class McElieceParameters
      * @param digest CCA2 mode digest
      * @throws IllegalArgumentException if <tt>keysize &lt; 1</tt>.
      */
-    public McElieceParameters(int keysize, Digest digest)
+    public McElieceParameters(final int keysize, final Digest digest)
     {
         if (keysize < 1)
         {
             throw new IllegalArgumentException("key size must be positive");
         }
-        m = 0;
-        n = 1;
-        while (n < keysize)
+        this.m = 0;
+        this.n = 1;
+        while (this.n < keysize)
         {
-            n <<= 1;
-            m++;
+            this.n <<= 1;
+            this.m++;
         }
-        t = n >>> 1;
-        t /= m;
-        fieldPoly = PolynomialRingGF2.getIrreduciblePolynomial(m);
+        this.t = this.n >>> 1;
+        this.t /= this.m;
+        this.fieldPoly = PolynomialRingGF2.getIrreduciblePolynomial(this.m);
         this.digest = digest;
     }
 
@@ -98,7 +98,7 @@ public class McElieceParameters
      * @throws IllegalArgumentException if <tt>m &lt; 1</tt> or <tt>m &gt; 32</tt> or
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt>.
      */
-    public McElieceParameters(int m, int t)
+    public McElieceParameters(final int m, final int t)
     {
         this(m, t, null);
     }
@@ -107,11 +107,12 @@ public class McElieceParameters
      * Constructor.
      *
      * @param m degree of the finite field GF(2^m)
-     * @param t error correction capability of the code
+     * @param t error correction capability of the code.
+     * @param digest Digest
      * @throws IllegalArgumentException if <tt>m &lt; 1</tt> or <tt>m &gt; 32</tt> or
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt>.
      */
-    public McElieceParameters(int m, int t, Digest digest)
+    public McElieceParameters(final int m, final int t, final Digest digest)
     {
         if (m < 1)
         {
@@ -122,17 +123,17 @@ public class McElieceParameters
             throw new IllegalArgumentException("m is too large");
         }
         this.m = m;
-        n = 1 << m;
+        this.n = 1 << m;
         if (t < 0)
         {
             throw new IllegalArgumentException("t must be positive");
         }
-        if (t > n)
+        if (t > this.n)
         {
             throw new IllegalArgumentException("t must be less than n = 2^m");
         }
         this.t = t;
-        fieldPoly = PolynomialRingGF2.getIrreduciblePolynomial(m);
+        this.fieldPoly = PolynomialRingGF2.getIrreduciblePolynomial(m);
         this.digest = digest;
     }
 
@@ -146,7 +147,7 @@ public class McElieceParameters
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt> or
      * <tt>poly</tt> is not an irreducible field polynomial.
      */
-    public McElieceParameters(int m, int t, int poly)
+    public McElieceParameters(final int m, final int t, final int poly)
     {
         this(m, t, poly, null);
     }
@@ -162,7 +163,7 @@ public class McElieceParameters
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt> or
      * <tt>poly</tt> is not an irreducible field polynomial.
      */
-    public McElieceParameters(int m, int t, int poly, Digest digest)
+    public McElieceParameters(final int m, final int t, final int poly, final Digest digest)
     {
         this.m = m;
         if (m < 1)
@@ -179,12 +180,12 @@ public class McElieceParameters
         {
             throw new IllegalArgumentException("t must be positive");
         }
-        if (t > n)
+        if (t > this.n)
         {
             throw new IllegalArgumentException("t must be less than n = 2^m");
         }
-        if ((PolynomialRingGF2.degree(poly) == m)
-            && (PolynomialRingGF2.isIrreducible(poly)))
+        if (PolynomialRingGF2.degree(poly) == m
+            && PolynomialRingGF2.isIrreducible(poly))
         {
             this.fieldPoly = poly;
         }
@@ -201,7 +202,7 @@ public class McElieceParameters
      */
     public int getM()
     {
-        return m;
+        return this.m;
     }
 
     /**
@@ -209,7 +210,7 @@ public class McElieceParameters
      */
     public int getN()
     {
-        return n;
+        return this.n;
     }
 
     /**
@@ -217,7 +218,7 @@ public class McElieceParameters
      */
     public int getT()
     {
-        return t;
+        return this.t;
     }
 
     /**
@@ -225,6 +226,6 @@ public class McElieceParameters
      */
     public int getFieldPoly()
     {
-        return fieldPoly;
+        return this.fieldPoly;
     }
 }

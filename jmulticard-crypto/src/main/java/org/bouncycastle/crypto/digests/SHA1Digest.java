@@ -17,7 +17,7 @@ public class SHA1Digest
 
     private int     H1, H2, H3, H4, H5;
 
-    private int[]   X = new int[80];
+    private final int[]   X = new int[80];
     private int     xOff;
 
     /**
@@ -31,8 +31,9 @@ public class SHA1Digest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t Digest.
      */
-    public SHA1Digest(SHA1Digest t)
+    public SHA1Digest(final SHA1Digest t)
     {
         super(t);
 
@@ -44,33 +45,33 @@ public class SHA1Digest
      *
      * @param encodedState the encoded state from the originating digest.
      */
-    public SHA1Digest(byte[] encodedState)
+    public SHA1Digest(final byte[] encodedState)
     {
         super(encodedState);
 
-        H1 = Pack.bigEndianToInt(encodedState, 16);
-        H2 = Pack.bigEndianToInt(encodedState, 20);
-        H3 = Pack.bigEndianToInt(encodedState, 24);
-        H4 = Pack.bigEndianToInt(encodedState, 28);
-        H5 = Pack.bigEndianToInt(encodedState, 32);
+        this.H1 = Pack.bigEndianToInt(encodedState, 16);
+        this.H2 = Pack.bigEndianToInt(encodedState, 20);
+        this.H3 = Pack.bigEndianToInt(encodedState, 24);
+        this.H4 = Pack.bigEndianToInt(encodedState, 28);
+        this.H5 = Pack.bigEndianToInt(encodedState, 32);
 
-        xOff = Pack.bigEndianToInt(encodedState, 36);
-        for (int i = 0; i != xOff; i++)
+        this.xOff = Pack.bigEndianToInt(encodedState, 36);
+        for (int i = 0; i != this.xOff; i++)
         {
-            X[i] = Pack.bigEndianToInt(encodedState, 40 + (i * 4));
+            this.X[i] = Pack.bigEndianToInt(encodedState, 40 + i * 4);
         }
     }
 
-    private void copyIn(SHA1Digest t)
+    private void copyIn(final SHA1Digest t)
     {
-        H1 = t.H1;
-        H2 = t.H2;
-        H3 = t.H3;
-        H4 = t.H4;
-        H5 = t.H5;
+        this.H1 = t.H1;
+        this.H2 = t.H2;
+        this.H3 = t.H3;
+        this.H4 = t.H4;
+        this.H5 = t.H5;
 
-        System.arraycopy(t.X, 0, X, 0, t.X.length);
-        xOff = t.xOff;
+        System.arraycopy(t.X, 0, this.X, 0, t.X.length);
+        this.xOff = t.xOff;
     }
 
     @Override
@@ -87,7 +88,7 @@ public class SHA1Digest
 
     @Override
 	protected void processWord(
-        byte[]  in,
+        final byte[]  in,
         int     inOff)
     {
         // Note: Inlined for performance
@@ -95,40 +96,40 @@ public class SHA1Digest
         int n = in[  inOff] << 24;
         n |= (in[++inOff] & 0xff) << 16;
         n |= (in[++inOff] & 0xff) << 8;
-        n |= (in[++inOff] & 0xff);
-        X[xOff] = n;
+        n |= in[++inOff] & 0xff;
+        this.X[this.xOff] = n;
 
-        if (++xOff == 16)
+        if (++this.xOff == 16)
         {
             processBlock();
-        }        
+        }
     }
 
     @Override
 	protected void processLength(
-        long    bitLength)
+        final long    bitLength)
     {
-        if (xOff > 14)
+        if (this.xOff > 14)
         {
             processBlock();
         }
 
-        X[14] = (int)(bitLength >>> 32);
-        X[15] = (int)bitLength;
+        this.X[14] = (int)(bitLength >>> 32);
+        this.X[15] = (int)bitLength;
     }
 
     @Override
 	public int doFinal(
-        byte[]  out,
-        int     outOff)
+        final byte[]  out,
+        final int     outOff)
     {
         finish();
 
-        Pack.intToBigEndian(H1, out, outOff);
-        Pack.intToBigEndian(H2, out, outOff + 4);
-        Pack.intToBigEndian(H3, out, outOff + 8);
-        Pack.intToBigEndian(H4, out, outOff + 12);
-        Pack.intToBigEndian(H5, out, outOff + 16);
+        Pack.intToBigEndian(this.H1, out, outOff);
+        Pack.intToBigEndian(this.H2, out, outOff + 4);
+        Pack.intToBigEndian(this.H3, out, outOff + 8);
+        Pack.intToBigEndian(this.H4, out, outOff + 12);
+        Pack.intToBigEndian(this.H5, out, outOff + 16);
 
         reset();
 
@@ -143,16 +144,16 @@ public class SHA1Digest
     {
         super.reset();
 
-        H1 = 0x67452301;
-        H2 = 0xefcdab89;
-        H3 = 0x98badcfe;
-        H4 = 0x10325476;
-        H5 = 0xc3d2e1f0;
+        this.H1 = 0x67452301;
+        this.H2 = 0xefcdab89;
+        this.H3 = 0x98badcfe;
+        this.H4 = 0x10325476;
+        this.H5 = 0xc3d2e1f0;
 
-        xOff = 0;
-        for (int i = 0; i != X.length; i++)
+        this.xOff = 0;
+        for (int i = 0; i != this.X.length; i++)
         {
-            X[i] = 0;
+            this.X[i] = 0;
         }
     }
 
@@ -163,29 +164,29 @@ public class SHA1Digest
     private static final int    Y2 = 0x6ed9eba1;
     private static final int    Y3 = 0x8f1bbcdc;
     private static final int    Y4 = 0xca62c1d6;
-   
+
     private int f(
-        int    u,
-        int    v,
-        int    w)
+        final int    u,
+        final int    v,
+        final int    w)
     {
-        return ((u & v) | ((~u) & w));
+        return u & v | ~u & w;
     }
 
     private int h(
-        int    u,
-        int    v,
-        int    w)
+        final int    u,
+        final int    v,
+        final int    w)
     {
-        return (u ^ v ^ w);
+        return u ^ v ^ w;
     }
 
     private int g(
-        int    u,
-        int    v,
-        int    w)
+        final int    u,
+        final int    v,
+        final int    w)
     {
-        return ((u & v) | (u & w) | (v & w));
+        return u & v | u & w | v & w;
     }
 
     @Override
@@ -196,44 +197,44 @@ public class SHA1Digest
         //
         for (int i = 16; i < 80; i++)
         {
-            int t = X[i - 3] ^ X[i - 8] ^ X[i - 14] ^ X[i - 16];
-            X[i] = t << 1 | t >>> 31;
+            final int t = this.X[i - 3] ^ this.X[i - 8] ^ this.X[i - 14] ^ this.X[i - 16];
+            this.X[i] = t << 1 | t >>> 31;
         }
 
         //
         // set up working variables.
         //
-        int     A = H1;
-        int     B = H2;
-        int     C = H3;
-        int     D = H4;
-        int     E = H5;
+        int     A = this.H1;
+        int     B = this.H2;
+        int     C = this.H3;
+        int     D = this.H4;
+        int     E = this.H5;
 
         //
         // round 1
         //
         int idx = 0;
-        
+
         for (int j = 0; j < 4; j++)
         {
             // E = rotateLeft(A, 5) + f(B, C, D) + E + X[idx++] + Y1
             // B = rotateLeft(B, 30)
-            E += (A << 5 | A >>> 27) + f(B, C, D) + X[idx++] + Y1;
+            E += (A << 5 | A >>> 27) + f(B, C, D) + this.X[idx++] + Y1;
             B = B << 30 | B >>> 2;
-        
-            D += (E << 5 | E >>> 27) + f(A, B, C) + X[idx++] + Y1;
+
+            D += (E << 5 | E >>> 27) + f(A, B, C) + this.X[idx++] + Y1;
             A = A << 30 | A >>> 2;
-       
-            C += (D << 5 | D >>> 27) + f(E, A, B) + X[idx++] + Y1;
+
+            C += (D << 5 | D >>> 27) + f(E, A, B) + this.X[idx++] + Y1;
             E = E << 30 | E >>> 2;
-       
-            B += (C << 5 | C >>> 27) + f(D, E, A) + X[idx++] + Y1;
+
+            B += (C << 5 | C >>> 27) + f(D, E, A) + this.X[idx++] + Y1;
             D = D << 30 | D >>> 2;
 
-            A += (B << 5 | B >>> 27) + f(C, D, E) + X[idx++] + Y1;
+            A += (B << 5 | B >>> 27) + f(C, D, E) + this.X[idx++] + Y1;
             C = C << 30 | C >>> 2;
         }
-        
+
         //
         // round 2
         //
@@ -241,22 +242,22 @@ public class SHA1Digest
         {
             // E = rotateLeft(A, 5) + h(B, C, D) + E + X[idx++] + Y2
             // B = rotateLeft(B, 30)
-            E += (A << 5 | A >>> 27) + h(B, C, D) + X[idx++] + Y2;
-            B = B << 30 | B >>> 2;   
-            
-            D += (E << 5 | E >>> 27) + h(A, B, C) + X[idx++] + Y2;
+            E += (A << 5 | A >>> 27) + h(B, C, D) + this.X[idx++] + Y2;
+            B = B << 30 | B >>> 2;
+
+            D += (E << 5 | E >>> 27) + h(A, B, C) + this.X[idx++] + Y2;
             A = A << 30 | A >>> 2;
-            
-            C += (D << 5 | D >>> 27) + h(E, A, B) + X[idx++] + Y2;
+
+            C += (D << 5 | D >>> 27) + h(E, A, B) + this.X[idx++] + Y2;
             E = E << 30 | E >>> 2;
-            
-            B += (C << 5 | C >>> 27) + h(D, E, A) + X[idx++] + Y2;
+
+            B += (C << 5 | C >>> 27) + h(D, E, A) + this.X[idx++] + Y2;
             D = D << 30 | D >>> 2;
 
-            A += (B << 5 | B >>> 27) + h(C, D, E) + X[idx++] + Y2;
+            A += (B << 5 | B >>> 27) + h(C, D, E) + this.X[idx++] + Y2;
             C = C << 30 | C >>> 2;
         }
-        
+
         //
         // round 3
         //
@@ -264,19 +265,19 @@ public class SHA1Digest
         {
             // E = rotateLeft(A, 5) + g(B, C, D) + E + X[idx++] + Y3
             // B = rotateLeft(B, 30)
-            E += (A << 5 | A >>> 27) + g(B, C, D) + X[idx++] + Y3;
+            E += (A << 5 | A >>> 27) + g(B, C, D) + this.X[idx++] + Y3;
             B = B << 30 | B >>> 2;
-            
-            D += (E << 5 | E >>> 27) + g(A, B, C) + X[idx++] + Y3;
+
+            D += (E << 5 | E >>> 27) + g(A, B, C) + this.X[idx++] + Y3;
             A = A << 30 | A >>> 2;
-            
-            C += (D << 5 | D >>> 27) + g(E, A, B) + X[idx++] + Y3;
+
+            C += (D << 5 | D >>> 27) + g(E, A, B) + this.X[idx++] + Y3;
             E = E << 30 | E >>> 2;
-            
-            B += (C << 5 | C >>> 27) + g(D, E, A) + X[idx++] + Y3;
+
+            B += (C << 5 | C >>> 27) + g(D, E, A) + this.X[idx++] + Y3;
             D = D << 30 | D >>> 2;
 
-            A += (B << 5 | B >>> 27) + g(C, D, E) + X[idx++] + Y3;
+            A += (B << 5 | B >>> 27) + g(C, D, E) + this.X[idx++] + Y3;
             C = C << 30 | C >>> 2;
         }
 
@@ -287,36 +288,36 @@ public class SHA1Digest
         {
             // E = rotateLeft(A, 5) + h(B, C, D) + E + X[idx++] + Y4
             // B = rotateLeft(B, 30)
-            E += (A << 5 | A >>> 27) + h(B, C, D) + X[idx++] + Y4;
+            E += (A << 5 | A >>> 27) + h(B, C, D) + this.X[idx++] + Y4;
             B = B << 30 | B >>> 2;
-            
-            D += (E << 5 | E >>> 27) + h(A, B, C) + X[idx++] + Y4;
+
+            D += (E << 5 | E >>> 27) + h(A, B, C) + this.X[idx++] + Y4;
             A = A << 30 | A >>> 2;
-            
-            C += (D << 5 | D >>> 27) + h(E, A, B) + X[idx++] + Y4;
+
+            C += (D << 5 | D >>> 27) + h(E, A, B) + this.X[idx++] + Y4;
             E = E << 30 | E >>> 2;
-            
-            B += (C << 5 | C >>> 27) + h(D, E, A) + X[idx++] + Y4;
+
+            B += (C << 5 | C >>> 27) + h(D, E, A) + this.X[idx++] + Y4;
             D = D << 30 | D >>> 2;
 
-            A += (B << 5 | B >>> 27) + h(C, D, E) + X[idx++] + Y4;
+            A += (B << 5 | B >>> 27) + h(C, D, E) + this.X[idx++] + Y4;
             C = C << 30 | C >>> 2;
         }
 
 
-        H1 += A;
-        H2 += B;
-        H3 += C;
-        H4 += D;
-        H5 += E;
+        this.H1 += A;
+        this.H2 += B;
+        this.H3 += C;
+        this.H4 += D;
+        this.H5 += E;
 
         //
         // reset start of the buffer.
         //
-        xOff = 0;
+        this.xOff = 0;
         for (int i = 0; i < 16; i++)
         {
-            X[i] = 0;
+            this.X[i] = 0;
         }
     }
 
@@ -327,9 +328,9 @@ public class SHA1Digest
     }
 
     @Override
-	public void reset(Memoable other)
+	public void reset(final Memoable other)
     {
-        SHA1Digest d = (SHA1Digest)other;
+        final SHA1Digest d = (SHA1Digest)other;
 
         super.copyIn(d);
         copyIn(d);
@@ -338,20 +339,20 @@ public class SHA1Digest
     @Override
 	public byte[] getEncodedState()
     {
-        byte[] state = new byte[40 + xOff * 4];
+        final byte[] state = new byte[40 + this.xOff * 4];
 
         super.populateState(state);
 
-        Pack.intToBigEndian(H1, state, 16);
-        Pack.intToBigEndian(H2, state, 20);
-        Pack.intToBigEndian(H3, state, 24);
-        Pack.intToBigEndian(H4, state, 28);
-        Pack.intToBigEndian(H5, state, 32);
-        Pack.intToBigEndian(xOff, state, 36);
+        Pack.intToBigEndian(this.H1, state, 16);
+        Pack.intToBigEndian(this.H2, state, 20);
+        Pack.intToBigEndian(this.H3, state, 24);
+        Pack.intToBigEndian(this.H4, state, 28);
+        Pack.intToBigEndian(this.H5, state, 32);
+        Pack.intToBigEndian(this.xOff, state, 36);
 
-        for (int i = 0; i != xOff; i++)
+        for (int i = 0; i != this.xOff; i++)
         {
-            Pack.intToBigEndian(X[i], state, 40 + (i * 4));
+            Pack.intToBigEndian(this.X[i], state, 40 + i * 4);
         }
 
         return state;

@@ -16,7 +16,7 @@ public class HSSSignature
     private final LMSSignedPubKey[] signedPubKey;
     private final LMSSignature signature;
 
-    public HSSSignature(int lMinus1, LMSSignedPubKey[] signedPubKey, LMSSignature signature)
+    public HSSSignature(final int lMinus1, final LMSSignedPubKey[] signedPubKey, final LMSSignature signature)
     {
         this.lMinus1 = lMinus1;
         this.signedPubKey = signedPubKey;
@@ -28,9 +28,9 @@ public class HSSSignature
      * @param src byte[], InputStream or HSSSignature
      * @param L   The HSS depth, available from public key.
      * @return An HSSSignature instance.
-     * @throws IOException
+     * @throws IOException If IO error occurs.
      */
-    public static HSSSignature getInstance(Object src, int L)
+    public static HSSSignature getInstance(final Object src, final int L)
         throws IOException
     {
         if (src instanceof HSSSignature)
@@ -40,12 +40,12 @@ public class HSSSignature
         else if (src instanceof DataInputStream)
         {
 
-            int lminus = ((DataInputStream)src).readInt();
+            final int lminus = ((DataInputStream)src).readInt();
             if (lminus != L - 1)
             {
                 throw new IllegalStateException("nspk exceeded maxNspk");
             }
-            LMSSignedPubKey[] signedPubKeys = new LMSSignedPubKey[lminus];
+            final LMSSignedPubKey[] signedPubKeys = new LMSSignedPubKey[lminus];
             if (lminus != 0)
             {
                 for (int t = 0; t < signedPubKeys.length; t++)
@@ -53,7 +53,7 @@ public class HSSSignature
                     signedPubKeys[t] = new LMSSignedPubKey(LMSSignature.getInstance(src), LMSPublicKeyParameters.getInstance(src));
                 }
             }
-            LMSSignature sig = LMSSignature.getInstance(src);
+            final LMSSignature sig = LMSSignature.getInstance(src);
 
             return new HSSSignature(lminus, signedPubKeys, sig);
         }
@@ -67,7 +67,9 @@ public class HSSSignature
             }
             finally
             {
-               if (in != null) in.close();
+               if (in != null) {
+				in.close();
+			}
             }
         }
         else if (src instanceof InputStream)
@@ -81,21 +83,21 @@ public class HSSSignature
 
     public int getlMinus1()
     {
-        return lMinus1;
+        return this.lMinus1;
     }
 
     public LMSSignedPubKey[] getSignedPubKey()
     {
-        return signedPubKey;
+        return this.signedPubKey;
     }
 
     public LMSSignature getSignature()
     {
-        return signature;
+        return this.signature;
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(final Object o)
     {
         if (this == o)
         {
@@ -106,36 +108,36 @@ public class HSSSignature
             return false;
         }
 
-        HSSSignature signature1 = (HSSSignature)o;
+        final HSSSignature signature1 = (HSSSignature)o;
 
-        if (lMinus1 != signature1.lMinus1)
+        if (this.lMinus1 != signature1.lMinus1)
         {
             return false;
         }
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
 
-        if (signedPubKey.length != signature1.signedPubKey.length)
+        if (this.signedPubKey.length != signature1.signedPubKey.length)
         {
             return false;
         }
 
-        for (int t = 0; t < signedPubKey.length; t++)
+        for (int t = 0; t < this.signedPubKey.length; t++)
         {
-            if (!signedPubKey[t].equals(signature1.signedPubKey[t]))
+            if (!this.signedPubKey[t].equals(signature1.signedPubKey[t]))
             {
                 return false;
             }
         }
 
-        return signature != null ? signature.equals(signature1.signature) : signature1.signature == null;
+        return this.signature != null ? this.signature.equals(signature1.signature) : signature1.signature == null;
     }
 
     @Override
     public int hashCode()
     {
-        int result = lMinus1;
-        result = 31 * result + Arrays.hashCode(signedPubKey);
-        result = 31 * result + (signature != null ? signature.hashCode() : 0);
+        int result = this.lMinus1;
+        result = 31 * result + Arrays.hashCode(this.signedPubKey);
+        result = 31 * result + (this.signature != null ? this.signature.hashCode() : 0);
         return result;
     }
 
@@ -143,16 +145,16 @@ public class HSSSignature
 	public byte[] getEncoded()
         throws IOException
     {
-        Composer composer = Composer.compose();
-        composer.u32str(lMinus1);
-        if (signedPubKey != null)
+        final Composer composer = Composer.compose();
+        composer.u32str(this.lMinus1);
+        if (this.signedPubKey != null)
         {
-            for (LMSSignedPubKey sigPub : signedPubKey)
+            for (final LMSSignedPubKey sigPub : this.signedPubKey)
             {
                 composer.bytes(sigPub);
             }
         }
-        composer.bytes(signature);
+        composer.bytes(this.signature);
         return composer.build();
 
     }

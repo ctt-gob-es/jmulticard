@@ -20,7 +20,7 @@ public class ChaChaEngine extends Salsa20Engine
      * Creates a ChaCha engine with a specific number of rounds.
      * @param rounds the number of rounds (must be an even number).
      */
-    public ChaChaEngine(int rounds)
+    public ChaChaEngine(final int rounds)
     {
         super(rounds);
     }
@@ -28,50 +28,50 @@ public class ChaChaEngine extends Salsa20Engine
     @Override
 	public String getAlgorithmName()
     {
-        return "ChaCha" + rounds;
+        return "ChaCha" + this.rounds;
     }
 
     @Override
-	protected void advanceCounter(long diff)
+	protected void advanceCounter(final long diff)
     {
-        int hi = (int)(diff >>> 32);
-        int lo = (int)diff;
+        final int hi = (int)(diff >>> 32);
+        final int lo = (int)diff;
 
         if (hi > 0)
         {
-            engineState[13] += hi;
+            this.engineState[13] += hi;
         }
 
-        int oldState = engineState[12];
+        final int oldState = this.engineState[12];
 
-        engineState[12] += lo;
+        this.engineState[12] += lo;
 
-        if (oldState != 0 && engineState[12] < oldState)
+        if (oldState != 0 && this.engineState[12] < oldState)
         {
-            engineState[13]++;
+            this.engineState[13]++;
         }
     }
 
     @Override
 	protected void advanceCounter()
     {
-        if (++engineState[12] == 0)
+        if (++this.engineState[12] == 0)
         {
-            ++engineState[13];
+            ++this.engineState[13];
         }
     }
 
     @Override
-	protected void retreatCounter(long diff)
+	protected void retreatCounter(final long diff)
     {
-        int hi = (int)(diff >>> 32);
-        int lo = (int)diff;
+        final int hi = (int)(diff >>> 32);
+        final int lo = (int)diff;
 
         if (hi != 0)
         {
-            if ((engineState[13] & 0xffffffffL) >= (hi & 0xffffffffL))
+            if ((this.engineState[13] & 0xffffffffL) >= (hi & 0xffffffffL))
             {
-                engineState[13] -= hi;
+                this.engineState[13] -= hi;
             }
             else
             {
@@ -79,16 +79,16 @@ public class ChaChaEngine extends Salsa20Engine
             }
         }
 
-        if ((engineState[12] & 0xffffffffL) >= (lo & 0xffffffffL))
+        if ((this.engineState[12] & 0xffffffffL) >= (lo & 0xffffffffL))
         {
-            engineState[12] -= lo;
+            this.engineState[12] -= lo;
         }
         else
         {
-            if (engineState[13] != 0)
+            if (this.engineState[13] != 0)
             {
-                --engineState[13];
-                engineState[12] -= lo;
+                --this.engineState[13];
+                this.engineState[12] -= lo;
             }
             else
             {
@@ -100,63 +100,65 @@ public class ChaChaEngine extends Salsa20Engine
     @Override
 	protected void retreatCounter()
     {
-        if (engineState[12] == 0 && engineState[13] == 0)
+        if (this.engineState[12] == 0 && this.engineState[13] == 0)
         {
             throw new IllegalStateException("attempt to reduce counter past zero.");
         }
 
-        if (--engineState[12] == -1)
+        if (--this.engineState[12] == -1)
         {
-            --engineState[13];
+            --this.engineState[13];
         }
     }
 
     @Override
 	protected long getCounter()
     {
-        return ((long)engineState[13] << 32) | (engineState[12] & 0xffffffffL);
+        return (long)this.engineState[13] << 32 | this.engineState[12] & 0xffffffffL;
     }
 
     @Override
 	protected void resetCounter()
     {
-        engineState[12] = engineState[13] = 0;
+        this.engineState[12] = this.engineState[13] = 0;
     }
 
     @Override
-	protected void setKey(byte[] keyBytes, byte[] ivBytes)
+	protected void setKey(final byte[] keyBytes, final byte[] ivBytes)
     {
         if (keyBytes != null)
         {
-            if ((keyBytes.length != 16) && (keyBytes.length != 32))
+            if (keyBytes.length != 16 && keyBytes.length != 32)
             {
                 throw new IllegalArgumentException(getAlgorithmName() + " requires 128 bit or 256 bit key");
             }
 
-            packTauOrSigma(keyBytes.length, engineState, 0);
+            packTauOrSigma(keyBytes.length, this.engineState, 0);
 
             // Key
-            Pack.littleEndianToInt(keyBytes, 0, engineState, 4, 4);
-            Pack.littleEndianToInt(keyBytes, keyBytes.length - 16, engineState, 8, 4);
+            Pack.littleEndianToInt(keyBytes, 0, this.engineState, 4, 4);
+            Pack.littleEndianToInt(keyBytes, keyBytes.length - 16, this.engineState, 8, 4);
         }
 
         // IV
-        Pack.littleEndianToInt(ivBytes, 0, engineState, 14, 2);
+        Pack.littleEndianToInt(ivBytes, 0, this.engineState, 14, 2);
     }
 
     @Override
-	protected void generateKeyStream(byte[] output)
+	protected void generateKeyStream(final byte[] output)
     {
-        chachaCore(rounds, engineState, x);
-        Pack.intToLittleEndian(x, output, 0);
+        chachaCore(this.rounds, this.engineState, this.x);
+        Pack.intToLittleEndian(this.x, output, 0);
     }
 
     /**
      * ChaCha function
      *
+     * @param rounds Rounds number.
      * @param   input   input data
-     */    
-    public static void chachaCore(int rounds, int[] input, int[] x)
+     * @param x result.
+     */
+    public static void chachaCore(final int rounds, final int[] input, final int[] x)
     {
         if (input.length != 16)
         {

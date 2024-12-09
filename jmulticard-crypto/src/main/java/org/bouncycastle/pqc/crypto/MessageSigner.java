@@ -15,7 +15,7 @@ public interface MessageSigner
      *                   otherwise.
      * @param param      key parameters for signature generation.
      */
-    public void init(boolean forSigning, CipherParameters param);
+    void init(boolean forSigning, CipherParameters param);
 
     /**
      * sign the passed in message (usually the output of a hash function).
@@ -23,13 +23,14 @@ public interface MessageSigner
      * @param message the message to be signed.
      * @return the signature of the message
      */
-    public byte[] generateSignature(byte[] message);
+    byte[] generateSignature(byte[] message);
 
     /**
      * verify the message message against the signature value.
      *
      * @param message the message that was supposed to have been signed.
      * @param signature the signature of the message
+     * @return {@code true} if the signature is valid, {@code false} otherwise.
      */
-    public boolean verifySignature(byte[] message, byte[] signature);
+    boolean verifySignature(byte[] message, byte[] signature);
 }

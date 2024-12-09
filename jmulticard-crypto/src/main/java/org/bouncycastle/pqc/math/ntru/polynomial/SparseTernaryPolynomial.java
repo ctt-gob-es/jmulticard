@@ -56,21 +56,21 @@ public class SparseTernaryPolynomial
      */
     public SparseTernaryPolynomial(final int[] coeffs)
     {
-        N = coeffs.length;
-        ones = new int[N];
-        negOnes = new int[N];
+        this.N = coeffs.length;
+        this.ones = new int[this.N];
+        this.negOnes = new int[this.N];
         int onesIdx = 0;
         int negOnesIdx = 0;
-        for (int i = 0; i < N; i++)
+        for (int i = 0; i < this.N; i++)
         {
             final int c = coeffs[i];
             switch (c)
             {
             case 1:
-                ones[onesIdx++] = i;
+                this.ones[onesIdx++] = i;
                 break;
             case -1:
-                negOnes[negOnesIdx++] = i;
+                this.negOnes[negOnesIdx++] = i;
                 break;
             case 0:
                 break;
@@ -78,8 +78,8 @@ public class SparseTernaryPolynomial
                 throw new IllegalArgumentException("Illegal value: " + c + ", must be one of {-1, 0, 1}");
             }
         }
-        ones = Arrays.copyOf(ones, onesIdx);
-        negOnes = Arrays.copyOf(negOnes, negOnesIdx);
+        this.ones = Arrays.copyOf(this.ones, onesIdx);
+        this.negOnes = Arrays.copyOf(this.negOnes, negOnesIdx);
     }
 
     /**
@@ -90,7 +90,7 @@ public class SparseTernaryPolynomial
      * @param numOnes    number of coefficients equal to 1
      * @param numNegOnes number of coefficients equal to -1
      * @return the decoded polynomial
-     * @throws IOException
+     * @throws IOException If IO error occurs.
      */
     public static SparseTernaryPolynomial fromBinary(final InputStream is, final int N, final int numOnes, final int numNegOnes)
         throws IOException
@@ -116,6 +116,8 @@ public class SparseTernaryPolynomial
      * @param N          number of coefficients
      * @param numOnes    number of 1's
      * @param numNegOnes number of -1's
+     * @param random Secure random.
+     * @return random polynomial
      */
     public static SparseTernaryPolynomial generateRandom(final int N, final int numOnes, final int numNegOnes, final SecureRandom random)
     {
@@ -127,34 +129,34 @@ public class SparseTernaryPolynomial
 	public IntegerPolynomial mult(final IntegerPolynomial poly2)
     {
         final int[] b = poly2.coeffs;
-        if (b.length != N)
+        if (b.length != this.N)
         {
             throw new IllegalArgumentException("Number of coefficients must be the same");
         }
 
-        final int[] c = new int[N];
-        for (final int i : ones) {
-            int j = N - 1 - i;
-            for (int k = N - 1; k >= 0; k--)
+        final int[] c = new int[this.N];
+        for (final int i : this.ones) {
+            int j = this.N - 1 - i;
+            for (int k = this.N - 1; k >= 0; k--)
             {
                 c[k] += b[j];
                 j--;
                 if (j < 0)
                 {
-                    j = N - 1;
+                    j = this.N - 1;
                 }
             }
         }
 
-        for (final int i : negOnes) {
-            int j = N - 1 - i;
-            for (int k = N - 1; k >= 0; k--)
+        for (final int i : this.negOnes) {
+            int j = this.N - 1 - i;
+            for (int k = this.N - 1; k >= 0; k--)
             {
                 c[k] -= b[j];
                 j--;
                 if (j < 0)
                 {
-                    j = N - 1;
+                    j = this.N - 1;
                 }
             }
         }
@@ -174,39 +176,39 @@ public class SparseTernaryPolynomial
 	public BigIntPolynomial mult(final BigIntPolynomial poly2)
     {
         final BigInteger[] b = poly2.coeffs;
-        if (b.length != N)
+        if (b.length != this.N)
         {
             throw new IllegalArgumentException("Number of coefficients must be the same");
         }
 
-        final BigInteger[] c = new BigInteger[N];
-        for (int i = 0; i < N; i++)
+        final BigInteger[] c = new BigInteger[this.N];
+        for (int i = 0; i < this.N; i++)
         {
             c[i] = BigInteger.ZERO;
         }
 
-        for (final int i : ones) {
-            int j = N - 1 - i;
-            for (int k = N - 1; k >= 0; k--)
+        for (final int i : this.ones) {
+            int j = this.N - 1 - i;
+            for (int k = this.N - 1; k >= 0; k--)
             {
                 c[k] = c[k].add(b[j]);
                 j--;
                 if (j < 0)
                 {
-                    j = N - 1;
+                    j = this.N - 1;
                 }
             }
         }
 
-        for (final int i : negOnes) {
-            int j = N - 1 - i;
-            for (int k = N - 1; k >= 0; k--)
+        for (final int i : this.negOnes) {
+            int j = this.N - 1 - i;
+            for (int k = this.N - 1; k >= 0; k--)
             {
                 c[k] = c[k].subtract(b[j]);
                 j--;
                 if (j < 0)
                 {
-                    j = N - 1;
+                    j = this.N - 1;
                 }
             }
         }
@@ -217,13 +219,13 @@ public class SparseTernaryPolynomial
     @Override
 	public int[] getOnes()
     {
-        return ones;
+        return this.ones;
     }
 
     @Override
 	public int[] getNegOnes()
     {
-        return negOnes;
+        return this.negOnes;
     }
 
     /**
@@ -234,8 +236,8 @@ public class SparseTernaryPolynomial
     public byte[] toBinary()
     {
         final int maxIndex = 1 << BITS_PER_INDEX;
-        final byte[] bin1 = ArrayEncoder.encodeModQ(ones, maxIndex);
-        final byte[] bin2 = ArrayEncoder.encodeModQ(negOnes, maxIndex);
+        final byte[] bin1 = ArrayEncoder.encodeModQ(this.ones, maxIndex);
+        final byte[] bin2 = ArrayEncoder.encodeModQ(this.negOnes, maxIndex);
 
         final byte[] bin = Arrays.copyOf(bin1, bin1.length + bin2.length);
         System.arraycopy(bin2, 0, bin, bin1.length, bin2.length);
@@ -245,12 +247,12 @@ public class SparseTernaryPolynomial
     @Override
 	public IntegerPolynomial toIntegerPolynomial()
     {
-        final int[] coeffs = new int[N];
-        for (final int one : ones) {
+        final int[] coeffs = new int[this.N];
+        for (final int one : this.ones) {
             final int i = one;
             coeffs[i] = 1;
         }
-        for (final int negOne : negOnes) {
+        for (final int negOne : this.negOnes) {
             final int i = negOne;
             coeffs[i] = -1;
         }
@@ -260,14 +262,14 @@ public class SparseTernaryPolynomial
     @Override
 	public int size()
     {
-        return N;
+        return this.N;
     }
 
     @Override
 	public void clear()
     {
-        java.util.Arrays.fill(ones, 0);
-        java.util.Arrays.fill(negOnes, 0);
+        java.util.Arrays.fill(this.ones, 0);
+        java.util.Arrays.fill(this.negOnes, 0);
     }
 
     @Override
@@ -275,9 +277,9 @@ public class SparseTernaryPolynomial
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + N;
-        result = prime * result + Arrays.hashCode(negOnes);
-        return prime * result + Arrays.hashCode(ones);
+        result = prime * result + this.N;
+        result = prime * result + Arrays.hashCode(this.negOnes);
+        return prime * result + Arrays.hashCode(this.ones);
     }
 
     @Override
@@ -287,20 +289,20 @@ public class SparseTernaryPolynomial
         {
             return true;
         }
-        if ((obj == null) || (getClass() != obj.getClass()))
+        if (obj == null || getClass() != obj.getClass())
         {
             return false;
         }
         final SparseTernaryPolynomial other = (SparseTernaryPolynomial)obj;
-        if (N != other.N)
+        if (this.N != other.N)
         {
             return false;
         }
-        if (!Arrays.areEqual(negOnes, other.negOnes))
+        if (!Arrays.areEqual(this.negOnes, other.negOnes))
         {
             return false;
         }
-        if (!Arrays.areEqual(ones, other.ones))
+        if (!Arrays.areEqual(this.ones, other.ones))
         {
             return false;
         }

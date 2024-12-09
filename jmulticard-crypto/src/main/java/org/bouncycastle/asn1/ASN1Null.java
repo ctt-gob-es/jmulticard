@@ -11,7 +11,7 @@ public abstract class ASN1Null
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1Null.class, BERTags.NULL)
     {
         @Override
-		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -21,18 +21,18 @@ public abstract class ASN1Null
      * Return an instance of ASN.1 NULL from the passed in object.
      * <p>
      * Accepted inputs:
+     * </p>
      * <ul>
      * <li> null &rarr; null
      * <li> {@link ASN1Null} object
      * <li> a byte[] containing ASN.1 NULL object
      * </ul>
-     * </p>
      *
      * @param o object to be converted.
      * @return an instance of ASN1Null, or null.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
-    public static ASN1Null getInstance(Object o)
+    public static ASN1Null getInstance(final Object o)
     {
         if (o instanceof ASN1Null)
         {
@@ -45,7 +45,7 @@ public abstract class ASN1Null
             {
                 return (ASN1Null)TYPE.fromByteArray((byte[])o);
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 throw new IllegalArgumentException("failed to construct NULL from byte[]: " + e.getMessage());
             }
@@ -54,7 +54,7 @@ public abstract class ASN1Null
         return null;
     }
 
-    public static ASN1Null getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1Null getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1Null)TYPE.getContextInstance(taggedObject, explicit);
     }
@@ -71,13 +71,13 @@ public abstract class ASN1Null
 
     @Override
 	boolean asn1Equals(
-        ASN1Primitive o)
+        final ASN1Primitive o)
     {
         if (!(o instanceof ASN1Null))
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -87,7 +87,7 @@ public abstract class ASN1Null
          return "NULL";
     }
 
-    static ASN1Null createPrimitive(byte[] contents)
+    static ASN1Null createPrimitive(final byte[] contents)
     {
         if (0 != contents.length)
         {

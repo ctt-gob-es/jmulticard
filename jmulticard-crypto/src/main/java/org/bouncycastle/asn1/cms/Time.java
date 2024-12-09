@@ -18,7 +18,6 @@ import org.bouncycastle.asn1.DERUTCTime;
 /**
  * <a href="https://tools.ietf.org/html/rfc5652#section-11.3">RFC 5652</a>:
  * Dual-mode timestamp format producing either UTCTIme or GeneralizedTime.
- * <p>
  * <pre>
  * Time ::= CHOICE {
  *     utcTime        UTCTime,
@@ -127,6 +126,7 @@ public class Time
      * </ul>
      *
      * @param obj the object we want converted.
+     * @return Time.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static Time getInstance(
@@ -150,33 +150,35 @@ public class Time
 
     /**
      * Get the date and time as a String in full form century format.
+     * @return Time.
      */
     public String getTime()
     {
-        if (time instanceof ASN1UTCTime)
+        if (this.time instanceof ASN1UTCTime)
         {
-            return ((ASN1UTCTime)time).getAdjustedTime();
+            return ((ASN1UTCTime)this.time).getAdjustedTime();
         }
         else
         {
-            return ((ASN1GeneralizedTime)time).getTime();
+            return ((ASN1GeneralizedTime)this.time).getTime();
         }
     }
 
     /**
      * Get java.util.Date version of date+time.
+     * @return date.
      */
     public Date getDate()
     {
         try
         {
-            if (time instanceof ASN1UTCTime)
+            if (this.time instanceof ASN1UTCTime)
             {
-                return ((ASN1UTCTime)time).getAdjustedDate();
+                return ((ASN1UTCTime)this.time).getAdjustedDate();
             }
             else
             {
-                return ((ASN1GeneralizedTime)time).getDate();
+                return ((ASN1GeneralizedTime)this.time).getDate();
             }
         }
         catch (final ParseException e)
@@ -191,6 +193,6 @@ public class Time
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        return time;
+        return this.time;
     }
 }

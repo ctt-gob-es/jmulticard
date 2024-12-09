@@ -12,7 +12,6 @@ import org.bouncycastle.asn1.DERSequence;
 /**
  * <a href="https://tools.ietf.org/html/rfc5652#page-14">RFC 5652</a>:
  * Attribute is a pair of OID (as type identifier) + set of values.
- * <p>
  * <pre>
  * Attribute ::= SEQUENCE {
  *     attrType OBJECT IDENTIFIER,
@@ -47,6 +46,7 @@ public class Attribute
      * </ul>
      *
      * @param o the object we want converted.
+     * @return Attribute.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static Attribute getInstance(
@@ -68,8 +68,8 @@ public class Attribute
     private Attribute(
         final ASN1Sequence seq)
     {
-        attrType = (ASN1ObjectIdentifier)seq.getObjectAt(0);
-        attrValues = (ASN1Set)seq.getObjectAt(1);
+        this.attrType = (ASN1ObjectIdentifier)seq.getObjectAt(0);
+        this.attrValues = (ASN1Set)seq.getObjectAt(1);
     }
 
     public Attribute(
@@ -82,17 +82,17 @@ public class Attribute
 
     public ASN1ObjectIdentifier getAttrType()
     {
-        return attrType;
+        return this.attrType;
     }
 
     public ASN1Set getAttrValues()
     {
-        return attrValues;
+        return this.attrValues;
     }
 
     public ASN1Encodable[] getAttributeValues()
     {
-        return attrValues.toArray();
+        return this.attrValues.toArray();
     }
 
     /**
@@ -103,8 +103,8 @@ public class Attribute
     {
         final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
-        v.add(attrType);
-        v.add(attrValues);
+        v.add(this.attrType);
+        v.add(this.attrValues);
 
         return new DERSequence(v);
     }

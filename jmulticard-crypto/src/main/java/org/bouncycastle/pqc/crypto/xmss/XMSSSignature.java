@@ -19,7 +19,7 @@ public final class XMSSSignature
     private XMSSSignature(final Builder builder)
     {
         super(builder);
-        index = builder.index;
+        this.index = builder.index;
         final int n = getParams().getTreeDigestSize();
         final byte[] tmpRandom = builder.random;
         if (tmpRandom != null)
@@ -28,11 +28,11 @@ public final class XMSSSignature
             {
                 throw new IllegalArgumentException("size of random needs to be equal to size of digest");
             }
-            random = tmpRandom;
+            this.random = tmpRandom;
         }
         else
         {
-            random = new byte[n];
+            this.random = new byte[n];
         }
     }
 
@@ -60,13 +60,13 @@ public final class XMSSSignature
 
         public Builder withIndex(final int val)
         {
-            index = val;
+            this.index = val;
             return this;
         }
 
         public Builder withRandom(final byte[] val)
         {
-            random = XMSSUtil.cloneArray(val);
+            this.random = XMSSUtil.cloneArray(val);
             return this;
         }
 
@@ -76,19 +76,19 @@ public final class XMSSSignature
             {
                 throw new NullPointerException("signature == null");
             }
-            final int n = params.getTreeDigestSize();
-            final int len = params.getWOTSPlus().getParams().getLen();
-            final int height = params.getHeight();
+            final int n = this.params.getTreeDigestSize();
+            final int len = this.params.getWOTSPlus().getParams().getLen();
+            final int height = this.params.getHeight();
             final int indexSize = 4;
             final int randomSize = n;
             final int signatureSize = len * n;
             final int authPathSize = height * n;
             int position = 0;
             /* extract index */
-            index = Pack.bigEndianToInt(val, position);
+            this.index = Pack.bigEndianToInt(val, position);
             position += indexSize;
             /* extract random */
-            random = XMSSUtil.extractBytesAtOffset(val, position, randomSize);
+            this.random = XMSSUtil.extractBytesAtOffset(val, position, randomSize);
             position += randomSize;
             withReducedSignature(XMSSUtil.extractBytesAtOffset(val, position, signatureSize + authPathSize));
             return this;
@@ -103,7 +103,7 @@ public final class XMSSSignature
 
     /**
      * @deprecated use getEncoded() this method will become private.
-     * @return
+     * @return Signature encoded.
      */
     @Override
 	@Deprecated
@@ -119,10 +119,10 @@ public final class XMSSSignature
         final byte[] out = new byte[totalSize];
         int position = 0;
         /* copy index */
-        Pack.intToBigEndian(index, out, position);
+        Pack.intToBigEndian(this.index, out, position);
         position += indexSize;
         /* copy random */
-        XMSSUtil.copyBytesAtOffset(out, random, position);
+        XMSSUtil.copyBytesAtOffset(out, this.random, position);
         position += randomSize;
         /* copy signature */
         final byte[][] signature = getWOTSPlusSignature().toByteArray();
@@ -141,11 +141,11 @@ public final class XMSSSignature
 
     public int getIndex()
     {
-        return index;
+        return this.index;
     }
 
     public byte[] getRandom()
     {
-        return XMSSUtil.cloneArray(random);
+        return XMSSUtil.cloneArray(this.random);
     }
 }

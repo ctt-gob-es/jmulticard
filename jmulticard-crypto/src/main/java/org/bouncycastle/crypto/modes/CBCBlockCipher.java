@@ -26,6 +26,7 @@ public class CBCBlockCipher
      * Return a new CBC mode cipher based on the passed in base cipher
      *
      * @param cipher the base cipher for the CBC mode.
+     * @return a new CBC mode.
      */
     public static CBCModeCipher newInstance(final BlockCipher cipher)
     {
@@ -45,9 +46,9 @@ public class CBCBlockCipher
         this.cipher = cipher;
         this.blockSize = cipher.getBlockSize();
 
-        this.IV = new byte[blockSize];
-        this.cbcV = new byte[blockSize];
-        this.cbcNextV = new byte[blockSize];
+        this.IV = new byte[this.blockSize];
+        this.cbcV = new byte[this.blockSize];
+        this.cbcNextV = new byte[this.blockSize];
     }
 
     /**
@@ -55,9 +56,10 @@ public class CBCBlockCipher
      *
      * @return the underlying block cipher that we are wrapping.
      */
-    public BlockCipher getUnderlyingCipher()
+    @Override
+	public BlockCipher getUnderlyingCipher()
     {
-        return cipher;
+        return this.cipher;
     }
 
     /**
@@ -70,7 +72,8 @@ public class CBCBlockCipher
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    public void init(
+    @Override
+	public void init(
         final boolean             encrypting,
         CipherParameters    params)
         throws IllegalArgumentException
@@ -84,18 +87,18 @@ public class CBCBlockCipher
             final ParametersWithIV ivParam = (ParametersWithIV)params;
             final byte[] iv = ivParam.getIV();
 
-            if (iv.length != blockSize)
+            if (iv.length != this.blockSize)
             {
                 throw new IllegalArgumentException("initialisation vector must be the same length as block size");
             }
 
-            System.arraycopy(iv, 0, IV, 0, iv.length);
+            System.arraycopy(iv, 0, this.IV, 0, iv.length);
 
             params = ivParam.getParameters();
         }
         else
         {
-            Arrays.fill(IV, (byte)0);
+            Arrays.fill(this.IV, (byte)0);
         }
 
         reset();
@@ -103,7 +106,7 @@ public class CBCBlockCipher
         // if null it's an IV changed only (key is to be reused).
         if (params != null)
         {
-            cipher.init(encrypting, params);
+            this.cipher.init(encrypting, params);
         }
         else if (oldEncrypting != encrypting)
         {
@@ -116,9 +119,10 @@ public class CBCBlockCipher
      *
      * @return the name of the underlying algorithm followed by "/CBC".
      */
-    public String getAlgorithmName()
+    @Override
+	public String getAlgorithmName()
     {
-        return cipher.getAlgorithmName() + "/CBC";
+        return this.cipher.getAlgorithmName() + "/CBC";
     }
 
     /**
@@ -126,9 +130,10 @@ public class CBCBlockCipher
      *
      * @return the block size of the underlying cipher.
      */
-    public int getBlockSize()
+    @Override
+	public int getBlockSize()
     {
-        return cipher.getBlockSize();
+        return this.cipher.getBlockSize();
     }
 
     /**
@@ -144,26 +149,28 @@ public class CBCBlockCipher
      * @exception IllegalStateException if the cipher isn't initialised.
      * @return the number of bytes processed and produced.
      */
-    public int processBlock(
+    @Override
+	public int processBlock(
         final byte[]      in,
         final int         inOff,
         final byte[]      out,
         final int         outOff)
         throws DataLengthException, IllegalStateException
     {
-        return encrypting ? encryptBlock(in, inOff, out, outOff) : decryptBlock(in, inOff, out, outOff);
+        return this.encrypting ? encryptBlock(in, inOff, out, outOff) : decryptBlock(in, inOff, out, outOff);
     }
 
     /**
      * reset the chaining vector back to the IV and reset the underlying
      * cipher.
      */
-    public void reset()
+    @Override
+	public void reset()
     {
-        System.arraycopy(IV, 0, cbcV, 0, IV.length);
-        Arrays.fill(cbcNextV, (byte)0);
+        System.arraycopy(this.IV, 0, this.cbcV, 0, this.IV.length);
+        Arrays.fill(this.cbcNextV, (byte)0);
 
-        cipher.reset();
+        this.cipher.reset();
     }
 
     /**
@@ -185,7 +192,7 @@ public class CBCBlockCipher
         final int         outOff)
         throws DataLengthException, IllegalStateException
     {
-        if (inOff + blockSize > in.length)
+        if (inOff + this.blockSize > in.length)
         {
             throw new DataLengthException("input buffer too short");
         }
@@ -194,17 +201,17 @@ public class CBCBlockCipher
          * XOR the cbcV and the input,
          * then encrypt the cbcV
          */
-        for (int i = 0; i < blockSize; i++)
+        for (int i = 0; i < this.blockSize; i++)
         {
-            cbcV[i] ^= in[inOff + i];
+            this.cbcV[i] ^= in[inOff + i];
         }
 
-        final int length = cipher.processBlock(cbcV, 0, out, outOff);
+        final int length = this.cipher.processBlock(this.cbcV, 0, out, outOff);
 
         /*
          * copy ciphertext to cbcV
          */
-        System.arraycopy(out, outOff, cbcV, 0, cbcV.length);
+        System.arraycopy(out, outOff, this.cbcV, 0, this.cbcV.length);
 
         return length;
     }
@@ -228,21 +235,21 @@ public class CBCBlockCipher
         final int         outOff)
         throws DataLengthException, IllegalStateException
     {
-        if (inOff + blockSize > in.length)
+        if (inOff + this.blockSize > in.length)
         {
             throw new DataLengthException("input buffer too short");
         }
 
-        System.arraycopy(in, inOff, cbcNextV, 0, blockSize);
+        System.arraycopy(in, inOff, this.cbcNextV, 0, this.blockSize);
 
-        final int length = cipher.processBlock(in, inOff, out, outOff);
+        final int length = this.cipher.processBlock(in, inOff, out, outOff);
 
         /*
          * XOR the cbcV and the output
          */
-        for (int i = 0; i < blockSize; i++)
+        for (int i = 0; i < this.blockSize; i++)
         {
-            out[outOff + i] ^= cbcV[i];
+            out[outOff + i] ^= this.cbcV[i];
         }
 
         /*
@@ -250,9 +257,9 @@ public class CBCBlockCipher
          */
         byte[]  tmp;
 
-        tmp = cbcV;
-        cbcV = cbcNextV;
-        cbcNextV = tmp;
+        tmp = this.cbcV;
+        this.cbcV = this.cbcNextV;
+        this.cbcNextV = tmp;
 
         return length;
     }

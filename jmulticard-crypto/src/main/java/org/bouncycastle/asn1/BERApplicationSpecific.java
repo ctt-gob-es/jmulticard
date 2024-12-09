@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /**
  * An indefinite-length encoding version of an ASN.1 ApplicationSpecific object.
- * 
+ *
  * @deprecated Will be removed. See comments for
  *             {@link ASN1ApplicationSpecific}.
  */
@@ -17,8 +17,9 @@ public class BERApplicationSpecific
      *
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
+     * @throws IOException If IO error occurs.
      */
-    public BERApplicationSpecific(int tagNo, ASN1Encodable baseEncodable) throws IOException
+    public BERApplicationSpecific(final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {
         this(true, tagNo, baseEncodable);
     }
@@ -29,8 +30,9 @@ public class BERApplicationSpecific
      * @param explicit true if the object is explicitly tagged.
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
+     * @throws IOException If IO error occurs.
      */
-    public BERApplicationSpecific(boolean explicit, int tagNo, ASN1Encodable baseEncodable) throws IOException
+    public BERApplicationSpecific(final boolean explicit, final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {
         super(new BERTaggedObject(explicit, BERTags.APPLICATION, tagNo, baseEncodable));
     }
@@ -41,12 +43,12 @@ public class BERApplicationSpecific
      * @param tagNo the tag number for this object.
      * @param contentsElements the objects making up the application specific object.
      */
-    public BERApplicationSpecific(int tagNo, ASN1EncodableVector contentsElements)
+    public BERApplicationSpecific(final int tagNo, final ASN1EncodableVector contentsElements)
     {
         super(new BERTaggedObject(false, BERTags.APPLICATION, tagNo, BERFactory.createSequence(contentsElements)));
     }
 
-    BERApplicationSpecific(ASN1TaggedObject taggedObject)
+    BERApplicationSpecific(final ASN1TaggedObject taggedObject)
     {
         super(taggedObject);
     }

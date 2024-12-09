@@ -35,24 +35,24 @@ public class BCRainbowPublicKey
 {
     private static final long serialVersionUID = 1L;
 
-    private short[][] coeffquadratic;
-    private short[][] coeffsingular;
-    private short[] coeffscalar;
-    private int docLength; // length of possible document to sign
+    private final short[][] coeffquadratic;
+    private final short[][] coeffsingular;
+    private final short[] coeffscalar;
+    private final int docLength; // length of possible document to sign
 
     private RainbowParameters rainbowParams;
 
     /**
      * Constructor
      *
-     * @param docLength
-     * @param coeffQuadratic
-     * @param coeffSingular
-     * @param coeffScalar
+     * @param docLength Document length
+     * @param coeffQuadratic coeffQuadratic
+     * @param coeffSingular coeffSingular
+     * @param coeffScalar coeffScalar
      */
-    public BCRainbowPublicKey(int docLength,
-                              short[][] coeffQuadratic, short[][] coeffSingular,
-                              short[] coeffScalar)
+    public BCRainbowPublicKey(final int docLength,
+                              final short[][] coeffQuadratic, final short[][] coeffSingular,
+                              final short[] coeffScalar)
     {
         this.docLength = docLength;
         this.coeffquadratic = coeffQuadratic;
@@ -65,14 +65,14 @@ public class BCRainbowPublicKey
      *
      * @param keySpec a {@link RainbowPublicKeySpec}
      */
-    public BCRainbowPublicKey(RainbowPublicKeySpec keySpec)
+    public BCRainbowPublicKey(final RainbowPublicKeySpec keySpec)
     {
         this(keySpec.getDocLength(), keySpec.getCoeffQuadratic(), keySpec
             .getCoeffSingular(), keySpec.getCoeffScalar());
     }
 
     public BCRainbowPublicKey(
-        RainbowPublicKeyParameters params)
+        final RainbowPublicKeyParameters params)
     {
         this(params.getDocLength(), params.getCoeffQuadratic(), params.getCoeffSingular(), params.getCoeffScalar());
     }
@@ -90,7 +90,7 @@ public class BCRainbowPublicKey
      */
     public short[][] getCoeffQuadratic()
     {
-        return coeffquadratic;
+        return this.coeffquadratic;
     }
 
     /**
@@ -98,11 +98,11 @@ public class BCRainbowPublicKey
      */
     public short[][] getCoeffSingular()
     {
-        short[][] copy = new short[coeffsingular.length][];
+        final short[][] copy = new short[this.coeffsingular.length][];
 
-        for (int i = 0; i != coeffsingular.length; i++)
+        for (int i = 0; i != this.coeffsingular.length; i++)
         {
-            copy[i] = Arrays.clone(coeffsingular[i]);
+            copy[i] = Arrays.clone(this.coeffsingular[i]);
         }
 
         return copy;
@@ -114,7 +114,7 @@ public class BCRainbowPublicKey
      */
     public short[] getCoeffScalar()
     {
-        return Arrays.clone(coeffscalar);
+        return Arrays.clone(this.coeffscalar);
     }
 
     /**
@@ -124,28 +124,28 @@ public class BCRainbowPublicKey
      * @return the result of the comparison
      */
     @Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
     {
         if (other == null || !(other instanceof BCRainbowPublicKey))
         {
             return false;
         }
-        BCRainbowPublicKey otherKey = (BCRainbowPublicKey)other;
+        final BCRainbowPublicKey otherKey = (BCRainbowPublicKey)other;
 
-        return docLength == otherKey.getDocLength()
-            && RainbowUtil.equals(coeffquadratic, otherKey.getCoeffQuadratic())
-            && RainbowUtil.equals(coeffsingular, otherKey.getCoeffSingular())
-            && RainbowUtil.equals(coeffscalar, otherKey.getCoeffScalar());
+        return this.docLength == otherKey.getDocLength()
+            && RainbowUtil.equals(this.coeffquadratic, otherKey.getCoeffQuadratic())
+            && RainbowUtil.equals(this.coeffsingular, otherKey.getCoeffSingular())
+            && RainbowUtil.equals(this.coeffscalar, otherKey.getCoeffScalar());
     }
 
     @Override
 	public int hashCode()
     {
-        int hash = docLength;
+        int hash = this.docLength;
 
-        hash = hash * 37 + Arrays.hashCode(coeffquadratic);
-        hash = hash * 37 + Arrays.hashCode(coeffsingular);
-        hash = hash * 37 + Arrays.hashCode(coeffscalar);
+        hash = hash * 37 + Arrays.hashCode(this.coeffquadratic);
+        hash = hash * 37 + Arrays.hashCode(this.coeffsingular);
+        hash = hash * 37 + Arrays.hashCode(this.coeffscalar);
 
         return hash;
     }
@@ -168,8 +168,8 @@ public class BCRainbowPublicKey
     @Override
 	public byte[] getEncoded()
     {
-        RainbowPublicKey key = new RainbowPublicKey(docLength, coeffquadratic, coeffsingular, coeffscalar);
-        AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
+        final RainbowPublicKey key = new RainbowPublicKey(this.docLength, this.coeffquadratic, this.coeffsingular, this.coeffscalar);
+        final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
 
         return KeyUtil.getEncodedSubjectPublicKeyInfo(algorithmIdentifier, key);
     }

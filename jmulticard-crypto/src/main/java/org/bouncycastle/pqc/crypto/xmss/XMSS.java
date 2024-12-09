@@ -19,11 +19,11 @@ public class XMSS
     /**
      * WOTS+ instance.
      */
-    private WOTSPlus wotsPlus;
+    private final WOTSPlus wotsPlus;
     /**
      * PRNG.
      */
-    private SecureRandom prng;
+    private final SecureRandom prng;
 
     /**
      * XMSS private key.
@@ -38,8 +38,9 @@ public class XMSS
      * XMSS constructor...
      *
      * @param params XMSSParameters.
+     * @param prng Secure random.
      */
-    public XMSS(XMSSParameters params, SecureRandom prng)
+    public XMSS(final XMSSParameters params, final SecureRandom prng)
     {
         super();
         if (params == null)
@@ -47,7 +48,7 @@ public class XMSS
             throw new NullPointerException("params == null");
         }
         this.params = params;
-        wotsPlus = params.getWOTSPlus();
+        this.wotsPlus = params.getWOTSPlus();
         this.prng = prng;
     }
 
@@ -100,19 +101,19 @@ public class XMSS
      */
     public void generateKeys()
     {
-        XMSSKeyPairGenerator kpGen = new XMSSKeyPairGenerator();
+        final XMSSKeyPairGenerator kpGen = new XMSSKeyPairGenerator();
 
-        kpGen.init(new XMSSKeyGenerationParameters(getParams(), prng));
+        kpGen.init(new XMSSKeyGenerationParameters(getParams(), this.prng));
 
-        AsymmetricCipherKeyPair kp = kpGen.generateKeyPair();
+        final AsymmetricCipherKeyPair kp = kpGen.generateKeyPair();
 
-        privateKey = (XMSSPrivateKeyParameters)kp.getPrivate();
-        publicKey = (XMSSPublicKeyParameters)kp.getPublic();
+        this.privateKey = (XMSSPrivateKeyParameters)kp.getPrivate();
+        this.publicKey = (XMSSPublicKeyParameters)kp.getPublic();
 
-        wotsPlus.importKeys(new byte[params.getTreeDigestSize()], this.privateKey.getPublicSeed());
+        this.wotsPlus.importKeys(new byte[this.params.getTreeDigestSize()], this.privateKey.getPublicSeed());
     }
 
-    public void importState(XMSSPrivateKeyParameters privateKey, XMSSPublicKeyParameters publicKey)
+    public void importState(final XMSSPrivateKeyParameters privateKey, final XMSSPublicKeyParameters publicKey)
     {
         if (!Arrays.areEqual(privateKey.getRoot(), publicKey.getRoot()))
         {
@@ -126,7 +127,7 @@ public class XMSS
         this.privateKey = privateKey;
         this.publicKey = publicKey;
 
-        wotsPlus.importKeys(new byte[params.getTreeDigestSize()], this.privateKey.getPublicSeed());
+        this.wotsPlus.importKeys(new byte[this.params.getTreeDigestSize()], this.privateKey.getPublicSeed());
     }
 
     /**
@@ -135,7 +136,7 @@ public class XMSS
      * @param privateKey XMSS private key.
      * @param publicKey  XMSS public key.
      */
-    public void importState(byte[] privateKey, byte[] publicKey)
+    public void importState(final byte[] privateKey, final byte[] publicKey)
     {
         if (privateKey == null)
         {
@@ -146,9 +147,9 @@ public class XMSS
             throw new NullPointerException("publicKey == null");
         }
         /* import keys */
-        XMSSPrivateKeyParameters tmpPrivateKey = new XMSSPrivateKeyParameters.Builder(params)
+        final XMSSPrivateKeyParameters tmpPrivateKey = new XMSSPrivateKeyParameters.Builder(this.params)
             .withPrivateKey(privateKey).build();
-        XMSSPublicKeyParameters tmpPublicKey = new XMSSPublicKeyParameters.Builder(params).withPublicKey(publicKey)
+        final XMSSPublicKeyParameters tmpPublicKey = new XMSSPublicKeyParameters.Builder(this.params).withPublicKey(publicKey)
             .build();
         if (!Arrays.areEqual(tmpPrivateKey.getRoot(), tmpPublicKey.getRoot()))
         {
@@ -161,7 +162,7 @@ public class XMSS
         /* import */
         this.privateKey = tmpPrivateKey;
         this.publicKey = tmpPublicKey;
-        wotsPlus.importKeys(new byte[params.getTreeDigestSize()], this.privateKey.getPublicSeed());
+        this.wotsPlus.importKeys(new byte[this.params.getTreeDigestSize()], this.privateKey.getPublicSeed());
     }
 
     /**
@@ -170,21 +171,21 @@ public class XMSS
      * @param message Message to sign.
      * @return XMSS signature on digest of message.
      */
-    public byte[] sign(byte[] message)
+    public byte[] sign(final byte[] message)
     {
         if (message == null)
         {
             throw new NullPointerException("message == null");
         }
-        XMSSSigner signer = new XMSSSigner();
+        final XMSSSigner signer = new XMSSSigner();
 
-        signer.init(true, privateKey);
+        signer.init(true, this.privateKey);
 
-        byte[] signature = signer.generateSignature(message);
+        final byte[] signature = signer.generateSignature(message);
 
-        privateKey = (XMSSPrivateKeyParameters)signer.getUpdatedPrivateKey();
+        this.privateKey = (XMSSPrivateKeyParameters)signer.getUpdatedPrivateKey();
 
-        importState(privateKey, publicKey);
+        importState(this.privateKey, this.publicKey);
 
         return signature;
     }
@@ -196,9 +197,9 @@ public class XMSS
      * @param signature XMSS signature.
      * @param publicKey XMSS public key.
      * @return true if signature is valid false else.
-     * @throws ParseException
+     * @throws ParseException If error ocurrs while decoding signature.
      */
-    public boolean verifySignature(byte[] message, byte[] signature, byte[] publicKey)
+    public boolean verifySignature(final byte[] message, final byte[] signature, final byte[] publicKey)
         throws ParseException
     {
         if (message == null)
@@ -214,7 +215,7 @@ public class XMSS
             throw new NullPointerException("publicKey == null");
         }
 
-        XMSSSigner signer = new XMSSSigner();
+        final XMSSSigner signer = new XMSSSigner();
 
         signer.init(false, new XMSSPublicKeyParameters.Builder(getParams()).withPublicKey(publicKey).build());
 
@@ -228,7 +229,7 @@ public class XMSS
      */
     public XMSSPrivateKeyParameters exportPrivateKey()
     {
-        return privateKey;
+        return this.privateKey;
     }
 
     /**
@@ -238,7 +239,7 @@ public class XMSS
      */
     public XMSSPublicKeyParameters exportPublicKey()
     {
-        return publicKey;
+        return this.publicKey;
     }
 
     /**
@@ -249,9 +250,9 @@ public class XMSS
      * @param otsHashAddress OTS hash address.
      * @return XMSS signature.
      */
-    protected WOTSPlusSignature wotsSign(byte[] messageDigest, OTSHashAddress otsHashAddress)
+    protected WOTSPlusSignature wotsSign(final byte[] messageDigest, final OTSHashAddress otsHashAddress)
     {
-        if (messageDigest.length != params.getTreeDigestSize())
+        if (messageDigest.length != this.params.getTreeDigestSize())
         {
             throw new IllegalArgumentException("size of messageDigest needs to be equal to size of digest");
         }
@@ -260,9 +261,9 @@ public class XMSS
             throw new NullPointerException("otsHashAddress == null");
         }
         /* (re)initialize WOTS+ instance */
-        wotsPlus.importKeys(wotsPlus.getWOTSPlusSecretKey(privateKey.getSecretKeySeed(), otsHashAddress), getPublicSeed());
+        this.wotsPlus.importKeys(this.wotsPlus.getWOTSPlusSecretKey(this.privateKey.getSecretKeySeed(), otsHashAddress), getPublicSeed());
         /* create WOTS+ signature */
-        return wotsPlus.sign(messageDigest, otsHashAddress);
+        return this.wotsPlus.sign(messageDigest, otsHashAddress);
     }
 
     /**
@@ -272,7 +273,7 @@ public class XMSS
      */
     public XMSSParameters getParams()
     {
-        return params;
+        return this.params;
     }
 
     /**
@@ -282,7 +283,7 @@ public class XMSS
      */
     protected WOTSPlus getWOTSPlus()
     {
-        return wotsPlus;
+        return this.wotsPlus;
     }
 
     /**
@@ -292,15 +293,15 @@ public class XMSS
      */
     public byte[] getRoot()
     {
-        return privateKey.getRoot();
+        return this.privateKey.getRoot();
     }
 
-    protected void setRoot(byte[] root)
+    protected void setRoot(final byte[] root)
     {
-        privateKey = new XMSSPrivateKeyParameters.Builder(params)
-            .withSecretKeySeed(privateKey.getSecretKeySeed()).withSecretKeyPRF(privateKey.getSecretKeyPRF())
-            .withPublicSeed(getPublicSeed()).withRoot(root).withBDSState(privateKey.getBDSState()).build();
-        publicKey = new XMSSPublicKeyParameters.Builder(params).withRoot(root).withPublicSeed(getPublicSeed())
+        this.privateKey = new XMSSPrivateKeyParameters.Builder(this.params)
+            .withSecretKeySeed(this.privateKey.getSecretKeySeed()).withSecretKeyPRF(this.privateKey.getSecretKeyPRF())
+            .withPublicSeed(getPublicSeed()).withRoot(root).withBDSState(this.privateKey.getBDSState()).build();
+        this.publicKey = new XMSSPublicKeyParameters.Builder(this.params).withRoot(root).withPublicSeed(getPublicSeed())
             .build();
     }
 
@@ -311,15 +312,15 @@ public class XMSS
      */
     public int getIndex()
     {
-        return privateKey.getIndex();
+        return this.privateKey.getIndex();
     }
 
-    protected void setIndex(int index)
+    protected void setIndex(final int index)
     {
-        privateKey = new XMSSPrivateKeyParameters.Builder(params)
-            .withSecretKeySeed(privateKey.getSecretKeySeed()).withSecretKeyPRF(privateKey.getSecretKeyPRF())
-            .withPublicSeed(privateKey.getPublicSeed()).withRoot(privateKey.getRoot())
-            .withBDSState(privateKey.getBDSState()).build();
+        this.privateKey = new XMSSPrivateKeyParameters.Builder(this.params)
+            .withSecretKeySeed(this.privateKey.getSecretKeySeed()).withSecretKeyPRF(this.privateKey.getSecretKeyPRF())
+            .withPublicSeed(this.privateKey.getPublicSeed()).withRoot(this.privateKey.getRoot())
+            .withBDSState(this.privateKey.getBDSState()).build();
     }
 
     /**
@@ -329,22 +330,22 @@ public class XMSS
      */
     public byte[] getPublicSeed()
     {
-        return privateKey.getPublicSeed();
+        return this.privateKey.getPublicSeed();
     }
 
-    protected void setPublicSeed(byte[] publicSeed)
+    protected void setPublicSeed(final byte[] publicSeed)
     {
-        privateKey = new XMSSPrivateKeyParameters.Builder(params)
-            .withSecretKeySeed(privateKey.getSecretKeySeed()).withSecretKeyPRF(privateKey.getSecretKeyPRF())
-            .withPublicSeed(publicSeed).withRoot(getRoot()).withBDSState(privateKey.getBDSState()).build();
-        publicKey = new XMSSPublicKeyParameters.Builder(params).withRoot(getRoot()).withPublicSeed(publicSeed)
+        this.privateKey = new XMSSPrivateKeyParameters.Builder(this.params)
+            .withSecretKeySeed(this.privateKey.getSecretKeySeed()).withSecretKeyPRF(this.privateKey.getSecretKeyPRF())
+            .withPublicSeed(publicSeed).withRoot(getRoot()).withBDSState(this.privateKey.getBDSState()).build();
+        this.publicKey = new XMSSPublicKeyParameters.Builder(this.params).withRoot(getRoot()).withPublicSeed(publicSeed)
             .build();
 
-        wotsPlus.importKeys(new byte[params.getTreeDigestSize()], publicSeed);
+        this.wotsPlus.importKeys(new byte[this.params.getTreeDigestSize()], publicSeed);
     }
 
     public XMSSPrivateKeyParameters getPrivateKey()
     {
-        return privateKey;
+        return this.privateKey;
     }
 }

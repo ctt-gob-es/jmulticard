@@ -8,7 +8,7 @@ import java.math.BigInteger;
 public class ECPrivateKeySpec
     extends ECKeySpec
 {
-    private BigInteger    d;
+    private final BigInteger    d;
 
     /**
      * base constructor
@@ -17,8 +17,8 @@ public class ECPrivateKeySpec
      * @param spec the domain parameters for the curve being used.
      */
     public ECPrivateKeySpec(
-        BigInteger      d,
-        ECParameterSpec spec)
+        final BigInteger      d,
+        final ECParameterSpec spec)
     {
         super(spec);
 
@@ -26,10 +26,10 @@ public class ECPrivateKeySpec
     }
 
     /**
-     * return the private number D
+     * @return the private number D
      */
     public BigInteger getD()
     {
-        return d;
+        return this.d;
     }
 }

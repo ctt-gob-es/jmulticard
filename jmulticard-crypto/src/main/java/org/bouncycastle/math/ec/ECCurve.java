@@ -45,26 +45,26 @@ public abstract class ECCurve
         protected ECEndomorphism endomorphism;
         protected ECMultiplier multiplier;
 
-        Config(int coord, ECEndomorphism endomorphism, ECMultiplier multiplier)
+        Config(final int coord, final ECEndomorphism endomorphism, final ECMultiplier multiplier)
         {
             this.coord = coord;
             this.endomorphism = endomorphism;
             this.multiplier = multiplier;
         }
 
-        public Config setCoordinateSystem(int coord)
+        public Config setCoordinateSystem(final int coord)
         {
             this.coord = coord;
             return this;
         }
 
-        public Config setEndomorphism(ECEndomorphism endomorphism)
+        public Config setEndomorphism(final ECEndomorphism endomorphism)
         {
             this.endomorphism = endomorphism;
             return this;
         }
 
-        public Config setMultiplier(ECMultiplier multiplier)
+        public Config setMultiplier(final ECMultiplier multiplier)
         {
             this.multiplier = multiplier;
             return this;
@@ -72,12 +72,12 @@ public abstract class ECCurve
 
         public ECCurve create()
         {
-            if (!supportsCoordinateSystem(coord))
+            if (!supportsCoordinateSystem(this.coord))
             {
                 throw new IllegalStateException("unsupported coordinate system");
             }
 
-            ECCurve c = cloneCurve();
+            final ECCurve c = cloneCurve();
             if (c == ECCurve.this)
             {
                 throw new IllegalStateException("implementation returned current curve");
@@ -86,9 +86,9 @@ public abstract class ECCurve
             // NOTE: Synchronization added to keep FindBugs™ happy
             synchronized (c)
             {
-                c.coord = coord;
-                c.endomorphism = endomorphism;
-                c.multiplier = multiplier;
+                c.coord = this.coord;
+                c.endomorphism = this.endomorphism;
+                c.multiplier = this.multiplier;
             }
 
             return c;
@@ -103,7 +103,7 @@ public abstract class ECCurve
     protected ECEndomorphism endomorphism = null;
     protected ECMultiplier multiplier = null;
 
-    protected ECCurve(FiniteField field)
+    protected ECCurve(final FiniteField field)
     {
         this.field = field;
     }
@@ -123,9 +123,9 @@ public abstract class ECCurve
         return new Config(this.coord, this.endomorphism, this.multiplier);
     }
 
-    public ECPoint validatePoint(BigInteger x, BigInteger y)
+    public ECPoint validatePoint(final BigInteger x, final BigInteger y)
     {
-        ECPoint p = createPoint(x, y);
+        final ECPoint p = createPoint(x, y);
         if (!p.isValid())
         {
             throw new IllegalArgumentException("Invalid point coordinates");
@@ -133,7 +133,7 @@ public abstract class ECCurve
         return p;
     }
 
-    public ECPoint createPoint(BigInteger x, BigInteger y)
+    public ECPoint createPoint(final BigInteger x, final BigInteger y)
     {
         return createRawPoint(fromBigInteger(x), fromBigInteger(y));
     }
@@ -146,20 +146,20 @@ public abstract class ECCurve
 
     protected ECMultiplier createDefaultMultiplier()
     {
-        if (endomorphism instanceof GLVEndomorphism)
+        if (this.endomorphism instanceof GLVEndomorphism)
         {
-            return new GLVMultiplier(this, (GLVEndomorphism)endomorphism);
+            return new GLVMultiplier(this, (GLVEndomorphism)this.endomorphism);
         }
 
         return new WNafL2RMultiplier();
     }
 
-    public boolean supportsCoordinateSystem(int coord)
+    public boolean supportsCoordinateSystem(final int coord)
     {
         return coord == COORD_AFFINE;
     }
 
-    public PreCompInfo getPreCompInfo(ECPoint point, String name)
+    public PreCompInfo getPreCompInfo(final ECPoint point, final String name)
     {
         checkPoint(point);
 
@@ -184,15 +184,16 @@ public abstract class ECCurve
      * Compute a <code>PreCompInfo</code> for a point on this curve, under a given name. Used by
      * <code>ECMultiplier</code>s to save the precomputation for this <code>ECPoint</code> for use
      * by subsequent multiplication.
-     * 
+     *
      * @param point
      *            The <code>ECPoint</code> to store precomputations for.
      * @param name
      *            A <code>String</code> used to index precomputations of different types.
      * @param callback
      *            Called to calculate the <code>PreCompInfo</code>.
+     * @return Precompiled info.
      */
-    public PreCompInfo precompute(ECPoint point, String name, PreCompCallback callback)
+    public PreCompInfo precompute(final ECPoint point, final String name, final PreCompCallback callback)
     {
         checkPoint(point);
 
@@ -208,8 +209,8 @@ public abstract class ECCurve
 
         synchronized (table)
         {
-            PreCompInfo existing = (PreCompInfo)table.get(name);
-            PreCompInfo result = callback.precompute(existing);
+            final PreCompInfo existing = (PreCompInfo)table.get(name);
+            final PreCompInfo result = callback.precompute(existing);
 
             if (result != existing)
             {
@@ -242,12 +243,12 @@ public abstract class ECCurve
      * coordinates reflect those of the equivalent point in an affine coordinate system. Where more
      * than one point is to be normalized, this method will generally be more efficient than
      * normalizing each point separately.
-     * 
+     *
      * @param points
      *            An array of points that will be updated in place with their normalized versions,
      *            where necessary
      */
-    public void normalizeAll(ECPoint[] points)
+    public void normalizeAll(final ECPoint[] points)
     {
         normalizeAll(points, 0, points.length, null);
     }
@@ -259,7 +260,7 @@ public abstract class ECCurve
      * normalizing each point separately. An (optional) z-scaling factor can be applied; effectively
      * each z coordinate is scaled by this value prior to normalization (but only one
      * actual multiplication is needed).
-     * 
+     *
      * @param points
      *            An array of points that will be updated in place with their normalized versions,
      *            where necessary
@@ -270,11 +271,11 @@ public abstract class ECCurve
      * @param iso
      *            The (optional) z-scaling factor - can be null
      */
-    public void normalizeAll(ECPoint[] points, int off, int len, ECFieldElement iso)
+    public void normalizeAll(final ECPoint[] points, final int off, final int len, final ECFieldElement iso)
     {
         checkPoints(points, off, len);
 
-        switch (this.getCoordinateSystem())
+        switch (getCoordinateSystem())
         {
         case ECCurve.COORD_AFFINE:
         case ECCurve.COORD_LAMBDA_AFFINE:
@@ -290,12 +291,12 @@ public abstract class ECCurve
         /*
          * Figure out which of the points actually need to be normalized
          */
-        ECFieldElement[] zs = new ECFieldElement[len];
-        int[] indices = new int[len];
+        final ECFieldElement[] zs = new ECFieldElement[len];
+        final int[] indices = new int[len];
         int count = 0;
         for (int i = 0; i < len; ++i)
         {
-            ECPoint p = points[off + i];
+            final ECPoint p = points[off + i];
             if (null != p && (iso != null || !p.isNormalized()))
             {
                 zs[count] = p.getZCoord(0);
@@ -312,7 +313,7 @@ public abstract class ECCurve
 
         for (int j = 0; j < count; ++j)
         {
-            int index = indices[j];
+            final int index = indices[j];
             points[index] = points[index].normalize(zs[j]);
         }
     }
@@ -321,45 +322,46 @@ public abstract class ECCurve
 
     public FiniteField getField()
     {
-        return field;
+        return this.field;
     }
 
     public ECFieldElement getA()
     {
-        return a;
+        return this.a;
     }
 
     public ECFieldElement getB()
     {
-        return b;
+        return this.b;
     }
 
     public BigInteger getOrder()
     {
-        return order;
+        return this.order;
     }
 
     public BigInteger getCofactor()
     {
-        return cofactor;
+        return this.cofactor;
     }
 
     public int getCoordinateSystem()
     {
-        return coord;
+        return this.coord;
     }
 
     protected abstract ECPoint decompressPoint(int yTilde, BigInteger X1);
 
     public ECEndomorphism getEndomorphism()
     {
-        return endomorphism;
+        return this.endomorphism;
     }
 
     /**
      * Sets the default <code>ECMultiplier</code>, unless already set.
-     * 
+     *
      * We avoid synchronizing for performance reasons, so there is no uniqueness guarantee.
+     * @return EC Multiplier.
      */
     public ECMultiplier getMultiplier()
     {
@@ -374,14 +376,15 @@ public abstract class ECCurve
      * Decode a point on this curve from its ASN.1 encoding. The different
      * encodings are taken account of, including point compression for
      * <code>F<sub>p</sub></code> (X9.62 s 4.2.1 pg 17).
+     * @param encoded curve encoded.
      * @return The decoded point.
      */
-    public ECPoint decodePoint(byte[] encoded)
+    public ECPoint decodePoint(final byte[] encoded)
     {
         ECPoint p = null;
-        int expectedLength = (getFieldSize() + 7) / 8;
+        final int expectedLength = (getFieldSize() + 7) / 8;
 
-        byte type = encoded[0];
+        final byte type = encoded[0];
         switch (type)
         {
         case 0x00: // infinity
@@ -397,13 +400,13 @@ public abstract class ECCurve
         case 0x02: // compressed
         case 0x03: // compressed
         {
-            if (encoded.length != (expectedLength + 1))
+            if (encoded.length != expectedLength + 1)
             {
                 throw new IllegalArgumentException("Incorrect length for compressed encoding");
             }
 
-            int yTilde = type & 1;
-            BigInteger X = BigIntegers.fromUnsignedByteArray(encoded, 1, expectedLength);
+            final int yTilde = type & 1;
+            final BigInteger X = BigIntegers.fromUnsignedByteArray(encoded, 1, expectedLength);
 
             p = decompressPoint(yTilde, X);
             if (!p.implIsValid(true, true))
@@ -415,13 +418,13 @@ public abstract class ECCurve
         }
         case 0x04: // uncompressed
         {
-            if (encoded.length != (2 * expectedLength + 1))
+            if (encoded.length != 2 * expectedLength + 1)
             {
                 throw new IllegalArgumentException("Incorrect length for uncompressed encoding");
             }
 
-            BigInteger X = BigIntegers.fromUnsignedByteArray(encoded, 1, expectedLength);
-            BigInteger Y = BigIntegers.fromUnsignedByteArray(encoded, 1 + expectedLength, expectedLength);
+            final BigInteger X = BigIntegers.fromUnsignedByteArray(encoded, 1, expectedLength);
+            final BigInteger Y = BigIntegers.fromUnsignedByteArray(encoded, 1 + expectedLength, expectedLength);
 
             p = validatePoint(X, Y);
             break;
@@ -429,13 +432,13 @@ public abstract class ECCurve
         case 0x06: // hybrid
         case 0x07: // hybrid
         {
-            if (encoded.length != (2 * expectedLength + 1))
+            if (encoded.length != 2 * expectedLength + 1)
             {
                 throw new IllegalArgumentException("Incorrect length for hybrid encoding");
             }
 
-            BigInteger X = BigIntegers.fromUnsignedByteArray(encoded, 1, expectedLength);
-            BigInteger Y = BigIntegers.fromUnsignedByteArray(encoded, 1 + expectedLength, expectedLength);
+            final BigInteger X = BigIntegers.fromUnsignedByteArray(encoded, 1, expectedLength);
+            final BigInteger Y = BigIntegers.fromUnsignedByteArray(encoded, 1 + expectedLength, expectedLength);
 
             if (Y.testBit(0) != (type == 0x07))
             {
@@ -460,22 +463,26 @@ public abstract class ECCurve
     /**
      * Create a cache-safe lookup table for the specified sequence of points. All the points MUST
      * belong to this {@link ECCurve} instance, and MUST already be normalized.
+     * @param points Points.
+     * @param off Offset.
+     * @param len Length.
+     * @return Table.
      */
-    public ECLookupTable createCacheSafeLookupTable(final ECPoint[] points, int off, final int len)
+    public ECLookupTable createCacheSafeLookupTable(final ECPoint[] points, final int off, final int len)
     {
-        final int FE_BYTES = (getFieldSize() + 7) >>> 3;
+        final int FE_BYTES = getFieldSize() + 7 >>> 3;
 
         final byte[] table = new byte[len * FE_BYTES * 2];
         {
             int pos = 0;
             for (int i = 0; i < len; ++i)
             {
-                ECPoint p = points[off + i];
-                byte[] px = p.getRawXCoord().toBigInteger().toByteArray();
-                byte[] py = p.getRawYCoord().toBigInteger().toByteArray();
+                final ECPoint p = points[off + i];
+                final byte[] px = p.getRawXCoord().toBigInteger().toByteArray();
+                final byte[] py = p.getRawYCoord().toBigInteger().toByteArray();
 
-                int pxStart = px.length > FE_BYTES ? 1 : 0, pxLen = px.length - pxStart;
-                int pyStart = py.length > FE_BYTES ? 1 : 0, pyLen = py.length - pyStart;
+                final int pxStart = px.length > FE_BYTES ? 1 : 0, pxLen = px.length - pxStart;
+                final int pyStart = py.length > FE_BYTES ? 1 : 0, pyLen = py.length - pyStart;
 
                 System.arraycopy(px, pxStart, table, pos + FE_BYTES - pxLen, pxLen); pos += FE_BYTES;
                 System.arraycopy(py, pyStart, table, pos + FE_BYTES - pyLen, pyLen); pos += FE_BYTES;
@@ -491,14 +498,14 @@ public abstract class ECCurve
             }
 
             @Override
-			public ECPoint lookup(int index)
+			public ECPoint lookup(final int index)
             {
-                byte[] x = new byte[FE_BYTES], y = new byte[FE_BYTES];
+                final byte[] x = new byte[FE_BYTES], y = new byte[FE_BYTES];
                 int pos = 0;
 
                 for (int i = 0; i < len; ++i)
                 {
-                    int MASK = ((i ^ index) - 1) >> 31;
+                    final int MASK = (i ^ index) - 1 >> 31;
 
                     for (int j = 0; j < FE_BYTES; ++j)
                     {
@@ -506,17 +513,17 @@ public abstract class ECCurve
                         y[j] ^= table[pos + FE_BYTES + j] & MASK;
                     }
 
-                    pos += (FE_BYTES * 2);
+                    pos += FE_BYTES * 2;
                 }
 
                 return createPoint(x, y);
             }
 
             @Override
-			public ECPoint lookupVar(int index)
+			public ECPoint lookupVar(final int index)
             {
-                byte[] x = new byte[FE_BYTES], y = new byte[FE_BYTES];
-                int pos = index * FE_BYTES * 2;
+                final byte[] x = new byte[FE_BYTES], y = new byte[FE_BYTES];
+                final int pos = index * FE_BYTES * 2;
 
                 for (int j = 0; j < FE_BYTES; ++j)
                 {
@@ -527,40 +534,40 @@ public abstract class ECCurve
                 return createPoint(x, y);
             }
 
-            private ECPoint createPoint(byte[] x, byte[] y)
+            private ECPoint createPoint(final byte[] x, final byte[] y)
             {
                 return createRawPoint(fromBigInteger(new BigInteger(1, x)), fromBigInteger(new BigInteger(1, y)));
             }
         };
     }
 
-    protected void checkPoint(ECPoint point)
+    protected void checkPoint(final ECPoint point)
     {
-        if (null == point || (this != point.getCurve()))
+        if (null == point || this != point.getCurve())
         {
             throw new IllegalArgumentException("'point' must be non-null and on this curve");
         }
     }
 
-    protected void checkPoints(ECPoint[] points)
+    protected void checkPoints(final ECPoint[] points)
     {
         checkPoints(points, 0, points.length);
     }
 
-    protected void checkPoints(ECPoint[] points, int off, int len)
+    protected void checkPoints(final ECPoint[] points, final int off, final int len)
     {
         if (points == null)
         {
             throw new IllegalArgumentException("'points' cannot be null");
         }
-        if (off < 0 || len < 0 || (off > (points.length - len)))
+        if (off < 0 || len < 0 || off > points.length - len)
         {
             throw new IllegalArgumentException("invalid range specified for 'points'");
         }
 
         for (int i = 0; i < len; ++i)
         {
-            ECPoint point = points[off + i];
+            final ECPoint point = points[off + i];
             if (null != point && this != point.getCurve())
             {
                 throw new IllegalArgumentException("'points' entries must be null or on this curve");
@@ -568,23 +575,23 @@ public abstract class ECCurve
         }
     }
 
-    public boolean equals(ECCurve other)
+    public boolean equals(final ECCurve other)
     {
         return this == other
-            || (null != other
+            || null != other
                 && getField().equals(other.getField())
                 && getA().toBigInteger().equals(other.getA().toBigInteger())
-                && getB().toBigInteger().equals(other.getB().toBigInteger()));
+                && getB().toBigInteger().equals(other.getB().toBigInteger());
     }
 
     @Override
-	public boolean equals(Object obj) 
+	public boolean equals(final Object obj)
     {
-        return this == obj || (obj instanceof ECCurve && equals((ECCurve)obj));
+        return this == obj || obj instanceof ECCurve && equals((ECCurve)obj);
     }
 
     @Override
-	public int hashCode() 
+	public int hashCode()
     {
         return getField().hashCode()
             ^ Integers.rotateLeft(getA().toBigInteger().hashCode(), 8)
@@ -593,48 +600,48 @@ public abstract class ECCurve
 
     public static abstract class AbstractFp extends ECCurve
     {
-        protected AbstractFp(BigInteger q)
+        protected AbstractFp(final BigInteger q)
         {
             super(FiniteFields.getPrimeField(q));
         }
 
         @Override
-		public boolean isValidFieldElement(BigInteger x)
+		public boolean isValidFieldElement(final BigInteger x)
         {
-            return x != null && x.signum() >= 0 && x.compareTo(this.getField().getCharacteristic()) < 0;
+            return x != null && x.signum() >= 0 && x.compareTo(getField().getCharacteristic()) < 0;
         }
 
         @Override
-		public ECFieldElement randomFieldElement(SecureRandom r)
+		public ECFieldElement randomFieldElement(final SecureRandom r)
         {
             /*
              * NOTE: BigInteger comparisons in the rejection sampling are not constant-time, so we
              * use the product of two independent elements to mitigate side-channels.
              */
-            BigInteger p = getField().getCharacteristic();
-            ECFieldElement fe1 = fromBigInteger(implRandomFieldElement(r, p));
-            ECFieldElement fe2 = fromBigInteger(implRandomFieldElement(r, p));
+            final BigInteger p = getField().getCharacteristic();
+            final ECFieldElement fe1 = fromBigInteger(implRandomFieldElement(r, p));
+            final ECFieldElement fe2 = fromBigInteger(implRandomFieldElement(r, p));
             return fe1.multiply(fe2);
         }
 
         @Override
-		public ECFieldElement randomFieldElementMult(SecureRandom r)
+		public ECFieldElement randomFieldElementMult(final SecureRandom r)
         {
             /*
              * NOTE: BigInteger comparisons in the rejection sampling are not constant-time, so we
              * use the product of two independent elements to mitigate side-channels.
              */
-            BigInteger p = getField().getCharacteristic();
-            ECFieldElement fe1 = fromBigInteger(implRandomFieldElementMult(r, p));
-            ECFieldElement fe2 = fromBigInteger(implRandomFieldElementMult(r, p));
+            final BigInteger p = getField().getCharacteristic();
+            final ECFieldElement fe1 = fromBigInteger(implRandomFieldElementMult(r, p));
+            final ECFieldElement fe2 = fromBigInteger(implRandomFieldElementMult(r, p));
             return fe1.multiply(fe2);
         }
 
         @Override
-		protected ECPoint decompressPoint(int yTilde, BigInteger X1)
+		protected ECPoint decompressPoint(final int yTilde, final BigInteger X1)
         {
-            ECFieldElement x = this.fromBigInteger(X1);
-            ECFieldElement rhs = x.square().add(this.a).multiply(x).add(this.b);
+            final ECFieldElement x = fromBigInteger(X1);
+            final ECFieldElement rhs = x.square().add(this.a).multiply(x).add(this.b);
             ECFieldElement y = rhs.sqrt();
 
             /*
@@ -654,7 +661,7 @@ public abstract class ECCurve
             return this.createRawPoint(x, y);
         }
 
-        private static BigInteger implRandomFieldElement(SecureRandom r, BigInteger p)
+        private static BigInteger implRandomFieldElement(final SecureRandom r, final BigInteger p)
         {
             BigInteger x;
             do
@@ -665,7 +672,7 @@ public abstract class ECCurve
             return x;
         }
 
-        private static BigInteger implRandomFieldElementMult(SecureRandom r, BigInteger p)
+        private static BigInteger implRandomFieldElementMult(final SecureRandom r, final BigInteger p)
         {
             BigInteger x;
             do
@@ -683,27 +690,33 @@ public abstract class ECCurve
     public static class Fp extends AbstractFp
     {
         private static final int FP_DEFAULT_COORDS = ECCurve.COORD_JACOBIAN_MODIFIED;
-        private static final Set<BigInteger> knownQs = Collections.synchronizedSet(new HashSet<BigInteger>());
+        private static final Set<BigInteger> knownQs = Collections.synchronizedSet(new HashSet<>());
         private static final BigIntegers.Cache validatedQs = new BigIntegers.Cache();
 
         BigInteger q, r;
         ECPoint.Fp infinity;
 
         /**
+         * @param q Prime.
+         * @param a The coefficient <code>a</code> in the Weierstrass equation
+         * for non-supersingular elliptic curves over
+         * <code>F<sub>2<sup>m</sup></sub></code>.
+         * @param b The coefficient <code>b</code> in the Weierstrass equation
+         * for non-supersingular elliptic curves over
          * @deprecated use constructor taking order/cofactor
          */
         @Deprecated
-		public Fp(BigInteger q, BigInteger a, BigInteger b)
+		public Fp(final BigInteger q, final BigInteger a, final BigInteger b)
         {
             this(q, a, b, null, null);
         }
 
-        public Fp(BigInteger q, BigInteger a, BigInteger b, BigInteger order, BigInteger cofactor)
+        public Fp(final BigInteger q, final BigInteger a, final BigInteger b, final BigInteger order, final BigInteger cofactor)
         {
             this(q, a, b, order, cofactor, false);
         }
 
-        public Fp(BigInteger q, BigInteger a, BigInteger b, BigInteger order, BigInteger cofactor, boolean isInternal)
+        public Fp(final BigInteger q, final BigInteger a, final BigInteger b, final BigInteger order, final BigInteger cofactor, final boolean isInternal)
         {
             super(q);
 
@@ -718,10 +731,10 @@ public abstract class ECCurve
             }
             else
             {
-                int maxBitLength = Properties.asInteger("org.bouncycastle.ec.fp_max_size", 1042); // 2 * 521
-                int certainty = Properties.asInteger("org.bouncycastle.ec.fp_certainty", 100);
+                final int maxBitLength = Properties.asInteger("org.bouncycastle.ec.fp_max_size", 1042); // 2 * 521
+                final int certainty = Properties.asInteger("org.bouncycastle.ec.fp_certainty", 100);
 
-                int qBitLength = q.bitLength();
+                final int qBitLength = q.bitLength();
                 if (maxBitLength < qBitLength)
                 {
                     throw new IllegalArgumentException("Fp q value out of range");
@@ -748,7 +761,7 @@ public abstract class ECCurve
             this.coord = FP_DEFAULT_COORDS;
         }
 
-        protected Fp(BigInteger q, BigInteger r, ECFieldElement a, ECFieldElement b, BigInteger order, BigInteger cofactor)
+        protected Fp(final BigInteger q, final BigInteger r, final ECFieldElement a, final ECFieldElement b, final BigInteger order, final BigInteger cofactor)
         {
             super(q);
 
@@ -770,7 +783,7 @@ public abstract class ECCurve
         }
 
         @Override
-		public boolean supportsCoordinateSystem(int coord)
+		public boolean supportsCoordinateSystem(final int coord)
         {
             switch (coord)
             {
@@ -786,37 +799,37 @@ public abstract class ECCurve
 
         public BigInteger getQ()
         {
-            return q;
+            return this.q;
         }
 
         @Override
 		public int getFieldSize()
         {
-            return q.bitLength();
+            return this.q.bitLength();
         }
 
         @Override
-		public ECFieldElement fromBigInteger(BigInteger x)
+		public ECFieldElement fromBigInteger(final BigInteger x)
         {
             return new ECFieldElement.Fp(this.q, this.r, x);
         }
 
         @Override
-		protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y)
+		protected ECPoint createRawPoint(final ECFieldElement x, final ECFieldElement y)
         {
             return new ECPoint.Fp(this, x, y);
         }
 
         @Override
-		protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
+		protected ECPoint createRawPoint(final ECFieldElement x, final ECFieldElement y, final ECFieldElement[] zs)
         {
             return new ECPoint.Fp(this, x, y, zs);
         }
 
         @Override
-		public ECPoint importPoint(ECPoint p)
+		public ECPoint importPoint(final ECPoint p)
         {
-            if (this != p.getCurve() && this.getCoordinateSystem() == ECCurve.COORD_JACOBIAN && !p.isInfinity())
+            if (this != p.getCurve() && getCoordinateSystem() == ECCurve.COORD_JACOBIAN && !p.isInfinity())
             {
                 switch (p.getCurve().getCoordinateSystem())
                 {
@@ -838,13 +851,13 @@ public abstract class ECCurve
         @Override
 		public ECPoint getInfinity()
         {
-            return infinity;
+            return this.infinity;
         }
     }
 
     public static abstract class AbstractF2m extends ECCurve
     {
-        public static BigInteger inverse(int m, int[] ks, BigInteger x)
+        public static BigInteger inverse(final int m, final int[] ks, final BigInteger x)
         {
             return new LongArray(x).modInverse(m, ks).toBigInteger();
         }
@@ -856,7 +869,7 @@ public abstract class ECCurve
          */
         private BigInteger[] si = null;
 
-        private static FiniteField buildField(int m, int k1, int k2, int k3)
+        private static FiniteField buildField(final int m, final int k1, final int k2, final int k3)
         {
             if (k1 == 0)
             {
@@ -886,17 +899,18 @@ public abstract class ECCurve
             return FiniteFields.getBinaryExtensionField(new int[]{ 0, k1, k2, k3, m });
         }
 
-        protected AbstractF2m(int m, int k1, int k2, int k3)
+        protected AbstractF2m(final int m, final int k1, final int k2, final int k3)
         {
             super(buildField(m, k1, k2, k3));
         }
 
         @Override
-		public ECPoint createPoint(BigInteger x, BigInteger y)
+		public ECPoint createPoint(final BigInteger x, final BigInteger y)
         {
-            ECFieldElement X = this.fromBigInteger(x), Y = this.fromBigInteger(y);
+            final ECFieldElement X = fromBigInteger(x);
+			ECFieldElement Y = fromBigInteger(y);
 
-            int coord = this.getCoordinateSystem();
+            final int coord = getCoordinateSystem();
 
             switch (coord)
             {
@@ -905,7 +919,7 @@ public abstract class ECCurve
             {
                 if (X.isZero())
                 {
-                    if (!Y.square().equals(this.getB()))
+                    if (!Y.square().equals(getB()))
                     {
                         throw new IllegalArgumentException();
                     }
@@ -938,34 +952,34 @@ public abstract class ECCurve
         }
 
         @Override
-		public boolean isValidFieldElement(BigInteger x)
+		public boolean isValidFieldElement(final BigInteger x)
         {
-            return x != null && x.signum() >= 0 && x.bitLength() <= this.getFieldSize();
+            return x != null && x.signum() >= 0 && x.bitLength() <= getFieldSize();
         }
 
         @Override
-		public ECFieldElement randomFieldElement(SecureRandom r)
+		public ECFieldElement randomFieldElement(final SecureRandom r)
         {
-            int m = getFieldSize();
+            final int m = getFieldSize();
             return fromBigInteger(BigIntegers.createRandomBigInteger(m, r));
         }
 
         @Override
-		public ECFieldElement randomFieldElementMult(SecureRandom r)
+		public ECFieldElement randomFieldElementMult(final SecureRandom r)
         {
             /*
              * NOTE: BigInteger comparisons in the rejection sampling are not constant-time, so we
              * use the product of two independent elements to mitigate side-channels.
              */
-            int m = getFieldSize();
-            ECFieldElement fe1 = fromBigInteger(implRandomFieldElementMult(r, m));
-            ECFieldElement fe2 = fromBigInteger(implRandomFieldElementMult(r, m));
+            final int m = getFieldSize();
+            final ECFieldElement fe1 = fromBigInteger(implRandomFieldElementMult(r, m));
+            final ECFieldElement fe2 = fromBigInteger(implRandomFieldElementMult(r, m));
             return fe1.multiply(fe2);
         }
 
         /**
          * Decompresses a compressed point P = (xp, yp) (X9.62 s 4.2.2).
-         * 
+         *
          * @param yTilde
          *            ~yp, an indication bit for the decompression of yp.
          * @param X1
@@ -973,16 +987,17 @@ public abstract class ECCurve
          * @return the decompressed point.
          */
         @Override
-		protected ECPoint decompressPoint(int yTilde, BigInteger X1)
+		protected ECPoint decompressPoint(final int yTilde, final BigInteger X1)
         {
-            ECFieldElement x = this.fromBigInteger(X1), y = null;
+            final ECFieldElement x = fromBigInteger(X1);
+			ECFieldElement y = null;
             if (x.isZero())
             {
-                y = this.getB().sqrt();
+                y = getB().sqrt();
             }
             else
-            { 
-                ECFieldElement beta = x.square().invert().multiply(this.getB()).add(this.getA()).add(x);
+            {
+                final ECFieldElement beta = x.square().invert().multiply(getB()).add(getA()).add(x);
                 ECFieldElement z = solveQuadraticEquation(beta);
                 if (z != null)
                 {
@@ -991,7 +1006,7 @@ public abstract class ECCurve
                         z = z.addOne();
                     }
 
-                    switch (this.getCoordinateSystem())
+                    switch (getCoordinateSystem())
                     {
                     case ECCurve.COORD_LAMBDA_AFFINE:
                     case ECCurve.COORD_LAMBDA_PROJECTIVE:
@@ -1019,28 +1034,28 @@ public abstract class ECCurve
         /**
          * Solves a quadratic equation <code>z<sup>2</sup> + z = beta</code>(X9.62
          * D.1.6) The other solution is <code>z + 1</code>.
-         * 
+         *
          * @param beta
          *            The value to solve the quadratic equation for.
          * @return the solution for <code>z<sup>2</sup> + z = beta</code> or
          *         <code>null</code> if no solution exists.
          */
-        protected ECFieldElement solveQuadraticEquation(ECFieldElement beta)
+        protected ECFieldElement solveQuadraticEquation(final ECFieldElement beta)
         {
-            ECFieldElement.AbstractF2m betaF2m = (ECFieldElement.AbstractF2m)beta;
+            final ECFieldElement.AbstractF2m betaF2m = (ECFieldElement.AbstractF2m)beta;
 
-            boolean fastTrace = betaF2m.hasFastTrace();
+            final boolean fastTrace = betaF2m.hasFastTrace();
             if (fastTrace && 0 != betaF2m.trace())
             {
                 return null;
             }
 
-            int m = this.getFieldSize();
+            final int m = getFieldSize();
 
-            // For odd m, use the half-trace 
+            // For odd m, use the half-trace
             if (0 != (m & 1))
             {
-                ECFieldElement r = betaF2m.halfTrace();
+                final ECFieldElement r = betaF2m.halfTrace();
                 if (fastTrace || r.square().add(r).add(beta).isZero())
                 {
                     return r;
@@ -1053,17 +1068,18 @@ public abstract class ECCurve
                 return beta;
             }
 
-            ECFieldElement gamma, z, zeroElement = this.fromBigInteger(ECConstants.ZERO);
+            ECFieldElement gamma, z;
+			final ECFieldElement zeroElement = fromBigInteger(ECConstants.ZERO);
 
-            Random rand = new Random();
+            final Random rand = new Random();
             do
             {
-                ECFieldElement t = this.fromBigInteger(new BigInteger(m, rand));
+                final ECFieldElement t = fromBigInteger(new BigInteger(m, rand));
                 z = zeroElement;
                 ECFieldElement w = beta;
                 for (int i = 1; i < m; i++)
                 {
-                    ECFieldElement w2 = w.square();
+                    final ECFieldElement w2 = w.square();
                     z = z.square().add(w2.multiply(t));
                     w = w2.add(beta);
                 }
@@ -1085,11 +1101,11 @@ public abstract class ECCurve
          */
         synchronized BigInteger[] getSi()
         {
-            if (si == null)
+            if (this.si == null)
             {
-                si = Tnaf.getSi(this);
+                this.si = Tnaf.getSi(this);
             }
-            return si;
+            return this.si;
         }
 
         /**
@@ -1101,7 +1117,7 @@ public abstract class ECCurve
             return this.order != null && this.cofactor != null && this.b.isOne() && (this.a.isZero() || this.a.isOne());
         }
 
-        private static BigInteger implRandomFieldElementMult(SecureRandom r, int m)
+        private static BigInteger implRandomFieldElementMult(final SecureRandom r, final int m)
         {
             BigInteger x;
             do
@@ -1124,7 +1140,7 @@ public abstract class ECCurve
         /**
          * The exponent <code>m</code> of <code>F<sub>2<sup>m</sup></sub></code>.
          */
-        private int m;  // can't be final - JDK 1.1
+        private final int m;  // can't be final - JDK 1.1
 
         /**
          * TPB: The integer <code>k</code> where <code>x<sup>m</sup> +
@@ -1134,7 +1150,7 @@ public abstract class ECCurve
          * x<sup>k3</sup> + x<sup>k2</sup> + x<sup>k1</sup> + 1</code>
          * represents the reduction polynomial <code>f(z)</code>.<br>
          */
-        private int k1;  // can't be final - JDK 1.1
+        private final int k1;  // can't be final - JDK 1.1
 
         /**
          * TPB: Always set to <code>0</code><br>
@@ -1142,7 +1158,7 @@ public abstract class ECCurve
          * x<sup>k3</sup> + x<sup>k2</sup> + x<sup>k1</sup> + 1</code>
          * represents the reduction polynomial <code>f(z)</code>.<br>
          */
-        private int k2;  // can't be final - JDK 1.1
+        private final int k2;  // can't be final - JDK 1.1
 
         /**
          * TPB: Always set to <code>0</code><br>
@@ -1150,12 +1166,12 @@ public abstract class ECCurve
          * x<sup>k3</sup> + x<sup>k2</sup> + x<sup>k1</sup> + 1</code>
          * represents the reduction polynomial <code>f(z)</code>.<br>
          */
-        private int k3;  // can't be final - JDK 1.1
-        
+        private final int k3;  // can't be final - JDK 1.1
+
          /**
          * The point at infinity on this curve.
          */
-        private ECPoint.F2m infinity;  // can't be final - JDK 1.1
+        private final ECPoint.F2m infinity;  // can't be final - JDK 1.1
 
         /**
          * Constructor for Trinomial Polynomial Basis (TPB).
@@ -1174,10 +1190,10 @@ public abstract class ECCurve
          */
         @Deprecated
 		public F2m(
-            int m,
-            int k,
-            BigInteger a,
-            BigInteger b)
+            final int m,
+            final int k,
+            final BigInteger a,
+            final BigInteger b)
         {
             this(m, k, 0, 0, a, b, null, null);
         }
@@ -1200,12 +1216,12 @@ public abstract class ECCurve
          * <code>#E<sub>a</sub>(F<sub>2<sup>m</sup></sub>) = h * n</code>.
          */
         public F2m(
-            int m, 
-            int k, 
-            BigInteger a, 
-            BigInteger b,
-            BigInteger order,
-            BigInteger cofactor)
+            final int m,
+            final int k,
+            final BigInteger a,
+            final BigInteger b,
+            final BigInteger order,
+            final BigInteger cofactor)
         {
             this(m, k, 0, 0, a, b, order, cofactor);
         }
@@ -1233,12 +1249,12 @@ public abstract class ECCurve
          */
         @Deprecated
 		public F2m(
-            int m,
-            int k1,
-            int k2,
-            int k3,
-            BigInteger a,
-            BigInteger b)
+            final int m,
+            final int k1,
+            final int k2,
+            final int k3,
+            final BigInteger a,
+            final BigInteger b)
         {
             this(m, k1, k2, k3, a, b, null, null);
         }
@@ -1267,14 +1283,14 @@ public abstract class ECCurve
          * <code>#E<sub>a</sub>(F<sub>2<sup>m</sup></sub>) = h * n</code>.
          */
         public F2m(
-            int m, 
-            int k1, 
-            int k2, 
-            int k3,
-            BigInteger a, 
-            BigInteger b,
-            BigInteger order,
-            BigInteger cofactor)
+            final int m,
+            final int k1,
+            final int k2,
+            final int k3,
+            final BigInteger a,
+            final BigInteger b,
+            final BigInteger order,
+            final BigInteger cofactor)
         {
             super(m, k1, k2, k3);
 
@@ -1291,7 +1307,7 @@ public abstract class ECCurve
             this.coord = F2M_DEFAULT_COORDS;
         }
 
-        protected F2m(int m, int k1, int k2, int k3, ECFieldElement a, ECFieldElement b, BigInteger order, BigInteger cofactor)
+        protected F2m(final int m, final int k1, final int k2, final int k3, final ECFieldElement a, final ECFieldElement b, final BigInteger order, final BigInteger cofactor)
         {
             super(m, k1, k2, k3);
 
@@ -1315,7 +1331,7 @@ public abstract class ECCurve
         }
 
         @Override
-		public boolean supportsCoordinateSystem(int coord)
+		public boolean supportsCoordinateSystem(final int coord)
         {
             switch (coord)
             {
@@ -1342,23 +1358,23 @@ public abstract class ECCurve
         @Override
 		public int getFieldSize()
         {
-            return m;
+            return this.m;
         }
 
         @Override
-		public ECFieldElement fromBigInteger(BigInteger x)
+		public ECFieldElement fromBigInteger(final BigInteger x)
         {
             return new ECFieldElement.F2m(this.m, this.k1, this.k2, this.k3, x);
         }
 
         @Override
-		protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y)
+		protected ECPoint createRawPoint(final ECFieldElement x, final ECFieldElement y)
         {
             return new ECPoint.F2m(this, x, y);
         }
 
         @Override
-		protected ECPoint createRawPoint(ECFieldElement x, ECFieldElement y, ECFieldElement[] zs)
+		protected ECPoint createRawPoint(final ECFieldElement x, final ECFieldElement y, final ECFieldElement[] zs)
         {
             return new ECPoint.F2m(this, x, y, zs);
         }
@@ -1366,51 +1382,51 @@ public abstract class ECCurve
         @Override
 		public ECPoint getInfinity()
         {
-            return infinity;
+            return this.infinity;
         }
 
         public int getM()
         {
-            return m;
+            return this.m;
         }
 
         /**
          * Return true if curve uses a Trinomial basis.
-         * 
+         *
          * @return true if curve Trinomial, false otherwise.
          */
         public boolean isTrinomial()
         {
-            return k2 == 0 && k3 == 0;
+            return this.k2 == 0 && this.k3 == 0;
         }
-        
+
         public int getK1()
         {
-            return k1;
+            return this.k1;
         }
 
         public int getK2()
         {
-            return k2;
+            return this.k2;
         }
 
         public int getK3()
         {
-            return k3;
+            return this.k3;
         }
 
         @Override
-		public ECLookupTable createCacheSafeLookupTable(ECPoint[] points, int off, final int len)
+		public ECLookupTable createCacheSafeLookupTable(final ECPoint[] points, final int off, final int len)
         {
-            final int FE_LONGS = (m + 63) >>> 6;
-            final int[] ks = isTrinomial() ? new int[]{ k1 } : new int[]{ k1, k2, k3 }; 
+            final int FE_LONGS = this.m + 63 >>> 6;
+            final int[] ks = isTrinomial() ? new int[]{ this.k1 } : new int[]{ this.k1, this.k2, this.k3 };
 
             final long[] table = new long[len * FE_LONGS * 2];
             {
                 int pos = 0;
                 for (int i = 0; i < len; ++i)
                 {
-                    ECPoint p = points[off + i];
+                    final ECPoint p = points[off + i];
                     ((ECFieldElement.F2m)p.getRawXCoord()).x.copyTo(table, pos); pos += FE_LONGS;
                     ((ECFieldElement.F2m)p.getRawYCoord()).x.copyTo(table, pos); pos += FE_LONGS;
                 }
@@ -1425,14 +1441,14 @@ public abstract class ECCurve
                 }
 
                 @Override
-				public ECPoint lookup(int index)
+				public ECPoint lookup(final int index)
                 {
-                    long[] x = Nat.create64(FE_LONGS), y = Nat.create64(FE_LONGS);
+                    final long[] x = Nat.create64(FE_LONGS), y = Nat.create64(FE_LONGS);
                     int pos = 0;
 
                     for (int i = 0; i < len; ++i)
                     {
-                        long MASK = ((i ^ index) - 1) >> 31;
+                        final long MASK = (i ^ index) - 1 >> 31;
 
                         for (int j = 0; j < FE_LONGS; ++j)
                         {
@@ -1440,17 +1456,17 @@ public abstract class ECCurve
                             y[j] ^= table[pos + FE_LONGS + j] & MASK;
                         }
 
-                        pos += (FE_LONGS * 2);
+                        pos += FE_LONGS * 2;
                     }
 
                     return createPoint(x, y);
                 }
 
                 @Override
-				public ECPoint lookupVar(int index)
+				public ECPoint lookupVar(final int index)
                 {
-                    long[] x = Nat.create64(FE_LONGS), y = Nat.create64(FE_LONGS);
-                    int pos = index * FE_LONGS * 2;
+                    final long[] x = Nat.create64(FE_LONGS), y = Nat.create64(FE_LONGS);
+                    final int pos = index * FE_LONGS * 2;
 
                     for (int j = 0; j < FE_LONGS; ++j)
                     {
@@ -1461,17 +1477,17 @@ public abstract class ECCurve
                     return createPoint(x, y);
                 }
 
-                private ECPoint createPoint(long[] x, long[] y)
+                private ECPoint createPoint(final long[] x, final long[] y)
                 {
-                    ECFieldElement.F2m X = new ECFieldElement.F2m(m, ks, new LongArray(x));
-                    ECFieldElement.F2m Y = new ECFieldElement.F2m(m, ks, new LongArray(y));
+                    final ECFieldElement.F2m X = new ECFieldElement.F2m(F2m.this.m, ks, new LongArray(x));
+                    final ECFieldElement.F2m Y = new ECFieldElement.F2m(F2m.this.m, ks, new LongArray(y));
                     return createRawPoint(X, Y);
                 }
             };
         }
     }
 
-    private static int getNumberOfIterations(int bits, int certainty)
+    private static int getNumberOfIterations(final int bits, final int certainty)
     {
         /*
          * NOTE: We enforce a minimum 'certainty' of 100 for bits >= 1024 (else 80). Where the

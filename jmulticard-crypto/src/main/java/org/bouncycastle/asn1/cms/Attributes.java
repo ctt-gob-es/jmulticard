@@ -29,12 +29,12 @@ public class Attributes
 
     private Attributes(final ASN1Set set)
     {
-        attributes = set;
+        this.attributes = set;
     }
 
     public Attributes(final ASN1EncodableVector v)
     {
-        attributes = new DLSet(v);
+        this.attributes = new DLSet(v);
     }
 
     /**
@@ -48,6 +48,7 @@ public class Attributes
      * </ul>
      *
      * @param obj the object we want converted.
+     * @return Attribute.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static Attributes getInstance(final Object obj)
@@ -73,11 +74,11 @@ public class Attributes
 
     public Attribute[] getAttributes()
     {
-        final Attribute[] rv = new Attribute[attributes.size()];
+        final Attribute[] rv = new Attribute[this.attributes.size()];
 
         for (int i = 0; i != rv.length; i++)
         {
-            rv[i] = Attribute.getInstance(attributes.getObjectAt(i));
+            rv[i] = Attribute.getInstance(this.attributes.getObjectAt(i));
         }
 
         return rv;
@@ -89,6 +90,6 @@ public class Attributes
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        return attributes;
+        return this.attributes;
     }
 }

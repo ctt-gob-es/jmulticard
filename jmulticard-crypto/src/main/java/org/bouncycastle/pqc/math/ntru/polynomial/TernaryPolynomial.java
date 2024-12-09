@@ -18,7 +18,7 @@ public interface TernaryPolynomial
     int[] getNegOnes();
 
     /**
-     * Returns the maximum number of coefficients the polynomial can have
+     * @return maximum number of coefficients the polynomial can have
      */
     int size();
 

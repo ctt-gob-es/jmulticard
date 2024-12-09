@@ -23,6 +23,7 @@ public class DEROctetString
      * Constructor from the encoding of an ASN.1 object.
      *
      * @param obj the object to be encoded.
+     * @throws IOException If IO error occurs.
      */
     public DEROctetString(
         final ASN1Encodable obj)
@@ -40,13 +41,13 @@ public class DEROctetString
     @Override
 	int encodedLength(final boolean withTag)
     {
-        return ASN1OutputStream.getLengthOfEncodingDL(withTag, string.length);
+        return ASN1OutputStream.getLengthOfEncodingDL(withTag, this.string.length);
     }
 
     @Override
 	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        out.writeEncodingDL(withTag, BERTags.OCTET_STRING, string);
+        out.writeEncodingDL(withTag, BERTags.OCTET_STRING, this.string);
     }
 
     @Override

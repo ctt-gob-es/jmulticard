@@ -24,7 +24,7 @@ public class SHA224Digest
 
     private int     H1, H2, H3, H4, H5, H6, H7, H8;
 
-    private int[]   X = new int[64];
+    private final int[]   X = new int[64];
     private int     xOff;
 
     /**
@@ -38,29 +38,30 @@ public class SHA224Digest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t Digest.
      */
-    public SHA224Digest(SHA224Digest t)
+    public SHA224Digest(final SHA224Digest t)
     {
         super(t);
 
         doCopy(t);
     }
 
-    private void doCopy(SHA224Digest t)
+    private void doCopy(final SHA224Digest t)
     {
         super.copyIn(t);
 
-        H1 = t.H1;
-        H2 = t.H2;
-        H3 = t.H3;
-        H4 = t.H4;
-        H5 = t.H5;
-        H6 = t.H6;
-        H7 = t.H7;
-        H8 = t.H8;
+        this.H1 = t.H1;
+        this.H2 = t.H2;
+        this.H3 = t.H3;
+        this.H4 = t.H4;
+        this.H5 = t.H5;
+        this.H6 = t.H6;
+        this.H7 = t.H7;
+        this.H8 = t.H8;
 
-        System.arraycopy(t.X, 0, X, 0, t.X.length);
-        xOff = t.xOff;
+        System.arraycopy(t.X, 0, this.X, 0, t.X.length);
+        this.xOff = t.xOff;
     }
 
     /**
@@ -68,23 +69,23 @@ public class SHA224Digest
      *
      * @param encodedState the encoded state from the originating digest.
      */
-    public SHA224Digest(byte[] encodedState)
+    public SHA224Digest(final byte[] encodedState)
     {
         super(encodedState);
 
-        H1 = Pack.bigEndianToInt(encodedState, 16);
-        H2 = Pack.bigEndianToInt(encodedState, 20);
-        H3 = Pack.bigEndianToInt(encodedState, 24);
-        H4 = Pack.bigEndianToInt(encodedState, 28);
-        H5 = Pack.bigEndianToInt(encodedState, 32);
-        H6 = Pack.bigEndianToInt(encodedState, 36);
-        H7 = Pack.bigEndianToInt(encodedState, 40);
-        H8 = Pack.bigEndianToInt(encodedState, 44);
+        this.H1 = Pack.bigEndianToInt(encodedState, 16);
+        this.H2 = Pack.bigEndianToInt(encodedState, 20);
+        this.H3 = Pack.bigEndianToInt(encodedState, 24);
+        this.H4 = Pack.bigEndianToInt(encodedState, 28);
+        this.H5 = Pack.bigEndianToInt(encodedState, 32);
+        this.H6 = Pack.bigEndianToInt(encodedState, 36);
+        this.H7 = Pack.bigEndianToInt(encodedState, 40);
+        this.H8 = Pack.bigEndianToInt(encodedState, 44);
 
-        xOff = Pack.bigEndianToInt(encodedState, 48);
-        for (int i = 0; i != xOff; i++)
+        this.xOff = Pack.bigEndianToInt(encodedState, 48);
+        for (int i = 0; i != this.xOff; i++)
         {
-            X[i] = Pack.bigEndianToInt(encodedState, 52 + (i * 4));
+            this.X[i] = Pack.bigEndianToInt(encodedState, 52 + i * 4);
         }
     }
 
@@ -102,7 +103,7 @@ public class SHA224Digest
 
     @Override
 	protected void processWord(
-        byte[]  in,
+        final byte[]  in,
         int     inOff)
     {
         // Note: Inlined for performance
@@ -110,10 +111,10 @@ public class SHA224Digest
         int n = in[  inOff] << 24;
         n |= (in[++inOff] & 0xff) << 16;
         n |= (in[++inOff] & 0xff) << 8;
-        n |= (in[++inOff] & 0xff);
-        X[xOff] = n;
+        n |= in[++inOff] & 0xff;
+        this.X[this.xOff] = n;
 
-        if (++xOff == 16)
+        if (++this.xOff == 16)
         {
             processBlock();
         }
@@ -121,31 +122,31 @@ public class SHA224Digest
 
     @Override
 	protected void processLength(
-        long    bitLength)
+        final long    bitLength)
     {
-        if (xOff > 14)
+        if (this.xOff > 14)
         {
             processBlock();
         }
 
-        X[14] = (int)(bitLength >>> 32);
-        X[15] = (int)(bitLength & 0xffffffff);
+        this.X[14] = (int)(bitLength >>> 32);
+        this.X[15] = (int)(bitLength & 0xffffffff);
     }
 
     @Override
 	public int doFinal(
-        byte[]  out,
-        int     outOff)
+        final byte[]  out,
+        final int     outOff)
     {
         finish();
 
-        Pack.intToBigEndian(H1, out, outOff);
-        Pack.intToBigEndian(H2, out, outOff + 4);
-        Pack.intToBigEndian(H3, out, outOff + 8);
-        Pack.intToBigEndian(H4, out, outOff + 12);
-        Pack.intToBigEndian(H5, out, outOff + 16);
-        Pack.intToBigEndian(H6, out, outOff + 20);
-        Pack.intToBigEndian(H7, out, outOff + 24);
+        Pack.intToBigEndian(this.H1, out, outOff);
+        Pack.intToBigEndian(this.H2, out, outOff + 4);
+        Pack.intToBigEndian(this.H3, out, outOff + 8);
+        Pack.intToBigEndian(this.H4, out, outOff + 12);
+        Pack.intToBigEndian(this.H5, out, outOff + 16);
+        Pack.intToBigEndian(this.H6, out, outOff + 20);
+        Pack.intToBigEndian(this.H7, out, outOff + 24);
 
         reset();
 
@@ -163,19 +164,19 @@ public class SHA224Digest
         /* SHA-224 initial hash value
          */
 
-        H1 = 0xc1059ed8;
-        H2 = 0x367cd507;
-        H3 = 0x3070dd17;
-        H4 = 0xf70e5939;
-        H5 = 0xffc00b31;
-        H6 = 0x68581511;
-        H7 = 0x64f98fa7;
-        H8 = 0xbefa4fa4;
+        this.H1 = 0xc1059ed8;
+        this.H2 = 0x367cd507;
+        this.H3 = 0x3070dd17;
+        this.H4 = 0xf70e5939;
+        this.H5 = 0xffc00b31;
+        this.H6 = 0x68581511;
+        this.H7 = 0x64f98fa7;
+        this.H8 = 0xbefa4fa4;
 
-        xOff = 0;
-        for (int i = 0; i != X.length; i++)
+        this.xOff = 0;
+        for (int i = 0; i != this.X.length; i++)
         {
-            X[i] = 0;
+            this.X[i] = 0;
         }
     }
 
@@ -187,132 +188,132 @@ public class SHA224Digest
         //
         for (int t = 16; t <= 63; t++)
         {
-            X[t] = Theta1(X[t - 2]) + X[t - 7] + Theta0(X[t - 15]) + X[t - 16];
+            this.X[t] = Theta1(this.X[t - 2]) + this.X[t - 7] + Theta0(this.X[t - 15]) + this.X[t - 16];
         }
 
         //
         // set up working variables.
         //
-        int     a = H1;
-        int     b = H2;
-        int     c = H3;
-        int     d = H4;
-        int     e = H5;
-        int     f = H6;
-        int     g = H7;
-        int     h = H8;
+        int     a = this.H1;
+        int     b = this.H2;
+        int     c = this.H3;
+        int     d = this.H4;
+        int     e = this.H5;
+        int     f = this.H6;
+        int     g = this.H7;
+        int     h = this.H8;
 
 
-        int t = 0;     
+        int t = 0;
         for(int i = 0; i < 8; i ++)
         {
             // t = 8 * i
-            h += Sum1(e) + Ch(e, f, g) + K[t] + X[t];
+            h += Sum1(e) + Ch(e, f, g) + K[t] + this.X[t];
             d += h;
             h += Sum0(a) + Maj(a, b, c);
             ++t;
 
             // t = 8 * i + 1
-            g += Sum1(d) + Ch(d, e, f) + K[t] + X[t];
+            g += Sum1(d) + Ch(d, e, f) + K[t] + this.X[t];
             c += g;
             g += Sum0(h) + Maj(h, a, b);
             ++t;
 
             // t = 8 * i + 2
-            f += Sum1(c) + Ch(c, d, e) + K[t] + X[t];
+            f += Sum1(c) + Ch(c, d, e) + K[t] + this.X[t];
             b += f;
             f += Sum0(g) + Maj(g, h, a);
             ++t;
 
             // t = 8 * i + 3
-            e += Sum1(b) + Ch(b, c, d) + K[t] + X[t];
+            e += Sum1(b) + Ch(b, c, d) + K[t] + this.X[t];
             a += e;
             e += Sum0(f) + Maj(f, g, h);
             ++t;
 
             // t = 8 * i + 4
-            d += Sum1(a) + Ch(a, b, c) + K[t] + X[t];
+            d += Sum1(a) + Ch(a, b, c) + K[t] + this.X[t];
             h += d;
             d += Sum0(e) + Maj(e, f, g);
             ++t;
 
             // t = 8 * i + 5
-            c += Sum1(h) + Ch(h, a, b) + K[t] + X[t];
+            c += Sum1(h) + Ch(h, a, b) + K[t] + this.X[t];
             g += c;
             c += Sum0(d) + Maj(d, e, f);
             ++t;
 
             // t = 8 * i + 6
-            b += Sum1(g) + Ch(g, h, a) + K[t] + X[t];
+            b += Sum1(g) + Ch(g, h, a) + K[t] + this.X[t];
             f += b;
             b += Sum0(c) + Maj(c, d, e);
             ++t;
 
             // t = 8 * i + 7
-            a += Sum1(f) + Ch(f, g, h) + K[t] + X[t];
+            a += Sum1(f) + Ch(f, g, h) + K[t] + this.X[t];
             e += a;
             a += Sum0(b) + Maj(b, c, d);
             ++t;
         }
 
-        H1 += a;
-        H2 += b;
-        H3 += c;
-        H4 += d;
-        H5 += e;
-        H6 += f;
-        H7 += g;
-        H8 += h;
+        this.H1 += a;
+        this.H2 += b;
+        this.H3 += c;
+        this.H4 += d;
+        this.H5 += e;
+        this.H6 += f;
+        this.H7 += g;
+        this.H8 += h;
 
         //
         // reset the offset and clean out the word buffer.
         //
-        xOff = 0;
+        this.xOff = 0;
         for (int i = 0; i < 16; i++)
         {
-            X[i] = 0;
+            this.X[i] = 0;
         }
     }
 
     /* SHA-224 functions */
     private int Ch(
-        int    x,
-        int    y,
-        int    z)
+        final int    x,
+        final int    y,
+        final int    z)
     {
-        return ((x & y) ^ ((~x) & z));
+        return x & y ^ ~x & z;
     }
 
     private int Maj(
-        int    x,
-        int    y,
-        int    z)
+        final int    x,
+        final int    y,
+        final int    z)
     {
-        return ((x & y) ^ (x & z) ^ (y & z));
+        return x & y ^ x & z ^ y & z;
     }
 
     private int Sum0(
-        int    x)
+        final int    x)
     {
-        return ((x >>> 2) | (x << 30)) ^ ((x >>> 13) | (x << 19)) ^ ((x >>> 22) | (x << 10));
+        return (x >>> 2 | x << 30) ^ (x >>> 13 | x << 19) ^ (x >>> 22 | x << 10);
     }
 
     private int Sum1(
-        int    x)
+        final int    x)
     {
-        return ((x >>> 6) | (x << 26)) ^ ((x >>> 11) | (x << 21)) ^ ((x >>> 25) | (x << 7));
+        return (x >>> 6 | x << 26) ^ (x >>> 11 | x << 21) ^ (x >>> 25 | x << 7);
     }
 
     private int Theta0(
-        int    x)
+        final int    x)
     {
-        return ((x >>> 7) | (x << 25)) ^ ((x >>> 18) | (x << 14)) ^ (x >>> 3);
+        return (x >>> 7 | x << 25) ^ (x >>> 18 | x << 14) ^ x >>> 3;
     }
 
     private int Theta1(
-        int    x)
+        final int    x)
     {
-        return ((x >>> 17) | (x << 15)) ^ ((x >>> 19) | (x << 13)) ^ (x >>> 10);
+        return (x >>> 17 | x << 15) ^ (x >>> 19 | x << 13) ^ x >>> 10;
     }
 
     /* SHA-224 Constants
@@ -336,9 +337,9 @@ public class SHA224Digest
     }
 
     @Override
-	public void reset(Memoable other)
+	public void reset(final Memoable other)
     {
-        SHA224Digest d = (SHA224Digest)other;
+        final SHA224Digest d = (SHA224Digest)other;
 
         doCopy(d);
     }
@@ -346,23 +347,23 @@ public class SHA224Digest
     @Override
 	public byte[] getEncodedState()
     {
-        byte[] state = new byte[52 + xOff * 4];
+        final byte[] state = new byte[52 + this.xOff * 4];
 
         super.populateState(state);
 
-        Pack.intToBigEndian(H1, state, 16);
-        Pack.intToBigEndian(H2, state, 20);
-        Pack.intToBigEndian(H3, state, 24);
-        Pack.intToBigEndian(H4, state, 28);
-        Pack.intToBigEndian(H5, state, 32);
-        Pack.intToBigEndian(H6, state, 36);
-        Pack.intToBigEndian(H7, state, 40);
-        Pack.intToBigEndian(H8, state, 44);
-        Pack.intToBigEndian(xOff, state, 48);
+        Pack.intToBigEndian(this.H1, state, 16);
+        Pack.intToBigEndian(this.H2, state, 20);
+        Pack.intToBigEndian(this.H3, state, 24);
+        Pack.intToBigEndian(this.H4, state, 28);
+        Pack.intToBigEndian(this.H5, state, 32);
+        Pack.intToBigEndian(this.H6, state, 36);
+        Pack.intToBigEndian(this.H7, state, 40);
+        Pack.intToBigEndian(this.H8, state, 44);
+        Pack.intToBigEndian(this.xOff, state, 48);
 
-        for (int i = 0; i != xOff; i++)
+        for (int i = 0; i != this.xOff; i++)
         {
-            Pack.intToBigEndian(X[i], state, 52 + (i * 4));
+            Pack.intToBigEndian(this.X[i], state, 52 + i * 4);
         }
 
         return state;

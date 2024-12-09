@@ -15,9 +15,10 @@ public final class XMSSMTKeyGenerationParameters
     /**
      * XMSSMT constructor...
      *
+     * @param xmssmtParameters XMSSMT parameters.
      * @param prng   Secure random to use.
      */
-    public XMSSMTKeyGenerationParameters(XMSSMTParameters xmssmtParameters, SecureRandom prng)
+    public XMSSMTKeyGenerationParameters(final XMSSMTParameters xmssmtParameters, final SecureRandom prng)
     {
         super(prng,-1);
 
@@ -26,6 +27,6 @@ public final class XMSSMTKeyGenerationParameters
 
     public XMSSMTParameters getParameters()
     {
-        return xmssmtParameters;
+        return this.xmssmtParameters;
     }
 }

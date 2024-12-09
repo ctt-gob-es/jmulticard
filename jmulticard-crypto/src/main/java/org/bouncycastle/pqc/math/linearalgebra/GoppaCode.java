@@ -33,9 +33,9 @@ public final class GoppaCode
     public static class MaMaPe
     {
 
-        private GF2Matrix s, h;
+        private final GF2Matrix s, h;
 
-        private Permutation p;
+        private final Permutation p;
 
         /**
          * Construct a new {@link MaMaPe} container with the given parameters.
@@ -44,7 +44,7 @@ public final class GoppaCode
          * @param h the second matrix
          * @param p the permutation
          */
-        public MaMaPe(GF2Matrix s, GF2Matrix h, Permutation p)
+        public MaMaPe(final GF2Matrix s, final GF2Matrix h, final Permutation p)
         {
             this.s = s;
             this.h = h;
@@ -56,7 +56,7 @@ public final class GoppaCode
          */
         public GF2Matrix getFirstMatrix()
         {
-            return s;
+            return this.s;
         }
 
         /**
@@ -64,7 +64,7 @@ public final class GoppaCode
          */
         public GF2Matrix getSecondMatrix()
         {
-            return h;
+            return this.h;
         }
 
         /**
@@ -72,7 +72,7 @@ public final class GoppaCode
          */
         public Permutation getPermutation()
         {
-            return p;
+            return this.p;
         }
     }
 
@@ -88,9 +88,9 @@ public final class GoppaCode
     public static class MatrixSet
     {
 
-        private GF2Matrix g;
+        private final GF2Matrix g;
 
-        private int[] setJ;
+        private final int[] setJ;
 
         /**
          * Construct a new {@link MatrixSet} container with the given
@@ -101,7 +101,7 @@ public final class GoppaCode
          *             generator matrix consisting of the specified columns
          *             is the identity
          */
-        public MatrixSet(GF2Matrix g, int[] setJ)
+        public MatrixSet(final GF2Matrix g, final int[] setJ)
         {
             this.g = g;
             this.setJ = setJ;
@@ -112,7 +112,7 @@ public final class GoppaCode
          */
         public GF2Matrix getG()
         {
-            return g;
+            return this.g;
         }
 
         /**
@@ -121,7 +121,7 @@ public final class GoppaCode
          */
         public int[] getSetJ()
         {
-            return setJ;
+            return this.setJ;
         }
     }
 
@@ -132,20 +132,21 @@ public final class GoppaCode
      *
      * @param field the finite field
      * @param gp    the irreducible Goppa polynomial
+     * @return check matrix.
      */
-    public static GF2Matrix createCanonicalCheckMatrix(GF2mField field,
-                                                       PolynomialGF2mSmallM gp)
+    public static GF2Matrix createCanonicalCheckMatrix(final GF2mField field,
+                                                       final PolynomialGF2mSmallM gp)
     {
-        int m = field.getDegree();
-        int n = 1 << m;
-        int t = gp.getDegree();
+        final int m = field.getDegree();
+        final int n = 1 << m;
+        final int t = gp.getDegree();
 
         /* create matrix H over GF(2^m) */
 
-        int[][] hArray = new int[t][n];
+        final int[][] hArray = new int[t][n];
 
         // create matrix YZ
-        int[][] yz = new int[t][n];
+        final int[][] yz = new int[t][n];
         for (int j = 0; j < n; j++)
         {
             // here j is used as index and as element of field GF(2^m)
@@ -176,21 +177,21 @@ public final class GoppaCode
 
         /* convert to matrix over GF(2) */
 
-        int[][] result = new int[t * m][(n + 31) >>> 5];
+        final int[][] result = new int[t * m][n + 31 >>> 5];
 
         for (int j = 0; j < n; j++)
         {
-            int q = j >>> 5;
-            int r = 1 << (j & 0x1f);
+            final int q = j >>> 5;
+            final int r = 1 << (j & 0x1f);
             for (int i = 0; i < t; i++)
             {
-                int e = hArray[i][j];
+                final int e = hArray[i][j];
                 for (int u = 0; u < m; u++)
                 {
-                    int b = (e >>> u) & 1;
+                    final int b = e >>> u & 1;
                     if (b != 0)
                     {
-                        int ind = (i + 1) * m - u - 1;
+                        final int ind = (i + 1) * m - u - 1;
                         result[ind][q] ^= r;
                     }
                 }
@@ -211,9 +212,9 @@ public final class GoppaCode
      * @param sr a source of randomness
      * @return the tuple <tt>(S^-1, M, P)</tt>
      */
-    public static MaMaPe computeSystematicForm(GF2Matrix h, SecureRandom sr)
+    public static MaMaPe computeSystematicForm(final GF2Matrix h, final SecureRandom sr)
     {
-        int n = h.getNumColumns();
+        final int n = h.getNumColumns();
         GF2Matrix hp, sInv;
         GF2Matrix s = null;
         Permutation p;
@@ -229,15 +230,15 @@ public final class GoppaCode
                 found = true;
                 s = (GF2Matrix)sInv.computeInverse();
             }
-            catch (ArithmeticException ae)
+            catch (final ArithmeticException ae)
             {
                 found = false;
             }
         }
         while (!found);
 
-        GF2Matrix shp = (GF2Matrix)s.rightMultiply(hp);
-        GF2Matrix m = shp.getRightSubMatrix();
+        final GF2Matrix shp = (GF2Matrix)s.rightMultiply(hp);
+        final GF2Matrix m = shp.getRightSubMatrix();
 
         return new MaMaPe(sInv, m, p);
     }
@@ -253,48 +254,48 @@ public final class GoppaCode
      *                     <tt>(GF(2<sup>m</sup>))<sup>t</sup></tt>
      * @return the error vector
      */
-    public static GF2Vector syndromeDecode(GF2Vector syndVec, GF2mField field,
-                                           PolynomialGF2mSmallM gp, PolynomialGF2mSmallM[] sqRootMatrix)
+    public static GF2Vector syndromeDecode(final GF2Vector syndVec, final GF2mField field,
+                                           final PolynomialGF2mSmallM gp, final PolynomialGF2mSmallM[] sqRootMatrix)
     {
 
-        int n = 1 << field.getDegree();
+        final int n = 1 << field.getDegree();
 
         // the error vector
-        GF2Vector errors = new GF2Vector(n);
+        final GF2Vector errors = new GF2Vector(n);
 
         // if the syndrome vector is zero, the error vector is also zero
         if (!syndVec.isZero())
         {
             // convert syndrome vector to polynomial over GF(2^m)
-            PolynomialGF2mSmallM syndrome = new PolynomialGF2mSmallM(syndVec
+            final PolynomialGF2mSmallM syndrome = new PolynomialGF2mSmallM(syndVec
                 .toExtensionFieldVector(field));
 
             // compute T = syndrome^-1 mod gp
-            PolynomialGF2mSmallM t = syndrome.modInverse(gp);
+            final PolynomialGF2mSmallM t = syndrome.modInverse(gp);
 
             // compute tau = sqRoot(T + X) mod gp
             PolynomialGF2mSmallM tau = t.addMonomial(1);
             tau = tau.modSquareRootMatrix(sqRootMatrix);
 
             // compute polynomials a and b satisfying a + b*tau = 0 mod gp
-            PolynomialGF2mSmallM[] ab = tau.modPolynomialToFracton(gp);
+            final PolynomialGF2mSmallM[] ab = tau.modPolynomialToFracton(gp);
 
             // compute the polynomial a^2 + X*b^2
-            PolynomialGF2mSmallM a2 = ab[0].multiply(ab[0]);
-            PolynomialGF2mSmallM b2 = ab[1].multiply(ab[1]);
-            PolynomialGF2mSmallM xb2 = b2.multWithMonomial(1);
-            PolynomialGF2mSmallM a2plusXb2 = a2.add(xb2);
+            final PolynomialGF2mSmallM a2 = ab[0].multiply(ab[0]);
+            final PolynomialGF2mSmallM b2 = ab[1].multiply(ab[1]);
+            final PolynomialGF2mSmallM xb2 = b2.multWithMonomial(1);
+            final PolynomialGF2mSmallM a2plusXb2 = a2.add(xb2);
 
             // normalize a^2 + X*b^2 to obtain the error locator polynomial
-            int headCoeff = a2plusXb2.getHeadCoefficient();
-            int invHeadCoeff = field.inverse(headCoeff);
-            PolynomialGF2mSmallM elp = a2plusXb2.multWithElement(invHeadCoeff);
+            final int headCoeff = a2plusXb2.getHeadCoefficient();
+            final int invHeadCoeff = field.inverse(headCoeff);
+            final PolynomialGF2mSmallM elp = a2plusXb2.multWithElement(invHeadCoeff);
 
             // for all elements i of GF(2^m)
             for (int i = 0; i < n; i++)
             {
                 // evaluate the error locator polynomial at i
-                int z = elp.evaluateAt(i);
+                final int z = elp.evaluateAt(i);
                 // if polynomial evaluates to zero
                 if (z == 0)
                 {

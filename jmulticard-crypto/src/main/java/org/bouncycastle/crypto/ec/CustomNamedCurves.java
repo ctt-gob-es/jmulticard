@@ -959,6 +959,7 @@ public class CustomNamedCurves
      *
      * @param oid
      *            an object identifier representing a named curve, if present.
+     * @return X9EC parameters.
      */
     public static X9ECParameters getByOID(final ASN1ObjectIdentifier oid)
     {
@@ -974,7 +975,7 @@ public class CustomNamedCurves
     /**
      * return the object identifier signified by the passed in name. Null if there is no object
      * identifier associated with name.
-     *
+     * @param name Named object.
      * @return the object identifier associated with name, if present.
      */
     public static ASN1ObjectIdentifier getOID(final String name)
@@ -983,7 +984,8 @@ public class CustomNamedCurves
     }
 
     /**
-     * return the named curve name represented by the given object identifier.
+     * @param oid Object identifier.
+     * @return the named curve name represented by the given object identifier.
      */
     public static String getName(final ASN1ObjectIdentifier oid)
     {
@@ -991,7 +993,7 @@ public class CustomNamedCurves
     }
 
     /**
-     * returns an enumeration containing the name strings for curves contained in this structure.
+     * @return an enumeration containing the name strings for curves contained in this structure.
      */
     public static Enumeration getNames()
     {

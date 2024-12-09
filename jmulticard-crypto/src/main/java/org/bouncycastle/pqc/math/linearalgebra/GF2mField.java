@@ -26,14 +26,14 @@ public class GF2mField
 
     private int degree = 0;
 
-    private int polynomial;
+    private final int polynomial;
 
     /**
      * create a finite field GF(2^m)
      *
      * @param degree the degree of the field
      */
-    public GF2mField(int degree)
+    public GF2mField(final int degree)
     {
         if (degree >= 32)
         {
@@ -46,7 +46,7 @@ public class GF2mField
                 " Error: the degree of field is non-positive ");
         }
         this.degree = degree;
-        polynomial = PolynomialRingGF2.getIrreduciblePolynomial(degree);
+        this.polynomial = PolynomialRingGF2.getIrreduciblePolynomial(degree);
     }
 
     /**
@@ -55,7 +55,7 @@ public class GF2mField
      * @param degree the degree of the field
      * @param poly   the field polynomial
      */
-    public GF2mField(int degree, int poly)
+    public GF2mField(final int degree, final int poly)
     {
         if (degree != PolynomialRingGF2.degree(poly))
         {
@@ -68,31 +68,31 @@ public class GF2mField
                 " Error: given polynomial is reducible");
         }
         this.degree = degree;
-        polynomial = poly;
+        this.polynomial = poly;
 
     }
 
-    public GF2mField(byte[] enc)
+    public GF2mField(final byte[] enc)
     {
         if (enc.length != 4)
         {
             throw new IllegalArgumentException(
                 "byte array is not an encoded finite field");
         }
-        polynomial = LittleEndianConversions.OS2IP(enc);
-        if (!PolynomialRingGF2.isIrreducible(polynomial))
+        this.polynomial = LittleEndianConversions.OS2IP(enc);
+        if (!PolynomialRingGF2.isIrreducible(this.polynomial))
         {
             throw new IllegalArgumentException(
                 "byte array is not an encoded finite field");
         }
 
-        degree = PolynomialRingGF2.degree(polynomial);
+        this.degree = PolynomialRingGF2.degree(this.polynomial);
     }
 
-    public GF2mField(GF2mField field)
+    public GF2mField(final GF2mField field)
     {
-        degree = field.degree;
-        polynomial = field.polynomial;
+        this.degree = field.degree;
+        this.polynomial = field.polynomial;
     }
 
     /**
@@ -102,7 +102,7 @@ public class GF2mField
      */
     public int getDegree()
     {
-        return degree;
+        return this.degree;
     }
 
     /**
@@ -112,7 +112,7 @@ public class GF2mField
      */
     public int getPolynomial()
     {
-        return polynomial;
+        return this.polynomial;
     }
 
     /**
@@ -122,17 +122,17 @@ public class GF2mField
      */
     public byte[] getEncoded()
     {
-        return LittleEndianConversions.I2OSP(polynomial);
+        return LittleEndianConversions.I2OSP(this.polynomial);
     }
 
     /**
      * Return sum of two elements
      *
-     * @param a
-     * @param b
+     * @param a First param.
+     * @param b Seconf param.
      * @return a+b
      */
-    public int add(int a, int b)
+    public int add(final int a, final int b)
     {
         return a ^ b;
     }
@@ -140,13 +140,13 @@ public class GF2mField
     /**
      * Return product of two elements
      *
-     * @param a
-     * @param b
+     * @param a First param.
+     * @param b Seconf param.
      * @return a*b
      */
-    public int mult(int a, int b)
+    public int mult(final int a, final int b)
     {
-        return PolynomialRingGF2.modMultiply(a, b, polynomial);
+        return PolynomialRingGF2.modMultiply(a, b, this.polynomial);
     }
 
     /**
@@ -194,9 +194,9 @@ public class GF2mField
      * @param a a field element a
      * @return a<sup>-1</sup>
      */
-    public int inverse(int a)
+    public int inverse(final int a)
     {
-        int d = (1 << degree) - 2;
+        final int d = (1 << this.degree) - 2;
 
         return exp(a, d);
     }
@@ -209,7 +209,7 @@ public class GF2mField
      */
     public int sqRoot(int a)
     {
-        for (int i = 1; i < degree; i++)
+        for (int i = 1; i < this.degree; i++)
         {
             a = mult(a, a);
         }
@@ -222,9 +222,9 @@ public class GF2mField
      * @param sr SecureRandom
      * @return a random element
      */
-    public int getRandomElement(SecureRandom sr)
+    public int getRandomElement(final SecureRandom sr)
     {
-        int result = RandUtils.nextInt(sr, 1 << degree);
+        final int result = RandUtils.nextInt(sr, 1 << this.degree);
         return result;
     }
 
@@ -244,14 +244,14 @@ public class GF2mField
      * @param sr SecureRandom
      * @return a random non-zero element
      */
-    public int getRandomNonZeroElement(SecureRandom sr)
+    public int getRandomNonZeroElement(final SecureRandom sr)
     {
-        int controltime = 1 << 20;
+        final int controltime = 1 << 20;
         int count = 0;
-        int result = RandUtils.nextInt(sr, 1 << degree);
-        while ((result == 0) && (count < controltime))
+        int result = RandUtils.nextInt(sr, 1 << this.degree);
+        while (result == 0 && count < controltime)
         {
-            result = RandUtils.nextInt(sr, 1 << degree);
+            result = RandUtils.nextInt(sr, 1 << this.degree);
             count++;
         }
         if (count == controltime)
@@ -262,16 +262,17 @@ public class GF2mField
     }
 
     /**
+     * @param e Encoded element.
      * @return true if e is encoded element of this field and false otherwise
      */
-    public boolean isElementOfThisField(int e)
+    public boolean isElementOfThisField(final int e)
     {
         // e is encoded element of this field iff 0<= e < |2^m|
-        if (degree == 31)
+        if (this.degree == 31)
         {
             return e >= 0;
         }
-        return e >= 0 && e < (1 << degree);
+        return e >= 0 && e < 1 << this.degree;
     }
 
     /*
@@ -280,7 +281,7 @@ public class GF2mField
     public String elementToStr(int a)
     {
         String s = "";
-        for (int i = 0; i < degree; i++)
+        for (int i = 0; i < this.degree; i++)
         {
             if (((byte)a & 0x01) == 0)
             {
@@ -304,17 +305,17 @@ public class GF2mField
      * @return true or false
      */
     @Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
     {
-        if ((other == null) || !(other instanceof GF2mField))
+        if (other == null || !(other instanceof GF2mField))
         {
             return false;
         }
 
-        GF2mField otherField = (GF2mField)other;
+        final GF2mField otherField = (GF2mField)other;
 
-        if ((degree == otherField.degree)
-            && (polynomial == otherField.polynomial))
+        if (this.degree == otherField.degree
+            && this.polynomial == otherField.polynomial)
         {
             return true;
         }
@@ -325,7 +326,7 @@ public class GF2mField
     @Override
 	public int hashCode()
     {
-        return polynomial;
+        return this.polynomial;
     }
 
     /**
@@ -336,8 +337,8 @@ public class GF2mField
     @Override
 	public String toString()
     {
-        String str = "Finite Field GF(2^" + degree + ") = " + "GF(2)[X]/<"
-            + polyToString(polynomial) + "> ";
+        final String str = "Finite Field GF(2^" + this.degree + ") = " + "GF(2)[X]/<"
+            + polyToString(this.polynomial) + "> ";
         return str;
     }
 

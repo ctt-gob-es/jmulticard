@@ -9,7 +9,7 @@ import java.security.PrivateKey;
 public interface ECPrivateKey extends ECKey, PrivateKey {
 
     /**
-     * return the private value D.
+     * @return the private value D.
      */
     BigInteger getD();
 }

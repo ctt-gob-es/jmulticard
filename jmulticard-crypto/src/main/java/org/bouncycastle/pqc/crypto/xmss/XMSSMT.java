@@ -12,9 +12,9 @@ import org.bouncycastle.util.Arrays;
 public final class XMSSMT
 {
 
-    private XMSSMTParameters params;
-    private XMSSParameters xmssParams;
-    private SecureRandom prng;
+    private final XMSSMTParameters params;
+    private final XMSSParameters xmssParams;
+    private final SecureRandom prng;
     private XMSSMTPrivateKeyParameters privateKey;
     private XMSSMTPublicKeyParameters publicKey;
 
@@ -22,8 +22,9 @@ public final class XMSSMT
      * XMSSMT constructor...
      *
      * @param params XMSSMTParameters.
+     * @param prng   Secure random to use.
      */
-    public XMSSMT(XMSSMTParameters params, SecureRandom prng)
+    public XMSSMT(final XMSSMTParameters params, final SecureRandom prng)
     {
         super();
         if (params == null)
@@ -31,11 +32,11 @@ public final class XMSSMT
             throw new NullPointerException("params == null");
         }
         this.params = params;
-        xmssParams = params.getXMSSParameters();
+        this.xmssParams = params.getXMSSParameters();
         this.prng = prng;
 
-        privateKey = new XMSSMTPrivateKeyParameters.Builder(params).build();
-        publicKey = new XMSSMTPublicKeyParameters.Builder(params).build();
+        this.privateKey = new XMSSMTPrivateKeyParameters.Builder(params).build();
+        this.publicKey = new XMSSMTPublicKeyParameters.Builder(params).build();
     }
 
     /**
@@ -43,22 +44,22 @@ public final class XMSSMT
      */
     public void generateKeys()
     {
-        XMSSMTKeyPairGenerator kpGen = new XMSSMTKeyPairGenerator();
+        final XMSSMTKeyPairGenerator kpGen = new XMSSMTKeyPairGenerator();
 
-        kpGen.init(new XMSSMTKeyGenerationParameters(getParams(), prng));
+        kpGen.init(new XMSSMTKeyGenerationParameters(getParams(), this.prng));
 
-        AsymmetricCipherKeyPair kp = kpGen.generateKeyPair();
+        final AsymmetricCipherKeyPair kp = kpGen.generateKeyPair();
 
-        privateKey = (XMSSMTPrivateKeyParameters)kp.getPrivate();
-        publicKey = (XMSSMTPublicKeyParameters)kp.getPublic();
+        this.privateKey = (XMSSMTPrivateKeyParameters)kp.getPrivate();
+        this.publicKey = (XMSSMTPublicKeyParameters)kp.getPublic();
 
-        importState(privateKey, publicKey);
+        importState(this.privateKey, this.publicKey);
     }
 
-    private void importState(XMSSMTPrivateKeyParameters privateKey, XMSSMTPublicKeyParameters publicKey)
+    private void importState(final XMSSMTPrivateKeyParameters privateKey, final XMSSMTPublicKeyParameters publicKey)
     {
         /* import to xmss */
-        xmssParams.getWOTSPlus().importKeys(new byte[params.getTreeDigestSize()], this.privateKey.getPublicSeed());
+        this.xmssParams.getWOTSPlus().importKeys(new byte[this.params.getTreeDigestSize()], this.privateKey.getPublicSeed());
 
         this.privateKey = privateKey;
         this.publicKey = publicKey;
@@ -70,7 +71,7 @@ public final class XMSSMT
      * @param privateKey XMSSMT private key.
      * @param publicKey  XMSSMT public key.
      */
-    public void importState(byte[] privateKey, byte[] publicKey)
+    public void importState(final byte[] privateKey, final byte[] publicKey)
     {
         if (privateKey == null)
         {
@@ -80,9 +81,9 @@ public final class XMSSMT
         {
             throw new NullPointerException("publicKey == null");
         }
-        XMSSMTPrivateKeyParameters xmssMTPrivateKey = new XMSSMTPrivateKeyParameters.Builder(params)
+        final XMSSMTPrivateKeyParameters xmssMTPrivateKey = new XMSSMTPrivateKeyParameters.Builder(this.params)
             .withPrivateKey(privateKey).build();
-        XMSSMTPublicKeyParameters xmssMTPublicKey = new XMSSMTPublicKeyParameters.Builder(params)
+        final XMSSMTPublicKeyParameters xmssMTPublicKey = new XMSSMTPublicKeyParameters.Builder(this.params)
             .withPublicKey(publicKey).build();
         if (!Arrays.areEqual(xmssMTPrivateKey.getRoot(), xmssMTPublicKey.getRoot()))
         {
@@ -92,9 +93,9 @@ public final class XMSSMT
         {
             throw new IllegalStateException("public seed of private key and public key do not match");
         }
-        
+
         /* import to xmss */
-        xmssParams.getWOTSPlus().importKeys(new byte[params.getTreeDigestSize()], xmssMTPrivateKey.getPublicSeed());
+        this.xmssParams.getWOTSPlus().importKeys(new byte[this.params.getTreeDigestSize()], xmssMTPrivateKey.getPublicSeed());
 
         this.privateKey = xmssMTPrivateKey;
         this.publicKey = xmssMTPublicKey;
@@ -106,22 +107,22 @@ public final class XMSSMT
      * @param message Message to sign.
      * @return XMSSMT signature on digest of message.
      */
-    public byte[] sign(byte[] message)
+    public byte[] sign(final byte[] message)
     {
         if (message == null)
         {
             throw new NullPointerException("message == null");
         }
 
-        XMSSMTSigner signer = new XMSSMTSigner();
+        final XMSSMTSigner signer = new XMSSMTSigner();
 
-        signer.init(true, privateKey);
+        signer.init(true, this.privateKey);
 
-        byte[] signature = signer.generateSignature(message);
+        final byte[] signature = signer.generateSignature(message);
 
-        privateKey = (XMSSMTPrivateKeyParameters)signer.getUpdatedPrivateKey();
+        this.privateKey = (XMSSMTPrivateKeyParameters)signer.getUpdatedPrivateKey();
 
-        importState(privateKey, publicKey);
+        importState(this.privateKey, this.publicKey);
 
         return signature;
     }
@@ -133,9 +134,9 @@ public final class XMSSMT
      * @param signature XMSSMT signature.
      * @param publicKey XMSSMT public key.
      * @return true if signature is valid false else.
-     * @throws ParseException
+     * @throws ParseException If error occurs while parsing XML signature.
      */
-    public boolean verifySignature(byte[] message, byte[] signature, byte[] publicKey)
+    public boolean verifySignature(final byte[] message, final byte[] signature, final byte[] publicKey)
         throws ParseException
     {
         if (message == null)
@@ -151,7 +152,7 @@ public final class XMSSMT
             throw new NullPointerException("publicKey == null");
         }
 
-        XMSSMTSigner signer = new XMSSMTSigner();
+        final XMSSMTSigner signer = new XMSSMTSigner();
 
         signer.init(false, new XMSSMTPublicKeyParameters.Builder(getParams()).withPublicKey(publicKey).build());
 
@@ -165,7 +166,7 @@ public final class XMSSMT
      */
     public byte[] exportPrivateKey()
     {
-        return privateKey.toByteArray();
+        return this.privateKey.toByteArray();
     }
 
     /**
@@ -175,7 +176,7 @@ public final class XMSSMT
      */
     public byte[] exportPublicKey()
     {
-        return publicKey.toByteArray();
+        return this.publicKey.toByteArray();
     }
 
     /**
@@ -185,7 +186,7 @@ public final class XMSSMT
      */
     public XMSSMTParameters getParams()
     {
-        return params;
+        return this.params;
     }
 
 
@@ -196,11 +197,11 @@ public final class XMSSMT
      */
     public byte[] getPublicSeed()
     {
-        return privateKey.getPublicSeed();
+        return this.privateKey.getPublicSeed();
     }
 
     protected XMSSParameters getXMSS()
     {
-        return xmssParams;
+        return this.xmssParams;
     }
 }

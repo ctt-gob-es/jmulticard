@@ -347,7 +347,8 @@ public class ECGOST3410NamedCurves
     }
 
     /**
-     * return the named curve name represented by the given object identifier.
+     * @param oid Object identifier.
+     * @return the named curve name represented by the given object identifier.
      */
     public static String getName(
         final ASN1ObjectIdentifier  oid)
@@ -356,7 +357,7 @@ public class ECGOST3410NamedCurves
     }
 
     /**
-     * returns an enumeration containing the name strings for parameters
+     * @return an enumeration containing the name strings for parameters
      * contained in this structure.
      */
     public static Enumeration getNames()

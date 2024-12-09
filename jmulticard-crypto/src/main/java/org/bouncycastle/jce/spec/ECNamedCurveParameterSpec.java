@@ -14,13 +14,13 @@ import org.bouncycastle.math.ec.ECPoint;
 public class ECNamedCurveParameterSpec
     extends ECParameterSpec
 {
-    private String  name;
+    private final String  name;
 
     public ECNamedCurveParameterSpec(
-        String      name,
-        ECCurve     curve,
-        ECPoint     G,
-        BigInteger  n)
+        final String      name,
+        final ECCurve     curve,
+        final ECPoint     G,
+        final BigInteger  n)
     {
         super(curve, G, n);
 
@@ -28,11 +28,11 @@ public class ECNamedCurveParameterSpec
     }
 
     public ECNamedCurveParameterSpec(
-        String      name,
-        ECCurve     curve,
-        ECPoint     G,
-        BigInteger  n,
-        BigInteger  h)
+        final String      name,
+        final ECCurve     curve,
+        final ECPoint     G,
+        final BigInteger  n,
+        final BigInteger  h)
     {
         super(curve, G, n, h);
 
@@ -40,12 +40,12 @@ public class ECNamedCurveParameterSpec
     }
 
     public ECNamedCurveParameterSpec(
-        String      name,
-        ECCurve     curve,
-        ECPoint     G,
-        BigInteger  n,
-        BigInteger  h,
-        byte[]      seed)
+        final String      name,
+        final ECCurve     curve,
+        final ECPoint     G,
+        final BigInteger  n,
+        final BigInteger  h,
+        final byte[]      seed)
     {
         super(curve, G, n, h, seed);
 
@@ -53,10 +53,10 @@ public class ECNamedCurveParameterSpec
     }
 
     /**
-     * return the name of the curve the EC domain parameters belong to.
+     * @return the name of the curve the EC domain parameters belong to.
      */
     public String getName()
     {
-        return name;
+        return this.name;
     }
 }

@@ -35,12 +35,12 @@ public class DERPrintableString
      * @param obj a DERPrintableString or an object that can be converted into one.
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return a DERPrintableString instance, or null.
-     * 
+     *
      * @deprecated Use {@link ASN1PrintableString#getInstance(Object)} instead.
      */
     @Deprecated
 	public static DERPrintableString getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof DERPrintableString)
         {
@@ -56,7 +56,7 @@ public class DERPrintableString
             {
                 return (DERPrintableString)fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -73,17 +73,17 @@ public class DERPrintableString
      *                 otherwise.
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return a DERPrintableString instance, or null.
-     * 
+     *
      * @deprecated Use
      *             {@link ASN1PrintableString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
     @Deprecated
 	public static DERPrintableString getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
-        ASN1Primitive o = obj.getObject();
+        final ASN1Primitive o = obj.getObject();
 
         if (explicit || o instanceof DERPrintableString)
         {
@@ -97,9 +97,10 @@ public class DERPrintableString
 
     /**
      * Basic constructor - this does not validate the string
+     * @param string String.
      */
     public DERPrintableString(
-        String   string)
+        final String   string)
     {
         this(string, false);
     }
@@ -113,13 +114,13 @@ public class DERPrintableString
      * contains characters that should not be in a PrintableString.
      */
     public DERPrintableString(
-        String   string,
-        boolean  validate)
+        final String   string,
+        final boolean  validate)
     {
         super(string, validate);
     }
 
-    DERPrintableString(byte[] contents, boolean clone)
+    DERPrintableString(final byte[] contents, final boolean clone)
     {
         super(contents, clone);
     }

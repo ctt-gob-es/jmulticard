@@ -22,6 +22,7 @@ public class BERSequence
 
     /**
      * Create a sequence containing one object
+     * @param element Encodable element.
      */
     public BERSequence(final ASN1Encodable element)
     {
@@ -30,6 +31,7 @@ public class BERSequence
 
     /**
      * Create a sequence containing a vector of objects.
+     * @param elementVector Encodable vector.
      */
     public BERSequence(final ASN1EncodableVector elementVector)
     {
@@ -38,6 +40,7 @@ public class BERSequence
 
     /**
      * Create a sequence containing an array of objects.
+     * @param elements Encodable elements.
      */
     public BERSequence(final ASN1Encodable[] elements)
     {
@@ -49,7 +52,7 @@ public class BERSequence
     {
         int totalLength = withTag ? 4 : 3;
 
-        for (final ASN1Encodable element : elements) {
+        for (final ASN1Encodable element : this.elements) {
             final ASN1Primitive p = element.toASN1Primitive();
             totalLength += p.encodedLength(true);
         }
@@ -60,7 +63,7 @@ public class BERSequence
     @Override
 	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        out.writeEncodingIL(withTag, BERTags.CONSTRUCTED | BERTags.SEQUENCE, elements);
+        out.writeEncodingIL(withTag, BERTags.CONSTRUCTED | BERTags.SEQUENCE, this.elements);
     }
 
     @Override

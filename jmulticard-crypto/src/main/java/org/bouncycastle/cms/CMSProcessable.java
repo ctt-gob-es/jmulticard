@@ -13,9 +13,12 @@ public interface CMSProcessable
      * passed in will do the handling on it's own.
      * <p>
      * Note: this routine may be called multiple times.
+     * @param out Output stream.
+     * @throws IOException If IO error occurs.
+     * @throws CMSException If object isnit encodable.
      */
-    public void write(OutputStream out)
+    void write(OutputStream out)
         throws IOException, CMSException;
 
-    public Object getContent();
+    Object getContent();
 }

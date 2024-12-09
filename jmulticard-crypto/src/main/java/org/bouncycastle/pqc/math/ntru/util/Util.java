@@ -20,8 +20,11 @@ public class Util
 
     /**
      * Calculates the inverse of n mod modulus
+     * @param n Number.
+     * @param modulus Modulus.
+     * @return Inverted value.
      */
-    public static int invert(int n, int modulus)
+    public static int invert(int n, final int modulus)
     {
         n %= modulus;
         if (n < 0)
@@ -33,26 +36,34 @@ public class Util
 
     /**
      * Calculates a^b mod modulus
+     * @param a First number.
+     * @param b Second number.
+     * @param modulus Modulus.
+     * @return result.
      */
-    public static int pow(int a, int b, int modulus)
+    public static int pow(final int a, final int b, final int modulus)
     {
         int p = 1;
         for (int i = 0; i < b; i++)
         {
-            p = (p * a) % modulus;
+            p = p * a % modulus;
         }
         return p;
     }
 
     /**
      * Calculates a^b mod modulus
+     * @param a First number.
+     * @param b Second number.
+     * @param modulus Modulus.
+     * @return result.
      */
-    public static long pow(long a, int b, long modulus)
+    public static long pow(final long a, final int b, final long modulus)
     {
         long p = 1;
         for (int i = 0; i < b; i++)
         {
-            p = (p * a) % modulus;
+            p = p * a % modulus;
         }
         return p;
     }
@@ -61,13 +72,14 @@ public class Util
      * Generates a "sparse" or "dense" polynomial containing numOnes ints equal to 1,
      * numNegOnes int equal to -1, and the rest equal to 0.
      *
-     * @param N
-     * @param numOnes
-     * @param numNegOnes
+     * @param N Number
+     * @param numOnes Positives
+     * @param numNegOnes Negatives
      * @param sparse     whether to create a {@link SparseTernaryPolynomial} or {@link DenseTernaryPolynomial}
+     * @param random Secure random.
      * @return a ternary polynomial
      */
-    public static TernaryPolynomial generateRandomTernary(int N, int numOnes, int numNegOnes, boolean sparse, SecureRandom random)
+    public static TernaryPolynomial generateRandomTernary(final int N, final int numOnes, final int numNegOnes, final boolean sparse, final SecureRandom random)
     {
         if (sparse)
         {
@@ -83,18 +95,19 @@ public class Util
      * Generates an array containing numOnes ints equal to 1,
      * numNegOnes int equal to -1, and the rest equal to 0.
      *
-     * @param N
-     * @param numOnes
-     * @param numNegOnes
+     * @param N Number
+     * @param numOnes Positives
+     * @param numNegOnes Negatives
+     * @param random Secure random.
      * @return an array of integers
      */
-    public static int[] generateRandomTernary(int N, int numOnes, int numNegOnes, SecureRandom random)
+    public static int[] generateRandomTernary(final int N, final int numOnes, final int numNegOnes, final SecureRandom random)
     {
-        Integer one = Integers.valueOf(1);
-        Integer minusOne = Integers.valueOf(-1);
-        Integer zero = Integers.valueOf(0);
+        final Integer one = Integers.valueOf(1);
+        final Integer minusOne = Integers.valueOf(-1);
+        final Integer zero = Integers.valueOf(0);
 
-        List list = new ArrayList();
+        final List list = new ArrayList();
         for (int i = 0; i < numOnes; i++)
         {
             list.add(one);
@@ -110,7 +123,7 @@ public class Util
 
         Collections.shuffle(list, random);
 
-        int[] arr = new int[N];
+        final int[] arr = new int[N];
         for (int i = 0; i < N; i++)
         {
             arr[i] = ((Integer)list.get(i)).intValue();
@@ -127,8 +140,8 @@ public class Util
     {
         if (!IS_64_BITNESS_KNOWN)
         {
-            String arch = System.getProperty("os.arch");
-            String sunModel = System.getProperty("sun.arch.data.model");
+            final String arch = System.getProperty("os.arch");
+            final String sunModel = System.getProperty("sun.arch.data.model");
             IS_64_BIT_JVM = "amd64".equals(arch) || "x86_64".equals(arch) || "ppc64".equals(arch) || "64".equals(sunModel);
             IS_64_BITNESS_KNOWN = true;
         }
@@ -140,15 +153,15 @@ public class Util
      * If there are not enough bytes in the stream, an <code>IOException</code>
      * is thrown.
      *
-     * @param is
-     * @param length
+     * @param is InputStream.
+     * @param length Number of bytes.
      * @return an array of length <code>length</code>
-     * @throws IOException
+     * @throws IOException If IO error occurs.
      */
-    public static byte[] readFullLength(InputStream is, int length)
+    public static byte[] readFullLength(final InputStream is, final int length)
         throws IOException
     {
-        byte[] arr = new byte[length];
+        final byte[] arr = new byte[length];
         if (is.read(arr) != arr.length)
         {
             throw new IOException("Not enough bytes to read.");

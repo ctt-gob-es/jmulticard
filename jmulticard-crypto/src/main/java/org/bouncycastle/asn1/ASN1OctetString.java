@@ -121,6 +121,7 @@ public abstract class ASN1OctetString
      * @param taggedObject the tagged object holding the object we want.
      * @param explicit true if the object is meant to be explicitly
      *              tagged false otherwise.
+     * @return Instance.
      * @exception IllegalArgumentException if the tagged object cannot
      *              be converted.
      */
@@ -133,6 +134,7 @@ public abstract class ASN1OctetString
      * return an Octet String from the given object.
      *
      * @param obj the object we want converted.
+     * @return Instance.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static ASN1OctetString getInstance(final Object obj)
@@ -192,7 +194,7 @@ public abstract class ASN1OctetString
     @Override
 	public InputStream getOctetStream()
     {
-        return new ByteArrayInputStream(string);
+        return new ByteArrayInputStream(this.string);
     }
 
     /**
@@ -212,13 +214,13 @@ public abstract class ASN1OctetString
      */
     public byte[] getOctets()
     {
-        return string;
+        return this.string;
     }
 
     @Override
 	public int hashCode()
     {
-        return Arrays.hashCode(this.getOctets());
+        return Arrays.hashCode(getOctets());
     }
 
     @Override
@@ -232,31 +234,31 @@ public abstract class ASN1OctetString
 
         final ASN1OctetString  other = (ASN1OctetString)o;
 
-        return Arrays.areEqual(string, other.string);
+        return Arrays.areEqual(this.string, other.string);
     }
 
     @Override
 	public ASN1Primitive getLoadedObject()
     {
-        return this.toASN1Primitive();
+        return toASN1Primitive();
     }
 
     @Override
 	ASN1Primitive toDERObject()
     {
-        return new DEROctetString(string);
+        return new DEROctetString(this.string);
     }
 
     @Override
 	ASN1Primitive toDLObject()
     {
-        return new DEROctetString(string);
+        return new DEROctetString(this.string);
     }
 
     @Override
 	public String toString()
     {
-      return "#" + Strings.fromByteArray(Hex.encode(string));
+      return "#" + Strings.fromByteArray(Hex.encode(this.string));
     }
 
     static ASN1OctetString createPrimitive(final byte[] contents)

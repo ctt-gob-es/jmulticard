@@ -13,7 +13,7 @@ public class McElieceCCA2Parameters
         this(DEFAULT_M, DEFAULT_T, "SHA-256");
     }
 
-    public McElieceCCA2Parameters(String digest)
+    public McElieceCCA2Parameters(final String digest)
     {
         this(DEFAULT_M, DEFAULT_T, digest);
     }
@@ -24,7 +24,7 @@ public class McElieceCCA2Parameters
      * @param keysize the length of a Goppa code
      * @throws IllegalArgumentException if <tt>keysize &lt; 1</tt>.
      */
-    public McElieceCCA2Parameters(int keysize)
+    public McElieceCCA2Parameters(final int keysize)
     {
         this(keysize, "SHA-256");
     }
@@ -36,7 +36,7 @@ public class McElieceCCA2Parameters
      * @param digest CCA2 mode digest
      * @throws IllegalArgumentException if <tt>keysize &lt; 1</tt>.
      */
-    public McElieceCCA2Parameters(int keysize, String digest)
+    public McElieceCCA2Parameters(final int keysize, final String digest)
     {
         super(keysize);
         this.digest = digest;
@@ -50,7 +50,7 @@ public class McElieceCCA2Parameters
      * @throws IllegalArgumentException if <tt>m &lt; 1</tt> or <tt>m &gt; 32</tt> or
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt>.
      */
-    public McElieceCCA2Parameters(int m, int t)
+    public McElieceCCA2Parameters(final int m, final int t)
     {
         this(m, t, "SHA-256");
     }
@@ -60,10 +60,11 @@ public class McElieceCCA2Parameters
      *
      * @param m degree of the finite field GF(2^m)
      * @param t error correction capability of the code
+     * @param digest Digest.
      * @throws IllegalArgumentException if <tt>m &lt; 1</tt> or <tt>m &gt; 32</tt> or
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt>.
      */
-    public McElieceCCA2Parameters(int m, int t, String digest)
+    public McElieceCCA2Parameters(final int m, final int t, final String digest)
     {
         super(m, t);
         this.digest = digest;
@@ -79,7 +80,7 @@ public class McElieceCCA2Parameters
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt> or
      * <tt>poly</tt> is not an irreducible field polynomial.
      */
-    public McElieceCCA2Parameters(int m, int t, int poly)
+    public McElieceCCA2Parameters(final int m, final int t, final int poly)
     {
         this(m, t, poly, "SHA-256");
     }
@@ -95,7 +96,7 @@ public class McElieceCCA2Parameters
      * <tt>t &lt; 0</tt> or <tt>t &gt; n</tt> or
      * <tt>poly</tt> is not an irreducible field polynomial.
      */
-    public McElieceCCA2Parameters(int m, int t, int poly, String digest)
+    public McElieceCCA2Parameters(final int m, final int t, final int poly, final String digest)
     {
         super(m, t, poly);
         this.digest = digest;
@@ -108,6 +109,6 @@ public class McElieceCCA2Parameters
      */
     public String getDigest()
     {
-        return digest;
+        return this.digest;
     }
 }

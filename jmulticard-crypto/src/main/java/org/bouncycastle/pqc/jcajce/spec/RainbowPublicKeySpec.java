@@ -11,22 +11,22 @@ import java.security.spec.KeySpec;
 public class RainbowPublicKeySpec
     implements KeySpec
 {
-    private short[][] coeffquadratic;
-    private short[][] coeffsingular;
-    private short[] coeffscalar;
-    private int docLength; // length of possible document to sign
+    private final short[][] coeffquadratic;
+    private final short[][] coeffsingular;
+    private final short[] coeffscalar;
+    private final int docLength; // length of possible document to sign
 
     /**
      * Constructor
      *
-     * @param docLength
-     * @param coeffquadratic
-     * @param coeffSingular
-     * @param coeffScalar
+     * @param docLength Length.
+     * @param coeffquadratic Quadratic.
+     * @param coeffSingular Singular.
+     * @param coeffScalar Scalar.
      */
-    public RainbowPublicKeySpec(int docLength,
-                                short[][] coeffquadratic, short[][] coeffSingular,
-                                short[] coeffScalar)
+    public RainbowPublicKeySpec(final int docLength,
+                                final short[][] coeffquadratic, final short[][] coeffSingular,
+                                final short[] coeffScalar)
     {
         this.docLength = docLength;
         this.coeffquadratic = coeffquadratic;
@@ -47,7 +47,7 @@ public class RainbowPublicKeySpec
      */
     public short[][] getCoeffQuadratic()
     {
-        return coeffquadratic;
+        return this.coeffquadratic;
     }
 
     /**
@@ -55,7 +55,7 @@ public class RainbowPublicKeySpec
      */
     public short[][] getCoeffSingular()
     {
-        return coeffsingular;
+        return this.coeffsingular;
     }
 
     /**
@@ -63,6 +63,6 @@ public class RainbowPublicKeySpec
      */
     public short[] getCoeffScalar()
     {
-        return coeffscalar;
+        return this.coeffscalar;
     }
 }

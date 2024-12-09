@@ -22,18 +22,18 @@ import org.bouncycastle.util.Arrays;
 public class ECNamedCurveSpec
     extends java.security.spec.ECParameterSpec
 {
-    private String  name;
+    private final String  name;
 
     private static EllipticCurve convertCurve(
-        ECCurve  curve,
-        byte[]   seed)
+        final ECCurve  curve,
+        final byte[]   seed)
     {
-        ECField field = convertField(curve.getField());
-        BigInteger a = curve.getA().toBigInteger(), b = curve.getB().toBigInteger();
+        final ECField field = convertField(curve.getField());
+        final BigInteger a = curve.getA().toBigInteger(), b = curve.getB().toBigInteger();
         return new EllipticCurve(field, a, b, seed);
     }
 
-    private static ECField convertField(FiniteField field)
+    private static ECField convertField(final FiniteField field)
     {
         if (ECAlgorithms.isFpField(field))
         {
@@ -41,18 +41,18 @@ public class ECNamedCurveSpec
         }
         else //if (ECAlgorithms.isF2mField(curveField))
         {
-            Polynomial poly = ((PolynomialExtensionField)field).getMinimalPolynomial();
-            int[] exponents = poly.getExponentsPresent();
-            int[] ks = Arrays.reverseInPlace(Arrays.copyOfRange(exponents, 1, exponents.length - 1));
+            final Polynomial poly = ((PolynomialExtensionField)field).getMinimalPolynomial();
+            final int[] exponents = poly.getExponentsPresent();
+            final int[] ks = Arrays.reverseInPlace(Arrays.copyOfRange(exponents, 1, exponents.length - 1));
             return new ECFieldF2m(poly.getDegree(), ks);
         }
     }
 
     public ECNamedCurveSpec(
-        String                              name,
-        ECCurve                             curve,
-        org.bouncycastle.math.ec.ECPoint    g,
-        BigInteger                          n)
+        final String                              name,
+        final ECCurve                             curve,
+        final org.bouncycastle.math.ec.ECPoint    g,
+        final BigInteger                          n)
     {
         super(convertCurve(curve, null), EC5Util.convertPoint(g), n, 1);
 
@@ -60,22 +60,22 @@ public class ECNamedCurveSpec
     }
 
     public ECNamedCurveSpec(
-        String          name,
-        EllipticCurve   curve,
-        ECPoint         g,
-        BigInteger      n)
+        final String          name,
+        final EllipticCurve   curve,
+        final ECPoint         g,
+        final BigInteger      n)
     {
         super(curve, g, n, 1);
 
         this.name = name;
     }
-    
+
     public ECNamedCurveSpec(
-        String                              name,
-        ECCurve                             curve,
-        org.bouncycastle.math.ec.ECPoint    g,
-        BigInteger                          n,
-        BigInteger                          h)
+        final String                              name,
+        final ECCurve                             curve,
+        final org.bouncycastle.math.ec.ECPoint    g,
+        final BigInteger                          n,
+        final BigInteger                          h)
     {
         super(convertCurve(curve, null), EC5Util.convertPoint(g), n, h.intValue());
 
@@ -83,24 +83,24 @@ public class ECNamedCurveSpec
     }
 
     public ECNamedCurveSpec(
-        String          name,
-        EllipticCurve   curve,
-        ECPoint         g,
-        BigInteger      n,
-        BigInteger      h)
+        final String          name,
+        final EllipticCurve   curve,
+        final ECPoint         g,
+        final BigInteger      n,
+        final BigInteger      h)
     {
         super(curve, g, n, h.intValue());
 
         this.name = name;
     }
-    
+
     public ECNamedCurveSpec(
-        String                              name,
-        ECCurve                             curve,
-        org.bouncycastle.math.ec.ECPoint    g,
-        BigInteger                          n,
-        BigInteger                          h,
-        byte[]                              seed)
+        final String                              name,
+        final ECCurve                             curve,
+        final org.bouncycastle.math.ec.ECPoint    g,
+        final BigInteger                          n,
+        final BigInteger                          h,
+        final byte[]                              seed)
     {
         super(convertCurve(curve, seed), EC5Util.convertPoint(g), n, h.intValue());
 
@@ -108,10 +108,10 @@ public class ECNamedCurveSpec
     }
 
     /**
-     * return the name of the curve the EC domain parameters belong to.
+     * @return the name of the curve the EC domain parameters belong to.
      */
     public String getName()
     {
-        return name;
+        return this.name;
     }
 }

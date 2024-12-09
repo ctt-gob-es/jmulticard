@@ -64,7 +64,7 @@ public abstract class ASN1BMPString
     /**
      * Return a BMP String from a tagged object.
      *
-     * @param obj      the tagged object holding the object we want
+     * @param taggedObject      the tagged object holding the object we want
      * @param explicit true if the object is meant to be explicitly tagged false
      *                 otherwise.
      * @exception IllegalArgumentException if the tagged object cannot be converted.
@@ -124,7 +124,7 @@ public abstract class ASN1BMPString
     @Override
 	public final String getString()
     {
-        return new String(string);
+        return new String(this.string);
     }
 
     @Override
@@ -143,13 +143,13 @@ public abstract class ASN1BMPString
 
         final ASN1BMPString that = (ASN1BMPString)other;
 
-        return Arrays.areEqual(string, that.string);
+        return Arrays.areEqual(this.string, that.string);
     }
 
     @Override
 	public final int hashCode()
     {
-        return Arrays.hashCode(string);
+        return Arrays.hashCode(this.string);
     }
 
     @Override
@@ -161,13 +161,13 @@ public abstract class ASN1BMPString
     @Override
 	final int encodedLength(final boolean withTag)
     {
-        return ASN1OutputStream.getLengthOfEncodingDL(withTag, string.length * 2);
+        return ASN1OutputStream.getLengthOfEncodingDL(withTag, this.string.length * 2);
     }
 
     @Override
 	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        final int count = string.length;
+        final int count = this.string.length;
 
         out.writeIdentifier(withTag, BERTags.BMP_STRING);
         out.writeDL(count * 2);
@@ -178,7 +178,7 @@ public abstract class ASN1BMPString
 		final int limit = count & -4;
         while (i < limit)
         {
-            final char c0 = string[i], c1 = string[i + 1], c2 = string[i + 2], c3 = string[i + 3];
+            final char c0 = this.string[i], c1 = this.string[i + 1], c2 = this.string[i + 2], c3 = this.string[i + 3];
             i += 4;
 
             buf[0] = (byte)(c0 >> 8);
@@ -197,7 +197,7 @@ public abstract class ASN1BMPString
             int bufPos = 0;
             do
             {
-                final char c0 = string[i];
+                final char c0 = this.string[i];
                 i += 1;
 
                 buf[bufPos++] = (byte)(c0 >> 8);

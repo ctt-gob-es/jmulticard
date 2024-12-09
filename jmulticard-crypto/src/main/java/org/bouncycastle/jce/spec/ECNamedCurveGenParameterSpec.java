@@ -10,19 +10,19 @@ import java.security.spec.AlgorithmParameterSpec;
 public class ECNamedCurveGenParameterSpec
     implements AlgorithmParameterSpec
 {
-    private String  name;
+    private final String  name;
 
     public ECNamedCurveGenParameterSpec(
-        String name)
+        final String name)
     {
         this.name = name;
     }
 
     /**
-     * return the name of the curve the EC domain parameters belong to.
+     * @return the name of the curve the EC domain parameters belong to.
      */
     public String getName()
     {
-        return name;
+        return this.name;
     }
 }

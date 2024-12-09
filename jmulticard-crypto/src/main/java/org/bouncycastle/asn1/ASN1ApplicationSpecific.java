@@ -58,7 +58,7 @@ public abstract class ASN1ApplicationSpecific
      */
     public int getApplicationTag()
     {
-        return taggedObject.getTagNo();
+        return this.taggedObject.getTagNo();
     }
 
     /**
@@ -69,7 +69,7 @@ public abstract class ASN1ApplicationSpecific
     @Override
 	public byte[] getContents()
     {
-        return taggedObject.getContents();
+        return this.taggedObject.getContents();
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class ASN1ApplicationSpecific
      */
     public ASN1Primitive getEnclosedObject() throws IOException
     {
-        return taggedObject.getBaseObject().toASN1Primitive();
+        return this.taggedObject.getBaseObject().toASN1Primitive();
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class ASN1ApplicationSpecific
      */
     public ASN1Primitive getObject(final int tagNo) throws IOException
     {
-        return taggedObject.getBaseUniversal(false, tagNo);
+        return this.taggedObject.getBaseUniversal(false, tagNo);
     }
 
     @Override
@@ -104,25 +104,25 @@ public abstract class ASN1ApplicationSpecific
     @Override
 	public ASN1Encodable parseBaseUniversal(final boolean declaredExplicit, final int baseTagNo) throws IOException
     {
-        return taggedObject.parseBaseUniversal(declaredExplicit, baseTagNo);
+        return this.taggedObject.parseBaseUniversal(declaredExplicit, baseTagNo);
     }
 
     @Override
 	public ASN1Encodable parseExplicitBaseObject() throws IOException
     {
-        return taggedObject.parseExplicitBaseObject();
+        return this.taggedObject.parseExplicitBaseObject();
     }
 
     @Override
 	public ASN1TaggedObjectParser parseExplicitBaseTagged() throws IOException
     {
-        return taggedObject.parseExplicitBaseTagged();
+        return this.taggedObject.parseExplicitBaseTagged();
     }
 
     @Override
 	public ASN1TaggedObjectParser parseImplicitBaseTagged(final int baseTagClass, final int baseTagNo) throws IOException
     {
-        return taggedObject.parseImplicitBaseTagged(baseTagClass, baseTagNo);
+        return this.taggedObject.parseImplicitBaseTagged(baseTagClass, baseTagNo);
     }
 
     public boolean hasApplicationTag(final int tagNo)
@@ -142,10 +142,11 @@ public abstract class ASN1ApplicationSpecific
      * ASN1TaggedObject with a tag class of {@link BERTags#APPLICATION}. This method
      * lets you get the internal ASN1TaggedObject so that client code can begin the
      * migration.
+     * @return Object to migration.
      */
     public ASN1TaggedObject getTaggedObject()
     {
-        return taggedObject;
+        return this.taggedObject;
     }
 
     /**
@@ -156,7 +157,7 @@ public abstract class ASN1ApplicationSpecific
     @Override
 	public boolean isConstructed()
     {
-        return taggedObject.isConstructed();
+        return this.taggedObject.isConstructed();
     }
 
     @Override
@@ -169,49 +170,49 @@ public abstract class ASN1ApplicationSpecific
     @Override
 	boolean encodeConstructed()
     {
-        return taggedObject.encodeConstructed();
+        return this.taggedObject.encodeConstructed();
     }
 
     @Override
 	int encodedLength(final boolean withTag) throws IOException
     {
-        return taggedObject.encodedLength(withTag);
+        return this.taggedObject.encodedLength(withTag);
     }
 
     @Override
 	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        taggedObject.encode(out, withTag);
+        this.taggedObject.encode(out, withTag);
     }
 
     @Override
 	String getASN1Encoding()
     {
-        return taggedObject.getASN1Encoding();
+        return this.taggedObject.getASN1Encoding();
     }
 
     @Override
 	ASN1Sequence rebuildConstructed(final ASN1Primitive primitive)
     {
-        return taggedObject.rebuildConstructed(primitive);
+        return this.taggedObject.rebuildConstructed(primitive);
     }
 
     @Override
 	ASN1TaggedObject replaceTag(final int tagClass, final int tagNo)
     {
-        return taggedObject.replaceTag(tagClass, tagNo);
+        return this.taggedObject.replaceTag(tagClass, tagNo);
     }
 
     @Override
 	ASN1Primitive toDERObject()
     {
-        return new DERApplicationSpecific((ASN1TaggedObject)taggedObject.toDERObject());
+        return new DERApplicationSpecific((ASN1TaggedObject)this.taggedObject.toDERObject());
     }
 
     @Override
 	ASN1Primitive toDLObject()
     {
-        return new DLApplicationSpecific((ASN1TaggedObject)taggedObject.toDLObject());
+        return new DLApplicationSpecific((ASN1TaggedObject)this.taggedObject.toDLObject());
     }
 
     private static int checkTagClass(final int tagClass)

@@ -111,8 +111,11 @@ public final class DefaultXMSSMTOid
      * Lookup OID.
      *
      * @param algorithmName       Algorithm name.
+     * @param digestSize	Digest size.
      * @param winternitzParameter Winternitz parameter.
+     * @param len Length.
      * @param height              Binary tree height.
+     * @param layers	Layers.
      * @return XMSS OID if parameters were found, null else.
      */
     public static DefaultXMSSMTOid lookup(final String algorithmName, final int digestSize, final int winternitzParameter, final int len,
@@ -152,12 +155,12 @@ public final class DefaultXMSSMTOid
     @Override
 	public int getOid()
     {
-        return oid;
+        return this.oid;
     }
 
     @Override
 	public String toString()
     {
-        return stringRepresentation;
+        return this.stringRepresentation;
     }
 }

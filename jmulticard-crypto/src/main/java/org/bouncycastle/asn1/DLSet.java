@@ -80,6 +80,7 @@ public class DLSet
 
     /**
      * create a set from an array of objects.
+     * @param elements Elements.
      */
     public DLSet(final ASN1Encodable[] elements)
     {
@@ -93,21 +94,21 @@ public class DLSet
 
     private int getContentsLength() throws IOException
     {
-        if (contentsLength < 0)
+        if (this.contentsLength < 0)
         {
-            final int count = elements.length;
+            final int count = this.elements.length;
             int totalLength = 0;
 
             for (int i = 0; i < count; ++i)
             {
-                final ASN1Primitive dlObject = elements[i].toASN1Primitive().toDLObject();
+                final ASN1Primitive dlObject = this.elements[i].toASN1Primitive().toDLObject();
                 totalLength += dlObject.encodedLength(true);
             }
 
-            contentsLength = totalLength;
+            this.contentsLength = totalLength;
         }
 
-        return contentsLength;
+        return this.contentsLength;
     }
 
     @Override
@@ -131,14 +132,14 @@ public class DLSet
 
         final ASN1OutputStream dlOut = out.getDLSubStream();
 
-        final int count = elements.length;
-        if (contentsLength >= 0 || count > 16)
+        final int count = this.elements.length;
+        if (this.contentsLength >= 0 || count > 16)
         {
             out.writeDL(getContentsLength());
 
             for (int i = 0; i < count; ++i)
             {
-                dlOut.writePrimitive(elements[i].toASN1Primitive(), true);
+                dlOut.writePrimitive(this.elements[i].toASN1Primitive(), true);
             }
         }
         else
@@ -148,12 +149,12 @@ public class DLSet
             final ASN1Primitive[] dlObjects = new ASN1Primitive[count];
             for (int i = 0; i < count; ++i)
             {
-                final ASN1Primitive dlObject = elements[i].toASN1Primitive().toDLObject();
+                final ASN1Primitive dlObject = this.elements[i].toASN1Primitive().toDLObject();
                 dlObjects[i] = dlObject;
                 totalLength += dlObject.encodedLength(true);
             }
 
-            contentsLength = totalLength;
+            this.contentsLength = totalLength;
             out.writeDL(totalLength);
 
             for (int i = 0; i < count; ++i)

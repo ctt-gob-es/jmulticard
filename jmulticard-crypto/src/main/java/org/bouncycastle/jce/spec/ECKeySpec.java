@@ -8,19 +8,19 @@ import java.security.spec.KeySpec;
 public class ECKeySpec
     implements KeySpec
 {
-    private ECParameterSpec     spec;
+    private final ECParameterSpec     spec;
 
     protected ECKeySpec(
-        ECParameterSpec spec)
+        final ECParameterSpec spec)
     {
         this.spec = spec;
     }
 
     /**
-     * return the domain parameters for the curve
+     * @return the domain parameters for the curve
      */
     public ECParameterSpec getParams()
     {
-        return spec;
+        return this.spec;
     }
 }

@@ -13,11 +13,11 @@ public class BERTaggedObject
     /**
      * create an implicitly tagged object that contains a zero
      * length sequence.
-     * 
+     * @param tagNo Tag number.
      * @deprecated Will be removed.
      */
     @Deprecated
-	public BERTaggedObject(int tagNo)
+	public BERTaggedObject(final int tagNo)
     {
         super(false, tagNo, new BERSequence());
     }
@@ -26,12 +26,12 @@ public class BERTaggedObject
      * @param tagNo the tag number for this object.
      * @param obj the tagged object.
      */
-    public BERTaggedObject(int tagNo, ASN1Encodable obj)
+    public BERTaggedObject(final int tagNo, final ASN1Encodable obj)
     {
         super(true, tagNo, obj);
     }
 
-    public BERTaggedObject(int tagClass, int tagNo, ASN1Encodable obj)
+    public BERTaggedObject(final int tagClass, final int tagNo, final ASN1Encodable obj)
     {
         super(true, tagClass, tagNo, obj);
     }
@@ -41,17 +41,17 @@ public class BERTaggedObject
      * @param tagNo the tag number for this object.
      * @param obj the tagged object.
      */
-    public BERTaggedObject(boolean explicit, int tagNo, ASN1Encodable obj)
+    public BERTaggedObject(final boolean explicit, final int tagNo, final ASN1Encodable obj)
     {
         super(explicit, tagNo, obj);
     }
 
-    public BERTaggedObject(boolean explicit, int tagClass, int tagNo, ASN1Encodable obj)
+    public BERTaggedObject(final boolean explicit, final int tagClass, final int tagNo, final ASN1Encodable obj)
     {
         super(explicit, tagClass, tagNo, obj);
     }
 
-    BERTaggedObject(int explicitness, int tagClass, int tagNo, ASN1Encodable obj)
+    BERTaggedObject(final int explicitness, final int tagClass, final int tagNo, final ASN1Encodable obj)
     {
         super(explicitness, tagClass, tagNo, obj);
     }
@@ -59,14 +59,14 @@ public class BERTaggedObject
     @Override
 	boolean encodeConstructed()
     {
-        return isExplicit() || obj.toASN1Primitive().encodeConstructed();
+        return isExplicit() || this.obj.toASN1Primitive().encodeConstructed();
     }
 
     @Override
-	int encodedLength(boolean withTag) throws IOException
+	int encodedLength(final boolean withTag) throws IOException
     {
-        ASN1Primitive primitive = obj.toASN1Primitive();
-        boolean explicit = isExplicit();
+        final ASN1Primitive primitive = this.obj.toASN1Primitive();
+        final boolean explicit = isExplicit();
 
         int length = primitive.encodedLength(explicit);
 
@@ -75,28 +75,28 @@ public class BERTaggedObject
             length += 3;
         }
 
-        length += withTag ? ASN1OutputStream.getLengthOfIdentifier(tagNo) : 0;
+        length += withTag ? ASN1OutputStream.getLengthOfIdentifier(this.tagNo) : 0;
 
         return length;
     }
 
     @Override
-	void encode(ASN1OutputStream out, boolean withTag) throws IOException
+	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
 //        assert out.getClass().isAssignableFrom(ASN1OutputStream.class);
 
-        ASN1Primitive primitive = obj.toASN1Primitive();
-        boolean explicit = isExplicit();
+        final ASN1Primitive primitive = this.obj.toASN1Primitive();
+        final boolean explicit = isExplicit();
 
         if (withTag)
         {
-            int flags = tagClass;
+            int flags = this.tagClass;
             if (explicit || primitive.encodeConstructed())
             {
                 flags |= BERTags.CONSTRUCTED;
             }
 
-            out.writeIdentifier(true, flags, tagNo);
+            out.writeIdentifier(true, flags, this.tagNo);
         }
 
         if (explicit)
@@ -119,14 +119,14 @@ public class BERTaggedObject
     }
 
     @Override
-	ASN1Sequence rebuildConstructed(ASN1Primitive primitive)
+	ASN1Sequence rebuildConstructed(final ASN1Primitive primitive)
     {
         return new BERSequence(primitive);
     }
 
     @Override
-	ASN1TaggedObject replaceTag(int tagClass, int tagNo)
+	ASN1TaggedObject replaceTag(final int tagClass, final int tagNo)
     {
-        return new BERTaggedObject(explicitness, tagClass, tagNo, obj);
+        return new BERTaggedObject(this.explicitness, tagClass, tagNo, this.obj);
     }
 }

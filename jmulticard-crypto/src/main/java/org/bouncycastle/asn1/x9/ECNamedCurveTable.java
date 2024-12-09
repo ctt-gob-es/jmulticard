@@ -26,7 +26,7 @@ public class ECNamedCurveTable
      * @return an X9ECParameters object or null if the curve is not available.
      */
     public static X9ECParameters getByName(
-        String name)
+        final String name)
     {
         X9ECParameters ecP = X962NamedCurves.getByName(name);
 
@@ -63,7 +63,7 @@ public class ECNamedCurveTable
         return ecP;
     }
 
-    public static X9ECParametersHolder getByNameLazy(String name)
+    public static X9ECParametersHolder getByNameLazy(final String name)
     {
         X9ECParametersHolder holder = X962NamedCurves.getByNameLazy(name);
 
@@ -103,11 +103,11 @@ public class ECNamedCurveTable
     /**
      * return the object identifier signified by the passed in name. Null
      * if there is no object identifier associated with name.
-     *
+     * @param name Object identifier name.
      * @return the object identifier associated with name, if present.
      */
     public static ASN1ObjectIdentifier getOID(
-        String name)
+        final String name)
     {
         ASN1ObjectIdentifier oid = X962NamedCurves.getOID(name);
 
@@ -145,7 +145,7 @@ public class ECNamedCurveTable
         {
             oid = CryptlibObjectIdentifiers.curvey25519;
         }
-        
+
         return oid;
     }
 
@@ -157,7 +157,7 @@ public class ECNamedCurveTable
      * @return a standard name for the curve.
      */
     public static String getName(
-        ASN1ObjectIdentifier oid)
+        final ASN1ObjectIdentifier oid)
     {
         String name = X962NamedCurves.getName(oid);
 
@@ -207,7 +207,7 @@ public class ECNamedCurveTable
      * @return an X9ECParameters object or null if the curve is not available.
      */
     public static X9ECParameters getByOID(
-        ASN1ObjectIdentifier oid)
+        final ASN1ObjectIdentifier oid)
     {
         X9ECParameters ecP = X962NamedCurves.getByOID(oid);
 
@@ -241,7 +241,7 @@ public class ECNamedCurveTable
         return ecP;
     }
 
-    public static X9ECParametersHolder getByOIDLazy(ASN1ObjectIdentifier oid)
+    public static X9ECParametersHolder getByOIDLazy(final ASN1ObjectIdentifier oid)
     {
         X9ECParametersHolder holder = X962NamedCurves.getByOIDLazy(oid);
 
@@ -282,7 +282,7 @@ public class ECNamedCurveTable
      */
     public static Enumeration getNames()
     {
-        Vector v = new Vector();
+        final Vector v = new Vector();
 
         addEnumeration(v, X962NamedCurves.getNames());
         addEnumeration(v, SECNamedCurves.getNames());
@@ -296,8 +296,8 @@ public class ECNamedCurveTable
     }
 
     private static void addEnumeration(
-        Vector v,
-        Enumeration e)
+        final Vector v,
+        final Enumeration e)
     {
         while (e.hasMoreElements())
         {

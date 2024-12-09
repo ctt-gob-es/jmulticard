@@ -5,39 +5,36 @@ import java.math.BigInteger;
 public class RSAPrivateCrtKeyParameters
     extends RSAKeyParameters
 {
-    private BigInteger  e;
-    private BigInteger  p;
-    private BigInteger  q;
-    private BigInteger  dP;
-    private BigInteger  dQ;
-    private BigInteger  qInv;
+    private final BigInteger  e;
+    private final BigInteger  p;
+    private final BigInteger  q;
+    private final BigInteger  dP;
+    private final BigInteger  dQ;
+    private final BigInteger  qInv;
 
-    /**
-     * 
-     */
     public RSAPrivateCrtKeyParameters(
-         BigInteger  modulus,
-         BigInteger  publicExponent,
-         BigInteger  privateExponent,
-         BigInteger  p,
-         BigInteger  q,
-         BigInteger  dP,
-         BigInteger  dQ,
-         BigInteger  qInv)
+         final BigInteger  modulus,
+         final BigInteger  publicExponent,
+         final BigInteger  privateExponent,
+         final BigInteger  p,
+         final BigInteger  q,
+         final BigInteger  dP,
+         final BigInteger  dQ,
+         final BigInteger  qInv)
      {
          this(modulus, publicExponent, privateExponent, p, q, dP, dQ, qInv, false);
      }
 
     public RSAPrivateCrtKeyParameters(
-        BigInteger  modulus,
-        BigInteger  publicExponent,
-        BigInteger  privateExponent,
-        BigInteger  p,
-        BigInteger  q,
-        BigInteger  dP,
-        BigInteger  dQ,
-        BigInteger  qInv,
-        boolean     isInternal)
+        final BigInteger  modulus,
+        final BigInteger  publicExponent,
+        final BigInteger  privateExponent,
+        final BigInteger  p,
+        final BigInteger  q,
+        final BigInteger  dP,
+        final BigInteger  dQ,
+        final BigInteger  qInv,
+        final boolean     isInternal)
     {
         super(true, modulus, privateExponent, isInternal);
 
@@ -51,31 +48,31 @@ public class RSAPrivateCrtKeyParameters
 
     public BigInteger getPublicExponent()
     {
-        return e;
+        return this.e;
     }
 
     public BigInteger getP()
     {
-        return p;
+        return this.p;
     }
 
     public BigInteger getQ()
     {
-        return q;
+        return this.q;
     }
 
     public BigInteger getDP()
     {
-        return dP;
+        return this.dP;
     }
 
     public BigInteger getDQ()
     {
-        return dQ;
+        return this.dQ;
     }
 
     public BigInteger getQInv()
     {
-        return qInv;
+        return this.qInv;
     }
 }

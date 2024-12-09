@@ -10,7 +10,6 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -62,13 +61,13 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
  *
  * SignedAttributes   ::= SET SIZE (1..MAX) OF Attribute
  * UnsignedAttributes ::= SET SIZE (1..MAX) OF Attribute
- * 
+ *
  * {@link Attribute} ::= SEQUENCE {
  *     attrType   OBJECT IDENTIFIER,
  *     attrValues SET OF AttributeValue }
  *
  * AttributeValue ::= ANY
- * 
+ *
  * SignatureValue ::= OCTET STRING
  * </pre>
  */
@@ -76,11 +75,11 @@ public class SignerInfo
     extends ASN1Object
 {
     private ASN1Integer              version;
-    private SignerIdentifier        sid;
-    private AlgorithmIdentifier     digAlgorithm;
+    private final SignerIdentifier        sid;
+    private final AlgorithmIdentifier     digAlgorithm;
     private ASN1Set                 authenticatedAttributes;
     private AlgorithmIdentifier     digEncryptionAlgorithm;
-    private ASN1OctetString         encryptedDigest;
+    private final ASN1OctetString         encryptedDigest;
     private ASN1Set                 unauthenticatedAttributes;
 
     /**
@@ -94,10 +93,11 @@ public class SignerInfo
      * </ul>
      *
      * @param o the object we want converted.
+     * @return Signer info.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static SignerInfo getInstance(
-        Object  o)
+        final Object  o)
         throws IllegalArgumentException
     {
         if (o instanceof SignerInfo)
@@ -114,7 +114,7 @@ public class SignerInfo
 
     /**
      *
-     * @param sid
+     * @param sid Signer identifier.
      * @param digAlgorithm            CMS knows as 'digestAlgorithm'
      * @param authenticatedAttributes CMS knows as 'signedAttrs'
      * @param digEncryptionAlgorithm  CMS knows as 'signatureAlgorithm'
@@ -122,12 +122,12 @@ public class SignerInfo
      * @param unauthenticatedAttributes CMS knows as 'unsignedAttrs'
      */
     public SignerInfo(
-        SignerIdentifier        sid,
-        AlgorithmIdentifier     digAlgorithm,
-        ASN1Set                 authenticatedAttributes,
-        AlgorithmIdentifier     digEncryptionAlgorithm,
-        ASN1OctetString         encryptedDigest,
-        ASN1Set                 unauthenticatedAttributes)
+        final SignerIdentifier        sid,
+        final AlgorithmIdentifier     digAlgorithm,
+        final ASN1Set                 authenticatedAttributes,
+        final AlgorithmIdentifier     digEncryptionAlgorithm,
+        final ASN1OctetString         encryptedDigest,
+        final ASN1Set                 unauthenticatedAttributes)
     {
         if (sid.isTagged())
         {
@@ -148,7 +148,7 @@ public class SignerInfo
 
     /**
      *
-     * @param sid
+     * @param sid Signer identifier.
      * @param digAlgorithm            CMS knows as 'digestAlgorithm'
      * @param authenticatedAttributes CMS knows as 'signedAttrs'
      * @param digEncryptionAlgorithm  CMS knows as 'signatureAlgorithm'
@@ -156,12 +156,12 @@ public class SignerInfo
      * @param unauthenticatedAttributes CMS knows as 'unsignedAttrs'
      */
     public SignerInfo(
-        SignerIdentifier        sid,
-        AlgorithmIdentifier     digAlgorithm,
-        Attributes              authenticatedAttributes,
-        AlgorithmIdentifier     digEncryptionAlgorithm,
-        ASN1OctetString         encryptedDigest,
-        Attributes              unauthenticatedAttributes)
+        final SignerIdentifier        sid,
+        final AlgorithmIdentifier     digAlgorithm,
+        final Attributes              authenticatedAttributes,
+        final AlgorithmIdentifier     digEncryptionAlgorithm,
+        final ASN1OctetString         encryptedDigest,
+        final Attributes              unauthenticatedAttributes)
     {
         if (sid.isTagged())
         {
@@ -181,73 +181,73 @@ public class SignerInfo
     }
 
     private SignerInfo(
-        ASN1Sequence seq)
+        final ASN1Sequence seq)
     {
-        Enumeration     e = seq.getObjects();
+        final Enumeration     e = seq.getObjects();
 
-        version = (ASN1Integer)e.nextElement();
-        sid = SignerIdentifier.getInstance(e.nextElement());
-        digAlgorithm = AlgorithmIdentifier.getInstance(e.nextElement());
+        this.version = (ASN1Integer)e.nextElement();
+        this.sid = SignerIdentifier.getInstance(e.nextElement());
+        this.digAlgorithm = AlgorithmIdentifier.getInstance(e.nextElement());
 
-        Object obj = e.nextElement();
+        final Object obj = e.nextElement();
 
         if (obj instanceof ASN1TaggedObject)
         {
-            authenticatedAttributes = ASN1Set.getInstance((ASN1TaggedObject)obj, false);
+            this.authenticatedAttributes = ASN1Set.getInstance((ASN1TaggedObject)obj, false);
 
-            digEncryptionAlgorithm = AlgorithmIdentifier.getInstance(e.nextElement());
+            this.digEncryptionAlgorithm = AlgorithmIdentifier.getInstance(e.nextElement());
         }
         else
         {
-            authenticatedAttributes = null;
-            digEncryptionAlgorithm = AlgorithmIdentifier.getInstance(obj);
+            this.authenticatedAttributes = null;
+            this.digEncryptionAlgorithm = AlgorithmIdentifier.getInstance(obj);
         }
 
-        encryptedDigest = DEROctetString.getInstance(e.nextElement());
+        this.encryptedDigest = ASN1OctetString.getInstance(e.nextElement());
 
         if (e.hasMoreElements())
         {
-            unauthenticatedAttributes = ASN1Set.getInstance((ASN1TaggedObject)e.nextElement(), false);
+            this.unauthenticatedAttributes = ASN1Set.getInstance((ASN1TaggedObject)e.nextElement(), false);
         }
         else
         {
-            unauthenticatedAttributes = null;
+            this.unauthenticatedAttributes = null;
         }
     }
 
     public ASN1Integer getVersion()
     {
-        return version;
+        return this.version;
     }
 
     public SignerIdentifier getSID()
     {
-        return sid;
+        return this.sid;
     }
 
     public ASN1Set getAuthenticatedAttributes()
     {
-        return authenticatedAttributes;
+        return this.authenticatedAttributes;
     }
 
     public AlgorithmIdentifier getDigestAlgorithm()
     {
-        return digAlgorithm;
+        return this.digAlgorithm;
     }
 
     public ASN1OctetString getEncryptedDigest()
     {
-        return encryptedDigest;
+        return this.encryptedDigest;
     }
 
     public AlgorithmIdentifier getDigestEncryptionAlgorithm()
     {
-        return digEncryptionAlgorithm;
+        return this.digEncryptionAlgorithm;
     }
 
     public ASN1Set getUnauthenticatedAttributes()
     {
-        return unauthenticatedAttributes;
+        return this.unauthenticatedAttributes;
     }
 
     /**
@@ -256,23 +256,23 @@ public class SignerInfo
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(7);
+        final ASN1EncodableVector v = new ASN1EncodableVector(7);
 
-        v.add(version);
-        v.add(sid);
-        v.add(digAlgorithm);
+        v.add(this.version);
+        v.add(this.sid);
+        v.add(this.digAlgorithm);
 
-        if (authenticatedAttributes != null)
+        if (this.authenticatedAttributes != null)
         {
-            v.add(new DERTaggedObject(false, 0, authenticatedAttributes));
+            v.add(new DERTaggedObject(false, 0, this.authenticatedAttributes));
         }
 
-        v.add(digEncryptionAlgorithm);
-        v.add(encryptedDigest);
+        v.add(this.digEncryptionAlgorithm);
+        v.add(this.encryptedDigest);
 
-        if (unauthenticatedAttributes != null)
+        if (this.unauthenticatedAttributes != null)
         {
-            v.add(new DERTaggedObject(false, 1, unauthenticatedAttributes));
+            v.add(new DERTaggedObject(false, 1, this.unauthenticatedAttributes));
         }
 
         return new DERSequence(v);

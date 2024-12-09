@@ -29,6 +29,7 @@ public class DERApplicationSpecific
      *
      * @param tag the tag number for this object.
      * @param baseEncodable the object to be contained.
+     * @throws IOException If IO error occurs.
      */
     public DERApplicationSpecific(final int tag, final ASN1Encodable baseEncodable) throws IOException
     {
@@ -41,6 +42,7 @@ public class DERApplicationSpecific
      * @param explicit true if the object is explicitly tagged.
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
+     * @throws IOException If IO error occurs.
      */
     public DERApplicationSpecific(final boolean explicit, final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {

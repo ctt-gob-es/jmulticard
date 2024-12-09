@@ -21,12 +21,16 @@ public class Base64 {
     }
 
     /** Encode the input data producing a base 64 encoded byte array.
+     * @param data to encode
      * @return a byte array containing the base 64 encoded data. */
     public static byte[] encode(final byte[] data) {
         return encode(data, 0, data.length);
     }
 
     /** Encode the input data producing a base 64 encoded byte array.
+     * @param data to encode
+     * @param off offset
+     * @param length number of bytes
      * @return a byte array containing the base 64 encoded data. */
     public static byte[] encode(final byte[] data, final int off, final int length) {
         final int len = encoder.getEncodedLength(length);
@@ -43,18 +47,27 @@ public class Base64 {
     }
 
     /** Encode the byte data to base 64 writing it to the given output stream.
-     * @return the number of bytes produced. */
+     * @param data to encode
+     * @param out The output stream to write to.
+     * @return the number of bytes produced.
+     * @throws IOException if IO error occurs. */
     public static int encode(final byte[] data, final OutputStream out) throws IOException {
         return encoder.encode(data, 0, data.length, out);
     }
 
     /** Encode the byte data to base 64 writing it to the given output stream.
-     * @return the number of bytes produced. */
+     * @param data to encode
+     * @param off offset
+     * @param length number of bytes
+     * @param out The output stream to write to.
+     * @return the number of bytes produced.
+     * @throws IOException if IO error occurs. */
     public static int encode(final byte[] data, final int off, final int length, final OutputStream out) throws IOException {
         return encoder.encode(data, off, length, out);
     }
 
     /** Decode the base 64 encoded input data. It is assumed the input data is valid.
+     * @param data Encoded data
      * @return a byte array representing the decoded data. */
     public static byte[] decode(final byte[] data) {
         final int len = data.length / 4 * 3;
@@ -71,6 +84,7 @@ public class Base64 {
     }
 
     /** Decode the base 64 encoded String data - whitespace will be ignored.
+     * @param data Encoded data
      * @return a byte array representing the decoded data. */
     public static byte[] decode(final String data) {
         final int len = data.length() / 4 * 3;
@@ -88,7 +102,10 @@ public class Base64 {
 
     /** Decode the base 64 encoded String data writing it to the given output stream,
      * whitespace characters will be ignored.
-     * @return the number of bytes produced. */
+     * @param data Encoded data
+     * @param out The output stream to write to.
+     * @return the number of bytes produced.
+     * @throws IOException if IO error occurs. */
     public static int decode(final String data, final OutputStream out) throws IOException {
         return encoder.decode(data, out);
     }
@@ -97,7 +114,8 @@ public class Base64 {
      * @param base64Data       The source data.
      * @param start            Start position.
      * @param length           the length.
-     * @param out The output stream to write to. */
+     * @param out The output stream to write to.
+     * @return the number of bytes produced. */
     public static int decode(final byte[] base64Data, final int start, final int length, final OutputStream out) {
         try {
            return encoder.decode(base64Data, start, length, out);

@@ -32,7 +32,7 @@ public final class CryptoServicesRegistrar
     private static final Permission CanSetConstraints = new CryptoServicesPermission(CryptoServicesPermission.CONSTRAINTS);
 
     private static final ThreadLocal<Map<String, Object[]>> threadProperties = new ThreadLocal<>();
-    private static final Map<String, Object[]> globalProperties = Collections.synchronizedMap(new HashMap<String, Object[]>());
+    private static final Map<String, Object[]> globalProperties = Collections.synchronizedMap(new HashMap<>());
     private static final SecureRandomProvider defaultRandomProviderImpl = new SecureRandomProvider()
     {
         @Override
@@ -202,7 +202,6 @@ public final class CryptoServicesRegistrar
      * Check a service to make sure it meets the current constraints.
      *
      * @param cryptoService the service to be checked.
-     * @throws CryptoServiceConstraintsException if the service violates the current constraints.
      */
     public static void checkConstraints(final CryptoServiceProperties cryptoService)
     {
@@ -211,6 +210,7 @@ public final class CryptoServicesRegistrar
 
     /**
      * Set the current algorithm constraints.
+     * @param constraints Constraints.
      */
     public static void setServicesConstraints(final CryptoServicesConstraints constraints)
     {

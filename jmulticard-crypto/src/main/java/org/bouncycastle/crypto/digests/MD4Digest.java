@@ -17,7 +17,7 @@ public class MD4Digest
 
     private int     H1, H2, H3, H4;         // IV's
 
-    private int[]   X = new int[16];
+    private final int[]   X = new int[16];
     private int     xOff;
 
     /**
@@ -31,25 +31,26 @@ public class MD4Digest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t Digest.
      */
-    public MD4Digest(MD4Digest t)
+    public MD4Digest(final MD4Digest t)
     {
         super(t);
 
         copyIn(t);
     }
 
-    private void copyIn(MD4Digest t)
+    private void copyIn(final MD4Digest t)
     {
         super.copyIn(t);
 
-        H1 = t.H1;
-        H2 = t.H2;
-        H3 = t.H3;
-        H4 = t.H4;
+        this.H1 = t.H1;
+        this.H2 = t.H2;
+        this.H3 = t.H3;
+        this.H4 = t.H4;
 
-        System.arraycopy(t.X, 0, X, 0, t.X.length);
-        xOff = t.xOff;
+        System.arraycopy(t.X, 0, this.X, 0, t.X.length);
+        this.xOff = t.xOff;
     }
 
     @Override
@@ -66,13 +67,13 @@ public class MD4Digest
 
     @Override
 	protected void processWord(
-        byte[]  in,
-        int     inOff)
+        final byte[]  in,
+        final int     inOff)
     {
-        X[xOff++] = (in[inOff] & 0xff) | ((in[inOff + 1] & 0xff) << 8)
-            | ((in[inOff + 2] & 0xff) << 16) | ((in[inOff + 3] & 0xff) << 24); 
+        this.X[this.xOff++] = in[inOff] & 0xff | (in[inOff + 1] & 0xff) << 8
+            | (in[inOff + 2] & 0xff) << 16 | (in[inOff + 3] & 0xff) << 24;
 
-        if (xOff == 16)
+        if (this.xOff == 16)
         {
             processBlock();
         }
@@ -80,21 +81,21 @@ public class MD4Digest
 
     @Override
 	protected void processLength(
-        long    bitLength)
+        final long    bitLength)
     {
-        if (xOff > 14)
+        if (this.xOff > 14)
         {
             processBlock();
         }
 
-        X[14] = (int)(bitLength & 0xffffffff);
-        X[15] = (int)(bitLength >>> 32);
+        this.X[14] = (int)(bitLength & 0xffffffff);
+        this.X[15] = (int)(bitLength >>> 32);
     }
 
     private void unpackWord(
-        int     word,
-        byte[]  out,
-        int     outOff)
+        final int     word,
+        final byte[]  out,
+        final int     outOff)
     {
         out[outOff]     = (byte)word;
         out[outOff + 1] = (byte)(word >>> 8);
@@ -104,15 +105,15 @@ public class MD4Digest
 
     @Override
 	public int doFinal(
-        byte[]  out,
-        int     outOff)
+        final byte[]  out,
+        final int     outOff)
     {
         finish();
 
-        unpackWord(H1, out, outOff);
-        unpackWord(H2, out, outOff + 4);
-        unpackWord(H3, out, outOff + 8);
-        unpackWord(H4, out, outOff + 12);
+        unpackWord(this.H1, out, outOff);
+        unpackWord(this.H2, out, outOff + 4);
+        unpackWord(this.H3, out, outOff + 8);
+        unpackWord(this.H4, out, outOff + 12);
 
         reset();
 
@@ -127,16 +128,16 @@ public class MD4Digest
     {
         super.reset();
 
-        H1 = 0x67452301;
-        H2 = 0xefcdab89;
-        H3 = 0x98badcfe;
-        H4 = 0x10325476;
+        this.H1 = 0x67452301;
+        this.H2 = 0xefcdab89;
+        this.H3 = 0x98badcfe;
+        this.H4 = 0x10325476;
 
-        xOff = 0;
+        this.xOff = 0;
 
-        for (int i = 0; i != X.length; i++)
+        for (int i = 0; i != this.X.length; i++)
         {
-            X[i] = 0;
+            this.X[i] = 0;
         }
     }
 
@@ -168,35 +169,35 @@ public class MD4Digest
      * rotate int x left n bits.
      */
     private int rotateLeft(
-        int x,
-        int n)
+        final int x,
+        final int n)
     {
-        return (x << n) | (x >>> (32 - n));
+        return x << n | x >>> 32 - n;
     }
 
     /*
      * F, G, H and I are the basic MD4 functions.
      */
     private int F(
-        int u,
-        int v,
-        int w)
+        final int u,
+        final int v,
+        final int w)
     {
-        return (u & v) | (~u & w);
+        return u & v | ~u & w;
     }
 
     private int G(
-        int u,
-        int v,
-        int w)
+        final int u,
+        final int v,
+        final int w)
     {
-        return (u & v) | (u & w) | (v & w);
+        return u & v | u & w | v & w;
     }
 
     private int H(
-        int u,
-        int v,
-        int w)
+        final int u,
+        final int v,
+        final int w)
     {
         return u ^ v ^ w;
     }
@@ -204,83 +205,83 @@ public class MD4Digest
     @Override
 	protected void processBlock()
     {
-        int a = H1;
-        int b = H2;
-        int c = H3;
-        int d = H4;
+        int a = this.H1;
+        int b = this.H2;
+        int c = this.H3;
+        int d = this.H4;
 
         //
         // Round 1 - F cycle, 16 times.
         //
-        a = rotateLeft(a + F(b, c, d) + X[ 0], S11);
-        d = rotateLeft(d + F(a, b, c) + X[ 1], S12);
-        c = rotateLeft(c + F(d, a, b) + X[ 2], S13);
-        b = rotateLeft(b + F(c, d, a) + X[ 3], S14);
-        a = rotateLeft(a + F(b, c, d) + X[ 4], S11);
-        d = rotateLeft(d + F(a, b, c) + X[ 5], S12);
-        c = rotateLeft(c + F(d, a, b) + X[ 6], S13);
-        b = rotateLeft(b + F(c, d, a) + X[ 7], S14);
-        a = rotateLeft(a + F(b, c, d) + X[ 8], S11);
-        d = rotateLeft(d + F(a, b, c) + X[ 9], S12);
-        c = rotateLeft(c + F(d, a, b) + X[10], S13);
-        b = rotateLeft(b + F(c, d, a) + X[11], S14);
-        a = rotateLeft(a + F(b, c, d) + X[12], S11);
-        d = rotateLeft(d + F(a, b, c) + X[13], S12);
-        c = rotateLeft(c + F(d, a, b) + X[14], S13);
-        b = rotateLeft(b + F(c, d, a) + X[15], S14);
+        a = rotateLeft(a + F(b, c, d) + this.X[ 0], S11);
+        d = rotateLeft(d + F(a, b, c) + this.X[ 1], S12);
+        c = rotateLeft(c + F(d, a, b) + this.X[ 2], S13);
+        b = rotateLeft(b + F(c, d, a) + this.X[ 3], S14);
+        a = rotateLeft(a + F(b, c, d) + this.X[ 4], S11);
+        d = rotateLeft(d + F(a, b, c) + this.X[ 5], S12);
+        c = rotateLeft(c + F(d, a, b) + this.X[ 6], S13);
+        b = rotateLeft(b + F(c, d, a) + this.X[ 7], S14);
+        a = rotateLeft(a + F(b, c, d) + this.X[ 8], S11);
+        d = rotateLeft(d + F(a, b, c) + this.X[ 9], S12);
+        c = rotateLeft(c + F(d, a, b) + this.X[10], S13);
+        b = rotateLeft(b + F(c, d, a) + this.X[11], S14);
+        a = rotateLeft(a + F(b, c, d) + this.X[12], S11);
+        d = rotateLeft(d + F(a, b, c) + this.X[13], S12);
+        c = rotateLeft(c + F(d, a, b) + this.X[14], S13);
+        b = rotateLeft(b + F(c, d, a) + this.X[15], S14);
 
         //
         // Round 2 - G cycle, 16 times.
         //
-        a = rotateLeft(a + G(b, c, d) + X[ 0] + 0x5a827999, S21);
-        d = rotateLeft(d + G(a, b, c) + X[ 4] + 0x5a827999, S22);
-        c = rotateLeft(c + G(d, a, b) + X[ 8] + 0x5a827999, S23);
-        b = rotateLeft(b + G(c, d, a) + X[12] + 0x5a827999, S24);
-        a = rotateLeft(a + G(b, c, d) + X[ 1] + 0x5a827999, S21);
-        d = rotateLeft(d + G(a, b, c) + X[ 5] + 0x5a827999, S22);
-        c = rotateLeft(c + G(d, a, b) + X[ 9] + 0x5a827999, S23);
-        b = rotateLeft(b + G(c, d, a) + X[13] + 0x5a827999, S24);
-        a = rotateLeft(a + G(b, c, d) + X[ 2] + 0x5a827999, S21);
-        d = rotateLeft(d + G(a, b, c) + X[ 6] + 0x5a827999, S22);
-        c = rotateLeft(c + G(d, a, b) + X[10] + 0x5a827999, S23);
-        b = rotateLeft(b + G(c, d, a) + X[14] + 0x5a827999, S24);
-        a = rotateLeft(a + G(b, c, d) + X[ 3] + 0x5a827999, S21);
-        d = rotateLeft(d + G(a, b, c) + X[ 7] + 0x5a827999, S22);
-        c = rotateLeft(c + G(d, a, b) + X[11] + 0x5a827999, S23);
-        b = rotateLeft(b + G(c, d, a) + X[15] + 0x5a827999, S24);
+        a = rotateLeft(a + G(b, c, d) + this.X[ 0] + 0x5a827999, S21);
+        d = rotateLeft(d + G(a, b, c) + this.X[ 4] + 0x5a827999, S22);
+        c = rotateLeft(c + G(d, a, b) + this.X[ 8] + 0x5a827999, S23);
+        b = rotateLeft(b + G(c, d, a) + this.X[12] + 0x5a827999, S24);
+        a = rotateLeft(a + G(b, c, d) + this.X[ 1] + 0x5a827999, S21);
+        d = rotateLeft(d + G(a, b, c) + this.X[ 5] + 0x5a827999, S22);
+        c = rotateLeft(c + G(d, a, b) + this.X[ 9] + 0x5a827999, S23);
+        b = rotateLeft(b + G(c, d, a) + this.X[13] + 0x5a827999, S24);
+        a = rotateLeft(a + G(b, c, d) + this.X[ 2] + 0x5a827999, S21);
+        d = rotateLeft(d + G(a, b, c) + this.X[ 6] + 0x5a827999, S22);
+        c = rotateLeft(c + G(d, a, b) + this.X[10] + 0x5a827999, S23);
+        b = rotateLeft(b + G(c, d, a) + this.X[14] + 0x5a827999, S24);
+        a = rotateLeft(a + G(b, c, d) + this.X[ 3] + 0x5a827999, S21);
+        d = rotateLeft(d + G(a, b, c) + this.X[ 7] + 0x5a827999, S22);
+        c = rotateLeft(c + G(d, a, b) + this.X[11] + 0x5a827999, S23);
+        b = rotateLeft(b + G(c, d, a) + this.X[15] + 0x5a827999, S24);
 
         //
         // Round 3 - H cycle, 16 times.
         //
-        a = rotateLeft(a + H(b, c, d) + X[ 0] + 0x6ed9eba1, S31);
-        d = rotateLeft(d + H(a, b, c) + X[ 8] + 0x6ed9eba1, S32);
-        c = rotateLeft(c + H(d, a, b) + X[ 4] + 0x6ed9eba1, S33);
-        b = rotateLeft(b + H(c, d, a) + X[12] + 0x6ed9eba1, S34);
-        a = rotateLeft(a + H(b, c, d) + X[ 2] + 0x6ed9eba1, S31);
-        d = rotateLeft(d + H(a, b, c) + X[10] + 0x6ed9eba1, S32);
-        c = rotateLeft(c + H(d, a, b) + X[ 6] + 0x6ed9eba1, S33);
-        b = rotateLeft(b + H(c, d, a) + X[14] + 0x6ed9eba1, S34);
-        a = rotateLeft(a + H(b, c, d) + X[ 1] + 0x6ed9eba1, S31);
-        d = rotateLeft(d + H(a, b, c) + X[ 9] + 0x6ed9eba1, S32);
-        c = rotateLeft(c + H(d, a, b) + X[ 5] + 0x6ed9eba1, S33);
-        b = rotateLeft(b + H(c, d, a) + X[13] + 0x6ed9eba1, S34);
-        a = rotateLeft(a + H(b, c, d) + X[ 3] + 0x6ed9eba1, S31);
-        d = rotateLeft(d + H(a, b, c) + X[11] + 0x6ed9eba1, S32);
-        c = rotateLeft(c + H(d, a, b) + X[ 7] + 0x6ed9eba1, S33);
-        b = rotateLeft(b + H(c, d, a) + X[15] + 0x6ed9eba1, S34);
+        a = rotateLeft(a + H(b, c, d) + this.X[ 0] + 0x6ed9eba1, S31);
+        d = rotateLeft(d + H(a, b, c) + this.X[ 8] + 0x6ed9eba1, S32);
+        c = rotateLeft(c + H(d, a, b) + this.X[ 4] + 0x6ed9eba1, S33);
+        b = rotateLeft(b + H(c, d, a) + this.X[12] + 0x6ed9eba1, S34);
+        a = rotateLeft(a + H(b, c, d) + this.X[ 2] + 0x6ed9eba1, S31);
+        d = rotateLeft(d + H(a, b, c) + this.X[10] + 0x6ed9eba1, S32);
+        c = rotateLeft(c + H(d, a, b) + this.X[ 6] + 0x6ed9eba1, S33);
+        b = rotateLeft(b + H(c, d, a) + this.X[14] + 0x6ed9eba1, S34);
+        a = rotateLeft(a + H(b, c, d) + this.X[ 1] + 0x6ed9eba1, S31);
+        d = rotateLeft(d + H(a, b, c) + this.X[ 9] + 0x6ed9eba1, S32);
+        c = rotateLeft(c + H(d, a, b) + this.X[ 5] + 0x6ed9eba1, S33);
+        b = rotateLeft(b + H(c, d, a) + this.X[13] + 0x6ed9eba1, S34);
+        a = rotateLeft(a + H(b, c, d) + this.X[ 3] + 0x6ed9eba1, S31);
+        d = rotateLeft(d + H(a, b, c) + this.X[11] + 0x6ed9eba1, S32);
+        c = rotateLeft(c + H(d, a, b) + this.X[ 7] + 0x6ed9eba1, S33);
+        b = rotateLeft(b + H(c, d, a) + this.X[15] + 0x6ed9eba1, S34);
 
-        H1 += a;
-        H2 += b;
-        H3 += c;
-        H4 += d;
+        this.H1 += a;
+        this.H2 += b;
+        this.H3 += c;
+        this.H4 += d;
 
         //
         // reset the offset and clean out the word buffer.
         //
-        xOff = 0;
-        for (int i = 0; i != X.length; i++)
+        this.xOff = 0;
+        for (int i = 0; i != this.X.length; i++)
         {
-            X[i] = 0;
+            this.X[i] = 0;
         }
     }
 
@@ -291,9 +292,9 @@ public class MD4Digest
     }
 
     @Override
-	public void reset(Memoable other)
+	public void reset(final Memoable other)
     {
-        MD4Digest d = (MD4Digest)other;
+        final MD4Digest d = (MD4Digest)other;
 
         copyIn(d);
     }

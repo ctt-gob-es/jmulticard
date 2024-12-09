@@ -127,6 +127,7 @@ public class GMNamedCurves
      * the passed in object identifier. Null if the curve isn't present.
      *
      * @param oid an object identifier representing a named curve, if present.
+     * @return EC parameters.
      */
     public static X9ECParameters getByOID(final ASN1ObjectIdentifier oid)
     {
@@ -142,7 +143,7 @@ public class GMNamedCurves
     /**
      * return the object identifier signified by the passed in name. Null
      * if there is no object identifier associated with name.
-     *
+     * @param name Object identifier anme.
      * @return the object identifier associated with name, if present.
      */
     public static ASN1ObjectIdentifier getOID(
@@ -152,7 +153,8 @@ public class GMNamedCurves
     }
 
     /**
-     * return the named curve name represented by the given object identifier.
+     * @param oid Object identifier.
+     * @return the named curve name represented by the given object identifier.
      */
     public static String getName(
         final ASN1ObjectIdentifier oid)
@@ -161,7 +163,7 @@ public class GMNamedCurves
     }
 
     /**
-     * returns an enumeration containing the name strings for curves
+     * @return an enumeration containing the name strings for curves
      * contained in this structure.
      */
     public static Enumeration getNames()

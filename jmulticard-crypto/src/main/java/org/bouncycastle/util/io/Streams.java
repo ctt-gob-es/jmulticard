@@ -133,6 +133,7 @@ public final class Streams {
      * @param inStr source input stream.
      * @param limit the maximum number of bytes allowed to be read.
      * @param outStr destination output stream.
+     * @return total bytes written
      * @throws IOException in case of underlying IOException, or if limit is reached on inStr still has data in it.
      */
     public static long pipeAllLimited(final InputStream inStr, final long limit, final OutputStream outStr)

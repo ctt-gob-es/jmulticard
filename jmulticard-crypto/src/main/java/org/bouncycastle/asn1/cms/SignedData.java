@@ -54,7 +54,6 @@ import org.bouncycastle.asn1.DLSequence;
  *       THEN version MUST be 3
  *       ELSE version MUST be 1
  * </pre>
- * <p>
  */
 public class SignedData
     extends ASN1Object
@@ -112,16 +111,16 @@ public class SignedData
         final ASN1Set     crls,
         final ASN1Set     signerInfos)
     {
-        version = calculateVersion(contentInfo.getContentType(), certificates, crls, signerInfos);
+        this.version = calculateVersion(contentInfo.getContentType(), certificates, crls, signerInfos);
         this.digestAlgorithms = digestAlgorithms;
         this.contentInfo = contentInfo;
         this.certificates = certificates;
         this.crls = crls;
         this.signerInfos = signerInfos;
-        digsBer = digestAlgorithms instanceof BERSet;
-        crlsBer = crls instanceof BERSet;
-        certsBer = certificates instanceof BERSet;
-        sigsBer = signerInfos instanceof BERSet;
+        this.digsBer = digestAlgorithms instanceof BERSet;
+        this.crlsBer = crls instanceof BERSet;
+        this.certsBer = certificates instanceof BERSet;
+        this.sigsBer = signerInfos instanceof BERSet;
     }
 
 
@@ -211,9 +210,9 @@ public class SignedData
     {
         final Enumeration     e = seq.getObjects();
 
-        version = ASN1Integer.getInstance(e.nextElement());
-        digestAlgorithms = (ASN1Set)e.nextElement();
-        contentInfo = ContentInfo.getInstance(e.nextElement());
+        this.version = ASN1Integer.getInstance(e.nextElement());
+        this.digestAlgorithms = (ASN1Set)e.nextElement();
+        this.contentInfo = ContentInfo.getInstance(e.nextElement());
 
         ASN1Set sigInfs = null;
         while (e.hasMoreElements())
@@ -232,12 +231,12 @@ public class SignedData
                 switch (tagged.getTagNo())
                 {
                 case 0:
-                    certsBer = tagged instanceof BERTaggedObject;
-                    certificates = ASN1Set.getInstance(tagged, false);
+                    this.certsBer = tagged instanceof BERTaggedObject;
+                    this.certificates = ASN1Set.getInstance(tagged, false);
                     break;
                 case 1:
-                    crlsBer = tagged instanceof BERTaggedObject;
-                    crls = ASN1Set.getInstance(tagged, false);
+                    this.crlsBer = tagged instanceof BERTaggedObject;
+                    this.crls = ASN1Set.getInstance(tagged, false);
                     break;
                 default:
                     throw new IllegalArgumentException("unknown tag value " + tagged.getTagNo());
@@ -258,39 +257,39 @@ public class SignedData
             throw new IllegalArgumentException("signerInfos not set");
         }
 
-        signerInfos = sigInfs;
-        digsBer = digestAlgorithms instanceof BERSet;
-        sigsBer = signerInfos instanceof BERSet;
+        this.signerInfos = sigInfs;
+        this.digsBer = this.digestAlgorithms instanceof BERSet;
+        this.sigsBer = this.signerInfos instanceof BERSet;
     }
 
     public ASN1Integer getVersion()
     {
-        return version;
+        return this.version;
     }
 
     public ASN1Set getDigestAlgorithms()
     {
-        return digestAlgorithms;
+        return this.digestAlgorithms;
     }
 
     public ContentInfo getEncapContentInfo()
     {
-        return contentInfo;
+        return this.contentInfo;
     }
 
     public ASN1Set getCertificates()
     {
-        return certificates;
+        return this.certificates;
     }
 
     public ASN1Set getCRLs()
     {
-        return crls;
+        return this.crls;
     }
 
     public ASN1Set getSignerInfos()
     {
-        return signerInfos;
+        return this.signerInfos;
     }
 
     /**
@@ -301,37 +300,37 @@ public class SignedData
     {
         final ASN1EncodableVector v = new ASN1EncodableVector(6);
 
-        v.add(version);
-        v.add(digestAlgorithms);
-        v.add(contentInfo);
+        v.add(this.version);
+        v.add(this.digestAlgorithms);
+        v.add(this.contentInfo);
 
-        if (certificates != null)
+        if (this.certificates != null)
         {
-            if (certsBer)
+            if (this.certsBer)
             {
-                v.add(new BERTaggedObject(false, 0, certificates));
+                v.add(new BERTaggedObject(false, 0, this.certificates));
             }
             else
             {
-                v.add(new DERTaggedObject(false, 0, certificates));
+                v.add(new DERTaggedObject(false, 0, this.certificates));
             }
         }
 
-        if (crls != null)
+        if (this.crls != null)
         {
-            if (crlsBer)
+            if (this.crlsBer)
             {
-                v.add(new BERTaggedObject(false, 1, crls));
+                v.add(new BERTaggedObject(false, 1, this.crls));
             }
             else
             {
-                v.add(new DERTaggedObject(false, 1, crls));
+                v.add(new DERTaggedObject(false, 1, this.crls));
             }
         }
 
-        v.add(signerInfos);
+        v.add(this.signerInfos);
 
-        if (!contentInfo.isDefiniteLength() || digsBer || sigsBer || crlsBer || certsBer)
+        if (!this.contentInfo.isDefiniteLength() || this.digsBer || this.sigsBer || this.crlsBer || this.certsBer)
         {
             return new BERSequence(v);
         }

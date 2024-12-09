@@ -10,7 +10,7 @@ import org.bouncycastle.math.ec.ECPoint;
 public interface ECPublicKey extends ECKey, PublicKey {
 
     /**
-     * return the public point Q
+     * @return the public point Q
      */
     ECPoint getQ();
 }

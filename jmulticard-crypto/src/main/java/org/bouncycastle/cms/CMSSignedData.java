@@ -77,10 +77,10 @@ public class CMSSignedData
     private CMSSignedData(
         final CMSSignedData   c)
     {
-        signedData = c.signedData;
-        contentInfo = c.contentInfo;
-        signedContent = c.signedContent;
-        signerInfoStore = c.signerInfoStore;
+        this.signedData = c.signedData;
+        this.contentInfo = c.contentInfo;
+        this.signedContent = c.signedContent;
+        this.signerInfoStore = c.signerInfoStore;
     }
 
     public CMSSignedData(
@@ -103,6 +103,7 @@ public class CMSSignedData
      *
      * @param hashes a map of precomputed digests for content indexed by name of hash.
      * @param sigBlock the signature object.
+     * @throws CMSException Invalid data.
      */
     public CMSSignedData(
         final Map     hashes,
@@ -117,6 +118,7 @@ public class CMSSignedData
      *
      * @param signedContent the content that was signed.
      * @param sigData the signature object.
+     * @throws CMSException Invalid data.
      */
     public CMSSignedData(
         final CMSProcessable  signedContent,
@@ -128,6 +130,8 @@ public class CMSSignedData
 
     /**
      * base constructor - with encapsulated content
+     * @param sigData the signature object.
+     * @throws CMSException Invalid data.
      */
     public CMSSignedData(
         final InputStream sigData)
@@ -136,6 +140,12 @@ public class CMSSignedData
         this(CMSUtils.readContentInfo(sigData));
     }
 
+    /**
+     * Constructor
+     * @param signedContent Content.
+     * @param sigData the signature object.
+     * @throws CMSException Invalid data.
+     */
     public CMSSignedData(
         final CMSProcessable  signedContent,
         final ContentInfo     sigData)
@@ -152,7 +162,7 @@ public class CMSSignedData
                 @Override
 				public ASN1ObjectIdentifier getContentType()
                 {
-                    return signedData.getEncapContentInfo().getContentType();
+                    return CMSSignedData.this.signedData.getEncapContentInfo().getContentType();
                 }
 
                 @Override
@@ -170,8 +180,8 @@ public class CMSSignedData
             };
         }
 
-        contentInfo = sigData;
-        signedData = getSignedData();
+        this.contentInfo = sigData;
+        this.signedData = getSignedData();
     }
 
     public CMSSignedData(
@@ -180,37 +190,37 @@ public class CMSSignedData
         throws CMSException
     {
         this.hashes = hashes;
-        contentInfo = sigData;
-        signedData = getSignedData();
+        this.contentInfo = sigData;
+        this.signedData = getSignedData();
     }
 
     public CMSSignedData(
         final ContentInfo sigData)
         throws CMSException
     {
-        contentInfo = sigData;
-        signedData = getSignedData();
+        this.contentInfo = sigData;
+        this.signedData = getSignedData();
 
         //
         // this can happen if the signed message is sent simply to send a
         // certificate chain.
         //
-        final ASN1Encodable content = signedData.getEncapContentInfo().getContent();
+        final ASN1Encodable content = this.signedData.getEncapContentInfo().getContent();
         if (content != null)
         {
             if (content instanceof ASN1OctetString)
             {
-                signedContent = new CMSProcessableByteArray(signedData.getEncapContentInfo().getContentType(),
+                this.signedContent = new CMSProcessableByteArray(this.signedData.getEncapContentInfo().getContentType(),
                     ((ASN1OctetString)content).getOctets());
             }
             else
             {
-                signedContent = new PKCS7ProcessableObject(signedData.getEncapContentInfo().getContentType(), content);
+                this.signedContent = new PKCS7ProcessableObject(this.signedData.getEncapContentInfo().getContentType(), content);
             }
         }
         else
         {
-            signedContent = null;
+            this.signedContent = null;
         }
     }
 
@@ -219,7 +229,7 @@ public class CMSSignedData
     {
         try
         {
-            return SignedData.getInstance(contentInfo.getContent());
+            return SignedData.getInstance(this.contentInfo.getContent());
         }
         catch (final ClassCastException | IllegalArgumentException e)
         {
@@ -229,45 +239,48 @@ public class CMSSignedData
 
     /**
      * Return the version number for this object
+     * @return version.
      */
     public int getVersion()
     {
-        return signedData.getVersion().intValueExact();
+        return this.signedData.getVersion().intValueExact();
     }
 
     /**
-     * return the collection of signers that are associated with the
+     *
+     * Return the collection of signers that are associated with the
      * signatures for the message.
+     * @return signers.
      */
     public SignerInformationStore getSignerInfos()
     {
-        if (signerInfoStore == null)
+        if (this.signerInfoStore == null)
         {
-            final ASN1Set         s = signedData.getSignerInfos();
+            final ASN1Set         s = this.signedData.getSignerInfos();
             final List            signerInfos = new ArrayList();
 
             for (int i = 0; i != s.size(); i++)
             {
                 final SignerInfo info = SignerInfo.getInstance(s.getObjectAt(i));
-                final ASN1ObjectIdentifier contentType = signedData.getEncapContentInfo().getContentType();
+                final ASN1ObjectIdentifier contentType = this.signedData.getEncapContentInfo().getContentType();
 
-                if (hashes == null)
+                if (this.hashes == null)
                 {
-                    signerInfos.add(new SignerInformation(info, contentType, signedContent, null));
+                    signerInfos.add(new SignerInformation(info, contentType, this.signedContent, null));
                 }
                 else
                 {
-                    final Object obj = hashes.keySet().iterator().next();
-                    final byte[] hash = obj instanceof String ? (byte[])hashes.get(info.getDigestAlgorithm().getAlgorithm().getId()) : (byte[])hashes.get(info.getDigestAlgorithm().getAlgorithm());
+                    final Object obj = this.hashes.keySet().iterator().next();
+                    final byte[] hash = obj instanceof String ? (byte[])this.hashes.get(info.getDigestAlgorithm().getAlgorithm().getId()) : (byte[])this.hashes.get(info.getDigestAlgorithm().getAlgorithm());
 
                     signerInfos.add(new SignerInformation(info, contentType, null, hash));
                 }
             }
 
-            signerInfoStore = new SignerInformationStore(signerInfos);
+            this.signerInfoStore = new SignerInformationStore(signerInfos);
         }
 
-        return signerInfoStore;
+        return this.signerInfoStore;
     }
 
     /**
@@ -277,7 +290,7 @@ public class CMSSignedData
      */
     public boolean isDetachedSignature()
     {
-        return signedData.getEncapContentInfo().getContent() == null && signedData.getSignerInfos().size() > 0;
+        return this.signedData.getEncapContentInfo().getContent() == null && this.signedData.getSignerInfos().size() > 0;
     }
 
     /**
@@ -287,7 +300,7 @@ public class CMSSignedData
      */
     public boolean isCertificateManagementMessage()
     {
-        return signedData.getEncapContentInfo().getContent() == null && signedData.getSignerInfos().size() == 0;
+        return this.signedData.getEncapContentInfo().getContent() == null && this.signedData.getSignerInfos().size() == 0;
     }
 
     /**
@@ -297,7 +310,7 @@ public class CMSSignedData
      */
     public Store<X509CertificateHolder> getCertificates()
     {
-        return HELPER.getCertificates(signedData.getCertificates());
+        return HELPER.getCertificates(this.signedData.getCertificates());
     }
 
     /**
@@ -307,7 +320,7 @@ public class CMSSignedData
      */
     public Store<X509CRLHolder> getCRLs()
     {
-        return HELPER.getCRLs(signedData.getCRLs());
+        return HELPER.getCRLs(this.signedData.getCRLs());
     }
 
     /**
@@ -317,7 +330,7 @@ public class CMSSignedData
      */
     public Store<X509AttributeCertificateHolder> getAttributeCertificates()
     {
-        return HELPER.getAttributeCertificates(signedData.getCertificates());
+        return HELPER.getAttributeCertificates(this.signedData.getCertificates());
     }
 
     /**
@@ -330,7 +343,7 @@ public class CMSSignedData
      */
     public Store getOtherRevocationInfo(final ASN1ObjectIdentifier otherRevocationInfoFormat)
     {
-        return HELPER.getOtherRevocationInfo(otherRevocationInfoFormat, signedData.getCRLs());
+        return HELPER.getOtherRevocationInfo(otherRevocationInfoFormat, this.signedData.getCRLs());
     }
 
     /**
@@ -340,9 +353,9 @@ public class CMSSignedData
      */
     public Set<AlgorithmIdentifier> getDigestAlgorithmIDs()
     {
-        final Set<AlgorithmIdentifier> digests = new HashSet<>(signedData.getDigestAlgorithms().size());
+        final Set<AlgorithmIdentifier> digests = new HashSet<>(this.signedData.getDigestAlgorithms().size());
 
-        for (final Object element : signedData.getDigestAlgorithms()) {
+        for (final Object element : this.signedData.getDigestAlgorithms()) {
             digests.add(AlgorithmIdentifier.getInstance(element));
         }
 
@@ -357,20 +370,21 @@ public class CMSSignedData
      */
     public String getSignedContentTypeOID()
     {
-        return signedData.getEncapContentInfo().getContentType().getId();
+        return this.signedData.getEncapContentInfo().getContentType().getId();
     }
 
     public CMSTypedData getSignedContent()
     {
-        return signedContent;
+        return this.signedContent;
     }
 
     /**
      * return the ContentInfo
+     * @return ContentInfo.
      */
     public ContentInfo toASN1Structure()
     {
-        return contentInfo;
+        return this.contentInfo;
     }
 
     /**
@@ -380,18 +394,20 @@ public class CMSSignedData
 	public byte[] getEncoded()
         throws IOException
     {
-        return contentInfo.getEncoded();
+        return this.contentInfo.getEncoded();
     }
 
     /**
      * return the ASN.1 encoded representation of this object using the specified encoding.
      *
      * @param encoding the ASN.1 encoding format to use ("BER", "DL", or "DER").
+     * @return Signed data encoded.
+     * @throws IOException If IO error occurs.
      */
     public byte[] getEncoded(final String encoding)
         throws IOException
     {
-        return contentInfo.getEncoded(encoding);
+        return this.contentInfo.getEncoded(encoding);
     }
 
     /**
@@ -420,7 +436,7 @@ public class CMSSignedData
     public boolean verifySignatures(final SignerInformationVerifierProvider verifierProvider, final boolean ignoreCounterSignatures)
         throws CMSException
     {
-        final Collection signers = this.getSignerInfos().getSigners();
+        final Collection signers = getSignerInfos().getSigners();
 
         for (final Object signer2 : signers) {
             final SignerInformation signer = (SignerInformation)signer2;

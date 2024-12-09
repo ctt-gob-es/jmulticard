@@ -3,21 +3,21 @@ package org.bouncycastle.pqc.crypto.rainbow;
 public class RainbowPublicKeyParameters
     extends RainbowKeyParameters
 {
-    private short[][] coeffquadratic;
-    private short[][] coeffsingular;
-    private short[] coeffscalar;
+    private final short[][] coeffquadratic;
+    private final short[][] coeffsingular;
+    private final short[] coeffscalar;
 
     /**
      * Constructor
      *
-     * @param docLength
-     * @param coeffQuadratic
-     * @param coeffSingular
-     * @param coeffScalar
+     * @param docLength Document length.
+     * @param coeffQuadratic Quadratic
+     * @param coeffSingular Singular
+     * @param coeffScalar Scalar
      */
-    public RainbowPublicKeyParameters(int docLength,
-                                      short[][] coeffQuadratic, short[][] coeffSingular,
-                                      short[] coeffScalar)
+    public RainbowPublicKeyParameters(final int docLength,
+                                      final short[][] coeffQuadratic, final short[][] coeffSingular,
+                                      final short[] coeffScalar)
     {
         super(false, docLength);
 
@@ -32,7 +32,7 @@ public class RainbowPublicKeyParameters
      */
     public short[][] getCoeffQuadratic()
     {
-        return coeffquadratic;
+        return this.coeffquadratic;
     }
 
     /**
@@ -40,7 +40,7 @@ public class RainbowPublicKeyParameters
      */
     public short[][] getCoeffSingular()
     {
-        return coeffsingular;
+        return this.coeffsingular;
     }
 
     /**
@@ -48,6 +48,6 @@ public class RainbowPublicKeyParameters
      */
     public short[] getCoeffScalar()
     {
-        return coeffscalar;
+        return this.coeffscalar;
     }
 }

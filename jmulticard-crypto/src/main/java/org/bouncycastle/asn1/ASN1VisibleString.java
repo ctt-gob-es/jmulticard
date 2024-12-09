@@ -18,7 +18,7 @@ public abstract class ASN1VisibleString
     static final ASN1UniversalType TYPE = new ASN1UniversalType(ASN1VisibleString.class, BERTags.VISIBLE_STRING)
     {
         @Override
-		ASN1Primitive fromImplicitPrimitive(DEROctetString octetString)
+		ASN1Primitive fromImplicitPrimitive(final DEROctetString octetString)
         {
             return createPrimitive(octetString.getOctets());
         }
@@ -32,7 +32,7 @@ public abstract class ASN1VisibleString
      * @return an ASN1VisibleString instance, or null
      */
     public static ASN1VisibleString getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof ASN1VisibleString)
         {
@@ -40,7 +40,7 @@ public abstract class ASN1VisibleString
         }
         if (obj instanceof ASN1Encodable)
         {
-            ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
+            final ASN1Primitive primitive = ((ASN1Encodable)obj).toASN1Primitive();
             if (primitive instanceof ASN1VisibleString)
             {
                 return (ASN1VisibleString)primitive;
@@ -52,7 +52,7 @@ public abstract class ASN1VisibleString
             {
                 return (ASN1VisibleString)TYPE.fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -64,26 +64,26 @@ public abstract class ASN1VisibleString
     /**
      * Return a Visible String from a tagged object.
      *
-     * @param obj the tagged object holding the object we want
+     * @param taggedObject the tagged object holding the object we want
      * @param explicit true if the object is meant to be explicitly
      *              tagged false otherwise.
      * @exception IllegalArgumentException if the tagged object cannot
      *               be converted.
      * @return an ASN1VisibleString instance, or null
      */
-    public static ASN1VisibleString getInstance(ASN1TaggedObject taggedObject, boolean explicit)
+    public static ASN1VisibleString getInstance(final ASN1TaggedObject taggedObject, final boolean explicit)
     {
         return (ASN1VisibleString)TYPE.getContextInstance(taggedObject, explicit);
     }
 
     final byte[] contents;
 
-    ASN1VisibleString(String string)
+    ASN1VisibleString(final String string)
     {
         this.contents = Strings.toByteArray(string);
     }
 
-    ASN1VisibleString(byte[] contents, boolean clone)
+    ASN1VisibleString(final byte[] contents, final boolean clone)
     {
         this.contents = clone ? Arrays.clone(contents) : contents;
     }
@@ -91,7 +91,7 @@ public abstract class ASN1VisibleString
     @Override
 	public final String getString()
     {
-        return Strings.fromByteArray(contents);
+        return Strings.fromByteArray(this.contents);
     }
 
     @Override
@@ -102,7 +102,7 @@ public abstract class ASN1VisibleString
 
     public final byte[] getOctets()
     {
-        return Arrays.clone(contents);
+        return Arrays.clone(this.contents);
     }
 
     @Override
@@ -112,26 +112,26 @@ public abstract class ASN1VisibleString
     }
 
     @Override
-	final int encodedLength(boolean withTag)
+	final int encodedLength(final boolean withTag)
     {
-        return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
+        return ASN1OutputStream.getLengthOfEncodingDL(withTag, this.contents.length);
     }
 
     @Override
-	final void encode(ASN1OutputStream out, boolean withTag) throws IOException
+	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        out.writeEncodingDL(withTag, BERTags.VISIBLE_STRING, contents);
+        out.writeEncodingDL(withTag, BERTags.VISIBLE_STRING, this.contents);
     }
 
     @Override
-	final boolean asn1Equals(ASN1Primitive other)
+	final boolean asn1Equals(final ASN1Primitive other)
     {
         if (!(other instanceof ASN1VisibleString))
         {
             return false;
         }
 
-        ASN1VisibleString that = (ASN1VisibleString)other;
+        final ASN1VisibleString that = (ASN1VisibleString)other;
 
         return Arrays.areEqual(this.contents, that.contents);
     }
@@ -139,10 +139,10 @@ public abstract class ASN1VisibleString
     @Override
 	public final int hashCode()
     {
-        return Arrays.hashCode(contents);
+        return Arrays.hashCode(this.contents);
     }
 
-    static ASN1VisibleString createPrimitive(byte[] contents)
+    static ASN1VisibleString createPrimitive(final byte[] contents)
     {
         return new DERVisibleString(contents, false);
     }

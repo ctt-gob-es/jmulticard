@@ -19,12 +19,12 @@ public class DERNumericString
      * @param obj a DERNumericString or an object that can be converted into one.
      * @exception IllegalArgumentException if the object cannot be converted.
      * @return a DERNumericString instance, or null
-     * 
+     *
      * @deprecated Use {@link ASN1NumericString#getInstance(Object)} instead.
      */
     @Deprecated
 	public static DERNumericString getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof DERNumericString)
         {
@@ -40,7 +40,7 @@ public class DERNumericString
             {
                 return (DERNumericString)fromByteArray((byte[])obj);
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 throw new IllegalArgumentException("encoding error in getInstance: " + e.toString());
             }
@@ -57,17 +57,17 @@ public class DERNumericString
      *                 otherwise.
      * @exception IllegalArgumentException if the tagged object cannot be converted.
      * @return a DERNumericString instance, or null.
-     * 
+     *
      * @deprecated Use
      *             {@link ASN1NumericString#getInstance(ASN1TaggedObject, boolean)}
      *             instead.
      */
     @Deprecated
 	public static DERNumericString getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
-        ASN1Primitive o = obj.getObject();
+        final ASN1Primitive o = obj.getObject();
 
         if (explicit || o instanceof DERNumericString)
         {
@@ -80,9 +80,10 @@ public class DERNumericString
     }
 
     /**
-     * Basic constructor -  without validation..
+     * Basic constructor -  without validation.
+     * @param string Numeric string.
      */
-    public DERNumericString(String string)
+    public DERNumericString(final String string)
     {
         this(string, false);
     }
@@ -95,12 +96,12 @@ public class DERNumericString
      * @throws IllegalArgumentException if validate is true and the string
      * contains characters that should not be in a NumericString.
      */
-    public DERNumericString(String string, boolean validate)
+    public DERNumericString(final String string, final boolean validate)
     {
         super(string, validate);
     }
 
-    DERNumericString(byte[] contents, boolean clone)
+    DERNumericString(final byte[] contents, final boolean clone)
     {
         super(contents, clone);
     }

@@ -13,7 +13,6 @@ import org.bouncycastle.asn1.DERTaggedObject;
  * Identify who signed the containing {@link SignerInfo} object.
  * <p>
  * The certificates referred to by this are at containing {@link SignedData} structure.
- * <p>
  * <pre>
  * SignerIdentifier ::= CHOICE {
  *     issuerAndSerialNumber IssuerAndSerialNumber,
@@ -60,6 +59,7 @@ public class SignerIdentifier
      * </ul>
      *
      * @param o the object we want converted.
+     * @return SignerIdentifier Signer identifier.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static SignerIdentifier getInstance(
@@ -91,17 +91,17 @@ public class SignerIdentifier
 
     public boolean isTagged()
     {
-        return id instanceof ASN1TaggedObject;
+        return this.id instanceof ASN1TaggedObject;
     }
 
     public ASN1Encodable getId()
     {
-        if (id instanceof ASN1TaggedObject)
+        if (this.id instanceof ASN1TaggedObject)
         {
-            return ASN1OctetString.getInstance((ASN1TaggedObject)id, false);
+            return ASN1OctetString.getInstance((ASN1TaggedObject)this.id, false);
         }
 
-        return id;
+        return this.id;
     }
 
     /**
@@ -110,6 +110,6 @@ public class SignerIdentifier
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        return id.toASN1Primitive();
+        return this.id.toASN1Primitive();
     }
 }

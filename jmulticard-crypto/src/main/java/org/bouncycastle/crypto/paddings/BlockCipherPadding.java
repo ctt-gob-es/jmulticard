@@ -14,7 +14,7 @@ public interface BlockCipherPadding
      *
      * @param random the source of randomness for the padding, if required.
      */
-    public void init(SecureRandom random)
+    void init(SecureRandom random)
         throws IllegalArgumentException;
 
     /**
@@ -22,27 +22,33 @@ public interface BlockCipherPadding
      *
      * @return the name of the algorithm the cipher implements.
      */
-    public String getPaddingName();
+    String getPaddingName();
 
     /**
      * add the pad bytes to the passed in block, returning the
      * number of bytes added.
      * <p>
-     * Note: this assumes that the last block of plain text is always 
+     * Note: this assumes that the last block of plain text is always
      * passed to it inside in. i.e. if inOff is zero, indicating the
      * entire block is to be overwritten with padding the value of in
      * should be the same as the last block of plain text. The reason
      * for this is that some modes such as "trailing bit compliment"
      * base the padding on the last byte of plain text.
      * </p>
+     * @param in Input data.
+     * @param inOff Padding.
+     * @return Number of bytes added.
+     *
      */
-    public int addPadding(byte[] in, int inOff);
+    int addPadding(byte[] in, int inOff);
 
     /**
      * return the number of pad bytes present in the block.
+     * @param in Input data.
+     * @return Number of pad bytes.
      * @exception InvalidCipherTextException if the padding is badly formed
      * or invalid.
      */
-    public int padCount(byte[] in)
+    int padCount(byte[] in)
         throws InvalidCipherTextException;
 }

@@ -16,9 +16,8 @@ public class BigIntEuclidean
     /**
      * Runs the EEA on two <code>BigInteger</code>s<br>
      * Implemented from pseudocode on <a href="https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">Wikipedia</a>.
-     *
-     * @param a
-     * @param b
+     * @param a First param.
+     * @param b Seconf param.
      * @return a <code>BigIntEuclidean</code> object that contains the result in the variables <code>x</code>, <code>y</code>, and <code>gcd</code>
      */
     public static BigIntEuclidean calculate(BigInteger a, BigInteger b)
@@ -29,8 +28,8 @@ public class BigIntEuclidean
         BigInteger lasty = BigInteger.ZERO;
         while (!b.equals(BigInteger.ZERO))
         {
-            BigInteger[] quotientAndRemainder = a.divideAndRemainder(b);
-            BigInteger quotient = quotientAndRemainder[0];
+            final BigInteger[] quotientAndRemainder = a.divideAndRemainder(b);
+            final BigInteger quotient = quotientAndRemainder[0];
 
             BigInteger temp = a;
             a = b;
@@ -45,7 +44,7 @@ public class BigIntEuclidean
             lasty = temp;
         }
 
-        BigIntEuclidean result = new BigIntEuclidean();
+        final BigIntEuclidean result = new BigIntEuclidean();
         result.x = lastx;
         result.y = lasty;
         result.gcd = a;

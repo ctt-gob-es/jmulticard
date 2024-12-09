@@ -15,13 +15,13 @@ public class DLExternal
      * <li> {@link ASN1Integer} + data {@link DERTaggedObject} (indirect reference form)</li>
      * <li> Anything but {@link DERTaggedObject} + data {@link DERTaggedObject} (data value form)</li>
      * </ul>
-     *
+     * @param vector Encodable vector.
      * @throws IllegalArgumentException if input size is wrong, or input is not an acceptable format
-     * 
+     *
      * @deprecated Use {@link DLExternal#DLExternal(DLSequence)} instead.
      */
     @Deprecated
-	public DLExternal(ASN1EncodableVector vector)
+	public DLExternal(final ASN1EncodableVector vector)
     {
         this(DLFactory.createSequence(vector));
     }
@@ -35,10 +35,10 @@ public class DLExternal
      * <li> {@link ASN1Integer} + data {@link DERTaggedObject} (indirect reference form)</li>
      * <li> Anything but {@link DERTaggedObject} + data {@link DERTaggedObject} (data value form)</li>
      * </ul>
-     *
+     * @param sequence Sequence.
      * @throws IllegalArgumentException if input size is wrong, or input is not an acceptable format
      */
-    public DLExternal(DLSequence sequence)
+    public DLExternal(final DLSequence sequence)
     {
         super(sequence);
     }
@@ -51,8 +51,8 @@ public class DLExternal
      * @param dataValueDescriptor The data value descriptor or <code>null</code> if not set.
      * @param externalData The external data in its encoded form.
      */
-    public DLExternal(ASN1ObjectIdentifier directReference, ASN1Integer indirectReference,
-        ASN1Primitive dataValueDescriptor, DERTaggedObject externalData)
+    public DLExternal(final ASN1ObjectIdentifier directReference, final ASN1Integer indirectReference,
+        final ASN1Primitive dataValueDescriptor, final DERTaggedObject externalData)
     {
         super(directReference, indirectReference, dataValueDescriptor, externalData);
     }
@@ -66,8 +66,8 @@ public class DLExternal
      * @param encoding The encoding to be used for the external data
      * @param externalData The external data
      */
-    public DLExternal(ASN1ObjectIdentifier directReference, ASN1Integer indirectReference,
-        ASN1Primitive dataValueDescriptor, int encoding, ASN1Primitive externalData)
+    public DLExternal(final ASN1ObjectIdentifier directReference, final ASN1Integer indirectReference,
+        final ASN1Primitive dataValueDescriptor, final int encoding, final ASN1Primitive externalData)
     {
         super(directReference, indirectReference, dataValueDescriptor, encoding, externalData);
     }
@@ -75,21 +75,21 @@ public class DLExternal
     @Override
 	ASN1Sequence buildSequence()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(4);
-        if (directReference != null)
+        final ASN1EncodableVector v = new ASN1EncodableVector(4);
+        if (this.directReference != null)
         {
-            v.add(directReference);
+            v.add(this.directReference);
         }
-        if (indirectReference != null)
+        if (this.indirectReference != null)
         {
-            v.add(indirectReference);
+            v.add(this.indirectReference);
         }
-        if (dataValueDescriptor != null)
+        if (this.dataValueDescriptor != null)
         {
-            v.add(dataValueDescriptor.toDLObject());
+            v.add(this.dataValueDescriptor.toDLObject());
         }
 
-        v.add(new DLTaggedObject(0 == encoding, encoding, externalContent));
+        v.add(new DLTaggedObject(0 == this.encoding, this.encoding, this.externalContent));
 
         return new DLSequence(v);
     }

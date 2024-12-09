@@ -39,14 +39,16 @@ public class X500Name
     private DERSequence rdnSeq;
 
     /**
+     * @param style Style.
+     * @param name Name.
      * @deprecated use the getInstance() method that takes a style.
      */
     @Deprecated
 	public X500Name(final X500NameStyle style, final X500Name name)
     {
         this.style = style;
-        rdns = name.rdns;
-        rdnSeq = name.rdnSeq;
+        this.rdns = name.rdns;
+        this.rdnSeq = name.rdnSeq;
     }
 
     /**
@@ -111,7 +113,7 @@ public class X500Name
         final ASN1Sequence  seq)
     {
         this.style = style;
-        rdns = new RDN[seq.size()];
+        this.rdns = new RDN[seq.size()];
 
         boolean inPlace = true;
 
@@ -119,16 +121,16 @@ public class X500Name
         for (final Object element : seq) {
             final RDN rdn = RDN.getInstance(element);
             inPlace &= rdn == element;
-            rdns[index++] = rdn;
+            this.rdns[index++] = rdn;
         }
 
         if (inPlace)
         {
-            rdnSeq = DERSequence.convert(seq);
+            this.rdnSeq = DERSequence.convert(seq);
         }
         else
         {
-            rdnSeq = new DERSequence(rdns);
+            this.rdnSeq = new DERSequence(this.rdns);
         }
     }
 
@@ -143,8 +145,8 @@ public class X500Name
         final RDN[]         rDNs)
     {
         this.style = style;
-        rdns = rDNs.clone();
-        rdnSeq = new DERSequence(rdns);
+        this.rdns = rDNs.clone();
+        this.rdnSeq = new DERSequence(this.rdns);
     }
 
     public X500Name(
@@ -169,7 +171,7 @@ public class X500Name
      */
     public RDN[] getRDNs()
     {
-        return rdns.clone();
+        return this.rdns.clone();
     }
 
     /**
@@ -179,11 +181,11 @@ public class X500Name
      */
     public ASN1ObjectIdentifier[] getAttributeTypes()
     {
-        final int count = rdns.length;
+        final int count = this.rdns.length;
 		int totalSize = 0;
         for (int i = 0; i < count; ++i)
         {
-            final RDN rdn = rdns[i];
+            final RDN rdn = this.rdns[i];
             totalSize += rdn.size();
         }
 
@@ -191,7 +193,7 @@ public class X500Name
         int oidsOff = 0;
         for (int i = 0; i < count; ++i)
         {
-            final RDN rdn = rdns[i];
+            final RDN rdn = this.rdns[i];
             oidsOff += rdn.collectAttributeTypes(oids, oidsOff);
         }
         return oids;
@@ -205,10 +207,10 @@ public class X500Name
      */
     public RDN[] getRDNs(final ASN1ObjectIdentifier attributeType)
     {
-        RDN[] res = new RDN[rdns.length];
+        RDN[] res = new RDN[this.rdns.length];
         int count = 0;
 
-        for (final RDN rdn : rdns) {
+        for (final RDN rdn : this.rdns) {
             if (rdn.containsAttributeType(attributeType))
             {
                 res[count++] = rdn;
@@ -228,22 +230,22 @@ public class X500Name
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        return rdnSeq;
+        return this.rdnSeq;
     }
 
     @Override
 	public int hashCode()
     {
-        if (isHashCodeCalculated)
+        if (this.isHashCodeCalculated)
         {
-            return hashCodeValue;
+            return this.hashCodeValue;
         }
 
-        isHashCodeCalculated = true;
+        this.isHashCodeCalculated = true;
 
-        hashCodeValue = style.calculateHashCode(this);
+        this.hashCodeValue = this.style.calculateHashCode(this);
 
-        return hashCodeValue;
+        return this.hashCodeValue;
     }
 
     /**
@@ -257,21 +259,21 @@ public class X500Name
             return true;
         }
 
-        if ((!(obj instanceof X500Name) && !(obj instanceof ASN1Sequence)))
+        if (!(obj instanceof X500Name) && !(obj instanceof ASN1Sequence))
         {
             return false;
         }
 
         final ASN1Primitive derO = ((ASN1Encodable)obj).toASN1Primitive();
 
-        if (this.toASN1Primitive().equals(derO))
+        if (toASN1Primitive().equals(derO))
         {
             return true;
         }
 
         try
         {
-            return style.areEqual(this, new X500Name(ASN1Sequence.getInstance(((ASN1Encodable)obj).toASN1Primitive())));
+            return this.style.areEqual(this, new X500Name(ASN1Sequence.getInstance(((ASN1Encodable)obj).toASN1Primitive())));
         }
         catch (final Exception e)
         {
@@ -282,7 +284,7 @@ public class X500Name
     @Override
 	public String toString()
     {
-        return style.toString(this);
+        return this.style.toString(this);
     }
 
     /**

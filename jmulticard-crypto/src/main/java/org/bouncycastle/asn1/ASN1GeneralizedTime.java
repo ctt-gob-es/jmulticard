@@ -21,7 +21,7 @@ import org.bouncycastle.util.Strings;
  * with 4 digit year (valid from 0001 to 9999).
  * </p><p>
  * Timestamp format is:  yyyymmddHHMMSS'Z'
- * </p><p>
+ * </p>
  * <h2>X.690</h2>
  * This is what is called "restricted string",
  * and it uses ASCII characters to encode digits and supplemental data.
@@ -118,10 +118,10 @@ public class ASN1GeneralizedTime
     public ASN1GeneralizedTime(
         final String time)
     {
-        contents = Strings.toByteArray(time);
+        this.contents = Strings.toByteArray(time);
         try
         {
-            this.getDate();
+            getDate();
         }
         catch (final ParseException e)
         {
@@ -141,7 +141,7 @@ public class ASN1GeneralizedTime
 
         dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
 
-        contents = Strings.toByteArray(dateF.format(time));
+        this.contents = Strings.toByteArray(dateF.format(time));
     }
 
     /**
@@ -159,7 +159,7 @@ public class ASN1GeneralizedTime
 
         dateF.setTimeZone(new SimpleTimeZone(0, "Z"));
 
-        contents = Strings.toByteArray(dateF.format(time));
+        this.contents = Strings.toByteArray(dateF.format(time));
     }
 
     ASN1GeneralizedTime(
@@ -169,9 +169,9 @@ public class ASN1GeneralizedTime
         {
             throw new IllegalArgumentException("GeneralizedTime string too short");
         }
-        contents = bytes;
+        this.contents = bytes;
 
-        if ((!isDigit(0) || !isDigit(1) || !isDigit(2) || !isDigit(3)))
+        if (!isDigit(0) || !isDigit(1) || !isDigit(2) || !isDigit(3))
         {
             throw new IllegalArgumentException("illegal characters in GeneralizedTime string");
         }
@@ -184,7 +184,7 @@ public class ASN1GeneralizedTime
      */
     public String getTimeString()
     {
-        return Strings.fromByteArray(contents);
+        return Strings.fromByteArray(this.contents);
     }
 
     /**
@@ -202,7 +202,7 @@ public class ASN1GeneralizedTime
      */
     public String getTime()
     {
-        final String stime = Strings.fromByteArray(contents);
+        final String stime = Strings.fromByteArray(this.contents);
 
         //
         // standardise the format.
@@ -315,7 +315,7 @@ public class ASN1GeneralizedTime
         for (index = 1; index < frac.length(); index++)
         {
             final char ch = frac.charAt(index);
-            if ((('0' > ch) || (ch > '9')))
+            if ('0' > ch || ch > '9')
             {
                 break;
             }
@@ -354,7 +354,7 @@ public class ASN1GeneralizedTime
         throws ParseException
     {
         SimpleDateFormat dateF;
-        final String stime = Strings.fromByteArray(contents);
+        final String stime = Strings.fromByteArray(this.contents);
         String d = stime;
 
         if (stime.endsWith("Z"))
@@ -380,7 +380,7 @@ public class ASN1GeneralizedTime
         }
         else if (stime.indexOf('-') > 0 || stime.indexOf('+') > 0)
         {
-            d = this.getTime();
+            d = getTime();
             dateF = calculateGMTDateFormat();
         }
         else
@@ -415,9 +415,9 @@ public class ASN1GeneralizedTime
 
     protected boolean hasFractionalSeconds()
     {
-        for (int i = 0; i != contents.length; i++)
+        for (int i = 0; i != this.contents.length; i++)
         {
-            if ((contents[i] == '.') && (i == 14))
+            if (this.contents[i] == '.' && i == 14)
 			{
 			    return true;
 			}
@@ -437,7 +437,7 @@ public class ASN1GeneralizedTime
 
     private boolean isDigit(final int pos)
     {
-        return contents.length > pos && contents[pos] >= '0' && contents[pos] <= '9';
+        return this.contents.length > pos && this.contents[pos] >= '0' && this.contents[pos] <= '9';
     }
 
     @Override
@@ -449,25 +449,25 @@ public class ASN1GeneralizedTime
     @Override
 	int encodedLength(final boolean withTag)
     {
-        return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
+        return ASN1OutputStream.getLengthOfEncodingDL(withTag, this.contents.length);
     }
 
     @Override
 	void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        out.writeEncodingDL(withTag, BERTags.GENERALIZED_TIME, contents);
+        out.writeEncodingDL(withTag, BERTags.GENERALIZED_TIME, this.contents);
     }
 
     @Override
 	ASN1Primitive toDERObject()
     {
-        return new DERGeneralizedTime(contents);
+        return new DERGeneralizedTime(this.contents);
     }
 
     @Override
 	ASN1Primitive toDLObject()
     {
-        return new DERGeneralizedTime(contents);
+        return new DERGeneralizedTime(this.contents);
     }
 
     @Override
@@ -478,13 +478,13 @@ public class ASN1GeneralizedTime
             return false;
         }
 
-        return Arrays.areEqual(contents, ((ASN1GeneralizedTime)o).contents);
+        return Arrays.areEqual(this.contents, ((ASN1GeneralizedTime)o).contents);
     }
 
     @Override
 	public int hashCode()
     {
-        return Arrays.hashCode(contents);
+        return Arrays.hashCode(this.contents);
     }
 
     static ASN1GeneralizedTime createPrimitive(final byte[] contents)

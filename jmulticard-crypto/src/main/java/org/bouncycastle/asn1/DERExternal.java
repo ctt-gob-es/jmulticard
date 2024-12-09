@@ -15,7 +15,7 @@ public class DERExternal
      * <li> {@link ASN1Integer} + data {@link DERTaggedObject} (indirect reference form)</li>
      * <li> Anything but {@link DERTaggedObject} + data {@link DERTaggedObject} (data value form)</li>
      * </ul>
-     *
+     * @param vector Encodable vector.
      * @throws IllegalArgumentException if input size is wrong, or input is not an acceptable format
      *
      * @deprecated Use {@link DERExternal#DERExternal(DERSequence)} instead.
@@ -35,7 +35,7 @@ public class DERExternal
      * <li> {@link ASN1Integer} + data {@link DERTaggedObject} (indirect reference form)</li>
      * <li> Anything but {@link DERTaggedObject} + data {@link DERTaggedObject} (data value form)</li>
      * </ul>
-     *
+     * @param sequence Encodable sequence.
      * @throws IllegalArgumentException if input size is wrong, or input is not an acceptable format
      */
     public DERExternal(final DERSequence sequence)
@@ -76,20 +76,20 @@ public class DERExternal
 	ASN1Sequence buildSequence()
     {
         final ASN1EncodableVector v = new ASN1EncodableVector(4);
-        if (directReference != null)
+        if (this.directReference != null)
         {
-            v.add(directReference);
+            v.add(this.directReference);
         }
-        if (indirectReference != null)
+        if (this.indirectReference != null)
         {
-            v.add(indirectReference);
+            v.add(this.indirectReference);
         }
-        if (dataValueDescriptor != null)
+        if (this.dataValueDescriptor != null)
         {
-            v.add(dataValueDescriptor.toDERObject());
+            v.add(this.dataValueDescriptor.toDERObject());
         }
 
-        v.add(new DERTaggedObject(0 == encoding, encoding, externalContent));
+        v.add(new DERTaggedObject(0 == this.encoding, this.encoding, this.externalContent));
 
         return new DERSequence(v);
     }

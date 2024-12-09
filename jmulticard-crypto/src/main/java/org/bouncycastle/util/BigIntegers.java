@@ -28,13 +28,13 @@ public final class BigIntegers
      * @return a byte array without a leading zero byte if present in the signed encoding.
      */
     public static byte[] asUnsignedByteArray(
-        BigInteger value)
+        final BigInteger value)
     {
-        byte[] bytes = value.toByteArray();
+        final byte[] bytes = value.toByteArray();
 
         if (bytes[0] == 0 && bytes.length != 1)
         {
-            byte[] tmp = new byte[bytes.length - 1];
+            final byte[] tmp = new byte[bytes.length - 1];
 
             System.arraycopy(bytes, 1, tmp, 0, tmp.length);
 
@@ -52,23 +52,23 @@ public final class BigIntegers
      * @param value  the value to be converted.
      * @return a byte array padded to a fixed length with leading zeros.
      */
-    public static byte[] asUnsignedByteArray(int length, BigInteger value)
+    public static byte[] asUnsignedByteArray(final int length, final BigInteger value)
     {
-        byte[] bytes = value.toByteArray();
+        final byte[] bytes = value.toByteArray();
         if (bytes.length == length)
         {
             return bytes;
         }
 
-        int start = (bytes[0] == 0 && bytes.length != 1) ? 1 : 0;
-        int count = bytes.length - start;
+        final int start = bytes[0] == 0 && bytes.length != 1 ? 1 : 0;
+        final int count = bytes.length - start;
 
         if (count > length)
         {
             throw new IllegalArgumentException("standard length exceeded for value");
         }
 
-        byte[] tmp = new byte[length];
+        final byte[] tmp = new byte[length];
         System.arraycopy(bytes, start, tmp, tmp.length - count, count);
         return tmp;
     }
@@ -82,24 +82,24 @@ public final class BigIntegers
      * @param off   the start offset in array <code>buf</code> at which the data is written.
      * @param len   the fixed length of data written (possibly padded with leading zeros).
      */
-    public static void asUnsignedByteArray(BigInteger value, byte[] buf, int off, int len)
+    public static void asUnsignedByteArray(final BigInteger value, final byte[] buf, final int off, final int len)
     {
-        byte[] bytes = value.toByteArray();
+        final byte[] bytes = value.toByteArray();
         if (bytes.length == len)
         {
             System.arraycopy(bytes, 0, buf, off, len);
             return;
         }
 
-        int start = (bytes[0] == 0 && bytes.length != 1) ? 1 : 0;
-        int count = bytes.length - start;
+        final int start = bytes[0] == 0 && bytes.length != 1 ? 1 : 0;
+        final int count = bytes.length - start;
 
         if (count > len)
         {
             throw new IllegalArgumentException("standard length exceeded for value");
         }
 
-        int padLen = len - count;
+        final int padLen = len - count;
         Arrays.fill(buf, off, off + padLen, (byte)0x00);
         System.arraycopy(bytes, start, buf, off + padLen, count);
     }
@@ -114,11 +114,11 @@ public final class BigIntegers
      * @return a random BigInteger value in the range [min,max]
      */
     public static BigInteger createRandomInRange(
-        BigInteger min,
-        BigInteger max,
-        SecureRandom random)
+        final BigInteger min,
+        final BigInteger max,
+        final SecureRandom random)
     {
-        int cmp = min.compareTo(max);
+        final int cmp = min.compareTo(max);
         if (cmp >= 0)
         {
             if (cmp > 0)
@@ -136,7 +136,7 @@ public final class BigIntegers
 
         for (int i = 0; i < MAX_ITERATIONS; ++i)
         {
-            BigInteger x = createRandomBigInteger(max.bitLength(), random);
+            final BigInteger x = createRandomBigInteger(max.bitLength(), random);
             if (x.compareTo(min) >= 0 && x.compareTo(max) <= 0)
             {
                 return x;
@@ -148,12 +148,12 @@ public final class BigIntegers
     }
 
 
-    public static BigInteger fromUnsignedByteArray(byte[] buf)
+    public static BigInteger fromUnsignedByteArray(final byte[] buf)
     {
         return new BigInteger(1, buf);
     }
 
-    public static BigInteger fromUnsignedByteArray(byte[] buf, int off, int length)
+    public static BigInteger fromUnsignedByteArray(final byte[] buf, final int off, final int length)
     {
         byte[] mag = buf;
         if (off != 0 || length != buf.length)
@@ -164,7 +164,7 @@ public final class BigIntegers
         return new BigInteger(1, mag);
     }
 
-    public static byte byteValueExact(BigInteger x)
+    public static byte byteValueExact(final BigInteger x)
     {
         // Since Java 1.8 could use BigInteger.byteValueExact instead
         if (x.bitLength() > 7)
@@ -175,7 +175,7 @@ public final class BigIntegers
         return x.byteValue();
     }
 
-    public static short shortValueExact(BigInteger x)
+    public static short shortValueExact(final BigInteger x)
     {
         // Since Java 1.8 could use BigInteger.shortValueExact instead
         if (x.bitLength() > 15)
@@ -186,7 +186,7 @@ public final class BigIntegers
         return x.shortValue();
     }
 
-    public static int intValueExact(BigInteger x)
+    public static int intValueExact(final BigInteger x)
     {
         // Since Java 1.8 could use BigInteger.intValueExact instead
         if (x.bitLength() > 31)
@@ -197,7 +197,7 @@ public final class BigIntegers
         return x.intValue();
     }
 
-    public static long longValueExact(BigInteger x)
+    public static long longValueExact(final BigInteger x)
     {
         // Since Java 1.8 could use BigInteger.longValueExact instead
         if (x.bitLength() > 63)
@@ -208,7 +208,7 @@ public final class BigIntegers
         return x.longValue();
     }
 
-    public static BigInteger modOddInverse(BigInteger M, BigInteger X)
+    public static BigInteger modOddInverse(final BigInteger M, BigInteger X)
     {
         if (!M.testBit(0))
         {
@@ -223,11 +223,11 @@ public final class BigIntegers
             X = X.mod(M);
         }
 
-        int bits = M.bitLength();
-        int[] m = Nat.fromBigInteger(bits, M);
-        int[] x = Nat.fromBigInteger(bits, X);
-        int len = m.length;
-        int[] z = Nat.create(len);
+        final int bits = M.bitLength();
+        final int[] m = Nat.fromBigInteger(bits, M);
+        final int[] x = Nat.fromBigInteger(bits, X);
+        final int len = m.length;
+        final int[] z = Nat.create(len);
         if (0 == Mod.modOddInverse(m, x, z))
         {
             throw new ArithmeticException("BigInteger not invertible.");
@@ -235,7 +235,7 @@ public final class BigIntegers
         return Nat.toBigInteger(len, z);
     }
 
-    public static BigInteger modOddInverseVar(BigInteger M, BigInteger X)
+    public static BigInteger modOddInverseVar(final BigInteger M, BigInteger X)
     {
         if (!M.testBit(0))
         {
@@ -258,11 +258,11 @@ public final class BigIntegers
             return ONE;
         }
 
-        int bits = M.bitLength();
-        int[] m = Nat.fromBigInteger(bits, M);
-        int[] x = Nat.fromBigInteger(bits, X);
-        int len = m.length;
-        int[] z = Nat.create(len);
+        final int bits = M.bitLength();
+        final int[] m = Nat.fromBigInteger(bits, M);
+        final int[] x = Nat.fromBigInteger(bits, X);
+        final int len = m.length;
+        final int[] z = Nat.create(len);
         if (!Mod.modOddInverseVar(m, x, z))
         {
             throw new ArithmeticException("BigInteger not invertible.");
@@ -270,7 +270,7 @@ public final class BigIntegers
         return Nat.toBigInteger(len, z);
     }
 
-    public static int getUnsignedByteLength(BigInteger n)
+    public static int getUnsignedByteLength(final BigInteger n)
     {
         if (n.equals(ZERO))
         {
@@ -287,7 +287,7 @@ public final class BigIntegers
      * @param random    a source of randomness.
      * @return a positive BigInteger
      */
-    public static BigInteger createRandomBigInteger(int bitLength, SecureRandom random)
+    public static BigInteger createRandomBigInteger(final int bitLength, final SecureRandom random)
     {
         return new BigInteger(1, createRandom(bitLength, random));
     }
@@ -305,10 +305,15 @@ public final class BigIntegers
      * Return a prime number candidate of the specified bit length.
      *
      * @param bitLength bit length for the generated BigInteger.
+     * @param certainty a measure of the uncertainty that the
+     * caller iswilling to tolerate: if the call returns true the
+     * probability that this BigInteger is prime exceeds(1 - 1/2certainty).
+     * The execution time ofthis method is proportional to the value
+     * of this parameter.
      * @param random    a source of randomness.
      * @return a positive BigInteger of numBits length
      */
-    public static BigInteger createRandomPrime(int bitLength, int certainty, SecureRandom random)
+    public static BigInteger createRandomPrime(final int bitLength, final int certainty, final SecureRandom random)
     {
         if (bitLength < 2)
         {
@@ -319,15 +324,15 @@ public final class BigIntegers
 
         if (bitLength == 2)
         {
-            return (random.nextInt() < 0) ? TWO : THREE;
+            return random.nextInt() < 0 ? TWO : THREE;
         }
 
         do
         {
-            byte[] base = createRandom(bitLength, random);
+            final byte[] base = createRandom(bitLength, random);
 
-            int xBits = 8 * base.length - bitLength;
-            byte lead = (byte)(1 << (7 - xBits));
+            final int xBits = 8 * base.length - bitLength;
+            final byte lead = (byte)(1 << 7 - xBits);
 
             // ensure top and bottom bit set
             base[0] |= lead;
@@ -347,7 +352,7 @@ public final class BigIntegers
         return rv;
     }
 
-    private static byte[] createRandom(int bitLength, SecureRandom random)
+    private static byte[] createRandom(final int bitLength, final SecureRandom random)
         throws IllegalArgumentException
     {
         if (bitLength < 1)
@@ -355,14 +360,14 @@ public final class BigIntegers
             throw new IllegalArgumentException("bitLength must be at least 1");
         }
 
-        int nBytes = (bitLength + 7) / 8;
+        final int nBytes = (bitLength + 7) / 8;
 
-        byte[] rv = new byte[nBytes];
+        final byte[] rv = new byte[nBytes];
 
         random.nextBytes(rv);
 
         // strip off any excess bits in the MSB
-        int xBits = 8 * nBytes - bitLength;
+        final int xBits = 8 * nBytes - bitLength;
         rv[0] &= (byte)(255 >>> xBits);
 
         return rv;
@@ -370,34 +375,34 @@ public final class BigIntegers
 
     public static class Cache
     {
-        private final Map<BigInteger, Boolean> values = new WeakHashMap<BigInteger, Boolean>();
+        private final Map<BigInteger, Boolean> values = new WeakHashMap<>();
         private final BigInteger[] preserve = new BigInteger[8];
 
         private int preserveCounter = 0;
 
-        public synchronized void add(BigInteger value)
+        public synchronized void add(final BigInteger value)
         {
-            values.put(value, Boolean.TRUE);
-            preserve[preserveCounter] = value;
-            preserveCounter = (preserveCounter + 1) % preserve.length;
+            this.values.put(value, Boolean.TRUE);
+            this.preserve[this.preserveCounter] = value;
+            this.preserveCounter = (this.preserveCounter + 1) % this.preserve.length;
         }
 
-        public synchronized boolean contains(BigInteger value)
+        public synchronized boolean contains(final BigInteger value)
         {
-            return values.containsKey(value);
+            return this.values.containsKey(value);
         }
 
         public synchronized int size()
         {
-            return values.size();
+            return this.values.size();
         }
 
         public synchronized void clear()
         {
-            values.clear();
-            for (int i = 0; i != preserve.length; i++)
+            this.values.clear();
+            for (int i = 0; i != this.preserve.length; i++)
             {
-                preserve[i] = null;
+                this.preserve[i] = null;
             }
         }
     }

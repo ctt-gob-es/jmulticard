@@ -62,21 +62,21 @@ public class GeneralName
 
     /**
      * @deprecated use X500Name constructor.
-     * @param dirName
+     * @param dirName Directory name.
      */
         @Deprecated
 		public GeneralName(
         final X509Name  dirName)
     {
-        obj = X500Name.getInstance(dirName);
-        tag = 4;
+        this.obj = X500Name.getInstance(dirName);
+        this.tag = 4;
     }
 
     public GeneralName(
         final X500Name  dirName)
     {
-        obj = dirName;
-        tag = 4;
+        this.obj = dirName;
+        this.tag = 4;
     }
 
     /**
@@ -105,12 +105,14 @@ public class GeneralName
      * MUST contain exactly four octets.  For IP Version 6, as specified in
      * RFC 1883, the octet string MUST contain exactly sixteen octets [RFC
      * 1883].
+     * @param tag Tag.
+     * @param name Name.
      */
     public GeneralName(
         final int           tag,
         final ASN1Encodable name)
     {
-        obj = name;
+        this.obj = name;
         this.tag = tag;
     }
 
@@ -145,22 +147,22 @@ public class GeneralName
 
         if (tag == rfc822Name || tag == dNSName || tag == uniformResourceIdentifier)
         {
-            obj = new DERIA5String(name);
+            this.obj = new DERIA5String(name);
         }
         else if (tag == registeredID)
         {
-            obj = new ASN1ObjectIdentifier(name);
+            this.obj = new ASN1ObjectIdentifier(name);
         }
         else if (tag == directoryName)
         {
-            obj = new X500Name(name);
+            this.obj = new X500Name(name);
         }
         else if (tag == iPAddress)
         {
             final byte[] enc = toGeneralNameEncoding(name);
             if (enc != null)
             {
-                obj = new DEROctetString(enc);
+                this.obj = new DEROctetString(enc);
             }
             else
             {
@@ -234,12 +236,12 @@ public class GeneralName
 
     public int getTagNo()
     {
-        return tag;
+        return this.tag;
     }
 
     public ASN1Encodable getName()
     {
-        return obj;
+        return this.obj;
     }
 
     @Override
@@ -247,20 +249,20 @@ public class GeneralName
     {
         final StringBuilder buf = new StringBuilder();
 
-        buf.append(tag);
+        buf.append(this.tag);
         buf.append(": ");
-        switch (tag)
+        switch (this.tag)
         {
         case rfc822Name:
         case dNSName:
         case uniformResourceIdentifier:
-            buf.append(ASN1IA5String.getInstance(obj).getString());
+            buf.append(ASN1IA5String.getInstance(this.obj).getString());
             break;
         case directoryName:
-            buf.append(X500Name.getInstance(obj).toString());
+            buf.append(X500Name.getInstance(this.obj).toString());
             break;
         default:
-            buf.append(obj.toString());
+            buf.append(this.obj.toString());
         }
         return buf.toString();
     }
@@ -429,8 +431,8 @@ public class GeneralName
 	public ASN1Primitive toASN1Primitive()
     {
         // directoryName is explicitly tagged as it is a CHOICE
-        final boolean explicit = tag == directoryName;
+        final boolean explicit = this.tag == directoryName;
 
-        return new DERTaggedObject(explicit, tag, obj);
+        return new DERTaggedObject(explicit, this.tag, this.obj);
     }
 }

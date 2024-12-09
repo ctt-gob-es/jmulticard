@@ -10,6 +10,7 @@ public interface CMSSignatureAlgorithmNameGenerator
      *
      * @param digestAlg the digest algorithm id.
      * @param encryptionAlg the encryption, or signing, algorithm id.
+     * @return Signature algorithm name.
      */
     String getSignatureName(AlgorithmIdentifier digestAlg, AlgorithmIdentifier encryptionAlg);
 }

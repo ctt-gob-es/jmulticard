@@ -55,7 +55,7 @@ public final class IntegerFunctions
      * @param B integer value
      * @return value of the jacobi symbol (A|B)
      */
-    public static int jacobi(BigInteger A, BigInteger B)
+    public static int jacobi(final BigInteger A, final BigInteger B)
     {
         BigInteger a, b, v;
         long k = 1;
@@ -124,7 +124,7 @@ public final class IntegerFunctions
             if (a.compareTo(b) < 0)
             { // a < b
                 // swap and correct intermediate result
-                BigInteger x = a;
+                final BigInteger x = a;
                 a = b;
                 b = x;
                 if (a.testBit(1) && b.testBit(1))
@@ -145,7 +145,7 @@ public final class IntegerFunctions
      * @param v - second integer
      * @return gcd(a, b)
      */
-    public static int gcd(int u, int v)
+    public static int gcd(final int u, final int v)
     {
         return BigInteger.valueOf(u).gcd(BigInteger.valueOf(v)).intValue();
     }
@@ -157,19 +157,19 @@ public final class IntegerFunctions
      * @param b the second integer
      * @return <tt>(g,u,v)</tt>, where <tt>g = gcd(abs(a),abs(b)) = ua + vb</tt>
      */
-    public static int[] extGCD(int a, int b)
+    public static int[] extGCD(final int a, final int b)
     {
-        BigInteger ba = BigInteger.valueOf(a);
-        BigInteger bb = BigInteger.valueOf(b);
-        BigInteger[] bresult = extgcd(ba, bb);
-        int[] result = new int[3];
+        final BigInteger ba = BigInteger.valueOf(a);
+        final BigInteger bb = BigInteger.valueOf(b);
+        final BigInteger[] bresult = extgcd(ba, bb);
+        final int[] result = new int[3];
         result[0] = bresult[0].intValue();
         result[1] = bresult[1].intValue();
         result[2] = bresult[2].intValue();
         return result;
     }
 
-    public static BigInteger divideAndRound(BigInteger a, BigInteger b)
+    public static BigInteger divideAndRound(final BigInteger a, final BigInteger b)
     {
         if (a.signum() < 0)
         {
@@ -182,9 +182,9 @@ public final class IntegerFunctions
         return a.shiftLeft(1).add(b).divide(b.shiftLeft(1));
     }
 
-    public static BigInteger[] divideAndRound(BigInteger[] a, BigInteger b)
+    public static BigInteger[] divideAndRound(final BigInteger[] a, final BigInteger b)
     {
-        BigInteger[] out = new BigInteger[a.length];
+        final BigInteger[] out = new BigInteger[a.length];
         for (int i = 0; i < a.length; i++)
         {
             out[i] = divideAndRound(a[i], b);
@@ -199,7 +199,7 @@ public final class IntegerFunctions
      * @param a the integer
      * @return ceil[log(a)]
      */
-    public static int ceilLog(BigInteger a)
+    public static int ceilLog(final BigInteger a)
     {
         int result = 0;
         BigInteger p = ONE;
@@ -218,7 +218,7 @@ public final class IntegerFunctions
      * @param a the integer
      * @return ceil[log(a)]
      */
-    public static int ceilLog(int a)
+    public static int ceilLog(final int a)
     {
         int log = 0;
         int i = 1;
@@ -237,7 +237,7 @@ public final class IntegerFunctions
      * @param n the integer
      * @return the number of bytes needed to encode <tt>n</tt>
      */
-    public static int ceilLog256(int n)
+    public static int ceilLog256(final int n)
     {
         if (n == 0)
         {
@@ -269,7 +269,7 @@ public final class IntegerFunctions
      * @param n the long integer
      * @return the number of bytes needed to encode <tt>n</tt>
      */
-    public static int ceilLog256(long n)
+    public static int ceilLog256(final long n)
     {
         if (n == 0)
         {
@@ -301,7 +301,7 @@ public final class IntegerFunctions
      * @param a the integer
      * @return floor[log(a)]
      */
-    public static int floorLog(BigInteger a)
+    public static int floorLog(final BigInteger a)
     {
         int result = -1;
         BigInteger p = ONE;
@@ -320,7 +320,7 @@ public final class IntegerFunctions
      * @param a the integer
      * @return floor[log(a)]
      */
-    public static int floorLog(int a)
+    public static int floorLog(final int a)
     {
         int h = 0;
         if (a <= 0)
@@ -344,7 +344,7 @@ public final class IntegerFunctions
      * @return the largest <tt>h</tt> with <tt>2^h | a</tt> if <tt>a!=0</tt>,
      *         <tt>0</tt> otherwise
      */
-    public static int maxPower(int a)
+    public static int maxPower(final int a)
     {
         int h = 0;
         if (a != 0)
@@ -386,7 +386,7 @@ public final class IntegerFunctions
      * @return the order k of g (that is k is the smallest integer with
      *         g<sup>k</sup> = 1 mod p
      */
-    public static int order(int g, int p)
+    public static int order(final int g, final int p)
     {
         int b, j;
 
@@ -423,8 +423,8 @@ public final class IntegerFunctions
      * @param end   - right bound of the interval
      * @return <tt>n</tt> reduced into <tt>[begin,end]</tt>
      */
-    public static BigInteger reduceInto(BigInteger n, BigInteger begin,
-                                        BigInteger end)
+    public static BigInteger reduceInto(final BigInteger n, final BigInteger begin,
+                                        final BigInteger end)
     {
         return n.subtract(begin).mod(end.subtract(begin)).add(begin);
     }
@@ -481,9 +481,9 @@ public final class IntegerFunctions
      * @param n the modulus
      * @return <tt>a<sup>e</sup> mod n</tt>
      */
-    public static int modPow(int a, int e, int n)
+    public static int modPow(int a, int e, final int n)
     {
-        if (n <= 0 || (n * n) > Integer.MAX_VALUE || e < 0)
+        if (n <= 0 || n * n > Integer.MAX_VALUE || e < 0)
         {
             return 0;
         }
@@ -493,9 +493,9 @@ public final class IntegerFunctions
         {
             if ((e & 1) == 1)
             {
-                result = (result * a) % n;
+                result = result * a % n;
             }
-            a = (a * a) % n;
+            a = a * a % n;
             e >>>= 1;
         }
         return result;
@@ -508,7 +508,7 @@ public final class IntegerFunctions
      * @param b - the second integer
      * @return <tt>(d,u,v)</tt>, where <tt>d = gcd(a,b) = ua + vb</tt>
      */
-    public static BigInteger[] extgcd(BigInteger a, BigInteger b)
+    public static BigInteger[] extgcd(final BigInteger a, final BigInteger b)
     {
         BigInteger u = ONE;
         BigInteger v = ZERO;
@@ -519,10 +519,10 @@ public final class IntegerFunctions
             BigInteger v3 = b;
             while (v3.signum() != 0)
             {
-                BigInteger[] tmp = d.divideAndRemainder(v3);
-                BigInteger q = tmp[0];
-                BigInteger t3 = tmp[1];
-                BigInteger t1 = u.subtract(q.multiply(v1));
+                final BigInteger[] tmp = d.divideAndRemainder(v3);
+                final BigInteger q = tmp[0];
+                final BigInteger t3 = tmp[1];
+                final BigInteger t1 = u.subtract(q.multiply(v1));
                 u = v1;
                 d = v3;
                 v1 = t1;
@@ -539,13 +539,13 @@ public final class IntegerFunctions
      * @param numbers - the set of numbers
      * @return the lcm(numbers)
      */
-    public static BigInteger leastCommonMultiple(BigInteger[] numbers)
+    public static BigInteger leastCommonMultiple(final BigInteger[] numbers)
     {
-        int n = numbers.length;
+        final int n = numbers.length;
         BigInteger result = numbers[0];
         for (int i = 1; i < n; i++)
         {
-            BigInteger gcd = result.gcd(numbers[i]);
+            final BigInteger gcd = result.gcd(numbers[i]);
             result = result.multiply(numbers[i]).divide(gcd);
         }
         return result;
@@ -560,7 +560,7 @@ public final class IntegerFunctions
      * @param m the modulus.
      * @return <tt>a mod m</tt>
      */
-    public static long mod(long a, long m)
+    public static long mod(final long a, final long m)
     {
         long result = a % m;
         if (result < 0)
@@ -577,7 +577,7 @@ public final class IntegerFunctions
      * @param mod - the modulus
      * @return <tt>a<sup>-1</sup> mod n</tt>
      */
-    public static int modInverse(int a, int mod)
+    public static int modInverse(final int a, final int mod)
     {
         return BigInteger.valueOf(a).modInverse(BigInteger.valueOf(mod))
             .intValue();
@@ -590,7 +590,7 @@ public final class IntegerFunctions
      * @param mod - the modulus
      * @return <tt>a<sup>-1</sup> mod n</tt>
      */
-    public static long modInverse(long a, long mod)
+    public static long modInverse(final long a, final long mod)
     {
         return BigInteger.valueOf(a).modInverse(BigInteger.valueOf(mod))
             .longValue();
@@ -604,7 +604,7 @@ public final class IntegerFunctions
      * @param p - the second integer
      * @return n if a = p^n or -1 otherwise
      */
-    public static int isPower(int a, int p)
+    public static int isPower(final int a, final int p)
     {
         if (a <= 0)
         {
@@ -645,9 +645,9 @@ public final class IntegerFunctions
             return 2;
         }
         int p = 3;
-        while (p <= (a / p))
+        while (p <= a / p)
         {
-            if ((a % p) == 0)
+            if (a % p == 0)
             {
                 return p;
             }
@@ -666,7 +666,7 @@ public final class IntegerFunctions
      * @return <tt>true</tt> if the given integer is prime with probability
      *         2<sup>-100</sup>, <tt>false</tt> otherwise
      */
-    public static boolean isPrime(int n)
+    public static boolean isPrime(final int n)
     {
         if (n < 2)
         {
@@ -691,10 +691,10 @@ public final class IntegerFunctions
             }
         }
 
-        if ((n % 3 == 0) || (n % 5 == 0) || (n % 7 == 0) || (n % 11 == 0)
-            || (n % 13 == 0) || (n % 17 == 0) || (n % 19 == 0)
-            || (n % 23 == 0) || (n % 29 == 0) || (n % 31 == 0)
-            || (n % 37 == 0) || (n % 41 == 0))
+        if (n % 3 == 0 || n % 5 == 0 || n % 7 == 0 || n % 11 == 0
+            || n % 13 == 0 || n % 17 == 0 || n % 19 == 0
+            || n % 23 == 0 || n % 29 == 0 || n % 31 == 0
+            || n % 37 == 0 || n % 41 == 0)
         {
             return false;
         }
@@ -710,7 +710,7 @@ public final class IntegerFunctions
      * @return <tt>true</tt> if the number has no factor of the tested primes,
      *         <tt>false</tt> if the number is definitely composite
      */
-    public static boolean passesSmallPrimeTest(BigInteger candidate)
+    public static boolean passesSmallPrimeTest(final BigInteger candidate)
     {
         final int[] smallPrime = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
             41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103,
@@ -788,7 +788,7 @@ public final class IntegerFunctions
      * @param certainty the certainty that the generated number is prime
      * @return the next prime greater than <tt>n</tt>
      */
-    public static BigInteger nextProbablePrime(BigInteger n, int certainty)
+    public static BigInteger nextProbablePrime(final BigInteger n, final int certainty)
     {
 
         if (n.signum() < 0 || n.signum() == 0 || n.equals(ONE))
@@ -809,12 +809,12 @@ public final class IntegerFunctions
             // Do cheap "pre-test" if applicable
             if (result.bitLength() > 6)
             {
-                long r = result.remainder(
+                final long r = result.remainder(
                     BigInteger.valueOf(SMALL_PRIME_PRODUCT)).longValue();
-                if ((r % 3 == 0) || (r % 5 == 0) || (r % 7 == 0)
-                    || (r % 11 == 0) || (r % 13 == 0) || (r % 17 == 0)
-                    || (r % 19 == 0) || (r % 23 == 0) || (r % 29 == 0)
-                    || (r % 31 == 0) || (r % 37 == 0) || (r % 41 == 0))
+                if (r % 3 == 0 || r % 5 == 0 || r % 7 == 0
+                    || r % 11 == 0 || r % 13 == 0 || r % 17 == 0
+                    || r % 19 == 0 || r % 23 == 0 || r % 29 == 0
+                    || r % 31 == 0 || r % 37 == 0 || r % 41 == 0)
                 {
                     result = result.add(TWO);
                     continue; // Candidate is composite; try another
@@ -844,7 +844,7 @@ public final class IntegerFunctions
      * @param n a integer number
      * @return the next prime greater than <tt>n</tt>
      */
-    public static BigInteger nextProbablePrime(BigInteger n)
+    public static BigInteger nextProbablePrime(final BigInteger n)
     {
         return nextProbablePrime(n, 20);
     }
@@ -855,7 +855,7 @@ public final class IntegerFunctions
      * @param n a integer number
      * @return the next prime greater than n
      */
-    public static BigInteger nextPrime(long n)
+    public static BigInteger nextPrime(final long n)
     {
         long i;
         boolean found = false;
@@ -870,9 +870,9 @@ public final class IntegerFunctions
             return BigInteger.valueOf(3);
         }
 
-        for (i = n + 1 + (n & 1); (i <= n << 1) && !found; i += 2)
+        for (i = n + 1 + (n & 1); i <= n << 1 && !found; i += 2)
         {
-            for (long j = 3; (j <= i >> 1) && !found; j += 2)
+            for (long j = 3; j <= i >> 1 && !found; j += 2)
             {
                 if (i % j == 0)
                 {
@@ -904,7 +904,7 @@ public final class IntegerFunctions
      * @param t - the "lower" integer
      * @return the binomialcoefficient "n over t" as BigInteger
      */
-    public static BigInteger binomial(int n, int t)
+    public static BigInteger binomial(final int n, int t)
     {
 
         BigInteger result = ONE;
@@ -919,21 +919,21 @@ public final class IntegerFunctions
         }
 
         // the property (n|t) = (n|n-t) be used to reduce numbers of operations
-        if (t > (n >>> 1))
+        if (t > n >>> 1)
         {
             t = n - t;
         }
 
         for (int i = 1; i <= t; i++)
         {
-            result = (result.multiply(BigInteger.valueOf(n - (i - 1))))
+            result = result.multiply(BigInteger.valueOf(n - (i - 1)))
                 .divide(BigInteger.valueOf(i));
         }
 
         return result;
     }
 
-    public static BigInteger randomize(BigInteger upperBound)
+    public static BigInteger randomize(final BigInteger upperBound)
     {
         if (sr == null)
         {
@@ -942,10 +942,10 @@ public final class IntegerFunctions
         return randomize(upperBound, sr);
     }
 
-    public static BigInteger randomize(BigInteger upperBound,
+    public static BigInteger randomize(final BigInteger upperBound,
                                        SecureRandom prng)
     {
-        int blen = upperBound.bitLength();
+        final int blen = upperBound.bitLength();
         BigInteger randomNum = BigInteger.valueOf(0);
 
         if (prng == null)
@@ -970,7 +970,7 @@ public final class IntegerFunctions
      * @param a - value out of which we extract the square root
      * @return the truncated square root of <tt>a</tt>
      */
-    public static BigInteger squareRoot(BigInteger a)
+    public static BigInteger squareRoot(final BigInteger a)
     {
         int bl;
         BigInteger result, remainder, b;
@@ -1016,8 +1016,9 @@ public final class IntegerFunctions
      *
      * @param base the base to take the root from
      * @param root the root, for example 2 for a square root
+     * @return Base.
      */
-    public static float intRoot(int base, int root)
+    public static float intRoot(final int base, final int root)
     {
         float gNew = base / root;
         float gOld = 0;
@@ -1044,7 +1045,7 @@ public final class IntegerFunctions
      * @param i power to be raised to.
      * @return int power i of f
      */
-    public static float floatPow(float f, int i)
+    public static float floatPow(final float f, int i)
     {
         float g = 1;
         for (; i > 0; i--)
@@ -1062,12 +1063,12 @@ public final class IntegerFunctions
      * @deprecated use MathFunctions.log(double) instead
      */
     @Deprecated
-	public static double log(double x)
+	public static double log(final double x)
     {
         if (x > 0 && x < 1)
         {
-            double d = 1 / x;
-            double result = -log(d);
+            final double d = 1 / x;
+            final double result = -log(d);
             return result;
         }
 
@@ -1094,10 +1095,10 @@ public final class IntegerFunctions
      * @deprecated use MathFunctions.log(long) instead
      */
     @Deprecated
-	public static double log(long x)
+	public static double log(final long x)
     {
-        int tmp = floorLog(BigInteger.valueOf(x));
-        long tmp2 = 1 << tmp;
+        final int tmp = floorLog(BigInteger.valueOf(x));
+        final long tmp2 = 1 << tmp;
         double rem = (double)x / (double)tmp2;
         rem = logBKM(rem);
         return tmp + rem;
@@ -1111,9 +1112,9 @@ public final class IntegerFunctions
      * @deprecated use MathFunctions.logBKM(double) instead
      */
     @Deprecated
-	private static double logBKM(double arg)
+	private static double logBKM(final double arg)
     {
-        double ae[] = // A_e[k] = log_2 (1 + 0.5^k)
+        final double ae[] = // A_e[k] = log_2 (1 + 0.5^k)
             {
                 1.0000000000000000000000000000000000000000000000000000000000000000000000000000,
                 0.5849625007211561814537389439478165087598144076924810604557526545410982276485,
@@ -1215,7 +1216,7 @@ public final class IntegerFunctions
                 0.0000000000000000000000000000091046857273082585094980096891901482445902524441,
                 0.0000000000000000000000000000045523428636541292547490048446022564529197237262,
                 0.0000000000000000000000000000022761714318270646273745024223029238091160103901};
-        int n = 53;
+        final int n = 53;
         double x = 1;
         double y = 0;
         double z;
@@ -1235,7 +1236,7 @@ public final class IntegerFunctions
         return y;
     }
 
-    public static boolean isIncreasing(int[] a)
+    public static boolean isIncreasing(final int[] a)
     {
         for (int i = 1; i < a.length; i++)
         {
@@ -1247,9 +1248,9 @@ public final class IntegerFunctions
         return true;
     }
 
-    public static byte[] integerToOctets(BigInteger val)
+    public static byte[] integerToOctets(final BigInteger val)
     {
-        byte[] valBytes = val.abs().toByteArray();
+        final byte[] valBytes = val.abs().toByteArray();
 
         // check whether the array includes a sign bit
         if ((val.bitLength() & 7) != 0)
@@ -1257,22 +1258,22 @@ public final class IntegerFunctions
             return valBytes;
         }
         // get rid of the sign bit (first byte)
-        byte[] tmp = new byte[val.bitLength() >> 3];
+        final byte[] tmp = new byte[val.bitLength() >> 3];
         System.arraycopy(valBytes, 1, tmp, 0, tmp.length);
         return tmp;
     }
 
-    public static BigInteger octetsToInteger(byte[] data, int offset,
-                                             int length)
+    public static BigInteger octetsToInteger(final byte[] data, final int offset,
+                                             final int length)
     {
-        byte[] val = new byte[length + 1];
+        final byte[] val = new byte[length + 1];
 
         val[0] = 0;
         System.arraycopy(data, offset, val, 1, length);
         return new BigInteger(val);
     }
 
-    public static BigInteger octetsToInteger(byte[] data)
+    public static BigInteger octetsToInteger(final byte[] data)
     {
         return octetsToInteger(data, 0, data.length);
     }

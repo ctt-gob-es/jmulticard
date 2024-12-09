@@ -4,7 +4,7 @@ public class DESParameters
     extends KeyParameter
 {
     public DESParameters(
-        byte[]  key)
+        final byte[]  key)
     {
         super(key);
 
@@ -54,13 +54,15 @@ public class DESParameters
      * <p>
      * See <a href="https://www.counterpane.com/applied.html">"Applied
      * Cryptography"</a> by Bruce Schneier for more information.
-     *
+     * </p>
+     * @param key Key.
+     * @param offset Offset.
      * @return true if the given DES key material is weak or semi-weak,
      *     false otherwise.
      */
     public static boolean isWeakKey(
-        byte[] key,
-        int offset)
+        final byte[] key,
+        final int offset)
     {
         if (key.length - offset < DES_KEY_LENGTH)
         {
@@ -89,19 +91,19 @@ public class DESParameters
      * @param bytes the byte array to set the parity on.
      */
     public static void setOddParity(
-        byte[] bytes)
+        final byte[] bytes)
     {
         for (int i = 0; i < bytes.length; i++)
         {
-            int b = bytes[i];
-            bytes[i] = (byte)((b & 0xfe) |
-                            ((((b >> 1) ^
-                            (b >> 2) ^
-                            (b >> 3) ^
-                            (b >> 4) ^
-                            (b >> 5) ^
-                            (b >> 6) ^
-                            (b >> 7)) ^ 0x01) & 0x01));
+            final int b = bytes[i];
+            bytes[i] = (byte)(b & 0xfe |
+                            (b >> 1 ^
+                            b >> 2 ^
+                            b >> 3 ^
+                            b >> 4 ^
+                            b >> 5 ^
+                            b >> 6 ^
+                            b >> 7 ^ 0x01) & 0x01);
         }
     }
 }

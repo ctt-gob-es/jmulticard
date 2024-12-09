@@ -52,7 +52,7 @@ public class SubjectPublicKeyInfo
         final ASN1Encodable       publicKey)
         throws IOException
     {
-        keyData = new DERBitString(publicKey);
+        this.keyData = new DERBitString(publicKey);
         this.algId = algId;
     }
 
@@ -60,11 +60,12 @@ public class SubjectPublicKeyInfo
         final AlgorithmIdentifier algId,
         final byte[]              publicKey)
     {
-        keyData = new DERBitString(publicKey);
+        this.keyData = new DERBitString(publicKey);
         this.algId = algId;
     }
 
     /**
+     * @param seq Sequence
      @deprecated use SubjectPublicKeyInfo.getInstance()
      */
     @Deprecated
@@ -79,13 +80,13 @@ public class SubjectPublicKeyInfo
 
         final Enumeration         e = seq.getObjects();
 
-        algId = AlgorithmIdentifier.getInstance(e.nextElement());
-        keyData = DERBitString.getInstance(e.nextElement());
+        this.algId = AlgorithmIdentifier.getInstance(e.nextElement());
+        this.keyData = DERBitString.getInstance(e.nextElement());
     }
 
     public AlgorithmIdentifier getAlgorithm()
     {
-        return algId;
+        return this.algId;
     }
 
     /**
@@ -95,7 +96,7 @@ public class SubjectPublicKeyInfo
     @Deprecated
 	public AlgorithmIdentifier getAlgorithmId()
     {
-        return algId;
+        return this.algId;
     }
 
     /**
@@ -109,7 +110,7 @@ public class SubjectPublicKeyInfo
     public ASN1Primitive parsePublicKey()
         throws IOException
     {
-        return ASN1Primitive.fromByteArray(keyData.getOctets());
+        return ASN1Primitive.fromByteArray(this.keyData.getOctets());
     }
 
     /**
@@ -125,7 +126,7 @@ public class SubjectPublicKeyInfo
 	public ASN1Primitive getPublicKey()
         throws IOException
     {
-        return ASN1Primitive.fromByteArray(keyData.getOctets());
+        return ASN1Primitive.fromByteArray(this.keyData.getOctets());
     }
 
     /**
@@ -135,7 +136,7 @@ public class SubjectPublicKeyInfo
      */
     public ASN1BitString getPublicKeyData()
     {
-        return keyData;
+        return this.keyData;
     }
 
     /**
@@ -151,8 +152,8 @@ public class SubjectPublicKeyInfo
     {
         final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
-        v.add(algId);
-        v.add(keyData);
+        v.add(this.algId);
+        v.add(this.keyData);
 
         return new DERSequence(v);
     }

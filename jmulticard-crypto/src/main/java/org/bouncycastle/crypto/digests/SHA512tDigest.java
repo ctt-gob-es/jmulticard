@@ -10,14 +10,15 @@ import org.bouncycastle.util.Pack;
 public class SHA512tDigest
     extends LongDigest
 {
-    private int digestLength;      // non-final due to old flow analyser.
+    private final int digestLength;      // non-final due to old flow analyser.
 
     private long  H1t, H2t, H3t, H4t, H5t, H6t, H7t, H8t;
 
     /**
-     * Standard constructor
+     * Standard constructor.
+     * @param bitLength Digest length.
      */
-    public SHA512tDigest(int bitLength)
+    public SHA512tDigest(final int bitLength)
     {
         if (bitLength >= 512)
         {
@@ -36,7 +37,7 @@ public class SHA512tDigest
 
         this.digestLength = bitLength / 8;
 
-        tIvGenerate(digestLength * 8);
+        tIvGenerate(this.digestLength * 8);
 
         reset();
     }
@@ -44,8 +45,9 @@ public class SHA512tDigest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t Digest.
      */
-    public SHA512tDigest(SHA512tDigest t)
+    public SHA512tDigest(final SHA512tDigest t)
     {
         super(t);
 
@@ -54,13 +56,13 @@ public class SHA512tDigest
         reset(t);
     }
 
-    public SHA512tDigest(byte[] encodedState)
+    public SHA512tDigest(final byte[] encodedState)
     {
         this(readDigestLength(encodedState));
         restoreState(encodedState);
     }
 
-    private static int readDigestLength(byte[] encodedState)
+    private static int readDigestLength(final byte[] encodedState)
     {
         return Pack.bigEndianToInt(encodedState, encodedState.length - 4);
     }
@@ -68,34 +70,34 @@ public class SHA512tDigest
     @Override
 	public String getAlgorithmName()
     {
-        return "SHA-512/" + Integer.toString(digestLength * 8);
+        return "SHA-512/" + Integer.toString(this.digestLength * 8);
     }
 
     @Override
 	public int getDigestSize()
     {
-        return digestLength;
+        return this.digestLength;
     }
 
     @Override
 	public int doFinal(
-        byte[]  out,
-        int     outOff)
+        final byte[]  out,
+        final int     outOff)
     {
         finish();
 
-        longToBigEndian(H1, out, outOff, digestLength);
-        longToBigEndian(H2, out, outOff + 8, digestLength - 8);
-        longToBigEndian(H3, out, outOff + 16, digestLength - 16);
-        longToBigEndian(H4, out, outOff + 24, digestLength - 24);
-        longToBigEndian(H5, out, outOff + 32, digestLength - 32);
-        longToBigEndian(H6, out, outOff + 40, digestLength - 40);
-        longToBigEndian(H7, out, outOff + 48, digestLength - 48);
-        longToBigEndian(H8, out, outOff + 56, digestLength - 56);
+        longToBigEndian(this.H1, out, outOff, this.digestLength);
+        longToBigEndian(this.H2, out, outOff + 8, this.digestLength - 8);
+        longToBigEndian(this.H3, out, outOff + 16, this.digestLength - 16);
+        longToBigEndian(this.H4, out, outOff + 24, this.digestLength - 24);
+        longToBigEndian(this.H5, out, outOff + 32, this.digestLength - 32);
+        longToBigEndian(this.H6, out, outOff + 40, this.digestLength - 40);
+        longToBigEndian(this.H7, out, outOff + 48, this.digestLength - 48);
+        longToBigEndian(this.H8, out, outOff + 56, this.digestLength - 56);
 
         reset();
 
-        return digestLength;
+        return this.digestLength;
     }
 
     /**
@@ -109,26 +111,26 @@ public class SHA512tDigest
         /*
          * initial hash values use the iv generation algorithm for t.
          */
-        H1 = H1t;
-        H2 = H2t;
-        H3 = H3t;
-        H4 = H4t;
-        H5 = H5t;
-        H6 = H6t;
-        H7 = H7t;
-        H8 = H8t;
+        this.H1 = this.H1t;
+        this.H2 = this.H2t;
+        this.H3 = this.H3t;
+        this.H4 = this.H4t;
+        this.H5 = this.H5t;
+        this.H6 = this.H6t;
+        this.H7 = this.H7t;
+        this.H8 = this.H8t;
     }
 
     private void tIvGenerate(int bitLength)
     {
-        H1 = 0x6a09e667f3bcc908L ^ 0xa5a5a5a5a5a5a5a5L;
-        H2 = 0xbb67ae8584caa73bL ^ 0xa5a5a5a5a5a5a5a5L;
-        H3 = 0x3c6ef372fe94f82bL ^ 0xa5a5a5a5a5a5a5a5L;
-        H4 = 0xa54ff53a5f1d36f1L ^ 0xa5a5a5a5a5a5a5a5L;
-        H5 = 0x510e527fade682d1L ^ 0xa5a5a5a5a5a5a5a5L;
-        H6 = 0x9b05688c2b3e6c1fL ^ 0xa5a5a5a5a5a5a5a5L;
-        H7 = 0x1f83d9abfb41bd6bL ^ 0xa5a5a5a5a5a5a5a5L;
-        H8 = 0x5be0cd19137e2179L ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H1 = 0x6a09e667f3bcc908L ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H2 = 0xbb67ae8584caa73bL ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H3 = 0x3c6ef372fe94f82bL ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H4 = 0xa54ff53a5f1d36f1L ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H5 = 0x510e527fade682d1L ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H6 = 0x9b05688c2b3e6c1fL ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H7 = 0x1f83d9abfb41bd6bL ^ 0xa5a5a5a5a5a5a5a5L;
+        this.H8 = 0x5be0cd19137e2179L ^ 0xa5a5a5a5a5a5a5a5L;
 
         update((byte)0x53);
         update((byte)0x48);
@@ -160,17 +162,17 @@ public class SHA512tDigest
 
         finish();
 
-        H1t = H1;
-        H2t = H2;
-        H3t = H3;
-        H4t = H4;
-        H5t = H5;
-        H6t = H6;
-        H7t = H7;
-        H8t = H8;
+        this.H1t = this.H1;
+        this.H2t = this.H2;
+        this.H3t = this.H3;
+        this.H4t = this.H4;
+        this.H5t = this.H5;
+        this.H6t = this.H6;
+        this.H7t = this.H7;
+        this.H8t = this.H8;
     }
 
-    private static void longToBigEndian(long n, byte[] bs, int off, int max)
+    private static void longToBigEndian(final long n, final byte[] bs, final int off, final int max)
     {
         if (max > 0)
         {
@@ -183,12 +185,12 @@ public class SHA512tDigest
         }
     }
 
-    private static void intToBigEndian(int n, byte[] bs, int off, int max)
+    private static void intToBigEndian(final int n, final byte[] bs, final int off, final int max)
     {
         int num = Math.min(4, max);
         while (--num >= 0)
         {
-            int shift = 8 * (3 - num);
+            final int shift = 8 * (3 - num);
             bs[off + num] = (byte)(n >>> shift);
         }
     }
@@ -200,9 +202,9 @@ public class SHA512tDigest
     }
 
     @Override
-	public void reset(Memoable other)
+	public void reset(final Memoable other)
     {
-        SHA512tDigest t = (SHA512tDigest)other;
+        final SHA512tDigest t = (SHA512tDigest)other;
 
         if (this.digestLength != t.digestLength)
         {
@@ -225,9 +227,9 @@ public class SHA512tDigest
 	public byte[] getEncodedState()
     {
         final int baseSize = getEncodedStateSize();
-        byte[] encoded = new byte[baseSize + 4];
+        final byte[] encoded = new byte[baseSize + 4];
         populateState(encoded);
-        Pack.intToBigEndian(digestLength * 8, encoded, baseSize);
+        Pack.intToBigEndian(this.digestLength * 8, encoded, baseSize);
         return encoded;
     }
 

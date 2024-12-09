@@ -17,8 +17,8 @@ public class ECPublicKeySpec
      * @param spec the domain parameters for the curve.
      */
     public ECPublicKeySpec(
-        ECPoint         q,
-        ECParameterSpec spec)
+        final ECPoint         q,
+        final ECParameterSpec spec)
     {
         super(spec);
 
@@ -33,10 +33,10 @@ public class ECPublicKeySpec
     }
 
     /**
-     * return the public point q
+     * @return the public point q
      */
     public ECPoint getQ()
     {
-        return q;
+        return this.q;
     }
 }

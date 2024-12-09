@@ -16,10 +16,10 @@ public class AttributeCertificate
     ASN1BitString               signatureValue;
 
     /**
-     * @param obj
+     * @param obj Certificate attribute.
      * @return an AttributeCertificate object
      */
-    public static AttributeCertificate getInstance(Object obj)
+    public static AttributeCertificate getInstance(final Object obj)
     {
         if (obj instanceof AttributeCertificate)
         {
@@ -32,11 +32,11 @@ public class AttributeCertificate
 
         return null;
     }
-    
+
     public AttributeCertificate(
-        AttributeCertificateInfo    acinfo,
-        AlgorithmIdentifier         signatureAlgorithm,
-        DERBitString                signatureValue)
+        final AttributeCertificateInfo    acinfo,
+        final AlgorithmIdentifier         signatureAlgorithm,
+        final DERBitString                signatureValue)
     {
         this.acinfo = acinfo;
         this.signatureAlgorithm = signatureAlgorithm;
@@ -44,7 +44,7 @@ public class AttributeCertificate
     }
 
     private AttributeCertificate(
-        ASN1Sequence    seq)
+        final ASN1Sequence    seq)
     {
         if (seq.size() != 3)
         {
@@ -56,20 +56,20 @@ public class AttributeCertificate
         this.signatureAlgorithm = AlgorithmIdentifier.getInstance(seq.getObjectAt(1));
         this.signatureValue = DERBitString.getInstance(seq.getObjectAt(2));
     }
-    
+
     public AttributeCertificateInfo getAcinfo()
     {
-        return acinfo;
+        return this.acinfo;
     }
 
     public AlgorithmIdentifier getSignatureAlgorithm()
     {
-        return signatureAlgorithm;
+        return this.signatureAlgorithm;
     }
 
     public ASN1BitString getSignatureValue()
     {
-        return signatureValue;
+        return this.signatureValue;
     }
 
     /**
@@ -85,11 +85,11 @@ public class AttributeCertificate
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(3);
+        final ASN1EncodableVector v = new ASN1EncodableVector(3);
 
-        v.add(acinfo);
-        v.add(signatureAlgorithm);
-        v.add(signatureValue);
+        v.add(this.acinfo);
+        v.add(this.signatureAlgorithm);
+        v.add(this.signatureValue);
 
         return new DERSequence(v);
     }

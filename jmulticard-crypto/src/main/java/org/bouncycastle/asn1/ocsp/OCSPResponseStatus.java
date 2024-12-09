@@ -33,7 +33,7 @@ public class OCSPResponseStatus
     public static final int SIG_REQUIRED = 5;
     public static final int UNAUTHORIZED = 6;
 
-    private ASN1Enumerated value;
+    private final ASN1Enumerated value;
 
     /**
      * RFC 2560, RFC 6960
@@ -50,21 +50,22 @@ public class OCSPResponseStatus
      *     unauthorized          (6)   --Request unauthorized
      * }
      * </pre>
+     * @param value Value.
      */
     public OCSPResponseStatus(
-        int value)
+        final int value)
     {
         this(new ASN1Enumerated(value));
     }
 
     private OCSPResponseStatus(
-        ASN1Enumerated value)
+        final ASN1Enumerated value)
     {
         this.value = value;
     }
 
     public static OCSPResponseStatus getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof OCSPResponseStatus)
         {
@@ -80,17 +81,17 @@ public class OCSPResponseStatus
 
     public int getIntValue()
     {
-        return value.intValueExact();
+        return this.value.intValueExact();
     }
 
     public BigInteger getValue()
     {
-        return value.getValue();
+        return this.value.getValue();
     }
 
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        return value;
+        return this.value;
     }
 }

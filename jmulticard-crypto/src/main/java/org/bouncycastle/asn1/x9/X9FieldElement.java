@@ -22,7 +22,7 @@ public class X9FieldElement
 
     public ECFieldElement getValue()
     {
-        return f;
+        return this.f;
     }
 
     /**
@@ -30,7 +30,6 @@ public class X9FieldElement
      * <pre>
      *  FieldElement ::= OCTET STRING
      * </pre>
-     * <p>
      * <ol>
      * <li> if <i>q</i> is an odd prime then the field element is
      * processed as an Integer and converted to an octet string
@@ -44,8 +43,8 @@ public class X9FieldElement
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        final int byteCount = converter.getByteLength(f);
-        final byte[] paddedBigInteger = converter.integerToBytes(f.toBigInteger(), byteCount);
+        final int byteCount = converter.getByteLength(this.f);
+        final byte[] paddedBigInteger = converter.integerToBytes(this.f.toBigInteger(), byteCount);
 
         return new DEROctetString(paddedBigInteger);
     }

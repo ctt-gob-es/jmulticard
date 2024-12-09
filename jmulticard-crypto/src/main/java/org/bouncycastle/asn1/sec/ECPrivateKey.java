@@ -24,16 +24,16 @@ import org.bouncycastle.util.BigIntegers;
 public class ECPrivateKey
     extends ASN1Object
 {
-    private ASN1Sequence seq;
+    private final ASN1Sequence seq;
 
     private ECPrivateKey(
-        ASN1Sequence seq)
+        final ASN1Sequence seq)
     {
         this.seq = seq;
     }
 
     public static ECPrivateKey getInstance(
-        Object obj)
+        final Object obj)
     {
         if (obj instanceof ECPrivateKey)
         {
@@ -49,11 +49,12 @@ public class ECPrivateKey
     }
 
     /**
+     * @param key the private key value.
      * @deprecated use constructor which takes orderBitLength to guarantee correct encoding.
      */
     @Deprecated
 	public ECPrivateKey(
-        BigInteger key)
+        final BigInteger key)
     {
         this(key.bitLength(), key);
     }
@@ -65,59 +66,64 @@ public class ECPrivateKey
      * @param key the private key value.
      */
     public ECPrivateKey(
-        int        orderBitLength,
-        BigInteger key)
+        final int        orderBitLength,
+        final BigInteger key)
     {
-        byte[] bytes = BigIntegers.asUnsignedByteArray((orderBitLength + 7) / 8, key);
+        final byte[] bytes = BigIntegers.asUnsignedByteArray((orderBitLength + 7) / 8, key);
 
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
         v.add(new ASN1Integer(1));
         v.add(new DEROctetString(bytes));
 
-        seq = new DERSequence(v);
+        this.seq = new DERSequence(v);
     }
 
     /**
+     * @param key the private key value.
+     * @param parameters Parameters.
      * @deprecated use constructor which takes orderBitLength to guarantee correct encoding.
      */
     @Deprecated
 	public ECPrivateKey(
-        BigInteger key,
-        ASN1Encodable parameters)
+        final BigInteger key,
+        final ASN1Encodable parameters)
     {
         this(key, null, parameters);
     }
 
     /**
+     * @param key the private key value.
+     * @param publicKey Public key.
+     * @param parameters Parameters.
      * @deprecated use constructor which takes orderBitLength to guarantee correct encoding.
      */
     @Deprecated
 	public ECPrivateKey(
-        BigInteger key,
-        ASN1BitString publicKey,
-        ASN1Encodable parameters)
+        final BigInteger key,
+        final ASN1BitString publicKey,
+        final ASN1Encodable parameters)
     {
         this(key.bitLength(), key, publicKey, parameters);
     }
 
     public ECPrivateKey(
-        int orderBitLength,
-        BigInteger key,
-        ASN1Encodable parameters)
+        final int orderBitLength,
+        final BigInteger key,
+        final ASN1Encodable parameters)
     {
         this(orderBitLength, key, null, parameters);
     }
 
     public ECPrivateKey(
-        int orderBitLength,
-        BigInteger key,
-        ASN1BitString publicKey,
-        ASN1Encodable parameters)
+        final int orderBitLength,
+        final BigInteger key,
+        final ASN1BitString publicKey,
+        final ASN1Encodable parameters)
     {
-        byte[] bytes = BigIntegers.asUnsignedByteArray((orderBitLength + 7) / 8, key);
+        final byte[] bytes = BigIntegers.asUnsignedByteArray((orderBitLength + 7) / 8, key);
 
-        ASN1EncodableVector v = new ASN1EncodableVector(4);
+        final ASN1EncodableVector v = new ASN1EncodableVector(4);
 
         v.add(new ASN1Integer(1));
         v.add(new DEROctetString(bytes));
@@ -132,22 +138,23 @@ public class ECPrivateKey
             v.add(new DERTaggedObject(true, 1, publicKey));
         }
 
-        seq = new DERSequence(v);
+        this.seq = new DERSequence(v);
     }
 
     public BigInteger getKey()
     {
-        ASN1OctetString octs = (ASN1OctetString)seq.getObjectAt(1);
+        final ASN1OctetString octs = (ASN1OctetString)this.seq.getObjectAt(1);
 
         return new BigInteger(1, octs.getOctets());
     }
-    
+
     public ASN1BitString getPublicKey()
     {
         return (ASN1BitString)getObjectInTag(1, BERTags.BIT_STRING);
     }
 
     /**
+     * @return Parameters.
      * @deprecated Use {@link #getParametersObject()} instead and getInstance
      *             methods or similar to get the object at the desired type.
      */
@@ -162,17 +169,17 @@ public class ECPrivateKey
         return getObjectInTag(0, -1);
     }
 
-    private ASN1Object getObjectInTag(int tagNo, int baseTagNo)
+    private ASN1Object getObjectInTag(final int tagNo, final int baseTagNo)
     {
-        Enumeration e = seq.getObjects();
+        final Enumeration e = this.seq.getObjects();
 
         while (e.hasMoreElements())
         {
-            ASN1Encodable obj = (ASN1Encodable)e.nextElement();
+            final ASN1Encodable obj = (ASN1Encodable)e.nextElement();
 
             if (obj instanceof ASN1TaggedObject)
             {
-                ASN1TaggedObject tag = (ASN1TaggedObject)obj;
+                final ASN1TaggedObject tag = (ASN1TaggedObject)obj;
                 if (tag.hasContextTag(tagNo))
                 {
                     return baseTagNo < 0
@@ -194,6 +201,6 @@ public class ECPrivateKey
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        return seq;
+        return this.seq;
     }
 }

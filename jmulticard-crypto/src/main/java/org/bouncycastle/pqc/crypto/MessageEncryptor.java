@@ -16,19 +16,21 @@ public interface MessageEncryptor
      * otherwise.
      * @param param key parameters for encryption or decryption.
      */
-    public void init(boolean forEncrypting, CipherParameters param);
+    void init(boolean forEncrypting, CipherParameters param);
 
     /**
      *
      * @param message the message to be signed.
+     * @return Encrypted message.
      */
-    public byte[] messageEncrypt(byte[] message);
+    byte[] messageEncrypt(byte[] message);
 
     /**
      *
      * @param cipher the cipher text of the message
-     * @throws InvalidCipherTextException
+     * @return Decrypted message.
+     * @throws InvalidCipherTextException if the text can't be dechipered.
      */
-    public byte[] messageDecrypt(byte[] cipher)
+    byte[] messageDecrypt(byte[] cipher)
         throws InvalidCipherTextException;
 }

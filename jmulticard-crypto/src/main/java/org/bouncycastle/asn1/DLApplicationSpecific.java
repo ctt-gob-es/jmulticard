@@ -31,6 +31,7 @@ public class DLApplicationSpecific
      *
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
+     * @throws IOException If IO error occurs.
      */
     public DLApplicationSpecific(final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {
@@ -43,6 +44,7 @@ public class DLApplicationSpecific
      * @param explicit true if the object is explicitly tagged.
      * @param tagNo the tag number for this object.
      * @param baseEncodable the object to be contained.
+     * @throws IOException If IO error occurs.
      */
     public DLApplicationSpecific(final boolean explicit, final int tagNo, final ASN1Encodable baseEncodable) throws IOException
     {

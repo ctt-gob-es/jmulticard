@@ -121,13 +121,13 @@ public abstract class ASN1TaggedObject
 		 * TODO This seems incorrect for some cases of implicit tags e.g. if one is a
 		 * declared-implicit SET and the other a parsed object.
 		 */
-		if (tagNo != that.tagNo ||
-            tagClass != that.tagClass || ((explicitness != that.explicitness) && (this.isExplicit() != that.isExplicit())))
+		if (this.tagNo != that.tagNo ||
+            this.tagClass != that.tagClass || this.explicitness != that.explicitness && isExplicit() != that.isExplicit())
 		{
 		    return false;
 		}
 
-        final ASN1Primitive p1 = obj.toASN1Primitive();
+        final ASN1Primitive p1 = this.obj.toASN1Primitive();
         final ASN1Primitive p2 = that.obj.toASN1Primitive();
 
         if (p1 == p2)
@@ -135,7 +135,7 @@ public abstract class ASN1TaggedObject
             return true;
         }
 
-        if (!this.isExplicit())
+        if (!isExplicit())
         {
             try
             {
@@ -156,13 +156,13 @@ public abstract class ASN1TaggedObject
     @Override
 	public int hashCode()
     {
-        return tagClass * 7919 ^ tagNo ^ (isExplicit() ? 0x0F : 0xF0) ^ obj.toASN1Primitive().hashCode();
+        return this.tagClass * 7919 ^ this.tagNo ^ (isExplicit() ? 0x0F : 0xF0) ^ this.obj.toASN1Primitive().hashCode();
     }
 
     @Override
 	public int getTagClass()
     {
-        return tagClass;
+        return this.tagClass;
     }
 
     /**
@@ -173,13 +173,13 @@ public abstract class ASN1TaggedObject
     @Override
 	public int getTagNo()
     {
-        return tagNo;
+        return this.tagNo;
     }
 
     @Override
 	public boolean hasContextTag(final int tagNo)
     {
-        return tagClass == BERTags.CONTEXT_SPECIFIC && this.tagNo == tagNo;
+        return this.tagClass == BERTags.CONTEXT_SPECIFIC && this.tagNo == tagNo;
     }
 
     @Override
@@ -196,11 +196,12 @@ public abstract class ASN1TaggedObject
      * affairs is if it returns false. An implicitly tagged object may appear
      * to be explicitly tagged, so you need to understand the context under
      * which the reading was done as well, see getObject below.
+     * @return If is exclicit object.
      */
     public boolean isExplicit()
     {
         // TODO New methods like 'isKnownExplicit' etc. to distinguish uncertain cases?
-        switch (explicitness)
+        switch (this.explicitness)
         {
         case DECLARED_EXPLICIT:
         case PARSED_EXPLICIT:
@@ -212,7 +213,7 @@ public abstract class ASN1TaggedObject
 
     boolean isParsed()
     {
-        switch (explicitness)
+        switch (this.explicitness)
         {
         case PARSED_EXPLICIT:
         case PARSED_IMPLICIT:
@@ -231,7 +232,7 @@ public abstract class ASN1TaggedObject
     {
         try
         {
-            final byte[] baseEncoding = obj.toASN1Primitive().getEncoded(getASN1Encoding());
+            final byte[] baseEncoding = this.obj.toASN1Primitive().getEncoded(getASN1Encoding());
             if (isExplicit())
             {
                 return baseEncoding;
@@ -282,6 +283,7 @@ public abstract class ASN1TaggedObject
      *             {@link BERTags#CONTEXT_SPECIFIC}. Use
      *             {@link #getBaseUniversal(boolean, int)} only after confirming the
      *             expected tag class.
+     * @return ASN.1 priitive.
      */
     @Deprecated
 	public ASN1Primitive getObject()
@@ -291,7 +293,7 @@ public abstract class ASN1TaggedObject
             throw new IllegalStateException("this method only valid for CONTEXT_SPECIFIC tags");
         }
 
-        return obj.toASN1Primitive();
+        return this.obj.toASN1Primitive();
     }
 
     /**
@@ -299,10 +301,11 @@ public abstract class ASN1TaggedObject
      * purposes, and prefer {@link #getExplicitBaseTagged()}, {@link #getImplicitBaseTagged(int, int)} or
      * {@link #getBaseUniversal(boolean, int)} where possible. Before using, check for matching tag
      * {@link #getTagClass() class} and {@link #getTagNo() number}.
+     * @return Base object.
      */
     public ASN1Object getBaseObject()
     {
-        return obj instanceof ASN1Object ? (ASN1Object)obj : obj.toASN1Primitive();
+        return this.obj instanceof ASN1Object ? (ASN1Object)this.obj : this.obj.toASN1Primitive();
     }
 
     /**
@@ -310,6 +313,7 @@ public abstract class ASN1TaggedObject
      * sparingly for other purposes, and prefer {@link #getExplicitBaseTagged()} or
      * {@link #getBaseUniversal(boolean, int)} where possible. Before using, check
      * for matching tag {@link #getTagClass() class} and {@link #getTagNo() number}.
+     * @return Base object.
      */
     public ASN1Object getExplicitBaseObject()
     {
@@ -318,7 +322,7 @@ public abstract class ASN1TaggedObject
             throw new IllegalStateException("object implicit - explicit expected.");
         }
 
-        return obj instanceof ASN1Object ? (ASN1Object)obj : obj.toASN1Primitive();
+        return this.obj instanceof ASN1Object ? (ASN1Object)this.obj : this.obj.toASN1Primitive();
     }
 
     public ASN1TaggedObject getExplicitBaseTagged()
@@ -328,7 +332,7 @@ public abstract class ASN1TaggedObject
             throw new IllegalStateException("object implicit - explicit expected.");
         }
 
-        return checkedCast(obj.toASN1Primitive());
+        return checkedCast(this.obj.toASN1Primitive());
     }
 
     public ASN1TaggedObject getImplicitBaseTagged(final int baseTagClass, final int baseTagNo)
@@ -338,14 +342,14 @@ public abstract class ASN1TaggedObject
             throw new IllegalArgumentException("invalid base tag class: " + baseTagClass);
         }
 
-        switch (explicitness)
+        switch (this.explicitness)
         {
         case DECLARED_EXPLICIT:
             throw new IllegalStateException("object explicit - implicit expected.");
 
         case DECLARED_IMPLICIT:
         {
-            final ASN1TaggedObject declared = checkedCast(obj.toASN1Primitive());
+            final ASN1TaggedObject declared = checkedCast(this.obj.toASN1Primitive());
             return ASN1Util.checkTag(declared, baseTagClass, baseTagNo);
         }
 
@@ -365,6 +369,7 @@ public abstract class ASN1TaggedObject
      *                         EXPLICIT.
      * @param tagNo            The universal {@link BERTags tag number} of the
      *                         expected base object.
+     * @return Base universal.
      */
     public ASN1Primitive getBaseUniversal(final boolean declaredExplicit, final int tagNo)
     {
@@ -386,16 +391,16 @@ public abstract class ASN1TaggedObject
                 throw new IllegalStateException("object explicit - implicit expected.");
             }
 
-            return universalType.checkedCast(obj.toASN1Primitive());
+            return universalType.checkedCast(this.obj.toASN1Primitive());
         }
 
-        if (DECLARED_EXPLICIT == explicitness)
+        if (DECLARED_EXPLICIT == this.explicitness)
         {
             throw new IllegalStateException("object explicit - implicit expected.");
         }
 
-        final ASN1Primitive primitive = obj.toASN1Primitive();
-        switch (explicitness)
+        final ASN1Primitive primitive = this.obj.toASN1Primitive();
+        switch (this.explicitness)
         {
         case PARSED_EXPLICIT:
             return universalType.fromImplicitConstructed(rebuildConstructed(primitive));
@@ -480,19 +485,19 @@ public abstract class ASN1TaggedObject
     @Override
 	ASN1Primitive toDERObject()
     {
-        return new DERTaggedObject(explicitness, tagClass, tagNo, obj);
+        return new DERTaggedObject(this.explicitness, this.tagClass, this.tagNo, this.obj);
     }
 
     @Override
 	ASN1Primitive toDLObject()
     {
-        return new DLTaggedObject(explicitness, tagClass, tagNo, obj);
+        return new DLTaggedObject(this.explicitness, this.tagClass, this.tagNo, this.obj);
     }
 
     @Override
 	public String toString()
     {
-        return ASN1Util.getTagText(tagClass, tagNo) + obj;
+        return ASN1Util.getTagText(this.tagClass, this.tagNo) + this.obj;
     }
 
     static ASN1Primitive createConstructedDL(final int tagClass, final int tagNo, final ASN1EncodableVector contentsElements)

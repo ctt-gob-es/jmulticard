@@ -13,7 +13,7 @@ public interface Mac
      * @exception IllegalArgumentException if the params argument is
      * inappropriate.
      */
-    public void init(CipherParameters params)
+    void init(CipherParameters params)
         throws IllegalArgumentException;
 
     /**
@@ -21,14 +21,14 @@ public interface Mac
      *
      * @return the name of the algorithm the MAC implements.
      */
-    public String getAlgorithmName();
+    String getAlgorithmName();
 
     /**
      * Return the block size for this MAC (in bytes).
      *
      * @return the block size for this MAC in bytes.
      */
-    public int getMacSize();
+    int getMacSize();
 
     /**
      * add a single byte to the mac for processing.
@@ -36,7 +36,7 @@ public interface Mac
      * @param in the byte to be processed.
      * @exception IllegalStateException if the MAC is not initialised.
      */
-    public void update(byte in)
+    void update(byte in)
         throws IllegalStateException;
 
     /**
@@ -46,7 +46,7 @@ public interface Mac
      * @exception IllegalStateException if the MAC is not initialised.
      * @exception DataLengthException if there isn't enough data in in.
      */
-    public void update(byte[] in, int inOff, int len)
+    void update(byte[] in, int inOff, int len)
         throws DataLengthException, IllegalStateException;
 
     /**
@@ -57,15 +57,16 @@ public interface Mac
      *
      * @param out the array the MAC is to be output to.
      * @param outOff the offset into the out buffer the output is to start at.
+     * @return Mac value.
      * @exception DataLengthException if there isn't enough space in out.
      * @exception IllegalStateException if the MAC is not initialised.
      */
-    public int doFinal(byte[] out, int outOff)
+    int doFinal(byte[] out, int outOff)
         throws DataLengthException, IllegalStateException;
 
     /**
      * Reset the MAC. At the end of resetting the MAC should be in the
      * in the same state it was after the last init (if there was one).
      */
-    public void reset();
+    void reset();
 }

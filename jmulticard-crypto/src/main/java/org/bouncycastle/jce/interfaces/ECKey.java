@@ -8,7 +8,7 @@ import org.bouncycastle.jce.spec.ECParameterSpec;
 public interface ECKey {
 
     /**
-     * return a parameter specification representing the EC domain parameters
+     * @return a parameter specification representing the EC domain parameters
      * for the key.
      */
     ECParameterSpec getParameters();

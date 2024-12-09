@@ -14,7 +14,7 @@ public class AttCertValidityPeriod
     ASN1GeneralizedTime  notAfterTime;
 
     public static AttCertValidityPeriod getInstance(
-            Object  obj)
+            final Object  obj)
     {
         if (obj instanceof AttCertValidityPeriod)
         {
@@ -24,12 +24,12 @@ public class AttCertValidityPeriod
         {
             return new AttCertValidityPeriod(ASN1Sequence.getInstance(obj));
         }
-        
+
         return null;
     }
-    
+
     private AttCertValidityPeriod(
-        ASN1Sequence    seq)
+        final ASN1Sequence    seq)
     {
         if (seq.size() != 2)
         {
@@ -37,17 +37,13 @@ public class AttCertValidityPeriod
                     + seq.size());
         }
 
-        notBeforeTime = ASN1GeneralizedTime.getInstance(seq.getObjectAt(0));
-        notAfterTime = ASN1GeneralizedTime.getInstance(seq.getObjectAt(1));
+        this.notBeforeTime = ASN1GeneralizedTime.getInstance(seq.getObjectAt(0));
+        this.notAfterTime = ASN1GeneralizedTime.getInstance(seq.getObjectAt(1));
     }
 
-    /**
-     * @param notBeforeTime
-     * @param notAfterTime
-     */
     public AttCertValidityPeriod(
-        ASN1GeneralizedTime notBeforeTime,
-        ASN1GeneralizedTime notAfterTime)
+        final ASN1GeneralizedTime notBeforeTime,
+        final ASN1GeneralizedTime notAfterTime)
     {
         this.notBeforeTime = notBeforeTime;
         this.notAfterTime = notAfterTime;
@@ -55,12 +51,12 @@ public class AttCertValidityPeriod
 
     public ASN1GeneralizedTime getNotBeforeTime()
     {
-        return notBeforeTime;
+        return this.notBeforeTime;
     }
 
     public ASN1GeneralizedTime getNotAfterTime()
     {
-        return notAfterTime;
+        return this.notAfterTime;
     }
 
     /**
@@ -69,16 +65,16 @@ public class AttCertValidityPeriod
      *  AttCertValidityPeriod  ::= SEQUENCE {
      *       notBeforeTime  GeneralizedTime,
      *       notAfterTime   GeneralizedTime
-     *  } 
+     *  }
      * </pre>
      */
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
-        v.add(notBeforeTime);
-        v.add(notAfterTime);
+        v.add(this.notBeforeTime);
+        v.add(this.notAfterTime);
 
         return new DERSequence(v);
     }

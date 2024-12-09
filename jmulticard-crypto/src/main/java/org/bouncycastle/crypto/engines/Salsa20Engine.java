@@ -114,7 +114,7 @@ public class Salsa20Engine
         final CipherParameters keyParam = ivParams.getParameters();
         if (keyParam == null)
         {
-            if (!initialised)
+            if (!this.initialised)
             {
                 throw new IllegalStateException(getAlgorithmName() + " KeyParameter can not be null for first initialisation");
             }
@@ -132,7 +132,7 @@ public class Salsa20Engine
 
         reset();
 
-        initialised = true;
+        this.initialised = true;
     }
 
     protected int getNonceSize()
@@ -143,10 +143,10 @@ public class Salsa20Engine
     @Override
 	public String getAlgorithmName()
     {
-        StringBuilder name = new StringBuilder("Salsa20");
-        if (rounds != DEFAULT_ROUNDS)
+        final StringBuilder name = new StringBuilder("Salsa20");
+        if (this.rounds != DEFAULT_ROUNDS)
         {
-            name.append("/").append(rounds);
+            name.append("/").append(this.rounds);
         }
         return name.toString();
     }
@@ -159,13 +159,13 @@ public class Salsa20Engine
             throw new MaxBytesExceededException("2^70 byte limit per IV; Change IV");
         }
 
-        final byte out = (byte)(keyStream[index]^in);
-        index = index + 1 & 63;
+        final byte out = (byte)(this.keyStream[this.index]^in);
+        this.index = this.index + 1 & 63;
 
-        if (index == 0)
+        if (this.index == 0)
         {
             advanceCounter();
-            generateKeyStream(keyStream);
+            generateKeyStream(this.keyStream);
         }
 
         return out;
@@ -178,24 +178,24 @@ public class Salsa20Engine
 
         if (hi > 0)
         {
-            engineState[9] += hi;
+            this.engineState[9] += hi;
         }
 
-        final int oldState = engineState[8];
+        final int oldState = this.engineState[8];
 
-        engineState[8] += lo;
+        this.engineState[8] += lo;
 
-        if (oldState != 0 && engineState[8] < oldState)
+        if (oldState != 0 && this.engineState[8] < oldState)
         {
-            engineState[9]++;
+            this.engineState[9]++;
         }
     }
 
     protected void advanceCounter()
     {
-        if (++engineState[8] == 0)
+        if (++this.engineState[8] == 0)
         {
-            ++engineState[9];
+            ++this.engineState[9];
         }
     }
 
@@ -206,9 +206,9 @@ public class Salsa20Engine
 
         if (hi != 0)
         {
-            if ((engineState[9] & 0xffffffffL) >= (hi & 0xffffffffL))
+            if ((this.engineState[9] & 0xffffffffL) >= (hi & 0xffffffffL))
             {
-                engineState[9] -= hi;
+                this.engineState[9] -= hi;
             }
             else
             {
@@ -216,29 +216,29 @@ public class Salsa20Engine
             }
         }
 
-        if ((engineState[8] & 0xffffffffL) >= (lo & 0xffffffffL))
+        if ((this.engineState[8] & 0xffffffffL) >= (lo & 0xffffffffL))
         {
-        } else if (engineState[9] != 0)
+        } else if (this.engineState[9] != 0)
 		{
-		    --engineState[9];
+		    --this.engineState[9];
 		}
 		else
 		{
 		    throw new IllegalStateException("attempt to reduce counter past zero.");
 		}
-		engineState[8] -= lo;
+		this.engineState[8] -= lo;
     }
 
     protected void retreatCounter()
     {
-        if (engineState[8] == 0 && engineState[9] == 0)
+        if (this.engineState[8] == 0 && this.engineState[9] == 0)
         {
             throw new IllegalStateException("attempt to reduce counter past zero.");
         }
 
-        if (--engineState[8] == -1)
+        if (--this.engineState[8] == -1)
         {
-            --engineState[9];
+            --this.engineState[9];
         }
     }
 
@@ -250,7 +250,7 @@ public class Salsa20Engine
         final byte[]     out,
         final int     outOff)
     {
-        if (!initialised)
+        if (!this.initialised)
         {
             throw new IllegalStateException(getAlgorithmName() + " not initialised");
         }
@@ -272,13 +272,13 @@ public class Salsa20Engine
 
         for (int i = 0; i < len; i++)
         {
-            out[i + outOff] = (byte)(keyStream[index] ^ in[i + inOff]);
-            index = index + 1 & 63;
+            out[i + outOff] = (byte)(this.keyStream[this.index] ^ in[i + inOff]);
+            this.index = this.index + 1 & 63;
 
-            if (index == 0)
+            if (this.index == 0)
             {
                 advanceCounter();
-                generateKeyStream(keyStream);
+                generateKeyStream(this.keyStream);
             }
         }
 
@@ -301,11 +301,11 @@ public class Salsa20Engine
                 remaining -= count * 64;
             }
 
-            final int oldIndex = index;
+            final int oldIndex = this.index;
 
-            index = index + (int)remaining & 63;
+            this.index = this.index + (int)remaining & 63;
 
-            if (index < oldIndex)
+            if (this.index < oldIndex)
             {
                 advanceCounter();
             }
@@ -325,16 +325,16 @@ public class Salsa20Engine
 
             for (long i = 0; i < remaining; i++)
             {
-                if (index == 0)
+                if (this.index == 0)
                 {
                     retreatCounter();
                 }
 
-                index = index - 1 & 63;
+                this.index = this.index - 1 & 63;
             }
         }
 
-        generateKeyStream(keyStream);
+        generateKeyStream(this.keyStream);
 
         return numberOfBytes;
     }
@@ -350,27 +350,27 @@ public class Salsa20Engine
     @Override
 	public long getPosition()
     {
-        return getCounter() * 64 + index;
+        return getCounter() * 64 + this.index;
     }
 
     @Override
 	public void reset()
     {
-        index = 0;
+        this.index = 0;
         resetLimitCounter();
         resetCounter();
 
-        generateKeyStream(keyStream);
+        generateKeyStream(this.keyStream);
     }
 
     protected long getCounter()
     {
-        return (long)engineState[9] << 32 | engineState[8] & 0xffffffffL;
+        return (long)this.engineState[9] << 32 | this.engineState[8] & 0xffffffffL;
     }
 
     protected void resetCounter()
     {
-        engineState[8] = engineState[9] = 0;
+        this.engineState[8] = this.engineState[9] = 0;
     }
 
     protected void setKey(final byte[] keyBytes, final byte[] ivBytes)
@@ -383,34 +383,36 @@ public class Salsa20Engine
             }
 
             final int tsOff = (keyBytes.length - 16) / 4;
-            engineState[0 ] = TAU_SIGMA[tsOff    ];
-            engineState[5 ] = TAU_SIGMA[tsOff + 1];
-            engineState[10] = TAU_SIGMA[tsOff + 2];
-            engineState[15] = TAU_SIGMA[tsOff + 3];
+            this.engineState[0 ] = TAU_SIGMA[tsOff    ];
+            this.engineState[5 ] = TAU_SIGMA[tsOff + 1];
+            this.engineState[10] = TAU_SIGMA[tsOff + 2];
+            this.engineState[15] = TAU_SIGMA[tsOff + 3];
 
             // Key
-            Pack.littleEndianToInt(keyBytes, 0, engineState, 1, 4);
-            Pack.littleEndianToInt(keyBytes, keyBytes.length - 16, engineState, 11, 4);
+            Pack.littleEndianToInt(keyBytes, 0, this.engineState, 1, 4);
+            Pack.littleEndianToInt(keyBytes, keyBytes.length - 16, this.engineState, 11, 4);
         }
 
         // IV
-        Pack.littleEndianToInt(ivBytes, 0, engineState, 6, 2);
+        Pack.littleEndianToInt(ivBytes, 0, this.engineState, 6, 2);
     }
 
     protected void generateKeyStream(final byte[] output)
     {
-        salsaCore(rounds, engineState, x);
-        Pack.intToLittleEndian(x, output, 0);
+        salsaCore(this.rounds, this.engineState, this.x);
+        Pack.intToLittleEndian(this.x, output, 0);
     }
 
     /**
      * Salsa20 function
      *
+     * @param rounds Rounds number.
      * @param   input   input data
+     * @param x result.
      */
     public static void salsaCore(final int rounds, final int[] input, final int[] x)
     {
-        if ((input.length != 16) || (x.length != 16))
+        if (input.length != 16 || x.length != 16)
         {
             throw new IllegalArgumentException();
         }
@@ -493,16 +495,16 @@ public class Salsa20Engine
 
     private void resetLimitCounter()
     {
-        cW0 = 0;
-        cW1 = 0;
-        cW2 = 0;
+        this.cW0 = 0;
+        this.cW1 = 0;
+        this.cW2 = 0;
     }
 
     private boolean limitExceeded()
     {
-        if ((++cW0 == 0) && (++cW1 == 0))
+        if (++this.cW0 == 0 && ++this.cW1 == 0)
 		{
-		    return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
+		    return (++this.cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
 		}
 
         return false;
@@ -513,10 +515,10 @@ public class Salsa20Engine
      */
     private boolean limitExceeded(final int len)
     {
-        cW0 += len;
-        if ((cW0 < len && cW0 >= 0) && (++cW1 == 0))
+        this.cW0 += len;
+        if (this.cW0 < len && this.cW0 >= 0 && ++this.cW1 == 0)
 		{
-		    return (++cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
+		    return (++this.cW2 & 0x20) != 0;          // 2^(32 + 32 + 6)
 		}
 
         return false;

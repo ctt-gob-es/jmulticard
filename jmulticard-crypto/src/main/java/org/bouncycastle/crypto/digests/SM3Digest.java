@@ -21,12 +21,12 @@ public class SM3Digest
     private static final int DIGEST_LENGTH = 32;   // bytes
     private static final int BLOCK_SIZE = 64 / 4; // of 32 bit ints (16 ints)
 
-    private int[] V = new int[DIGEST_LENGTH / 4]; // in 32 bit ints (8 ints)
-    private int[] inwords = new int[BLOCK_SIZE];
+    private final int[] V = new int[DIGEST_LENGTH / 4]; // in 32 bit ints (8 ints)
+    private final int[] inwords = new int[BLOCK_SIZE];
     private int xOff;
 
     // Work-bufs used within processBlock()
-    private int[] W = new int[68];
+    private final int[] W = new int[68];
 
     // Round constant T for processBlock() which is 32 bit integer rolled left up to (63 MOD 32) bit positions.
     private static final int[] T = new int[64];
@@ -35,14 +35,14 @@ public class SM3Digest
     {
         for (int i = 0; i < 16; ++i)
         {
-            int t = 0x79CC4519;
-            T[i] = (t << i) | (t >>> (32 - i));
+            final int t = 0x79CC4519;
+            T[i] = t << i | t >>> 32 - i;
         }
         for (int i = 16; i < 64; ++i)
         {
-            int n = i % 32;
-            int t = 0x7A879D8A;
-            T[i] = (t << n) | (t >>> (32 - n));
+            final int n = i % 32;
+            final int t = 0x7A879D8A;
+            T[i] = t << n | t >>> 32 - n;
         }
     }
 
@@ -58,19 +58,20 @@ public class SM3Digest
     /**
      * Copy constructor.  This will copy the state of the provided
      * message digest.
+     * @param t Digest.
      */
-    public SM3Digest(SM3Digest t)
+    public SM3Digest(final SM3Digest t)
     {
         super(t);
 
         copyIn(t);
     }
 
-    private void copyIn(SM3Digest t)
+    private void copyIn(final SM3Digest t)
     {
         System.arraycopy(t.V, 0, this.V, 0, this.V.length);
         System.arraycopy(t.inwords, 0, this.inwords, 0, this.inwords.length);
-        xOff = t.xOff;
+        this.xOff = t.xOff;
     }
 
     @Override
@@ -93,9 +94,9 @@ public class SM3Digest
     }
 
     @Override
-	public void reset(Memoable other)
+	public void reset(final Memoable other)
     {
-        SM3Digest d = (SM3Digest)other;
+        final SM3Digest d = (SM3Digest)other;
 
         super.copyIn(d);
         copyIn(d);
@@ -124,12 +125,12 @@ public class SM3Digest
 
 
     @Override
-	public int doFinal(byte[] out,
-                       int outOff)
+	public int doFinal(final byte[] out,
+                       final int outOff)
     {
         finish();
 
-        Pack.intToBigEndian(V, out, outOff);
+        Pack.intToBigEndian(this.V, out, outOff);
 
         reset();
 
@@ -138,15 +139,15 @@ public class SM3Digest
 
 
     @Override
-	protected void processWord(byte[] in,
+	protected void processWord(final byte[] in,
                                int inOff)
     {
         // Note: Inlined for performance
         // this.inwords[xOff] = Pack.bigEndianToInt(in, inOff);
-        int n = (((in[inOff] & 0xff) << 24) |
-            ((in[++inOff] & 0xff) << 16) |
-            ((in[++inOff] & 0xff) << 8) |
-            ((in[++inOff] & 0xff)));
+        final int n = (in[inOff] & 0xff) << 24 |
+            (in[++inOff] & 0xff) << 16 |
+            (in[++inOff] & 0xff) << 8 |
+            in[++inOff] & 0xff;
 
         this.inwords[this.xOff] = n;
         ++this.xOff;
@@ -158,9 +159,9 @@ public class SM3Digest
     }
 
     @Override
-	protected void processLength(long bitLength)
+	protected void processLength(final long bitLength)
     {
-        if (this.xOff > (BLOCK_SIZE - 2))
+        if (this.xOff > BLOCK_SIZE - 2)
         {
             // xOff == 15  --> can't fit the 64 bit length field at tail..
             this.inwords[this.xOff] = 0; // fill with zero
@@ -169,7 +170,7 @@ public class SM3Digest
             processBlock();
         }
         // Fill with zero words, until reach 2nd to last slot
-        while (this.xOff < (BLOCK_SIZE - 2))
+        while (this.xOff < BLOCK_SIZE - 2)
         {
             this.inwords[this.xOff] = 0;
             ++this.xOff;
@@ -177,7 +178,7 @@ public class SM3Digest
 
         // Store input data length in BITS
         this.inwords[this.xOff++] = (int)(bitLength >>> 32);
-        this.inwords[this.xOff++] = (int)(bitLength);
+        this.inwords[this.xOff++] = (int)bitLength;
     }
 
 /*
@@ -220,36 +221,36 @@ ROLL 23 :  ((x << 23) | (x >>> (32-23)))
 
     private int P0(final int x)
     {
-        final int r9 = ((x << 9) | (x >>> (32 - 9)));
-        final int r17 = ((x << 17) | (x >>> (32 - 17)));
-        return (x ^ r9 ^ r17);
+        final int r9 = x << 9 | x >>> 32 - 9;
+        final int r17 = x << 17 | x >>> 32 - 17;
+        return x ^ r9 ^ r17;
     }
 
     private int P1(final int x)
     {
-        final int r15 = ((x << 15) | (x >>> (32 - 15)));
-        final int r23 = ((x << 23) | (x >>> (32 - 23)));
-        return (x ^ r15 ^ r23);
+        final int r15 = x << 15 | x >>> 32 - 15;
+        final int r23 = x << 23 | x >>> 32 - 23;
+        return x ^ r15 ^ r23;
     }
 
     private int FF0(final int x, final int y, final int z)
     {
-        return (x ^ y ^ z);
+        return x ^ y ^ z;
     }
 
     private int FF1(final int x, final int y, final int z)
     {
-        return ((x & y) | (x & z) | (y & z));
+        return x & y | x & z | y & z;
     }
 
     private int GG0(final int x, final int y, final int z)
     {
-        return (x ^ y ^ z);
+        return x ^ y ^ z;
     }
 
     private int GG1(final int x, final int y, final int z)
     {
-        return ((x & y) | ((~x) & z));
+        return x & y | ~x & z;
     }
 
 
@@ -262,10 +263,10 @@ ROLL 23 :  ((x << 23) | (x >>> (32-23)))
         }
         for (int j = 16; j < 68; ++j)
         {
-            int wj3 = this.W[j - 3];
-            int r15 = ((wj3 << 15) | (wj3 >>> (32 - 15)));
-            int wj13 = this.W[j - 13];
-            int r7 = ((wj13 << 7) | (wj13 >>> (32 - 7)));
+            final int wj3 = this.W[j - 3];
+            final int r15 = wj3 << 15 | wj3 >>> 32 - 15;
+            final int wj13 = this.W[j - 13];
+            final int r7 = wj13 << 7 | wj13 >>> 32 - 7;
             this.W[j] = P1(this.W[j - 16] ^ this.W[j - 9] ^ r15) ^ r7 ^ this.W[j - 6];
         }
 
@@ -281,20 +282,20 @@ ROLL 23 :  ((x << 23) | (x >>> (32-23)))
 
         for (int j = 0; j < 16; ++j)
         {
-            int a12 = ((A << 12) | (A >>> (32 - 12)));
-            int s1_ = a12 + E + T[j];
-            int SS1 = ((s1_ << 7) | (s1_ >>> (32 - 7)));
-            int SS2 = SS1 ^ a12;
-            int Wj = W[j];
-            int W1j = Wj ^ W[j + 4];
-            int TT1 = FF0(A, B, C) + D + SS2 + W1j;
-            int TT2 = GG0(E, F, G) + H + SS1 + Wj;
+            final int a12 = A << 12 | A >>> 32 - 12;
+            final int s1_ = a12 + E + T[j];
+            final int SS1 = s1_ << 7 | s1_ >>> 32 - 7;
+            final int SS2 = SS1 ^ a12;
+            final int Wj = this.W[j];
+            final int W1j = Wj ^ this.W[j + 4];
+            final int TT1 = FF0(A, B, C) + D + SS2 + W1j;
+            final int TT2 = GG0(E, F, G) + H + SS1 + Wj;
             D = C;
-            C = ((B << 9) | (B >>> (32 - 9)));
+            C = B << 9 | B >>> 32 - 9;
             B = A;
             A = TT1;
             H = G;
-            G = ((F << 19) | (F >>> (32 - 19)));
+            G = F << 19 | F >>> 32 - 19;
             F = E;
             E = P0(TT2);
         }
@@ -302,20 +303,20 @@ ROLL 23 :  ((x << 23) | (x >>> (32-23)))
         // Different FF,GG functions on rounds 16..63
         for (int j = 16; j < 64; ++j)
         {
-            int a12 = ((A << 12) | (A >>> (32 - 12)));
-            int s1_ = a12 + E + T[j];
-            int SS1 = ((s1_ << 7) | (s1_ >>> (32 - 7)));
-            int SS2 = SS1 ^ a12;
-            int Wj = W[j];
-            int W1j = Wj ^ W[j + 4];
-            int TT1 = FF1(A, B, C) + D + SS2 + W1j;
-            int TT2 = GG1(E, F, G) + H + SS1 + Wj;
+            final int a12 = A << 12 | A >>> 32 - 12;
+            final int s1_ = a12 + E + T[j];
+            final int SS1 = s1_ << 7 | s1_ >>> 32 - 7;
+            final int SS2 = SS1 ^ a12;
+            final int Wj = this.W[j];
+            final int W1j = Wj ^ this.W[j + 4];
+            final int TT1 = FF1(A, B, C) + D + SS2 + W1j;
+            final int TT2 = GG1(E, F, G) + H + SS1 + Wj;
             D = C;
-            C = ((B << 9) | (B >>> (32 - 9)));
+            C = B << 9 | B >>> 32 - 9;
             B = A;
             A = TT1;
             H = G;
-            G = ((F << 19) | (F >>> (32 - 19)));
+            G = F << 19 | F >>> 32 - 19;
             F = E;
             E = P0(TT2);
         }

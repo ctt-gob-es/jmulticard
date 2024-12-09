@@ -34,18 +34,18 @@ public class X509CertificateHolder
     private transient Certificate x509Certificate;
     private transient Extensions  extensions;
 
-    private static Certificate parseBytes(byte[] certEncoding)
+    private static Certificate parseBytes(final byte[] certEncoding)
         throws IOException
     {
         try
         {
             return Certificate.getInstance(CertUtils.parseNonEmptyASN1(certEncoding));
         }
-        catch (ClassCastException e)
+        catch (final ClassCastException e)
         {
             throw new CertIOException("malformed data: " + e.getMessage(), e);
         }
-        catch (IllegalArgumentException e)
+        catch (final IllegalArgumentException e)
         {
             throw new CertIOException("malformed data: " + e.getMessage(), e);
         }
@@ -57,7 +57,7 @@ public class X509CertificateHolder
      * @param certEncoding BER/DER encoding of the certificate.
      * @throws IOException in the event of corrupted data, or an incorrect structure.
      */
-    public X509CertificateHolder(byte[] certEncoding)
+    public X509CertificateHolder(final byte[] certEncoding)
         throws IOException
     {
         this(parseBytes(certEncoding));
@@ -68,12 +68,12 @@ public class X509CertificateHolder
      *
      * @param x509Certificate an ASN.1 Certificate structure.
      */
-    public X509CertificateHolder(Certificate x509Certificate)
+    public X509CertificateHolder(final Certificate x509Certificate)
     {
         init(x509Certificate);
     }
 
-    private void init(Certificate x509Certificate)
+    private void init(final Certificate x509Certificate)
     {
         this.x509Certificate = x509Certificate;
         this.extensions = x509Certificate.getTBSCertificate().getExtensions();
@@ -81,16 +81,17 @@ public class X509CertificateHolder
 
     public int getVersionNumber()
     {
-        return x509Certificate.getVersionNumber();
+        return this.x509Certificate.getVersionNumber();
     }
 
     /**
+     * @return Version.
      * @deprecated use getVersionNumber
      */
     @Deprecated
 	public int getVersion()
     {
-        return x509Certificate.getVersionNumber();
+        return this.x509Certificate.getVersionNumber();
     }
 
     /**
@@ -100,7 +101,7 @@ public class X509CertificateHolder
      */
     public boolean hasExtensions()
     {
-        return extensions != null;
+        return this.extensions != null;
     }
 
     /**
@@ -110,11 +111,11 @@ public class X509CertificateHolder
      *
      * @return the extension if present, null otherwise.
      */
-    public Extension getExtension(ASN1ObjectIdentifier oid)
+    public Extension getExtension(final ASN1ObjectIdentifier oid)
     {
-        if (extensions != null)
+        if (this.extensions != null)
         {
-            return extensions.getExtension(oid);
+            return this.extensions.getExtension(oid);
         }
 
         return null;
@@ -127,7 +128,7 @@ public class X509CertificateHolder
      */
     public Extensions getExtensions()
     {
-        return extensions;
+        return this.extensions;
     }
 
     /**
@@ -138,7 +139,7 @@ public class X509CertificateHolder
      */
     public List getExtensionOIDs()
     {
-        return CertUtils.getExtensionOIDs(extensions);
+        return CertUtils.getExtensionOIDs(this.extensions);
     }
 
     /**
@@ -149,7 +150,7 @@ public class X509CertificateHolder
      */
     public Set getCriticalExtensionOIDs()
     {
-        return CertUtils.getCriticalExtensionOIDs(extensions);
+        return CertUtils.getCriticalExtensionOIDs(this.extensions);
     }
 
     /**
@@ -160,7 +161,7 @@ public class X509CertificateHolder
      */
     public Set getNonCriticalExtensionOIDs()
     {
-        return CertUtils.getNonCriticalExtensionOIDs(extensions);
+        return CertUtils.getNonCriticalExtensionOIDs(this.extensions);
     }
 
     /**
@@ -170,7 +171,7 @@ public class X509CertificateHolder
      */
     public BigInteger getSerialNumber()
     {
-        return x509Certificate.getSerialNumber().getValue();
+        return this.x509Certificate.getSerialNumber().getValue();
     }
 
     /**
@@ -180,7 +181,7 @@ public class X509CertificateHolder
      */
     public X500Name getIssuer()
     {
-        return X500Name.getInstance(x509Certificate.getIssuer());
+        return X500Name.getInstance(this.x509Certificate.getIssuer());
     }
 
     /**
@@ -190,7 +191,7 @@ public class X509CertificateHolder
      */
     public X500Name getSubject()
     {
-        return X500Name.getInstance(x509Certificate.getSubject());
+        return X500Name.getInstance(this.x509Certificate.getSubject());
     }
 
     /**
@@ -200,7 +201,7 @@ public class X509CertificateHolder
      */
     public Date getNotBefore()
     {
-        return x509Certificate.getStartDate().getDate();
+        return this.x509Certificate.getStartDate().getDate();
     }
 
     /**
@@ -210,7 +211,7 @@ public class X509CertificateHolder
      */
     public Date getNotAfter()
     {
-        return x509Certificate.getEndDate().getDate();
+        return this.x509Certificate.getEndDate().getDate();
     }
 
     /**
@@ -220,7 +221,7 @@ public class X509CertificateHolder
      */
     public SubjectPublicKeyInfo getSubjectPublicKeyInfo()
     {
-        return x509Certificate.getSubjectPublicKeyInfo();
+        return this.x509Certificate.getSubjectPublicKeyInfo();
     }
 
     /**
@@ -230,7 +231,7 @@ public class X509CertificateHolder
      */
     public Certificate toASN1Structure()
     {
-        return x509Certificate;
+        return this.x509Certificate;
     }
 
     /**
@@ -240,7 +241,7 @@ public class X509CertificateHolder
      */
     public AlgorithmIdentifier getSignatureAlgorithm()
     {
-        return x509Certificate.getSignatureAlgorithm();
+        return this.x509Certificate.getSignatureAlgorithm();
     }
 
     /**
@@ -250,7 +251,7 @@ public class X509CertificateHolder
      */
     public byte[] getSignature()
     {
-        return x509Certificate.getSignature().getOctets();
+        return this.x509Certificate.getSignature().getOctets();
     }
 
     /**
@@ -259,9 +260,9 @@ public class X509CertificateHolder
      * @param date the date of interest.
      * @return true if the certificate is valid, false otherwise.
      */
-    public boolean isValidOn(Date date)
+    public boolean isValidOn(final Date date)
     {
-        return !date.before(x509Certificate.getStartDate().getDate()) && !date.after(x509Certificate.getEndDate().getDate());
+        return !date.before(this.x509Certificate.getStartDate().getDate()) && !date.after(this.x509Certificate.getEndDate().getDate());
     }
 
     /**
@@ -271,12 +272,12 @@ public class X509CertificateHolder
      * @return true if the signature is valid, false otherwise.
      * @throws CertException if the signature cannot be processed or is inappropriate.
      */
-    public boolean isSignatureValid(ContentVerifierProvider verifierProvider)
+    public boolean isSignatureValid(final ContentVerifierProvider verifierProvider)
         throws CertException
     {
-        TBSCertificate tbsCert = x509Certificate.getTBSCertificate();
+        final TBSCertificate tbsCert = this.x509Certificate.getTBSCertificate();
 
-        if (!CertUtils.isAlgIdEqual(tbsCert.getSignature(), x509Certificate.getSignatureAlgorithm()))
+        if (!CertUtils.isAlgIdEqual(tbsCert.getSignature(), this.x509Certificate.getSignatureAlgorithm()))
         {
             throw new CertException("signature invalid - algorithm identifier mismatch");
         }
@@ -285,23 +286,23 @@ public class X509CertificateHolder
 
         try
         {
-            verifier = verifierProvider.get((tbsCert.getSignature()));
+            verifier = verifierProvider.get(tbsCert.getSignature());
 
-            OutputStream sOut = verifier.getOutputStream();
+            final OutputStream sOut = verifier.getOutputStream();
             tbsCert.encodeTo(sOut, ASN1Encoding.DER);
             sOut.close();
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             throw new CertException("unable to process signature: " + e.getMessage(), e);
         }
 
-        return verifier.verify(this.getSignature());
+        return verifier.verify(getSignature());
     }
 
     @Override
 	public boolean equals(
-        Object o)
+        final Object o)
     {
         if (o == this)
         {
@@ -313,7 +314,7 @@ public class X509CertificateHolder
             return false;
         }
 
-        X509CertificateHolder other = (X509CertificateHolder)o;
+        final X509CertificateHolder other = (X509CertificateHolder)o;
 
         return this.x509Certificate.equals(other.x509Certificate);
     }
@@ -334,11 +335,11 @@ public class X509CertificateHolder
 	public byte[] getEncoded()
         throws IOException
     {
-        return x509Certificate.getEncoded();
+        return this.x509Certificate.getEncoded();
     }
 
     private void readObject(
-        ObjectInputStream in)
+        final ObjectInputStream in)
         throws IOException, ClassNotFoundException
     {
         in.defaultReadObject();
@@ -347,11 +348,11 @@ public class X509CertificateHolder
     }
 
     private void writeObject(
-        ObjectOutputStream out)
+        final ObjectOutputStream out)
         throws IOException
     {
         out.defaultWriteObject();
 
-        out.writeObject(this.getEncoded());
+        out.writeObject(getEncoded());
     }
 }

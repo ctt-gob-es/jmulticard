@@ -18,7 +18,7 @@ public final class DefaultXMSSOid
 
     static
     {
-        Map<String, DefaultXMSSOid> map = new HashMap<String, DefaultXMSSOid>();
+        final Map<String, DefaultXMSSOid> map = new HashMap<>();
         map.put(createKey("SHA-256", 32, 16, 67, 10), new DefaultXMSSOid(0x00000001, "XMSS_SHA2_10_256"));
         map.put(createKey("SHA-256", 32, 16, 67, 16), new DefaultXMSSOid(0x00000002, "XMSS_SHA2_16_256"));
         map.put(createKey("SHA-256", 32, 16, 67, 20), new DefaultXMSSOid(0x00000003, "XMSS_SHA2_20_256"));
@@ -49,7 +49,7 @@ public final class DefaultXMSSOid
      * @param oid                  OID.
      * @param stringRepresentation String representation of OID.
      */
-    private DefaultXMSSOid(int oid, String stringRepresentation)
+    private DefaultXMSSOid(final int oid, final String stringRepresentation)
     {
         super();
         this.oid = oid;
@@ -60,12 +60,14 @@ public final class DefaultXMSSOid
      * Lookup OID.
      *
      * @param algorithmName       Algorithm name.
+     * @param digestSize	Digest size.
      * @param winternitzParameter Winternitz parameter.
+     * @param len Length.
      * @param height              Binary tree height.
      * @return XMSS OID if parameters were found, null else.
      */
-    public static DefaultXMSSOid lookup(String algorithmName, int digestSize, int winternitzParameter, int len,
-                                        int height)
+    public static DefaultXMSSOid lookup(final String algorithmName, final int digestSize, final int winternitzParameter, final int len,
+                                        final int height)
     {
         if (algorithmName == null)
         {
@@ -78,12 +80,14 @@ public final class DefaultXMSSOid
      * Create a key based on parameters.
      *
      * @param algorithmName       Algorithm name.
+     * @param digestSize	Digest size.
      * @param winternitzParameter Winternitz Parameter.
+     * @param len Length.
      * @param height              Binary tree height.
      * @return String representation of parameters for lookup table.
      */
-    private static String createKey(String algorithmName, int digestSize, int winternitzParameter, int len,
-                                    int height)
+    private static String createKey(final String algorithmName, final int digestSize, final int winternitzParameter, final int len,
+                                    final int height)
     {
         if (algorithmName == null)
         {
@@ -100,12 +104,12 @@ public final class DefaultXMSSOid
     @Override
 	public int getOid()
     {
-        return oid;
+        return this.oid;
     }
 
     @Override
     public String toString()
     {
-        return stringRepresentation;
+        return this.stringRepresentation;
     }
 }

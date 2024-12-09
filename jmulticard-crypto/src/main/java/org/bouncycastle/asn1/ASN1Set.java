@@ -17,7 +17,7 @@ import org.bouncycastle.util.Arrays;
  * BER support uses indefinite form.
  * </p><p>
  * The CER form support does not exist.
- * </p><p>
+ * </p>
  * <h2>X.690</h2>
  * <h3>8: Basic encoding rules</h3>
  * <h4>8.11 Encoding of a set value </h4>
@@ -171,8 +171,8 @@ public abstract class ASN1Set
 
     protected ASN1Set()
     {
-        elements = ASN1EncodableVector.EMPTY_ELEMENTS;
-        isSorted = true;
+        this.elements = ASN1EncodableVector.EMPTY_ELEMENTS;
+        this.isSorted = true;
     }
 
     /**
@@ -186,8 +186,8 @@ public abstract class ASN1Set
             throw new NullPointerException("'element' cannot be null");
         }
 
-        elements = new ASN1Encodable[]{ element };
-        isSorted = true;
+        this.elements = new ASN1Encodable[]{ element };
+        this.isSorted = true;
     }
 
     /**
@@ -213,8 +213,8 @@ public abstract class ASN1Set
             tmp = elementVector.takeElements();
         }
 
-        elements = tmp;
-        isSorted = doSort || tmp.length < 2;
+        this.elements = tmp;
+        this.isSorted = doSort || tmp.length < 2;
     }
 
     /**
@@ -236,7 +236,7 @@ public abstract class ASN1Set
         }
 
         this.elements = tmp;
-        isSorted = doSort || tmp.length < 2;
+        this.isSorted = doSort || tmp.length < 2;
     }
 
     ASN1Set(final boolean isSorted, final ASN1Encodable[] elements)
@@ -254,15 +254,15 @@ public abstract class ASN1Set
             @Override
 			public boolean hasMoreElements()
             {
-                return pos < elements.length;
+                return this.pos < ASN1Set.this.elements.length;
             }
 
             @Override
 			public Object nextElement()
             {
-                if (pos < elements.length)
+                if (this.pos < ASN1Set.this.elements.length)
                 {
-                    return elements[pos++];
+                    return ASN1Set.this.elements[this.pos++];
                 }
                 throw new NoSuchElementException();
             }
@@ -277,7 +277,7 @@ public abstract class ASN1Set
      */
     public ASN1Encodable getObjectAt(final int index)
     {
-        return elements[index];
+        return this.elements[index];
     }
 
     /**
@@ -287,12 +287,12 @@ public abstract class ASN1Set
      */
     public int size()
     {
-        return elements.length;
+        return this.elements.length;
     }
 
     public ASN1Encodable[] toArray()
     {
-        return ASN1EncodableVector.cloneElements(elements);
+        return ASN1EncodableVector.cloneElements(this.elements);
     }
 
     public ASN1SetParser parser()
@@ -306,12 +306,12 @@ public abstract class ASN1Set
             @Override
 			public ASN1Encodable readObject() throws IOException
             {
-                if (count == pos)
+                if (count == this.pos)
                 {
                     return null;
                 }
 
-                final ASN1Encodable obj = elements[pos++];
+                final ASN1Encodable obj = ASN1Set.this.elements[this.pos++];
                 if (obj instanceof ASN1Sequence)
                 {
                     return ((ASN1Sequence)obj).parser();
@@ -342,13 +342,13 @@ public abstract class ASN1Set
 	public int hashCode()
     {
 //        return Arrays.hashCode(elements);
-        int i = elements.length;
+        int i = this.elements.length;
         int hc = i + 1;
 
         // NOTE: Order-independent contribution of elements to avoid sorting
         while (--i >= 0)
         {
-            hc += elements[i].toASN1Primitive().hashCode();
+            hc += this.elements[i].toASN1Primitive().hashCode();
         }
 
         return hc;
@@ -362,13 +362,13 @@ public abstract class ASN1Set
 	ASN1Primitive toDERObject()
     {
         ASN1Encodable[] tmp;
-        if (isSorted)
+        if (this.isSorted)
         {
-            tmp = elements;
+            tmp = this.elements;
         }
         else
         {
-            tmp = elements.clone();
+            tmp = this.elements.clone();
             sort(tmp);
         }
 
@@ -382,7 +382,7 @@ public abstract class ASN1Set
     @Override
 	ASN1Primitive toDLObject()
     {
-        return new DLSet(isSorted, elements);
+        return new DLSet(this.isSorted, this.elements);
     }
 
     @Override
@@ -395,13 +395,13 @@ public abstract class ASN1Set
 
         final ASN1Set that = (ASN1Set)other;
 
-        final int count = this.size();
+        final int count = size();
         if (that.size() != count)
         {
             return false;
         }
 
-        final DERSet dis = (DERSet)this.toDERObject();
+        final DERSet dis = (DERSet)toDERObject();
         final DERSet dat = (DERSet)that.toDERObject();
 
         for (int i = 0; i < count; ++i)
@@ -437,7 +437,7 @@ public abstract class ASN1Set
         sb.append('[');
         for (int i = 0;;)
         {
-            sb.append(elements[i]);
+            sb.append(this.elements[i]);
             if (++i >= count)
             {
                 break;

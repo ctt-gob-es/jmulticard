@@ -49,10 +49,11 @@ public class ContentInfo
      * </ul>
      *
      * @param obj the object we want converted.
+     * @return ContentInfo.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static ContentInfo getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof ContentInfo)
         {
@@ -67,47 +68,47 @@ public class ContentInfo
     }
 
     public static ContentInfo getInstance(
-        ASN1TaggedObject obj,
-        boolean explicit)
+        final ASN1TaggedObject obj,
+        final boolean explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     private ContentInfo(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
         if (seq.size() < 1 || seq.size() > 2)
         {
             throw new IllegalArgumentException("Bad sequence size: " + seq.size());
         }
-        contentType = (ASN1ObjectIdentifier)seq.getObjectAt(0);
+        this.contentType = (ASN1ObjectIdentifier)seq.getObjectAt(0);
 
         if (seq.size() > 1)
         {
-            ASN1TaggedObject tagged = (ASN1TaggedObject)seq.getObjectAt(1);
+            final ASN1TaggedObject tagged = (ASN1TaggedObject)seq.getObjectAt(1);
             if (!tagged.isExplicit() || tagged.getTagNo() != 0)
             {
                 throw new IllegalArgumentException("Bad tag for 'content'");
             }
 
-            content = tagged.getObject();
+            this.content = tagged.getObject();
         }
         else
         {
-            content = null;
+            this.content = null;
         }
-        isDefiniteLength = !(seq instanceof BERSequence);
+        this.isDefiniteLength = !(seq instanceof BERSequence);
     }
 
     public ContentInfo(
-        ASN1ObjectIdentifier contentType,
-        ASN1Encodable        content)
+        final ASN1ObjectIdentifier contentType,
+        final ASN1Encodable        content)
     {
         this.contentType = contentType;
         this.content = content;
         if (content != null)
         {
-            ASN1Primitive prim = content.toASN1Primitive();
+            final ASN1Primitive prim = content.toASN1Primitive();
             this.isDefiniteLength =
                 prim instanceof DEROctetString
                     || prim instanceof DLSequence
@@ -122,12 +123,12 @@ public class ContentInfo
 
     public ASN1ObjectIdentifier getContentType()
     {
-        return contentType;
+        return this.contentType;
     }
 
     public ASN1Encodable getContent()
     {
-        return content;
+        return this.content;
     }
 
     /**
@@ -137,7 +138,7 @@ public class ContentInfo
      */
     public boolean isDefiniteLength()
     {
-        return isDefiniteLength;
+        return this.isDefiniteLength;
     }
 
     /**
@@ -146,22 +147,22 @@ public class ContentInfo
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector  v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector  v = new ASN1EncodableVector(2);
 
-        v.add(contentType);
+        v.add(this.contentType);
 
-        if (content != null)
+        if (this.content != null)
         {
-            if (isDefiniteLength)
+            if (this.isDefiniteLength)
             {
-                v.add(new DLTaggedObject(0, content));
+                v.add(new DLTaggedObject(0, this.content));
             }
             else
             {
-                v.add(new BERTaggedObject(0, content));
+                v.add(new BERTaggedObject(0, this.content));
             }
         }
 
-        return isDefiniteLength ? (ASN1Primitive)new DLSequence(v) : (ASN1Primitive)new BERSequence(v);
+        return this.isDefiniteLength ? (ASN1Primitive)new DLSequence(v) : (ASN1Primitive)new BERSequence(v);
     }
 }

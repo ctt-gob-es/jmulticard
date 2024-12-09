@@ -14,8 +14,9 @@ public interface ASN1BitStringParser
      * byte, if any, may include pad bits. See {@link #getPadBits()}.
      *
      * @return an InputStream with its source as the BIT STRING content.
+     * @throws IOException If IO error occurs.
      */
-    public InputStream getBitStream() throws IOException;
+    InputStream getBitStream() throws IOException;
 
     /**
      * Return an InputStream representing the contents of the BIT STRING, where the
@@ -23,8 +24,9 @@ public interface ASN1BitStringParser
      * during parsing).
      *
      * @return an InputStream with its source as the BIT STRING content.
+     * @throws IOException If IO error occurs.
      */
-    public InputStream getOctetStream() throws IOException;
+    InputStream getOctetStream() throws IOException;
 
     /**
      * Return the number of pad bits, if any, in the final byte, if any, read from
@@ -36,5 +38,5 @@ public interface ASN1BitStringParser
      *
      * @return the number of pad bits. In the range zero to seven.
      */
-    public int getPadBits();
+    int getPadBits();
 }

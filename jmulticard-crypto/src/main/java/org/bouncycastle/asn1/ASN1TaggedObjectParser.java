@@ -27,18 +27,18 @@ public interface ASN1TaggedObjectParser
     boolean hasTag(int tagClass, int tagNo);
 
     /**
-     * 
+     *
      * Return a parser for the actual object tagged.
      *
      * @param tag        the primitive tag value for the object tagged originally.
      * @param isExplicit true if the tagging was done explicitly.
      * @return a parser for the tagged object.
      * @throws IOException if a parser cannot be constructed.
-     * 
+     *
      * @deprecated This parser now includes the {@link #getTagClass() tag class}.
      *             This method will raise an exception if it is not
      *             {@link BERTags#CONTEXT_SPECIFIC}. Use
-     *             {@link ASN1Util#parseContextBaseUniversal(ASN1TaggedObjectParser, int, int, boolean, int)}
+     *             {@link ASN1Util#parseContextBaseUniversal(ASN1TaggedObjectParser, int, boolean, int)}
      *             as a direct replacement, or use
      *             {@link #parseBaseUniversal(boolean, int)} only after confirming
      *             the expected tag class (e.g.
@@ -50,12 +50,6 @@ public interface ASN1TaggedObjectParser
 
     ASN1Encodable parseBaseUniversal(boolean declaredExplicit, int baseTagNo) throws IOException;
 
-    /**
-     * Needed for open types, until we have better type-guided parsing support. Use sparingly for other
-     * purposes, and prefer {@link #parseExplicitBaseTagged()} or {@link #parseBaseUniversal(boolean, int)}
-     * where possible. Before using, check for matching tag {@link #getTagClass() class} and
-     * {@link #getTagNo() number}.
-     */
     ASN1Encodable parseExplicitBaseObject() throws IOException;
 
     ASN1TaggedObjectParser parseExplicitBaseTagged() throws IOException;

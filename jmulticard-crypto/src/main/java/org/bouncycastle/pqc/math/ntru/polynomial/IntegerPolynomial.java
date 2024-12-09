@@ -114,7 +114,7 @@ public class IntegerPolynomial
      */
     public IntegerPolynomial(final int N)
     {
-        coeffs = new int[N];
+        this.coeffs = new int[N];
     }
 
     /**
@@ -134,10 +134,10 @@ public class IntegerPolynomial
      */
     public IntegerPolynomial(final BigIntPolynomial p)
     {
-        coeffs = new int[p.coeffs.length];
+        this.coeffs = new int[p.coeffs.length];
         for (int i = 0; i < p.coeffs.length; i++)
         {
-            coeffs[i] = p.coeffs[i].intValue();
+            this.coeffs[i] = p.coeffs[i].intValue();
         }
     }
 
@@ -172,6 +172,7 @@ public class IntegerPolynomial
      * @param is an input stream
      * @param N  number of coefficients
      * @return the decoded polynomial
+     * @throws IOException IIf IO error occurs.
      */
     public static IntegerPolynomial fromBinary3Tight(final InputStream is, final int N)
         throws IOException
@@ -186,7 +187,7 @@ public class IntegerPolynomial
      *
      * @param data an encoded ternary polynomial
      * @param N    number of coefficients
-     * @param q
+     * @param q	Number of zeros.
      * @return the decoded polynomial
      */
     public static IntegerPolynomial fromBinary(final byte[] data, final int N, final int q)
@@ -201,8 +202,9 @@ public class IntegerPolynomial
      *
      * @param is an encoded ternary polynomial
      * @param N  number of coefficients
-     * @param q
+     * @param q	Number of zeros.
      * @return the decoded polynomial
+     * @throws IOException IIf IO error occurs.
      */
     public static IntegerPolynomial fromBinary(final InputStream is, final int N, final int q)
         throws IOException
@@ -219,7 +221,7 @@ public class IntegerPolynomial
      */
     public byte[] toBinary3Sves()
     {
-        return ArrayEncoder.encodeMod3Sves(coeffs);
+        return ArrayEncoder.encodeMod3Sves(this.coeffs);
     }
 
     /**
@@ -230,13 +232,13 @@ public class IntegerPolynomial
     public byte[] toBinary3Tight()
     {
         BigInteger sum = Constants.BIGINT_ZERO;
-        for (int i = coeffs.length - 1; i >= 0; i--)
+        for (int i = this.coeffs.length - 1; i >= 0; i--)
         {
             sum = sum.multiply(BigInteger.valueOf(3));
-            sum = sum.add(BigInteger.valueOf(coeffs[i] + 1));
+            sum = sum.add(BigInteger.valueOf(this.coeffs[i] + 1));
         }
 
-        final int size = (BigInteger.valueOf(3).pow(coeffs.length).bitLength() + 7) / 8;
+        final int size = (BigInteger.valueOf(3).pow(this.coeffs.length).bitLength() + 7) / 8;
         byte[] arr = sum.toByteArray();
 
         if (arr.length < size)
@@ -258,12 +260,12 @@ public class IntegerPolynomial
     /**
      * Encodes a polynomial whose coefficients are between 0 and q, to binary. q must be a power of 2.
      *
-     * @param q
+     * @param q Number of zeros.
      * @return the encoded polynomial
      */
     public byte[] toBinary(final int q)
     {
-        return ArrayEncoder.encodeModQ(coeffs, q);
+        return ArrayEncoder.encodeModQ(this.coeffs, q);
     }
 
     /**
@@ -283,7 +285,7 @@ public class IntegerPolynomial
     @Override
 	public IntegerPolynomial mult(final IntegerPolynomial poly2)
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
         if (poly2.coeffs.length != N)
         {
             throw new IllegalArgumentException("Number of coefficients must be the same");
@@ -313,7 +315,7 @@ public class IntegerPolynomial
      */
     private IntegerPolynomial multRecursive(final IntegerPolynomial poly2)
     {
-        final int[] a = coeffs;
+        final int[] a = this.coeffs;
         final int[] b = poly2.coeffs;
 
         final int n = poly2.coeffs.length;
@@ -372,13 +374,13 @@ public class IntegerPolynomial
      */
     public IntegerPolynomial invertFq(final int q)
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
         int k = 0;
         IntegerPolynomial b = new IntegerPolynomial(N + 1);
         b.coeffs[0] = 1;
         IntegerPolynomial c = new IntegerPolynomial(N + 1);
         IntegerPolynomial f = new IntegerPolynomial(N + 1);
-        f.coeffs = Arrays.copyOf(coeffs, N + 1);
+        f.coeffs = Arrays.copyOf(this.coeffs, N + 1);
         f.modPositive(2);
         // set g(x) = x^N − 1
         IntegerPolynomial g = new IntegerPolynomial(N + 1);
@@ -487,13 +489,13 @@ public class IntegerPolynomial
      */
     public IntegerPolynomial invertF3()
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
         int k = 0;
         IntegerPolynomial b = new IntegerPolynomial(N + 1);
         b.coeffs[0] = 1;
         IntegerPolynomial c = new IntegerPolynomial(N + 1);
         IntegerPolynomial f = new IntegerPolynomial(N + 1);
-        f.coeffs = Arrays.copyOf(coeffs, N + 1);
+        f.coeffs = Arrays.copyOf(this.coeffs, N + 1);
         f.modPositive(3);
         // set g(x) = x^N − 1
         IntegerPolynomial g = new IntegerPolynomial(N + 1);
@@ -581,7 +583,7 @@ public class IntegerPolynomial
      */
     public Resultant resultant()
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
 
         // Compute resultants modulo prime numbers. Continue until NUM_EQUAL_RESULTANTS consecutive modular resultants are equal.
         final LinkedList<ModularResultant> modResultants = new LinkedList<>();
@@ -676,7 +678,7 @@ public class IntegerPolynomial
      */
     public Resultant resultantMultiThread()
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
 
         // upper bound for resultant(f, g) = ||f, 2||^deg(g) * ||g, 2||^deg(f) = squaresum(f)^(N/2) * 2^(deg(f)/2) because g(x)=x^N-1
         // see https://jondalon.mathematik.uni-osnabrueck.de/staff/phpages/brunsw/CompAlg.pdf chapter 3
@@ -763,13 +765,13 @@ public class IntegerPolynomial
 
     /**
      * Resultant of this polynomial with <code>x^n-1 mod p</code>.
-     *
+     * @param p a modulus
      * @return <code>(rho, res)</code> satisfying <code>res = rho*this + t*(x^n-1) mod p</code> for some integer <code>t</code>.
      */
     public ModularResultant resultant(final int p)
     {
         // Add a coefficient as the following operations involve polynomials of degree deg(f)+1
-        final int[] fcoeffs = Arrays.copyOf(coeffs, coeffs.length + 1);
+        final int[] fcoeffs = Arrays.copyOf(this.coeffs, this.coeffs.length + 1);
         final IntegerPolynomial f = new IntegerPolynomial(fcoeffs);
         final int N = fcoeffs.length;
 
@@ -837,10 +839,10 @@ public class IntegerPolynomial
      */
     private void multShiftSub(final IntegerPolynomial b, final int c, final int k, final int p)
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
         for (int i = k; i < N; i++)
         {
-            coeffs[i] = (coeffs[i] - b.coeffs[i - k] * c) % p;
+            this.coeffs[i] = (this.coeffs[i] - b.coeffs[i - k] * c) % p;
         }
     }
 
@@ -852,7 +854,7 @@ public class IntegerPolynomial
     private BigInteger squareSum()
     {
         BigInteger sum = Constants.BIGINT_ZERO;
-        for (final int coeff : coeffs) {
+        for (final int coeff : this.coeffs) {
             sum = sum.add(BigInteger.valueOf(coeff * coeff));
         }
         return sum;
@@ -865,8 +867,8 @@ public class IntegerPolynomial
      */
     int degree()
     {
-        int degree = coeffs.length - 1;
-        while (degree > 0 && coeffs[degree] == 0)
+        int degree = this.coeffs.length - 1;
+        while (degree > 0 && this.coeffs[degree] == 0)
         {
             degree--;
         }
@@ -878,6 +880,7 @@ public class IntegerPolynomial
      * and takes the coefficient values mod <code>modulus</code>.
      *
      * @param b another polynomial
+     * @param modulus Modulus
      */
     public void add(final IntegerPolynomial b, final int modulus)
     {
@@ -892,13 +895,13 @@ public class IntegerPolynomial
      */
     public void add(final IntegerPolynomial b)
     {
-        if (b.coeffs.length > coeffs.length)
+        if (b.coeffs.length > this.coeffs.length)
         {
-            coeffs = Arrays.copyOf(coeffs, b.coeffs.length);
+            this.coeffs = Arrays.copyOf(this.coeffs, b.coeffs.length);
         }
         for (int i = 0; i < b.coeffs.length; i++)
         {
-            coeffs[i] += b.coeffs[i];
+            this.coeffs[i] += b.coeffs[i];
         }
     }
 
@@ -907,6 +910,7 @@ public class IntegerPolynomial
      * and takes the coefficient values mod <code>modulus</code>.
      *
      * @param b another polynomial
+     * @param modulus a modulus
      */
     public void sub(final IntegerPolynomial b, final int modulus)
     {
@@ -921,39 +925,39 @@ public class IntegerPolynomial
      */
     public void sub(final IntegerPolynomial b)
     {
-        if (b.coeffs.length > coeffs.length)
+        if (b.coeffs.length > this.coeffs.length)
         {
-            coeffs = Arrays.copyOf(coeffs, b.coeffs.length);
+            this.coeffs = Arrays.copyOf(this.coeffs, b.coeffs.length);
         }
         for (int i = 0; i < b.coeffs.length; i++)
         {
-            coeffs[i] -= b.coeffs[i];
+            this.coeffs[i] -= b.coeffs[i];
         }
     }
 
     /**
      * Subtracts a <code>int</code> from each coefficient. Does not return a new polynomial but modifies this polynomial.
      *
-     * @param b
+     * @param b another int
      */
     void sub(final int b)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] -= b;
+            this.coeffs[i] -= b;
         }
     }
 
     /**
      * Multiplies each coefficient by a <code>int</code>. Does not return a new polynomial but modifies this polynomial.
      *
-     * @param factor
+     * @param factor mltiplicator factor
      */
     public void mult(final int factor)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] *= factor;
+            this.coeffs[i] *= factor;
         }
     }
 
@@ -964,10 +968,10 @@ public class IntegerPolynomial
      */
     private void mult2(final int modulus)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] *= 2;
-            coeffs[i] %= modulus;
+            this.coeffs[i] *= 2;
+            this.coeffs[i] %= modulus;
         }
     }
 
@@ -978,10 +982,10 @@ public class IntegerPolynomial
      */
     public void mult3(final int modulus)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] *= 3;
-            coeffs[i] %= modulus;
+            this.coeffs[i] *= 3;
+            this.coeffs[i] %= modulus;
         }
     }
 
@@ -993,10 +997,10 @@ public class IntegerPolynomial
     public void div(final int k)
     {
         final int k2 = (k + 1) / 2;
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] += coeffs[i] > 0 ? k2 : -k2;
-            coeffs[i] /= k;
+            this.coeffs[i] += this.coeffs[i] > 0 ? k2 : -k2;
+            this.coeffs[i] /= k;
         }
     }
 
@@ -1005,16 +1009,16 @@ public class IntegerPolynomial
      */
     public void mod3()
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] %= 3;
-            if (coeffs[i] > 1)
+            this.coeffs[i] %= 3;
+            if (this.coeffs[i] > 1)
             {
-                coeffs[i] -= 3;
+                this.coeffs[i] -= 3;
             }
-            if (coeffs[i] < -1)
+            if (this.coeffs[i] < -1)
             {
-                coeffs[i] += 3;
+                this.coeffs[i] += 3;
             }
         }
     }
@@ -1036,27 +1040,28 @@ public class IntegerPolynomial
     void modCenter(final int modulus)
     {
         mod(modulus);
-        for (int j = 0; j < coeffs.length; j++)
+        for (int j = 0; j < this.coeffs.length; j++)
         {
-            while (coeffs[j] < modulus / 2)
+            while (this.coeffs[j] < modulus / 2)
             {
-                coeffs[j] += modulus;
+                this.coeffs[j] += modulus;
             }
-            while (coeffs[j] >= modulus / 2)
+            while (this.coeffs[j] >= modulus / 2)
             {
-                coeffs[j] -= modulus;
+                this.coeffs[j] -= modulus;
             }
         }
     }
 
     /**
      * Takes each coefficient modulo <code>modulus</code>.
+     * @param modulus a modulus.
      */
     public void mod(final int modulus)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] %= modulus;
+            this.coeffs[i] %= modulus;
         }
     }
 
@@ -1067,11 +1072,11 @@ public class IntegerPolynomial
      */
     public void ensurePositive(final int modulus)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            while (coeffs[i] < 0)
+            while (this.coeffs[i] < 0)
             {
-                coeffs[i] += modulus;
+                this.coeffs[i] += modulus;
             }
         }
     }
@@ -1084,7 +1089,7 @@ public class IntegerPolynomial
      */
     public long centeredNormSq(final int q)
     {
-        final int N = coeffs.length;
+        final int N = this.coeffs.length;
         final IntegerPolynomial p = (IntegerPolynomial)clone();
         p.shiftGap(q);
 
@@ -1107,7 +1112,7 @@ public class IntegerPolynomial
     {
         modCenter(q);
 
-        final int[] sorted = Arrays.clone(coeffs);
+        final int[] sorted = Arrays.clone(this.coeffs);
 
         sort(sorted);
 
@@ -1167,15 +1172,15 @@ public class IntegerPolynomial
      */
     public void center0(final int q)
     {
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            while (coeffs[i] < -q / 2)
+            while (this.coeffs[i] < -q / 2)
             {
-                coeffs[i] += q;
+                this.coeffs[i] += q;
             }
-            while (coeffs[i] > q / 2)
+            while (this.coeffs[i] > q / 2)
             {
-                coeffs[i] -= q;
+                this.coeffs[i] -= q;
             }
         }
     }
@@ -1188,7 +1193,7 @@ public class IntegerPolynomial
     public int sumCoeffs()
     {
         int sum = 0;
-        for (final int coeff : coeffs) {
+        for (final int coeff : this.coeffs) {
             sum += coeff;
         }
         return sum;
@@ -1201,7 +1206,7 @@ public class IntegerPolynomial
      */
     private boolean equalsZero()
     {
-        for (final int coeff : coeffs) {
+        for (final int coeff : this.coeffs) {
             if (coeff != 0)
             {
                 return false;
@@ -1217,14 +1222,14 @@ public class IntegerPolynomial
      */
     public boolean equalsOne()
     {
-        for (int i = 1; i < coeffs.length; i++)
+        for (int i = 1; i < this.coeffs.length; i++)
         {
-            if (coeffs[i] != 0)
+            if (this.coeffs[i] != 0)
             {
                 return false;
             }
         }
-        return coeffs[0] == 1;
+        return this.coeffs[0] == 1;
     }
 
     /**
@@ -1234,14 +1239,14 @@ public class IntegerPolynomial
      */
     private boolean equalsAbsOne()
     {
-        for (int i = 1; i < coeffs.length; i++)
+        for (int i = 1; i < this.coeffs.length; i++)
         {
-            if (coeffs[i] != 0)
+            if (this.coeffs[i] != 0)
             {
                 return false;
             }
         }
-        return Math.abs(coeffs[0]) == 1;
+        return Math.abs(this.coeffs[0]) == 1;
     }
 
     /**
@@ -1253,7 +1258,7 @@ public class IntegerPolynomial
     public int count(final int value)
     {
         int count = 0;
-        for (final int coeff : coeffs) {
+        for (final int coeff : this.coeffs) {
             if (coeff == value)
             {
                 count++;
@@ -1267,17 +1272,17 @@ public class IntegerPolynomial
      */
     public void rotate1()
     {
-        final int clast = coeffs[coeffs.length - 1];
-        for (int i = coeffs.length - 1; i > 0; i--)
+        final int clast = this.coeffs[this.coeffs.length - 1];
+        for (int i = this.coeffs.length - 1; i > 0; i--)
         {
-            coeffs[i] = coeffs[i - 1];
+            this.coeffs[i] = this.coeffs[i - 1];
         }
-        coeffs[0] = clast;
+        this.coeffs[0] = clast;
     }
 
     public void clear()
     {
-        java.util.Arrays.fill(coeffs, 0);
+        java.util.Arrays.fill(this.coeffs, 0);
     }
 
     @Override
@@ -1289,7 +1294,7 @@ public class IntegerPolynomial
     @Override
 	public Object clone()
     {
-        return new IntegerPolynomial(coeffs.clone());
+        return new IntegerPolynomial(this.coeffs.clone());
     }
 
     @Override
@@ -1297,7 +1302,7 @@ public class IntegerPolynomial
     {
         if (obj instanceof IntegerPolynomial)
         {
-            return Arrays.areEqual(coeffs, ((IntegerPolynomial)obj).coeffs);
+            return Arrays.areEqual(this.coeffs, ((IntegerPolynomial)obj).coeffs);
         }
 		return false;
     }
@@ -1317,7 +1322,7 @@ public class IntegerPolynomial
         @Override
 		public ModularResultant call()
         {
-            return resultant(modulus);
+            return resultant(this.modulus);
         }
     }
 
@@ -1337,7 +1342,7 @@ public class IntegerPolynomial
 
         @Override
 		public ModularResultant call() {
-            return ModularResultant.combineRho(modRes1, modRes2);
+            return ModularResultant.combineRho(this.modRes1, this.modRes2);
         }
     }
 
@@ -1348,16 +1353,16 @@ public class IntegerPolynomial
 
         public BigInteger nextPrime()
         {
-            if (index < BIGINT_PRIMES.size())
+            if (this.index < BIGINT_PRIMES.size())
             {
-                prime = (BigInteger)BIGINT_PRIMES.get(index++);
+                this.prime = (BigInteger)BIGINT_PRIMES.get(this.index++);
             }
             else
             {
-                prime = prime.nextProbablePrime();
+                this.prime = this.prime.nextProbablePrime();
             }
 
-            return prime;
+            return this.prime;
         }
     }
 }

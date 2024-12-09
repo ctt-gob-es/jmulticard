@@ -23,8 +23,8 @@ public interface MultiBlockCipher
      * @param out output data array.
      * @param outOff start position for output data.
      * @return number of bytes written to out.
-     * @throws DataLengthException
-     * @throws IllegalStateException
+     * @throws DataLengthException if offset error occurs.
+     * @throws IllegalStateException if using invalid data.
      */
     int processBlocks(byte[] in, int inOff, int blockCount, byte[] out, int outOff)
         throws DataLengthException, IllegalStateException;

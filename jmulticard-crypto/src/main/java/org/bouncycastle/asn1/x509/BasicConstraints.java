@@ -18,14 +18,14 @@ public class BasicConstraints
     ASN1Integer  pathLenConstraint = null;
 
     public static BasicConstraints getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static BasicConstraints getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj instanceof BasicConstraints)
         {
@@ -43,13 +43,13 @@ public class BasicConstraints
         return null;
     }
 
-    public static BasicConstraints fromExtensions(Extensions extensions)
+    public static BasicConstraints fromExtensions(final Extensions extensions)
     {
         return getInstance(Extensions.getExtensionParsedValue(extensions, Extension.basicConstraints));
     }
 
     private BasicConstraints(
-        ASN1Sequence   seq)
+        final ASN1Sequence   seq)
     {
         if (seq.size() == 0)
         {
@@ -82,7 +82,7 @@ public class BasicConstraints
     }
 
     public BasicConstraints(
-        boolean cA)
+        final boolean cA)
     {
         if (cA)
         {
@@ -97,11 +97,11 @@ public class BasicConstraints
 
     /**
      * create a cA=true object for the given path length constraint.
-     * 
-     * @param pathLenConstraint
+     *
+     * @param pathLenConstraint Constraint.
      */
     public BasicConstraints(
-        int     pathLenConstraint)
+        final int     pathLenConstraint)
     {
         this.cA = ASN1Boolean.getInstance(true);
         this.pathLenConstraint = new ASN1Integer(pathLenConstraint);
@@ -109,14 +109,14 @@ public class BasicConstraints
 
     public boolean isCA()
     {
-        return (cA != null) && cA.isTrue();
+        return this.cA != null && this.cA.isTrue();
     }
 
     public BigInteger getPathLenConstraint()
     {
-        if (pathLenConstraint != null)
+        if (this.pathLenConstraint != null)
         {
-            return pathLenConstraint.getValue();
+            return this.pathLenConstraint.getValue();
         }
 
         return null;
@@ -134,16 +134,16 @@ public class BasicConstraints
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector v = new ASN1EncodableVector(2);
+        final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
-        if (cA != null)
+        if (this.cA != null)
         {
-            v.add(cA);
+            v.add(this.cA);
         }
 
-        if (pathLenConstraint != null)  // yes some people actually do this when cA is false...
+        if (this.pathLenConstraint != null)  // yes some people actually do this when cA is false...
         {
-            v.add(pathLenConstraint);
+            v.add(this.pathLenConstraint);
         }
 
         return new DERSequence(v);
@@ -152,10 +152,10 @@ public class BasicConstraints
     @Override
 	public String toString()
     {
-        if (pathLenConstraint == null)
+        if (this.pathLenConstraint == null)
         {
-            return "BasicConstraints: isCa(" + this.isCA() + ")";
+            return "BasicConstraints: isCa(" + isCA() + ")";
         }
-        return "BasicConstraints: isCa(" + this.isCA() + "), pathLenConstraint = " + pathLenConstraint.getValue();
+        return "BasicConstraints: isCa(" + isCA() + "), pathLenConstraint = " + this.pathLenConstraint.getValue();
     }
 }

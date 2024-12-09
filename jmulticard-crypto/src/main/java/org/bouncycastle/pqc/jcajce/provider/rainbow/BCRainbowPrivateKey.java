@@ -34,37 +34,38 @@ public class BCRainbowPrivateKey
     private static final long serialVersionUID = 1L;
 
     // the inverse of L1
-    private short[][] A1inv;
+    private final short[][] A1inv;
 
     // translation vector element of L1
-    private short[] b1;
+    private final short[] b1;
 
     // the inverse of L2
-    private short[][] A2inv;
+    private final short[][] A2inv;
 
     // translation vector of L2
-    private short[] b2;
+    private final short[] b2;
 
     /*
       * components of F
       */
-    private Layer[] layers;
+    private final Layer[] layers;
 
     // set of vinegar vars per layer.
-    private int[] vi;
+    private final int[] vi;
 
 
     /**
      * Constructor.
      *
-     * @param A1inv
-     * @param b1
-     * @param A2inv
-     * @param b2
-     * @param layers
+     * @param A1inv inverse of L1
+     * @param b1 translation vector of L1
+     * @param A2inv inverse of L2
+     * @param b2 translation vector of L2
+     * @param vi vinegar vars per layer.
+     * @param layers Layers.
      */
-    public BCRainbowPrivateKey(short[][] A1inv, short[] b1, short[][] A2inv,
-                               short[] b2, int[] vi, Layer[] layers)
+    public BCRainbowPrivateKey(final short[][] A1inv, final short[] b1, final short[][] A2inv,
+                               final short[] b2, final int[] vi, final Layer[] layers)
     {
         this.A1inv = A1inv;
         this.b1 = b1;
@@ -79,14 +80,14 @@ public class BCRainbowPrivateKey
      *
      * @param keySpec a {@link RainbowPrivateKeySpec}
      */
-    public BCRainbowPrivateKey(RainbowPrivateKeySpec keySpec)
+    public BCRainbowPrivateKey(final RainbowPrivateKeySpec keySpec)
     {
         this(keySpec.getInvA1(), keySpec.getB1(), keySpec.getInvA2(), keySpec
             .getB2(), keySpec.getVi(), keySpec.getLayers());
     }
 
     public BCRainbowPrivateKey(
-        RainbowPrivateKeyParameters params)
+        final RainbowPrivateKeyParameters params)
     {
         this(params.getInvA1(), params.getB1(), params.getInvA2(), params.getB2(), params.getVi(), params.getLayers());
     }
@@ -148,7 +149,7 @@ public class BCRainbowPrivateKey
      */
     public int[] getVi()
     {
-        return vi;
+        return this.vi;
     }
 
     /**
@@ -158,28 +159,28 @@ public class BCRainbowPrivateKey
      * @return the result of the comparison
      */
     @Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
     {
         if (other == null || !(other instanceof BCRainbowPrivateKey))
         {
             return false;
         }
-        BCRainbowPrivateKey otherKey = (BCRainbowPrivateKey)other;
+        final BCRainbowPrivateKey otherKey = (BCRainbowPrivateKey)other;
 
         boolean eq = true;
         // compare using shortcut rule ( && instead of &)
-        eq = eq && RainbowUtil.equals(A1inv, otherKey.getInvA1());
-        eq = eq && RainbowUtil.equals(A2inv, otherKey.getInvA2());
-        eq = eq && RainbowUtil.equals(b1, otherKey.getB1());
-        eq = eq && RainbowUtil.equals(b2, otherKey.getB2());
-        eq = eq && Arrays.equals(vi, otherKey.getVi());
-        if (layers.length != otherKey.getLayers().length)
+        eq = eq && RainbowUtil.equals(this.A1inv, otherKey.getInvA1());
+        eq = eq && RainbowUtil.equals(this.A2inv, otherKey.getInvA2());
+        eq = eq && RainbowUtil.equals(this.b1, otherKey.getB1());
+        eq = eq && RainbowUtil.equals(this.b2, otherKey.getB2());
+        eq = eq && Arrays.equals(this.vi, otherKey.getVi());
+        if (this.layers.length != otherKey.getLayers().length)
         {
             return false;
         }
-        for (int i = layers.length - 1; i >= 0; i--)
+        for (int i = this.layers.length - 1; i >= 0; i--)
         {
-            eq &= layers[i].equals(otherKey.getLayers()[i]);
+            eq &= this.layers[i].equals(otherKey.getLayers()[i]);
         }
         return eq;
     }
@@ -187,17 +188,17 @@ public class BCRainbowPrivateKey
     @Override
 	public int hashCode()
     {
-        int hash = layers.length;
+        int hash = this.layers.length;
 
-        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(A1inv);
-        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(b1);
-        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(A2inv);
-        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(b2);
-        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(vi);
+        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(this.A1inv);
+        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(this.b1);
+        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(this.A2inv);
+        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(this.b2);
+        hash = hash * 37 + org.bouncycastle.util.Arrays.hashCode(this.vi);
 
-        for (int i = layers.length - 1; i >= 0; i--)
+        for (int i = this.layers.length - 1; i >= 0; i--)
         {
-            hash = hash * 37 + layers[i].hashCode();
+            hash = hash * 37 + this.layers[i].hashCode();
         }
 
 
@@ -216,24 +217,24 @@ public class BCRainbowPrivateKey
     @Override
 	public byte[] getEncoded()
     {
-        RainbowPrivateKey privateKey = new RainbowPrivateKey(A1inv, b1, A2inv, b2, vi, layers);
+        final RainbowPrivateKey privateKey = new RainbowPrivateKey(this.A1inv, this.b1, this.A2inv, this.b2, this.vi, this.layers);
 
         PrivateKeyInfo pki;
         try
         {
-            AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
+            final AlgorithmIdentifier algorithmIdentifier = new AlgorithmIdentifier(PQCObjectIdentifiers.rainbow, DERNull.INSTANCE);
             pki = new PrivateKeyInfo(algorithmIdentifier, privateKey);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             return null;
         }
         try
         {
-            byte[] encoded = pki.getEncoded();
+            final byte[] encoded = pki.getEncoded();
             return encoded;
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             return null;
         }

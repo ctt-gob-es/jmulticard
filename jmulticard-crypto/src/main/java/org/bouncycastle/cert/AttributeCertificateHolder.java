@@ -22,7 +22,7 @@ import org.bouncycastle.util.Selector;
 
 /**
  * The Holder object.
- * 
+ *
  * <pre>
  *          Holder ::= SEQUENCE {
  *                baseCertificateID   [0] IssuerSerial OPTIONAL,
@@ -48,9 +48,9 @@ public class AttributeCertificateHolder
 
     final Holder holder;
 
-    AttributeCertificateHolder(ASN1Sequence seq)
+    AttributeCertificateHolder(final ASN1Sequence seq)
     {
-        holder = Holder.getInstance(seq);
+        this.holder = Holder.getInstance(seq);
     }
 
     /**
@@ -59,10 +59,10 @@ public class AttributeCertificateHolder
      * @param issuerName name of associated certificate's issuer.
      * @param serialNumber serial number of associated certificate.
      */
-    public AttributeCertificateHolder(X500Name issuerName,
-        BigInteger serialNumber)
+    public AttributeCertificateHolder(final X500Name issuerName,
+        final BigInteger serialNumber)
     {
-        holder = new Holder(new IssuerSerial(
+        this.holder = new Holder(new IssuerSerial(
             generateGeneralNames(issuerName),
             new ASN1Integer(serialNumber)));
     }
@@ -72,9 +72,9 @@ public class AttributeCertificateHolder
      *
      * @param cert the certificate to be associated with this holder.
      */
-    public AttributeCertificateHolder(X509CertificateHolder cert)
+    public AttributeCertificateHolder(final X509CertificateHolder cert)
     {
-        holder = new Holder(new IssuerSerial(generateGeneralNames(cert.getIssuer()),
+        this.holder = new Holder(new IssuerSerial(generateGeneralNames(cert.getIssuer()),
             new ASN1Integer(cert.getSerialNumber())));
     }
 
@@ -83,9 +83,9 @@ public class AttributeCertificateHolder
      *
      * @param principal the entityName to be associated with the attribute certificate.
      */
-    public AttributeCertificateHolder(X500Name principal)
+    public AttributeCertificateHolder(final X500Name principal)
     {
-        holder = new Holder(generateGeneralNames(principal));
+        this.holder = new Holder(generateGeneralNames(principal));
     }
 
     /**
@@ -103,7 +103,7 @@ public class AttributeCertificateHolder
      * </ul>
      * <p>
      * This cannot be used if a v1 attribute certificate is used.
-     * 
+     *
      * @param digestedObjectType The digest object type.
      * @param digestAlgorithm The algorithm identifier for the hash.
      * @param otherObjectTypeID The object type ID if
@@ -111,17 +111,16 @@ public class AttributeCertificateHolder
      *            <code>otherObjectDigest</code>.
      * @param objectDigest The hash value.
      */
-    public AttributeCertificateHolder(int digestedObjectType,
-        ASN1ObjectIdentifier digestAlgorithm, ASN1ObjectIdentifier otherObjectTypeID, byte[] objectDigest)
+    public AttributeCertificateHolder(final int digestedObjectType,
+        final ASN1ObjectIdentifier digestAlgorithm, final ASN1ObjectIdentifier otherObjectTypeID, final byte[] objectDigest)
     {
-        holder = new Holder(new ObjectDigestInfo(digestedObjectType,
+        this.holder = new Holder(new ObjectDigestInfo(digestedObjectType,
             otherObjectTypeID, new AlgorithmIdentifier(digestAlgorithm), Arrays
                 .clone(objectDigest)));
     }
 
     /**
      * Returns the digest object type if an object digest info is used.
-     * <p>
      * <ul>
      * <li>0 - publicKey - A hash of the public key of the holder must be
      * passed.
@@ -130,73 +129,73 @@ public class AttributeCertificateHolder
      * <li>2 - otherObjectDigest - A hash of some other object type must be
      * passed. <code>otherObjectTypeID</code> must not be empty.
      * </ul>
-     * 
+     *
      * @return The digest object type or -1 if no object digest info is set.
      */
     public int getDigestedObjectType()
     {
-        if (holder.getObjectDigestInfo() != null)
+        if (this.holder.getObjectDigestInfo() != null)
         {
-            return holder.getObjectDigestInfo().getDigestedObjectType().intValueExact();
+            return this.holder.getObjectDigestInfo().getDigestedObjectType().intValueExact();
         }
         return -1;
     }
 
     /**
      * Returns algorithm identifier for the digest used if ObjectDigestInfo is present.
-     * 
+     *
      * @return digest AlgorithmIdentifier or <code>null</code> if ObjectDigestInfo is absent.
      */
     public AlgorithmIdentifier getDigestAlgorithm()
     {
-        if (holder.getObjectDigestInfo() != null)
+        if (this.holder.getObjectDigestInfo() != null)
         {
-            return holder.getObjectDigestInfo().getDigestAlgorithm();
+            return this.holder.getObjectDigestInfo().getDigestAlgorithm();
         }
         return null;
     }
 
     /**
      * Returns the hash if an object digest info is used.
-     * 
+     *
      * @return The hash or <code>null</code> if ObjectDigestInfo is absent.
      */
     public byte[] getObjectDigest()
     {
-        if (holder.getObjectDigestInfo() != null)
+        if (this.holder.getObjectDigestInfo() != null)
         {
-            return holder.getObjectDigestInfo().getObjectDigest().getBytes();
+            return this.holder.getObjectDigestInfo().getObjectDigest().getBytes();
         }
         return null;
     }
 
     /**
      * Returns the digest algorithm ID if an object digest info is used.
-     * 
+     *
      * @return The digest algorithm ID or <code>null</code> if no object
      *         digest info is set.
      */
     public ASN1ObjectIdentifier getOtherObjectTypeID()
     {
-        if (holder.getObjectDigestInfo() != null)
+        if (this.holder.getObjectDigestInfo() != null)
         {
-            new ASN1ObjectIdentifier(holder.getObjectDigestInfo().getOtherObjectTypeID().getId());
+            new ASN1ObjectIdentifier(this.holder.getObjectDigestInfo().getOtherObjectTypeID().getId());
         }
         return null;
     }
 
-    private GeneralNames generateGeneralNames(X500Name principal)
+    private GeneralNames generateGeneralNames(final X500Name principal)
     {
         return new GeneralNames(new GeneralName(principal));
     }
 
-    private boolean matchesDN(X500Name subject, GeneralNames targets)
+    private boolean matchesDN(final X500Name subject, final GeneralNames targets)
     {
-        GeneralName[] names = targets.getNames();
+        final GeneralName[] names = targets.getNames();
 
         for (int i = 0; i != names.length; i++)
         {
-            GeneralName gn = names[i];
+            final GeneralName gn = names[i];
 
             if (gn.getTagNo() == GeneralName.directoryName)
             {
@@ -210,9 +209,9 @@ public class AttributeCertificateHolder
         return false;
     }
 
-    private X500Name[] getPrincipals(GeneralName[] names)
+    private X500Name[] getPrincipals(final GeneralName[] names)
     {
-        List l = new ArrayList(names.length);
+        final List l = new ArrayList(names.length);
 
         for (int i = 0; i != names.length; i++)
         {
@@ -228,15 +227,15 @@ public class AttributeCertificateHolder
     /**
      * Return any principal objects inside the attribute certificate holder
      * entity names field.
-     * 
+     *
      * @return an array of Principal objects (usually X500Principal), null if no
      *         entity names field is set.
      */
     public X500Name[] getEntityNames()
     {
-        if (holder.getEntityName() != null)
+        if (this.holder.getEntityName() != null)
         {
-            return getPrincipals(holder.getEntityName().getNames());
+            return getPrincipals(this.holder.getEntityName().getNames());
         }
 
         return null;
@@ -244,14 +243,14 @@ public class AttributeCertificateHolder
 
     /**
      * Return the principals associated with the issuer attached to this holder
-     * 
+     *
      * @return an array of principals, null if no BaseCertificateID is set.
      */
     public X500Name[] getIssuer()
     {
-        if (holder.getBaseCertificateID() != null)
+        if (this.holder.getBaseCertificateID() != null)
         {
-            return getPrincipals(holder.getBaseCertificateID().getIssuer().getNames());
+            return getPrincipals(this.holder.getBaseCertificateID().getIssuer().getNames());
         }
 
         return null;
@@ -260,15 +259,15 @@ public class AttributeCertificateHolder
     /**
      * Return the serial number associated with the issuer attached to this
      * holder.
-     * 
+     *
      * @return the certificate serial number, null if no BaseCertificateID is
      *         set.
      */
     public BigInteger getSerialNumber()
     {
-        if (holder.getBaseCertificateID() != null)
+        if (this.holder.getBaseCertificateID() != null)
         {
-            return holder.getBaseCertificateID().getSerial().getValue();
+            return this.holder.getBaseCertificateID().getSerial().getValue();
         }
 
         return null;
@@ -277,40 +276,40 @@ public class AttributeCertificateHolder
     @Override
 	public Object clone()
     {
-        return new AttributeCertificateHolder((ASN1Sequence)holder.toASN1Primitive());
+        return new AttributeCertificateHolder((ASN1Sequence)this.holder.toASN1Primitive());
     }
 
     @Override
-	public boolean match(Object obj)
+	public boolean match(final Object obj)
     {
         if (!(obj instanceof X509CertificateHolder))
         {
             return false;
         }
 
-        X509CertificateHolder x509Cert = (X509CertificateHolder)obj;
+        final X509CertificateHolder x509Cert = (X509CertificateHolder)obj;
 
-        if (holder.getBaseCertificateID() != null)
+        if (this.holder.getBaseCertificateID() != null)
         {
-            return holder.getBaseCertificateID().getSerial().hasValue(x509Cert.getSerialNumber())
-                && matchesDN(x509Cert.getIssuer(), holder.getBaseCertificateID().getIssuer());
+            return this.holder.getBaseCertificateID().getSerial().hasValue(x509Cert.getSerialNumber())
+                && matchesDN(x509Cert.getIssuer(), this.holder.getBaseCertificateID().getIssuer());
         }
 
-        if (holder.getEntityName() != null)
+        if (this.holder.getEntityName() != null)
         {
             if (matchesDN(x509Cert.getSubject(),
-                holder.getEntityName()))
+                this.holder.getEntityName()))
             {
                 return true;
             }
         }
 
-        if (holder.getObjectDigestInfo() != null)
+        if (this.holder.getObjectDigestInfo() != null)
         {
             try
             {
-                DigestCalculator digCalc = digestCalculatorProvider.get(holder.getObjectDigestInfo().getDigestAlgorithm());
-                OutputStream     digOut = digCalc.getOutputStream();
+                final DigestCalculator digCalc = digestCalculatorProvider.get(this.holder.getObjectDigestInfo().getDigestAlgorithm());
+                final OutputStream     digOut = digCalc.getOutputStream();
 
                 switch (getDigestedObjectType())
                 {
@@ -330,7 +329,7 @@ public class AttributeCertificateHolder
                     return false;
                 }
             }
-            catch (Exception e)
+            catch (final Exception e)
             {
                 return false;
             }
@@ -340,7 +339,7 @@ public class AttributeCertificateHolder
     }
 
     @Override
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
     {
         if (obj == this)
         {
@@ -352,7 +351,7 @@ public class AttributeCertificateHolder
             return false;
         }
 
-        AttributeCertificateHolder other = (AttributeCertificateHolder)obj;
+        final AttributeCertificateHolder other = (AttributeCertificateHolder)obj;
 
         return this.holder.equals(other.holder);
     }
@@ -369,7 +368,7 @@ public class AttributeCertificateHolder
      *
      * @param digCalcProvider a provider of digest calculators.
      */
-    public static void setDigestCalculatorProvider(DigestCalculatorProvider digCalcProvider)
+    public static void setDigestCalculatorProvider(final DigestCalculatorProvider digCalcProvider)
     {
         digestCalculatorProvider = digCalcProvider;
     }

@@ -83,7 +83,7 @@ public abstract class ASN1PrintableString
     /**
      * Return a Printable String from a tagged object.
      *
-     * @param obj the tagged object holding the object we want
+     * @param taggedObject the tagged object holding the object we want
      * @param explicit true if the object is meant to be explicitly
      *              tagged false otherwise.
      * @exception IllegalArgumentException if the tagged object cannot
@@ -112,7 +112,7 @@ public abstract class ASN1PrintableString
             throw new IllegalArgumentException("string contains illegal characters");
         }
 
-        contents = Strings.toByteArray(string);
+        this.contents = Strings.toByteArray(string);
     }
 
     ASN1PrintableString(final byte[] contents, final boolean clone)
@@ -123,12 +123,12 @@ public abstract class ASN1PrintableString
     @Override
 	public final String getString()
     {
-        return Strings.fromByteArray(contents);
+        return Strings.fromByteArray(this.contents);
     }
 
     public final byte[] getOctets()
     {
-        return Arrays.clone(contents);
+        return Arrays.clone(this.contents);
     }
 
     @Override
@@ -140,13 +140,13 @@ public abstract class ASN1PrintableString
     @Override
 	final int encodedLength(final boolean withTag)
     {
-        return ASN1OutputStream.getLengthOfEncodingDL(withTag, contents.length);
+        return ASN1OutputStream.getLengthOfEncodingDL(withTag, this.contents.length);
     }
 
     @Override
 	final void encode(final ASN1OutputStream out, final boolean withTag) throws IOException
     {
-        out.writeEncodingDL(withTag, BERTags.PRINTABLE_STRING, contents);
+        out.writeEncodingDL(withTag, BERTags.PRINTABLE_STRING, this.contents);
     }
 
     @Override
@@ -159,13 +159,13 @@ public abstract class ASN1PrintableString
 
         final ASN1PrintableString that = (ASN1PrintableString)other;
 
-        return Arrays.areEqual(contents, that.contents);
+        return Arrays.areEqual(this.contents, that.contents);
     }
 
     @Override
 	public final int hashCode()
     {
-        return Arrays.hashCode(contents);
+        return Arrays.hashCode(this.contents);
     }
 
     @Override
@@ -177,7 +177,7 @@ public abstract class ASN1PrintableString
     /**
      * return true if the passed in String can be represented without
      * loss as a PrintableString, false otherwise.
-     *
+     * @param str String to check.
      * @return true if in printable set, false otherwise.
      */
     public static boolean isPrintableString(
@@ -192,7 +192,7 @@ public abstract class ASN1PrintableString
                 return false;
             }
 
-            if (('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z'))
+            if ('a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z')
             {
                 continue;
             }

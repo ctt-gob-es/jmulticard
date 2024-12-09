@@ -17,45 +17,47 @@ public class LongPolynomial2
      *
      * @param p the original polynomial. Coefficients must be between 0 and 2047.
      */
-    public LongPolynomial2(IntegerPolynomial p)
+    public LongPolynomial2(final IntegerPolynomial p)
     {
-        numCoeffs = p.coeffs.length;
-        coeffs = new long[(numCoeffs + 1) / 2];
+        this.numCoeffs = p.coeffs.length;
+        this.coeffs = new long[(this.numCoeffs + 1) / 2];
         int idx = 0;
-        for (int pIdx = 0; pIdx < numCoeffs; )
+        for (int pIdx = 0; pIdx < this.numCoeffs; )
         {
             int c0 = p.coeffs[pIdx++];
             while (c0 < 0)
             {
                 c0 += 2048;
             }
-            long c1 = pIdx < numCoeffs ? p.coeffs[pIdx++] : 0;
+            long c1 = pIdx < this.numCoeffs ? p.coeffs[pIdx++] : 0;
             while (c1 < 0)
             {
                 c1 += 2048;
             }
-            coeffs[idx] = c0 + (c1 << 24);
+            this.coeffs[idx] = c0 + (c1 << 24);
             idx++;
         }
     }
 
-    private LongPolynomial2(long[] coeffs)
+    private LongPolynomial2(final long[] coeffs)
     {
         this.coeffs = coeffs;
     }
 
-    private LongPolynomial2(int N)
+    private LongPolynomial2(final int N)
     {
-        coeffs = new long[N];
+        this.coeffs = new long[N];
     }
 
     /**
      * Multiplies the polynomial with another, taking the indices mod N and the values mod 2048.
+     * @param poly2 multiplicator.
+     * @return result
      */
-    public LongPolynomial2 mult(LongPolynomial2 poly2)
+    public LongPolynomial2 mult(final LongPolynomial2 poly2)
     {
-        int N = coeffs.length;
-        if (poly2.coeffs.length != N || numCoeffs != poly2.numCoeffs)
+        final int N = this.coeffs.length;
+        if (poly2.coeffs.length != N || this.numCoeffs != poly2.numCoeffs)
         {
             throw new IllegalArgumentException("Number of coefficients must be the same");
         }
@@ -64,11 +66,11 @@ public class LongPolynomial2
 
         if (c.coeffs.length > N)
         {
-            if (numCoeffs % 2 == 0)
+            if (this.numCoeffs % 2 == 0)
             {
                 for (int k = N; k < c.coeffs.length; k++)
                 {
-                    c.coeffs[k - N] = (c.coeffs[k - N] + c.coeffs[k]) & 0x7FF0007FFL;
+                    c.coeffs[k - N] = c.coeffs[k - N] + c.coeffs[k] & 0x7FF0007FFL;
                 }
                 c.coeffs = Arrays.copyOf(c.coeffs, N);
             }
@@ -86,20 +88,20 @@ public class LongPolynomial2
         }
 
         c = new LongPolynomial2(c.coeffs);
-        c.numCoeffs = numCoeffs;
+        c.numCoeffs = this.numCoeffs;
         return c;
     }
 
     public IntegerPolynomial toIntegerPolynomial()
     {
-        int[] intCoeffs = new int[numCoeffs];
+        final int[] intCoeffs = new int[this.numCoeffs];
         int uIdx = 0;
-        for (int i = 0; i < coeffs.length; i++)
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            intCoeffs[uIdx++] = (int)(coeffs[i] & 2047);
-            if (uIdx < numCoeffs)
+            intCoeffs[uIdx++] = (int)(this.coeffs[i] & 2047);
+            if (uIdx < this.numCoeffs)
             {
-                intCoeffs[uIdx++] = (int)((coeffs[i] >> 24) & 2047);
+                intCoeffs[uIdx++] = (int)(this.coeffs[i] >> 24 & 2047);
             }
         }
         return new IntegerPolynomial(intCoeffs);
@@ -107,63 +109,65 @@ public class LongPolynomial2
 
     /**
      * Karazuba multiplication
+     * @param poly2 multiplicator.
+     * @return result
      */
-    private LongPolynomial2 multRecursive(LongPolynomial2 poly2)
+    private LongPolynomial2 multRecursive(final LongPolynomial2 poly2)
     {
-        long[] a = coeffs;
-        long[] b = poly2.coeffs;
+        final long[] a = this.coeffs;
+        final long[] b = poly2.coeffs;
 
-        int n = poly2.coeffs.length;
+        final int n = poly2.coeffs.length;
         if (n <= 32)
         {
-            int cn = 2 * n;
-            LongPolynomial2 c = new LongPolynomial2(new long[cn]);
+            final int cn = 2 * n;
+            final LongPolynomial2 c = new LongPolynomial2(new long[cn]);
             for (int k = 0; k < cn; k++)
             {
                 for (int i = Math.max(0, k - n + 1); i <= Math.min(k, n - 1); i++)
                 {
-                    long c0 = a[k - i] * b[i];
-                    long cu = c0 & 0x7FF000000L + (c0 & 2047);
-                    long co = (c0 >>> 48) & 2047;
+                    final long c0 = a[k - i] * b[i];
+                    final long cu = c0 & 0x7FF000000L + (c0 & 2047);
+                    final long co = c0 >>> 48 & 2047;
 
-                    c.coeffs[k] = (c.coeffs[k] + cu) & 0x7FF0007FFL;
-                    c.coeffs[k + 1] = (c.coeffs[k + 1] + co) & 0x7FF0007FFL;
+                    c.coeffs[k] = c.coeffs[k] + cu & 0x7FF0007FFL;
+                    c.coeffs[k + 1] = c.coeffs[k + 1] + co & 0x7FF0007FFL;
                 }
             }
             return c;
         }
         else
         {
-            int n1 = n / 2;
+            final int n1 = n / 2;
 
-            LongPolynomial2 a1 = new LongPolynomial2(Arrays.copyOf(a, n1));
-            LongPolynomial2 a2 = new LongPolynomial2(Arrays.copyOfRange(a, n1, n));
-            LongPolynomial2 b1 = new LongPolynomial2(Arrays.copyOf(b, n1));
-            LongPolynomial2 b2 = new LongPolynomial2(Arrays.copyOfRange(b, n1, n));
+            final LongPolynomial2 a1 = new LongPolynomial2(Arrays.copyOf(a, n1));
+            final LongPolynomial2 a2 = new LongPolynomial2(Arrays.copyOfRange(a, n1, n));
+            final LongPolynomial2 b1 = new LongPolynomial2(Arrays.copyOf(b, n1));
+            final LongPolynomial2 b2 = new LongPolynomial2(Arrays.copyOfRange(b, n1, n));
 
-            LongPolynomial2 A = (LongPolynomial2)a1.clone();
+            final LongPolynomial2 A = (LongPolynomial2)a1.clone();
             A.add(a2);
-            LongPolynomial2 B = (LongPolynomial2)b1.clone();
+            final LongPolynomial2 B = (LongPolynomial2)b1.clone();
             B.add(b2);
 
-            LongPolynomial2 c1 = a1.multRecursive(b1);
-            LongPolynomial2 c2 = a2.multRecursive(b2);
-            LongPolynomial2 c3 = A.multRecursive(B);
+            final LongPolynomial2 c1 = a1.multRecursive(b1);
+            final LongPolynomial2 c2 = a2.multRecursive(b2);
+            final LongPolynomial2 c3 = A.multRecursive(B);
             c3.sub(c1);
             c3.sub(c2);
 
-            LongPolynomial2 c = new LongPolynomial2(2 * n);
+            final LongPolynomial2 c = new LongPolynomial2(2 * n);
             for (int i = 0; i < c1.coeffs.length; i++)
             {
                 c.coeffs[i] = c1.coeffs[i] & 0x7FF0007FFL;
             }
             for (int i = 0; i < c3.coeffs.length; i++)
             {
-                c.coeffs[n1 + i] = (c.coeffs[n1 + i] + c3.coeffs[i]) & 0x7FF0007FFL;
+                c.coeffs[n1 + i] = c.coeffs[n1 + i] + c3.coeffs[i] & 0x7FF0007FFL;
             }
             for (int i = 0; i < c2.coeffs.length; i++)
             {
-                c.coeffs[2 * n1 + i] = (c.coeffs[2 * n1 + i] + c2.coeffs[i]) & 0x7FF0007FFL;
+                c.coeffs[2 * n1 + i] = c.coeffs[2 * n1 + i] + c2.coeffs[i] & 0x7FF0007FFL;
             }
             return c;
         }
@@ -174,15 +178,15 @@ public class LongPolynomial2
      *
      * @param b another polynomial
      */
-    private void add(LongPolynomial2 b)
+    private void add(final LongPolynomial2 b)
     {
-        if (b.coeffs.length > coeffs.length)
+        if (b.coeffs.length > this.coeffs.length)
         {
-            coeffs = Arrays.copyOf(coeffs, b.coeffs.length);
+            this.coeffs = Arrays.copyOf(this.coeffs, b.coeffs.length);
         }
         for (int i = 0; i < b.coeffs.length; i++)
         {
-            coeffs[i] = (coeffs[i] + b.coeffs[i]) & 0x7FF0007FFL;
+            this.coeffs[i] = this.coeffs[i] + b.coeffs[i] & 0x7FF0007FFL;
         }
     }
 
@@ -191,15 +195,15 @@ public class LongPolynomial2
      *
      * @param b another polynomial
      */
-    private void sub(LongPolynomial2 b)
+    private void sub(final LongPolynomial2 b)
     {
-        if (b.coeffs.length > coeffs.length)
+        if (b.coeffs.length > this.coeffs.length)
         {
-            coeffs = Arrays.copyOf(coeffs, b.coeffs.length);
+            this.coeffs = Arrays.copyOf(this.coeffs, b.coeffs.length);
         }
         for (int i = 0; i < b.coeffs.length; i++)
         {
-            coeffs[i] = (0x0800000800000L + coeffs[i] - b.coeffs[i]) & 0x7FF0007FFL;
+            this.coeffs[i] = 0x0800000800000L + this.coeffs[i] - b.coeffs[i] & 0x7FF0007FFL;
         }
     }
 
@@ -210,12 +214,12 @@ public class LongPolynomial2
      * @param b    another polynomial
      * @param mask a bit mask less than 2048 to apply to each 11-bit coefficient
      */
-    public void subAnd(LongPolynomial2 b, int mask)
+    public void subAnd(final LongPolynomial2 b, final int mask)
     {
-        long longMask = (((long)mask) << 24) + mask;
+        final long longMask = ((long)mask << 24) + mask;
         for (int i = 0; i < b.coeffs.length; i++)
         {
-            coeffs[i] = (0x0800000800000L + coeffs[i] - b.coeffs[i]) & longMask;
+            this.coeffs[i] = 0x0800000800000L + this.coeffs[i] - b.coeffs[i] & longMask;
         }
     }
 
@@ -225,29 +229,29 @@ public class LongPolynomial2
      *
      * @param mask a bit mask less than 2048 to apply to each 11-bit coefficient
      */
-    public void mult2And(int mask)
+    public void mult2And(final int mask)
     {
-        long longMask = (((long)mask) << 24) + mask;
-        for (int i = 0; i < coeffs.length; i++)
+        final long longMask = ((long)mask << 24) + mask;
+        for (int i = 0; i < this.coeffs.length; i++)
         {
-            coeffs[i] = (coeffs[i] << 1) & longMask;
+            this.coeffs[i] = this.coeffs[i] << 1 & longMask;
         }
     }
 
     @Override
 	public Object clone()
     {
-        LongPolynomial2 p = new LongPolynomial2(coeffs.clone());
-        p.numCoeffs = numCoeffs;
+        final LongPolynomial2 p = new LongPolynomial2(this.coeffs.clone());
+        p.numCoeffs = this.numCoeffs;
         return p;
     }
 
     @Override
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
     {
         if (obj instanceof LongPolynomial2)
         {
-            return Arrays.areEqual(coeffs, ((LongPolynomial2)obj).coeffs);
+            return Arrays.areEqual(this.coeffs, ((LongPolynomial2)obj).coeffs);
         }
         else
         {

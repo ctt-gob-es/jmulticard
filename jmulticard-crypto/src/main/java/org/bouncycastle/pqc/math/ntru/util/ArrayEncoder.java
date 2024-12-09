@@ -65,19 +65,19 @@ public class ArrayEncoder
      * @param q the modulus
      * @return the encoded array
      */
-    public static byte[] encodeModQ(int[] a, int q)
+    public static byte[] encodeModQ(final int[] a, final int q)
     {
-        int bitsPerCoeff = 31 - Integer.numberOfLeadingZeros(q);
-        int numBits = a.length * bitsPerCoeff;
-        int numBytes = (numBits + 7) / 8;
-        byte[] data = new byte[numBytes];
+        final int bitsPerCoeff = 31 - Integer.numberOfLeadingZeros(q);
+        final int numBits = a.length * bitsPerCoeff;
+        final int numBytes = (numBits + 7) / 8;
+        final byte[] data = new byte[numBytes];
         int bitIndex = 0;
         int byteIndex = 0;
         for (int i = 0; i < a.length; i++)
         {
             for (int j = 0; j < bitsPerCoeff; j++)
             {
-                int currentBit = (a[i] >> j) & 1;
+                final int currentBit = a[i] >> j & 1;
                 data[byteIndex] |= currentBit << bitIndex;
                 if (bitIndex == 7)
                 {
@@ -100,14 +100,14 @@ public class ArrayEncoder
      *
      * @param data an encoded ternary polynomial
      * @param N    number of coefficients
-     * @param q
+     * @param q		Number of zeros.
      * @return an array containing <code>N</code> coefficients between <code>0</code> and <code>q-1</code>
      */
-    public static int[] decodeModQ(byte[] data, int N, int q)
+    public static int[] decodeModQ(final byte[] data, final int N, final int q)
     {
-        int[] coeffs = new int[N];
-        int bitsPerCoeff = 31 - Integer.numberOfLeadingZeros(q);
-        int numBits = N * bitsPerCoeff;
+        final int[] coeffs = new int[N];
+        final int bitsPerCoeff = 31 - Integer.numberOfLeadingZeros(q);
+        final int numBits = N * bitsPerCoeff;
         int coeffIndex = 0;
         for (int bitIndex = 0; bitIndex < numBits; bitIndex++)
         {
@@ -115,8 +115,8 @@ public class ArrayEncoder
             {
                 coeffIndex++;
             }
-            int bit = getBit(data, bitIndex);
-            coeffs[coeffIndex] += bit << (bitIndex % bitsPerCoeff);
+            final int bit = getBit(data, bitIndex);
+            coeffs[coeffIndex] += bit << bitIndex % bitsPerCoeff;
         }
         return coeffs;
     }
@@ -128,15 +128,16 @@ public class ArrayEncoder
      *
      * @param is an encoded ternary polynomial
      * @param N  number of coefficients
-     * @param q
+     * @param q Number of zeros.
      * @return the decoded polynomial
+     * @throws IOException If IO error occurs.
      */
-    public static int[] decodeModQ(InputStream is, int N, int q)
+    public static int[] decodeModQ(final InputStream is, final int N, final int q)
         throws IOException
     {
-        int qBits = 31 - Integer.numberOfLeadingZeros(q);
-        int size = (N * qBits + 7) / 8;
-        byte[] arr = Util.readFullLength(is, size);
+        final int qBits = 31 - Integer.numberOfLeadingZeros(q);
+        final int size = (N * qBits + 7) / 8;
+        final byte[] arr = Util.readFullLength(is, size);
         return decodeModQ(arr, N, q);
     }
 
@@ -150,16 +151,16 @@ public class ArrayEncoder
      * @param N    number of coefficients
      * @return the decoded coefficients
      */
-    public static int[] decodeMod3Sves(byte[] data, int N)
+    public static int[] decodeMod3Sves(final byte[] data, final int N)
     {
-        int[] coeffs = new int[N];
+        final int[] coeffs = new int[N];
         int coeffIndex = 0;
         for (int bitIndex = 0; bitIndex < data.length * 8; )
         {
-            int bit1 = getBit(data, bitIndex++);
-            int bit2 = getBit(data, bitIndex++);
-            int bit3 = getBit(data, bitIndex++);
-            int coeffTableIndex = bit1 * 4 + bit2 * 2 + bit3;
+            final int bit1 = getBit(data, bitIndex++);
+            final int bit2 = getBit(data, bitIndex++);
+            final int bit3 = getBit(data, bitIndex++);
+            final int coeffTableIndex = bit1 * 4 + bit2 * 2 + bit3;
             coeffs[coeffIndex++] = COEFF1_TABLE[coeffTableIndex];
             coeffs[coeffIndex++] = COEFF2_TABLE[coeffTableIndex];
             // ignore bytes that can't fit
@@ -177,26 +178,26 @@ public class ArrayEncoder
      * so this method is only safe to use with arrays produced by {@link #decodeMod3Sves(byte[], int)}.<br>
      * See P1363.1 section 9.2.3.
      *
-     * @param arr
+     * @param arr mod3.
      * @return the encoded array
      */
-    public static byte[] encodeMod3Sves(int[] arr)
+    public static byte[] encodeMod3Sves(final int[] arr)
     {
-        int numBits = (arr.length * 3 + 1) / 2;
-        int numBytes = (numBits + 7) / 8;
-        byte[] data = new byte[numBytes];
+        final int numBits = (arr.length * 3 + 1) / 2;
+        final int numBytes = (numBits + 7) / 8;
+        final byte[] data = new byte[numBytes];
         int bitIndex = 0;
         int byteIndex = 0;
         for (int i = 0; i < arr.length / 2 * 2; )
         {   // if length is an odd number, throw away the highest coeff
-            int coeff1 = arr[i++] + 1;
-            int coeff2 = arr[i++] + 1;
+            final int coeff1 = arr[i++] + 1;
+            final int coeff2 = arr[i++] + 1;
             if (coeff1 == 0 && coeff2 == 0)
             {
                 throw new IllegalStateException("Illegal encoding!");
             }
-            int bitTableIndex = coeff1 * 3 + coeff2;
-            int[] bits = new int[]{BIT1_TABLE[bitTableIndex], BIT2_TABLE[bitTableIndex], BIT3_TABLE[bitTableIndex]};
+            final int bitTableIndex = coeff1 * 3 + coeff2;
+            final int[] bits = new int[]{BIT1_TABLE[bitTableIndex], BIT2_TABLE[bitTableIndex], BIT3_TABLE[bitTableIndex]};
             for (int j = 0; j < 3; j++)
             {
                 data[byteIndex] |= bits[j] << bitIndex;
@@ -216,10 +217,10 @@ public class ArrayEncoder
 
     /**
      * Encodes an <code>int</code> array whose elements are between <code>-1</code> and <code>1</code>, to a byte array.
-     *
+     * @param intArray mod3.
      * @return the encoded array
      */
-    public static byte[] encodeMod3Tight(int[] intArray)
+    public static byte[] encodeMod3Tight(final int[] intArray)
     {
         BigInteger sum = BigInteger.ZERO;
         for (int i = intArray.length - 1; i >= 0; i--)
@@ -228,13 +229,13 @@ public class ArrayEncoder
             sum = sum.add(BigInteger.valueOf(intArray[i] + 1));
         }
 
-        int size = (BigInteger.valueOf(3).pow(intArray.length).bitLength() + 7) / 8;
+        final int size = (BigInteger.valueOf(3).pow(intArray.length).bitLength() + 7) / 8;
         byte[] arr = sum.toByteArray();
 
         if (arr.length < size)
         {
             // pad with leading zeros so arr.length==size
-            byte[] arr2 = new byte[size];
+            final byte[] arr2 = new byte[size];
             System.arraycopy(arr, 0, arr2, size - arr.length, arr.length);
             return arr2;
         }
@@ -254,10 +255,10 @@ public class ArrayEncoder
      * @param N number of coefficients
      * @return the decoded array
      */
-    public static int[] decodeMod3Tight(byte[] b, int N)
+    public static int[] decodeMod3Tight(final byte[] b, final int N)
     {
         BigInteger sum = new BigInteger(1, b);
-        int[] coeffs = new int[N];
+        final int[] coeffs = new int[N];
         for (int i = 0; i < N; i++)
         {
             coeffs[i] = sum.mod(BigInteger.valueOf(3)).intValue() - 1;
@@ -276,19 +277,20 @@ public class ArrayEncoder
      * @param is an input stream containing the data to decode
      * @param N  number of coefficients
      * @return the decoded array
+     * @throws IOException If IO error occurs.
      */
-    public static int[] decodeMod3Tight(InputStream is, int N)
+    public static int[] decodeMod3Tight(final InputStream is, final int N)
         throws IOException
     {
-        int size = (int)Math.ceil(N * Math.log(3) / Math.log(2) / 8);
-        byte[] arr = Util.readFullLength(is, size);
+        final int size = (int)Math.ceil(N * Math.log(3) / Math.log(2) / 8);
+        final byte[] arr = Util.readFullLength(is, size);
         return decodeMod3Tight(arr, N);
     }
 
-    private static int getBit(byte[] arr, int bitIndex)
+    private static int getBit(final byte[] arr, final int bitIndex)
     {
-        int byteIndex = bitIndex / 8;
-        int arrElem = arr[byteIndex] & 0xFF;
-        return (arrElem >> (bitIndex % 8)) & 1;
+        final int byteIndex = bitIndex / 8;
+        final int arrElem = arr[byteIndex] & 0xFF;
+        return arrElem >> bitIndex % 8 & 1;
     }
 }

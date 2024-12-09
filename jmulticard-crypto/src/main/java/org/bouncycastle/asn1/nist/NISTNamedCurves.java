@@ -18,7 +18,7 @@ public class NISTNamedCurves
     static final Hashtable objIds = new Hashtable();
     static final Hashtable names = new Hashtable();
 
-    static void defineCurve(String name, ASN1ObjectIdentifier oid)
+    static void defineCurve(final String name, final ASN1ObjectIdentifier oid)
     {
         objIds.put(name, oid);
         names.put(oid, name);
@@ -43,15 +43,15 @@ public class NISTNamedCurves
         defineCurve("P-192", SECObjectIdentifiers.secp192r1);
     }
 
-    public static X9ECParameters getByName(String name)
+    public static X9ECParameters getByName(final String name)
     {
-        ASN1ObjectIdentifier oid = getOID(name);
+        final ASN1ObjectIdentifier oid = getOID(name);
         return null != oid ? SECNamedCurves.getByOID(oid) : null;
     }
 
-    public static X9ECParametersHolder getByNameLazy(String name)
+    public static X9ECParametersHolder getByNameLazy(final String name)
     {
-        ASN1ObjectIdentifier oid = getOID(name);
+        final ASN1ObjectIdentifier oid = getOID(name);
         return null != oid ? SECNamedCurves.getByOIDLazy(oid) : null;
     }
 
@@ -60,13 +60,14 @@ public class NISTNamedCurves
      * the passed in object identifier. Null if the curve isn't present.
      *
      * @param oid an object identifier representing a named curve, if present.
+     * @return Parameters.
      */
-    public static X9ECParameters getByOID(ASN1ObjectIdentifier oid)
+    public static X9ECParameters getByOID(final ASN1ObjectIdentifier oid)
     {
         return names.containsKey(oid) ? SECNamedCurves.getByOID(oid) : null;
     }
 
-    public static X9ECParametersHolder getByOIDLazy(ASN1ObjectIdentifier oid)
+    public static X9ECParametersHolder getByOIDLazy(final ASN1ObjectIdentifier oid)
     {
         return names.containsKey(oid) ? SECNamedCurves.getByOIDLazy(oid) : null;
     }
@@ -74,24 +75,25 @@ public class NISTNamedCurves
     /**
      * return the object identifier signified by the passed in name. Null
      * if there is no object identifier associated with name.
-     *
+     * @param name Name.
      * @return the object identifier associated with name, if present.
      */
-    public static ASN1ObjectIdentifier getOID(String name)
+    public static ASN1ObjectIdentifier getOID(final String name)
     {
         return (ASN1ObjectIdentifier)objIds.get(Strings.toUpperCase(name));
     }
 
     /**
-     * return the named curve name represented by the given object identifier.
+     * @param oid OID.
+     * @return the named curve name represented by the given object identifier.
      */
-    public static String getName(ASN1ObjectIdentifier oid)
+    public static String getName(final ASN1ObjectIdentifier oid)
     {
         return (String)names.get(oid);
     }
 
     /**
-     * returns an enumeration containing the name strings for curves
+     * @return an enumeration containing the name strings for curves
      * contained in this structure.
      */
     public static Enumeration getNames()

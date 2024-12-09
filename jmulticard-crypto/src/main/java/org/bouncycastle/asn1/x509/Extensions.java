@@ -26,28 +26,28 @@ import org.bouncycastle.asn1.DERSequence;
 public class Extensions
     extends ASN1Object
 {
-    private Hashtable extensions = new Hashtable();
-    private Vector ordering = new Vector();
+    private final Hashtable extensions = new Hashtable();
+    private final Vector ordering = new Vector();
 
-    public static Extension getExtension(Extensions extensions, ASN1ObjectIdentifier oid)
+    public static Extension getExtension(final Extensions extensions, final ASN1ObjectIdentifier oid)
     {
         return null == extensions ? null : extensions.getExtension(oid);
     }
 
-    public static ASN1Encodable getExtensionParsedValue(Extensions extensions, ASN1ObjectIdentifier oid)
+    public static ASN1Encodable getExtensionParsedValue(final Extensions extensions, final ASN1ObjectIdentifier oid)
     {
         return null == extensions ? null : extensions.getExtensionParsedValue(oid);
     }
 
     public static Extensions getInstance(
-        ASN1TaggedObject obj,
-        boolean explicit)
+        final ASN1TaggedObject obj,
+        final boolean explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static Extensions getInstance(
-        Object obj)
+        final Object obj)
     {
         if (obj instanceof Extensions)
         {
@@ -68,21 +68,21 @@ public class Extensions
      * </p>
      */
     private Extensions(
-        ASN1Sequence seq)
+        final ASN1Sequence seq)
     {
-        Enumeration e = seq.getObjects();
+        final Enumeration e = seq.getObjects();
 
         while (e.hasMoreElements())
         {
-            Extension ext = Extension.getInstance(e.nextElement());
+            final Extension ext = Extension.getInstance(e.nextElement());
 
-            if (extensions.containsKey(ext.getExtnId()))
+            if (this.extensions.containsKey(ext.getExtnId()))
             {
                 throw new IllegalArgumentException("repeated extension found: " + ext.getExtnId());
             }
-            
-            extensions.put(ext.getExtnId(), ext);
-            ordering.addElement(ext.getExtnId());
+
+            this.extensions.put(ext.getExtnId(), ext);
+            this.ordering.addElement(ext.getExtnId());
         }
     }
 
@@ -92,7 +92,7 @@ public class Extensions
      * @param extension a single extension.
      */
     public Extensions(
-        Extension extension)
+        final Extension extension)
     {
         this.ordering.addElement(extension.getExtnId());
         this.extensions.put(extension.getExtnId(), extension);
@@ -104,11 +104,11 @@ public class Extensions
      * @param extensions an array of extensions.
      */
     public Extensions(
-        Extension[] extensions)
+        final Extension[] extensions)
     {
         for (int i = 0; i != extensions.length; i++)
         {
-            Extension ext = extensions[i];
+            final Extension ext = extensions[i];
 
             this.ordering.addElement(ext.getExtnId());
             this.extensions.put(ext.getExtnId(), ext);
@@ -116,34 +116,34 @@ public class Extensions
     }
 
     /**
-     * return an Enumeration of the extension field's object ids.
+     * @return an Enumeration of the extension field's object ids.
      */
     public Enumeration oids()
     {
-        return ordering.elements();
+        return this.ordering.elements();
     }
 
     /**
      * return the extension represented by the object identifier
      * passed in.
-     *
+     * @param oid OID.
      * @return the extension if it's present, null otherwise.
      */
     public Extension getExtension(
-        ASN1ObjectIdentifier oid)
+        final ASN1ObjectIdentifier oid)
     {
-        return (Extension)extensions.get(oid);
+        return (Extension)this.extensions.get(oid);
     }
 
     /**
      * return the parsed value of the extension represented by the object identifier
      * passed in.
-     *
+     * @param oid OID.
      * @return the parsed value of the extension if it's present, null otherwise.
      */
-    public ASN1Encodable getExtensionParsedValue(ASN1ObjectIdentifier oid)
+    public ASN1Encodable getExtensionParsedValue(final ASN1ObjectIdentifier oid)
     {
-        Extension ext = this.getExtension(oid);
+        final Extension ext = this.getExtension(oid);
 
         if (ext != null)
         {
@@ -166,13 +166,13 @@ public class Extensions
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector vec = new ASN1EncodableVector(ordering.size());
+        final ASN1EncodableVector vec = new ASN1EncodableVector(this.ordering.size());
 
-        Enumeration e = ordering.elements();
+        final Enumeration e = this.ordering.elements();
         while (e.hasMoreElements())
         {
-            ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)e.nextElement();
-            Extension ext = (Extension)extensions.get(oid);
+            final ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)e.nextElement();
+            final Extension ext = (Extension)this.extensions.get(oid);
 
             vec.add(ext);
         }
@@ -181,20 +181,20 @@ public class Extensions
     }
 
     public boolean equivalent(
-        Extensions other)
+        final Extensions other)
     {
-        if (extensions.size() != other.extensions.size())
+        if (this.extensions.size() != other.extensions.size())
         {
             return false;
         }
 
-        Enumeration e1 = extensions.keys();
+        final Enumeration e1 = this.extensions.keys();
 
         while (e1.hasMoreElements())
         {
-            Object key = e1.nextElement();
+            final Object key = e1.nextElement();
 
-            if (!extensions.get(key).equals(other.extensions.get(key)))
+            if (!this.extensions.get(key).equals(other.extensions.get(key)))
             {
                 return false;
             }
@@ -205,7 +205,7 @@ public class Extensions
 
     public ASN1ObjectIdentifier[] getExtensionOIDs()
     {
-        return toOidArray(ordering);
+        return toOidArray(this.ordering);
     }
 
     public ASN1ObjectIdentifier[] getNonCriticalExtensionOIDs()
@@ -218,15 +218,15 @@ public class Extensions
         return getExtensionOIDs(true);
     }
 
-    private ASN1ObjectIdentifier[] getExtensionOIDs(boolean isCritical)
+    private ASN1ObjectIdentifier[] getExtensionOIDs(final boolean isCritical)
     {
-        Vector oidVec = new Vector();
+        final Vector oidVec = new Vector();
 
-        for (int i = 0; i != ordering.size(); i++)
+        for (int i = 0; i != this.ordering.size(); i++)
         {
-            Object oid = ordering.elementAt(i);
+            final Object oid = this.ordering.elementAt(i);
 
-            if (((Extension)extensions.get(oid)).isCritical() == isCritical)
+            if (((Extension)this.extensions.get(oid)).isCritical() == isCritical)
             {
                 oidVec.addElement(oid);
             }
@@ -235,9 +235,9 @@ public class Extensions
         return toOidArray(oidVec);
     }
 
-    private ASN1ObjectIdentifier[] toOidArray(Vector oidVec)
+    private ASN1ObjectIdentifier[] toOidArray(final Vector oidVec)
     {
-        ASN1ObjectIdentifier[] oids = new ASN1ObjectIdentifier[oidVec.size()];
+        final ASN1ObjectIdentifier[] oids = new ASN1ObjectIdentifier[oidVec.size()];
 
         for (int i = 0; i != oids.length; i++)
         {

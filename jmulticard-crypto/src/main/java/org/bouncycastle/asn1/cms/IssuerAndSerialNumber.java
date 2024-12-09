@@ -15,7 +15,6 @@ import org.bouncycastle.asn1.x509.X509Name;
 
 /**
  * <a href="https://tools.ietf.org/html/rfc5652#section-10.2.4">RFC 5652</a>: IssuerAndSerialNumber object.
- * <p>
  * <pre>
  * IssuerAndSerialNumber ::= SEQUENCE {
  *     issuer Name,
@@ -42,6 +41,7 @@ public class IssuerAndSerialNumber
      * </ul>
      *
      * @param obj the object we want converted.
+     * @return IssuerAndSerialNumber.
      * @exception IllegalArgumentException if the object cannot be converted.
      */
     public static IssuerAndSerialNumber getInstance(
@@ -60,32 +60,34 @@ public class IssuerAndSerialNumber
     }
 
     /**
+     * @param seq Encoded sequence.
      * @deprecated  use getInstance() method.
      */
     @Deprecated
 	public IssuerAndSerialNumber(
         final ASN1Sequence    seq)
     {
-        name = X500Name.getInstance(seq.getObjectAt(0));
-        serialNumber = (ASN1Integer)seq.getObjectAt(1);
+        this.name = X500Name.getInstance(seq.getObjectAt(0));
+        this.serialNumber = (ASN1Integer)seq.getObjectAt(1);
     }
 
     public IssuerAndSerialNumber(
         final Certificate certificate)
     {
-        name = certificate.getIssuer();
-        serialNumber = certificate.getSerialNumber();
+        this.name = certificate.getIssuer();
+        this.serialNumber = certificate.getSerialNumber();
     }
 
     /**
+     * @param certificate Certificate.
      * @deprecated use constructor taking Certificate
      */
     @Deprecated
 	public IssuerAndSerialNumber(
         final X509CertificateStructure certificate)
     {
-        name = certificate.getIssuer();
-        serialNumber = certificate.getSerialNumber();
+        this.name = certificate.getIssuer();
+        this.serialNumber = certificate.getSerialNumber();
     }
 
     public IssuerAndSerialNumber(
@@ -97,6 +99,8 @@ public class IssuerAndSerialNumber
     }
 
     /**
+     * @param name Name
+     * @param serialNumber Serial number
      * @deprecated use X500Name constructor
      */
     @Deprecated
@@ -109,6 +113,8 @@ public class IssuerAndSerialNumber
     }
 
     /**
+     * @param name Name
+     * @param serialNumber Serial number
      * @deprecated use X500Name constructor
      */
     @Deprecated
@@ -122,12 +128,12 @@ public class IssuerAndSerialNumber
 
     public X500Name getName()
     {
-        return name;
+        return this.name;
     }
 
 	public ASN1Integer getSerialNumber()
     {
-        return serialNumber;
+        return this.serialNumber;
     }
 
     @Override
@@ -135,8 +141,8 @@ public class IssuerAndSerialNumber
     {
         final ASN1EncodableVector v = new ASN1EncodableVector(2);
 
-        v.add(name);
-        v.add(serialNumber);
+        v.add(this.name);
+        v.add(this.serialNumber);
 
         return new DERSequence(v);
     }

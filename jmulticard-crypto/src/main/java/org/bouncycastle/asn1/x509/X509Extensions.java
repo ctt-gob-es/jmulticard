@@ -27,7 +27,7 @@ public class X509Extensions
      */
     @Deprecated
 	public static final ASN1ObjectIdentifier SubjectDirectoryAttributes = new ASN1ObjectIdentifier("2.5.29.9");
-    
+
     /**
      * Subject Key Identifier
      *  @deprecated use X509Extension value.
@@ -174,7 +174,7 @@ public class X509Extensions
      */
     @Deprecated
 	public static final ASN1ObjectIdentifier FreshestCRL = new ASN1ObjectIdentifier("2.5.29.46");
-     
+
     /**
      * Inhibit Any Policy
      *  @deprecated use X509Extension value.
@@ -195,7 +195,7 @@ public class X509Extensions
      */
     @Deprecated
 	public static final ASN1ObjectIdentifier SubjectInfoAccess = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.1.11");
-    
+
     /**
      * Logo Type
      *  @deprecated use X509Extension value.
@@ -209,7 +209,7 @@ public class X509Extensions
      */
     @Deprecated
 	public static final ASN1ObjectIdentifier BiometricInfo = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.1.2");
-    
+
     /**
      * QCStatements
      *  @deprecated use X509Extension value.
@@ -223,7 +223,7 @@ public class X509Extensions
      */
     @Deprecated
 	public static final ASN1ObjectIdentifier AuditIdentity = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.1.4");
-    
+
     /**
      * NoRevAvail extension in attribute certificates.
      *  @deprecated use X509Extension value.
@@ -237,19 +237,19 @@ public class X509Extensions
      */
     @Deprecated
 	public static final ASN1ObjectIdentifier TargetInformation = new ASN1ObjectIdentifier("2.5.29.55");
-    
-    private Hashtable               extensions = new Hashtable();
-    private Vector                  ordering = new Vector();
+
+    private final Hashtable               extensions = new Hashtable();
+    private final Vector                  ordering = new Vector();
 
     public static X509Extensions getInstance(
-        ASN1TaggedObject obj,
-        boolean          explicit)
+        final ASN1TaggedObject obj,
+        final boolean          explicit)
     {
         return getInstance(ASN1Sequence.getInstance(obj, explicit));
     }
 
     public static X509Extensions getInstance(
-        Object  obj)
+        final Object  obj)
     {
         if (obj == null || obj instanceof X509Extensions)
         {
@@ -278,30 +278,31 @@ public class X509Extensions
      * Constructor from ASN1Sequence.
      *
      * the extensions are a list of constructed sequences, either with (OID, OctetString) or (OID, Boolean, OctetString)
+     * @param seq Sequence.
      */
     public X509Extensions(
-        ASN1Sequence  seq)
+        final ASN1Sequence  seq)
     {
-        Enumeration e = seq.getObjects();
+        final Enumeration e = seq.getObjects();
 
         while (e.hasMoreElements())
         {
-            ASN1Sequence            s = ASN1Sequence.getInstance(e.nextElement());
+            final ASN1Sequence            s = ASN1Sequence.getInstance(e.nextElement());
 
             if (s.size() == 3)
             {
-                extensions.put(s.getObjectAt(0), new X509Extension(ASN1Boolean.getInstance(s.getObjectAt(1)), ASN1OctetString.getInstance(s.getObjectAt(2))));
+                this.extensions.put(s.getObjectAt(0), new X509Extension(ASN1Boolean.getInstance(s.getObjectAt(1)), ASN1OctetString.getInstance(s.getObjectAt(2))));
             }
             else if (s.size() == 2)
             {
-                extensions.put(s.getObjectAt(0), new X509Extension(false, ASN1OctetString.getInstance(s.getObjectAt(1))));
+                this.extensions.put(s.getObjectAt(0), new X509Extension(false, ASN1OctetString.getInstance(s.getObjectAt(1))));
             }
             else
             {
                 throw new IllegalArgumentException("Bad sequence size: " + s.size());
             }
 
-            ordering.addElement(s.getObjectAt(0));
+            this.ordering.addElement(s.getObjectAt(0));
         }
     }
 
@@ -309,9 +310,10 @@ public class X509Extensions
      * constructor from a table of extensions.
      * <p>
      * it's is assumed the table contains OID/String pairs.
+     * @param extensions Extensions.
      */
     public X509Extensions(
-        Hashtable  extensions)
+        final Hashtable  extensions)
     {
         this(null, extensions);
     }
@@ -320,12 +322,14 @@ public class X509Extensions
      * Constructor from a table of extensions with ordering.
      * <p>
      * It's is assumed the table contains OID/String pairs.
+     * @param ordering Ordering.
+     * @param extensions Extensions.
      * @deprecated use Extensions
      */
     @Deprecated
 	public X509Extensions(
-        Vector      ordering,
-        Hashtable   extensions)
+        final Vector      ordering,
+        final Hashtable   extensions)
     {
         Enumeration e;
 
@@ -347,8 +351,8 @@ public class X509Extensions
 
         while (e.hasMoreElements())
         {
-            ASN1ObjectIdentifier     oid = ASN1ObjectIdentifier.getInstance(e.nextElement());
-            X509Extension           ext = (X509Extension)extensions.get(oid);
+            final ASN1ObjectIdentifier     oid = ASN1ObjectIdentifier.getInstance(e.nextElement());
+            final X509Extension           ext = (X509Extension)extensions.get(oid);
 
             this.extensions.put(oid, ext);
         }
@@ -356,55 +360,55 @@ public class X509Extensions
 
     /**
      * Constructor from two vectors
-     * 
+     *
      * @param objectIDs a vector of the object identifiers.
      * @param values a vector of the extension values.
      * @deprecated use Extensions
      */
     @Deprecated
 	public X509Extensions(
-        Vector      objectIDs,
-        Vector      values)
+        final Vector      objectIDs,
+        final Vector      values)
     {
         Enumeration e = objectIDs.elements();
 
         while (e.hasMoreElements())
         {
-            this.ordering.addElement(e.nextElement()); 
+            this.ordering.addElement(e.nextElement());
         }
 
         int count = 0;
-        
+
         e = this.ordering.elements();
 
         while (e.hasMoreElements())
         {
-            ASN1ObjectIdentifier     oid = (ASN1ObjectIdentifier)e.nextElement();
-            X509Extension           ext = (X509Extension)values.elementAt(count);
+            final ASN1ObjectIdentifier     oid = (ASN1ObjectIdentifier)e.nextElement();
+            final X509Extension           ext = (X509Extension)values.elementAt(count);
 
             this.extensions.put(oid, ext);
             count++;
         }
     }
-    
+
     /**
-     * return an Enumeration of the extension field's object ids.
+     * @return an Enumeration of the extension field's object ids.
      */
     public Enumeration oids()
     {
-        return ordering.elements();
+        return this.ordering.elements();
     }
 
     /**
      * return the extension represented by the object identifier
      * passed in.
-     *
+     * @param oid Object identifier.
      * @return the extension if it's present, null otherwise.
      */
     public X509Extension getExtension(
-        ASN1ObjectIdentifier oid)
+        final ASN1ObjectIdentifier oid)
     {
-        return (X509Extension)extensions.get(oid);
+        return (X509Extension)this.extensions.get(oid);
     }
 
     /**
@@ -420,15 +424,15 @@ public class X509Extensions
     @Override
 	public ASN1Primitive toASN1Primitive()
     {
-        ASN1EncodableVector vec = new ASN1EncodableVector(ordering.size());
+        final ASN1EncodableVector vec = new ASN1EncodableVector(this.ordering.size());
 
-        Enumeration e = ordering.elements();
+        final Enumeration e = this.ordering.elements();
         while (e.hasMoreElements())
         {
-            ASN1EncodableVector v = new ASN1EncodableVector(3);
+            final ASN1EncodableVector v = new ASN1EncodableVector(3);
 
-            ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)e.nextElement();
-            X509Extension ext = (X509Extension)extensions.get(oid);
+            final ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier)e.nextElement();
+            final X509Extension ext = (X509Extension)this.extensions.get(oid);
 
             v.add(oid);
 
@@ -446,20 +450,20 @@ public class X509Extensions
     }
 
     public boolean equivalent(
-        X509Extensions other)
+        final X509Extensions other)
     {
-        if (extensions.size() != other.extensions.size())
+        if (this.extensions.size() != other.extensions.size())
         {
             return false;
         }
 
-        Enumeration     e1 = extensions.keys();
+        final Enumeration     e1 = this.extensions.keys();
 
         while (e1.hasMoreElements())
         {
-            Object  key = e1.nextElement();
+            final Object  key = e1.nextElement();
 
-            if (!extensions.get(key).equals(other.extensions.get(key)))
+            if (!this.extensions.get(key).equals(other.extensions.get(key)))
             {
                 return false;
             }
@@ -470,9 +474,9 @@ public class X509Extensions
 
     public ASN1ObjectIdentifier[] getExtensionOIDs()
     {
-        return toOidArray(ordering);
+        return toOidArray(this.ordering);
     }
-    
+
     public ASN1ObjectIdentifier[] getNonCriticalExtensionOIDs()
     {
         return getExtensionOIDs(false);
@@ -483,15 +487,15 @@ public class X509Extensions
         return getExtensionOIDs(true);
     }
 
-    private ASN1ObjectIdentifier[] getExtensionOIDs(boolean isCritical)
+    private ASN1ObjectIdentifier[] getExtensionOIDs(final boolean isCritical)
     {
-        Vector oidVec = new Vector();
+        final Vector oidVec = new Vector();
 
-        for (int i = 0; i != ordering.size(); i++)
+        for (int i = 0; i != this.ordering.size(); i++)
         {
-            Object oid = ordering.elementAt(i);
+            final Object oid = this.ordering.elementAt(i);
 
-            if (((X509Extension)extensions.get(oid)).isCritical() == isCritical)
+            if (((X509Extension)this.extensions.get(oid)).isCritical() == isCritical)
             {
                 oidVec.addElement(oid);
             }
@@ -500,9 +504,9 @@ public class X509Extensions
         return toOidArray(oidVec);
     }
 
-    private ASN1ObjectIdentifier[] toOidArray(Vector oidVec)
+    private ASN1ObjectIdentifier[] toOidArray(final Vector oidVec)
     {
-        ASN1ObjectIdentifier[] oids = new ASN1ObjectIdentifier[oidVec.size()];
+        final ASN1ObjectIdentifier[] oids = new ASN1ObjectIdentifier[oidVec.size()];
 
         for (int i = 0; i != oids.length; i++)
         {
