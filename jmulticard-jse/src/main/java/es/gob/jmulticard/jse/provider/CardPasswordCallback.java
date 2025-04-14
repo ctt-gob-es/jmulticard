@@ -23,12 +23,12 @@ public final class CardPasswordCallback extends PasswordCallback {
 				"El PasswordProtection no puede ser nulo" //$NON-NLS-1$
 			);
 		}
-		passp = pp;
+		this.passp = pp;
 	}
 
 	@Override
 	public char[] getPassword() {
-		return passp.getPassword();
+		return this.passp.getPassword();
 	}
 
 }

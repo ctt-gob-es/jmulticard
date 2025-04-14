@@ -44,13 +44,17 @@ public final class CeresProvider extends Provider {
     	return defaultConnection;
     }
 
-    /** Crea un proveedor JCA para tarjeta FNMT-RCM-CERES con la conexi&oacute;n por defecto. */
+    /**
+     * Crea un proveedor JCA para tarjeta FNMT-RCM-CERES con la conexi&oacute;n por defecto.
+     */
     public CeresProvider() {
     	this(null);
     }
 
-    /** Crea un proveedor JCA para tarjeta FNMT-RCM-CERES.
-     * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU. */
+    /**
+     * Crea un proveedor JCA para tarjeta FNMT-RCM-CERES.
+     * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU.
+     */
     public CeresProvider(final ApduConnection conn) {
         super(NAME, VERSION, INFO);
 

@@ -56,9 +56,11 @@ import es.gob.jmulticard.CryptoHelper;
 import es.gob.jmulticard.card.dnie.DnieFactory;
 import es.gob.jmulticard.connection.ApduConnection;
 
-/** Implementaci&oacute;n del SPI <code>KeyStore</code> para DNIe y tarjetas compatibles.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
-public final class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
+/**
+ * Implementaci&oacute;n del SPI <code>KeyStore</code> para DNIe.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ */
+public class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
 
 	/** Alias del certificado de CA intermedia (siempre el mismo en el DNIe). */
 	private static final String INTERMEDIATE_CA_CERT_ALIAS = "CertCAIntermediaDGP"; //$NON-NLS-1$
@@ -75,7 +77,7 @@ public final class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
 
     	// La cadena disponible del certificado la componen el propio certificado y el
     	// certificado de la CA intermedia. Si no se puede recuperar esta ultima, se obvia
-    	final X509Certificate intermediateCaCert = cryptoCard.getCertificate(INTERMEDIATE_CA_CERT_ALIAS);
+    	final X509Certificate intermediateCaCert = this.cryptoCard.getCertificate(INTERMEDIATE_CA_CERT_ALIAS);
 
     	X509Certificate sha2DnieRoot = null;
 
@@ -136,11 +138,12 @@ public final class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
     			if (((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler() == null) {
     				throw new IllegalArgumentException("El CallbackHandler no puede ser nulo"); //$NON-NLS-1$
     			}
-    			cryptoCard = DnieFactory.getDnie(
+    			this.cryptoCard = DnieFactory.getDnie(
 					DnieProvider.getDefaultApduConnection(),
 					null,
 					CRYPTO_HELPER,
-					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler()
+					((KeyStore.CallbackHandlerProtection) pp).getCallbackHandler(),
+					isAnotherCardsAllowed()
 				);
     		}
     		else if (pp instanceof KeyStore.PasswordProtection) {
@@ -148,7 +151,7 @@ public final class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
 					(PasswordProtection) pp,
 					JMultiCardProviderMessages.getString("DnieKeyStoreImpl.0") //$NON-NLS-1$
 				);
-    			cryptoCard = DnieFactory.getDnie(DnieProvider.getDefaultApduConnection(), pwc, CRYPTO_HELPER, null);
+    			this.cryptoCard = DnieFactory.getDnie(DnieProvider.getDefaultApduConnection(), pwc, CRYPTO_HELPER, null, isAnotherCardsAllowed());
     		}
     		else {
     			LOGGER.warning(
@@ -157,14 +160,15 @@ public final class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
     		}
     	}
     	else {
-	    	cryptoCard = DnieFactory.getDnie(DnieProvider.getDefaultApduConnection(), null, CRYPTO_HELPER, null);
+	    	this.cryptoCard = DnieFactory.getDnie(DnieProvider.getDefaultApduConnection(), null, CRYPTO_HELPER, null, isAnotherCardsAllowed());
     	}
 
-    	aliases = Arrays.asList(cryptoCard.getAliases());
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
     }
 
     @Override
     public void engineLoad(final InputStream stream, final char[] password) throws IOException {
+
     	// Ponemos la conexion por defecto
     	final ApduConnection conn;
     	try {
@@ -177,13 +181,24 @@ public final class DnieKeyStoreImpl extends AbstractJMultiCardKeyStore {
     	}
 
         // Aqui se realiza el acceso e inicializacion del DNIe
-    	cryptoCard = DnieFactory.getDnie(
+    	this.cryptoCard = DnieFactory.getDnie(
     		conn,
     		password != null ? new CachePasswordCallback(password) : null,
 			CRYPTO_HELPER,
-			null
+			null,
+			isAnotherCardsAllowed()
 		);
 
-    	aliases = Arrays.asList(cryptoCard.getAliases());
+    	this.aliases = Arrays.asList(this.cryptoCard.getAliases());
+    }
+    
+    /**
+     * Indica si se va a permitir la carga de otras tarjetas compatibles con JMulticard a traves de esta implementaci&oacute;n.
+     * La implementaci&oacute;n por defecto siempre devuelve {@code false}.
+     * @return {@code true} si se permite la carga de otras tarjetas, {@code false} en caso contrario.
+     */
+    @SuppressWarnings("static-method")
+	protected boolean isAnotherCardsAllowed() {
+    	return false;
     }
 }

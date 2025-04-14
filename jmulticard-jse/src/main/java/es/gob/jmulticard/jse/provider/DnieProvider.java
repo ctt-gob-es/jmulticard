@@ -39,8 +39,12 @@
  */
 package es.gob.jmulticard.jse.provider;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.security.Provider;
 import java.security.ProviderException;
+import java.util.Properties;
 
 import es.gob.jmulticard.card.dnie.Dnie;
 import es.gob.jmulticard.connection.ApduConnection;
@@ -71,6 +75,12 @@ public final class DnieProvider extends Provider {
 
     private static final String DNIE_PRIVATE_KEY = "es.gob.jmulticard.jse.provider.DniePrivateKey"; //$NON-NLS-1$
 
+    private static final String KEYSTORE_DNI = "KeyStore.DNI"; //$NON-NLS-1$
+    private static final String KEYSTORE_CERES430 = "KeyStore.CERES430"; //$NON-NLS-1$
+    
+    private static final String CONFIG_PARAM_PROVIDER_NAME = "name"; //$NON-NLS-1$
+    private static final String CONFIG_PARAM_ALLOW_ANOTHER_CARDS = "allowAnotherCards"; //$NON-NLS-1$
+
     private static final long serialVersionUID = -1046745919235177156L;
 
     private static final String INFO = "Proveedor para el DNIe y tarjetas compatibles"; //$NON-NLS-1$
@@ -87,15 +97,29 @@ public final class DnieProvider extends Provider {
     	return defaultConnection;
     }
 
-    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe) con la conexi&oacute;n por defecto. */
+    /**
+     * Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe) con la conexi&oacute;n y el nombre
+     * por defecto.
+     */
     public DnieProvider() {
     	this(null);
     }
 
-    /** Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe).
-     * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU. */
+    /**
+     * Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe) con el nombre por defecto.
+     * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU.
+     */
     public DnieProvider(final ApduConnection conn) {
-        super(NAME, VERSION, INFO);
+        this(conn, NAME);
+    }
+    
+    /**
+     * Crea un proveedor JCA para DNI Electr&oacute;nico (DNIe) y se le asigna un nombre concreto.
+     * @param conn Conexi&oacute;n a usar para el env&iacute;o y recepci&oacute;n de APDU.
+     * @param name Nombre que se le asigna al proveedor.
+     */
+    public DnieProvider(final ApduConnection conn, String name) {
+        super(name, VERSION, INFO);	// Se mantiene este constructor por compatibilidad con Java 8
 
         try {
 			defaultConnection = conn == null ?
@@ -170,4 +194,39 @@ public final class DnieProvider extends Provider {
 	        put("Cipher.RSA/ECB/PKCS1Padding SupportedKeyClasses", DNIE_PRIVATE_KEY); //$NON-NLS-1$
         }
     }
+
+    // No agregamos el @Override para mantener la compatibilidad con Java 8
+ 	public Provider configure(final String config) {
+
+		Properties prop = new Properties();
+		try (Reader reader = new StringReader(config)) {
+			prop.load(reader);
+		} catch (IOException e) {
+			throw new SecurityException("La configuracion del proveedor debe tener formato de properties", e); //$NON-NLS-1$
+		}
+ 		
+		String providerName = NAME;
+		if (prop.containsKey(CONFIG_PARAM_PROVIDER_NAME)) {
+			providerName = prop.getProperty(CONFIG_PARAM_PROVIDER_NAME);
+		}
+
+		Provider newProvider = new DnieProvider(defaultConnection, providerName);
+
+		if (prop.containsKey(CONFIG_PARAM_ALLOW_ANOTHER_CARDS)) {
+			newProvider.remove(KEYSTORE_DNI);
+			if (Boolean.parseBoolean(prop.getProperty(CONFIG_PARAM_ALLOW_ANOTHER_CARDS))) {
+				newProvider.put(KEYSTORE_DNI, "es.gob.jmulticard.jse.provider.JMulticardKeyStoreImpl"); //$NON-NLS-1$
+				newProvider.put(KEYSTORE_CERES430, "es.gob.jmulticard.jse.provider.JMulticardKeyStoreImpl"); //$NON-NLS-1$
+			} else {
+				newProvider.put(KEYSTORE_DNI, "es.gob.jmulticard.jse.provider.DnieKeyStoreImpl"); //$NON-NLS-1$
+			}
+		}
+
+    	return newProvider;
+    }
+
+ 	// No agregamos el @Override para mantener la compatibilidad con Java 8
+ 	public boolean isConfigured() {
+ 		return true;
+ 	}
 }

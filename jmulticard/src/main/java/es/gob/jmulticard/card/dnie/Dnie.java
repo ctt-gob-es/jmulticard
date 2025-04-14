@@ -298,7 +298,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
             try {
                 getConnection().close();
                 if (getConnection() instanceof Cwa14890Connection) {
-                    setConnection(((Cwa14890Connection) getConnection()).getSubConnection());
+                    setConnection(getConnection().getSubConnection());
                 }
             }
             catch (final ApduConnectionException ex) {
@@ -772,7 +772,7 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 			try {
 				getConnection().close();
 				if (getConnection() instanceof Cwa14890Connection) {
-					setConnection(((Cwa14890Connection) getConnection()).getSubConnection());
+					setConnection(getConnection().getSubConnection());
 				}
 				// Se vuelve a llamar ya con el canal recuperado.
 				// Como no hay control de la recursividad, si hay perdidas de canal continuadas
@@ -818,7 +818,6 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 	 */
 	public String getIdesp() throws Iso7816FourCardException, IOException {
 		final String idEsp = new String(selectFileByLocationAndRead(IDESP_LOCATION));
-		JmcLogger.info(Dnie.class.getName(), "getIdesp", "Leido el IDESP del DNIe: " + idEsp.trim()); //$NON-NLS-1$ //$NON-NLS-2$
 		return idEsp;
 	}
 

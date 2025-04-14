@@ -127,24 +127,24 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 	  public String toString() {
     	return "Conexion de bajo nivel JSR-268 " + //$NON-NLS-1$
 			(isOpen()
-				? "abierta en modo " + (exclusive ? "" : "no") + " exclusivo" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				? "abierta en modo " + (this.exclusive ? "" : "no") + " exclusivo" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					: "cerrada"); //$NON-NLS-1$
     }
 
     @Override
     public void close() throws ApduConnectionException {
-    	if (card != null) {
+    	if (this.card != null) {
 	        try {
-	            card.disconnect(false);
+	            this.card.disconnect(false);
 	        }
 	        catch (final Exception e) {
 	            throw new ApduConnectionException(
 	                "Error intentando cerrar el objeto de tarjeta inteligente, la conexion puede quedar abierta pero inutil", e //$NON-NLS-1$
 	            );
 	        }
-	        card = null;
+	        this.card = null;
     	}
-        cardChannel = null;
+        this.cardChannel = null;
     }
 
     /** {@inheritDoc} */
@@ -212,7 +212,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
     @Override
     public boolean isOpen() {
-        return card != null;
+        return this.card != null;
     }
 
     @Override
@@ -239,59 +239,59 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             if (terminales.isEmpty()) {
                 throw new NoReadersFoundException();
             }
-            if (terminalNumber == -1) {
+            if (this.terminalNumber == -1) {
             	final long[] cadsWithCard = getTerminals(true);
             	if (cadsWithCard.length <= 0) {
             		throw new ApduConnectionException(
         				"En el sistema no hay ningun terminal con tarjeta insertada" //$NON-NLS-1$
     				);
             	}
-				terminalNumber = (int) cadsWithCard[0];
+				this.terminalNumber = (int) cadsWithCard[0];
             }
-            if (terminales.size() <= terminalNumber) {
+            if (terminales.size() <= this.terminalNumber) {
                 throw new ApduConnectionException(
-            		"No se detecto el lector de tarjetas numero " + terminalNumber //$NON-NLS-1$
+            		"No se detecto el lector de tarjetas numero " + this.terminalNumber //$NON-NLS-1$
         		);
             }
-            card = terminales.get(terminalNumber).connect(protocol.toString());
+            this.card = terminales.get(this.terminalNumber).connect(this.protocol.toString());
         }
         catch(final javax.smartcardio.CardNotPresentException e) {
             throw new CardNotPresentException(e);
         }
         catch (final CardException e) {
             throw new ApduConnectionException(
-                "No se ha podido abrir la conexion con el lector de tarjetas numero " + terminalNumber, e  //$NON-NLS-1$
+                "No se ha podido abrir la conexion con el lector de tarjetas numero " + this.terminalNumber, e  //$NON-NLS-1$
     		);
         }
 
-        if (exclusive) {
+        if (this.exclusive) {
             try {
-                card.beginExclusive();
+                this.card.beginExclusive();
             }
             catch (final CardException e) {
                 throw new ApduConnectionException(
-                    "No se ha podido abrir la conexion exclusiva con el lector de tarjetas numero " + Integer.toString(terminalNumber), e //$NON-NLS-1$
+                    "No se ha podido abrir la conexion exclusiva con el lector de tarjetas numero " + Integer.toString(this.terminalNumber), e //$NON-NLS-1$
                 );
             }
         }
-        cardChannel = card.getBasicChannel();
-        protocol = ApduConnectionProtocol.getApduConnectionProtocol(card.getProtocol());
+        this.cardChannel = this.card.getBasicChannel();
+        this.protocol = ApduConnectionProtocol.getApduConnectionProtocol(this.card.getProtocol());
     }
 
     @Override
     public byte[] reset() throws ApduConnectionException {
-    	if (card != null) {
+    	if (this.card != null) {
 	    	try {
-				card.disconnect(true);
+				this.card.disconnect(true);
 			}
 	    	catch (final CardException e) {
 				LOGGER.warning("Error reiniciando la tarjeta: " + e); //$NON-NLS-1$
 			}
     	}
-    	card = null;
+    	this.card = null;
         open();
-        if (card != null) {
-            return card.getATR().getBytes();
+        if (this.card != null) {
+            return this.card.getATR().getBytes();
         }
         throw new ApduConnectionException("Error indefinido reiniciando la conexion con la tarjeta"); //$NON-NLS-1$
     }
@@ -302,12 +302,12 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
      *           exclusivo, <code>false</code> para abrirla en modo no
      *           exclusivo. */
     public void setExclusiveUse(final boolean ex) {
-        if (card == null) {
-            exclusive = ex;
+        if (this.card == null) {
+            this.exclusive = ex;
         }
         else {
             LOGGER.warning(
-                "No se puede cambiar el modo de acceso a la tarjeta con la conexion abierta, se mantendra el modo EXCLUSIVE=" + Boolean.toString(exclusive) //$NON-NLS-1$
+                "No se puede cambiar el modo de acceso a la tarjeta con la conexion abierta, se mantendra el modo EXCLUSIVE=" + Boolean.toString(this.exclusive) //$NON-NLS-1$
             );
         }
     }
@@ -322,21 +322,21 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             LOGGER.warning(
                 "El protocolo de conexion no puede ser nulo, se usara T=0" //$NON-NLS-1$
             );
-            protocol = ApduConnectionProtocol.T0;
+            this.protocol = ApduConnectionProtocol.T0;
             return;
         }
-        protocol = p;
+        this.protocol = p;
     }
 
     @Override
     public void setTerminal(final int terminalN) {
-        if (terminalNumber == terminalN) {
+        if (this.terminalNumber == terminalN) {
             return;
         }
 
         final boolean wasOpened = isOpen();
 
-        terminalNumber = terminalN;
+        this.terminalNumber = terminalN;
 
         if (wasOpened) {
             try {
@@ -360,7 +360,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     @Override
     public ResponseApdu internalTransmit(final byte[] command) throws ApduConnectionException {
 
-        if (cardChannel == null) {
+        if (this.cardChannel == null) {
             throw new ApduConnectionException(
                 "No se puede transmitir sobre una conexion cerrada" //$NON-NLS-1$
             );
@@ -380,7 +380,7 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
         try {
         	final ResponseApdu response = new ResponseApdu(
-				cardChannel.transmit(commandApdu).getBytes()
+				this.cardChannel.transmit(commandApdu).getBytes()
 			);
             if (DEBUG) {
             	LOGGER.info(
@@ -399,9 +399,9 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
                 "Error de comunicacion con la tarjeta tratando de transmitir la APDU" +  //$NON-NLS-1$
                 	(isChv ? " de verificacion de PIN" : //$NON-NLS-1$
             		"\n" + HexUtils.hexify(command, command.length > 32) + //$NON-NLS-1$
-            			"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
+            			"\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
             				" en modo EXCLUSIVE=" + //$NON-NLS-1$
-            					Boolean.toString(exclusive) +
+            					Boolean.toString(this.exclusive) +
             						" con el protocolo " + getProtocol()), e //$NON-NLS-1$
             );
         }
@@ -410,9 +410,9 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
                     "Error de comunicacion con la tarjeta tratando de transmitir la APDU" +  //$NON-NLS-1$
                         	(isChv ? " de verificacion de PIN" : //$NON-NLS-1$
                     		"\n" + HexUtils.hexify(command, command.length > 32) + //$NON-NLS-1$
-                    			"\nAl lector " + Integer.toString(terminalNumber) + //$NON-NLS-1$
+                    			"\nAl lector " + Integer.toString(this.terminalNumber) + //$NON-NLS-1$
                     				" en modo EXCLUSIVE=" + //$NON-NLS-1$
-                    					Boolean.toString(exclusive) +
+                    					Boolean.toString(this.exclusive) +
                     						" con el protocolo " + getProtocol()), e //$NON-NLS-1$
             );
         }
@@ -421,13 +421,13 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     /** Devuelve el protocolo de conexi&oacute;n con la tarjeta usado actualmente.
      * @return Un objeto de tipo enumerado <code>ConnectionProtocol</code>. */
     public ApduConnectionProtocol getProtocol() {
-        return protocol;
+        return this.protocol;
     }
 
     /** Indica si la conexi&oacute;n con la tarjeta se ha establecido en modo exclusivo o no.
      * @return <code>true</code> si la conexi&oacute;n est&aacute; establecida en modo exclusivo. */
     public boolean isExclusiveUse() {
-        return exclusive;
+        return this.exclusive;
     }
 
 	@Override

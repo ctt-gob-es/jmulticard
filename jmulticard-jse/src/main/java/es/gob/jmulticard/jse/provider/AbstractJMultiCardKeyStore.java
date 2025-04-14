@@ -42,17 +42,17 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
 
     @Override
     public final Enumeration<String> engineAliases() {
-        return Collections.enumeration(aliases);
+        return Collections.enumeration(this.aliases);
     }
 
     @Override
     public final boolean engineContainsAlias(final String alias) {
-        return aliases.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     @Override
     public final Certificate engineGetCertificate(final String alias) {
-        return cryptoCard.getCertificate(alias);
+        return this.cryptoCard.getCertificate(alias);
     }
 
     @Override
@@ -60,7 +60,7 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
         if (!(otherCert instanceof X509Certificate)) {
             return null;
         }
-        for (final String alias : aliases) {
+        for (final String alias : this.aliases) {
         	final Certificate myCert = engineGetCertificate(alias);
             try {
 				if (myCert != null && HexUtils.arrayEquals(otherCert.getEncoded(), myCert.getEncoded())) {
@@ -83,9 +83,9 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
     	if (password != null) {
     		// Establecemos el PasswordCallback
     		final PasswordCallback pwc = new CachePasswordCallback(password);
-    		cryptoCard.setPasswordCallback(pwc);
+    		this.cryptoCard.setPasswordCallback(pwc);
     	}
-        final PrivateKeyReference pkRef = cryptoCard.getPrivateKey(alias);
+        final PrivateKeyReference pkRef = this.cryptoCard.getPrivateKey(alias);
 		if (!(pkRef instanceof DniePrivateKeyReference)) {
 			throw new ProviderException(
 				"La clave obtenida de la tarjeta no es del tipo esperado, se ha obtenido: " + (pkRef != null ? pkRef.getClass().getName() : "null") //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,7 +105,7 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
     		// Establecemos el CallbackHandler
     		final CallbackHandler chp = ((KeyStore.CallbackHandlerProtection) protParam).getCallbackHandler();
     		if(chp != null) {
-    			cryptoCard.setCallbackHandler(chp);
+    			this.cryptoCard.setCallbackHandler(chp);
     		}
     	}
     	else if (protParam instanceof KeyStore.PasswordProtection) {
@@ -113,7 +113,7 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
     		final PasswordCallback pwc = new CachePasswordCallback(
 				((KeyStore.PasswordProtection)protParam).getPassword()
 			);
-    		cryptoCard.setPasswordCallback(pwc);
+    		this.cryptoCard.setPasswordCallback(pwc);
     	}
     	else {
     		LOGGER.warning(
@@ -133,7 +133,7 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
 
     @Override
     public final int engineSize() {
-        return aliases.size();
+        return this.aliases.size();
     }
 
     @Override
@@ -152,7 +152,7 @@ public abstract class AbstractJMultiCardKeyStore extends KeyStoreSpi {
 
     @Override
     public final boolean engineIsKeyEntry(final String alias) {
-        return aliases.contains(alias);
+        return this.aliases.contains(alias);
     }
 
     //***************************************************************************************
