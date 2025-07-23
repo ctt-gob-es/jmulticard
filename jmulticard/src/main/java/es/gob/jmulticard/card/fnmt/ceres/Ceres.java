@@ -72,6 +72,7 @@ import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15PrKdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
+import es.gob.jmulticard.callback.CardWithRetriesPasswordCallback;
 import es.gob.jmulticard.card.Atr;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
@@ -168,7 +169,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 	/** Establece el <code>PasswordCallback</code> para el PIN de la tarjeta.
      * @param pwc <code>PasswordCallback</code> para el PIN de la tarjeta. */
     public void setPasswordCallback(final PasswordCallback pwc) {
-    	passwordCallback = pwc;
+    	this.passwordCallback = pwc;
     }
 
     private static void checkAtr(final byte[] atrBytes) throws InvalidCardException {
@@ -229,7 +230,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 				"Error cargando las estructuras iniciales de la tarjeta", e //$NON-NLS-1$
 			);
 		}
-		cryptoHelper = ch;
+		this.cryptoHelper = ch;
 	}
 
 	private void preload() throws Iso7816FourCardException,
@@ -263,8 +264,8 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 
         // Leemos los certificados segun las rutas del CDF
 
-        certs = new LinkedHashMap<>(cdf.getCertificateCount());
-        aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
+        this.certs = new LinkedHashMap<>(cdf.getCertificateCount());
+        this.aliasByCertAndKeyId = new LinkedHashMap<>(cdf.getCertificateCount());
 
         for (int i=0; i<cdf.getCertificateCount(); i++) {
         	final Location l = new Location(
@@ -272,7 +273,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 			);
         	X509Certificate cert;
         	try {
-        		cert = CompressionUtils.getCertificateFromCompressedOrNotData(selectFileByLocationAndRead(l), cryptoHelper);
+        		cert = CompressionUtils.getCertificateFromCompressedOrNotData(selectFileByLocationAndRead(l), this.cryptoHelper);
         	}
         	catch (final IOException e) {
         		JmcLogger.warning("No se ha encontrado un certificado referenciado, se pasa al siguiente: " + e); //$NON-NLS-1$
@@ -280,8 +281,8 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
         	}
 
         	final String alias = i + " " + cert.getSerialNumber(); //$NON-NLS-1$
-        	aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
-        	certs.put(alias, cert);
+        	this.aliasByCertAndKeyId.put(HexUtils.hexify(cdf.getCertificateId(i), false), alias);
+        	this.certs.put(alias, cert);
         }
 
         // Leemos el PrKDF
@@ -304,11 +305,11 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
         	prkdf.setDerValue(prkdfValue);
         }
 
-        keys = new LinkedHashMap<>();
+        this.keys = new LinkedHashMap<>();
         for (int i=0; i<prkdf.getKeyCount(); i++) {
-        	final String alias = aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
+        	final String alias = this.aliasByCertAndKeyId.get(HexUtils.hexify(prkdf.getKeyId(i), false));
         	if (alias != null) {
-	        	keys.put(alias, Byte.valueOf(prkdf.getKeyReference(i)));
+	        	this.keys.put(alias, Byte.valueOf(prkdf.getKeyReference(i)));
         	}
         }
 
@@ -326,27 +327,27 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 			throw new IllegalStateException("No se han podido leer los alias de los certificados de la tarjeta CERES", e); //$NON-NLS-1$
 		}
 		for (final String alias : aliases) {
-			if (keys.get(alias) == null) {
-				certs.remove(alias);
+			if (this.keys.get(alias) == null) {
+				this.certs.remove(alias);
 			}
 		}
 	}
 
 	@Override
 	public String[] getAliases() {
-		return certs.keySet().toArray(new String[0]);
+		return this.certs.keySet().toArray(new String[0]);
 	}
 
 	@Override
 	public X509Certificate getCertificate(final String alias) {
-		return certs.get(alias);
+		return this.certs.get(alias);
 	}
 
 	@Override
 	public PrivateKeyReference getPrivateKey(final String alias) {
 		return new CeresPrivateKeyReference(
-			keys.get(alias).byteValue(),
-			((RSAPublicKey)certs.get(alias).getPublicKey()).getModulus().bitLength()
+			this.keys.get(alias).byteValue(),
+			((RSAPublicKey)this.certs.get(alias).getPublicKey()).getModulus().bitLength()
 		);
 	}
 
@@ -369,10 +370,10 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 		final CeresPrivateKeyReference ceresPrivateKey = (CeresPrivateKeyReference) keyRef;
 
 		// Pedimos el PIN si no se ha pedido antes
-		if (!authenticated) {
+		if (!this.authenticated) {
 			try {
 				verifyPin(getInternalPasswordCallback());
-				authenticated = true;
+				this.authenticated = true;
 			}
 			catch (final ApduConnectionException e1) {
 				throw new CryptoCardException("Error en la verificacion de PIN", e1); //$NON-NLS-1$
@@ -381,7 +382,7 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 
 		final byte[] digestInfo;
 		try {
-			digestInfo = DigestInfo.encode(algorithm, data, cryptoHelper);
+			digestInfo = DigestInfo.encode(algorithm, data, this.cryptoHelper);
 		}
 		catch(final Exception e) {
 			throw new CryptoCardException("Error creando el DigestInfo para la firma con el algoritmo " + algorithm, e); //$NON-NLS-1$
@@ -525,24 +526,28 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 	 * @return <code>PasswordCallback</code> predefinida.
 	 * @throws PinException Si no se puede obtener el PIN del <code>CallbackHandler</code>. */
     protected PasswordCallback getInternalPasswordCallback() throws PinException {
-    	if (passwordCallback != null) {
+    	if (this.passwordCallback != null) {
     		final int retriesLeft = getPinRetriesLeft();
     		if(retriesLeft == 0) {
     			throw new AuthenticationModeLockedException();
     		}
-    		return passwordCallback;
+    		return this.passwordCallback;
     	}
-    	if (callbackHandler != null) {
+    	if (this.callbackHandler != null) {
         	final int retriesLeft = getPinRetriesLeft();
         	if(retriesLeft == 0) {
         		throw new AuthenticationModeLockedException();
         	}
-        	final PasswordCallback pwc = new PasswordCallback(
-    			CardMessages.getString("Gen.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
-				false
-			);
+        	
+        	final CardWithRetriesPasswordCallback  pwc = new CardWithRetriesPasswordCallback(
+        			CardMessages.getString("Gen.0", Integer.toString(retriesLeft)), //$NON-NLS-1$
+    				false
+    			);
+    		
+    		pwc.setRetriesLeft(retriesLeft);
+    		
 			try {
-				callbackHandler.handle(new Callback[] { pwc });
+				this.callbackHandler.handle(new Callback[] { pwc });
 			}
 			catch (final IOException e) {
 				throw new PinException("Error obteniendo el PIN del CallbackHandler", e); //$NON-NLS-1$
@@ -575,12 +580,12 @@ public final class Ceres extends AbstractIso7816EightCard implements CryptoCard 
 	/** Obtiene el <code>CallbackHandler</code>.
 	 * @return <code>CallbackHandler</code>. */
     public CallbackHandler getCallbackHandler() {
-		return callbackHandler;
+		return this.callbackHandler;
 	}
 
     /** Define el <code>CallbackHandler</code>.
      * @param callh <code>CallbackHandler</code> a definir. */
 	public void setCallbackHandler(final CallbackHandler callh) {
-		callbackHandler = callh;
+		this.callbackHandler = callh;
 	}
 }

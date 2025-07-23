@@ -76,6 +76,7 @@ import es.gob.jmulticard.asn1.der.pkcs1.DigestInfo;
 import es.gob.jmulticard.asn1.der.pkcs15.Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.Pkcs15Cdf;
 import es.gob.jmulticard.asn1.der.pkcs15.PrKdf;
+import es.gob.jmulticard.callback.CardWithRetriesPasswordCallback;
 import es.gob.jmulticard.card.AuthenticationModeLockedException;
 import es.gob.jmulticard.card.BadPinException;
 import es.gob.jmulticard.card.CardMessages;
@@ -339,10 +340,14 @@ public class Dnie extends AbstractIso7816EightCard implements Dni, Cwa14890Card 
 
     	// Si hay establecido un CallbackHandler, le solicitamos un PasswordCallback
     	if (this.callbackHandler != null) {
-        	final PasswordCallback  pwc = new PasswordCallback(
-    			getPinMessage(retriesLeft),
-				false
-			);
+    		
+    		final CardWithRetriesPasswordCallback  pwc = new CardWithRetriesPasswordCallback(
+        			getPinMessage(retriesLeft),
+    				false
+    			);
+    		
+    		pwc.setRetriesLeft(retriesLeft);
+    		
 			try {
 				this.callbackHandler.handle(new Callback[] { pwc });
 			}
