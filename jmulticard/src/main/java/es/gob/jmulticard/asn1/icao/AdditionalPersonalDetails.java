@@ -30,37 +30,61 @@ public final class AdditionalPersonalDetails extends DecoderObject {
 	/** Lugar de nacimiento. */
 	private String birthPlace = null;
 
-	/** Direcci&oacute;n permanente (campos separados por '&lt;'). */
-	private String permanentAddress = null;
+	/** Direcci&oacute;n. */
+	private String residenceAddress = null;
+
+	/** Ciudad. */
+	private String residenceCity = null;
+
+	/** Provincia. */
+	private String residenceProvince = null;
 
 	/** Obtiene el nombre completo del titular.
 	 * @return Nombre completo del titular. */
 	public String getSubjectFullName() {
-		return subjectFullName;
+		return this.subjectFullName;
 	}
 
 	/** Ontiene el n&uacute;mero personal.
 	 * @return N&uacute;mero personal. */
 	public String getPersonalNumber() {
-		return personalNumber;
+		return this.personalNumber;
 	}
 
 	/** Obtiene la fecha de nacimiento completa (en formato <i>aaaammdd</i>).
 	 * @return Fecha de nacimiento completa (en formato <i>aaaammdd</i>). */
 	public String getFullBirthDate() {
-		return fullBirthDate;
+		return this.fullBirthDate;
 	}
 
 	/** Obtiene el lugar de nacimiento.
 	 * @return Lugar de nacimiento. */
 	public String getBirthPlace() {
-		return birthPlace;
+		return this.birthPlace;
 	}
 
-	/** Obtiene la direcci&oacute;n permanente (campos separados por '&lt;').
-	 * @return Direcci&oacute;n permanente (campos separados por '&lt;'). */
-	public String getPermanentAddress() {
-		return permanentAddress;
+	/**
+	 * Obtiene la direcci&oacute;n.
+	 * @return Direcci&oacute;n.
+	 */
+	public String getResidenceAddress() {
+		return this.residenceAddress;
+	}
+
+	/**
+	 * Obtiene la ciudad de la direcci&oacute;n.
+	 * @return Ciudad.
+	 */
+	public String getResidenceCity() {
+		return this.residenceCity;
+	}
+
+	/**
+	 * Obtiene la provincia de tu direcci&oacute;n.
+	 * @return Provincia.
+	 */
+	public String getResidenceProvince() {
+		return this.residenceProvince;
 	}
 
 	@Override
@@ -113,25 +137,33 @@ public final class AdditionalPersonalDetails extends DecoderObject {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("Detalles personales adidionales:"); //$NON-NLS-1$
-		if (subjectFullName != null) {
+		if (this.subjectFullName != null) {
 			sb.append("\n  Nombre completo del titular: "); //$NON-NLS-1$
-			sb.append(subjectFullName);
+			sb.append(this.subjectFullName);
 		}
-		if (personalNumber != null) {
+		if (this.personalNumber != null) {
 			sb.append("\n  Numero personal: "); //$NON-NLS-1$
-			sb.append(personalNumber);
+			sb.append(this.personalNumber);
 		}
-		if (fullBirthDate != null) {
+		if (this.fullBirthDate != null) {
 			sb.append("\n  Fecha de nacimiento completa: "); //$NON-NLS-1$
-			sb.append(fullBirthDate);
+			sb.append(this.fullBirthDate);
 		}
-		if (birthPlace != null) {
+		if (this.birthPlace != null) {
 			sb.append("\n  Lugar de nacimiento: "); //$NON-NLS-1$
-			sb.append(birthPlace);
+			sb.append(this.birthPlace);
 		}
-		if (permanentAddress != null) {
-			sb.append("\n  Direccion permanente: "); //$NON-NLS-1$
-			sb.append(permanentAddress);
+		if (this.residenceAddress != null) {
+			sb.append("\n  Direccion: "); //$NON-NLS-1$
+			sb.append(this.residenceAddress);
+		}
+		if (this.residenceCity != null) {
+			sb.append("\n  Ciudad: "); //$NON-NLS-1$
+			sb.append(this.residenceCity);
+		}
+		if (this.residenceProvince != null) {
+			sb.append("\n  Provincia: "); //$NON-NLS-1$
+			sb.append(this.residenceProvince);
 		}
 		return sb.toString();
 	}
@@ -139,19 +171,28 @@ public final class AdditionalPersonalDetails extends DecoderObject {
 	private void processField(final byte type, final byte[] value) {
 		switch(type) {
 			case 0x0e:
-				subjectFullName = new String(value);
+				this.subjectFullName = new String(value);
 				break;
 			case 0x10:
-				personalNumber = new String(value);
+				this.personalNumber = new String(value);
 				break;
 			case 0x2b:
-				fullBirthDate = HexUtils.hexify(value, false);
+				this.fullBirthDate = HexUtils.hexify(value, false);
 				break;
 			case 0x11:
-				birthPlace = new String(value);
+				this.birthPlace = new String(value);
 				break;
 			case 0x42:
-				permanentAddress = new String(value);
+				final String fullAddress = new String(value);
+
+				final String[] addressParticles = fullAddress.split("<"); //$NON-NLS-1$
+				this.residenceAddress = addressParticles[0];
+				if (addressParticles.length >= 2) {
+					this.residenceCity = addressParticles[1];
+				}
+				if (addressParticles.length >= 3) {
+					this.residenceProvince = addressParticles[2];
+				}
 				break;
 			default:
 				JmcLogger.warning("Rotulo de DG11 no soportado: 5F" + HexUtils.hexify(new byte[] { type }, false)); //$NON-NLS-1$
