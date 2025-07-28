@@ -221,6 +221,7 @@ public final class JMultiCardProviderFactory {
 				LOGGER.warning("Numero de terminal no valido (" + terminal + "): " + e1); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
+
 			try {
 				final byte[] atr = conn.reset();
 				final Provider provider = getProvider(atr);

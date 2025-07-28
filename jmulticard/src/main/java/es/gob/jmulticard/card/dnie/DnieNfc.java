@@ -149,14 +149,16 @@ public class DnieNfc extends Dnie3 {
 					throw new UnsupportedOperationException("Tipo de inicializador PACE no soportado: " + paceInitType); //$NON-NLS-1$
 			}
 
-			final SecureMessaging sm = cryptoHelper.getPaceChannelHelper(
-				new CardAccess(
-					CardAccess.PaceAlgorithm.PACE_ECDH_GM_AES_CBC_CMAC_128,
-					CardAccess.PaceAlgorithmParam.BRAINPOOL_256_R1,
-					DigestAlgorithm.SHA1
-				),
-				null // No hay PACE CHAT
-			).openPaceChannel((byte)0x00, paceInitializer, con);
+
+			final PaceChannelHelper channelHelper = cryptoHelper.getPaceChannelHelper(
+					new CardAccess(
+						CardAccess.PaceAlgorithm.PACE_ECDH_GM_AES_CBC_CMAC_128,
+						CardAccess.PaceAlgorithmParam.BRAINPOOL_256_R1,
+						DigestAlgorithm.SHA1
+					),
+					null // No hay PACE CHAT
+				);
+			final SecureMessaging sm = channelHelper.openPaceChannel((byte)0x00, paceInitializer, con);
 
 			return new PaceConnection(con, cryptoHelper, sm);
 		}
@@ -205,7 +207,7 @@ public class DnieNfc extends Dnie3 {
 															                    PinException {
 		if(!(getConnection() instanceof Cwa14890Connection)) {
 			try {
-				rawConnection = getPaceConnection(
+				this.rawConnection = getPaceConnection(
 					getConnection(),
 					getCryptoHelper().getPaceChannelHelper(
 						new CardAccess(
@@ -225,7 +227,7 @@ public class DnieNfc extends Dnie3 {
 			}
 
 			try {
-				setConnection(rawConnection);
+				setConnection(this.rawConnection);
 			}
 	        catch (final ApduConnectionException e) {
 	        	throw new CryptoCardException("Error al abrir el canal PACE", e); //$NON-NLS-1$
@@ -243,7 +245,7 @@ public class DnieNfc extends Dnie3 {
     	final byte[] ret = signInternal(data, signAlgorithm, privateKeyReference);
     	try {
     		//Define el canal sin cifrar para resetearlo tras cada firma
-    		setConnection(((Cwa14890Connection)getConnection()).getSubConnection());
+    		setConnection(getConnection().getSubConnection());
     		//Resetea la tarjeta intentando leer un fichero sin cifrar el canal (se obtiene error 69 87)
     		resetCard();
 		}

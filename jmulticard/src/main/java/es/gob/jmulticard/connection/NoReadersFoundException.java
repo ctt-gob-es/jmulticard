@@ -39,8 +39,10 @@
  */
 package es.gob.jmulticard.connection;
 
-/** Excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
- * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s. */
+/**
+ * Excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
+ * @author Tom&aacute;s Garc&iacute;a-Mer&aacute;s.
+ */
 public class NoReadersFoundException extends ApduConnectionException {
 
 	/** Identificador de versi&oacute;n para la serializaci&oacute;n. */
@@ -51,9 +53,19 @@ public class NoReadersFoundException extends ApduConnectionException {
         super("No se detectaron lectores de tarjetas en el sistema"); //$NON-NLS-1$
     }
 
-    /** Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
+    /**
+     * Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
      * @param msg Mensaje de la excepci&oacute;n.
-     * @param e Excepci&oacute;n de origen. */
+     */
+	public NoReadersFoundException(final String msg) {
+		super(msg);
+	}
+
+    /**
+     * Construye una excepci&oacute;n que indica que no se han detectado lectores compatibles de tarjetas inteligentes.
+     * @param msg Mensaje de la excepci&oacute;n.
+     * @param e Excepci&oacute;n de origen.
+     */
     public NoReadersFoundException(final String msg, final Throwable e) {
     	super(msg, e);
     }

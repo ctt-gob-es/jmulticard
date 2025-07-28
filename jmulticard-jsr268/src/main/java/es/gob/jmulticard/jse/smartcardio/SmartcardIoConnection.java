@@ -41,6 +41,7 @@ package es.gob.jmulticard.jse.smartcardio;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,14 +71,24 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 
 	private static final boolean DEBUG = false;
 
-	/** Tama&ntilde;o m&aacute;ximo de las APDU.
+	/**
+	 * Tama&ntilde;o m&aacute;ximo de las APDU.
 	 * Por encima de este tama&ntilde;o, se hace autom&aacute;ticamente
-	 * una envoltura en varias APDU. */
+	 * una envoltura en varias APDU.
+	 */
 	private static final int MAX_APDU_SIZE = 0xFF;
 
-    /** Constante para la indicaci&oacute;n de que se ha detectado un
-     * reinicio del canal con la tarjeta. */
+    /**
+     * Constante para la indicaci&oacute;n de que se ha detectado un
+     * reinicio del canal con la tarjeta.
+     */
     private static final String SCARD_W_RESET_CARD = "SCARD_W_RESET_CARD"; //$NON-NLS-1$
+
+    /**
+     * Propiedad del sistema con la que configurar que se ignoren los lectores de
+     * tarjeta que se reconozcan como lectores virtuales.
+     */
+    private static final String SYSTEM_PROPERTY_IGNORE_VIRTUAL_READERS = "ignoreVirtualReaders"; //$NON-NLS-1$
 
     private static final Logger LOGGER = Logger.getLogger(SmartcardIoConnection.class.getName());
 
@@ -90,6 +101,8 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     private boolean exclusive = false;
 
     private ApduConnectionProtocol protocol = ApduConnectionProtocol.ANY;
+
+    List<CardTerminal> terminales = null;
 
     static {
 
@@ -151,9 +164,9 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
     @Override
     public String getTerminalInfo(final int terminal) throws ApduConnectionException {
         try {
-            final List<CardTerminal> terminales = TerminalFactory.getDefault().terminals().list();
-            if (terminal < terminales.size()) {
-                final CardTerminal cardTerminal = terminales.get(terminal);
+            final List<CardTerminal> terminalList = getTerminals();
+            if (terminal < terminalList.size()) {
+                final CardTerminal cardTerminal = terminalList.get(terminal);
                 if (cardTerminal != null) {
                     return cardTerminal.getName();
                 }
@@ -168,11 +181,14 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
         }
     }
 
-    @Override
-    public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
-    	final List<CardTerminal> terminales;
+    private List<CardTerminal> getTerminals() {
+
+    	if (this.terminales != null) {
+    		return this.terminales;
+    	}
+
     	try {
-    		terminales = TerminalFactory.getDefault().terminals().list();
+    		this.terminales = TerminalFactory.getDefault().terminals().list();
     	}
     	catch(final CardException e) {
     		LOGGER.log(
@@ -180,15 +196,47 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
 				"No se ha podido recuperar la lista de lectores del sistema", //$NON-NLS-1$
 				e
 			);
-    		return new long[0];
+    		return Collections.emptyList();
     	}
 
+    	final boolean ignoreVirtualReaders = Boolean.getBoolean(SYSTEM_PROPERTY_IGNORE_VIRTUAL_READERS);
+    	if (ignoreVirtualReaders) {
+    		final List<CardTerminal> filteredList = new ArrayList<>();
+    		for (final CardTerminal terminal : this.terminales) {
+    			if (!isVirtual(terminal)) {
+    				filteredList.add(terminal);
+    			}
+    		}
+    		this.terminales = filteredList;
+    	}
+
+    	return this.terminales;
+    }
+
+    /**
+     * Identifica si se trata de un lector de tarjetas virtual.
+     * @param terminal Lector de tarjetas.
+     * @return {@code true} si se trata de un lector virtual,
+     * {@code false} en caso contrario.
+     */
+    private static boolean isVirtual(final CardTerminal terminal) {
+
+    	final String name = terminal.getName();
+
+    	// Ignoramos Windows Hello, el sistema de inicio de sesion de Microsoft (C)
+    	return name != null && name.startsWith("Windows Hello"); //$NON-NLS-1$
+	}
+
+	@Override
+    public long[] getTerminals(final boolean onlyWithCardPresent) throws ApduConnectionException {
+
+		final List<CardTerminal> terminalList = getTerminals();
         try {
         	// Listamos los indices de los lectores que correspondan segun si tienen o no tarjeta insertada
-        	final ArrayList<Long> idsTerminales = new ArrayList<>(terminales.size());
-        	for (int idx = 0; idx < terminales.size(); idx++) {
+        	final ArrayList<Long> idsTerminales = new ArrayList<>(terminalList.size());
+        	for (int idx = 0; idx < terminalList.size(); idx++) {
         		if (onlyWithCardPresent) {
-        			if (terminales.get(idx).isCardPresent()) {
+        			if (terminalList.get(idx).isCardPresent()) {
         				idsTerminales.add(Long.valueOf(idx));
         			}
         		}
@@ -226,17 +274,9 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
         System.setProperty("sun.security.smartcardio.t0GetResponse", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         System.setProperty("sun.security.smartcardio.t1GetResponse", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        final List<CardTerminal> terminales;
+        final List<CardTerminal> terminalList = getTerminals();
         try {
-            terminales = TerminalFactory.getDefault().terminals().list();
-        }
-        catch(final Exception e) {
-        	throw new NoReadersFoundException(
-    			"No se han podido listar los lectores del sistema", e //$NON-NLS-1$
-			);
-        }
-        try {
-            if (terminales.isEmpty()) {
+            if (terminalList.isEmpty()) {
                 throw new NoReadersFoundException();
             }
             if (this.terminalNumber == -1) {
@@ -248,12 +288,12 @@ public final class SmartcardIoConnection extends AbstractApduConnectionIso7816 {
             	}
 				this.terminalNumber = (int) cadsWithCard[0];
             }
-            if (terminales.size() <= this.terminalNumber) {
+            if (terminalList.size() <= this.terminalNumber) {
                 throw new ApduConnectionException(
             		"No se detecto el lector de tarjetas numero " + this.terminalNumber //$NON-NLS-1$
         		);
             }
-            this.card = terminales.get(this.terminalNumber).connect(this.protocol.toString());
+            this.card = terminalList.get(this.terminalNumber).connect(this.protocol.toString());
         }
         catch(final javax.smartcardio.CardNotPresentException e) {
             throw new CardNotPresentException(e);
