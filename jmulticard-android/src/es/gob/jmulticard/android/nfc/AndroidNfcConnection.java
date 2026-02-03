@@ -27,16 +27,39 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
 
     private final IsoDep mIsoDep;
 
-    /** Constructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
+    /**
+     * Constructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
      * @param tag <code>Tag</code> para obtener el objeto <code>IsoDep</code> y establecer la
      *            conexi&oacute;n.
-     * @throws IOException Si falla el establecimiento de la conexi&oacute;n. */
+     * @throws IOException Si falla el establecimiento de la conexi&oacute;n.
+     */
     public AndroidNfcConnection(final Tag tag) throws IOException {
         if (tag == null) {
             throw new IllegalArgumentException("El tag NFC no puede ser nulo"); //$NON-NLS-1$
         }
         this.mIsoDep = IsoDep.get(tag);
         this.mIsoDep.connect();
+        this.mIsoDep.setTimeout(ISODEP_TIMEOUT);
+
+        // Retenemos la conexion hasta nuestro siguiente envio.
+        // Solo en la versiones de Android afectadas por el error https://issuetracker.google.com/issues/36977343
+        if (
+    		android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD_MR1 &&
+    		android.os.Build.VERSION.SDK_INT <  ANDROID_P
+        ) {
+            NFCWatchdogRefresher.holdConnection(this.mIsoDep);
+        }
+    }
+
+    /**
+     * Constructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
+     * @param IsoDep Conexi&oacute;n IsoDep ya establecida.
+     */
+    public AndroidNfcConnection(final IsoDep isoDep) {
+        if (isoDep == null) {
+            throw new IllegalArgumentException("El tag NFC no puede ser nulo"); //$NON-NLS-1$
+        }
+        this.mIsoDep = isoDep;
         this.mIsoDep.setTimeout(ISODEP_TIMEOUT);
 
         // Retenemos la conexion hasta nuestro siguiente envio.
