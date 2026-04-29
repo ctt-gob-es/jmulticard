@@ -53,7 +53,7 @@ public final class AndroidNfcConnection extends AbstractApduConnectionIso7816 {
 
     /**
      * Constructor de la clase para la gesti&oacute;n de la conexi&oacute;n por NFC.
-     * @param IsoDep Conexi&oacute;n IsoDep ya establecida.
+     * @param isoDep Conexi&oacute;n IsoDep ya establecida.
      */
     public AndroidNfcConnection(final IsoDep isoDep) {
         if (isoDep == null) {
