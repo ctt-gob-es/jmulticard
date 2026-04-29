@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.gob.afirma.jmulticard</groupId>
 	<artifactId>jmulticard-base</artifactId>
-	<version>2.0</version>
+	<version>2.1</version>
 	<packaging>pom</packaging>
 	
 	<name>jmulticard-base</name>
@@ -14,7 +14,7 @@
 	
 	<developers>
 		<developer>
-			<name>Secretaría General de Administración Digital</name>
+			<name>Agencia Estatal de Administración Digital</name>
 			<email>soporte.afirma@correo.gob.es</email>
 			<organization>Gobierno de España</organization>
 			<organizationUrl>https://administracionelectronica.gob.es</organizationUrl>
@@ -41,18 +41,7 @@
 		<developerConnection>scm:git:ssh://github.com/ctt-gob-es/jmulticard.git</developerConnection>
 		<url>https://github.com/ctt-gob-es/jmulticard</url>
 	</scm>
-	
-	<distributionManagement>
-	  <snapshotRepository>
-		<id>ossrh</id>
-		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-	  </snapshotRepository>
-	  <repository>
-		<id>ossrh</id>
-		<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-	  </repository>
-	</distributionManagement>
-	
+
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<java.source>1.8</java.source>
@@ -197,7 +186,7 @@
 					<plugin>
 					  <groupId>org.apache.maven.plugins</groupId>
 					  <artifactId>maven-gpg-plugin</artifactId>
-					  <version>3.2.0</version>
+					  <version>3.2.8</version>
 					  <executions>
 						<execution>
 						  <id>sign-artifacts</id>
@@ -207,6 +196,16 @@
 						  </goals>
 						</execution>
 					  </executions>
+					</plugin>
+					
+					<plugin>
+					  <groupId>org.sonatype.central</groupId>
+					  <artifactId>central-publishing-maven-plugin</artifactId>
+					  <version>0.9.0</version>
+					  <extensions>true</extensions>
+					  <configuration>
+						<publishingServerId>central</publishingServerId>
+					  </configuration>
 					</plugin>
 					
 				</plugins>

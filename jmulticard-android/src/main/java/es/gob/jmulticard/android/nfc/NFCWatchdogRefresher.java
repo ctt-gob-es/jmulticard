@@ -41,7 +41,7 @@ final class NFCWatchdogRefresher {
      * <p>If this method is called multiple times without any calls to
      * {@link #stopHoldingConnection()}, each subsequent call will automatically
      * cancel the previous one.</p> */
-    static void holdConnection(final IsoDep isoDep) {
+    public static void holdConnection(final IsoDep isoDep) {
         Log.v(TAG, "holdConnection()"); //$NON-NLS-1$
         if (sHandlerThread != null || sHandler != null || sRefresher != null) {
             Log.d(TAG, "holdConnection(): Existing background thread found, stopping!"); //$NON-NLS-1$
@@ -113,9 +113,9 @@ final class NFCWatchdogRefresher {
         private int mCurrentRuntime;
 
         WatchdogRefresher(final Handler handler, final IsoDep isoDep) {
-            mHandler = new WeakReference<>(handler);
-            mIsoDep = new WeakReference<>(isoDep);
-            mCurrentRuntime = 0;
+            this.mHandler = new WeakReference<>(handler);
+            this.mIsoDep = new WeakReference<>(isoDep);
+            this.mCurrentRuntime = 0;
         }
 
         @Override
@@ -140,10 +140,10 @@ final class NFCWatchdogRefresher {
                 		result.equals(Integer.valueOf(0)) &&
                 		handler != null                   &&
                 		sIsRunning                        &&
-                		mCurrentRuntime < RUNTIME_MAX
+                		this.mCurrentRuntime < RUNTIME_MAX
             		) {
                         handler.postDelayed(this, INTERVAL);
-                        mCurrentRuntime += INTERVAL;
+                        this.mCurrentRuntime += INTERVAL;
                         Log.v(TAG, "Told NFC Watchdog to wait"); //$NON-NLS-1$
                     }
                     else {
@@ -157,11 +157,11 @@ final class NFCWatchdogRefresher {
         }
 
         private Handler getHandler() {
-            return mHandler.get();
+            return this.mHandler.get();
         }
 
         private Tag getTag() {
-            final IsoDep isoDep = mIsoDep.get();
+            final IsoDep isoDep = this.mIsoDep.get();
             if (isoDep != null) {
                 return isoDep.getTag();
             }
